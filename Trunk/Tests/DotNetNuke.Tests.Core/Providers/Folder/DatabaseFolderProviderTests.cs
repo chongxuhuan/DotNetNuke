@@ -361,7 +361,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _filesTable.Rows.Add(validFileBytes);
 
-            _mockData.Setup(md => md.GetFileContent(Constants.FOLDER_ValidFileId, Constants.CONTENT_ValidPortalId)).Returns(_filesTable.CreateDataReader());
+            _mockData.Setup(md => md.GetFileContent(Constants.FOLDER_ValidFileId)).Returns(_filesTable.CreateDataReader());
 
             _fileManager.Setup(fm => fm.GetFile(_folderInfo.Object, Constants.FOLDER_ValidFileName))
                 .Returns(new FileInfo { FileId = Constants.FOLDER_ValidFileId, PortalId = Constants.CONTENT_ValidPortalId });

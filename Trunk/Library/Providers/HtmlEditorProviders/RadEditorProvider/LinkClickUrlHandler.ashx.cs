@@ -65,7 +65,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 	/// See http://blog.theaccidentalgeek.com/post/2008/10/28/An-Updated-Abstract-Boilerplate-HttpHandler.aspx for more information on 
 	/// the BaseHttpHandler.
 	/// </remarks>
-	public class LinkClickUrlHandler : DotNetNuke.Framework.BaseHttpHandler
+	public class LinkClickUrlHandler : BaseHttpHandler
 	{
 
 		private PortalAliasController _portalAliasController = new PortalAliasController();
@@ -88,7 +88,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			if (@params.LinkUrl.Contains(@params.HomeDirectory))
 			{
 				string filePath = @params.LinkUrl.Substring(@params.LinkUrl.IndexOf(@params.HomeDirectory)).Replace(@params.HomeDirectory, "");
-				string linkedFileId = _fileController.ConvertFilePathToFileId(filePath, @params.PortalId);
+				string linkedFileId = _fileController.ConvertFilePathToFileId(filePath, @params.PortalId).ToString();
 				link = string.Format("fileID={0}", linkedFileId);
 			}
 			else
@@ -102,9 +102,9 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				string cultureCode = Localization.SystemLocale;
 
 				//Try HumanFriendlyUrl TabPath
-				link = TabController.GetTabByTabPath(@params.PortalId, tabPath, cultureCode);
+				link = TabController.GetTabByTabPath(@params.PortalId, tabPath, cultureCode).ToString();
 
-				if (string.IsNullOrEmpty(link).NullInteger)
+				if (link == Null.NullInteger.ToString())
 				{
 					//Try getting the tabId from the querystring
 					string[] arrParams = @params.LinkUrl.Split('/');
@@ -116,7 +116,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 							break;
 						}
 					}
-					if (string.IsNullOrEmpty(link).NullInteger)
+                    if (link == Null.NullInteger.ToString())
 					{
 						link = @params.LinkUrl;
 					}
@@ -177,7 +177,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				for (var x = 0; x < maxCount; x++)
 				{
 					UrlLogInfo log = (UrlLogInfo)urlLog[x];
-					fullTableContent.Append("<tr><td>" + log.ClickDate.ToString() + "</td><td>" + log.FullName + "</td></tr>");
+					fullTableContent.Append("<tr><td>" + log.ClickDate + "</td><td>" + log.FullName + "</td></tr>");
 				}
 			}
 
@@ -193,57 +193,57 @@ namespace DotNetNuke.Providers.RadEditorProvider
 		public override void HandleRequest()
 		{
 			string output = null;
-			DialogParams @params = Content.FromJson<DialogParams>(); // This uses the new JSON Extensions in DotNetNuke.Common.Utilities.JsonExtensionsWeb
+			DialogParams dialogParams = Content.FromJson<DialogParams>(); // This uses the new JSON Extensions in DotNetNuke.Common.Utilities.JsonExtensionsWeb
 
-			string link = @params.LinkUrl;
-			@params.LinkClickUrl = link;
+			string link = dialogParams.LinkUrl;
+			dialogParams.LinkClickUrl = link;
 
-			if (@params != null)
+			if (dialogParams != null)
 			{
 
-				if (! (@params.LinkAction == "GetLinkInfo"))
+				if (! (dialogParams.LinkAction == "GetLinkInfo"))
 				{
-					if (@params.Track)
+					if (dialogParams.Track)
 					{
-						string tempVar = @params.LinkUrl;
-						@params.LinkClickUrl = GetLinkClickURL(ref @params, ref tempVar);
-						@params.LinkUrl = tempVar;
-						UrlTrackingInfo linkTrackingInfo = _urlController.GetUrlTracking(@params.PortalId, @params.LinkUrl, @params.ModuleId);
+						string tempVar = dialogParams.LinkUrl;
+						dialogParams.LinkClickUrl = GetLinkClickURL(ref dialogParams, ref tempVar);
+						dialogParams.LinkUrl = tempVar;
+						UrlTrackingInfo linkTrackingInfo = _urlController.GetUrlTracking(dialogParams.PortalId, dialogParams.LinkUrl, dialogParams.ModuleId);
 
 						if (linkTrackingInfo != null)
 						{
-							@params.Track = linkTrackingInfo.TrackClicks;
-							@params.TrackUser = linkTrackingInfo.LogActivity;
-							@params.DateCreated = linkTrackingInfo.CreatedDate.ToString();
-							@params.LastClick = linkTrackingInfo.LastClick.ToString();
-							@params.Clicks = linkTrackingInfo.Clicks;
+							dialogParams.Track = linkTrackingInfo.TrackClicks;
+							dialogParams.TrackUser = linkTrackingInfo.LogActivity;
+							dialogParams.DateCreated = linkTrackingInfo.CreatedDate.ToString();
+							dialogParams.LastClick = linkTrackingInfo.LastClick.ToString();
+							dialogParams.Clicks = linkTrackingInfo.Clicks.ToString();
 						}
 						else
 						{
-							@params.Track = false;
-							@params.TrackUser = false;
+							dialogParams.Track = false;
+							dialogParams.TrackUser = false;
 						}
-						@params.LinkUrl = link;
+						dialogParams.LinkUrl = link;
 
 					}
 				}
 
-				switch (@params.LinkAction)
+				switch (dialogParams.LinkAction)
 				{
 					case "GetLoggingInfo": //also meant for the tracking tab but this is to retrieve the user information
 						DateTime logStartDate = DateTime.MinValue;
 						DateTime logEndDate = DateTime.MinValue;
 						string logText = "<table><tr><th>Date</th><th>User</th></tr><tr><td colspan='2'>The selected date-range did<br /> not return any results.</td></tr>";
 
-						if (DateTime.TryParse(@params.LogStartDate, out logStartDate))
+						if (DateTime.TryParse(dialogParams.LogStartDate, out logStartDate))
 						{
-							if (! (DateTime.TryParse(@params.LogEndDate, out logEndDate)))
+							if (! (DateTime.TryParse(dialogParams.LogEndDate, out logEndDate)))
 							{
 								logEndDate = logStartDate.AddDays(1);
 							}
 
 							UrlController _urlController = new UrlController();
-							ArrayList urlLog = _urlController.GetUrlLog(@params.PortalId, GetLinkUrl(ref @params, @params.LinkUrl), @params.ModuleId, logStartDate, logEndDate);
+							ArrayList urlLog = _urlController.GetUrlLog(dialogParams.PortalId, GetLinkUrl(ref dialogParams, dialogParams.LinkUrl), dialogParams.ModuleId, logStartDate, logEndDate);
 
 							if (urlLog != null)
 							{
@@ -252,19 +252,19 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 						}
 
-						@params.TrackingLog = logText;
+						dialogParams.TrackingLog = logText;
 
 						break;
 					case "GetLinkInfo":
-						if (@params.Track)
+						if (dialogParams.Track)
 						{
 							//this section is for when the user clicks ok in the dialog box, we actually create a record for the linkclick urls.
-							if (! (@params.LinkUrl.ToLower().Contains("linkclick.aspx")))
+							if (! (dialogParams.LinkUrl.ToLower().Contains("linkclick.aspx")))
 							{
-								@params.LinkClickUrl = GetLinkClickURL(ref @params, ref link);
+								dialogParams.LinkClickUrl = GetLinkClickURL(ref dialogParams, ref link);
 							}
 
-							_urlController.UpdateUrl(@params.PortalId, link, GetURLType(DotNetNuke.Common.Globals.GetURLType(link)), @params.TrackUser, true, @params.ModuleId, false);
+							_urlController.UpdateUrl(dialogParams.PortalId, link, GetURLType(DotNetNuke.Common.Globals.GetURLType(link)), dialogParams.TrackUser, true, dialogParams.ModuleId, false);
 
 						}
 						else
@@ -272,62 +272,58 @@ namespace DotNetNuke.Providers.RadEditorProvider
 							//this section is meant for retrieving/displaying the original links and determining if the links are being tracked(making sure the track checkbox properly checked)
 							UrlTrackingInfo linkTrackingInfo = null;
 
-							if (@params.LinkUrl.Contains("fileticket"))
+							if (dialogParams.LinkUrl.Contains("fileticket"))
 							{
-								var queryString = @params.LinkUrl.Split('=');
-								var encryptedFileId = queryString(1).Split('&')[0];
+								var queryString = dialogParams.LinkUrl.Split('=');
+								var encryptedFileId = queryString[1].Split('&')[0];
 
-								string fileID = UrlUtils.DecryptParameter(encryptedFileId, @params.PortalGuid);
-								FileInfo savedFile = _fileController.GetFileById(fileID, @params.PortalId);
+								string fileID = UrlUtils.DecryptParameter(encryptedFileId, dialogParams.PortalGuid);
+								FileInfo savedFile = _fileController.GetFileById(Int32.Parse(fileID), dialogParams.PortalId);
 
-								linkTrackingInfo = _urlController.GetUrlTracking(@params.PortalId, string.Format("fileID={0}", fileID), @params.ModuleId);
-								@params.LinkClickUrl = string.Format("{0}{1}{2}{3}/{4}", "http://", this.Context.Request.Url.Host, @params.HomeDirectory, savedFile.Folder, savedFile.FileName).Replace("//", "/");
+								linkTrackingInfo = _urlController.GetUrlTracking(dialogParams.PortalId, string.Format("fileID={0}", fileID), dialogParams.ModuleId);
+								dialogParams.LinkClickUrl = string.Format("{0}{1}{2}{3}/{4}", "http://", this.Context.Request.Url.Host, dialogParams.HomeDirectory, savedFile.Folder, savedFile.FileName).Replace("//", "/");
 							}
 							else
 							{
 								try
 								{
-									link = @params.LinkUrl.Split(Convert.ToChar("?"))[1].Split(Convert.ToChar("&"))[0].Split(Convert.ToChar("="))[1];
+									link = dialogParams.LinkUrl.Split(Convert.ToChar("?"))[1].Split(Convert.ToChar("&"))[0].Split(Convert.ToChar("="))[1];
 
 									int tabId = 0;
 									if (int.TryParse(link, out tabId)) //if it's a tabid get the tab path
 									{
 										TabController _tabController = new TabController();
-										@params.LinkClickUrl = _tabController.GetTab(tabId, @params.PortalId, true).FullUrl;
-										linkTrackingInfo = _urlController.GetUrlTracking(@params.PortalId, tabId, @params.ModuleId);
+										dialogParams.LinkClickUrl = _tabController.GetTab(tabId, dialogParams.PortalId, true).FullUrl;
+										linkTrackingInfo = _urlController.GetUrlTracking(dialogParams.PortalId, tabId.ToString(), dialogParams.ModuleId);
 									}
 									else
 									{
-										@params.LinkClickUrl = HttpContext.Current.Server.UrlDecode(link); //get the actual link
-										linkTrackingInfo = _urlController.GetUrlTracking(@params.PortalId, @params.LinkClickUrl, @params.ModuleId);
+										dialogParams.LinkClickUrl = HttpContext.Current.Server.UrlDecode(link); //get the actual link
+										linkTrackingInfo = _urlController.GetUrlTracking(dialogParams.PortalId, dialogParams.LinkClickUrl, dialogParams.ModuleId);
 									}
 
 								}
 								catch (Exception ex)
 								{
-									@params.LinkClickUrl = @params.LinkUrl;
+									dialogParams.LinkClickUrl = dialogParams.LinkUrl;
 								}
 							}
 
 							if (linkTrackingInfo == null)
 							{
-								@params.Track = false;
-								@params.TrackUser = false;
+								dialogParams.Track = false;
+								dialogParams.TrackUser = false;
 							}
 							else
 							{
-								@params.Track = linkTrackingInfo.TrackClicks;
-								@params.TrackUser = linkTrackingInfo.LogActivity;
+								dialogParams.Track = linkTrackingInfo.TrackClicks;
+								dialogParams.TrackUser = linkTrackingInfo.LogActivity;
 							}
 
 						}
 						break;
 				}
-				output = @params.ToJson();
-			}
-			else
-			{
-				output = (new DialogParams()).ToJson;
+				output = dialogParams.ToJson();
 			}
 
 			Response.Write(output);

@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -42,31 +43,30 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
 {
     public class DNNScheduler : SchedulingProvider
     {
-		#region "Constructors"
+        #region "Constructors"
         public DNNScheduler()
         {
             if (DataProvider.Instance() == null)
             {
-				//get the provider configuration based on the type
-                DataProvider objProvider = null;
+                //get the provider configuration based on the type
+                DataProvider dataProvider;
                 string defaultprovider = Data.DataProvider.Instance().DefaultProviderName;
-                string dataProviderNamespace = "DotNetNuke.Services.Scheduling.DNNScheduling";
                 if (defaultprovider == "SqlDataProvider")
                 {
-                    objProvider = new SqlDataProvider();
+                    dataProvider = new SqlDataProvider();
                 }
                 else
                 {
-                    string providerType = dataProviderNamespace + "." + defaultprovider;
-                    objProvider = (DataProvider) Reflection.CreateObject(providerType, providerType, true);
+                    string providerType = "DotNetNuke.Services.Scheduling.DNNScheduling." + defaultprovider;
+                    dataProvider = (DataProvider)Reflection.CreateObject(providerType, providerType, true);
                 }
-                ComponentFactory.RegisterComponentInstance<DataProvider>(objProvider);
+                ComponentFactory.RegisterComponentInstance<DataProvider>(dataProvider);
             }
         }
-		
-		#endregion
 
-		#region "Public Properties"
+        #endregion
+
+        #region "Public Properties"
 
         public override Dictionary<string, string> Settings
         {
@@ -75,65 +75,63 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
                 return ComponentFactory.GetComponentSettings<DNNScheduler>() as Dictionary<string, string>;
             }
         }
-		
-		#endregion
-		
-		#region "Private Methods"
 
-        private bool CanRunOnThisServer(string Servers)
+        #endregion
+
+        #region "Private Methods"
+
+        private bool CanRunOnThisServer(string servers)
         {
             string lwrServers = "";
-            if (lwrServers != null)
+            if (servers != null)
             {
-                lwrServers = Servers.ToLower();
+                lwrServers = servers.ToLower();
             }
             if (String.IsNullOrEmpty(lwrServers) || lwrServers.Contains(Globals.ServerName.ToLower()))
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
-        }
-		
-		#endregion
 
-		#region "Public Methods"
-		
-        public override int AddSchedule(ScheduleItem objScheduleItem)
+            return false;
+        }
+
+        #endregion
+
+        #region "Public Methods"
+
+        public override int AddSchedule(ScheduleItem scheduleItem)
         {
-			//Remove item from queue
-            Scheduler.CoreScheduler.RemoveFromScheduleQueue(objScheduleItem);
-			//save item
-            objScheduleItem.ScheduleID = SchedulingController.AddSchedule(objScheduleItem.TypeFullName,
-                                                                          objScheduleItem.TimeLapse,
-                                                                          objScheduleItem.TimeLapseMeasurement,
-                                                                          objScheduleItem.RetryTimeLapse,
-                                                                          objScheduleItem.RetryTimeLapseMeasurement,
-                                                                          objScheduleItem.RetainHistoryNum,
-                                                                          objScheduleItem.AttachToEvent,
-                                                                          objScheduleItem.CatchUpEnabled,
-                                                                          objScheduleItem.Enabled,
-                                                                          objScheduleItem.ObjectDependencies,
-                                                                          objScheduleItem.Servers,
-                                                                          objScheduleItem.FriendlyName);
+            //Remove item from queue
+            Scheduler.CoreScheduler.RemoveFromScheduleQueue(scheduleItem);
+            //save item
+            scheduleItem.ScheduleID = SchedulingController.AddSchedule(scheduleItem.TypeFullName,
+                                                                          scheduleItem.TimeLapse,
+                                                                          scheduleItem.TimeLapseMeasurement,
+                                                                          scheduleItem.RetryTimeLapse,
+                                                                          scheduleItem.RetryTimeLapseMeasurement,
+                                                                          scheduleItem.RetainHistoryNum,
+                                                                          scheduleItem.AttachToEvent,
+                                                                          scheduleItem.CatchUpEnabled,
+                                                                          scheduleItem.Enabled,
+                                                                          scheduleItem.ObjectDependencies,
+                                                                          scheduleItem.Servers,
+                                                                          scheduleItem.FriendlyName);
             //Add schedule to queue
-			RunScheduleItemNow(objScheduleItem);
+            RunScheduleItemNow(scheduleItem);
 
             //Return Id
-			return objScheduleItem.ScheduleID;
+            return scheduleItem.ScheduleID;
         }
 
-        public override void AddScheduleItemSetting(int ScheduleID, string Name, string Value)
+        public override void AddScheduleItemSetting(int scheduleID, string name, string value)
         {
-            SchedulingController.AddScheduleItemSetting(ScheduleID, Name, Value);
+            SchedulingController.AddScheduleItemSetting(scheduleID, name, value);
         }
 
-        public override void DeleteSchedule(ScheduleItem objScheduleItem)
+        public override void DeleteSchedule(ScheduleItem scheduleItem)
         {
-            SchedulingController.DeleteSchedule(objScheduleItem.ScheduleID);
-            Scheduler.CoreScheduler.RemoveFromScheduleQueue(objScheduleItem);
+            SchedulingController.DeleteSchedule(scheduleItem.ScheduleID);
+            Scheduler.CoreScheduler.RemoveFromScheduleQueue(scheduleItem);
             DataCache.RemoveCache("ScheduleLastPolled");
         }
 
@@ -141,7 +139,7 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
         {
             if (Enabled)
             {
-                var s = new Scheduler.CoreScheduler(Debug, MaxThreads);
+                new Scheduler.CoreScheduler(Debug, MaxThreads);
                 Scheduler.CoreScheduler.KeepRunning = true;
                 Scheduler.CoreScheduler.KeepThreadAlive = false;
                 Scheduler.CoreScheduler.Start();
@@ -163,9 +161,9 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
             return SchedulingController.GetMaxThreadCount();
         }
 
-        public override ScheduleItem GetNextScheduledTask(string Server)
+        public override ScheduleItem GetNextScheduledTask(string server)
         {
-            return SchedulingController.GetNextScheduledTask(Server);
+            return SchedulingController.GetNextScheduledTask(server);
         }
 
         public override ArrayList GetSchedule()
@@ -173,29 +171,29 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
             return new ArrayList(SchedulingController.GetSchedule().ToArray());
         }
 
-        public override ArrayList GetSchedule(string Server)
+        public override ArrayList GetSchedule(string server)
         {
-            return new ArrayList(SchedulingController.GetSchedule(Server).ToArray());
+            return new ArrayList(SchedulingController.GetSchedule(server).ToArray());
         }
 
-        public override ScheduleItem GetSchedule(int ScheduleID)
+        public override ScheduleItem GetSchedule(int scheduleID)
         {
-            return SchedulingController.GetSchedule(ScheduleID);
+            return SchedulingController.GetSchedule(scheduleID);
         }
 
-        public override ScheduleItem GetSchedule(string TypeFullName, string Server)
+        public override ScheduleItem GetSchedule(string typeFullName, string server)
         {
-            return SchedulingController.GetSchedule(TypeFullName, Server);
+            return SchedulingController.GetSchedule(typeFullName, server);
         }
 
-        public override ArrayList GetScheduleHistory(int ScheduleID)
+        public override ArrayList GetScheduleHistory(int scheduleID)
         {
-            return new ArrayList(SchedulingController.GetScheduleHistory(ScheduleID).ToArray());
+            return new ArrayList(SchedulingController.GetScheduleHistory(scheduleID).ToArray());
         }
 
-        public override Hashtable GetScheduleItemSettings(int ScheduleID)
+        public override Hashtable GetScheduleItemSettings(int scheduleID)
         {
-            return SchedulingController.GetScheduleItemSettings(ScheduleID);
+            return SchedulingController.GetScheduleItemSettings(scheduleID);
         }
 
         public override Collection GetScheduleProcessing()
@@ -213,45 +211,45 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
             return SchedulingController.GetScheduleStatus();
         }
 
-        public override void Halt(string SourceOfHalt)
+        public override void Halt(string sourceOfHalt)
         {
-            var s = new Scheduler.CoreScheduler(Debug, MaxThreads);
-            Scheduler.CoreScheduler.Halt(SourceOfHalt);
+            new Scheduler.CoreScheduler(Debug, MaxThreads);
+            Scheduler.CoreScheduler.Halt(sourceOfHalt);
             Scheduler.CoreScheduler.KeepRunning = false;
         }
 
         public override void PurgeScheduleHistory()
         {
-            var s = new Scheduler.CoreScheduler(MaxThreads);
+            new Scheduler.CoreScheduler(MaxThreads);
             Scheduler.CoreScheduler.PurgeScheduleHistory();
         }
 
-        public override void ReStart(string SourceOfRestart)
+        public override void ReStart(string sourceOfRestart)
         {
-            Halt(SourceOfRestart);
+            Halt(sourceOfRestart);
             StartAndWaitForResponse();
         }
 
-        public override void RunEventSchedule(EventName objEventName)
+        public override void RunEventSchedule(EventName eventName)
         {
             if (Enabled)
             {
-                var s = new Scheduler.CoreScheduler(Debug, MaxThreads);
-                Scheduler.CoreScheduler.RunEventSchedule(objEventName);
+                new Scheduler.CoreScheduler(Debug, MaxThreads);
+                Scheduler.CoreScheduler.RunEventSchedule(eventName);
             }
         }
 
-        public override void RunScheduleItemNow(ScheduleItem objScheduleItem)
+        public override void RunScheduleItemNow(ScheduleItem scheduleItem)
         {
-			//Remove item from queue
-            Scheduler.CoreScheduler.RemoveFromScheduleQueue(objScheduleItem);
-            var objScheduleHistoryItem = new ScheduleHistoryItem(objScheduleItem);
-            objScheduleHistoryItem.NextStart = DateTime.Now;
-            if (objScheduleHistoryItem.TimeLapse != Null.NullInteger && objScheduleHistoryItem.TimeLapseMeasurement != Null.NullString && objScheduleHistoryItem.Enabled &&
-                CanRunOnThisServer(objScheduleItem.Servers))
+            //Remove item from queue
+            Scheduler.CoreScheduler.RemoveFromScheduleQueue(scheduleItem);
+            var scheduleHistoryItem = new ScheduleHistoryItem(scheduleItem);
+            scheduleHistoryItem.NextStart = DateTime.Now;
+            if (scheduleHistoryItem.TimeLapse != Null.NullInteger && scheduleHistoryItem.TimeLapseMeasurement != Null.NullString && scheduleHistoryItem.Enabled &&
+                CanRunOnThisServer(scheduleItem.Servers))
             {
-                objScheduleHistoryItem.ScheduleSource = ScheduleSource.STARTED_FROM_SCHEDULE_CHANGE;
-                Scheduler.CoreScheduler.AddToScheduleQueue(objScheduleHistoryItem);
+                scheduleHistoryItem.ScheduleSource = ScheduleSource.STARTED_FROM_SCHEDULE_CHANGE;
+                Scheduler.CoreScheduler.AddToScheduleQueue(scheduleHistoryItem);
             }
             DataCache.RemoveCache("ScheduleLastPolled");
         }
@@ -260,7 +258,7 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
         {
             if (Enabled)
             {
-                var s = new Scheduler.CoreScheduler(Debug, MaxThreads);
+                new Scheduler.CoreScheduler(Debug, MaxThreads);
                 Scheduler.CoreScheduler.KeepRunning = true;
                 Scheduler.CoreScheduler.KeepThreadAlive = true;
                 Scheduler.CoreScheduler.Start();
@@ -271,8 +269,7 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
         {
             if (Enabled)
             {
-                var newThread = new Thread(Start);
-                newThread.IsBackground = true;
+                var newThread = new Thread(Start) {IsBackground = true};
                 newThread.Start();
 
                 //wait for up to 30 seconds for thread
@@ -288,28 +285,38 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
             }
         }
 
-        public override void UpdateSchedule(ScheduleItem objScheduleItem)
+        public override void UpdateSchedule(ScheduleItem scheduleItem)
         {
-			//Remove item from queue
-            Scheduler.CoreScheduler.RemoveFromScheduleQueue(objScheduleItem);
-			//save item
-            SchedulingController.UpdateSchedule(objScheduleItem.ScheduleID,
-                                                objScheduleItem.TypeFullName,
-                                                objScheduleItem.TimeLapse,
-                                                objScheduleItem.TimeLapseMeasurement,
-                                                objScheduleItem.RetryTimeLapse,
-                                                objScheduleItem.RetryTimeLapseMeasurement,
-                                                objScheduleItem.RetainHistoryNum,
-                                                objScheduleItem.AttachToEvent,
-                                                objScheduleItem.CatchUpEnabled,
-                                                objScheduleItem.Enabled,
-                                                objScheduleItem.ObjectDependencies,
-                                                objScheduleItem.Servers,
-                                                objScheduleItem.FriendlyName);
+            //Remove item from queue
+            Scheduler.CoreScheduler.RemoveFromScheduleQueue(scheduleItem);
+            //save item
+            SchedulingController.UpdateSchedule(scheduleItem.ScheduleID,
+                                                scheduleItem.TypeFullName,
+                                                scheduleItem.TimeLapse,
+                                                scheduleItem.TimeLapseMeasurement,
+                                                scheduleItem.RetryTimeLapse,
+                                                scheduleItem.RetryTimeLapseMeasurement,
+                                                scheduleItem.RetainHistoryNum,
+                                                scheduleItem.AttachToEvent,
+                                                scheduleItem.CatchUpEnabled,
+                                                scheduleItem.Enabled,
+                                                scheduleItem.ObjectDependencies,
+                                                scheduleItem.Servers,
+                                                scheduleItem.FriendlyName);
+            //Update items that are already scheduled
+            var futureHistory = GetScheduleHistory(scheduleItem.ScheduleID).Cast<ScheduleHistoryItem>().Where(h => h.NextStart > DateTime.Now);
+
+            foreach (var scheduleHistoryItem in futureHistory)
+            {
+                scheduleHistoryItem.NextStart = scheduleItem.NextStart;
+                SchedulingController.UpdateScheduleHistory(scheduleHistoryItem);
+            }
+
+
             //Add schedule to queue
-			RunScheduleItemNow(objScheduleItem);
+            RunScheduleItemNow(scheduleItem);
         }
-		
-		#endregion
+
+        #endregion
     }
 }

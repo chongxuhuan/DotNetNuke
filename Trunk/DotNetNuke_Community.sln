@@ -228,9 +228,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.CloudFolderProviders", "Professional\Providers\FolderProviders\CloudFolderProviders\DotNetNuke.Professional.CloudFolderProviders.csproj", "{2A1157E2-27F8-4D72-86CC-10FE142E98D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.RadEditorProvider", "Library\Providers\HtmlEditorProviders\RadEditorProvider\DotNetNuke.RadEditorProvider.csproj", "{2671B9D5-A788-4DE3-93D6-20D6895A2979}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 61
+		SccNumberOfProjects = 62
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -470,6 +472,10 @@ Global
 		SccProjectName60 = Website
 		SccLocalPath60 = Website
 		SccProjectEnlistmentChoice60 = 2
+		SccProjectUniqueName61 = Library\\Providers\\HtmlEditorProviders\\RadEditorProvider\\DotNetNuke.RadEditorProvider.csproj
+		SccProjectTopLevelParentUniqueName61 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName61 = Library/Providers/HtmlEditorProviders/RadEditorProvider
+		SccLocalPath61 = Library\\Providers\\HtmlEditorProviders\\RadEditorProvider
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1214,6 +1220,18 @@ Global
 		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2A1157E2-27F8-4D72-86CC-10FE142E98D9}.Release|x86.ActiveCfg = Release|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Release|.NET.ActiveCfg = Release|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1263,6 +1281,7 @@ Global
 		{93532801-CD42-40D1-B765-77676362F98C} = {7533B8E3-499F-4FCA-995D-6D4C989AE046}
 		{81C952E8-9836-4966-B09C-8493ED398D9C} = {7533B8E3-499F-4FCA-995D-6D4C989AE046}
 		{40EDB581-6D12-42C0-A610-736AE97A0321} = {7533B8E3-499F-4FCA-995D-6D4C989AE046}
+		{2671B9D5-A788-4DE3-93D6-20D6895A2979} = {6DA8666D-9980-4875-BAC6-F6B45A0FAB2D}
 		{9108D6A3-B570-4778-87C6-7B9424A7EA67} = {92CD4708-95B8-425B-B2BD-B0F77EB93170}
 		{1CA23A12-DA34-49B4-833A-76F3CA8D554C} = {92CD4708-95B8-425B-B2BD-B0F77EB93170}
 		{649E7B07-2170-4471-97C5-0941FBA12159} = {C82EAC40-C9BA-49B7-9D65-BB562F704A8C}

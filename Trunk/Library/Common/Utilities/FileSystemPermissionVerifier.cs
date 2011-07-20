@@ -63,7 +63,7 @@ namespace DotNetNuke.Common.Utilities
                 //Attempt to create the File
                 try
                 {
-                    new RetryableAction(() => FileCreateAction(verifyPath), "Creating verification file").TryIt();
+                    RetryableAction.RetryEverySecondFor30Seconds(() => FileCreateAction(verifyPath), "Creating verification file");
                 }
                 catch (Exception exc)
                 {
@@ -103,7 +103,7 @@ namespace DotNetNuke.Common.Utilities
                 //Attempt to delete the File
                 try
                 {
-                    new RetryableAction(()=> File.Delete(verifyPath), "Deleting verification file").TryIt();
+                    RetryableAction.RetryEverySecondFor30Seconds(()=> File.Delete(verifyPath), "Deleting verification file");
                 }
                 catch (Exception exc)
                 {
@@ -128,7 +128,7 @@ namespace DotNetNuke.Common.Utilities
             //Attempt to create the Directory
             try
             {
-                new RetryableAction(() => FolderCreateAction(verifyPath), "Creating verification folder").TryIt();
+                RetryableAction.RetryEverySecondFor30Seconds(() => FolderCreateAction(verifyPath), "Creating verification folder");
             }
             catch (Exception exc)
             {
@@ -164,7 +164,7 @@ namespace DotNetNuke.Common.Utilities
                 //Attempt to delete the Directory
                 try
                 {
-                    new RetryableAction(() => Directory.Delete(verifyPath), "Deleting verification folder").TryIt();
+                    RetryableAction.RetryEverySecondFor30Seconds(() => Directory.Delete(verifyPath), "Deleting verification folder");
                 }
                 catch (Exception exc)
                 {

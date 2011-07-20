@@ -147,7 +147,7 @@ namespace DotNetNuke.Services.FileSystem
                 IDataReader dr = null;
                 try
                 {
-                    dr = DataProvider.Instance().GetFileContent(file.FileId, file.PortalId);
+                    dr = DataProvider.Instance().GetFileContent(file.FileId);
                     if (dr.Read())
                     {
                         bytes = (byte[])dr["Content"];

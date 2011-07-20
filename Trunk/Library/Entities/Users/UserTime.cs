@@ -35,6 +35,7 @@ namespace DotNetNuke.Entities.Users
 {
     public class UserTime
     {
+        [Obsolete("Deprecated in DNN 6.0.1. Replaced by UserInfo.LocalTime")]
         public DateTime CurrentUserTime
         {
             get
@@ -91,6 +92,7 @@ namespace DotNetNuke.Entities.Users
             return dt.AddMinutes(FromServerToClientFactor(clientTimeZone, portalSettings.TimeZone.BaseUtcOffset.TotalMinutes));
         }
 
+        [Obsolete("Deprecated in DNN 6.0.1. Replaced by UserInfo.LocalTime")]
         public static DateTime CurrentTimeForUser(UserInfo userInfo)
         {
             if (userInfo == null || userInfo.UserID == -1)

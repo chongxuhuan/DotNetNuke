@@ -18,46 +18,14 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-//INSTANT C# NOTE: Formerly VB project-level imports:
-using DotNetNuke;
-using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Data;
-using DotNetNuke.Entities;
-using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Framework;
-using DotNetNuke.Modules;
-using DotNetNuke.Security;
-using DotNetNuke.Services;
-using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI;
+
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Collections.Specialized;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.Caching;
-using System.Web.SessionState;
-using System.Web.Security;
-using System.Web.Profile;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
-using System.Xml;
-using DotNetNuke.Services.Cache;
-using DotNetNuke.UI.WebControls;
 using DotNetNuke.Entities.Host;
-using DotNetNuke.Entities.Portals;
-using DotNetNuke.Framework.Providers;
+using DotNetNuke.Services.FileSystem;
+
 using Telerik.Web.UI;
 
 namespace DotNetNuke.Providers.RadEditorProvider
@@ -147,7 +115,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				DotNetNuke.Services.Exceptions.LogException(ex);
+				DotNetNuke.Services.Exceptions.Exceptions.LogException(ex);
 				throw ex;
 			}
 		}
@@ -177,8 +145,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				rootFolder = rootFolder.Replace("/", "\\");
 
 				string errorMessage = string.Empty;
-				FileSystem.FolderController folderCtrl = new FileSystem.FolderController();
-				FileSystem.FolderInfo folder = folderCtrl.GetFolder(portalSettings.PortalId, dbFolderPath, false);
+				FolderController folderCtrl = new FolderController();
+				FolderInfo folder = folderCtrl.GetFolder(portalSettings.PortalId, dbFolderPath, false);
 
 				if ((folder == null))
 				{
@@ -195,7 +163,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 					return;
 				}
 
-				FileSystem.FileController fileCtrl = new FileSystem.FileController();
+				FileController fileCtrl = new FileController();
 				DotNetNuke.Services.FileSystem.FileInfo existingFile = fileCtrl.GetFile(newFileName, portalSettings.PortalId, folder.FolderID);
 
 				// error if file exists
@@ -205,10 +173,10 @@ namespace DotNetNuke.Providers.RadEditorProvider
 					return;
 				}
 
-				FileSystem.FileInfo newFile = existingFile;
+				FileInfo newFile = existingFile;
 				if ((newFile == null))
 				{
-					newFile = new FileSystem.FileInfo();
+					newFile = new FileInfo();
 				}
 
 				newFile.FileName = newFileName;
@@ -217,7 +185,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				newFile.Size = fileContents.Length;
 				newFile.FolderId = folder.FolderID;
 
-				errorMessage = DotNetNuke.Common.Utilities.FileSystemUtils.CreateFileFromString(rootFolder, newFile.FileName, fileContents, newFile.ContentType, string.Empty, false);
+				errorMessage = FileSystemUtils.CreateFileFromString(rootFolder, newFile.FileName, fileContents, newFile.ContentType, string.Empty, false);
 
 				if (! (string.IsNullOrEmpty(errorMessage)))
 				{
@@ -244,7 +212,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				DotNetNuke.Services.Exceptions.LogException(ex);
+				DotNetNuke.Services.Exceptions.Exceptions.LogException(ex);
 				throw ex;
 			}
 		}
@@ -334,13 +302,12 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 
 
-	public SaveTemplate()
-	{
+	    public SaveTemplate()
+	    {
 
-//INSTANT C# NOTE: Converted event handler wireups:
-		this.Init += new System.EventHandler(Page_Init);
-		this.Load += new System.EventHandler(Page_Load);
-	}
+    	    this.Init += new System.EventHandler(Page_Init);
+		    this.Load += new System.EventHandler(Page_Load);
+	    }
 	}
 
 }

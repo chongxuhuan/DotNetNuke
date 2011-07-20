@@ -18,38 +18,16 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-//INSTANT C# NOTE: Formerly VB project-level imports:
-using DotNetNuke;
-using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Data;
-using DotNetNuke.Entities;
 using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Framework;
-using DotNetNuke.Modules;
-using DotNetNuke.Security;
-using DotNetNuke.Services;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.UI;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Collections.Specialized;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.Caching;
-using System.Web.SessionState;
-using System.Web.Security;
-using System.Web.Profile;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using DotNetNuke.Entities.Users;
@@ -115,15 +93,28 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 		}
 
-		protected void Page_Init(object sender, System.EventArgs e)
-		{
-			DotNetNuke.Framework.AJAX.RegisterScriptManager();
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            treeTools.NodeClick += treeTools_NodeClick;
+            cmdUpdate.Click += OnUpdateClick;
+            cmdCancel.Click += OnCancelClick;
+            cmdCopy.Click += OnCopyClick;
+            cmdDelete.Click += OnDeleteClick;
+            cmdCreate.Click += cmdCreate_Click;
+            chkPortal.CheckedChanged += chkPortal_CheckedChanged;
+            btnEnable.Click += btnEnable_Click;
+ 
+			Framework.AJAX.RegisterScriptManager();
 			BindConfigForm();
 		}
 
-		protected void Page_Load(object sender, System.EventArgs e)
-		{
-			try
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            try
 			{
 
 				//If Not ViewState("EditorConfigPath") Is Nothing Then
@@ -158,43 +149,43 @@ namespace DotNetNuke.Providers.RadEditorProvider
 					}
 					else
 					{
-						DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("lblHostOnly", LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+						UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("lblHostOnly", LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
 					}
 				}
 				else
 				{
-					DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("lblNotAuthorized", LocalResourceFile), Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+					UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("lblNotAuthorized", LocalResourceFile), UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
 				}
 
 			}
 			catch (Exception exc)
 			{
-				ProcessModuleLoadException(this, exc);
+				Exceptions.ProcessModuleLoadException(this, exc);
 			}
 		}
 
-		protected void treeTools_NodeClick(object sender, Telerik.Web.UI.RadTreeNodeEventArgs e)
+		protected void treeTools_NodeClick(object sender, RadTreeNodeEventArgs e)
 		{
 			BindFile();
 		}
 
-		protected void OnUpdateClick(object sender, System.EventArgs e)
+		protected void OnUpdateClick(object sender, EventArgs e)
 		{
 			string orgConfigPath = this.treeTools.SelectedNode.Value;
 			string orgToolsPath = orgConfigPath.ToLower().Replace("config", "tools");
 
 			UpdateConfig(orgConfigPath);
 
-			System.IO.StreamWriter tw = System.IO.File.CreateText(orgToolsPath);
+			StreamWriter tw = File.CreateText(orgToolsPath);
 			tw.Write(txtTools.Text);
 			tw.Close();
 			tw.Dispose();
 
-			DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "The update was successful.", Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess);
+			UI.Skins.Skin.AddModuleMessage(this, "The update was successful.", UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess);
 			//BindFile()
 		}
 
-		protected void OnCancelClick(object sender, System.EventArgs e)
+		protected void OnCancelClick(object sender, EventArgs e)
 		{
 			pnlEditor.Visible = false;
 			pnlForm.Visible = false;
@@ -203,10 +194,10 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			LoadConfiguration();
 			LoadPages();
 
-			DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "All unsaved changes have been discarded.", Skins.Controls.ModuleMessage.ModuleMessageType.BlueInfo);
+			UI.Skins.Skin.AddModuleMessage(this, "All unsaved changes have been discarded.", UI.Skins.Controls.ModuleMessage.ModuleMessageType.BlueInfo);
 		}
 
-		protected void OnCopyClick(object sender, System.EventArgs e)
+		protected void OnCopyClick(object sender, EventArgs e)
 		{
 			pnlEditor.Visible = false;
 			pnlForm.Visible = true;
@@ -1283,7 +1274,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 							ctl.NumberFormat.GroupSeparator = "";
 							ctl.NumberFormat.GroupSizes = 9;
 							ctl.ID = "ctl_rc_" + key;
-							ctl.Width = Unit.Pixel(255F);
+							ctl.Width = Unit.Pixel(255);
 
 							pnlRow.Controls.Add(ctl);
 							break;
@@ -1304,7 +1295,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 							ctl.NumberFormat.GroupSeparator = "";
 							ctl.NumberFormat.GroupSizes = 9;
 							ctl.ID = "ctl_rc_" + key;
-							ctl.Width = Unit.Pixel(255F);
+							ctl.Width = Unit.Pixel(255);
 
 							pnlRow.Controls.Add(ctl);
 							break;
@@ -1382,7 +1373,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			if (File.Exists(configpath))
 			{
 				BindSelectedConfig(configpath);
-				ViewState("EditorConfigPath") = configpath;
+				ViewState["EditorConfigPath"] = configpath;
 
 				cmdUpdate.Enabled = (! (configpath.ToLower().EndsWith("configfile.xml.original.xml")));
 				cmdCreate.Enabled = true;
@@ -1617,22 +1608,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 #endregion
 
-
-	public ProviderConfig()
-	{
-
-//INSTANT C# NOTE: Converted event handler wireups:
-		this.Init += new System.EventHandler(Page_Init);
-		this.Load += new System.EventHandler(Page_Load);
-		treeTools.NodeClick += new Telerik.Web.UI.RadTreeNodeEventHandler(treeTools_NodeClick);
-		cmdUpdate.Click += new System.EventHandler(OnUpdateClick);
-		cmdCancel.Click += new System.EventHandler(OnCancelClick);
-		cmdCopy.Click += new System.EventHandler(OnCopyClick);
-		cmdDelete.Click += new System.EventHandler(OnDeleteClick);
-		cmdCreate.Click += new System.EventHandler(cmdCreate_Click);
-		chkPortal.CheckedChanged += new System.EventHandler(chkPortal_CheckedChanged);
-		btnEnable.Click += new System.EventHandler(btnEnable_Click);
-	}
 	}
 
 }

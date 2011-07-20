@@ -19,39 +19,12 @@
 //
 
 
-//INSTANT C# NOTE: Formerly VB project-level imports:
-using DotNetNuke;
-using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Data;
-using DotNetNuke.Entities;
 using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Framework;
-using DotNetNuke.Modules;
-using DotNetNuke.Security;
-using DotNetNuke.Services;
-using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI;
+
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Collections.Specialized;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.Caching;
-using System.Web.SessionState;
-using System.Web.Security;
-using System.Web.Profile;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
 using DotNetNuke.Entities.Portals;
 using Telerik.Web.UI;
@@ -59,14 +32,14 @@ using Telerik.Web.UI;
 namespace DotNetNuke.Providers.RadEditorProvider
 {
 
-	public class PageDropDownList : Telerik.Web.UI.RadComboBox
+	public class PageDropDownList : RadComboBox
 	{
 
-		protected override void OnPreRender(System.EventArgs e)
+		protected override void OnPreRender(EventArgs e)
 		{
 			base.OnPreRender(e);
 
-			DotNetNuke.Entities.Users.UserInfo userInfo = DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo();
+			Entities.Users.UserInfo userInfo = Entities.Users.UserController.GetCurrentUserInfo();
 			if (! Page.IsPostBack && userInfo != null && userInfo.UserID != Null.NullInteger)
 			{
 				//check view permissions - Yes?
@@ -92,7 +65,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				Items.Insert(0, new Telerik.Web.UI.RadComboBoxItem("", ""));
 			}
 
-			Width = Unit.Pixel(245F);
+			Width = Unit.Pixel(245);
 
 		}
 

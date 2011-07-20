@@ -17,9 +17,9 @@ namespace DotNetNuke.Common.Utilities.Internal
         public Action Action { get; set; }
 
         /// <summary>
-        /// A message describing the action to be used in the log messages
+        /// A message describing the action.  The primary purpose is to make the action identifiable in the log output.
         /// </summary>
-        public string LogMessage { get; set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// The maximum number of retries to attempt
@@ -30,7 +30,7 @@ namespace DotNetNuke.Common.Utilities.Internal
         /// The number of milliseconds to wait between retries.
         /// <remarks>The delay period is approximate and will be affected by the demands of other threads on the system.</remarks>
         /// </summary>
-        public int Delay { get; set; }
+        public TimeSpan Delay { get; set; }
 
         /// <summary>
         /// A factor by which the delay is adjusted after each retry.  Default is 1.
@@ -39,10 +39,20 @@ namespace DotNetNuke.Common.Utilities.Internal
         /// </summary>
         public float DelayMultiplier { get; set; }
 
-        public RetryableAction(Action action, string logMessage, int maxRetries = 30, int delay = 1000, float delayMultiplier = 1)
+        public static void RetryEverySecondFor30Seconds(Action action, string description)
         {
+            new RetryableAction(action, description, 30, TimeSpan.FromSeconds(1)).TryIt();
+        }
+        
+        public RetryableAction(Action action, string description, int maxRetries, TimeSpan delay, float delayMultiplier = 1)
+        {
+            if(delay.TotalMilliseconds > int.MaxValue)
+            {
+                throw new ArgumentException(string.Format("delay must be less than {0} milliseconds", int.MaxValue));
+            }
+            
             Action = action;
-            LogMessage = logMessage;
+            Description = description;
             MaxRetries = maxRetries;
             Delay = delay;
             DelayMultiplier = delayMultiplier;
@@ -50,7 +60,7 @@ namespace DotNetNuke.Common.Utilities.Internal
 
         public void TryIt()
         {
-            var currentDelay = Delay;
+            var currentDelay = (int) Delay.TotalMilliseconds;
             int retrysRemaining = MaxRetries;
 
             do
@@ -58,17 +68,18 @@ namespace DotNetNuke.Common.Utilities.Internal
                 try
                 {
                     Action();
+                    DnnLog.Trace("Action succeeded - {0}", Description);
                     return;
                 }
                 catch(Exception)
                 {
                     if (retrysRemaining <= 0)
                     {
-                        DnnLog.Warn("All retries failed - " + LogMessage);
+                        DnnLog.Warn("All retries of action failed - {0}", Description);
                         throw;
                     }
 
-                    DnnLog.Info(string.Format("Retrying operation {0} - {1}", retrysRemaining, LogMessage));
+                    DnnLog.Trace("Retrying action {0} - {1}", retrysRemaining, Description);
                     Thread.Sleep(currentDelay);
 
                     const double epsilon = 0.0001;

@@ -32,6 +32,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Services.SystemDateTime;
 using DotNetNuke.Services.Tokens;
 using DotNetNuke.UI.WebControls;
 
@@ -306,6 +307,40 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         [Browsable(false)]
         public int UserID { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets current time in User's timezone
+        /// </summary>
+        /// <history>
+        ///     [aprasad]	07/19/2011	Added
+        /// </history>
+        /// -----------------------------------------------------------------------------        
+        public DateTime LocalTime()
+        {
+            return LocalTime(SystemDateTime.GetCurrentTimeUtc());
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Convert utc time in User's timezone
+        /// </summary>
+        /// <param name="utcTime">Utc time to convert</param>
+        /// <history>
+        ///     [aprasad]	07/19/2011	Added
+        /// </history>
+        /// -----------------------------------------------------------------------------       
+        public DateTime LocalTime(DateTime utcTime)
+        {
+            if (UserID > Null.NullInteger)
+            {
+                return TimeZoneInfo.ConvertTime(utcTime, TimeZoneInfo.Utc, this.Profile.PreferredTimeZone);
+            }
+            else
+            {
+                return TimeZoneInfo.ConvertTime(utcTime, TimeZoneInfo.Utc, PortalController.GetCurrentPortalSettings().TimeZone);
+            }                            
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>

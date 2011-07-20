@@ -21,7 +21,7 @@
                 <dnn:DnnGridTemplateColumn UniqueName="NextStart" HeaderText="NextStart">
                     <ItemTemplate><asp:Label ID="lblNextStart" runat="server" /></ItemTemplate>
                 </dnn:DnnGridTemplateColumn>
-                <dnn:DnnGridTemplateColumn UniqueName="ViewHistory">
+                <dnn:DnnGridTemplateColumn UniqueName="ViewHistory" HeaderText="ViewLog">
                     <ItemTemplate>
                         <asp:HyperLink ID="hlHistory" runat="server">
                             <dnn:DnnImage IconKey="ScheduleHistory" id="imgHistory" runat="server" />

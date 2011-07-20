@@ -39,7 +39,7 @@ namespace DotNetNuke.Services.Scheduling
 {
     public enum EventName
     {
-		//do not add APPLICATION_END
+        //do not add APPLICATION_END
         //it will not reliably complete
         APPLICATION_START
     }
@@ -84,40 +84,29 @@ namespace DotNetNuke.Services.Scheduling
 
     public abstract class SchedulingProvider
     {
-		
-        private static bool _Debug;
-        private static int _MaxThreads;
-        private readonly string _providerPath;
         public EventName EventName;
-		
-		
+
+
 
         public SchedulingProvider()
         {
-            _providerPath = Settings["providerPath"];
+            ProviderPath = Settings["providerPath"];
             if (!string.IsNullOrEmpty(Settings["debug"]))
             {
-                _Debug = Convert.ToBoolean(Settings["debug"]);
+                Debug = Convert.ToBoolean(Settings["debug"]);
             }
             if (!string.IsNullOrEmpty(Settings["maxThreads"]))
             {
-                _MaxThreads = Convert.ToInt32(Settings["maxThreads"]);
+                MaxThreads = Convert.ToInt32(Settings["maxThreads"]);
             }
             else
             {
-                _MaxThreads = 1;
+                MaxThreads = 1;
             }
         }
-		
-		
 
-        public static bool Debug
-        {
-            get
-            {
-                return _Debug;
-            }
-        }
+
+        public static bool Debug { get; private set; }
 
         public static bool Enabled
         {
@@ -127,28 +116,14 @@ namespace DotNetNuke.Services.Scheduling
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
         }
 
-        public static int MaxThreads
-        {
-            get
-            {
-                return _MaxThreads;
-            }
-        }
+        public static int MaxThreads { get; private set; }
 
-        public string ProviderPath
-        {
-            get
-            {
-                return _providerPath;
-            }
-        }
+        public string ProviderPath { get; private set; }
 
         public static bool ReadyForPoll
         {
@@ -158,10 +133,7 @@ namespace DotNetNuke.Services.Scheduling
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -173,33 +145,23 @@ namespace DotNetNuke.Services.Scheduling
                 {
                     return Convert.ToDateTime(DataCache.GetCache("ScheduleLastPolled"));
                 }
-                else
-                {
-                    return DateTime.MinValue;
-                }
+                return DateTime.MinValue;
             }
             set
             {
-                DateTime ns;
-                ScheduleItem s;
-                s = Instance().GetNextScheduledTask(ServerController.GetExecutingServerName());
-                if (s != null)
+                DateTime nextStart;
+
+                var nextScheduledTask = Instance().GetNextScheduledTask(ServerController.GetExecutingServerName());
+                if (nextScheduledTask != null && nextScheduledTask.NextStart > DateTime.Now)
                 {
-                    DateTime NextStart = s.NextStart;
-                    if (NextStart >= DateTime.Now)
-                    {
-                        ns = NextStart;
-                    }
-                    else
-                    {
-                        ns = DateTime.Now.AddMinutes(1);
-                    }
+                    nextStart = nextScheduledTask.NextStart;
                 }
                 else
                 {
-                    ns = DateTime.Now.AddMinutes(1);
+                    nextStart = DateTime.Now.AddMinutes(1);
                 }
-                DataCache.SetCache("ScheduleLastPolled", value, ns);
+
+                DataCache.SetCache("ScheduleLastPolled", value, nextStart);
             }
         }
 
@@ -210,7 +172,7 @@ namespace DotNetNuke.Services.Scheduling
                 return Host.SchedulerMode;
             }
         }
-		
+
 
         public virtual Dictionary<string, string> Settings
         {
@@ -225,36 +187,36 @@ namespace DotNetNuke.Services.Scheduling
             return ComponentFactory.GetComponent<SchedulingProvider>();
         }
 
-		
+
         public abstract void Start();
 
         public abstract void ExecuteTasks();
 
-        public abstract void ReStart(string SourceOfRestart);
+        public abstract void ReStart(string sourceOfRestart);
 
         public abstract void StartAndWaitForResponse();
 
-        public abstract void Halt(string SourceOfHalt);
+        public abstract void Halt(string sourceOfHalt);
 
         public abstract void PurgeScheduleHistory();
 
-        public abstract void RunEventSchedule(EventName objEventName);
+        public abstract void RunEventSchedule(EventName eventName);
 
         public abstract ArrayList GetSchedule();
 
-        public abstract ArrayList GetSchedule(string Server);
+        public abstract ArrayList GetSchedule(string server);
 
-        public abstract ScheduleItem GetSchedule(int ScheduleID);
+        public abstract ScheduleItem GetSchedule(int scheduleID);
 
-        public abstract ScheduleItem GetSchedule(string TypeFullName, string Server);
+        public abstract ScheduleItem GetSchedule(string typeFullName, string server);
 
-        public abstract ScheduleItem GetNextScheduledTask(string Server);
+        public abstract ScheduleItem GetNextScheduledTask(string server);
 
-        public abstract ArrayList GetScheduleHistory(int ScheduleID);
+        public abstract ArrayList GetScheduleHistory(int scheduleID);
 
-        public abstract Hashtable GetScheduleItemSettings(int ScheduleID);
+        public abstract Hashtable GetScheduleItemSettings(int scheduleID);
 
-        public abstract void AddScheduleItemSetting(int ScheduleID, string Name, string Value);
+        public abstract void AddScheduleItemSetting(int scheduleID, string name, string value);
 
         public abstract Collection GetScheduleQueue();
 
@@ -268,16 +230,16 @@ namespace DotNetNuke.Services.Scheduling
 
         public abstract ScheduleStatus GetScheduleStatus();
 
-        public abstract int AddSchedule(ScheduleItem objScheduleItem);
+        public abstract int AddSchedule(ScheduleItem scheduleItem);
 
-        public abstract void UpdateSchedule(ScheduleItem objScheduleItem);
+        public abstract void UpdateSchedule(ScheduleItem scheduleItem);
 
-        public abstract void DeleteSchedule(ScheduleItem objScheduleItem);
+        public abstract void DeleteSchedule(ScheduleItem scheduleItem);
 
-        public virtual void RunScheduleItemNow(ScheduleItem objScheduleItem)
+        public virtual void RunScheduleItemNow(ScheduleItem scheduleItem)
         {
-			//Do Nothing
+            //Do Nothing
         }
-		
+
     }
 }

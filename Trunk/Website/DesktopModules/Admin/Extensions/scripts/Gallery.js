@@ -681,6 +681,9 @@ Cache = function (Scope, TimeoutInMinutes, StorageType, ExpireCallback) {
     Cache.isEnabled = (typeof this.store != 'undefined') && (typeof JSON != 'undefined') && (typeof(this.TimeoutInMinutes) == 'undefined' || (typeof(this.TimeoutInMinutes) != 'undefined' && this.TimeoutInMinutes > 0));
     if (Cache.isEnabled) {
         if (typeof(this.TimeoutInMinutes) != 'undefined') {
+        	$(document).ready(function() {
+        		Cache.ClearInterval();
+        	});
             this.cacheExpire = window.setInterval(Cache.ClearInterval, (TimeoutInMinutes * 60000), this);
         }
     }

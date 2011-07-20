@@ -65,7 +65,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 		{
 			base.OnInit(e);
 
-			PortalSettings settings = PortalController.GetCurrentPortalSettings;
+			PortalSettings settings = PortalController.GetCurrentPortalSettings();
 			CultureInfo pageLocale = Localization.GetPageLocale(settings);
 			if (settings != null && pageLocale != null)
 			{

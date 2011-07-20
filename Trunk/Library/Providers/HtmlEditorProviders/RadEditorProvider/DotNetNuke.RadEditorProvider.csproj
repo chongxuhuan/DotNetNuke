@@ -9,7 +9,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>DotNetNuke.RadEditorProvider</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -19,32 +20,34 @@
     </UpgradeBackupLocation>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <OutputPath>..\..\..\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.RadEditorProvider.xml</DocumentationFile>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.RadEditorProvider.xml</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="DotNetNuke">
-      <HintPath>..\..\..\bin\DotNetNuke.dll</HintPath>
-    </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.0.185, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\bin\DotNetNuke.WebUtility.dll</HintPath>
+      <HintPath>..\..\..\Controls\DotNetNuke.WebUtility\bin\DotNetNuke.WebUtility.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -164,14 +167,20 @@
     <None Include="App_LocalResources\ProviderConfig.ascx.resx">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Documentation\License.txt" />
-    <Content Include="Documentation\ReleaseNotes.txt" />
+    <Content Include="images\attachment.png" />
+    <Content Include="images\help.png" />
+    <Content Include="images\radeditor_config_large.png" />
+    <Content Include="images\radeditor_config_small.png" />
+    <Content Include="images\save.png" />
+    <Content Include="images\templates.png" />
     <Content Include="js\RegisterDialogs.js" />
+    <Content Include="License.txt" />
     <Content Include="LinkClickUrlHandler.ashx" />
     <None Include="DotNetNuke.RadEditorProvider.dnn" />
     <None Include="RadSpell\en-US.tdf" />
     <Content Include="Dialogs\LinkManager.ascx" />
     <Content Include="module.css" />
+    <Content Include="ReleaseNotes.txt" />
     <Content Include="SpellCheckHandler.ashx" />
   </ItemGroup>
   <ItemGroup>
@@ -213,20 +222,99 @@
     <Content Include="images\DMXManager.gif" />
     <Content Include="ImageTester.aspx" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\DotNetNuke.Library.csproj">
+      <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
+      <Name>DotNetNuke.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>DotNetNuke.RadEditorProvider</DNNFileName>
+    <PackageName>RadEditorProvider</PackageName>
+    <Providers>/Providers</Providers>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
+    <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\..\..\Website\Install\Provider</WebsiteInstallPath>
+  </PropertyGroup>
+  <Import Project="..\..\..\..\BuildScripts\Package.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="CopyBin;GetFiles;DebugProject;Package">
+  </Target>
+  <Target Name="GetFiles">
+    <ItemGroup>
+      <TextFiles Include="*.txt" Exclude="license.txt;releasenotes.txt" />
+    </ItemGroup>
+    <ItemGroup>
+      <Views Include="*.ashx;*.aspx;*.css;*.ascx" />
+    </ItemGroup>
+    <ItemGroup>
+      <ResourceFiles Include="App_LocalResources\*.resx" />
+    </ItemGroup>
+    <ItemGroup>
+      <Css Include="Css\*.css" />
+    </ItemGroup>
+    <ItemGroup>
+      <Dialogs Include="Dialogs\*.ascx, Dialogs\*.aspx" />
+    </ItemGroup>
+    <ItemGroup>
+      <DialogResourceFiles Include="Dialogs\App_LocalResources\*.resx" />
+    </ItemGroup>
+    <ItemGroup>
+      <Images Include="Images/*.*" />
+    </ItemGroup>
+    <ItemGroup>
+      <Js Include="Js/*.*" />
+    </ItemGroup>
+    <ItemGroup>
+      <RadSpell Include="RadSpell/*.*" />
+    </ItemGroup>
+    <ItemGroup>
+      <ToolsFile Include="ToolsFile/*.*" />
+    </ItemGroup>
+    <ItemGroup>
+      <ConfigFile Include="ConfigFile/*.*" />
+    </ItemGroup>
+    <ItemGroup>
+      <Resources Include="@(ResourceFiles);@(Views);@(Images);@(TextFiles);@(Css);@(Dialogs);@(DialogResourceFiles);@(Js);@(RadSpell);@(ToolsFile);@(ConfigFile)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="CopyBin">
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="$(MSBuildProjectDirectory)\Package\bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin" />
+  </Target>
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Copy SourceFiles="@(Views)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider" />
+    <Copy SourceFiles="@(Css)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider\Css" />
+    <Copy SourceFiles="@(Dialogs)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider\Dialogs" />
+    <Copy SourceFiles="@(DialogResourceFiles)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider\Dialogs\App_LocalResources" />
+    <Copy SourceFiles="@(Images)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider\Images" />
+    <Copy SourceFiles="@(Js)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider\Js" />
+    <Copy SourceFiles="@(RadSpell)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider\RadSpell" />
+    <Copy SourceFiles="@(ToolsFile)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider\ToolsFile" />
+    <Copy SourceFiles="@(ConfigFile)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider\ConfigFile" />
+    <Copy SourceFiles="@(TextFiles)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider" />
+    <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="..\..\..\..\Website\DesktopModules\Admin\RadEditorProvider\App_LocalResources" />
+  </Target>
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>1864</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
 </Project>

@@ -18,41 +18,13 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-//INSTANT C# NOTE: Formerly VB project-level imports:
-using DotNetNuke;
-using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Data;
-using DotNetNuke.Entities;
-using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Framework;
-using DotNetNuke.Modules;
-using DotNetNuke.Security;
-using DotNetNuke.Services;
-using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Collections.Specialized;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Caching;
-using System.Web.SessionState;
-using System.Web.Security;
-using System.Web.Profile;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
-using Telerik.Web.UI;
 using Telerik.Web.UI.Widgets;
 using DotNetNuke.Services.FileSystem;
 using System.IO;
@@ -79,27 +51,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 		}
 
 #region Overrides
-
-		//Protected Overrides Function IsValid(ByVal directory As System.IO.DirectoryInfo) As Boolean
-		//    Return MyBase.IsValid(directory)
-		//End Function
-
-		//Protected Overrides Function IsValid(ByVal file As System.IO.FileInfo) As Boolean
-		//    Return MyBase.IsValid(file)
-		//End Function
-
-		public override bool CanCreateDirectory
-		{
-			get
-			{
-				return base.CanCreateDirectory;
-			}
-		}
-
-		public override bool CheckWritePermissions(string folderPath)
-		{
-			return base.CheckWritePermissions(folderPath);
-		}
 
 		public override System.IO.Stream GetFile(string url)
 		{
@@ -275,7 +226,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				return DNNValidator.LogUnknownError(ref ex, path);
+				return DNNValidator.LogUnknownError(ex, path);
 			}
 		}
 
@@ -304,7 +255,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				return DNNValidator.LogUnknownError(ref ex, path);
+				return DNNValidator.LogUnknownError(ex, path);
 			}
 		}
 
@@ -410,7 +361,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 		{
 			try
 			{
-				string virtualPath = (string)(string)FileSystemValidation.ToVirtualPath(path);
+				string virtualPath = FileSystemValidation.ToVirtualPath(path);
 
 				string returnValue = DNNValidator.OnCreateFile(FileSystemValidation.CombineVirtualPath(virtualPath, name), file.ContentLength);
 				if (! (string.IsNullOrEmpty(returnValue)))
@@ -420,12 +371,12 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 				returnValue = TelerikContent.StoreFile(file, virtualPath, name, arguments);
 
-				DotNetNuke.Services.FileSystem.FileInfo dnnFileInfo = new DotNetNuke.Services.FileSystem.FileInfo();
+				Services.FileSystem.FileInfo dnnFileInfo = new DotNetNuke.Services.FileSystem.FileInfo();
 				FillFileInfo(file, ref dnnFileInfo);
 
 				//Add or update file
 				FolderInfo dnnFolder = DNNValidator.GetUserFolder(virtualPath);
-				DotNetNuke.Services.FileSystem.FileInfo dnnFile = DNNFileCtrl.GetFile(name, PortalSettings.PortalId, dnnFolder.FolderID);
+				Services.FileSystem.FileInfo dnnFile = DNNFileCtrl.GetFile(name, PortalSettings.PortalId, dnnFolder.FolderID);
 				if (dnnFile != null)
 				{
 					DNNFileCtrl.UpdateFile(dnnFile.FileId, dnnFileInfo.FileName, dnnFileInfo.Extension, file.ContentLength, dnnFileInfo.Width, dnnFileInfo.Height, dnnFileInfo.ContentType, dnnFolder.FolderPath, dnnFolder.FolderID);
@@ -458,7 +409,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 				returnValue = TelerikContent.StoreBitmap(bitmap, virtualPathAndFile, format);
 
-				DotNetNuke.Services.FileSystem.FileInfo dnnFileInfo = new DotNetNuke.Services.FileSystem.FileInfo();
+				Services.FileSystem.FileInfo dnnFileInfo = new Services.FileSystem.FileInfo();
 				FillFileInfo(virtualPathAndFile, ref dnnFileInfo);
 
 				//check again with real contentLength
@@ -470,7 +421,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				}
 
 				FolderInfo dnnFolder = DNNValidator.GetUserFolder(virtualPath);
-				DotNetNuke.Services.FileSystem.FileInfo dnnFile = DNNFileCtrl.GetFile(dnnFileInfo.FileName, PortalSettings.PortalId, dnnFolder.FolderID);
+				Services.FileSystem.FileInfo dnnFile = DNNFileCtrl.GetFile(dnnFileInfo.FileName, PortalSettings.PortalId, dnnFolder.FolderID);
 
 				if (dnnFile != null)
 				{
@@ -485,11 +436,11 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				return DNNValidator.LogUnknownError(ref ex, url);
+				return DNNValidator.LogUnknownError(ex, url);
 			}
 		}
 
-		public override Telerik.Web.UI.Widgets.DirectoryItem ResolveDirectory(string path)
+		public override DirectoryItem ResolveDirectory(string path)
 		{
 			try
 			{
@@ -498,12 +449,12 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				DNNValidator.LogUnknownError(ref ex, path);
+				DNNValidator.LogUnknownError(ex, path);
 				return null;
 			}
 		}
 
-		public override Telerik.Web.UI.Widgets.DirectoryItem ResolveRootDirectoryAsTree(string path)
+		public override DirectoryItem ResolveRootDirectoryAsTree(string path)
 		{
 			try
 			{
@@ -512,12 +463,12 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				DNNValidator.LogUnknownError(ref ex, path);
+				DNNValidator.LogUnknownError(ex, path);
 				return null;
 			}
 		}
 
-		public override Telerik.Web.UI.Widgets.DirectoryItem[] ResolveRootDirectoryAsList(string path)
+		public override DirectoryItem[] ResolveRootDirectoryAsList(string path)
 		{
 			try
 			{
@@ -526,7 +477,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				DNNValidator.LogUnknownError(ref ex, path);
+				DNNValidator.LogUnknownError(ex, path);
 				return null;
 			}
 		}
@@ -608,10 +559,11 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 #region Private
 
-		private Telerik.Web.UI.Widgets.DirectoryItem GetDirectoryItemWithDNNPermissions(string path, bool loadFiles)
+		private DirectoryItem GetDirectoryItemWithDNNPermissions(string path, bool loadFiles)
 		{
-			Telerik.Web.UI.Widgets.DirectoryItem radDirectory = TelerikContent.ResolveDirectory(FileSystemValidation.ToVirtualPath(path));
-			var returnValues = AddChildDirectoriesToList(ref new Telerik.Web.UI.Widgets.DirectoryItem[] {radDirectory}, true, loadFiles);
+			DirectoryItem radDirectory = TelerikContent.ResolveDirectory(FileSystemValidation.ToVirtualPath(path));
+		    DirectoryItem[] directoryArray = new[] {radDirectory};
+            var returnValues = AddChildDirectoriesToList(ref directoryArray, true, loadFiles);
 
 			if (returnValues != null && returnValues.Length > 0)
 			{
@@ -621,11 +573,11 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return null;
 		}
 
-		private Telerik.Web.UI.Widgets.DirectoryItem[] AddChildDirectoriesToList(ref Telerik.Web.UI.Widgets.DirectoryItem[] radDirectories, bool recursive, bool loadFiles)
+		private DirectoryItem[] AddChildDirectoriesToList(ref DirectoryItem[] radDirectories, bool recursive, bool loadFiles)
 		{
 			ArrayList newDirectories = new ArrayList();
 
-			foreach (Telerik.Web.UI.Widgets.DirectoryItem radDirectory in radDirectories)
+			foreach (DirectoryItem radDirectory in radDirectories)
 			{
 				System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + " AddChildDirectoriesToList " + radDirectory.Name);
 
@@ -657,36 +609,35 @@ namespace DotNetNuke.Providers.RadEditorProvider
 					}
 
 					ArrayList showFiles = new ArrayList();
-					Telerik.Web.UI.Widgets.PathPermissions folderPermissions = Telerik.Web.UI.Widgets.PathPermissions.Read;
+					PathPermissions folderPermissions = PathPermissions.Read;
 
 					if (DNNValidator.CanViewFilesInFolder(dnnFolder))
 					{
 						if (DNNValidator.CanAddToFolder(dnnFolder))
 						{
-							folderPermissions = folderPermissions | Telerik.Web.UI.Widgets.PathPermissions.Upload;
+							folderPermissions = folderPermissions | PathPermissions.Upload;
 						}
 
 						if (DNNValidator.CanDeleteFolder(dnnFolder))
 						{
-							folderPermissions = folderPermissions | Telerik.Web.UI.Widgets.PathPermissions.Delete;
+							folderPermissions = folderPermissions | PathPermissions.Delete;
 						}
 
 						if (loadFiles)
 						{
-							IDictionary<string, DotNetNuke.Services.FileSystem.FileInfo> dnnFiles = GetDNNFiles(dnnFolder.FolderID);
+							IDictionary<string, Services.FileSystem.FileInfo> dnnFiles = GetDNNFiles(dnnFolder.FolderID);
 
-							if (dnnFolder.StorageLocation != FolderController.StorageLocationTypes.InsecureFileSystem)
+							if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
 							{
 								//check Telerik search patterns to filter out files
-								foreach (DotNetNuke.Services.FileSystem.FileInfo dnnFile in dnnFiles.Values)
+								foreach (Services.FileSystem.FileInfo dnnFile in dnnFiles.Values)
 								{
-									string tempVar[] = base.SearchPatterns;
+									string[] tempVar = SearchPatterns;
 									if (CheckSearchPatterns(dnnFile.FileName, ref tempVar))
 									{
-										string url = DotNetNuke.Common.Globals.LinkClick("fileid=" + dnnFile.FileId.ToString(), Null.NullInteger, Null.NullInteger);
-										//= DotNetNuke.Common.Globals.ApplicationPath & "/LinkClick.aspx?fileticket=" & UrlUtils.EncryptParameter(dnnFile.FileId)
+										string url = Common.Globals.LinkClick("fileid=" + dnnFile.FileId, Null.NullInteger, Null.NullInteger);
 
-										Telerik.Web.UI.Widgets.FileItem fileItem = new Telerik.Web.UI.Widgets.FileItem(dnnFile.FileName, dnnFile.Extension, dnnFile.Size, "", url, "", folderPermissions);
+										FileItem fileItem = new FileItem(dnnFile.FileName, dnnFile.Extension, dnnFile.Size, "", url, "", folderPermissions);
 
 										showFiles.Add(fileItem);
 									}
@@ -695,11 +646,11 @@ namespace DotNetNuke.Providers.RadEditorProvider
 							else
 							{
 								//check Telerik search patterns to filter out files
-								foreach (Telerik.Web.UI.Widgets.FileItem telerikFile in radDirectory.Files)
+								foreach (FileItem telerikFile in radDirectory.Files)
 								{
 									if (dnnFiles.ContainsKey(telerikFile.Name))
 									{
-										Telerik.Web.UI.Widgets.FileItem fileItem = new Telerik.Web.UI.Widgets.FileItem(telerikFile.Name, telerikFile.Extension, telerikFile.Length, "", FileSystemValidation.ToVirtualPath(radDirectory.FullPath) + telerikFile.Name, "", folderPermissions);
+										FileItem fileItem = new FileItem(telerikFile.Name, telerikFile.Extension, telerikFile.Length, "", FileSystemValidation.ToVirtualPath(radDirectory.FullPath) + telerikFile.Name, "", folderPermissions);
 
 										showFiles.Add(fileItem);
 									}
@@ -708,7 +659,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 						}
 					}
 
-					Telerik.Web.UI.Widgets.FileItem[] folderFiles = showFiles.ToArray(typeof(Telerik.Web.UI.Widgets.FileItem));
+					FileItem[] folderFiles = (FileItem[])showFiles.ToArray(typeof(FileItem));
 
 					//Root folder name
 					string dirName = radDirectory.Name;
@@ -717,35 +668,35 @@ namespace DotNetNuke.Providers.RadEditorProvider
 						dirName = FileSystemValidation.EndUserHomeDirectory;
 					}
 
-					Telerik.Web.UI.Widgets.DirectoryItem newDirectory = null;
+					DirectoryItem newDirectory;
 					if (recursive)
 					{
-						radDirectory = TelerikContent.ResolveRootDirectoryAsTree(radDirectory.Path);
-						Telerik.Web.UI.Widgets.DirectoryItem tempVar2[] = radDirectory.Directories;
-						newDirectory = new Telerik.Web.UI.Widgets.DirectoryItem(dirName, "", endUserPath, "", folderPermissions, folderFiles, AddChildDirectoriesToList(ref tempVar2, false, false));
+                        DirectoryItem directory = TelerikContent.ResolveRootDirectoryAsTree(radDirectory.Path);
+                        DirectoryItem[] tempVar2 = directory.Directories;
+						newDirectory = new DirectoryItem(dirName, "", endUserPath, "", folderPermissions, folderFiles, AddChildDirectoriesToList(ref tempVar2, false, false));
 						radDirectory.Directories = tempVar2;
 					}
 					else
 					{
-						newDirectory = new Telerik.Web.UI.Widgets.DirectoryItem(dirName, "", endUserPath, "", folderPermissions, folderFiles, new Telerik.Web.UI.Widgets.DirectoryItem[0]);
+						newDirectory = new DirectoryItem(dirName, "", endUserPath, "", folderPermissions, folderFiles, new Telerik.Web.UI.Widgets.DirectoryItem[0]);
 					}
 
 					newDirectories.Add(newDirectory);
 				}
 			}
 
-			return newDirectories.ToArray(typeof(Telerik.Web.UI.Widgets.DirectoryItem));
+			return (DirectoryItem[])newDirectories.ToArray(typeof(DirectoryItem));
 		}
 
-		private IDictionary<string, DotNetNuke.Services.FileSystem.FileInfo> GetDNNFiles(int dnnFolderID)
+		private IDictionary<string, Services.FileSystem.FileInfo> GetDNNFiles(int dnnFolderID)
 		{
 			System.Data.IDataReader drFiles = null;
-			IDictionary<string, DotNetNuke.Services.FileSystem.FileInfo> dnnFiles = null;
+			IDictionary<string, Services.FileSystem.FileInfo> dnnFiles = null;
 
 			try
 			{
 				drFiles = DNNFileCtrl.GetFiles(PortalSettings.PortalId, dnnFolderID);
-				dnnFiles = CBO.FillDictionary<string, DotNetNuke.Services.FileSystem.FileInfo>("FileName", drFiles);
+				dnnFiles = CBO.FillDictionary<string, Services.FileSystem.FileInfo>("FileName", drFiles);
 			}
 			finally
 			{
@@ -763,14 +714,14 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 		private bool CheckAllChildrenVisible(ref FolderInfo folder)
 		{
-			string virtualPath = (string)(string)FileSystemValidation.ToVirtualPath(folder.FolderPath);
+			string virtualPath = FileSystemValidation.ToVirtualPath(folder.FolderPath);
 
 			//check files are visible
-			IDictionary<string, DotNetNuke.Services.FileSystem.FileInfo> files = GetDNNFiles(folder.FolderID);
+			IDictionary<string, Services.FileSystem.FileInfo> files = GetDNNFiles(folder.FolderID);
 			int visibleFileCount = 0;
-			foreach (DotNetNuke.Services.FileSystem.FileInfo fileItem in files.Values)
+			foreach (Services.FileSystem.FileInfo fileItem in files.Values)
 			{
-				string tempVar[] = base.SearchPatterns;
+				string[] tempVar = SearchPatterns;
 				if (CheckSearchPatterns(fileItem.FileName, ref tempVar))
 				{
 					visibleFileCount = visibleFileCount + 1;
@@ -909,7 +860,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return returnValue;
 		}
 
-		private object ConvertToRegexPattern(string pattern)
+        private string ConvertToRegexPattern(string pattern)
 		{
 			string returnValue = System.Text.RegularExpressions.Regex.Escape(pattern);
 			returnValue = returnValue.Replace("\\*", ".*");
@@ -917,7 +868,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return returnValue;
 		}
 
-		private object GetTelerikMessage(string key)
+		private string GetTelerikMessage(string key)
 		{
 			string returnValue = key;
 			switch (key)

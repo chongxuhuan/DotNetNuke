@@ -25,14 +25,11 @@
 
 using System;
 using System.IO;
-using System.Threading;
 using System.Xml.XPath;
 
-using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Common.Utilities.Internal;
 using DotNetNuke.Entities.Host;
-using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Installer.Log;
 using DotNetNuke.Services.Installer.Packages;
 using DotNetNuke.UI.Modules;
@@ -260,7 +257,7 @@ namespace DotNetNuke.Services.Installer
             }
 			
             //Copy file to backup location
-            new RetryableAction(() => FileSystemUtils.CopyFile(fullFileName, backupFileName), "Backup file " + fullFileName).TryIt();
+            RetryableAction.RetryEverySecondFor30Seconds(() => FileSystemUtils.CopyFile(fullFileName, backupFileName), "Backup file " + fullFileName);
             log.AddInfo(string.Format(FILE_CreateBackup, installFile.FullName));
         }
 
@@ -288,7 +285,7 @@ namespace DotNetNuke.Services.Installer
             }
 			
             //Copy file from temp location
-            new RetryableAction(() => FileSystemUtils.CopyFile(installFile.TempFileName, fullFileName), "Copy file to " + fullFileName).TryIt();
+            RetryableAction.RetryEverySecondFor30Seconds(() => FileSystemUtils.CopyFile(installFile.TempFileName, fullFileName), "Copy file to " + fullFileName);
 
             log.AddInfo(string.Format(FILE_Created, installFile.FullName));
         }
@@ -325,7 +322,7 @@ namespace DotNetNuke.Services.Installer
             string fullFileName = Path.Combine(basePath, fileName);
             if (File.Exists(fullFileName))
             {
-                new RetryableAction(() => FileSystemUtils.DeleteFile(fullFileName), "Delete file " + fullFileName).TryIt();
+                RetryableAction.RetryEverySecondFor30Seconds(() => FileSystemUtils.DeleteFile(fullFileName), "Delete file " + fullFileName);
                 log.AddInfo(string.Format(FILE_Deleted, fileName));
                 string folderName = Path.GetDirectoryName(fullFileName);
                 if (folderName != null)
@@ -582,7 +579,7 @@ namespace DotNetNuke.Services.Installer
             FileSystemUtils.DeleteFile(destFileName);
 
             var file = new FileInfo(destFileName);
-            if (!file.Directory.Exists)
+            if (file.Directory != null && !file.Directory.Exists)
             {
                 file.Directory.Create();
             }

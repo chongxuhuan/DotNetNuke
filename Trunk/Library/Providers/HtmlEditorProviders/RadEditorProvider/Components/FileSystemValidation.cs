@@ -19,39 +19,15 @@
 //
 
 //INSTANT C# NOTE: Formerly VB project-level imports:
-using DotNetNuke;
-using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Data;
-using DotNetNuke.Entities;
-using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Framework;
-using DotNetNuke.Modules;
-using DotNetNuke.Security;
-using DotNetNuke.Services;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.UI;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Collections.Specialized;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Caching;
-using System.Web.SessionState;
-using System.Web.Security;
-using System.Web.Profile;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-
 using System.IO;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Entities.Portals;
@@ -90,7 +66,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				return LogUnknownError(ref ex, virtualPath);
+				return LogUnknownError(ex, virtualPath);
 			}
 
 			return returnValue;
@@ -140,7 +116,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				return LogUnknownError(ref ex, virtualPath);
+				return LogUnknownError(ex, virtualPath);
 			}
 
 			return returnValue;
@@ -201,7 +177,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				return LogUnknownError(ex, virtualPathAndFile, contentLength);
+				return LogUnknownError(ex, virtualPathAndFile, contentLength.ToString());
 			}
 
 			return returnValue;
@@ -218,7 +194,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				return LogUnknownError(ref ex, virtualPathAndFile);
+				return LogUnknownError(ex, virtualPathAndFile);
 			}
 
 			return returnValue;
@@ -247,7 +223,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				return LogUnknownError(ref ex, virtualPathAndFile);
+				return LogUnknownError(ex, virtualPathAndFile);
 			}
 
 			return returnValue;
@@ -380,7 +356,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 		/// <param name="path"></param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public static object ToVirtualPath(string path)
+		public static string ToVirtualPath(string path)
 		{
 			path = path.Replace("\\", "/");
 
@@ -440,12 +416,12 @@ namespace DotNetNuke.Providers.RadEditorProvider
 		/// <param name="path"></param>
 		/// <returns></returns>
 		/// <remarks></remarks>
-		public static object ToDBPath(string path)
+		public static string ToDBPath(string path)
 		{
 			return ToDBPath(path, true);
 		}
 
-		private static object ToDBPath(string path, bool removeFileName)
+        private static string ToDBPath(string path, bool removeFileName)
 		{
 			string returnValue = path;
 
@@ -483,7 +459,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return returnValue;
 		}
 
-		public static object CombineVirtualPath(string virtualPath, string folderOrFileName)
+		public static string CombineVirtualPath(string virtualPath, string folderOrFileName)
 		{
 			string returnValue = Path.Combine(virtualPath, folderOrFileName);
 			returnValue = returnValue.Replace("\\", "/");
@@ -496,7 +472,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return returnValue;
 		}
 
-		public static object RemoveFileName(string path)
+        public static string RemoveFileName(string path)
 		{
 			if (! (string.IsNullOrEmpty(System.IO.Path.GetExtension(path))))
 			{
@@ -510,12 +486,12 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 #region Public Data Access
 
-		public virtual IDictionary<string, FileSystem.FolderInfo> GetUserFolders()
+		public virtual IDictionary<string, FolderInfo> GetUserFolders()
 		{
 			return UserFolders;
 		}
 
-		public virtual FileSystem.FolderInfo GetUserFolder(string path)
+		public virtual FolderInfo GetUserFolder(string path)
 		{
 			string dbPath = (string)(string)FileSystemValidation.ToDBPath(path);
 
@@ -527,10 +503,10 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return null;
 		}
 
-		public virtual IDictionary<string, FileSystem.FolderInfo> GetChildUserFolders(string parentPath)
+		public virtual IDictionary<string, FolderInfo> GetChildUserFolders(string parentPath)
 		{
 			string dbPath = (string)(string)FileSystemValidation.ToDBPath(parentPath);
-			IDictionary<string, FileSystem.FolderInfo> returnValue = new Dictionary<string, FileSystem.FolderInfo>();
+			IDictionary<string, FolderInfo> returnValue = new Dictionary<string, FolderInfo>();
 
 			if (string.IsNullOrEmpty(dbPath))
 			{
@@ -608,7 +584,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return UserFolders.ContainsKey(ToDBPath(path));
 		}
 
-		public virtual bool CanViewFolder(FileSystem.FolderInfo dnnFolder)
+		public virtual bool CanViewFolder(FolderInfo dnnFolder)
 		{
 			return UserFolders.ContainsKey(dnnFolder.FolderPath);
 		}
@@ -618,7 +594,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return CanViewFilesInFolder(GetUserFolder(path));
 		}
 
-		public virtual bool CanViewFilesInFolder(FileSystem.FolderInfo dnnFolder)
+		public virtual bool CanViewFilesInFolder(FolderInfo dnnFolder)
 		{
 			if ((dnnFolder == null))
 			{
@@ -638,14 +614,14 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return true;
 		}
 
-		public virtual bool CanAddToFolder(FileSystem.FolderInfo dnnFolder)
+		public virtual bool CanAddToFolder(FolderInfo dnnFolder)
 		{
 			if (! (FolderPermissionController.CanAddFolder(dnnFolder)))
 			{
 				return false;
 			}
 
-			if (dnnFolder.StorageLocation != FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem)
+            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
 			{
 				return false;
 			}
@@ -653,14 +629,14 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return true;
 		}
 
-		public virtual bool CanDeleteFolder(FileSystem.FolderInfo dnnFolder)
+		public virtual bool CanDeleteFolder(FolderInfo dnnFolder)
 		{
 			if (! (FolderPermissionController.CanDeleteFolder(dnnFolder)))
 			{
 				return false;
 			}
 
-			if (dnnFolder.StorageLocation != FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem)
+            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
 			{
 				return false;
 			}
@@ -681,7 +657,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return Check_CanAddToFolder(GetDNNFolder(virtualPath), isFileCheck, EnableDetailedLogging);
 		}
 
-		private string Check_CanAddToFolder(FileSystem.FolderInfo dnnFolder, bool isFileCheck, bool logDetail)
+		private string Check_CanAddToFolder(FolderInfo dnnFolder, bool isFileCheck, bool logDetail)
 		{
 			if (dnnFolder == null)
 			{
@@ -695,7 +671,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 
 			//only allow management of regular storage type
-			if (dnnFolder.StorageLocation != FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem)
+            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
 			{
 				return LogDetailError(ErrorCodes.AddFolder_NotInsecureFolder, ToVirtualPath(dnnFolder.FolderPath), logDetail);
 			}
@@ -713,7 +689,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return Check_CanCopyFolder(GetDNNFolder(virtualPath), isFileCheck, EnableDetailedLogging);
 		}
 
-		private string Check_CanCopyFolder(FileSystem.FolderInfo dnnFolder, bool isFileCheck, bool logDetail)
+		private string Check_CanCopyFolder(FolderInfo dnnFolder, bool isFileCheck, bool logDetail)
 		{
 			if (dnnFolder == null)
 			{
@@ -727,7 +703,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 
 			//only allow management of regular storage type
-			if (dnnFolder.StorageLocation != FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem)
+			if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
 			{
 				return LogDetailError(ErrorCodes.CopyFolder_NotInsecureFolder, ToVirtualPath(dnnFolder.FolderPath), logDetail);
 			}
@@ -750,7 +726,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return Check_CanDeleteFolder(GetDNNFolder(virtualPath), isFileCheck, EnableDetailedLogging);
 		}
 
-		private string Check_CanDeleteFolder(FileSystem.FolderInfo dnnFolder, bool isFileCheck, bool logDetail)
+		private string Check_CanDeleteFolder(FolderInfo dnnFolder, bool isFileCheck, bool logDetail)
 		{
 			if (dnnFolder == null)
 			{
@@ -780,7 +756,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 
 			//only allow management of regular storage type
-			if (dnnFolder.StorageLocation != FileSystem.FolderController.StorageLocationTypes.InsecureFileSystem)
+            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
 			{
 				return LogDetailError(ErrorCodes.DeleteFolder_NotInsecureFolder, ToVirtualPath(dnnFolder.FolderPath), logDetail);
 			}
@@ -806,7 +782,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				{
 					if (HttpContext.Current != null)
 					{
-						return string.Format(Localization.Localization.GetString("RestrictedFileType"), ToEndUserPath(virtualPathAndName), validExtensions.Replace(",", ", *."));
+						return string.Format(Localization.GetString("RestrictedFileType"), ToEndUserPath(virtualPathAndName), validExtensions.Replace(",", ", *."));
 					}
 					else
 					{
@@ -816,7 +792,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				return LogUnknownError(ref ex, virtualPathAndName);
+				return LogUnknownError(ex, virtualPathAndName);
 			}
 
 			return string.Empty;
@@ -835,14 +811,14 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			{
 				string fileName = Path.GetFileName(virtualPathAndName);
 				PortalController portalCtrl = new PortalController();
-				if (! (portalCtrl.HasSpaceAvailable(PortalController.GetCurrentPortalSettings.PortalId, contentLength)))
+				if (! (portalCtrl.HasSpaceAvailable(PortalController.GetCurrentPortalSettings().PortalId, contentLength)))
 				{
-					return string.Format(Localization.Localization.GetString("DiskSpaceExceeded"), ToEndUserPath(virtualPathAndName));
+					return string.Format(Localization.GetString("DiskSpaceExceeded"), ToEndUserPath(virtualPathAndName));
 				}
 			}
 			catch (Exception ex)
 			{
-				return LogUnknownError(ex, virtualPathAndName, contentLength);
+				return LogUnknownError(ex, virtualPathAndName, contentLength.ToString());
 			}
 
 			return string.Empty;
@@ -862,7 +838,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				try
 				{
 					openFile = File.OpenRead(virtualPathAndFile);
-					returnValue = openFile.Length;
+                    returnValue = (int)openFile.Length;
 				}
 				finally
 				{
@@ -878,20 +854,20 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return returnValue;
 		}
 
-		private IDictionary<string, FileSystem.FolderInfo> _UserFolders = null;
-		private IDictionary<string, FileSystem.FolderInfo> UserFolders
+		private IDictionary<string, FolderInfo> _UserFolders = null;
+		private IDictionary<string, FolderInfo> UserFolders
 		{
 			get
 			{
 				if (_UserFolders == null)
 				{
-					_UserFolders = new Dictionary<string, FileSystem.FolderInfo>();
+					_UserFolders = new Dictionary<string, FolderInfo>();
 
 					ArrayList folders = FileSystemUtils.GetFoldersByUser(PortalSettings.PortalId, true, true, "READ");
 
 					foreach (var folder in folders)
 					{
-						FileSystem.FolderInfo dnnFolder = (FileSystem.FolderInfo)folder;
+						FolderInfo dnnFolder = (FolderInfo)folder;
 						string folderPath = dnnFolder.FolderPath;
 
 						if (! (string.IsNullOrEmpty(folderPath)) && folderPath.Substring(folderPath.Length - 1, 1) == "/")
@@ -920,7 +896,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 									continue;
 								}
 
-								FileSystem.FolderInfo addFolder = GetDNNFolder(addPath);
+								FolderInfo addFolder = GetDNNFolder(addPath);
 								if (addFolder == null)
 								{
 									break;
@@ -939,19 +915,19 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 		}
 
-		private FileSystem.FolderInfo GetDNNFolder(string path)
+		private FolderInfo GetDNNFolder(string path)
 		{
 			return DNNFolderCtrl.GetFolder(PortalSettings.PortalId, FileSystemValidation.ToDBPath(path), false);
 		}
 
-		private FileSystem.FolderController _DNNFolderCtrl = null;
-		private FileSystem.FolderController DNNFolderCtrl
+		private FolderController _DNNFolderCtrl = null;
+		private FolderController DNNFolderCtrl
 		{
 			get
 			{
 				if (_DNNFolderCtrl == null)
 				{
-					_DNNFolderCtrl = new FileSystem.FolderController();
+					_DNNFolderCtrl = new FolderController();
 				}
 				return _DNNFolderCtrl;
 			}
@@ -966,7 +942,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 		}
 
-		protected internal string LogUnknownError(ref Exception ex, params string[] @params)
+		protected internal string LogUnknownError(Exception ex, params string[] @params)
 		{
 			string returnValue = GetUnknownText();
 			FileManagerException exc = new FileManagerException(GetSystemErrorText(@params), ex);
@@ -1007,41 +983,41 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				case ErrorCodes.CannotMoveFolder_ChildrenVisible:
 				case ErrorCodes.CannotDeleteFolder_ChildrenVisible:
 				case ErrorCodes.CannotCopyFolder_ChildrenVisible:
-					logMsg = GetString("ErrorCodes." + errorCode.ToString());
+					logMsg = GetString("ErrorCodes." + errorCode);
 					break;
 				case ErrorCodes.DeleteFolder_Root:
 				case ErrorCodes.RenameFolder_Root:
-					logMsg = GetString("ErrorCodes." + errorCode.ToString());
-					returnValue = string.Format("{0} [{1}]", GetString("ErrorCodes." + errorCode.ToString()), endUserPath);
+					logMsg = GetString("ErrorCodes." + errorCode);
+					returnValue = string.Format("{0} [{1}]", GetString("ErrorCodes." + errorCode), endUserPath);
 					break;
 				case ErrorCodes.FileDoesNotExist:
 				case ErrorCodes.FolderDoesNotExist:
 					logMsg = string.Empty;
-					returnValue = string.Format("{0} [{1}]", GetString("ErrorCodes." + errorCode.ToString()), endUserPath);
+					returnValue = string.Format("{0} [{1}]", GetString("ErrorCodes." + errorCode), endUserPath);
 					break;
 			}
 
 			if (! (string.IsNullOrEmpty(logMsg)))
 			{
-				DotNetNuke.Services.Log.EventLog.EventLogController objEventLog = new DotNetNuke.Services.Log.EventLog.EventLogController();
-				DotNetNuke.Services.Log.EventLog.LogInfo objEventLogInfo = new DotNetNuke.Services.Log.EventLog.LogInfo();
+				Services.Log.EventLog.EventLogController objEventLog = new Services.Log.EventLog.EventLogController();
+				Services.Log.EventLog.LogInfo objEventLogInfo = new Services.Log.EventLog.LogInfo();
 
 				objEventLogInfo.AddProperty("From", "TelerikHtmlEditorProvider Message");
 
 				if (PortalSettings.ActiveTab != null)
 				{
-					objEventLogInfo.AddProperty("TabID", PortalSettings.ActiveTab.TabID);
+					objEventLogInfo.AddProperty("TabID", PortalSettings.ActiveTab.TabID.ToString());
 					objEventLogInfo.AddProperty("TabName", PortalSettings.ActiveTab.TabName);
 				}
 
-				DotNetNuke.Entities.Users.UserInfo user = DotNetNuke.Entities.Users.UserController.GetCurrentUserInfo();
+				Entities.Users.UserInfo user = Entities.Users.UserController.GetCurrentUserInfo();
 				if (user != null)
 				{
-					objEventLogInfo.AddProperty("UserID", user.UserID);
+					objEventLogInfo.AddProperty("UserID", user.UserID.ToString());
 					objEventLogInfo.AddProperty("UserName", user.Username);
 				}
 
-				objEventLogInfo.LogTypeKey = DotNetNuke.Services.Log.EventLog.EventLogController.EventLogType.ADMIN_ALERT.ToString();
+				objEventLogInfo.LogTypeKey = Services.Log.EventLog.EventLogController.EventLogType.ADMIN_ALERT.ToString();
 				objEventLogInfo.AddProperty("Message", logMsg);
 				objEventLogInfo.AddProperty("Path", virtualPath);
 				objEventLog.AddLog(objEventLogInfo);

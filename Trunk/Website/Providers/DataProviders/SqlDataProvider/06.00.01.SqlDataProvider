@@ -8,6 +8,46 @@
 /*****                                                  *****/
 /************************************************************/
 
+/* DNN-13590 - Adjust GetFileContent for performance */
+/*****************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFileContent]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFileContent]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFileContent]
+	@FileId int
+AS
+BEGIN
+	SELECT Content
+	FROM {databaseOwner}[{objectQualifier}Files]
+	WHERE FileId = @FileId
+END
+GO
+
+/* DNN-13592 - Adjust GetFolderPermissionsByPortal for performance */
+/*******************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFolderPermissionsByPortal]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFolderPermissionsByPortal]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFolderPermissionsByPortal]
+	@PortalId int
+AS
+BEGIN
+	IF @PortalId IS NOT NULL BEGIN
+		SELECT *
+		FROM {databaseOwner}{objectQualifier}vw_FolderPermissions
+		WHERE PortalID = @PortalID
+	END
+	ELSE BEGIN
+		SELECT *
+		FROM {databaseOwner}{objectQualifier}vw_FolderPermissions
+		WHERE PortalID IS NULL
+	END
+END
+GO
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

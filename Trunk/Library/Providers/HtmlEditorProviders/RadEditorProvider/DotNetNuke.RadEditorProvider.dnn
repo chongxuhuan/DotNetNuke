@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-	<package name="DotNetNuke.RadEditorProvider" type="Module" version="06.00.00">
+	<package name="DotNetNuke.RadEditorProvider" type="Module" version="06.00.01">
 	<friendlyName>RadEditor Manager</friendlyName>
 	<description>A module used to configure toolbar items, behavior, and other options used in the DotNetNuke RadEditor Provider.</description>
 	  <owner>
@@ -53,8 +53,8 @@
 	<component type="Assembly">
 	  <assemblies>
 		<assembly>
-		  <name>DotNetNuke.RadEditorProvider.dll</name>
-			<sourceFileName>DotNetNuke.RadEditorProvider.dll</sourceFileName>
+      <path>bin</path>		  
+      <name>DotNetNuke.RadEditorProvider.dll</name>
 		</assembly>
 	  </assemblies>
 	</component>
@@ -66,17 +66,6 @@
 				<sourceFileName>Resources.zip</sourceFileName>
 			</resourceFile>
 		</resourceFiles>
-	</component>
-	<component type="File">
-		<files>
-			<basePath>DesktopModules\Admin\RadEditorProvider\Documentation</basePath>
-			<file>
-				<name>License.txt</name>
-			</file>
-			<file>
-				<name>ReleaseNotes.txt</name>
-			</file>
-		</files>
 	</component>
 	<component type="Config">
 		<config>

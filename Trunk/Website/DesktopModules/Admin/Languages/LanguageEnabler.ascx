@@ -31,8 +31,6 @@
                 <asp:Label ID="enabledPublishedMessage" runat="server" CssClass="Normal" ResourceKey="EnabledPublishedMessage" />
                 <br />
             </asp:PlaceHolder>
-            <asp:Label ID="defaultPortalLabel" runat="server" CssClass="NormalRed" Text="**" />
-            <asp:Label ID="defaultPortalMessage" runat="server" CssClass="Normal" />
             <asp:HyperLink ID="cmdEnableLocalizedContent" runat="server" CssClass="dnnSecondaryAction enableLocalization" ResourceKey="EnableLocalization" />
         </div>
         <div class="dnnFormItem">
@@ -209,6 +207,8 @@
                     </Columns>
                 </MasterTableView>
             </dnn:DnnGrid>
+            <asp:Label ID="defaultPortalLabel" runat="server" CssClass="NormalRed" Text="**" />
+            <asp:Label ID="defaultPortalMessage" runat="server" CssClass="Normal" />
         </div>
     </fieldset>
     <ul class="dnnActions dnnClear">

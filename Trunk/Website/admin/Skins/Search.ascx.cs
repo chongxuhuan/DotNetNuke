@@ -33,6 +33,7 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
 
 using Globals = DotNetNuke.Common.Globals;
+using DotNetNuke.Entities.Icons;
 
 #endregion
 
@@ -104,7 +105,7 @@ namespace DotNetNuke.UI.Skins.Controls
         /// </summary>
         /// <value>The site icon URL.</value>
         /// <remarks>If the SiteIconURL is not set or is an empty string then this will return a site relative URL for the 
-        /// dotnetnuke-icon.gif image in the images/search subfolder.  SiteIconURL supports using 
+        /// DnnSearch_16X16_Standard.png image in the images/search subfolder.  SiteIconURL supports using 
         /// app relative virtual paths designated by the use of the tilde (~).</remarks>
         public string SiteIconURL
         {
@@ -112,7 +113,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (string.IsNullOrEmpty(_siteIconURL))
                 {
-                    return "~/images/Search/dotnetnuke-icon.gif";
+                    return IconController.IconURL("DnnSearch");
                 }
                 return _siteIconURL;
             }
@@ -226,7 +227,7 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 if (string.IsNullOrEmpty(_webIconURL))
                 {
-                    return "~/images/Search/google-icon.gif";
+                    return IconController.IconURL("GoogleSearch");
                 }
                 return _webIconURL;
             }

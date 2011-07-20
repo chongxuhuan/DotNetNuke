@@ -18,41 +18,14 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-//INSTANT C# NOTE: Formerly VB project-level imports:
-using DotNetNuke;
-using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Data;
-using DotNetNuke.Entities;
-using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Framework;
-using DotNetNuke.Modules;
-using DotNetNuke.Security;
-using DotNetNuke.Services;
-using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI;
+
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
 using System.Collections.Specialized;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Caching;
-using System.Web.SessionState;
-using System.Web.Security;
-using System.Web.Profile;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Services.FileSystem;
 
 namespace DotNetNuke.Providers.RadEditorProvider
 {
@@ -78,8 +51,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				if (! (string.IsNullOrEmpty(renderUrl)))
 				{
 					string fileContents = string.Empty;
-					FileSystem.FileController fileCtrl = new FileSystem.FileController();
-					FileSystem.FileInfo fileInfo = null;
+					FileController fileCtrl = new FileController();
+					FileInfo fileInfo = null;
 					int portalID = PortalController.GetCurrentPortalSettings().PortalId;
 
 					if (renderUrl.ToLower().Contains("linkclick.aspx") && renderUrl.ToLower().Contains("fileticket"))
@@ -100,7 +73,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 						if (! (string.IsNullOrEmpty(fileName)))
 						{
-							FileSystem.FolderInfo dnnFolder = GetDNNFolder(dbPath);
+							FolderInfo dnnFolder = GetDNNFolder(dbPath);
 							if (dnnFolder != null)
 							{
 								fileInfo = fileCtrl.GetFile(fileName, portalID, dnnFolder.FolderID);
@@ -125,7 +98,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				DotNetNuke.Services.Exceptions.LogException(ex);
+				Services.Exceptions.Exceptions.LogException(ex);
 				Content.Text = string.Empty;
 			}
 		}
@@ -209,13 +182,12 @@ namespace DotNetNuke.Providers.RadEditorProvider
 #endregion
 
 
-	override protected void OnInit(EventArgs e)
-	{
-		base.OnInit(e);
+	    override protected void OnInit(EventArgs e)
+	    {
+		    base.OnInit(e);
 
-//INSTANT C# NOTE: Converted event handler wireups:
-		this.Load += new System.EventHandler(Page_Load);
-	}
+		    this.Load += Page_Load;
+	    }
 	}
 
 }

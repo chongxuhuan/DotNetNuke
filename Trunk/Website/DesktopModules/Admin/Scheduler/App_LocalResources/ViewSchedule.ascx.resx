@@ -174,4 +174,7 @@
   <data name="Status.Text" xml:space="preserve">
     <value>View Status</value>
   </data>
+  <data name="ViewLog.Header" xml:space="preserve">
+    <value>Log</value>
+  </data>
 </root>

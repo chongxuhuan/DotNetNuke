@@ -1851,9 +1851,9 @@ namespace DotNetNuke.Data
             return SqlHelper.ExecuteDataset(ConnectionString, DatabaseOwner + ObjectQualifier + "GetAllFiles").Tables[0];
         }
 
-        public override IDataReader GetFileContent(int FileId, int PortalId)
+        public override IDataReader GetFileContent(int FileId)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetFileContent", FileId, GetNull(PortalId));
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetFileContent", FileId);
         }
 
         public override void UpdateFileContent(int FileId, byte[] Content)

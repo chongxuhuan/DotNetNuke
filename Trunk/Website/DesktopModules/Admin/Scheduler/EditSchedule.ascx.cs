@@ -95,57 +95,55 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         private void BindData()
         {
-            ScheduleItem objScheduleItem;
-
             if (Request.QueryString["ScheduleID"] != null)
             {
                 ViewState["ScheduleID"] = Request.QueryString["ScheduleID"];
-                objScheduleItem = SchedulingProvider.Instance().GetSchedule(Convert.ToInt32(Request.QueryString["ScheduleID"]));
+                ScheduleItem scheduleItem = SchedulingProvider.Instance().GetSchedule(Convert.ToInt32(Request.QueryString["ScheduleID"]));
 
-                txtFriendlyName.Text = objScheduleItem.FriendlyName;
+                txtFriendlyName.Text = scheduleItem.FriendlyName;
                 txtType.Enabled = false;
-                txtType.Text = objScheduleItem.TypeFullName;
-                chkEnabled.Checked = objScheduleItem.Enabled;
-                if (objScheduleItem.TimeLapse == Null.NullInteger)
+                txtType.Text = scheduleItem.TypeFullName;
+                chkEnabled.Checked = scheduleItem.Enabled;
+                if (scheduleItem.TimeLapse == Null.NullInteger)
                 {
                     txtTimeLapse.Text = "";
                 }
                 else
                 {
-                    txtTimeLapse.Text = Convert.ToString(objScheduleItem.TimeLapse);
+                    txtTimeLapse.Text = Convert.ToString(scheduleItem.TimeLapse);
                 }
-                if (ddlTimeLapseMeasurement.Items.FindByValue(objScheduleItem.TimeLapseMeasurement) != null)
+                if (ddlTimeLapseMeasurement.Items.FindByValue(scheduleItem.TimeLapseMeasurement) != null)
                 {
-                    ddlTimeLapseMeasurement.Items.FindByValue(objScheduleItem.TimeLapseMeasurement).Selected = true;
+                    ddlTimeLapseMeasurement.Items.FindByValue(scheduleItem.TimeLapseMeasurement).Selected = true;
                 }
-                if (objScheduleItem.RetryTimeLapse == Null.NullInteger)
+                if (scheduleItem.RetryTimeLapse == Null.NullInteger)
                 {
                     txtRetryTimeLapse.Text = "";
                 }
                 else
                 {
-                    txtRetryTimeLapse.Text = Convert.ToString(objScheduleItem.RetryTimeLapse);
+                    txtRetryTimeLapse.Text = Convert.ToString(scheduleItem.RetryTimeLapse);
                 }
-                if (ddlRetryTimeLapseMeasurement.Items.FindByValue(objScheduleItem.RetryTimeLapseMeasurement) != null)
+                if (ddlRetryTimeLapseMeasurement.Items.FindByValue(scheduleItem.RetryTimeLapseMeasurement) != null)
                 {
-                    ddlRetryTimeLapseMeasurement.Items.FindByValue(objScheduleItem.RetryTimeLapseMeasurement).Selected = true;
+                    ddlRetryTimeLapseMeasurement.Items.FindByValue(scheduleItem.RetryTimeLapseMeasurement).Selected = true;
                 }
-                if (ddlRetainHistoryNum.Items.FindByValue(Convert.ToString(objScheduleItem.RetainHistoryNum)) != null)
+                if (ddlRetainHistoryNum.Items.FindByValue(Convert.ToString(scheduleItem.RetainHistoryNum)) != null)
                 {
-                    ddlRetainHistoryNum.Items.FindByValue(Convert.ToString(objScheduleItem.RetainHistoryNum)).Selected = true;
+                    ddlRetainHistoryNum.Items.FindByValue(Convert.ToString(scheduleItem.RetainHistoryNum)).Selected = true;
                 }
                 else
                 {
-                    ddlRetainHistoryNum.Items.Add(objScheduleItem.RetainHistoryNum.ToString());
-                    ddlRetainHistoryNum.Items.FindByValue(Convert.ToString(objScheduleItem.RetainHistoryNum)).Selected = true;
+                    ddlRetainHistoryNum.Items.Add(scheduleItem.RetainHistoryNum.ToString());
+                    ddlRetainHistoryNum.Items.FindByValue(Convert.ToString(scheduleItem.RetainHistoryNum)).Selected = true;
                 }
-                if (ddlAttachToEvent.Items.FindByValue(objScheduleItem.AttachToEvent) != null)
+                if (ddlAttachToEvent.Items.FindByValue(scheduleItem.AttachToEvent) != null)
                 {
-                    ddlAttachToEvent.Items.FindByValue(objScheduleItem.AttachToEvent).Selected = true;
+                    ddlAttachToEvent.Items.FindByValue(scheduleItem.AttachToEvent).Selected = true;
                 }
-                chkCatchUpEnabled.Checked = objScheduleItem.CatchUpEnabled;
-                txtObjectDependencies.Text = objScheduleItem.ObjectDependencies;
-                BindServers(objScheduleItem.Servers);
+                chkCatchUpEnabled.Checked = scheduleItem.CatchUpEnabled;
+                txtObjectDependencies.Text = scheduleItem.ObjectDependencies;
+                BindServers(scheduleItem.Servers);
             }
             else
             {
@@ -188,33 +186,33 @@ namespace DotNetNuke.Modules.Admin.Scheduler
 
         private ScheduleItem CreateScheduleItem()
         {
-            var objScheduleItem = new ScheduleItem();
-            objScheduleItem.TypeFullName = txtType.Text;
-            objScheduleItem.FriendlyName = txtFriendlyName.Text;
+            var scheduleItem = new ScheduleItem();
+            scheduleItem.TypeFullName = txtType.Text;
+            scheduleItem.FriendlyName = txtFriendlyName.Text;
             if (String.IsNullOrEmpty(txtTimeLapse.Text) || txtTimeLapse.Text == "0" || txtTimeLapse.Text == "-1")
             {
-                objScheduleItem.TimeLapse = Null.NullInteger;
+                scheduleItem.TimeLapse = Null.NullInteger;
             }
             else
             {
-                objScheduleItem.TimeLapse = Convert.ToInt32(txtTimeLapse.Text);
+                scheduleItem.TimeLapse = Convert.ToInt32(txtTimeLapse.Text);
             }
-            objScheduleItem.TimeLapseMeasurement = ddlTimeLapseMeasurement.SelectedItem.Value;
+            scheduleItem.TimeLapseMeasurement = ddlTimeLapseMeasurement.SelectedItem.Value;
 
             if (String.IsNullOrEmpty(txtRetryTimeLapse.Text) || txtRetryTimeLapse.Text == "0" || txtRetryTimeLapse.Text == "-1")
             {
-                objScheduleItem.RetryTimeLapse = Null.NullInteger;
+                scheduleItem.RetryTimeLapse = Null.NullInteger;
             }
             else
             {
-                objScheduleItem.RetryTimeLapse = Convert.ToInt32(txtRetryTimeLapse.Text);
+                scheduleItem.RetryTimeLapse = Convert.ToInt32(txtRetryTimeLapse.Text);
             }
-            objScheduleItem.RetryTimeLapseMeasurement = ddlRetryTimeLapseMeasurement.SelectedItem.Value;
-            objScheduleItem.RetainHistoryNum = Convert.ToInt32(ddlRetainHistoryNum.SelectedItem.Value);
-            objScheduleItem.AttachToEvent = ddlAttachToEvent.SelectedItem.Value;
-            objScheduleItem.CatchUpEnabled = chkCatchUpEnabled.Checked;
-            objScheduleItem.Enabled = chkEnabled.Checked;
-            objScheduleItem.ObjectDependencies = txtObjectDependencies.Text;
+            scheduleItem.RetryTimeLapseMeasurement = ddlRetryTimeLapseMeasurement.SelectedItem.Value;
+            scheduleItem.RetainHistoryNum = Convert.ToInt32(ddlRetainHistoryNum.SelectedItem.Value);
+            scheduleItem.AttachToEvent = ddlAttachToEvent.SelectedItem.Value;
+            scheduleItem.CatchUpEnabled = chkCatchUpEnabled.Checked;
+            scheduleItem.Enabled = chkEnabled.Checked;
+            scheduleItem.ObjectDependencies = txtObjectDependencies.Text;
 
             //if servers are specified, the concatenated string needs to be prefixed and suffixed by commas ( ie. ",SERVER1,SERVER2," )
             var servers = Null.NullString;
@@ -236,9 +234,9 @@ namespace DotNetNuke.Modules.Admin.Scheduler
             }
             if (!string.IsNullOrEmpty(servers))
             {
-                objScheduleItem.Servers = servers + ",";
+                scheduleItem.Servers = servers + ",";
             }
-            return objScheduleItem;
+            return scheduleItem;
         }
 
         #endregion
