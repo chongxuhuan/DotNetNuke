@@ -73,9 +73,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{7533B8E3-499F-4FCA-995D-6D4C989AE046}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HtmlEditor Providers", "HtmlEditor Providers", "{6DA8666D-9980-4875-BAC6-F6B45A0FAB2D}"
-	ProjectSection(SolutionItems) = preProject
-		Library\Providers\HtmlEditorProviders\ReadMe.txt = Library\Providers\HtmlEditorProviders\ReadMe.txt
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Library", "Library\DotNetNuke.Library.csproj", "{D391550C-7107-49B2-A6AC-8627C8B06ADC}"
 EndProject
@@ -160,7 +157,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Community", "Community", "{
 		Community\Templates\Default Website.template.resources = Community\Templates\Default Website.template.resources
 	EndProjectSection
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = "SAK"
 		SccAuxPath = "SAK"
@@ -182,7 +179,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "htt
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		SlnRelativePath = "Website\"
+		VWDPort = "37559"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{93532801-CD42-40D1-B765-77676362F98C} = {93532801-CD42-40D1-B765-77676362F98C}
@@ -481,15 +478,15 @@ Global
 		SccProjectTopLevelParentUniqueName59 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName59 = Professional/Providers/FolderProviders/CloudFolderProviders
 		SccLocalPath59 = Professional\\Providers\\FolderProviders\\CloudFolderProviders
-		SccWebProject60 = true
-		SccProjectUniqueName60 = http://localhost/DotNetNuke_Community
-		SccProjectName60 = Website
-		SccLocalPath60 = Website
-		SccProjectEnlistmentChoice60 = 2
-		SccProjectUniqueName61 = Library\\Providers\\HtmlEditorProviders\\RadEditorProvider\\DotNetNuke.RadEditorProvider.csproj
-		SccProjectTopLevelParentUniqueName61 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName61 = Library/Providers/HtmlEditorProviders/RadEditorProvider
-		SccLocalPath61 = Library\\Providers\\HtmlEditorProviders\\RadEditorProvider
+		SccProjectUniqueName60 = Library\\Providers\\HtmlEditorProviders\\RadEditorProvider\\DotNetNuke.RadEditorProvider.csproj
+		SccProjectTopLevelParentUniqueName60 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName60 = Library/Providers/HtmlEditorProviders/RadEditorProvider
+		SccLocalPath60 = Library\\Providers\\HtmlEditorProviders\\RadEditorProvider
+		SccWebProject61 = true
+		SccProjectUniqueName61 = http://localhost/DotNetNuke_Community
+		SccProjectName61 = Website
+		SccLocalPath61 = http://localhost/DotNetNuke_Community/
+		SccProjectEnlistmentChoice61 = 2
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET

@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Web;
 
 using DotNetNuke.Common;
@@ -507,12 +508,18 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="relativePath">The relative path of the folder.</param>
         /// <param name="isRecursive">Indicates if the synchronization has to be recursive.</param>
         /// <param name="syncFiles">Indicates if files need to be synchronized.</param>
+        /// <exception cref="DotNetNuke.Services.FileSystem.NoNetworkAvailableException">Thrown when there are folder mappings requiring network connection but there is no network available.</exception>
         /// <returns>The number of folder collisions.</returns>
         public virtual int Synchronize(int portalID, string relativePath, bool isRecursive, bool syncFiles)
         {
             DnnLog.MethodEntry();
 
             Requires.NotNull("relativePath", relativePath);
+
+            if (AreThereFolderMappingsRequiringNetworkConnectivity(portalID, relativePath, isRecursive) && !IsNetworkAvailable())
+            {
+                throw new NoNetworkAvailableException(Localization.Localization.GetExceptionMessage("NoNetworkAvailableError", "Network connectivity is needed but there is no network available."));
+            }
 
             Nullable<int> scriptTimeOut = null;
 
@@ -525,7 +532,7 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             var collisionNotifications = new List<string>();
-            var mergedTree = GetMergedTree(portalID, relativePath, isRecursive);         
+            var mergedTree = GetMergedTree(portalID, relativePath, isRecursive);
             for (var i = 0; i < mergedTree.Count; i++)
             {
                 var item = mergedTree.Values[i];
@@ -893,6 +900,36 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
+        internal virtual bool AreThereFolderMappingsRequiringNetworkConnectivity(int portalID, string relativePath, bool isRecursive)
+        {
+            var folder = GetFolder(portalID, relativePath);
+            
+            if (folder != null)
+            {
+                var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
+                var folderProvider = FolderProvider.Instance(folderMapping.FolderProviderType);
+
+                if (folderProvider.RequiresNetworkConnectivity)
+                {
+                    return true;
+                }
+            }
+
+            if (isRecursive)
+            {
+                var folderMappingsRequiringNetworkConnectivity = from fm in FolderMappingController.Instance.GetFolderMappings(portalID)
+                                                                 where
+                                                                      fm.IsEditable &&
+                                                                      FolderProvider.Instance(fm.FolderProviderType).RequiresNetworkConnectivity
+                                                                 select fm;
+
+                return folderMappingsRequiringNetworkConnectivity.Count() > 0;
+            }
+
+            return false;
+        }
+
+        /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual int GetCurrentScriptTimeout()
         {
             return HttpContext.Current.Server.ScriptTimeout;
@@ -1133,6 +1170,12 @@ namespace DotNetNuke.Services.FileSystem
             return (from folderMapping in FolderMappingController.Instance.GetFolderMappings(portalID)
                     where folderMapping.IsEditable
                     select GetFolderMappingFolders(folderMapping, relativePath, isRecursive)).Aggregate(mergedTree, MergeFolderLists);
+        }
+
+        /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
+        internal virtual bool IsNetworkAvailable()
+        {
+            return NetworkInterface.GetIsNetworkAvailable();
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
@@ -1502,7 +1545,7 @@ namespace DotNetNuke.Services.FileSystem
                         {
                             using (var fileContent = fileManager.GetFileContent(file))
                             {
-                                if(fileContent != null)
+                                if (fileContent != null)
                                 {
                                     fileManager.UpdateFile(file, fileContent);
                                 }

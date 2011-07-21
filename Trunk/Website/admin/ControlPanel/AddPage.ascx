@@ -20,4 +20,4 @@
 		<asp:Label runat="server" ResourceKey="IncludeInMenu" AssociatedControlID="IncludeInMenu" />
     </div>
 </div>
-<asp:LinkButton ID="cmdAddPage" runat="server" ResourceKey="AddButton" CssClass="dnnPrimaryAction" />
+<asp:LinkButton ID="cmdAddPage" runat="server" ResourceKey="AddButton" CssClass="dnnPrimaryAction" ValidationGroup="ControlPanel" />

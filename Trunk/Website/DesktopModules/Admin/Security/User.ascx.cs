@@ -305,6 +305,11 @@ namespace DotNetNuke.Modules.Admin.Users
 
             userNameReadOnly.Visible = !AddUser;
             userName.Visible = AddUser;
+            var userNameSetting = GetSetting(UserPortalID, "Security_UserNameValidation");
+            if ((userNameSetting != null) && (!string.IsNullOrEmpty(Convert.ToString(userNameSetting))))
+            {
+                userName.ValidationExpression = Convert.ToString(userNameSetting);
+            }
 
             var setting = GetSetting(UserPortalID, "Security_EmailValidation");
             if ((setting != null) && (!string.IsNullOrEmpty(Convert.ToString(setting))))

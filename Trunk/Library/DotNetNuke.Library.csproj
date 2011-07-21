@@ -488,6 +488,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Services\FileSystem\Exceptions\FolderAlreadyExistsException.cs" />
+    <Compile Include="Services\FileSystem\Exceptions\NoNetworkAvailableException.cs" />
     <Compile Include="Services\FileSystem\Internal\DefaultFolderProviders.cs" />
     <Compile Include="Services\FileSystem\Wrappers\IconControllerWrapper.cs" />
     <Compile Include="Services\FileSystem\Wrappers\IIconController.cs" />

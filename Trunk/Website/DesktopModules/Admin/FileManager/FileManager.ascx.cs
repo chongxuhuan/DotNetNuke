@@ -1441,6 +1441,14 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 }
 
                 LastFolderPath = DestPath;
+
+                if (Framework.AJAX.IsEnabled())
+                {
+                    Framework.AJAX.RegisterPostBackControl(lnkSyncFolder);
+                    Framework.AJAX.RegisterPostBackControl(lnkSyncFolders);
+                    Framework.AJAX.RegisterPostBackControl(lnkDeleteAllCheckedFiles);
+                    Framework.AJAX.RegisterPostBackControl(lnkMoveFiles);
+                }
             }
             catch (Exception exc) //Module failed to load
             {
@@ -1469,10 +1477,19 @@ namespace DotNetNuke.Modules.Admin.FileManager
             var objFolderInfo = FolderManager.Instance.GetFolder(FolderPortalID, strFolderPath);
             if (objFolderInfo == null)
             {
-				//file system needs synchronizing
-                //with database...this folder is new.
-                Synchronize();
-                objFolderInfo = FolderManager.Instance.GetFolder(FolderPortalID, strFolderPath);
+                try
+                {
+                    //file system needs synchronizing
+                    //with database...this folder is new.
+                    Synchronize();
+                    objFolderInfo = FolderManager.Instance.GetFolder(FolderPortalID, strFolderPath);
+                }
+                catch (Exception ex)
+                {
+                    DnnLog.Error(ex);
+                    UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("PermissionsError", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                    return;
+                }
             }
             objFolderInfo.FolderPermissions.Clear();
             objFolderInfo.FolderPermissions.AddRange(dgPermissions.Permissions);
@@ -1571,6 +1588,16 @@ namespace DotNetNuke.Modules.Admin.FileManager
                     if (lnkDLFile != null)
                     {
                         Framework.AJAX.RegisterPostBackControl(lnkDLFile);
+                    }
+
+                    if (lnkDeleteFile != null)
+                    {
+                        Framework.AJAX.RegisterPostBackControl(lnkDeleteFile);
+                    }
+
+                    if (lnkOkRename != null)
+                    {
+                        Framework.AJAX.RegisterPostBackControl(lnkOkRename);
                     }
                 }
             }
@@ -1819,7 +1846,23 @@ namespace DotNetNuke.Modules.Admin.FileManager
         {
             var fileManager = Services.FileSystem.FileManager.Instance;
             var file = fileManager.GetFile(Convert.ToInt32(e.CommandArgument));
-            fileManager.WriteFileToResponse(file, ContentDisposition.Inline);
+
+            try
+            {
+                fileManager.WriteFileToResponse(file, ContentDisposition.Inline);
+            }
+            catch (Exception ex)
+            {
+                DnnLog.Error(ex);
+
+                var strErrorMessage = Localization.GetString("ErrorDownloadingFile", LocalResourceFile) +
+                    PathUtils.Instance.AddTrailingSlash(UnMaskPath(DestPath)) +
+                    file.FileName +
+                    "<br/>&nbsp;&nbsp;&nbsp;" + ex.Message + "<br/>";
+
+                strErrorMessage = MaskString(strErrorMessage);
+                ShowErrorMessage(strErrorMessage);
+            }
 
             BindFolderTree();
         }
@@ -2293,13 +2336,30 @@ namespace DotNetNuke.Modules.Admin.FileManager
         /// -----------------------------------------------------------------------------
         private void lnkSyncFolder_Command(object sender, CommandEventArgs e)
         {
-            string syncFolderPath = UnMaskPath(DestPath);
-            bool isRecursive = chkRecursive.Checked;
-            string relPath = syncFolderPath.Replace(RootFolderPath, "").Replace("\\", "/");
-            FolderManager.Instance.Synchronize(FolderPortalID, relPath, isRecursive, true);
-            
-			//reload page to make treeview update.
-			Response.Redirect(Globals.NavigateURL(), true);
+            var syncFolderPath = UnMaskPath(DestPath);
+            var isRecursive = chkRecursive.Checked;
+            var relPath = syncFolderPath.Replace(RootFolderPath, "").Replace("\\", "/");
+
+            try
+            {
+                FolderManager.Instance.Synchronize(FolderPortalID, relPath, isRecursive, true);
+
+                ////reload page to make treeview update.
+                //Response.Redirect(Globals.NavigateURL(), true);
+            }
+            catch (Exception ex)
+            {
+                DnnLog.Error(ex);
+
+                var strErrorMessage = Localization.GetString("ErrorSynchronizingFolder", LocalResourceFile) +
+                    PathUtils.Instance.AddTrailingSlash(UnMaskPath(DestPath)) +
+                    "<br/>&nbsp;&nbsp;&nbsp;" + ex.Message + "<br/>";
+
+                strErrorMessage = MaskString(strErrorMessage);
+                ShowErrorMessage(strErrorMessage);
+            }
+
+            BindFolderTree();
         }
 
         /// -----------------------------------------------------------------------------
@@ -2316,17 +2376,25 @@ namespace DotNetNuke.Modules.Admin.FileManager
         /// -----------------------------------------------------------------------------
         protected void lnkSyncFolders_Click(object sender, ImageClickEventArgs e)
         {
-            if (IsHostMenu)
+            try
             {
-                FolderManager.Instance.Synchronize(Null.NullInteger, "", true, false);
+                FolderManager.Instance.Synchronize(IsHostMenu ? Null.NullInteger : PortalId, "", true, false);
+
+                ////reload page to make treeview update.
+                //Response.Redirect(Globals.NavigateURL(), true);
             }
-            else
+            catch (Exception ex)
             {
-                FolderManager.Instance.Synchronize(PortalId, "", true, false);
+                DnnLog.Error(ex);
+
+                var strErrorMessage = Localization.GetString("ErrorSynchronizingFolders", LocalResourceFile) +
+                    "<br/>&nbsp;&nbsp;&nbsp;" + ex.Message + "<br/>";
+
+                strErrorMessage = MaskString(strErrorMessage);
+                ShowErrorMessage(strErrorMessage);
             }
-            
-			//reload page to make treeview update.
-			Response.Redirect(Globals.NavigateURL(), true);
+
+            BindFolderTree();
         }
 
         /// -----------------------------------------------------------------------------

@@ -42,6 +42,7 @@ namespace DotNetNuke.Security.Permissions
         private static void ClearPermissionCache(int PortalID)
         {
             DataCache.ClearFolderPermissionsCache(PortalID);
+            DataCache.ClearCache(string.Format("Folders|{0}|", PortalID));
         }
 
         public static bool CanAddFolder(FolderInfo folder)
@@ -126,7 +127,7 @@ namespace DotNetNuke.Security.Permissions
         public static void SaveFolderPermissions(FolderInfo folder)
         {
             provider.SaveFolderPermissions(folder);
-            DataCache.ClearFolderPermissionsCache(folder.PortalID);
+            ClearPermissionCache(folder.PortalID);
         }
 
         #region "Obsolete Methods"

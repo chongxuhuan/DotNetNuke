@@ -318,6 +318,12 @@ namespace DotNetNuke.Common
             @"^\s*[a-zA-Z0-9_%+#&'*/=^`{|}~-](?:\.?[a-zA-Z0-9_%+#&'*/=^`{|}~-])*@(?:[a-zA-Z0-9_](?:(?:\.?|-*)[a-zA-Z0-9_])*\.[a-zA-Z]{2,9}|\[(?:2[0-4]\d|25[0-5]|[01]?\d\d?)\.(?:2[0-4]\d|25[0-5]|[01]?\d\d?)\.(?:2[0-4]\d|25[0-5]|[01]?\d\d?)\.(?:2[0-4]\d|25[0-5]|[01]?\d\d?)])\s*$";
 
         /// <summary>
+        /// User Name regex pattern
+        /// </summary>
+        /// <value></value>
+        public const string glbUserNameRegEx = @"^[a-zA-Z0-9]{5,}$";
+
+        /// <summary>
         /// format of a script tag
         /// </summary>
         /// <value><![CDATA[<script type=\"text/javascript\" src=\"{0}\" ></script>]]></value>

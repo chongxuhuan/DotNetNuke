@@ -39,6 +39,9 @@
         <tool name="InsertParagraph" />
         <tool separator="true"/>
         <tool name="ToggleScreenMode" shortcut="F11"/>
+        <tool separator="true"/>
+        <tool name="InsertDate" />
+        <tool name="InsertTime" />
     </tools>
 
     <tools>
@@ -46,6 +49,8 @@
         <tool name="Italic" shortcut="CTRL+I"/>
         <tool name="Underline" shortcut="CTRL+U"/>
         <tool name="StrikeThrough" />
+        <tool name="Superscript" />
+        <tool name="Subscript" />
         <tool separator="true"/>
         <tool name="Indent" />
         <tool name="Outdent" />
@@ -57,6 +62,18 @@
         <tool name="ConvertToUpper" />
         <tool name="InsertHorizontalRule" />
         <tool separator="true"/>
+        <tool name="ForeColor" />
+        <tool name="BackColor" />
+        <tool name="FontName" />
+        <tool name="FontSize" />
+        <tool name="FontName" />
+        <tool separator="true"/>
+        <tool name="JustifyLeft" />
+        <tool name="JustifyCenter" />
+        <tool name="JustifyRight" />
+        <tool name="JustifyFull" />        
+    </tools>
+    <tools>
         <tool name="FormatBlock"/>
         <tool separator="true"/>
         <tool name="ApplyClass"/>

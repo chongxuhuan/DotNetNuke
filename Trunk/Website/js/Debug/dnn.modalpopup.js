@@ -2,25 +2,33 @@
     dnnModal = { //global scope
         load: function () {
             //This method prevents the popup from flashing before closing, also redirects the parent window.
-            //parent and parent.parent needs to be assign to a varaible for Opera compatibility issues.
-            var windowTop = parent;
-            var parentTop = windowTop.parent;
+            //parent and parent.parent needs to be assign to a varaible for Opera compatibility issues.            
+            try {
+                if (parent.location.href !== undefined) {
 
-            if (typeof (parentTop.$find) != "undefined") {
-                if (location.href.indexOf('popUp') == -1 || windowTop.location.href.indexOf("popUp") > -1) {
-                    windowTop.location.href = location.href;
+                    var windowTop = parent;
+                    var parentTop = windowTop.parent;
 
-                    var popup = windowTop.$("#iPopUp");
-                    if (popup.dialog('isOpen') === true) {
-                        popup.dialog("option", {
-                            close: function (event, ui) { }
-                        }).dialog('close').remove();
+                    if (typeof (parentTop.$find) != "undefined") {
+                        if (location.href.indexOf('popUp') == -1 || windowTop.location.href.indexOf("popUp") > -1) {
+                            windowTop.location.href = location.href;
+
+                            var popup = windowTop.$("#iPopUp");
+                            if (popup.dialog('isOpen') === true) {
+                                popup.dialog("option", {
+                                    close: function (event, ui) { }
+                                }).dialog('close').remove();
+                            }
+
+                        }
+                        else {
+                            windowTop.$("#iPopUp").dialog({ title: document.title });
+                        }
                     }
-
                 }
-                else {
-                    windowTop.$("#iPopUp").dialog({ title: document.title });
-                }
+            }
+            catch (err) {
+                return false;
             }
         },
         show: function (url, showReturn, height, width) {
@@ -44,6 +52,7 @@
                 maxHeight: 1080,
                 resizable: true,
                 closeOnEscape: true,
+                zIndex: 100000,
                 close: function (event, ui) {
                     windowTop.location.reload();
                     $(this).remove();
@@ -92,4 +101,4 @@
         }
     };
     dnnModal.load();
-}(this, jQuery))
+} (this, jQuery))

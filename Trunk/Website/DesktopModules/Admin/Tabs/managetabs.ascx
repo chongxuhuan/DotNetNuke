@@ -155,7 +155,9 @@
 				</div>
 				<div id="readyForTranslationRow" runat="server" visible="false" class="dnnFormItem">
 					<asp:Label ID="readyToTranslateLabel" runat="server" resourceKey="readyToTranslateLabel" />
-					<dnn:CommandButton ID="readyForTranslationButton" runat="server" IconKey="Language" ResourceKey="ReadyForTranslation" />
+                    <ul class="dnnActions dnnClear">
+                        <li><asp:LinkButton ID="readyForTranslationButton" runat="server" ResourceKey="ReadyForTranslation"  CssClass="dnnSecondaryAction"/></li>                        
+                    </ul>
 				</div>
 				<div id="localizedTabsRow" runat="server" class="dnnFormItem">
 					<asp:Label ID="localizedTabsLabel" runat="server" resourcekey="LocalizedTabs" EnableViewState="False" />

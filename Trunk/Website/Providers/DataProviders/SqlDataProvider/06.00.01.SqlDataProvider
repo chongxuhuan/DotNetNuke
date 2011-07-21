@@ -49,6 +49,99 @@ BEGIN
 END
 GO
 
+/* DNN-13815 - Adjust Dashboard_GetControls for performance */
+/************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Dashboard_GetControls]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetControls]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetControls] 
+	@IsEnabled bit
+AS
+BEGIN
+	IF @IsEnabled = 0 BEGIN
+		SELECT *
+		FROM {databaseOwner}[{objectQualifier}Dashboard_Controls]
+		ORDER BY ViewOrder
+	END
+	ELSE BEGIN
+		SELECT *
+		FROM {databaseOwner}[{objectQualifier}Dashboard_Controls]
+		WHERE IsEnabled = 1
+		ORDER BY ViewOrder
+	END
+END
+GO
+
+/* DNN-13814 - Adjust Dashboard_AddControl for performance */
+/***********************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Dashboard_AddControl]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_AddControl]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_AddControl]
+	@PackageId int,
+	@DashboardControlKey nvarchar(50),
+	@IsEnabled bit,
+	@DashboardControlSrc nvarchar(250),
+	@DashboardControlLocalResources nvarchar(250),
+	@ControllerClass nvarchar(250),
+	@ViewOrder int
+AS
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}Dashboard_Controls] (
+		PackageId,
+		DashboardControlKey,
+		IsEnabled,
+		DashboardControlSrc,
+		DashboardControlLocalResources,
+		ControllerClass,
+		ViewOrder
+	)
+	VALUES (
+		@PackageId,
+		@DashboardControlKey,
+		@IsEnabled,
+		@DashboardControlSrc,
+		@DashboardControlLocalResources,
+		@ControllerClass,
+		case @ViewOrder
+			when -1 then (SELECT TOP 1 ViewOrder FROM {databaseOwner}[{objectQualifier}Dashboard_Controls] ORDER BY ViewOrder DESC) + 1
+			else @ViewOrder
+		end
+	)
+
+	SELECT SCOPE_IDENTITY()
+END
+GO
+
+/* DNN-13813 - Adjust AddScheduleItemSetting for performance */
+/*************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddScheduleItemSetting]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddScheduleItemSetting]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddScheduleItemSetting]
+	@ScheduleID int,
+	@Name nvarchar(50),
+	@Value nvarchar(256)
+AS
+BEGIN
+	UPDATE {databaseOwner}[{objectQualifier}ScheduleItemSettings]
+	SET SettingValue = @Value
+	WHERE ScheduleID = @ScheduleID
+	AND SettingName = @Name
+
+	IF @@ROWCOUNT = 0 BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}ScheduleItemSettings] (ScheduleID, SettingName, Settingvalue)
+		VALUES (@ScheduleID, @Name, @Value)
+	END
+END
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

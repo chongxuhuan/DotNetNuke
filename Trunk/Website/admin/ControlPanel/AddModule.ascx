@@ -49,6 +49,6 @@
             </div>
             <div class="dnnFormCheckbox"><asp:CheckBox ID="chkCopyModule" runat="server" /></div>
         </div>
-        <asp:LinkButton ID="cmdAddModule" runat="server"  ResourceKey="AddModule" CssClass="dnnPrimaryAction" />
+        <asp:LinkButton ID="cmdAddModule" runat="server"  ResourceKey="AddModule" CssClass="dnnPrimaryAction" ValidationGroup="ControlPanel" />
     </ContentTemplate>
 </asp:UpdatePanel>

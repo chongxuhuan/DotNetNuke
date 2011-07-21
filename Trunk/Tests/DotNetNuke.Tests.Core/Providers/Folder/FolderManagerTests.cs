@@ -694,6 +694,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var mergedTreeItem = new FolderManager.MergedTreeItem();
             mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, mergedTreeItem);
 
+            _mockFolderManager.Setup(mfm => mfm.AreThereFolderMappingsRequiringNetworkConnectivity(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(false);
             _mockFolderManager.Setup(mfm => mfm.GetCurrentScriptTimeout()).Returns(0);
             _mockFolderManager.Setup(mfm => mfm.SetScriptTimeout(It.IsAny<int>()));
             _mockFolderManager.Setup(mfm => mfm.GetMergedTree(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(mergedTree);
@@ -713,6 +714,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var mergedTreeItem = new FolderManager.MergedTreeItem();
             mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, mergedTreeItem);
 
+            _mockFolderManager.Setup(mfm => mfm.AreThereFolderMappingsRequiringNetworkConnectivity(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(false);
             _mockFolderManager.Setup(mfm => mfm.GetCurrentScriptTimeout()).Returns(0);
             _mockFolderManager.Setup(mfm => mfm.SetScriptTimeout(It.IsAny<int>()));
             _mockFolderManager.Setup(mfm => mfm.GetMergedTree(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(mergedTree);
@@ -732,6 +734,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var mergedTreeItem = new FolderManager.MergedTreeItem();
             mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, mergedTreeItem);
 
+            _mockFolderManager.Setup(mfm => mfm.AreThereFolderMappingsRequiringNetworkConnectivity(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(false);
             _mockFolderManager.Setup(mfm => mfm.GetCurrentScriptTimeout()).Returns(0);
             _mockFolderManager.Setup(mfm => mfm.SetScriptTimeout(It.IsAny<int>()));
             _mockFolderManager.Setup(mfm => mfm.GetMergedTree(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(mergedTree);
@@ -751,6 +754,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var mergedTreeItem = new FolderManager.MergedTreeItem();
             mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, mergedTreeItem);
 
+            _mockFolderManager.Setup(mfm => mfm.AreThereFolderMappingsRequiringNetworkConnectivity(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(false);
             _mockFolderManager.Setup(mfm => mfm.GetCurrentScriptTimeout()).Returns(0);
             _mockFolderManager.Setup(mfm => mfm.SetScriptTimeout(It.IsAny<int>()));
             _mockFolderManager.Setup(mfm => mfm.GetMergedTree(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(mergedTree);
@@ -769,6 +773,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var mergedTreeItem = new FolderManager.MergedTreeItem();
             mergedTree.Add(Constants.FOLDER_ValidFolderRelativePath, mergedTreeItem);
 
+            _mockFolderManager.Setup(mfm => mfm.AreThereFolderMappingsRequiringNetworkConnectivity(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(false);
             _mockFolderManager.Setup(mfm => mfm.GetCurrentScriptTimeout()).Returns(0);
             _mockFolderManager.Setup(mfm => mfm.SetScriptTimeout(It.IsAny<int>()));
             _mockFolderManager.Setup(mfm => mfm.GetMergedTree(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(mergedTree);
@@ -779,6 +784,16 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var result = _mockFolderManager.Object.Synchronize(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false, false);
 
             Assert.AreEqual(1, result);
+        }
+
+        [Test]
+        [ExpectedException(typeof(NoNetworkAvailableException))]
+        public void SynchronizeFolder_Throws_When_Some_Folder_Mapping_Requires_Network_Connectivity_But_There_Is_No_Network_Available()
+        {
+            _mockFolderManager.Setup(mfm => mfm.AreThereFolderMappingsRequiringNetworkConnectivity(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false)).Returns(true);
+            _mockFolderManager.Setup(mfm => mfm.IsNetworkAvailable()).Returns(false);
+
+            _mockFolderManager.Object.Synchronize(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false, false);
         }
 
         #endregion

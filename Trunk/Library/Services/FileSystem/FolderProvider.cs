@@ -125,6 +125,17 @@ namespace DotNetNuke.Services.FileSystem
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating if the provider requires network connectivity to do its tasks.
+        /// </summary>
+        public virtual bool RequiresNetworkConnectivity
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         #endregion
 
         #region Abstract Methods

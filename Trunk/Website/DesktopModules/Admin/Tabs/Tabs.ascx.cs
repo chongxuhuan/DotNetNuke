@@ -904,7 +904,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 canAdd = TabPermissionController.CanAddPage(tab);
                 canDelete = TabPermissionController.CanDeletePage(tab);
                 canMakeVisible = canHide = canDisable = canEnable = canEdit = TabPermissionController.CanManagePage(tab);
-                canMakeHome = PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName);
+                canMakeHome = PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) && !tab.DisableLink;
 
                 if (TabController.IsSpecialTab(tab.TabID, PortalSettings) || rblMode.SelectedValue == "H")
                 {

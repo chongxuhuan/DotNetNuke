@@ -27,4 +27,4 @@
         <asp:CheckBox ID="IsSecure" runat="server" Checked="false" CssClass="dnnFormCheckbox" />
     </asp:Panel>
 </div>
-<asp:LinkButton ID="cmdUpdate" runat="server" ResourceKey="UpdateButton" CssClass="dnnPrimaryAction" />
+<asp:LinkButton ID="cmdUpdate" runat="server" ResourceKey="UpdateButton" CssClass="dnnPrimaryAction" ValidationGroup="ControlPanel" />

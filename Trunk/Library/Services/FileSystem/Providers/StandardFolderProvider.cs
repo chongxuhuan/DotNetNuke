@@ -35,6 +35,21 @@ namespace DotNetNuke.Services.FileSystem
 {
     public class StandardFolderProvider : FolderProvider
     {
+        #region Public Properties
+
+        /// <summary>
+        /// Gets a value indicating if the provider requires network connectivity to do its tasks.
+        /// </summary>
+        public override bool RequiresNetworkConnectivity
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        #endregion
+
         #region Abstract Methods
 
         public override void AddFile(IFolderInfo folder, string fileName, Stream content)
@@ -148,7 +163,7 @@ namespace DotNetNuke.Services.FileSystem
             {
                 stream = FileWrapper.Instance.OpenRead(Path.Combine(folder.PhysicalPath, fileName));
             }
-            catch(IOException iex)
+            catch (IOException iex)
             {
                 DnnLog.Warn(iex.Message);
             }
@@ -275,7 +290,7 @@ namespace DotNetNuke.Services.FileSystem
                 }
             }
         }
-        
+
         public override void UpdateFile(IFolderInfo folder, string fileName, Stream content)
         {
             Requires.NotNull("folder", folder);

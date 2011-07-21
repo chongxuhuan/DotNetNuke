@@ -268,7 +268,7 @@
     <value>Date</value>
   </data>
   <data name="ErrorDeletingFolder.Text" xml:space="preserve">
-    <value>Error Deleting Folder:&lt;BR&gt;</value>
+    <value>Error Deleting Folder:&lt;br/&gt;</value>
   </data>
   <data name="NotEnoughSpace.Text" xml:space="preserve">
     <value>Not Enough avaialble Portal Space</value>
@@ -313,10 +313,10 @@
     <value>UnSelect All</value>
   </data>
   <data name="Rename.Error" xml:space="preserve">
-    <value>Error Renaming File: &lt;BR&gt;</value>
+    <value>Error Renaming File: &lt;br/&gt;</value>
   </data>
   <data name="SetAttrubute.Error" xml:space="preserve">
-    <value>Errors Occured While Attempting to Change File Attributes: &lt;BR&gt;</value>
+    <value>Errors Occured While Attempting to Change File Attributes: &lt;br/&gt;</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>&lt;h1&gt;About File Manager&lt;/h1&gt;&lt;p&gt;Administrators can manage the files stored in their upload directory. This module allows you to upload new files, download files, delete files, and synchronize your upload directory. It also provides information on the amount of disk space used and available.&lt;/p&gt;</value>
@@ -383,5 +383,14 @@
   </data>
   <data name="SecureFolderWarning.Text" xml:space="preserve">
     <value>These permissions apply to DotNetNuke.  Anonymous users may be able to bypass DotNetNuke and read these files.  Other folder providers such as Secure, and Database can prevent all anonymous access to files.</value>
+  </data>
+  <data name="ErrorDownloadingFile.Text" xml:space="preserve">
+    <value>Error Downloading File:&amp;nbsp;</value>
+  </data>
+  <data name="ErrorSynchronizingFolder.Text" xml:space="preserve">
+    <value>Error Synchronizing Folder:&amp;nbsp;</value>
+  </data>
+  <data name="ErrorSynchronizingFolders.Text" xml:space="preserve">
+    <value>Error Synchronizing Folders:&amp;nbsp;</value>
   </data>
 </root>

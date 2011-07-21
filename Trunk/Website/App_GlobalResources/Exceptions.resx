@@ -150,6 +150,9 @@
   <data name="InvalidZipFile.Text" xml:space="preserve">
     <value>The file specified is not a zip compressed file.</value>
   </data>
+  <data name="NoNetworkAvailableError.Text" xml:space="preserve">
+    <value>Network connectivity is needed but there is no network available.</value>
+  </data>
   <data name="PropertyCannotBeNegative.Text" xml:space="preserve">
     <value>The property '{1}' in object '{0}' cannot be negative.</value>
   </data>

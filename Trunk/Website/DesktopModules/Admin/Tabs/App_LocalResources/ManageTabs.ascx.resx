@@ -532,7 +532,7 @@
     <value>You are about to publish this page.  This action will mark all the modules as translated and will automatically copy all the View permissions from the master/default language.  Are you sure you want to do this?</value>
   </data>
   <data name="ReadyForTranslation.Text" xml:space="preserve">
-    <value>Click this button to mark this page "Ready for Translation".  This will copy the module content to the sub-language versions of the page and send messages to any user in a Page Translation role.</value>
+    <value>Ready for Translation</value>
   </data>
   <data name="NewContentMessage.Body" xml:space="preserve">
     <value>The following page has new content ready for translation&lt;br/&gt;
@@ -549,10 +549,10 @@ Page: &lt;a href='{1}'&gt;{0}&lt;/a&gt;</value>
     <value>Publish Page</value>
   </data>
   <data name="readyToTranslateLabel.Help" xml:space="preserve">
-    <value>Click the button to the right to mark this page "Ready for Translation".  This will copy the module content to the sub-language versions of the page and send messages to any user in a Page Translation role.</value>
+    <value>Click the link below to mark this page "Ready for Translation".  This will copy the module content to the sub-language versions of the page and send messages to any user in a Page Translation role.</value>
   </data>
   <data name="readyToTranslateLabel.Text" xml:space="preserve">
-    <value>Ready for Translation</value>
+    <value>Click the link below to mark this page "Ready for Translation".  This will copy the module content to the sub-language versions of the page and send messages to any user in a Page Translation role.</value>
   </data>
   <data name="CacheSettings.Text" xml:space="preserve">
     <value>Cache Settings</value>

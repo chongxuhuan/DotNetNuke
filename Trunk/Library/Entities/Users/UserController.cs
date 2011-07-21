@@ -226,6 +226,10 @@ namespace DotNetNuke.Entities.Users
             {
                 settings["Security_EmailValidation"] = Globals.glbEmailRegEx;
             }
+            if (settings["Security_UserNameValidation"] == null)
+            {
+                settings["Security_UserNameValidation"] = Globals.glbUserNameRegEx;
+            }
             //Forces a valid profile on registration
             if (settings["Security_RequireValidProfile"] == null)
             {
