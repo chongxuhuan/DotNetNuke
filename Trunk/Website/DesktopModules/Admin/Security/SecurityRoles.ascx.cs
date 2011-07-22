@@ -180,8 +180,8 @@ namespace DotNetNuke.Modules.Admin.Security
         {
             get
             {
-                object setting = UserModuleBase.GetSetting(PortalId, "Security_UsersControl");
-                return (UsersControl) setting;
+                var setting = UserModuleBase.GetSetting(PortalId, "Security_UsersControl");
+                return (UsersControl)Convert.ToInt32(setting); ;
             }
         }
 

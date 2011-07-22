@@ -404,11 +404,14 @@ namespace DotNetNuke.Framework
         public static void RegisterDnnJQueryPlugins(Page page)
         {
             RegisterJQueryUI(page);
-#if DEBUG
-            page.ClientScript.RegisterClientScriptInclude("dnnJqueryPlugins", page.ResolveUrl("~/js/Debug/dnn.jquery.js"));
-#else
-            page.ClientScript.RegisterClientScriptInclude("dnnJqueryPlugins", page.ResolveUrl("~/js/dnn.jquery.js"));
-#endif
+            if (HttpContext.Current.IsDebuggingEnabled)
+            {
+                page.ClientScript.RegisterClientScriptInclude("dnnJqueryPlugins", page.ResolveUrl("~/js/Debug/dnn.jquery.js"));
+            }
+            else
+            {
+                page.ClientScript.RegisterClientScriptInclude("dnnJqueryPlugins", page.ResolveUrl("~/js/dnn.jquery.js"));
+            }
         }
 
         public static void RequestRegistration()

@@ -167,12 +167,14 @@
     <None Include="App_LocalResources\ProviderConfig.ascx.resx">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Dialogs\DocumentManager.ascx" />
     <Content Include="images\attachment.png" />
     <Content Include="images\help.png" />
     <Content Include="images\radeditor_config_large.png" />
     <Content Include="images\radeditor_config_small.png" />
     <Content Include="images\save.png" />
     <Content Include="images\templates.png" />
+    <Content Include="js\ClientScripts.js" />
     <Content Include="js\RegisterDialogs.js" />
     <Content Include="License.txt" />
     <Content Include="LinkClickUrlHandler.ashx" />
@@ -200,12 +202,12 @@
     <Content Include="ConfigFile\ConfigFile.xml.Original.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="ConfigFile\ConfigFile.xml">
+    <Content Include="ConfigFile\default.ConfigFile.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="DialogHandler.aspx" />
     <Content Include="ToolsFile\ToolsFile.xml.Original.xml" />
-    <Content Include="ToolsFile\ToolsFile.xml" />
+    <Content Include="ToolsFile\default.ToolsFile.xml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Dialogs\RenderTemplate.aspx" />
@@ -223,6 +225,10 @@
     <Content Include="ImageTester.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\DotNetNuke.Instrumentation\DotNetNuke.Instrumentation.csproj">
+      <Project>{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}</Project>
+      <Name>DotNetNuke.Instrumentation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\DotNetNuke.Library.csproj">
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Name>DotNetNuke.Library</Name>
@@ -252,13 +258,13 @@
       <ResourceFiles Include="App_LocalResources\*.resx" />
     </ItemGroup>
     <ItemGroup>
-      <Css Include="Css\*.css" />
+      <Css Include="Css/*.css" />
     </ItemGroup>
     <ItemGroup>
-      <Dialogs Include="Dialogs\*.ascx, Dialogs\*.aspx" />
+      <Dialogs Include="Dialogs/*.ascx; Dialogs/*.aspx" />
     </ItemGroup>
     <ItemGroup>
-      <DialogResourceFiles Include="Dialogs\App_LocalResources\*.resx" />
+      <DialogResourceFiles Include="Dialogs/App_LocalResources/*.resx" />
     </ItemGroup>
     <ItemGroup>
       <Images Include="Images/*.*" />

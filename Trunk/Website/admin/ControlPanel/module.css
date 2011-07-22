@@ -49,7 +49,7 @@
 		ul.dnnadminmega {margin:0;padding:5px 0 0 0;}
 			.dnnadminmega ul, .dnnadminmega li {list-style:none none;margin:0;padding:0;}
 			.dnnadminmega li {float:left;display:block;}
-				.dnnadminmega .megaborder {position:absolute;top:18px;z-index:20;width:485px;padding:1em;background:white;-moz-border-radius:0px 0px 5px 5px;-webkit-border-bottom-right-radius:5px;-webkit-border-bottom-left-radius:5px;border-radius:0px 0px 5px 5px;-moz-box-shadow:0 1px 5px #aaa;-webkit-box-shadow:0 1px 5px #aaa;box-shadow:0 1px 5px #aaa;border:4px solid #ccc;display:none;}
+				.dnnadminmega .megaborder {position:absolute;top:18px;left:0px;z-index:20;width:485px;padding:1em;background:white;-moz-border-radius:0px 0px 5px 5px;-webkit-border-bottom-right-radius:5px;-webkit-border-bottom-left-radius:5px;border-radius:0px 0px 5px 5px;-moz-box-shadow:0 1px 5px #aaa;-webkit-box-shadow:0 1px 5px #aaa;box-shadow:0 1px 5px #aaa;border:4px solid #ccc;display:none;}
 					.dnnadminmega li.root {float:left;margin:0 15px 0 0;position:relative;}
 						.dnnadminmega li.root a{font-weight:bold;}
 						.dnnadminmega li.root > a{color:Black;}

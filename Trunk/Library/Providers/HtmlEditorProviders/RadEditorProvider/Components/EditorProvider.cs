@@ -39,6 +39,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Modules.HTMLEditorProvider;
 using DotNetNuke.Security;
 using DotNetNuke.UI;
@@ -221,7 +222,23 @@ namespace DotNetNuke.Providers.RadEditorProvider
                 }
 
                 //nothing else found, return default file
+                EnsureDefaultFileExists(path);
+
                 return tempConfigFile;
+            }
+        }
+
+        private static void EnsureDefaultFileExists(string path)
+        {
+            if (!File.Exists(path))
+            {
+                string filePath = Path.GetDirectoryName(path);
+                string name = "default." + Path.GetFileName(path);
+                string defaultConfigFile = Path.Combine(filePath, name);
+
+                //if defaultConfigFile is missing there is a big problem
+                //let the error propogate to the module level
+                File.Copy(defaultConfigFile, path);
             }
         }
 
@@ -321,6 +338,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
                 }
 
                 //nothing else found, return default file
+                EnsureDefaultFileExists(path);
+
                 return tempToolsFile;
             }
         }
@@ -452,8 +471,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
         private void AddChildLinks(int TabId, ref EditorLink links)
         {
-//INSTANT C# NOTE: Commented this declaration since looping variables in 'foreach' loops are declared in the 'foreach' header in C#:
-//			DotNetNuke.Entities.Tabs.TabInfo objTab = null;
             var tc = new TabController();
             List<TabInfo> tabs = TabController.GetPortalTabs(PortalSettings.PortalId, Null.NullInteger, false, "", true, false, true, true, false);
             foreach (TabInfo objTab in tabs)
@@ -477,8 +494,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
         private void AddPortalLinks()
         {
-//INSTANT C# NOTE: Commented this declaration since looping variables in 'foreach' loops are declared in the 'foreach' header in C#:
-//			DotNetNuke.Entities.Tabs.TabInfo objTab = null;
             var portalLinks = new EditorLink("Portal Links", string.Empty);
             _editor.Links.Add(portalLinks);
 
@@ -513,6 +528,9 @@ namespace DotNetNuke.Providers.RadEditorProvider
             _editor.ToolsFile = ToolsFile;
             _editor.EnableViewState = false;
             _editor.ExternalDialogsPath = moduleFolderPath + "Dialogs/";
+
+            _editor.OnClientCommandExecuting = "OnClientCommandExecuting";
+
 
             if (! string.IsNullOrEmpty(ConfigFile))
             {
@@ -864,6 +882,9 @@ namespace DotNetNuke.Providers.RadEditorProvider
             PortalPath = PortalPath.Replace(PortalSettings.HomeDirectory, "").Replace("//", "/");
             string strSaveTemplateDialogPath = _panel.Page.ResolveUrl(moduleFolderPath + "Dialogs/SaveTemplate.aspx?Path=" + PortalPath + "&TabId=" + PortalSettings.ActiveTab.TabID);
 
+            string strRegisterClientScriptPath = _panel.Page.ResolveUrl(moduleFolderPath + "js/ClientScripts.js");
+
+            _panel.Controls.Add(new LiteralControl("<script type=\"text/javascript\" src=\"" + strRegisterClientScriptPath + "\"></script>"));
 
             string strRegisterDialogScriptPath = _panel.Page.ResolveUrl(moduleFolderPath + "js/RegisterDialogs.js");
 
@@ -933,13 +954,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
         {
             try
             {
-                //Exceptions are causing a stream of other NullReferenceExceptions
-                //as a work around, track the exception and print out
-                //                If (Not IsNothing(_TrackException)) Then
-                //                    _panel.Controls.Clear()
-                //                    _panel.Controls.Add(New LiteralControl(_TrackException.Message))
-                //                End If
-
                 var parentModule = ControlUtilities.FindParentControl<PortalModuleBase>(HtmlEditorControl);
                 int moduleid = Convert.ToInt32(((parentModule == null) ? -1 : parentModule.ModuleId));
                 int portalId = Convert.ToInt32(((parentModule == null) ? -1 : parentModule.PortalId));

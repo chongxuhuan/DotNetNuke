@@ -25,6 +25,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
@@ -72,8 +73,52 @@ namespace DotNetNuke.Services.FileSystem
             return objFolderMapping.FolderMappingID;
         }
 
-        public void DeleteFolderMapping(int folderMappingID)
+        public void DeleteFolderMapping(int portalID, int folderMappingID)
         {
+            var folderManager = FolderManager.Instance;
+            var folders = folderManager.GetFolders(portalID);
+            
+            var folderMappingFolders = folders.Where(f => f.FolderMappingID == folderMappingID);
+
+            if (folderMappingFolders.Count() > 0)
+            {
+                // Delete files in folders with the provided mapping (only in the database)
+                foreach (var file in folderMappingFolders.Select(folderManager.GetFiles).SelectMany(files => files))
+                {
+                    dataProvider.DeleteFile(portalID, file.FileName, file.FolderId);
+                }
+
+                // Remove the folders with the provided mapping that doesn't have child folders with other mapping (only in the database and filesystem)
+                var folders1 = folders; // copy the variable to not access a modified closure
+                var removableFolders = folders.Where(f => f.FolderMappingID == folderMappingID && !folders1.Any(f2 => f2.FolderID != f.FolderID &&
+                                f2.FolderPath.StartsWith(f.FolderPath) && f2.FolderMappingID != folderMappingID));
+
+                if (removableFolders.Count() > 0)
+                {
+                    foreach (var removableFolder in removableFolders.OrderByDescending(rf => rf.FolderPath))
+                    {
+                        DirectoryWrapper.Instance.Delete(removableFolder.PhysicalPath, false);
+                        dataProvider.DeleteFolder(portalID, removableFolder.FolderPath);
+                    }
+                }
+
+                // Update the rest of folders with the provided mapping to use the standard mapping
+                folders = folderManager.GetFolders(portalID); // re-fetch the folders
+
+                folderMappingFolders = folders.Where(f => f.FolderMappingID == folderMappingID);
+
+                if (folderMappingFolders.Count() > 0)
+                {
+                    var defaultFolderMapping = GetDefaultFolderMapping(portalID);
+
+                    foreach (var folderMappingFolder in folderMappingFolders)
+                    {
+                        folderMappingFolder.FolderMappingID = defaultFolderMapping.FolderMappingID;
+                        folderManager.UpdateFolder(folderMappingFolder);
+                    }
+                }
+            }
+            
             dataProvider.DeleteFolderMapping(folderMappingID);
             DataCache.RemoveCache(CacheKeyPrefix + folderMappingID);
         }

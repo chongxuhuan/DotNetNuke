@@ -95,18 +95,38 @@ namespace DotNetNuke.Common
             ComponentFactory.InstallComponents(new ProviderInstaller("moduleCaching", typeof (ModuleCachingProvider)));
             ComponentFactory.InstallComponents(new ProviderInstaller("sitemap", typeof (SitemapProvider)));
             ComponentFactory.InstallComponents(new ProviderInstaller("folder", typeof (FolderProvider)));
-            var provider = ComponentFactory.GetComponent<PermissionProvider>();
-            if (provider == null)
-            {
-                ComponentFactory.RegisterComponentInstance<PermissionProvider>(new PermissionProvider());
-            }
+            RegisterIfNotAlreadyRegistered<FolderProvider, StandardFolderProvider>("StandardFolderProvider");
+            RegisterIfNotAlreadyRegistered<FolderProvider, SecureFolderProvider>("SecureFolderProvider");
+            RegisterIfNotAlreadyRegistered<FolderProvider, DatabaseFolderProvider>("DatabaseFolderProvider");
+            RegisterIfNotAlreadyRegistered<PermissionProvider>();
             ComponentFactory.InstallComponents(new ProviderInstaller("htmlEditor", typeof (HtmlEditorProvider), ComponentLifeStyleType.Transient));
             ComponentFactory.InstallComponents(new ProviderInstaller("navigationControl", typeof (NavigationProvider), ComponentLifeStyleType.Transient));
 
             DnnLog.Info("Application Started");
         }
 
-        private void Application_End(object Sender, EventArgs E)
+        private static void RegisterIfNotAlreadyRegistered<TConcrete>(string name = "") where TConcrete:class, new()
+        {
+            RegisterIfNotAlreadyRegistered<TConcrete, TConcrete>(name);
+        }
+
+	    private static void RegisterIfNotAlreadyRegistered<TAbstract, TConcrete>(string name = "") where TAbstract:class where TConcrete:class, new()
+	    {
+	        var provider = ComponentFactory.GetComponent<TAbstract>();
+	        if (provider == null)
+	        {
+                if(String.IsNullOrEmpty(name))
+                {
+                    ComponentFactory.RegisterComponentInstance<TAbstract>(new TConcrete());   
+                }
+                else
+                {
+                    ComponentFactory.RegisterComponentInstance<TAbstract>(name, new TConcrete());    
+                }
+	        }
+	    }
+
+	    private void Application_End(object Sender, EventArgs E)
         {
             DnnLog.MethodEntry();
             DnnLog.Info("Application Ending");

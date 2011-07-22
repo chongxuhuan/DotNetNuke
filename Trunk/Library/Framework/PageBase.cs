@@ -349,13 +349,16 @@ namespace DotNetNuke.Framework
                 Localization.SetThreadCultures(PageCulture, PortalSettings);
             }
 
-
             AJAX.AddScriptManager(this);
-#if DEBUG
-            Page.ClientScript.RegisterClientScriptInclude("dnncore", ResolveUrl("~/js/Debug/dnncore.js"));
-#else
-            Page.ClientScript.RegisterClientScriptInclude("dnncore", ResolveUrl("~/js/dnncore.js"));
-#endif
+
+            if (HttpContext.Current.IsDebuggingEnabled)
+            {
+                Page.ClientScript.RegisterClientScriptInclude("dnncore", Page.ResolveUrl("~/js/Debug/dnncore.js"));
+            }
+            else
+            {
+                Page.ClientScript.RegisterClientScriptInclude("dnncore", Page.ResolveUrl("~/js/dnncore.js"));
+            }
             base.OnInit(e);
         }
 

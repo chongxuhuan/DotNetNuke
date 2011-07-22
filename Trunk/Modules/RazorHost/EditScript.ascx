@@ -4,7 +4,7 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <dnn:DnnToolTipManager ID="toolTipManager" runat="server" Position="Center" RelativeTo="BrowserWindow" Width="500px" Height="200px" HideEvent="ManualClose" ShowEvent="OnClick" Modal="true" Skin="Default" RenderInPageRoot="true" AnimationDuration="200" ManualClose="true"
 	ManualCloseButtonText="Close" />
-<div class="dnnForm dnnRazorHost dnnClear" id="dnnRazorHost">
+<div class="dnnForm dnnRazorHostEditScript dnnClear" id="dnnEditScript">
     <fieldset>
         <div class="dnnFormItem">
             <dnn:Label id="scriptsLabel" runat="Server" controlname="scriptList" />

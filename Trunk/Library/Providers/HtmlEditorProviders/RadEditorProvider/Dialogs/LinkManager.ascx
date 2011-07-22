@@ -618,7 +618,6 @@
 	var _enableUrlLanguage = parent.dnn.getVar('editorEnableUrlLanguage');
 </script>
 
-
 <table cellpadding="0" cellspacing="0" class="reDialog LinkManager NoMarginDialog" style="width: 392px;">
 	<tr>
 		<td class="reTopcell">

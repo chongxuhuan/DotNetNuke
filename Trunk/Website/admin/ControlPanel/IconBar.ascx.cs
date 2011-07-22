@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -727,11 +728,16 @@ namespace DotNetNuke.UI.ControlPanels
         private void cboPanes_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadPositions();
-#if DEBUG
-            string script = string.Format(Globals.glbScriptFormat, ResolveUrl("~/Resources/ControlPanel/ControlPanel.debug.js"));
-#else
-            string script = string.Format(Globals.glbScriptFormat, ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
-#endif
+            string script;
+            if (HttpContext.Current.IsDebuggingEnabled)
+            {
+                script = string.Format(Globals.glbScriptFormat, ResolveUrl("~/Resources/ControlPanel/ControlPanel.debug.js"));
+            }
+            else
+            {
+                script = string.Format(Globals.glbScriptFormat, ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
+            }
+
             ClientAPI.RegisterStartUpScript(Page, "ControlPanel", script);
         }
 

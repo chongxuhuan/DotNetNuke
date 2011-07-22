@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <manifest>
 	<template>DNNAdmin.xslt</template>
-	<scripts>
-    <script>jquery.dnnadminmega.js</script>
-  </scripts>
   <defaultClientOptions>
 		<clientOption name="MenuStyle" type="string" value="DNNAdmin" />
 	</defaultClientOptions>

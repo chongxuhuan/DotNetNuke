@@ -159,6 +159,16 @@
                         <li><asp:LinkButton ID="readyForTranslationButton" runat="server" ResourceKey="ReadyForTranslation"  CssClass="dnnSecondaryAction"/></li>                        
                     </ul>
 				</div>
+                <div id="sendTranslationMessageRow" runat="server" visible="false" class="dnnFormItem">                    
+                    <asp:Label ID="TranslationCommentLabel" runat="server" resourcekey="TranslationComment" EnableViewState="False" />		            
+			        <div class="dnnFormItem">
+				        <asp:textbox id="txtTranslationComment" runat="server" textmode="multiline" />				            
+			        </div>			            
+                    <ul class="dnnActions dnnClear">		                    
+		                <li><asp:LinkButton id="cmdSubmitTranslation" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdSubmit" /></li>
+		                <li><asp:LinkButton id="cmdCancelTranslation" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdCancel" /></li>
+	                </ul>
+                </div>
 				<div id="localizedTabsRow" runat="server" class="dnnFormItem">
 					<asp:Label ID="localizedTabsLabel" runat="server" resourcekey="LocalizedTabs" EnableViewState="False" />
 					<dnn:TabLocalization id="tabLocalization" runat="server" />

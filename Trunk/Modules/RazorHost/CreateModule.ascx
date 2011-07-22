@@ -4,9 +4,7 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <dnn:DnnToolTipManager ID="toolTipManager" runat="server" Position="Center" RelativeTo="BrowserWindow" Width="500px" Height="200px" HideEvent="ManualClose"
 	ShowEvent="OnClick" Modal="true" Skin="Default" RenderInPageRoot="true" AnimationDuration="200" ManualClose="true"	ManualCloseButtonText="Close" />
-<asp:RequiredFieldValidator ID="valFolder" runat="server" resourceKey="valFolder" ControlToValidate="txtFolder" CssClass="dnnFormError" EnableClientScript="true" Display="Dynamic" />
-<asp:RequiredFieldValidator ID="valName" runat="server" resourceKey="valName" ControlToValidate="txtName" CssClass="dnnFormError" EnableClientScript="true" Display="Dynamic" />
-<div class="dnnForm dnnRazorHost dnnClear" id="dnnRazorHost">
+<div class="dnnForm dnnRazorHostCreateModule dnnClear" id="dnnRazorHost">
     <fieldset>
         <div class="dnnFormItem">
             <dnn:Label id="scriptsLabel" runat="Server" controlname="scriptList" />
@@ -17,10 +15,14 @@
         <div class="dnnFormItem">
             <dnn:label id="plFolder" controlname="txtFolder" runat="server" />
             <asp:TextBox ID="txtFolder" runat="server" />
+            <asp:RequiredFieldValidator ID="valFolder" runat="server" resourceKey="valFolder" ControlToValidate="txtFolder" 
+                CssClass="dnnFormError" EnableClientScript="true" Display="Dynamic" />
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plName" controlname="txtName" runat="server" />
             <asp:TextBox ID="txtName" runat="server" />
+            <asp:RequiredFieldValidator ID="valName" runat="server" resourceKey="valName" ControlToValidate="txtName" 
+            CssClass="dnnFormError" EnableClientScript="true" Display="Dynamic" />
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plDescription" controlname="txtDescription" runat="server" />

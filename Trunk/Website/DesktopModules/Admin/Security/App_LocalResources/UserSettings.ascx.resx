@@ -375,4 +375,10 @@
   <data name="Security_UserNameValidation.Text" xml:space="preserve">
     <value>User Name Validation</value>
   </data>
+  <data name="Security_CaptchaRetrivePassword.Help" xml:space="preserve">
+    <value>Select to add a CAPTCHA control to Password Retrieval</value>
+  </data>
+  <data name="Security_CaptchaRetrivePassword.Text" xml:space="preserve">
+    <value>Use CAPTCHA to Retrieve Password</value>
+  </data>
 </root>

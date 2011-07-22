@@ -22,24 +22,6 @@ namespace DotNetNuke.Modules.RazorHost {
         protected global::DotNetNuke.Web.UI.WebControls.DnnToolTipManager toolTipManager;
         
         /// <summary>
-        /// valFolder control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator valFolder;
-        
-        /// <summary>
-        /// valName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator valName;
-        
-        /// <summary>
         /// scriptsLabel control.
         /// </summary>
         /// <remarks>
@@ -94,6 +76,15 @@ namespace DotNetNuke.Modules.RazorHost {
         protected global::System.Web.UI.WebControls.TextBox txtFolder;
         
         /// <summary>
+        /// valFolder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valFolder;
+        
+        /// <summary>
         /// plName control.
         /// </summary>
         /// <remarks>
@@ -110,6 +101,15 @@ namespace DotNetNuke.Modules.RazorHost {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtName;
+        
+        /// <summary>
+        /// valName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valName;
         
         /// <summary>
         /// plDescription control.

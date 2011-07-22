@@ -30,7 +30,7 @@ namespace DotNetNuke.Services.FileSystem
     {
         void AddDefaultFolderTypes(int portalID);
         int AddFolderMapping(FolderMappingInfo objFolderMapping);
-        void DeleteFolderMapping(int folderMappingID);
+        void DeleteFolderMapping(int portalID, int folderMappingID);
         FolderMappingInfo GetDefaultFolderMapping(int portalID);
         FolderMappingInfo GetFolderMapping(int folderMappingID);
         FolderMappingInfo GetFolderMapping(int portalID, string mappingName);

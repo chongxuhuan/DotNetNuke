@@ -120,7 +120,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 switch (e.CommandName)
                 {
                     case "Delete":
-                        _folderMappingController.DeleteFolderMapping(folderMapping.FolderMappingID);
+                        _folderMappingController.DeleteFolderMapping(folderMapping.PortalID, folderMapping.FolderMappingID);
                         folderMappingsList.Remove(folderMapping);
                         break;
                     default:

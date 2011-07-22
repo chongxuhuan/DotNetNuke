@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -282,11 +283,14 @@ namespace DotNetNuke.UI.ControlPanels
 
 				if (!cs.IsClientScriptIncludeRegistered("ControlPanel"))
 				{
-#if DEBUG
-					cs.RegisterClientScriptInclude("ControlPanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.debug.js"));
-#else
-                    cs.RegisterClientScriptInclude("ControlPanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
-#endif
+                    if (HttpContext.Current.IsDebuggingEnabled)
+                    {
+                        cs.RegisterClientScriptInclude("ControlPanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.debug.js"));
+                    }
+                    else
+                    {
+                        cs.RegisterClientScriptInclude("ControlPanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
+                    }
 				}
 			}
         	cmdVisibility.Visible = false;

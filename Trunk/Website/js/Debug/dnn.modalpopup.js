@@ -38,7 +38,7 @@
                 $(document).find('html').css('overflow', 'hidden');
                 $(document).append($modal);
             }
-            $modal[0].src = url;
+
             var windowTop = parent; //needs to be assign to a varaible for Opera compatibility issues.
 
             $modal.dialog({
@@ -94,6 +94,29 @@
                 $modal.dialog({ position: 'center' });
 
             });
+        	
+        	var showLoading = function() {
+        		var loading = $("<div class=\"dnnLoading\"></div>");
+        		loading.css({
+					width: $modal.width()
+					,height: $modal.height()
+        		});
+        		$modal.before(loading);
+        		$modal.hide();
+        	};
+        	
+        	var hideLoading = function () {
+        		$modal.prev(".dnnLoading").remove();
+        		$modal.show();
+        	}
+        	
+        	setTimeout(function() { showLoading() }, 0);
+        	
+        	$modal[0].src = url;
+
+        	$modal.bind("load", function() {
+        		hideLoading();
+        	});
 
             if (showReturn.toString() == "true") {
                 return false;

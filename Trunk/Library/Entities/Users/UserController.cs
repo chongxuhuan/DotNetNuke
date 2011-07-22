@@ -222,6 +222,10 @@ namespace DotNetNuke.Entities.Users
             {
                 settings["Security_CaptchaRegister"] = false;
             }
+            if (settings["Security_CaptchaRetrivePassword"] == null)
+            {
+                settings["Security_CaptchaRetrivePassword"] = false;
+            }
             if (settings["Security_EmailValidation"] == null)
             {
                 settings["Security_EmailValidation"] = Globals.glbEmailRegEx;

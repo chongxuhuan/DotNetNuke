@@ -90,7 +90,7 @@ namespace DotNetNuke.UI.Skins
             {
                 string folder = skinFolder.Substring(skinFolder.LastIndexOf("\\") + 1);
 
-                string key = FormatSkinName(folder, Path.GetFileNameWithoutExtension(skinFile));
+                string key = ((isPortal) ? "Site: " : "Host: ") + FormatSkinName(folder, Path.GetFileNameWithoutExtension(skinFile));
                 string prefix = (isPortal) ? "[L]" : "[G]";
                 string value = prefix + skinRoot + "/" + folder + "/" + Path.GetFileName(skinFile);
                 skins.Add(new KeyValuePair<string, string>(key, value)); 

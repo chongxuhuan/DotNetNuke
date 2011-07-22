@@ -486,25 +486,20 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 #region Properties
 
-		private FileSystemValidation _DNNValidator = null;
+		private FileSystemValidation _DNNValidator;
 		private FileSystemValidation DNNValidator
 		{
 			get
 			{
-				if (_DNNValidator == null)
-				{
-					_DNNValidator = new FileSystemValidation();
-				}
-
-				return _DNNValidator;
+			    return _DNNValidator ?? (_DNNValidator = new FileSystemValidation());
 			}
 		}
 
-		private DotNetNuke.Entities.Portals.PortalSettings PortalSettings
+		private Entities.Portals.PortalSettings PortalSettings
 		{
 			get
 			{
-				return DotNetNuke.Entities.Portals.PortalSettings.Current;
+				return Entities.Portals.PortalSettings.Current;
 			}
 		}
 
@@ -561,8 +556,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 		private DirectoryItem GetDirectoryItemWithDNNPermissions(string path, bool loadFiles)
 		{
-			DirectoryItem radDirectory = TelerikContent.ResolveDirectory(FileSystemValidation.ToVirtualPath(path));
-		    DirectoryItem[] directoryArray = new[] {radDirectory};
+			var radDirectory = TelerikContent.ResolveDirectory(FileSystemValidation.ToVirtualPath(path));
+		    var directoryArray = new[] {radDirectory};
             var returnValues = AddChildDirectoriesToList(ref directoryArray, true, loadFiles);
 
 			if (returnValues != null && returnValues.Length > 0)
@@ -575,117 +570,118 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 		private DirectoryItem[] AddChildDirectoriesToList(ref DirectoryItem[] radDirectories, bool recursive, bool loadFiles)
 		{
-			ArrayList newDirectories = new ArrayList();
+			var newDirectories = new ArrayList();
 
-			foreach (DirectoryItem radDirectory in radDirectories)
+			foreach (var radDirectory in radDirectories)
 			{
-				System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + " AddChildDirectoriesToList " + radDirectory.Name);
+			    System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + " AddChildDirectoriesToList " + radDirectory.Name);
 
-				if (radDirectory == null)
-				{
-					continue;
-				}
+			    var endUserPath = (string) FileSystemValidation.ToEndUserPath(radDirectory.FullPath);
 
-				string endUserPath = (string)(string)FileSystemValidation.ToEndUserPath(radDirectory.FullPath);
-				FolderInfo dnnFolder = DNNValidator.GetUserFolder(radDirectory.FullPath);
+			    var folderPath = radDirectory.FullPath.EndsWith("/") ? radDirectory.FullPath : radDirectory.FullPath + "/";
 
-				if ((dnnFolder == null))
-				{
-					continue;
-				}
+			    var dnnFolder = DNNValidator.GetUserFolder(folderPath);
 
-				if (dnnFolder != null)
-				{
-					//Don't show protected folders
-					if (! (string.IsNullOrEmpty(dnnFolder.FolderPath)) && dnnFolder.IsProtected)
-					{
-						continue;
-					}
+			    if ((dnnFolder == null))
+			    {
+			        continue;
+			    }
+			    
+                //Don't show protected folders
+			    if (! (string.IsNullOrEmpty(dnnFolder.FolderPath)) && dnnFolder.IsProtected)
+			    {
+			        continue;
+			    }
 
-					//Don't show Cache folder
-					if (dnnFolder.FolderPath.ToLowerInvariant() == "cache/")
-					{
-						continue;
-					}
+			    //Don't show Cache folder
+			    if (dnnFolder.FolderPath.ToLowerInvariant() == "cache/")
+			    {
+			        continue;
+			    }
 
-					ArrayList showFiles = new ArrayList();
-					PathPermissions folderPermissions = PathPermissions.Read;
+			    var showFiles = new ArrayList();
+			    var folderPermissions = PathPermissions.Read;
 
-					if (DNNValidator.CanViewFilesInFolder(dnnFolder))
-					{
-						if (DNNValidator.CanAddToFolder(dnnFolder))
-						{
-							folderPermissions = folderPermissions | PathPermissions.Upload;
-						}
+			    if (DNNValidator.CanViewFilesInFolder(dnnFolder))
+			    {
+			        if (DNNValidator.CanAddToFolder(dnnFolder))
+			        {
+			            folderPermissions = folderPermissions | PathPermissions.Upload;
+			        }
 
-						if (DNNValidator.CanDeleteFolder(dnnFolder))
-						{
-							folderPermissions = folderPermissions | PathPermissions.Delete;
-						}
+			        if (DNNValidator.CanDeleteFolder(dnnFolder))
+			        {
+			            folderPermissions = folderPermissions | PathPermissions.Delete;
+			        }
 
-						if (loadFiles)
-						{
-							IDictionary<string, Services.FileSystem.FileInfo> dnnFiles = GetDNNFiles(dnnFolder.FolderID);
+			        if (loadFiles)
+			        {
+			            IDictionary<string, Services.FileSystem.FileInfo> dnnFiles = GetDNNFiles(dnnFolder.FolderID);
 
-							if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
-							{
-								//check Telerik search patterns to filter out files
-								foreach (Services.FileSystem.FileInfo dnnFile in dnnFiles.Values)
-								{
-									string[] tempVar = SearchPatterns;
-									if (CheckSearchPatterns(dnnFile.FileName, ref tempVar))
-									{
-										string url = Common.Globals.LinkClick("fileid=" + dnnFile.FileId, Null.NullInteger, Null.NullInteger);
+			            if (dnnFolder.StorageLocation != (int) FolderController.StorageLocationTypes.InsecureFileSystem)
+			            {
+			                //check Telerik search patterns to filter out files
+			                foreach (var dnnFile in dnnFiles.Values)
+			                {
+			                    var tempVar = SearchPatterns;
+			                    if (CheckSearchPatterns(dnnFile.FileName, ref tempVar))
+			                    {
+			                        var url = Common.Globals.LinkClick("fileid=" + dnnFile.FileId, Null.NullInteger, Null.NullInteger);
 
-										FileItem fileItem = new FileItem(dnnFile.FileName, dnnFile.Extension, dnnFile.Size, "", url, "", folderPermissions);
+			                        var fileItem = new FileItem(dnnFile.FileName, dnnFile.Extension, dnnFile.Size, "", url, "", folderPermissions);
 
-										showFiles.Add(fileItem);
-									}
-								}
-							}
-							else
-							{
-								//check Telerik search patterns to filter out files
-								foreach (FileItem telerikFile in radDirectory.Files)
-								{
-									if (dnnFiles.ContainsKey(telerikFile.Name))
-									{
-										FileItem fileItem = new FileItem(telerikFile.Name, telerikFile.Extension, telerikFile.Length, "", FileSystemValidation.ToVirtualPath(radDirectory.FullPath) + telerikFile.Name, "", folderPermissions);
+			                        showFiles.Add(fileItem);
+			                    }
+			                }
+			            }
+			            else
+			            {
+			                //check Telerik search patterns to filter out files
+			                foreach (var telerikFile in radDirectory.Files)
+			                {
+			                    if (dnnFiles.ContainsKey(telerikFile.Name))
+			                    {
+			                        var fileItem = new FileItem(telerikFile.Name,
+			                                                         telerikFile.Extension,
+			                                                         telerikFile.Length,
+			                                                         "",
+			                                                         FileSystemValidation.ToVirtualPath(folderPath) + telerikFile.Name,
+			                                                         "",
+			                                                         folderPermissions);
 
-										showFiles.Add(fileItem);
-									}
-								}
-							}
-						}
-					}
+			                        showFiles.Add(fileItem);
+			                    }
+			                }
+			            }
+			        }
+			    }
 
-					FileItem[] folderFiles = (FileItem[])showFiles.ToArray(typeof(FileItem));
+			    var folderFiles = (FileItem[]) showFiles.ToArray(typeof (FileItem));
 
-					//Root folder name
-					string dirName = radDirectory.Name;
-					if (dnnFolder.FolderPath == "" && dnnFolder.FolderName == "")
-					{
-						dirName = FileSystemValidation.EndUserHomeDirectory;
-					}
+			    //Root folder name
+			    var dirName = radDirectory.Name;
+			    if (dnnFolder.FolderPath == "" && dnnFolder.FolderName == "")
+			    {
+			        dirName = FileSystemValidation.EndUserHomeDirectory;
+			    }
 
-					DirectoryItem newDirectory;
-					if (recursive)
-					{
-                        DirectoryItem directory = TelerikContent.ResolveRootDirectoryAsTree(radDirectory.Path);
-                        DirectoryItem[] tempVar2 = directory.Directories;
-						newDirectory = new DirectoryItem(dirName, "", endUserPath, "", folderPermissions, folderFiles, AddChildDirectoriesToList(ref tempVar2, false, false));
-						radDirectory.Directories = tempVar2;
-					}
-					else
-					{
-						newDirectory = new DirectoryItem(dirName, "", endUserPath, "", folderPermissions, folderFiles, new Telerik.Web.UI.Widgets.DirectoryItem[0]);
-					}
+			    DirectoryItem newDirectory;
+			    if (recursive)
+			    {
+			        var directory = TelerikContent.ResolveRootDirectoryAsTree(radDirectory.Path);
+			        var tempVar2 = directory.Directories;
+			        newDirectory = new DirectoryItem(dirName, "", endUserPath, "", folderPermissions, folderFiles, AddChildDirectoriesToList(ref tempVar2, false, false));
+			        radDirectory.Directories = tempVar2;
+			    }
+			    else
+			    {
+			        newDirectory = new DirectoryItem(dirName, "", endUserPath, "", folderPermissions, folderFiles, new DirectoryItem[0]);
+			    }
 
-					newDirectories.Add(newDirectory);
-				}
+			    newDirectories.Add(newDirectory);
 			}
 
-			return (DirectoryItem[])newDirectories.ToArray(typeof(DirectoryItem));
+		    return (DirectoryItem[])newDirectories.ToArray(typeof(DirectoryItem));
 		}
 
 		private IDictionary<string, Services.FileSystem.FileInfo> GetDNNFiles(int dnnFolderID)

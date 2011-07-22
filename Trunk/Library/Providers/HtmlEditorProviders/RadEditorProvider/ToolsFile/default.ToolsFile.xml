@@ -65,8 +65,7 @@
         <tool name="ForeColor" />
         <tool name="BackColor" />
         <tool name="FontName" />
-        <tool name="FontSize" />
-        <tool name="FontName" />
+        <tool name="FontSize" />        
         <tool separator="true"/>
         <tool name="JustifyLeft" />
         <tool name="JustifyCenter" />

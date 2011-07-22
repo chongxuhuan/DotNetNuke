@@ -8,7 +8,8 @@
 	<script type="text/javascript">
 		jQuery(document).ready(function ($) {
 			var $body = window.opera ? (document.compatMode == "CSS1Compat" ? $('html') : $('body')) : $('html,body');
-			$body.animate({ scrollTop: $('#<%=dnnSkinMessage.ClientID %>').offset().top }, 'fast');
+			var scrollTop = $('#<%=dnnSkinMessage.ClientID %>').offset().top - parseInt($(document.body).css("margin-top"));
+			$body.animate({ scrollTop: scrollTop }, 'fast');
 		});
 	</script>
 </dnn:DnnScriptBlock>

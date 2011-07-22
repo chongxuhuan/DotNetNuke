@@ -114,7 +114,7 @@ namespace DotNetNuke.Modules.Admin.Security
         {
             get
             {
-                var setting = GetSetting(PortalId, "Security_CaptchaLogin");
+                var setting = GetSetting(PortalId, "Security_CaptchaRetrivePassword");
                 return Convert.ToBoolean(setting);
             }
         }

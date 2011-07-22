@@ -169,7 +169,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                         {
                             if (FolderMappingID == Null.NullInteger)
                             {
-                                _folderMappingController.DeleteFolderMapping(folderMappingID);
+                                _folderMappingController.DeleteFolderMapping(FolderPortalID, folderMappingID);
                             }
                             return;
                         }
