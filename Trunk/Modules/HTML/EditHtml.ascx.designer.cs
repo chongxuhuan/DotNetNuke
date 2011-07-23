@@ -13,31 +13,22 @@ namespace DotNetNuke.Modules.Html {
     public partial class EditHtml {
         
         /// <summary>
-        /// liCurrent control.
+        /// ehmContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liCurrent;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ehmContent;
         
         /// <summary>
-        /// liMaster control.
+        /// placeMasterContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liMaster;
-        
-        /// <summary>
-        /// liVersions control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liVersions;
+        protected global::System.Web.UI.WebControls.PlaceHolder placeMasterContent;
         
         /// <summary>
         /// txtContent control.
@@ -46,7 +37,7 @@ namespace DotNetNuke.Modules.Html {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-		protected global::DotNetNuke.UI.UserControls.TextEditor txtContent;
+        protected global::DotNetNuke.UI.UserControls.TextEditor txtContent;
         
         /// <summary>
         /// divSubmittedContent control.
@@ -319,22 +310,13 @@ namespace DotNetNuke.Modules.Html {
         protected global::DotNetNuke.Web.UI.WebControls.DnnGrid dgHistory;
         
         /// <summary>
-        /// ehmContent control.
+        /// dnnVersions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ehmContent;
-        
-        /// <summary>
-        /// placeMasterContent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder placeMasterContent;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dnnVersions;
         
         /// <summary>
         /// plMaxVersions control.

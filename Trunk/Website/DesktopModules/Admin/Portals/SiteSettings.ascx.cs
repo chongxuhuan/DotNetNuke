@@ -230,19 +230,22 @@ namespace DotNetNuke.Modules.Admin.Portals
                                                                  false,
                                                                  false,
                                                                  false);
-            cboSplashTabId.DataSource = listTabs;
+
+            List<TabInfo> tabs = listTabs.Where(t => t.DisableLink == false).ToList();
+
+            cboSplashTabId.DataSource = tabs;
             cboSplashTabId.DataBind(portal.SplashTabId.ToString());
 
-            cboHomeTabId.DataSource = listTabs;
+            cboHomeTabId.DataSource = tabs;
             cboHomeTabId.DataBind(portal.HomeTabId.ToString());
 
-            cboLoginTabId.DataSource = listTabs;
+            cboLoginTabId.DataSource = tabs;
             cboLoginTabId.DataBind(portal.LoginTabId.ToString());
 
-            cboRegisterTabId.DataSource = listTabs;
+            cboRegisterTabId.DataSource = tabs;
             cboRegisterTabId.DataBind(portal.RegisterTabId.ToString());
 
-            cboSearchTabId.DataSource = listTabs;
+            cboSearchTabId.DataSource = tabs;
             cboSearchTabId.DataBind(portal.SearchTabId.ToString());
 
             listTabs = TabController.GetPortalTabs(portal.PortalID, Null.NullInteger, false, true);

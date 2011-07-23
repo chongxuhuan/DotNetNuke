@@ -55,13 +55,10 @@ namespace DotNetNuke.UI.UserControls
     [ValidationPropertyAttribute("Text")]
     public class TextEditor : UserControl
     {
-		#region "Private Members"
+		#region Private Members
 
         private const string MyFileName = "TextEditor.ascx";
         private HtmlEditorProvider _richTextEditor;
-        private bool _chooseMode = true;
-        private bool _chooseRender = true;
-        private bool _htmlEncode = true;
         protected Panel PanelTextEditor;
         protected RadioButtonList OptRender;
         protected RadioButtonList OptView;
@@ -71,36 +68,23 @@ namespace DotNetNuke.UI.UserControls
         protected HtmlGenericControl DivRichTextBox;
         protected Panel PanelView;
         protected TextBox TxtDesktopHTML;
-		
-		#endregion
 
-		#region "Properties"
+        public TextEditor()
+        {
+            HtmlEncode = true;
+            ChooseRender = true;
+            ChooseMode = true;
+        }
+
+        #endregion
+
+		#region Properties
 
         ///<summary>Enables/Disables the option to allow the user to select between Rich/Basic Mode, Default is true.</summary>
-		public bool ChooseMode
-        {
-            get
-            {
-                return _chooseMode;
-            }
-            set
-            {
-                _chooseMode = value;
-            }
-        }
+        public bool ChooseMode { get; set; }
 
-		///<summary>Determines wether or not the Text/Html button is rendered for Basic mode, Default is True</summary>
-        public bool ChooseRender
-        {
-            get
-            {
-                return _chooseRender;
-            }
-            set
-            {
-                _chooseRender = value;
-            }
-        }
+        ///<summary>Determines wether or not the Text/Html button is rendered for Basic mode, Default is True</summary>
+        public bool ChooseRender { get; set; }
 
         ///<summary>Gets/Sets the Default mode of the control, either "RICH" or "BASIC", Defaults to Rich</summary>
 		public string DefaultMode
@@ -126,17 +110,7 @@ namespace DotNetNuke.UI.UserControls
 		public Unit Height { get; set; }
 
         ///<summary>Turns on HtmlEncoding of text.  If this option is on the control will assume, it is being passed encoded text and will decode.</summary>
-		public bool HtmlEncode
-        {
-            get
-            {
-                return _htmlEncode;
-            }
-            set
-            {
-                _htmlEncode = value;
-            }
-        }
+        public bool HtmlEncode { get; set; }
 
         ///<summary>The current mode of the control "RICH",  "BASIC"</summary>
 		public string Mode
@@ -270,7 +244,7 @@ namespace DotNetNuke.UI.UserControls
 		
 		#endregion
 
-		#region "Private Methods"
+		#region Private Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -383,7 +357,7 @@ namespace DotNetNuke.UI.UserControls
 		
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
         protected override void OnInit(EventArgs e)
         {

@@ -279,4 +279,7 @@
   <data name="VersionsRollback.Text" xml:space="preserve">
     <value>Rollback</value>
   </data>
+  <data name="NoVersions.Text" xml:space="preserve">
+    <value>There is no version history for this content.</value>
+  </data>
 </root>

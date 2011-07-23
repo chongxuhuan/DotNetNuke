@@ -176,7 +176,7 @@ namespace DotNetNuke.Entities.Users
             }
             else
             {
-                settings["Display_Mode"] = (DisplayMode) settings["Display_Mode"];
+                settings["Display_Mode"] = (DisplayMode)Convert.ToInt32(settings["Display_Mode"]); 
             }
             if (settings["Display_SuppressPager"] == null)
             {
@@ -192,7 +192,7 @@ namespace DotNetNuke.Entities.Users
             }
             else
             {
-                settings["Profile_DefaultVisibility"] = (UserVisibilityMode) settings["Profile_DefaultVisibility"];
+                settings["Profile_DefaultVisibility"] = (UserVisibilityMode) Convert.ToInt32(settings["Profile_DefaultVisibility"]);
             }
             if (settings["Profile_DisplayVisibility"] == null)
             {
@@ -257,7 +257,7 @@ namespace DotNetNuke.Entities.Users
             }
             else
             {
-                settings["Security_UsersControl"] = (UsersControl) settings["Security_UsersControl"];
+                settings["Security_UsersControl"] = (UsersControl)Convert.ToInt32(settings["Security_UsersControl"]);
             }
             //Display name format
             if (settings["Security_DisplayNameFormat"] == null)
@@ -1085,8 +1085,22 @@ namespace DotNetNuke.Entities.Users
                             case "Records_":
                             case "Redirect_":
                             case "Security_":
-								//update value or add any new values
-                                settings[kvp.Key] = kvp.Value;
+                                switch(kvp.Key)
+                                {
+                                    case "Display_Mode":
+                                        settings[kvp.Key] = (DisplayMode) Convert.ToInt32(kvp.Value);
+                                        break;
+                                    case "Profile_DefaultVisibility":
+                                        settings[kvp.Key] = (UserVisibilityMode)Convert.ToInt32(kvp.Value);
+                                        break;
+                                    case "Security_UsersControl":
+                                        settings[kvp.Key] = (UsersControl)Convert.ToInt32(kvp.Value);
+                                        break;
+                                    default:
+                                        //update value or add any new values
+                                        settings[kvp.Key] = kvp.Value;
+                                        break;
+                                }
                                 break;
                         }
                     }

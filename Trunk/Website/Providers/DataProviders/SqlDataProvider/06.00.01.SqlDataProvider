@@ -74,49 +74,6 @@ BEGIN
 END
 GO
 
-/* DNN-13814 - Adjust Dashboard_AddControl for performance */
-/***********************************************************/
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Dashboard_AddControl]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_AddControl]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_AddControl]
-	@PackageId int,
-	@DashboardControlKey nvarchar(50),
-	@IsEnabled bit,
-	@DashboardControlSrc nvarchar(250),
-	@DashboardControlLocalResources nvarchar(250),
-	@ControllerClass nvarchar(250),
-	@ViewOrder int
-AS
-BEGIN
-	INSERT INTO {databaseOwner}[{objectQualifier}Dashboard_Controls] (
-		PackageId,
-		DashboardControlKey,
-		IsEnabled,
-		DashboardControlSrc,
-		DashboardControlLocalResources,
-		ControllerClass,
-		ViewOrder
-	)
-	VALUES (
-		@PackageId,
-		@DashboardControlKey,
-		@IsEnabled,
-		@DashboardControlSrc,
-		@DashboardControlLocalResources,
-		@ControllerClass,
-		case @ViewOrder
-			when -1 then (SELECT TOP 1 ViewOrder FROM {databaseOwner}[{objectQualifier}Dashboard_Controls] ORDER BY ViewOrder DESC) + 1
-			else @ViewOrder
-		end
-	)
-
-	SELECT SCOPE_IDENTITY()
-END
-GO
-
 /* DNN-13813 - Adjust AddScheduleItemSetting for performance */
 /*************************************************************/
 
@@ -157,6 +114,23 @@ BEGIN
 	FROM {databaseOwner}[{objectQualifier}FolderMappings]
 	WHERE FolderMappingID = @FolderMappingID
 END
+GO
+
+/* DNN-17298 - Reduce deadlock risk during execution of stored procedure DeleteSiteLog */
+/**************************************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteSiteLog]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSiteLog]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteSiteLog]
+	@DateTime                      datetime, 
+	@PortalID                      int
+
+AS
+	DELETE FROM {databaseOwner}{objectQualifier}SiteLog WITH(READPAST)
+	WHERE  PortalId = @PortalID
+		AND    DateTime < @DateTime
 GO
 
 /************************************************************/

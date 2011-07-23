@@ -659,7 +659,7 @@ namespace DotNetNuke.Modules.Admin.Users
             {
 				//Get Default View
                 var setting = UserModuleBase.GetSetting(UsersPortalId, "Display_Mode");
-                var mode = (DisplayMode) Convert.ToInt32(setting);
+                var mode = (DisplayMode) setting;
                 switch (mode)
                 {
                     case DisplayMode.All:
