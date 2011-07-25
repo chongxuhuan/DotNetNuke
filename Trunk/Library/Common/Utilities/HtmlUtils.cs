@@ -29,6 +29,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Services.Upgrade;
 using System.Collections.Generic;
 
@@ -747,7 +748,8 @@ namespace DotNetNuke.Common.Utilities
                 {
                     searchAlias = portalAlias.Substring(0, portalAlias.IndexOf("/"));
                 }
-                Regex exp = new Regex(string.Format("(href=&quot;)https?://{0}(.*?&quot;)", searchAlias));
+            	string protocol = PortalSettings.Current.SSLEnabled ? "https://" : "http://";
+                Regex exp = new Regex(string.Format("(href=&quot;){0}{1}(.*?&quot;)", protocol, searchAlias));
 
                 html = exp.Replace(html, "$1$2");
             }

@@ -775,6 +775,9 @@ namespace DotNetNuke.Common.Lists
                         {
                             entry.SortOrder = 0;
                         }
+						//save the list as system list when its edit by host user.
+                		entry.SystemList = ListPortalID == Null.NullInteger;
+
                         ctlLists.AddListEntry(entry);
 
                         DataBind();

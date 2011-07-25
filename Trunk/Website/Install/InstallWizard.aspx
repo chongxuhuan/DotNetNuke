@@ -417,6 +417,18 @@
                         toggleSmtpCredentials();
                     });
                 }
+            	
+            	//prevent next button to be click twice, install scripts' button will be handled by other function.
+            	if(pageNo !== 3) {
+            		$("#" + nextButtonID).click(function(e) {
+            			if (!$(this).hasClass("dnnDisabledAction")) {
+            				$(this).addClass("dnnDisabledAction");
+            			}
+            			else {
+            				e.preventDefault();
+            			}
+            		});
+            	}
             }
 
             $(document).ready(function () {

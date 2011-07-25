@@ -348,7 +348,7 @@ namespace DotNetNuke.Entities.Profile
             bool isValid = true;
             foreach (ProfilePropertyDefinition propertyDefinition in objProfile.ProfileProperties)
             {
-                if (propertyDefinition.Required && propertyDefinition.PropertyValue == Null.NullString)
+				if (propertyDefinition.Required && string.IsNullOrEmpty(propertyDefinition.PropertyValue))
                 {
                     isValid = false;
                     break;
