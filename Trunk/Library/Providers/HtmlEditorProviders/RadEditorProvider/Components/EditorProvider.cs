@@ -556,6 +556,44 @@ namespace DotNetNuke.Providers.RadEditorProvider
                         //CssClasses, Snippets, Languages
                         switch (propertyName)
                         {
+                            case "AutoResizeHeight":
+                                {
+                                    _editor.AutoResizeHeight = bool.Parse(node.InnerText);
+                                    break;
+                                }
+                            case "BorderWidth":
+                                {
+                                    _editor.BorderWidth = Unit.Parse(node.InnerText);
+                                    break;
+                                }
+                            case "EnableResize":
+                                {
+                                    _editor.EnableResize = bool.Parse(node.InnerText);
+                                    break;
+                                }
+                            case "NewLineBr":
+                                {
+                                    //use NewLineMode as NewLineBR has been obsoleted
+                                    if (bool.Parse(node.InnerText)==true)
+                                    {
+                                        _editor.NewLineMode = EditorNewLineModes.Br;
+                                        }
+                                    else
+                                    {
+                                        _editor.NewLineMode = EditorNewLineModes.P; 
+                                    }
+                                    break;
+                                }
+                            case "Height":
+                                {
+                                    _editor.Height = Unit.Parse(node.InnerText);
+                                    break;
+                                }
+                            case "Width":
+                                {
+                                    _editor.Width = Unit.Parse(node.InnerText);
+                                    break;
+                                }
                             case "ScriptToLoad":
                                 {
                                     string path = Context.Request.MapPath(PortalSettings.ActiveTab.SkinPath) + node.InnerText;

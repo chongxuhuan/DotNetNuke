@@ -143,14 +143,8 @@ namespace DotNetNuke.Modules.Admin.Users
             {
                 UserCreateStatus createStatus = UserCreateStatus.AddUser;
                 if (!chkRandom.Checked)
-                {
-					//1. Check Password and Confirm are the same
-                    if (txtPassword.Text != txtConfirm.Text)
-                    {
-                        createStatus = UserCreateStatus.PasswordMismatch;
-                    }
-					
-					//2. Check Password is Valid
+                {					
+					//1. Check Password is Valid
                     if (createStatus == UserCreateStatus.AddUser && !UserController.ValidatePassword(txtPassword.Text))
                     {
                         createStatus = UserCreateStatus.InvalidPassword;
@@ -194,8 +188,6 @@ namespace DotNetNuke.Modules.Admin.Users
                 if (createStatus != UserCreateStatus.AddUser)
                 {
                     _IsValid = false;
-                    valPassword.ErrorMessage = UserController.GetUserCreateStatus(createStatus);
-                    valPassword.IsValid = false;
                 }
             }
             return _IsValid;

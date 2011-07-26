@@ -786,6 +786,7 @@ namespace DotNetNuke.Modules.Admin.Host
                     HostController.Instance.Update("jQueryDebug", chkJQueryDebugVersion.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("jQueryHosted", chkJQueryUseHosted.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("jQueryUrl", txtJQueryHostedUrl.Text, false);
+                    HostController.Instance.Update("jQueryUIUrl", txtJQueryUIHostedUrl.Text, false);
 
                     UpdateCompression();
 

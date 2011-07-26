@@ -49,9 +49,9 @@ using DotNetNuke.Instrumentation;
 
 namespace DotNetNuke.Common
 {
-	/// <summary>
-	/// DotNetNuke Http Application. It will handle Start, End, BeginRequest, Error event for whole application.
-	/// </summary>
+    /// <summary>
+    /// DotNetNuke Http Application. It will handle Start, End, BeginRequest, Error event for whole application.
+    /// </summary>
     public class DotNetNukeHttpApplication : HttpApplication
     {
         void Application_Error(object sender, EventArgs e)
@@ -60,7 +60,8 @@ namespace DotNetNuke.Common
 
             // Get the exception object.
             DnnLog.Trace("Dumping all Application Errors");
-            if(HttpContext.Current!=null) {
+            if (HttpContext.Current != null)
+            {
                 foreach (Exception exc in HttpContext.Current.AllErrors) DnnLog.Fatal(exc);
             }
             DnnLog.Trace("End Dumping all Application Errors");
@@ -68,7 +69,6 @@ namespace DotNetNuke.Common
 
         private void Application_Start(object Sender, EventArgs E)
         {
-            DnnLog.MethodEntry();
             DnnLog.Info("Application Starting");
 
             if (String.IsNullOrEmpty(Config.GetSetting("ServerName")))
@@ -80,59 +80,61 @@ namespace DotNetNuke.Common
                 Globals.ServerName = Config.GetSetting("ServerName");
             }
             ComponentFactory.Container = new SimpleContainer();
-            ComponentFactory.InstallComponents(new ProviderInstaller("data", typeof (DataProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("caching", typeof (CachingProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("logging", typeof (LoggingProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("scheduling", typeof (SchedulingProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("searchIndex", typeof (IndexingProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("searchDataStore", typeof (SearchDataStoreProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("friendlyUrl", typeof (FriendlyUrlProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("members", typeof (MembershipProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("roles", typeof (RoleProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("profiles", typeof (ProfileProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("permissions", typeof (PermissionProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("outputCaching", typeof (OutputCachingProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("moduleCaching", typeof (ModuleCachingProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("sitemap", typeof (SitemapProvider)));
-            ComponentFactory.InstallComponents(new ProviderInstaller("folder", typeof (FolderProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("data", typeof(DataProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("caching", typeof(CachingProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("logging", typeof(LoggingProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("scheduling", typeof(SchedulingProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("searchIndex", typeof(IndexingProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("searchDataStore", typeof(SearchDataStoreProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("friendlyUrl", typeof(FriendlyUrlProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("members", typeof(MembershipProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("roles", typeof(RoleProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("profiles", typeof(ProfileProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("permissions", typeof(PermissionProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("outputCaching", typeof(OutputCachingProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("moduleCaching", typeof(ModuleCachingProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("sitemap", typeof(SitemapProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("folder", typeof(FolderProvider)));
             RegisterIfNotAlreadyRegistered<FolderProvider, StandardFolderProvider>("StandardFolderProvider");
             RegisterIfNotAlreadyRegistered<FolderProvider, SecureFolderProvider>("SecureFolderProvider");
             RegisterIfNotAlreadyRegistered<FolderProvider, DatabaseFolderProvider>("DatabaseFolderProvider");
             RegisterIfNotAlreadyRegistered<PermissionProvider>();
-            ComponentFactory.InstallComponents(new ProviderInstaller("htmlEditor", typeof (HtmlEditorProvider), ComponentLifeStyleType.Transient));
-            ComponentFactory.InstallComponents(new ProviderInstaller("navigationControl", typeof (NavigationProvider), ComponentLifeStyleType.Transient));
+            ComponentFactory.InstallComponents(new ProviderInstaller("htmlEditor", typeof(HtmlEditorProvider), ComponentLifeStyleType.Transient));
+            ComponentFactory.InstallComponents(new ProviderInstaller("navigationControl", typeof(NavigationProvider), ComponentLifeStyleType.Transient));
 
             DnnLog.Info("Application Started");
         }
 
-        private static void RegisterIfNotAlreadyRegistered<TConcrete>(string name = "") where TConcrete:class, new()
+        private static void RegisterIfNotAlreadyRegistered<TConcrete>(string name = "") where TConcrete : class, new()
         {
             RegisterIfNotAlreadyRegistered<TConcrete, TConcrete>(name);
         }
 
-	    private static void RegisterIfNotAlreadyRegistered<TAbstract, TConcrete>(string name = "") where TAbstract:class where TConcrete:class, new()
-	    {
-	        var provider = ComponentFactory.GetComponent<TAbstract>();
-	        if (provider == null)
-	        {
-                if(String.IsNullOrEmpty(name))
+        private static void RegisterIfNotAlreadyRegistered<TAbstract, TConcrete>(string name = "")
+            where TAbstract : class
+            where TConcrete : class, new()
+        {
+            var provider = ComponentFactory.GetComponent<TAbstract>();
+            if (provider == null)
+            {
+                if (String.IsNullOrEmpty(name))
                 {
-                    ComponentFactory.RegisterComponentInstance<TAbstract>(new TConcrete());   
+                    ComponentFactory.RegisterComponentInstance<TAbstract>(new TConcrete());
                 }
                 else
                 {
-                    ComponentFactory.RegisterComponentInstance<TAbstract>(name, new TConcrete());    
+                    ComponentFactory.RegisterComponentInstance<TAbstract>(name, new TConcrete());
                 }
-	        }
-	    }
+            }
+        }
 
-	    private void Application_End(object Sender, EventArgs E)
+        private void Application_End(object Sender, EventArgs E)
         {
             DnnLog.MethodEntry();
             DnnLog.Info("Application Ending");
             Initialize.LogEnd();
             Initialize.StopScheduler();
- 
+
             DnnLog.Trace("Dumping all Application Errors");
             if (HttpContext.Current != null)
             {
@@ -141,19 +143,20 @@ namespace DotNetNuke.Common
             DnnLog.Trace("End Dumping all Application Errors");
             DnnLog.Info("Application Ended");
         }
-        
+
         private void Application_BeginRequest(object sender, EventArgs e)
         {
-            DnnLog.MethodEntry();
             var app = (HttpApplication)sender;
-            HttpRequest Request = app.Request;
-            if (Request.Url.LocalPath.ToLower().EndsWith("scriptresource.axd") || Request.Url.LocalPath.ToLower().EndsWith("webresource.axd") || Request.Url.LocalPath.ToLower().EndsWith("gif") ||
-                Request.Url.LocalPath.ToLower().EndsWith("jpg") || Request.Url.LocalPath.ToLower().EndsWith("css") || Request.Url.LocalPath.ToLower().EndsWith("js"))
+            string requsetUrl = app.Request.Url.LocalPath.ToLower();
+            if (!requsetUrl.EndsWith(".aspx") && !requsetUrl.EndsWith("/") &&
+                (requsetUrl.EndsWith("scriptresource.axd") || requsetUrl.EndsWith("webresource.axd") || requsetUrl.EndsWith(".gif") ||
+                requsetUrl.EndsWith(".jpg") || requsetUrl.EndsWith(".css") || requsetUrl.EndsWith(".js")) || requsetUrl.EndsWith(".js"))
             {
                 return;
             }
+
             Initialize.Init(app);
-            Initialize.RunSchedule(Request);
+            Initialize.RunSchedule(app.Request);
         }
     }
 }

@@ -125,11 +125,11 @@ this.assignCss(new dnn.controls.DNNTreeNode(node));},dispose:function()
 {this.renderNode(null,this.container);},renderNode:function(node,oCont,bExists)
 {var oChildCont=oCont;var tNode;if(bExists!=true)
 {if(node!=null)
-{tNode=new dnn.controls.DNNTreeNode(node);var oNewContainer;oNewContainer=this.createChildControl('DIV',tNode.id,'ctr');oNewContainer.appendChild(this.renderSpacer((this.indentWidth*tNode.level)+((tNode.hasNodes||tNode.hasPendingNodes)?0:this.expImgWidth)));if(tNode.hasNodes||tNode.hasPendingNodes)
+{tNode=new dnn.controls.DNNTreeNode(node);var oNewContainer;oNewContainer=this.createChildControl('DIV',tNode.id,'ctr');if(document.getElementById(oNewContainer.id)==null){oNewContainer.appendChild(this.renderSpacer((this.indentWidth*tNode.level)+((tNode.hasNodes||tNode.hasPendingNodes)?0:this.expImgWidth)));if(tNode.hasNodes||tNode.hasPendingNodes)
 oNewContainer.appendChild(this.renderExpCol(tNode));if(this.checkBoxes)
 oNewContainer.appendChild(this.renderCheckbox(tNode));var oIconCont=this.renderIconCont(tNode);oNewContainer.appendChild(oIconCont);if(tNode.imageIndex>-1||tNode.image!='')
 {oIconCont.appendChild(this.renderIcon(tNode));}
-oNewContainer.appendChild(this.renderText(tNode));oCont.appendChild(oNewContainer);this.assignCss(tNode);}
+oNewContainer.appendChild(this.renderText(tNode));oCont.appendChild(oNewContainer);this.assignCss(tNode);}}
 else
 node=this.rootNode;if(tNode!=null&&(tNode.hasNodes||tNode.hasPendingNodes))
 {oChildCont=this.createChildControl('DIV',tNode.id,'pctr');if(tNode.expanded!=true)

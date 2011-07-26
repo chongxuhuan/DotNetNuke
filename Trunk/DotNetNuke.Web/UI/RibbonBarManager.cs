@@ -383,9 +383,9 @@ namespace DotNetNuke.Web.UI
             {
                 DnnLog.Error(ex);
 
-                if ((ex.Message == "Tab Exists"))
+                if (ex.Message.StartsWith("Page Exists"))
                 {
-                    throw new DotNetNukeException("Page already exists.", DotNetNukeErrorCode.PageExists);
+                    throw new DotNetNukeException(ex.Message, DotNetNukeErrorCode.PageExists);
                 }
             }
 

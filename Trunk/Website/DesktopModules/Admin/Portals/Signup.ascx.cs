@@ -214,6 +214,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                     bool blnChild;
                     string strPortalAlias;
                     string strChildPath = string.Empty;
+                    var closePopUpStr = string.Empty;
 
                     var objPortalController = new PortalController();
 
@@ -397,7 +398,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                             {
                                 DnnLog.Error(exc);
 
-                                message = string.Format(Localization.GetString("UnknownSendMail.Error", LocalResourceFile), webUrl);
+                                closePopUpStr = (PortalSettings.EnablePopUps) ? "onclick=\"return " + UrlUtils.ClosePopUp(true,webUrl,true) + "\"" : "";
+                                message = string.Format(Localization.GetString("UnknownSendMail.Error", LocalResourceFile), webUrl, closePopUpStr);
                             }
                             var objEventLog = new EventLogController();
                             objEventLog.AddLog(objPortalController.GetPortal(intPortalId), PortalSettings, UserId, "", EventLogController.EventLogType.PORTAL_CREATED);
@@ -405,11 +407,13 @@ namespace DotNetNuke.Modules.Admin.Portals
                             //Redirect to this new site
                             if (message == Null.NullString)
                             {
-                                Response.Redirect(webUrl, true);
+                                webUrl = (PortalSettings.EnablePopUps) ? UrlUtils.ClosePopUp(true, webUrl, false) : webUrl;
+                                Response.Redirect(webUrl,true);
                             }
                             else
                             {
-                                message = string.Format(Localization.GetString("SendMail.Error", LocalResourceFile), message, webUrl);
+                                closePopUpStr = (PortalSettings.EnablePopUps) ? "onclick=\"return " + UrlUtils.ClosePopUp(true, webUrl, true) + "\"" : "";
+                                message = string.Format(Localization.GetString("SendMail.Error", LocalResourceFile), message, webUrl, closePopUpStr);
                                 messageType = ModuleMessage.ModuleMessageType.YellowWarning;
                             }
                         }

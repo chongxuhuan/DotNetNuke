@@ -89,14 +89,12 @@ dnn.controls.DNNTree = function(o)
 dnn.controls.DNNTree.prototype =
 {
 
-    initialize: function()
-    {
+    initialize: function () {
         dnn.controls.DNNTree.callBaseMethod(this, 'initialize');
         this.generateTreeHTML();
     },
 
-    focusHandler: function(e)
-    {
+    focusHandler: function (e) {
         var tNode = this.hoverTreeNode;
         if (tNode == null)
             tNode = new dnn.controls.DNNTreeNode(this.rootNode.childNodes(0));
@@ -104,53 +102,43 @@ dnn.controls.DNNTree.prototype =
         this.container.onfocus = null;
     },
 
-    keydownHandler: function(e)
-    {
+    keydownHandler: function (e) {
         var dir = 0;
         var axis = '';
 
-        if (e.keyCode == KEY_UP_ARROW)
-        {
+        if (e.keyCode == KEY_UP_ARROW) {
             dir = -1;
             axis = 'y';
         }
-        if (e.keyCode == KEY_DOWN_ARROW)
-        {
+        if (e.keyCode == KEY_DOWN_ARROW) {
             dir = 1;
             axis = 'y';
         }
-        if (e.keyCode == KEY_LEFT_ARROW)
-        {
+        if (e.keyCode == KEY_LEFT_ARROW) {
             dir = -1;
             axis = 'x';
         }
-        if (e.keyCode == KEY_RIGHT_ARROW)
-        {
+        if (e.keyCode == KEY_RIGHT_ARROW) {
             dir = 1;
             axis = 'x';
         }
 
-        if (dir != 0)
-        {
+        if (dir != 0) {
             var tNode = this.hoverTreeNode;
             var node;
             if (tNode == null)
                 tNode = new dnn.controls.DNNTreeNode(this.rootNode.childNodes(0));
 
-            if (axis == 'x')
-            {
-                if (dir == -1)
-                {
+            if (axis == 'x') {
+                if (dir == -1) {
                     if (tNode.hasNodes && tNode.expanded)
                         this.collapseNode(tNode);
                     else
                         node = tNode.node.parentNode();
                 }
 
-                if (dir == 1)
-                {
-                    if (tNode.hasNodes || tNode.hasPendingNodes)
-                    {
+                if (dir == 1) {
+                    if (tNode.hasNodes || tNode.hasPendingNodes) {
                         if (tNode.expanded != true)
                             this.expandNode(tNode);
                         else
@@ -158,8 +146,7 @@ dnn.controls.DNNTree.prototype =
                     }
                 }
             }
-            else if (axis == 'y')
-            {
+            else if (axis == 'y') {
                 var iNodeIndex = tNode.node.getNodeIndex('id');
                 var parentNode = tNode.node.parentNode();
                 if (tNode.hasNodes && tNode.expanded && dir > 0)	//if has expanded nodes and going down, select first child
@@ -203,18 +190,15 @@ dnn.controls.DNNTree.prototype =
             return false;
         }
 
-        if (e.keyCode == KEY_RETURN && this.hoverTreeNode != null)
-        {
+        if (e.keyCode == KEY_RETURN && this.hoverTreeNode != null) {
             this.selectNode(this.hoverTreeNode);
             return false;
         }
 
     },
 
-    hoverNode: function(tNode)
-    {
-        if (this.hoverTreeNode != null)
-        {
+    hoverNode: function (tNode) {
+        if (this.hoverTreeNode != null) {
             this.hoverTreeNode.hover = false;
             this.assignCss(this.hoverTreeNode);
         }
@@ -223,13 +207,11 @@ dnn.controls.DNNTree.prototype =
         this.hoverTreeNode = tNode;
     },
 
-    getXml: function()
-    {
+    getXml: function () {
         return this.rootNode.getXml();
     },
 
-    expandNode: function(tNode)
-    {
+    expandNode: function (tNode) {
         var ctr = this.getChildControl(tNode.id, 'pctr');
         var expandCol = this.getChildControl(tNode.id, 'expcol');
 
@@ -238,13 +220,11 @@ dnn.controls.DNNTree.prototype =
         tNode.update();
         this.update();
 
-        if (tNode.hasPendingNodes)
-        {
+        if (tNode.hasPendingNodes) {
             var sXml = tNode.node.getXml();
             tNode.tree = this; //need to give reference back to self
 
-            if (this.workImg != null)
-            {
+            if (this.workImg != null) {
                 var icon = this.getChildControl(tNode.id, 'icn');
                 if (icon)
                     icon.src = this.sysImgPath + this.workImg;
@@ -258,16 +238,14 @@ dnn.controls.DNNTree.prototype =
             tNode.hasNodes = true;
             this.hoverTreeNode = tNode;
         }
-        else
-        {
+        else {
             dnn.dom.expandElement(ctr, this.animf);
         }
 
         return true;
     },
 
-    collapseNode: function(tNode)
-    {
+    collapseNode: function (tNode) {
         var ctr = this.getChildControl(tNode.id, 'pctr');
         var expandCol = this.getChildControl(tNode.id, 'expcol');
         //ctr.style.display = 'none';
@@ -279,27 +257,23 @@ dnn.controls.DNNTree.prototype =
         return true;
     },
 
-    selectNode: function(tNode)
-    {
+    selectNode: function (tNode) {
         var arg = new dnn.controls.DNNNodeEventArgs(tNode);
         this.invoke_handler('click', arg);
         if (arg.get_cancel())
             return;
 
-        if (this.selTreeNode != null && this.checkBoxes == false)
-        {
+        if (this.selTreeNode != null && this.checkBoxes == false) {
             this.selTreeNode.selected = null;
             this.assignCss(this.selTreeNode);
             this.selTreeNode.update('selected');
         }
 
-        if (tNode.selected)
-        {
+        if (tNode.selected) {
             tNode.selected = null;
             this.assignCss(tNode);
         }
-        else
-        {
+        else {
             tNode.selected = true;
             this.hoverTreeNode = tNode;
             this.assignCss(tNode);
@@ -313,16 +287,14 @@ dnn.controls.DNNTree.prototype =
         if (chk != null)
             chk.checked = tNode.selected;
 
-        if (tNode.selected)
-        {
+        if (tNode.selected) {
             var js = '';
             if (this.defaultJS.length > 0)
                 js = this.defaultJS;
             if (tNode.js.length > 0)
                 js = tNode.js;
 
-            if (js.length > 0)
-            {
+            if (js.length > 0) {
                 if (eval(js) == false)
                     return; //don't do postback if returns false
             }
@@ -331,10 +303,8 @@ dnn.controls.DNNTree.prototype =
                 eval(this.postBack.replace('[NODEID]', tNode.id));
             else if (tNode.clickAction == dnn.controls.action.nav)
                 dnn.dom.navigate(tNode.url, tNode.target.length > 0 ? tNode.target : this.target);
-            else if (tNode.clickAction == dnn.controls.action.expand)
-            {
-                if (tNode.hasNodes || tNode.hasPendingNodes)
-                {
+            else if (tNode.clickAction == dnn.controls.action.expand) {
+                if (tNode.hasNodes || tNode.hasPendingNodes) {
                     if (tNode.expanded)
                         this.collapseNode(tNode);
                     else
@@ -346,11 +316,9 @@ dnn.controls.DNNTree.prototype =
         return true;
     },
 
-    selectAllChildren: function(tNode)
-    {
+    selectAllChildren: function (tNode) {
         var childTNode;
-        for (var i = 0; i < tNode.childNodeCount(); i++)
-        {
+        for (var i = 0; i < tNode.childNodeCount(); i++) {
             childTNode = tNode.childNodes(i);
             if (childTNode.selected != tNode.selected)
                 this.selectNode(childTNode);
@@ -359,8 +327,7 @@ dnn.controls.DNNTree.prototype =
         }
     },
 
-    assignCss: function(tNode)
-    {
+    assignCss: function (tNode) {
         var oText = this.getChildControl(tNode.id, 't'); //, this.container);
         var sNodeCss = this.css;
 
@@ -380,10 +347,8 @@ dnn.controls.DNNTree.prototype =
         oText.className = sNodeCss;
     },
 
-    update: function(force)
-    {
-        if (force)
-        {
+    update: function (force) {
+        if (force) {
             if (this.selTreeNode)
                 dnn.setVar(this.ns + ':selected', this.selTreeNode.id); 	//BACKWARDS COMPAT ONLY!!!    
             dnn.setVar(this.ns + '_json', this.rootNode.getJSON());
@@ -392,20 +357,17 @@ dnn.controls.DNNTree.prototype =
     },
 
     //--- Event Handlers ---//
-    _onsubmit: function()
-    {
+    _onsubmit: function () {
         this.update(true);
     },
 
-    callBackStatus: function(result, ctx, req)
-    {
+    callBackStatus: function (result, ctx, req) {
         var tNode = ctx;
         var tree = tNode.tree;
         tree.invoke_compatHandler('callBackStatus', result, ctx, req);
     },
 
-    callBackSuccess: function(result, ctx, req)
-    {
+    callBackSuccess: function (result, ctx, req) {
         var tNode = ctx;
         var tree = tNode.tree;
         var parent = tNode.node; ;
@@ -414,8 +376,7 @@ dnn.controls.DNNTree.prototype =
         parent.nodes = json.nodes;
         parent.setupJSONNodes(parent.rootNode(), parent, parent.nodes);
 
-        if (tree.workImg != null)
-        {
+        if (tree.workImg != null) {
             var icon = tree.getChildControl(tNode.id, 'icn');
             if (tNode.image != '')
                 icon.src = tNode.image;
@@ -437,18 +398,15 @@ dnn.controls.DNNTree.prototype =
         tree.invoke_handler('callBackSuccess', new dnn.controls.DNNCallbackEventArgs(result, ctx, req));
     },
 
-    callBackFail: function(result, ctx, req)
-    {
+    callBackFail: function (result, ctx, req) {
         var tNode = ctx;
         var tree = tNode.tree;
         tree.invoke_handler('callBackFail', new dnn.controls.DNNCallbackEventArgs(result, ctx, req));
     },
 
-    nodeExpColClick: function(evt)
-    {
+    nodeExpColClick: function (evt) {
         var node = this._findEventNode(evt);
-        if (node != null)
-        {
+        if (node != null) {
             var tNode = new dnn.controls.DNNTreeNode(node);
 
             var ctr = this.getChildControl(tNode.id, 'pctr');
@@ -459,11 +417,9 @@ dnn.controls.DNNTree.prototype =
         }
     },
 
-    nodeCheck: function(evt)
-    {
+    nodeCheck: function (evt) {
         var node = this._findEventNode(evt);
-        if (node != null)
-        {
+        if (node != null) {
             var tNode = new dnn.controls.DNNTreeNode(node);
             if (this.checkBoxMode == 2 && this.selTreeNode != null)
                 this.selectNode(this.selTreeNode);   //unselect node
@@ -476,77 +432,71 @@ dnn.controls.DNNTree.prototype =
         }
     },
 
-    nodeTextClick: function(evt)
-    {
+    nodeTextClick: function (evt) {
         var node = this._findEventNode(evt);
-        if (node != null)
-        {
+        if (node != null) {
             this.selectNode(new dnn.controls.DNNTreeNode(node));
         }
     },
 
-    nodeTextMOver: function(evt)
-    {
+    nodeTextMOver: function (evt) {
         var node = this._findEventNode(evt);
         if (node != null)
             this.hoverNode(new dnn.controls.DNNTreeNode(node));
     },
 
-    nodeTextMOut: function(evt)
-    {
+    nodeTextMOut: function (evt) {
         var node = this._findEventNode(evt);
         if (node != null)
             this.assignCss(new dnn.controls.DNNTreeNode(node));
     },
 
-    dispose: function()
-    {
+    dispose: function () {
         this._onsubmitDelegate = null;
         dnn.controls.DNNTree.callBaseMethod(this, 'dispose');
     },
 
     //--- Generates tree HTML through passed in XML DOM ---//
-    generateTreeHTML: function()
-    {
+    generateTreeHTML: function () {
         //this.debugWrite('generateTreeHTML', 'generateTreeHTML');
         //this.rootNode = this.DOM.rootNode();
         this.renderNode(null, this.container);
         //this.debugWrite('generateTreeHTML', 'generateTreeHTML [END]');	
     },
 
-    renderNode: function(node, oCont, bExists)
-    {
+    renderNode: function (node, oCont, bExists) {
         var oChildCont = oCont;
         var tNode;
 
-        if (bExists != true)
-        {
-            if (node != null)
-            {
+        if (bExists != true) {
+            if (node != null) {
                 //render node
                 tNode = new dnn.controls.DNNTreeNode(node);
                 var oNewContainer;
                 oNewContainer = this.createChildControl('DIV', tNode.id, 'ctr'); //container for Node
-                oNewContainer.appendChild(this.renderSpacer((this.indentWidth * tNode.level) + ((tNode.hasNodes || tNode.hasPendingNodes) ? 0 : this.expImgWidth))); //indent node
-                if (tNode.hasNodes || tNode.hasPendingNodes)	//if node has children then render expand/collapse icon
-                    oNewContainer.appendChild(this.renderExpCol(tNode));
+                if (document.getElementById(oNewContainer.id) == null) {
+                    oNewContainer.appendChild(this.renderSpacer((this.indentWidth * tNode.level) + ((tNode.hasNodes || tNode.hasPendingNodes) ? 0 : this.expImgWidth))); //indent node
+                    if (tNode.hasNodes || tNode.hasPendingNodes)	//if node has children then render expand/collapse icon
+                        oNewContainer.appendChild(this.renderExpCol(tNode));
 
-                if (this.checkBoxes)
-                    oNewContainer.appendChild(this.renderCheckbox(tNode));
+                    if (this.checkBoxes)
+                        oNewContainer.appendChild(this.renderCheckbox(tNode));
 
-                var oIconCont = this.renderIconCont(tNode);
-                oNewContainer.appendChild(oIconCont);
-                if (tNode.imageIndex > -1 || tNode.image != '')	//if node has image 
-                {
-                    oIconCont.appendChild(this.renderIcon(tNode));
-                    //oNewContainer.appendChild(this.renderSpacer(10));
+                    var oIconCont = this.renderIconCont(tNode);
+                    oNewContainer.appendChild(oIconCont);
+                    if (tNode.imageIndex > -1 || tNode.image != '')	//if node has image 
+                    {
+                        oIconCont.appendChild(this.renderIcon(tNode));
+                        //oNewContainer.appendChild(this.renderSpacer(10));
+                    }
+                    //else
+                    //    oIconCont.appendChild(this.renderSpacer(this.indentWidth));
+
+                    oNewContainer.appendChild(this.renderText(tNode)); //render text
+                
+                    oCont.appendChild(oNewContainer);
+                    this.assignCss(tNode);
                 }
-                //else
-                //    oIconCont.appendChild(this.renderSpacer(this.indentWidth));
-
-                oNewContainer.appendChild(this.renderText(tNode)); //render text
-                oCont.appendChild(oNewContainer);
-                this.assignCss(tNode);
             }
             else
                 node = this.rootNode;
@@ -566,11 +516,9 @@ dnn.controls.DNNTree.prototype =
 
     },
 
-    renderExpCol: function(tNode)
-    {
+    renderExpCol: function (tNode) {
         var img = this.createChildControl('IMG', tNode.id, 'expcol');
-        if ((tNode.hasNodes || tNode.hasPendingNodes) && this.expandImg.length)
-        {
+        if ((tNode.hasNodes || tNode.hasPendingNodes) && this.expandImg.length) {
             if (tNode.expanded)
                 img.src = this.expandImg;
             else
@@ -587,8 +535,7 @@ dnn.controls.DNNTree.prototype =
         return img;
     },
 
-    renderIconCont: function(tNode)
-    {
+    renderIconCont: function (tNode) {
         var span = this.createChildControl('SPAN', tNode.id, 'icnc');
         if (tNode.cssIcon.length > 0)
             span.className = tNode.cssIcon;
@@ -598,8 +545,7 @@ dnn.controls.DNNTree.prototype =
         return span;
     },
 
-    renderIcon: function(tNode)
-    {
+    renderIcon: function (tNode) {
         var img = this.createChildControl('IMG', tNode.id, 'icn');
         if (tNode.image != '')
             img.src = tNode.image;
@@ -609,8 +555,7 @@ dnn.controls.DNNTree.prototype =
         return img;
     },
 
-    renderCheckbox: function(tNode)
-    {
+    renderCheckbox: function (tNode) {
         var chk = this.createChildControl('INPUT', tNode.id, 'chk');
         chk.type = 'checkbox';
         chk.defaultChecked = tNode.selected;
@@ -620,8 +565,7 @@ dnn.controls.DNNTree.prototype =
         return chk;
     },
 
-    renderSpacer: function(width)
-    {
+    renderSpacer: function (width) {
         var img = document.createElement('IMG');
         img.src = this.sysImgPath + 'spacer.gif';
         img.width = width;
@@ -631,8 +575,7 @@ dnn.controls.DNNTree.prototype =
         return img;
     },
 
-    renderText: function(tNode)
-    {
+    renderText: function (tNode) {
         var span = this.createChildControl('SPAN', tNode.id, 't');
         span.innerHTML = tNode.text;
         span.style.cursor = 'pointer';
@@ -640,8 +583,7 @@ dnn.controls.DNNTree.prototype =
         if (tNode.toolTip.length > 0)
             span.title = tNode.toolTip;
 
-        if (tNode.enabled || tNode.clickAction == dnn.controls.action.expand)
-        {
+        if (tNode.enabled || tNode.clickAction == dnn.controls.action.expand) {
             //span.onclick = dnn.dom.getObjMethRef(this, 'nodeTextClick');
             if (this.checkBoxes)
                 this.addHandlers(span, { "click": this.nodeCheck }, this);
@@ -658,8 +600,7 @@ dnn.controls.DNNTree.prototype =
             }
         }
 
-        if (tNode.selected)
-        {
+        if (tNode.selected) {
             this.selTreeNode = tNode;
             this.hoverTreeNode = tNode;
         }
@@ -667,16 +608,13 @@ dnn.controls.DNNTree.prototype =
         return span;
     },
 
-    _findEventNode: function(evt)
-    {
+    _findEventNode: function (evt) {
         return this.rootNode.findNode(this.getChildControlBaseId(evt.target));
     },
 
-    _loadNodes: function()
-    {
+    _loadNodes: function () {
         var json = dnn.evalJSON(dnn.getVar(this.ns + '_json'));
-        if (json)
-        {
+        if (json) {
             this.nodes = json.nodes;
             this.rootNode = {};
             this.rootNode.nodes = this.nodes;
@@ -703,13 +641,13 @@ dnn.controls.DNNTree.prototype =
     }
     },
 
-_debugWrite: function()
+    _debugWrite: function()
     {
     this._debugControl.value += this._debugBuffer;
     this._debugBuffer = '';
     },
 
-debugWrite: function(category, text)
+    debugWrite: function(category, text)
     {
     if (this._debugMode)
     {

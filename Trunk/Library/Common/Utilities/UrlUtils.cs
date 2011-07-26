@@ -179,15 +179,14 @@ namespace DotNetNuke.Common.Utilities
 
         public static string PopUpUrl(string url, Control control, PortalSettings portalSettings, bool onClickEvent, bool responseRedirect, int windowHeight, int windowWidth)
         {
-            string delimiter;
             var popUpScriptFormat = String.Empty;
             var popUpUrl = url;
+            var delimiter = popUpUrl.Contains("?") ? "&" : "?";
 
             //create a the querystring for use on a Response.Redirect
             if (responseRedirect)
             {
                 popUpScriptFormat += "{0}{1}popUp=true";
-                delimiter = popUpUrl.Contains("?") ? "&" : "?";
                 popUpUrl = String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower());
             }
             else
@@ -195,7 +194,6 @@ namespace DotNetNuke.Common.Utilities
                 if (!popUpUrl.Contains("dnnModal.show"))
                 {
                     popUpScriptFormat += "dnnModal.show('{0}{1}popUp=true',/*showReturn*/{2},{3},{4})";
-                    delimiter = popUpUrl.Contains("?") ? "&" : "?";
                     popUpUrl = "javascript:" + String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower(), windowHeight, windowWidth);
                 }
                 else
@@ -216,6 +214,17 @@ namespace DotNetNuke.Common.Utilities
             if (onClickEvent && popUpUrl.StartsWith("javascript:")) popUpUrl = popUpUrl.Replace("javascript:", "");
 
             return popUpUrl;
+        }
+
+        public static string ClosePopUp(Boolean refresh, string url, bool onClickEvent)
+        {
+            var closePopUpStr = "dnnModal.closePopUp({0}, {1})";
+            closePopUpStr = "javascript:" + string.Format(closePopUpStr, refresh.ToString().ToLower(), "'" + url + "'");
+
+            // Removes the javascript txt for onClick scripts)
+            if (onClickEvent && closePopUpStr.StartsWith("javascript:")) closePopUpStr = closePopUpStr.Replace("javascript:", "");
+
+            return closePopUpStr;
         }
 
         public static string ReplaceQSParam(string url, string param, string newValue)

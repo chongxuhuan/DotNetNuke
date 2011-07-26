@@ -119,7 +119,7 @@ namespace DotNetNuke.Entities.Tabs
             if (tabId > Null.NullInteger)
             {
                 //Tab exists so Throw
-                throw new TabExistsException(tabId, "Tab Exists");
+                throw new TabExistsException(tabId, string.Format("Page Exists in portal: {0}, path: {1}, culture: {2}", tab.PortalID, tab.TabPath, tab.CultureCode));
             }
 
             //First create ContentItem as we need the ContentItemID

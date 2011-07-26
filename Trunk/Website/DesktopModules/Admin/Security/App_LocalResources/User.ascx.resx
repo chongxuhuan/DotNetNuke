@@ -252,4 +252,7 @@
   <data name="Username.RegExError" xml:space="preserve">
     <value>Invalid: it must be 5 characters long alphanumeric</value>
   </data>
+  <data name="ComparePasswordsValidator.ErrorMessage" xml:space="preserve">
+    <value>The Password and Confirmation Passwords must match</value>
+  </data>
 </root>

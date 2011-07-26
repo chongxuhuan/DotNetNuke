@@ -53,11 +53,8 @@
                 resizable: true,
                 closeOnEscape: true,
                 zIndex: 100000,
-                close: function (event, ui) {
-                    windowTop.location.reload();
-                    $(this).remove();
-                }
-            })
+                close: function (event, ui) { dnnModal.closePopUp(); }
+            	})
         .width(width - 11)
         .height(height - 11);
 
@@ -94,34 +91,51 @@
                 $modal.dialog({ position: 'center' });
 
             });
-        	
-        	var showLoading = function() {
-        		var loading = $("<div class=\"dnnLoading\"></div>");
-        		loading.css({
-					width: $modal.width()
-					,height: $modal.height()
-        		});
-        		$modal.before(loading);
-        		$modal.hide();
-        	};
-        	
-        	var hideLoading = function () {
+
+            var showLoading = function () {
+                var loading = $("<div class=\"dnnLoading\"></div>");
+                loading.css({
+                    width: $modal.width()
+					, height: $modal.height()
+                });
+                $modal.before(loading);
+                $modal.hide();
+            };
+
+        	var hideLoading = function() {
         		$modal.prev(".dnnLoading").remove();
         		$modal.show();
-        	}
-        	
-        	setTimeout(function() { showLoading() }, 0);
-        	
-        	$modal[0].src = url;
+        	};
 
-        	$modal.bind("load", function() {
-        		hideLoading();
-        	});
+            setTimeout(function () { showLoading() }, 0);
+
+            $modal[0].src = url;
+
+            $modal.bind("load", function () {
+                hideLoading();
+            });
 
             if (showReturn.toString() == "true") {
                 return false;
             }
+        },
+        closePopUp: function (refresh, url) {
+            var windowTop = parent;
+        	if(typeof refresh === "undefined") {
+        		refresh = true;
+        	}
+        	
+        	if(typeof url === "undefined") {
+        		url = windowTop.location;
+        	}
+            if (refresh) {
+                windowTop.location.href = url;
+                $(this).remove();
+            }
+            else
+            { $(this).remove(); }
         }
+
     };
     dnnModal.load();
-} (this, jQuery))
+} (window, jQuery))

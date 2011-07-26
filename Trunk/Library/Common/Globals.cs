@@ -1284,17 +1284,6 @@ namespace DotNetNuke.Common
             {
                 arrFileList.Add(new FileItem("", "<" + Localization.GetString("None_Specified") + ">"));
             }
-            string portalRoot;
-            if (PortalId == Null.NullInteger)
-            {
-                portalRoot = HostMapPath;
-            }
-            else
-            {
-                var objPortals = new PortalController();
-                PortalInfo objPortal = objPortals.GetPortal(PortalId);
-                portalRoot = objPortal.HomeDirectoryMapPath;
-            }
 
             var objFolder = FolderManager.Instance.GetFolder(PortalId, Folder);
 
