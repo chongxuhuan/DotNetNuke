@@ -251,7 +251,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 var Actions = new ModuleActionCollection();
                 if (!IsProfile)
                 {
-                    if (!AddUser)
+                    if (!AddUser && !IsEdit)
                     {
                         Actions.Add(GetNextActionID(),
                                     Localization.GetString(ModuleActionType.AddContent, LocalResourceFile),

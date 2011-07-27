@@ -580,41 +580,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// GetCheckAllString 
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[Jon Henning]	11/1/2004	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private string GetCheckAllString()
-        {
-            int intCount = dgFileList.Items.Count;
-
-            CheckBox chkFile;
-            int i;
-            string strResult;
-            strResult = "setMoveFiles('');" + Environment.NewLine;
-            for (i = 0; i <= intCount - 1; i++)
-            {
-                chkFile = (CheckBox) dgFileList.Items[i].FindControl("chkFile");
-                if ((chkFile) != null)
-                {
-                    strResult = strResult + "var chk1 = dnn.dom.getById('" + chkFile.ClientID + "');";
-                    strResult = strResult + "chk1.checked = blValue;" + Environment.NewLine;
-                    strResult = strResult + "if (!chk1.onclick) {chk1.parentElement.onclick();}else{chk1.onclick();}" + Environment.NewLine;
-                }
-            }
-            strResult = "function CheckAllFiles(blValue) {" + strResult + "}" + Environment.NewLine;
-
-            strResult = "<script language=javascript>" + strResult + "</script>";
-
-            return strResult;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
         /// GeneratePermissionsGrid generates the permissions grid for the folder
         /// </summary>
         /// <remarks>
@@ -1252,9 +1217,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
             Page.ClientScript.RegisterForEventValidation(lnkMovePrevious.UniqueID);
             Page.ClientScript.RegisterForEventValidation(lnkMoveFiles.UniqueID);
 
-            string strTemp = GetCheckAllString();
-
-            pnlScripts2.Controls.Add(new LiteralControl(strTemp));
             if (dgFileList.Items.Count <= 10 && dgFileList.PageCount == 1)
             {
                 dgFileList.PagerStyle.Visible = false;

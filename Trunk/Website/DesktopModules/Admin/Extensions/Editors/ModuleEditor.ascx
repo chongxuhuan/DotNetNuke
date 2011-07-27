@@ -5,15 +5,15 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <h2 class="dnnFormSectionHead" id="moduleSettingsHead" runat='server'><a href="" class="dnnLabelExpanded"><%=LocalizeString("ModuleSettings")%></a></h2>
 <fieldset>
-    <div class="dnnFormMessage dnnFormInfo"><asp:Label ID="lblHelp" runat="server" /></div>
+    <asp:Label ID="lblHelp" runat="server" CssClass="dnnFormMessage dnnFormInfo" />
     <dnn:DnnFormEditor id="desktopModuleForm" runat="Server" FormMode="Short">
         <Items>
             <dnn:DnnFormLiteralItem ID="moduleName" runat="server" DataField = "ModuleName" />
             <dnn:DnnFormTextBoxItem ID="folderName" runat="server" DataField = "FolderName" />
             <dnn:DnnFormComboBoxItem ID="category" runat="server" DataField = "Category" ListTextField="Name" ListValueField="Name" />
-            <dnn:DnnFormTextBoxItem ID="controllerClass" runat="server" DataField = "BusinessControllerClass" Columns="60" />
-            <dnn:DnnFormTextBoxItem ID="dependencies" runat="server" DataField = "Dependencies" Columns="60"/>
-            <dnn:DnnFormTextBoxItem ID="permissions" runat="server" DataField = "Permissions" Columns="60"/>
+            <dnn:DnnFormTextBoxItem ID="controllerClass" runat="server" DataField = "BusinessControllerClass" Columns="55" />
+            <dnn:DnnFormTextBoxItem ID="dependencies" runat="server" DataField = "Dependencies" Columns="55"/>
+            <dnn:DnnFormTextBoxItem ID="permissions" runat="server" DataField = "Permissions" Columns="55"/>
             <dnn:DnnFormLiteralItem ID="isPortable" runat="server" DataField="IsPortable" />
             <dnn:DnnFormLiteralItem ID="isSearchable" runat="server" DataField="IsSearchable" />
             <dnn:DnnFormLiteralItem ID="isUpgradable" runat="server" DataField="IsUpgradeable" />

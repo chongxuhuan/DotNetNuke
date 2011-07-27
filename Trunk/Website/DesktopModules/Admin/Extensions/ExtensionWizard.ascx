@@ -66,7 +66,7 @@
                 </dnn:DnnFormEditor>
                 <div class="dnnForm">
                     <div class="dnnFormItem">
-                        <asp:Label ID="lblError" runat="server" cssClass="dnnFormMessage dnnFormValidationSummary" />
+                        <asp:Label ID="lblError" runat="server" cssClass="dnnFormMessage dnnFormValidationSummary" Visible="false" />
                     </div>
                 </div>               
             </asp:WizardStep>

@@ -380,7 +380,7 @@ function unzipFile(FileName) {
 
 function gridCheckAll(sender) {
     m_bAllFilesChecked = !m_bAllFilesChecked;
-    CheckAllFiles(m_bAllFilesChecked);
+    checkAllFiles(m_bAllFilesChecked);
     if (!m_bAllFilesChecked) {
         sender.src = sender.src.replace('checked', 'unchecked');
         sender.alt = m_sLocaleSelectAll;
@@ -392,6 +392,29 @@ function gridCheckAll(sender) {
 
     return false;
 }
+
+function checkAllFiles(bChecked) {
+	setMoveFiles('');
+	var inputs = document.getElementById("<%=dgFileList.ClientID %>").getElementsByTagName("input");
+	for (var i = 0; i < inputs.length; i++) {
+		if (inputs[i].type === "checkbox" && inputs[i].id.indexOf("chkFile") > -1) {
+			inputs[i].checked = bChecked;
+			if (!inputs[i].onclick) {
+				inputs[i].parentElement.onclick();
+			}
+			else {
+				inputs[i].onclick();
+			}
+		}
+	}
+}
+
+/*handle ajax request*/
+
+Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+	m_bAllFilesChecked = false;
+	setMoveFiles('');
+});
 
 </script>
 <asp:panel id="pnlMainScripts" Runat="server"/>
@@ -591,11 +614,11 @@ function gridCheckAll(sender) {
 									<ItemStyle HorizontalAlign="center" width="30px"></ItemStyle>
 									<HeaderTemplate>
 									    <asp:panel ID="pnlCheckAll" runat="server" Visible = "<%# IsEditable %>">
-    										<input onclick='return gridCheckAll(this);' type="image" src='<%# Page.ResolveUrl("~/images/FileManager/unchecked.gif") %>' alt='<%=Localization.GetString("SelectAll", LocalResourceFile)%>'  title='<%=Localization.GetString("SelectAll", LocalResourceFile)%>'>
+    										<input onclick="return gridCheckAll(this);" type="image" src='<%# Page.ResolveUrl("~/images/FileManager/unchecked.gif") %>' alt='<%=Localization.GetString("SelectAll", LocalResourceFile)%>'  title='<%=Localization.GetString("SelectAll", LocalResourceFile)%>'>
 									    </asp:panel>
 									</HeaderTemplate>
 									<ItemTemplate>
-										<asp:CheckBox ID="chkFile" Runat="server" Visible = "<%# IsEditable %>" filename='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
+										<asp:CheckBox ID="chkFile" Runat="server" Visible="<%# IsEditable %>" filename='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />
 									</ItemTemplate>
 									<EditItemTemplate>
 										<asp:CheckBox ID="chkFile" Enabled="False" Runat="server" filename='<%# DataBinder.Eval(Container, "DataItem.FileName")%>' />

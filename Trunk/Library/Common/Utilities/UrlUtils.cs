@@ -179,22 +179,28 @@ namespace DotNetNuke.Common.Utilities
 
         public static string PopUpUrl(string url, Control control, PortalSettings portalSettings, bool onClickEvent, bool responseRedirect, int windowHeight, int windowWidth)
         {
-            var popUpScriptFormat = String.Empty;
+            return PopUpUrl(url, control, portalSettings, onClickEvent, responseRedirect, windowHeight, windowWidth, true, string.Empty);
+        }
+
+        public static string PopUpUrl(string url, Control control, PortalSettings portalSettings, bool onClickEvent, bool responseRedirect, int windowHeight, int windowWidth, bool refresh, string closingUrl)
+        {
             var popUpUrl = url;
             var delimiter = popUpUrl.Contains("?") ? "&" : "?";
+            var popUpScriptFormat = String.Empty;
 
             //create a the querystring for use on a Response.Redirect
             if (responseRedirect)
             {
-                popUpScriptFormat += "{0}{1}popUp=true";
+                popUpScriptFormat = "{0}{1}popUp=true";
                 popUpUrl = String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower());
             }
             else
             {
                 if (!popUpUrl.Contains("dnnModal.show"))
                 {
-                    popUpScriptFormat += "dnnModal.show('{0}{1}popUp=true',/*showReturn*/{2},{3},{4})";
-                    popUpUrl = "javascript:" + String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower(), windowHeight, windowWidth);
+                    popUpScriptFormat = "dnnModal.show('{0}{1}popUp=true',/*showReturn*/{2},{3},{4},{5},'{6}')";
+                    closingUrl = (closingUrl != Null.NullString) ? closingUrl : String.Empty;
+                    popUpUrl = "javascript:" + String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower(), windowHeight, windowWidth, refresh.ToString().ToLower(), closingUrl);
                 }
                 else
                 {

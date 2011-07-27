@@ -335,6 +335,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                         {
                             e.Cancel = true;
                             lblError.Text = string.Format(Localization.GetString("DuplicateName", LocalResourceFile), newPackage.Name);
+                        	lblError.Visible = true;
                         }
                     }
                     if (PackageEditor != null && PackageID > Null.NullInteger)

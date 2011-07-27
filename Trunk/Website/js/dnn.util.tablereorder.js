@@ -1,7 +1,7 @@
 ﻿
 Type.registerNamespace('dnn.util');dnn.extend(dnn.util,{tableReorderMove:function(ctl,bUp,sKey)
 {var oTR=dnn.dom.getParentByTagName(ctl,'tr');if(oTR!=null)
-{var oCtr=oTR.parentNode;var iIdx=oTR.rowIndex;if(dnn.dom.getAttr(oTR,'origidx','')=='-1')
+{var oCtr=oTR.parentNode;if(oCtr.childNodes[oCtr.childNodes.length - 1].nodeName == "#text") {dnn.dom.removeChild(oCtr.childNodes[oCtr.childNodes.length - 1]);};var iIdx=oTR.rowIndex;if(dnn.dom.getAttr(oTR,'origidx','')=='-1')
 this.tableReorderSetOriginalIndexes(oCtr);var iNextIdx=(bUp?this.tableReorderGetPrev(oCtr,iIdx-1):this.tableReorderGetNext(oCtr,iIdx+1));if(iNextIdx>-1)
 {var aryValues=this.getInputValues(oTR);var aryValues2;var oSwapNode;dnn.dom.removeChild(oTR);if(oCtr.childNodes.length>iNextIdx)
 {oSwapNode=oCtr.childNodes[iNextIdx];aryValues2=this.getInputValues(oSwapNode);oCtr.insertBefore(oTR,oSwapNode);}

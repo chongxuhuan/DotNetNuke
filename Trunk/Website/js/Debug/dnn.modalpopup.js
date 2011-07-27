@@ -11,15 +11,16 @@
 
                     if (typeof (parentTop.$find) != "undefined") {
                         if (location.href.indexOf('popUp') == -1 || windowTop.location.href.indexOf("popUp") > -1) {
-                            windowTop.location.href = location.href;
-
+                            
                             var popup = windowTop.$("#iPopUp");
+                            var refresh = popup.dialog("option", "refresh");
+                            var closingUrl = popup.dialog("option", "closingUrl");
+
                             if (popup.dialog('isOpen') === true) {
                                 popup.dialog("option", {
-                                    close: function (event, ui) { }
-                                }).dialog('close').remove();
+                                    close: function (event, ui) { dnnModal.closePopUp(refresh, closingUrl); }
+                                }).dialog('close');
                             }
-
                         }
                         else {
                             windowTop.$("#iPopUp").dialog({ title: document.title });
@@ -31,10 +32,10 @@
                 return false;
             }
         },
-        show: function (url, showReturn, height, width) {
+        show: function (url, showReturn, height, width, refresh, closingUrl) {
             var $modal = $("#iPopUp");
             if ($modal.length == 0) {
-                $modal = $("<iframe id=\"iPopUp\" src=\"about:blank\" scrolling=\"auto\" frameborder=\"0\" ></iframe>");
+                $modal = $("<iframe id=\"iPopUp\" src=\"about:blank\" scrolling=\"auto\" frameborder=\"0\"></iframe>");
                 $(document).find('html').css('overflow', 'hidden');
                 $(document).append($modal);
             }
@@ -53,8 +54,10 @@
                 resizable: true,
                 closeOnEscape: true,
                 zIndex: 100000,
-                close: function (event, ui) { dnnModal.closePopUp(); }
-            	})
+                refresh: refresh,
+                closingUrl: closingUrl,
+                close: function (event, ui) { dnnModal.closePopUp(refresh, closingUrl); }
+            })
         .width(width - 11)
         .height(height - 11);
 
@@ -102,12 +105,12 @@
                 $modal.hide();
             };
 
-        	var hideLoading = function() {
-        		$modal.prev(".dnnLoading").remove();
-        		$modal.show();
-        	};
+            var hideLoading = function () {
+                $modal.prev(".dnnLoading").remove();
+                $modal.show();
+            };
 
-            setTimeout(function () { showLoading() }, 0);
+            showLoading();
 
             $modal[0].src = url;
 
@@ -120,20 +123,20 @@
             }
         },
         closePopUp: function (refresh, url) {
-            var windowTop = parent;
-        	if(typeof refresh === "undefined") {
-        		refresh = true;
-        	}
-        	
-        	if(typeof url === "undefined") {
-        		url = windowTop.location;
-        	}
-            if (refresh) {
+            var windowTop = parent; //needs to be assign to a varaible for Opera compatibility issues.
+            if (typeof refresh === "undefined") {
+                refresh = true;
+            }
+            if ((typeof url === "undefined") || (url == "")) {
+                url = windowTop.location;
+            }
+            if (refresh.toString() == "true") {
                 windowTop.location.href = url;
+                $(this).hide();
+            }
+            else {
                 $(this).remove();
             }
-            else
-            { $(this).remove(); }
         }
 
     };

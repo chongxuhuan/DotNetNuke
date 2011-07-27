@@ -37,6 +37,7 @@ using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Entities.Modules.Definitions;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.EventQueue;
 using DotNetNuke.Services.Installer.Packages;
@@ -92,13 +93,13 @@ namespace DotNetNuke.Entities.Modules
         /// -----------------------------------------------------------------------------
         private static object GetDesktopModulesByPortalCallBack(CacheItemArgs cacheItemArgs)
         {
-            var portalId = (int) cacheItemArgs.ParamList[0];
+            var portalId = (int)cacheItemArgs.ParamList[0];
             return CBO.FillDictionary("DesktopModuleID", DataProvider.GetDesktopModulesByPortal(portalId), new Dictionary<int, DesktopModuleInfo>());
         }
 
         private static object GetPortalDesktopModulesByPortalIDCallBack(CacheItemArgs cacheItemArgs)
         {
-            var portalId = (int) cacheItemArgs.ParamList[0];
+            var portalId = (int)cacheItemArgs.ParamList[0];
             return CBO.FillDictionary("PortalDesktopModuleID", DataProvider.Instance().GetPortalDesktopModules(portalId, Null.NullInteger), new Dictionary<int, PortalDesktopModuleInfo>());
         }
 
@@ -109,9 +110,9 @@ namespace DotNetNuke.Entities.Modules
                                        where t.ContentType == "DesktopModule"
                                        select t).SingleOrDefault();
 
-            if(contentType == null)
+            if (contentType == null)
             {
-                contentType = new ContentType {ContentType = "DesktopModule"};
+                contentType = new ContentType { ContentType = "DesktopModule" };
                 contentType.ContentTypeId = typeController.AddContentType(contentType);
             }
 
@@ -144,18 +145,18 @@ namespace DotNetNuke.Entities.Modules
 
                 if (vocabulary != null)
                 {
-                    term = new Term(vocabulary.VocabularyId) {Name = category};
+                    term = new Term(vocabulary.VocabularyId) { Name = category };
 
                     termController.AddTerm(term);
                 }
-            }           
+            }
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// DeleteDesktopModule deletes a Desktop Module
         /// </summary>
-		/// <param name="objDesktopModule">Desktop Module Info</param>
+        /// <param name="objDesktopModule">Desktop Module Info</param>
         /// <history>
         /// 	[cnurse]	05/14/2009   Documented
         /// </history>
@@ -223,8 +224,8 @@ namespace DotNetNuke.Entities.Modules
         public static DesktopModuleInfo GetDesktopModule(int desktopModuleID, int portalID)
         {
             var module = (from kvp in GetDesktopModulesInternal(portalID)
-                    where kvp.Value.DesktopModuleID == desktopModuleID
-                    select kvp.Value)
+                          where kvp.Value.DesktopModuleID == desktopModuleID
+                          select kvp.Value)
                    .FirstOrDefault();
 
             if (module == null)
@@ -234,6 +235,10 @@ namespace DotNetNuke.Entities.Modules
                           select kvp.Value)
                    .FirstOrDefault();
             }
+
+            if (module == null)
+                DnnLog.Warn("Unable to find module by module ID. ID:{0} PortalID:{1}", desktopModuleID, portalID);
+
             return module;
         }
 
@@ -248,10 +253,15 @@ namespace DotNetNuke.Entities.Modules
         /// -----------------------------------------------------------------------------
         public static DesktopModuleInfo GetDesktopModuleByPackageID(int packageID)
         {
-            return (from kvp in GetDesktopModulesInternal(Null.NullInteger)
-                    where kvp.Value.PackageID == packageID
-                    select kvp.Value)
-                    .FirstOrDefault();
+            DesktopModuleInfo desktopModuleByPackageID = (from kvp in GetDesktopModulesInternal(Null.NullInteger)
+                                                          where kvp.Value.PackageID == packageID
+                                                          select kvp.Value)
+                .FirstOrDefault();
+
+            if (desktopModuleByPackageID == null)
+                DnnLog.Warn("Unable to find module by package ID. ID:{0}", packageID);
+
+            return desktopModuleByPackageID;
         }
 
         /// -----------------------------------------------------------------------------
@@ -269,10 +279,14 @@ namespace DotNetNuke.Entities.Modules
         /// -----------------------------------------------------------------------------
         public static DesktopModuleInfo GetDesktopModuleByModuleName(string moduleName, int portalID)
         {
-            return (from kvp in GetDesktopModulesInternal(portalID)
-                    where kvp.Value.ModuleName == moduleName
-                    select kvp.Value)
-                    .FirstOrDefault();
+            DesktopModuleInfo desktopModuleByModuleName = (from kvp in GetDesktopModulesInternal(portalID)
+                                                           where kvp.Value.ModuleName == moduleName
+                                                           select kvp.Value).FirstOrDefault();
+
+            if (desktopModuleByModuleName == null)
+                DnnLog.Warn("Unable to find module by name. Name:{0} portalId:{1}", moduleName, portalID);
+
+            return desktopModuleByModuleName;
         }
 
         /// -----------------------------------------------------------------------------
@@ -292,7 +306,12 @@ namespace DotNetNuke.Entities.Modules
 
         public static DesktopModuleInfo GetDesktopModuleByFriendlyName(string friendlyName)
         {
-            return (from kvp in GetDesktopModulesInternal(Null.NullInteger) where kvp.Value.FriendlyName == friendlyName select kvp.Value).FirstOrDefault();
+            var module = (from kvp in GetDesktopModulesInternal(Null.NullInteger) where kvp.Value.FriendlyName == friendlyName select kvp.Value).FirstOrDefault();
+
+            if (module== null)
+                DnnLog.Warn("Unable to find module by friendly name. Name:{0}", friendlyName);
+
+            return module;
         }
 
         /// -----------------------------------------------------------------------------
@@ -390,7 +409,7 @@ namespace DotNetNuke.Entities.Modules
             {
                 DataCache.ClearHostCache(true);
             }
-            return desktopModuleID;          
+            return desktopModuleID;
         }
 
         public void UpdateModuleInterfaces(ref DesktopModuleInfo desktopModuleInfo)
@@ -659,19 +678,19 @@ namespace DotNetNuke.Entities.Modules
         [Obsolete("This method replaced in DotNetNuke 5.0 by Shared method GetDesktopModules(Integer)")]
         public ArrayList GetDesktopModules()
         {
-            return CBO.FillCollection(DataProvider.GetDesktopModules(), typeof (DesktopModuleInfo));
+            return CBO.FillCollection(DataProvider.GetDesktopModules(), typeof(DesktopModuleInfo));
         }
 
         [Obsolete("This method replaced in DotNetNuke 5.0 by Shared method GetDesktopModules(Integer)")]
         public ArrayList GetDesktopModulesByPortal(int portalID)
         {
-            return CBO.FillCollection(DataProvider.GetDesktopModulesByPortal(portalID), typeof (DesktopModuleInfo));
+            return CBO.FillCollection(DataProvider.GetDesktopModulesByPortal(portalID), typeof(DesktopModuleInfo));
         }
 
         [Obsolete("This method replaced in DotNetNuke 5.0 by Shared method GetPortalDesktopModulesByPortalID(Integer) and GetPortalDesktopModulesByDesktopModuleID(Integer) And GetPortalDesktopModule(Integer, Integer)")]
         public ArrayList GetPortalDesktopModules(int portalID, int desktopModuleID)
         {
-            return CBO.FillCollection(DataProvider.Instance().GetPortalDesktopModules(portalID, desktopModuleID), typeof (PortalDesktopModuleInfo));
+            return CBO.FillCollection(DataProvider.Instance().GetPortalDesktopModules(portalID, desktopModuleID), typeof(PortalDesktopModuleInfo));
         }
 
         /// -----------------------------------------------------------------------------

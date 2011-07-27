@@ -70,7 +70,7 @@ namespace DotNetNuke.Common.Utilities
         /// <returns>True if extension is in whitelist or whitelist is empty.  False otherwise.</returns>
         public bool IsAllowedExtension(string extension, IEnumerable<string> additionalExtensions)
         {
-            IEnumerable<string> allExtensions = CombineLists(additionalExtensions);
+            List<string> allExtensions = CombineLists(additionalExtensions).ToList();
             if (!allExtensions.Any())
             {
                 return true;
@@ -117,13 +117,20 @@ namespace DotNetNuke.Common.Utilities
 
         private IEnumerable<string> CombineLists(IEnumerable<string> additionalExtensions)
         {
-            if(additionalExtensions == null || !additionalExtensions.Any())
+            if(additionalExtensions == null)
             {
                 return _extensions;
             }
 
-            additionalExtensions = NormalizeExtensions(additionalExtensions);
-            return _extensions.Union(additionalExtensions);
+            //toList required to ensure that multiple enumerations of the list are possible
+            var additionalExtensionsList = additionalExtensions.ToList();
+            if( !additionalExtensionsList.Any())
+            {
+                return _extensions;
+            }
+
+            var normalizedExtensions = NormalizeExtensions(additionalExtensionsList);
+            return _extensions.Union(normalizedExtensions);
         }
 
         private IEnumerable<string> NormalizeExtensions(IEnumerable<string> additionalExtensions)

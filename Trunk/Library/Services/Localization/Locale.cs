@@ -181,16 +181,16 @@ namespace DotNetNuke.Services.Localization
             Text = Null.SetNullString(dr["CultureName"]);
             Fallback = Null.SetNullString(dr["FallbackCulture"]);
 
-            try
+            //These fields may not be populated (for Host level locales)
+            DataTable schemaTable = dr.GetSchemaTable();
+            bool hasColumns = schemaTable.Select("ColumnName = 'IsPublished' Or ColumnName = 'PortalID'").Length == 2;
+            
+            if(hasColumns)
             {
-                //These fields may not be populated (for Host level locales)
                 IsPublished = Null.SetNullBoolean(dr["IsPublished"]);
                 PortalId = Null.SetNullInteger(dr["PortalID"]);
             }
-            catch (IndexOutOfRangeException)
-            {
-            }
-
+            
             //Call the base classes fill method to populate base class proeprties
             base.FillInternal(dr);
         }

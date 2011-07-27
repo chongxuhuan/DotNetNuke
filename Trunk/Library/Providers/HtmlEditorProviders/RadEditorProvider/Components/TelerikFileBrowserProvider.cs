@@ -798,7 +798,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 		private void FillImageInfo(Stream fileStream, ref DotNetNuke.Services.FileSystem.FileInfo fileInfo)
 		{
-			if (Convert.ToBoolean((DotNetNuke.Common.Globals.glbImageFileTypes + ",".IndexOf(fileInfo.Extension.ToLowerInvariant() + ",", 0) + 1)))
+		    var imageExtensions = new FileExtensionWhitelist(Common.Globals.glbImageFileTypes);
+			if (imageExtensions.IsAllowedExtension(fileInfo.Extension))
 			{
 				System.Drawing.Image img = null;
 				try
