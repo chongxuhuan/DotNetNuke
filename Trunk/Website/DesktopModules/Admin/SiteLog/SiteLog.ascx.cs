@@ -248,7 +248,7 @@ namespace DotNetNuke.Modules.Admin.SiteLog
                         cmdDisplay.Visible = true;
                     }
                     var ctlList = new ListController();
-                    var colSiteLogReports = ctlList.GetListEntryInfoCollection("Site Log Reports");
+                    var colSiteLogReports = ctlList.GetListEntryInfoItems("Site Log Reports");
 
                     cboReportType.DataSource = colSiteLogReports;
                     cboReportType.DataBind();

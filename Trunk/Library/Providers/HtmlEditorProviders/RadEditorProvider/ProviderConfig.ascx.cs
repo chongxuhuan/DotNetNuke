@@ -1494,7 +1494,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 						string nodeTitle = "Everyone";
 
 						string strTargetGroup = nodename.Replace("ConfigFile.", "");
-						string strTargetPortal = "";
 						string strTargetTab = "";
 
 						if (strTargetGroup.Length > 0)

@@ -250,7 +250,7 @@
     <value>Last name is invalid</value>
   </data>
   <data name="Username.RegExError" xml:space="preserve">
-    <value>Invalid: it must be 5 characters long alphanumeric</value>
+    <value>Invalid:Letters and numbers only (no spaces), must be 5 characters long.</value>
   </data>
   <data name="ComparePasswordsValidator.ErrorMessage" xml:space="preserve">
     <value>The Password and Confirmation Passwords must match</value>

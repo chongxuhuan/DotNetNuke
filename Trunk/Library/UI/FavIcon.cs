@@ -43,7 +43,7 @@ namespace DotNetNuke.UI.Internals
         /// <param name="fileId">The file id or Null.NullInteger for none</param>
         public void Update(int fileId)
         {
-            PortalController.UpdatePortalSetting(_portalId, SettingName, fileId != Null.NullInteger ? string.Format("FileID={0}", fileId) : "", clearCache: true);
+            PortalController.UpdatePortalSetting(_portalId, SettingName, fileId != Null.NullInteger ? string.Format("FileID={0}", fileId) : "", /*clearCache*/ true);
             DataCache.ClearCache(GetCacheKey(_portalId));
         }
 

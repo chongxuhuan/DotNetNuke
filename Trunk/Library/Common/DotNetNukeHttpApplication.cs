@@ -105,12 +105,12 @@ namespace DotNetNuke.Common
             DnnLog.Info("Application Started");
         }
 
-        private static void RegisterIfNotAlreadyRegistered<TConcrete>(string name = "") where TConcrete : class, new()
+        private static void RegisterIfNotAlreadyRegistered<TConcrete>() where TConcrete : class, new()
         {
-            RegisterIfNotAlreadyRegistered<TConcrete, TConcrete>(name);
+            RegisterIfNotAlreadyRegistered<TConcrete, TConcrete>("");
         }
 
-        private static void RegisterIfNotAlreadyRegistered<TAbstract, TConcrete>(string name = "")
+        private static void RegisterIfNotAlreadyRegistered<TAbstract, TConcrete>(string name)
             where TAbstract : class
             where TConcrete : class, new()
         {

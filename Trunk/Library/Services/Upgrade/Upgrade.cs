@@ -1326,7 +1326,7 @@ namespace DotNetNuke.Services.Upgrade
                         {
                             using (var stream = File.OpenRead(localPath))
                             {
-                                FileManager.Instance.AddFile(folder, fileName, stream, overwrite: false);
+                                FileManager.Instance.AddFile(folder, fileName, stream, /*overwrite*/ false);
                             }
                         }
                         fileId = FileManager.Instance.GetFile(folder, fileName).FileId;
@@ -1833,7 +1833,7 @@ namespace DotNetNuke.Services.Upgrade
 
             //Add new Photo Profile field to Host
             var listController = new ListController();
-            var dataTypes = listController.GetListEntryInfoCollection("DataType");
+            Dictionary<string, ListEntryInfo> dataTypes = listController.GetListEntryInfoDictionary("DataType");
 
             var properties = ProfileController.GetPropertyDefinitionsByPortal(Null.NullInteger);
             ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count*2 + 2, UserVisibilityMode.AllUsers, dataTypes);
@@ -2099,7 +2099,7 @@ namespace DotNetNuke.Services.Upgrade
         {
             //Add new Photo Profile field to Host
             var listController = new ListController();
-            ListEntryInfoCollection dataTypes = listController.GetListEntryInfoCollection("DataType");
+            Dictionary<string, ListEntryInfo> dataTypes = listController.GetListEntryInfoDictionary("DataType");
 
             var properties = ProfileController.GetPropertyDefinitionsByPortal(Null.NullInteger);
             ProfileController.AddDefaultDefinition(Null.NullInteger, "Preferences", "Photo", "Image", 0, properties.Count*2 + 2, UserVisibilityMode.AllUsers, dataTypes);

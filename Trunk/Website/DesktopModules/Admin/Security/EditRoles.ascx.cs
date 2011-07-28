@@ -179,7 +179,7 @@ namespace DotNetNuke.Modules.Admin.Security
                     var objUser = new RoleController();
 
                     var ctlList = new ListController();
-                    var colFrequencies = ctlList.GetListEntryInfoCollection("Frequency", "");
+                    var colFrequencies = ctlList.GetListEntryInfoItems("Frequency", "");
 
                     cboBillingFrequency.DataSource = colFrequencies;
                     cboBillingFrequency.DataBind();
@@ -259,6 +259,17 @@ namespace DotNetNuke.Modules.Admin.Security
                         cmdManage.Visible = false;
                         lblRoleName.Visible = false;
                         txtRoleName.Visible = true;
+
+						//select default role group id
+						if(Request.QueryString["RoleGroupID"] != null)
+						{
+							var roleGroupID = Request.QueryString["RoleGroupID"];
+							if (cboRoleGroups.Items.FindByValue(roleGroupID) != null)
+							{
+								cboRoleGroups.ClearSelection();
+								cboRoleGroups.Items.FindByValue(roleGroupID).Selected = true;
+							}
+						}
                     }
                 }
             }

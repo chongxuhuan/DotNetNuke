@@ -26,7 +26,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
@@ -192,25 +194,42 @@ namespace DotNetNuke.Common.Lists
             return (ListEntryInfo) CBO.FillObject(DataProvider.Instance().GetListEntry(ListName, Value), typeof (ListEntryInfo));
         }
 
-        public ListEntryInfoCollection GetListEntryInfoCollection(string ListName)
+        public IEnumerable<ListEntryInfo> GetListEntryInfoItems(string listName)
         {
-            return GetListEntryInfoCollection(ListName, "", Null.NullInteger);
+            return GetListEntryInfoItems(listName, "", Null.NullInteger);
         }
 
-        public ListEntryInfoCollection GetListEntryInfoCollection(string ListName, string ParentKey)
+        public IEnumerable<ListEntryInfo> GetListEntryInfoItems(string listName, string parentKey)
         {
-            return GetListEntryInfoCollection(ListName, ParentKey, Null.NullInteger);
+            return GetListEntryInfoItems(listName, parentKey, Null.NullInteger);
         }
 
-        public ListEntryInfoCollection GetListEntryInfoCollection(string ListName, string ParentKey, int PortalId)
+        public IEnumerable<ListEntryInfo> GetListEntryInfoItems(string listName, string parentKey, int portalId)
         {
-            var objListEntryInfoCollection = new ListEntryInfoCollection();
-            ArrayList arrListEntries = CBO.FillCollection(DataProvider.Instance().GetListEntriesByListName(ListName, ParentKey, PortalId), typeof (ListEntryInfo));
-            foreach (ListEntryInfo entry in arrListEntries)
-            {
-                objListEntryInfoCollection.Add(entry.Key, entry);
-            }
-            return objListEntryInfoCollection;
+            return CBO.FillCollection<ListEntryInfo>(DataProvider.Instance().GetListEntriesByListName(listName, parentKey, portalId));
+        }
+
+        public Dictionary<string, ListEntryInfo> GetListEntryInfoDictionary(string listName)
+        {
+            return GetListEntryInfoDictionary(listName, "", Null.NullInteger);
+        }
+
+        public Dictionary<string, ListEntryInfo> GetListEntryInfoDictionary(string listName, string parentKey)
+        {
+            return GetListEntryInfoDictionary(listName, parentKey, Null.NullInteger);
+        }
+
+        public Dictionary<string, ListEntryInfo> GetListEntryInfoDictionary(string listName, string parentKey, int portalId)
+        {
+            return ListEntryInfoItemsToDictionary(GetListEntryInfoItems(listName, parentKey, portalId));
+        }
+        
+        private static Dictionary<string, ListEntryInfo> ListEntryInfoItemsToDictionary(IEnumerable<ListEntryInfo> items)
+        {
+            var dict = new Dictionary<string, ListEntryInfo>();
+            items.ToList().ForEach(x => dict.Add(x.Key, x));
+
+            return dict;
         }
 
         public ListInfo GetListInfo(string ListName)
@@ -291,6 +310,31 @@ namespace DotNetNuke.Common.Lists
             DataProvider.Instance().UpdateListSortOrder(EntryID, MoveUp);
             ListEntryInfo entry = GetListEntryInfo(EntryID);
             ClearCache(entry.PortalID);
+        }
+
+        [Obsolete("Obsoleted in 6.0.1 use IEnumerable<ListEntryInfo> GetListEntryInfoXXX(string) instead"), EditorBrowsable(EditorBrowsableState.Never)]
+        public ListEntryInfoCollection GetListEntryInfoCollection(string listName)
+        {
+            return GetListEntryInfoCollection(listName, "", Null.NullInteger);
+        }
+
+        [Obsolete("Obsoleted in 6.0.1 use IEnumerable<ListEntryInfo> GetListEntryInfoXXX(string, string, int) instead"), EditorBrowsable(EditorBrowsableState.Never)]
+        public ListEntryInfoCollection GetListEntryInfoCollection(string listName, string parentKey)
+        {
+            return GetListEntryInfoCollection(listName, parentKey, Null.NullInteger);
+        }
+
+        [Obsolete("Obsoleted in 6.0.1 use IEnumerable<ListEntryInfo> GetListEntryInfoXXX(string, string, int) instead"), EditorBrowsable(EditorBrowsableState.Never)]
+        public ListEntryInfoCollection GetListEntryInfoCollection(string listName, string parentKey, int portalId)
+        {
+            var items = GetListEntryInfoItems(listName, parentKey, portalId);
+
+            var collection = new ListEntryInfoCollection();
+            if (items != null)
+            {
+                items.ToList().ForEach(x => collection.Add(x.Key, x));
+            }
+            return collection;
         }
     }
 }

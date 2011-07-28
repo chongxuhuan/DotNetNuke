@@ -40,3 +40,4 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 .dnnManageSecurityRoles .dnnFormItem input {float:none;}
 
 .dnnUser .dnnForm, .dnnMembership .dnnForm{ min-width: 500px;}
+.dnnUser .register{ min-width: 620px;}

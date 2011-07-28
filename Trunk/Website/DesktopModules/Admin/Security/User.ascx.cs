@@ -111,6 +111,22 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+		/// <summary>
+		/// User Form's css class.
+		/// </summary>
+    	public string CssClass
+    	{
+    		get
+    		{
+				return pnlAddUser.CssClass;
+    		}
+			set
+			{
+				userForm.CssClass = string.IsNullOrEmpty(userForm.CssClass) ? value : string.Format("{0} {1}", userForm.CssClass, value);
+				pnlAddUser.CssClass = string.IsNullOrEmpty(pnlAddUser.CssClass) ? value : string.Format("{0} {1}", pnlAddUser.CssClass, value); ;
+			}
+    	}
+
 		#endregion
 
 		#region "Private Methods"

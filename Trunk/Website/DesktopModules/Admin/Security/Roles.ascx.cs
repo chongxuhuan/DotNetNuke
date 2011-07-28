@@ -79,7 +79,7 @@ namespace DotNetNuke.Modules.Admin.Security
                             ModuleActionType.AddContent,
                             "",
                             "add.gif",
-                            EditUrl(),
+							EditUrl("RoleGroupID", Request.QueryString["RoleGroupID"]),
                             false,
                             SecurityAccessLevel.Edit,
                             true,
@@ -169,7 +169,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 cboRoleGroups.Items.Add(new ListItem(Localization.GetString("AllRoles"), "-2"));
 
                 liItem = new ListItem(Localization.GetString("GlobalRoles"), "-1");
-                if (_roleGroupId < 0)
+                if (_roleGroupId == -1)
                 {
                     liItem.Selected = true;
                 }
@@ -364,8 +364,7 @@ namespace DotNetNuke.Modules.Admin.Security
         /// -----------------------------------------------------------------------------
         protected void OnRoleGroupIndexChanged(object sender, EventArgs e)
         {
-            _roleGroupId = Int32.Parse(cboRoleGroups.SelectedValue);
-            BindData();
+			Response.Redirect(Globals.NavigateURL("", string.Format("RoleGroupID={0}", cboRoleGroups.SelectedValue)));
         }
 
         /// -----------------------------------------------------------------------------

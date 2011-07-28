@@ -43,8 +43,10 @@ namespace DotNetNuke.Common.Utilities.Internal
         {
             new RetryableAction(action, description, 30, TimeSpan.FromSeconds(1)).TryIt();
         }
-        
-        public RetryableAction(Action action, string description, int maxRetries, TimeSpan delay, float delayMultiplier = 1)
+
+        public RetryableAction(Action action, string description, int maxRetries, TimeSpan delay) : this(action, description, maxRetries, delay, 1) {}
+
+        public RetryableAction(Action action, string description, int maxRetries, TimeSpan delay, float delayMultiplier)
         {
             if(delay.TotalMilliseconds > int.MaxValue)
             {

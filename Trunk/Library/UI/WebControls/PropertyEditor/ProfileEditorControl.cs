@@ -87,7 +87,7 @@ namespace DotNetNuke.UI.WebControls
                         {
                             var countryEdit = (DNNCountryEditControl) checkEditor.Editor;
                             var objListController = new ListController();
-                            ListEntryInfoCollection countries = objListController.GetListEntryInfoCollection("Country");
+                            var countries = objListController.GetListEntryInfoItems("Country");
                             foreach (ListEntryInfo checkCountry in countries)
                             {
                                 if (checkCountry.Text == Convert.ToString(countryEdit.Value))

@@ -24,6 +24,9 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Web.UI;
 
 using DotNetNuke.Common.Lists;
@@ -52,11 +55,15 @@ namespace DotNetNuke.UI.WebControls
     [ToolboxData("<{0}:DNNListEditControl runat=server></{0}:DNNListEditControl>")]
     public class DNNListEditControl : EditControl, IPostBackEventHandler
     {
-        private ListEntryInfoCollection _List;
-        private string _ListName = Null.NullString;
-        private string _ParentKey = Null.NullString;
-        private ListBoundField _TextField = ListBoundField.Text;
-        private ListBoundField _ValueField = ListBoundField.Value;
+        private List<ListEntryInfo> _listEntries;
+        private string _listName = "";
+
+        public DNNListEditControl()
+        {
+            ValueField = ListBoundField.Value;
+            TextField = ListBoundField.Text;
+            ParentKey = "";
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -97,27 +104,36 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// List gets the List associated with the control
         /// </summary>
-        /// <value>A string representing the Value</value>
-        /// <history>
-        ///     [cnurse]	05/04/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
+        [Obsolete("Obsoleted in 6.0.1 use ListEntries instead"), EditorBrowsable(EditorBrowsableState.Never)]
         protected ListEntryInfoCollection List
         {
             get
             {
-                if (_List == null)
-                {
-                    var objListController = new ListController();
-                    _List = objListController.GetListEntryInfoCollection(ListName, ParentKey, PortalId);
-                }
-                return _List;
+                var listController = new ListController();
+                return listController.GetListEntryInfoCollection(ListName, ParentKey, PortalId);
             }
         }
+
+        /// <summary>
+        /// Gets the ListEntryInfo objects associated witht the control
+        /// </summary>
+        protected IEnumerable<ListEntryInfo> ListEntries
+        {
+            get
+            {
+                if(_listEntries == null)
+                {
+                    var listController = new ListController();
+                    _listEntries = listController.GetListEntryInfoItems(ListName, ParentKey, PortalId).ToList();
+                }
+
+                return _listEntries;
+            }
+        }
+
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -131,15 +147,15 @@ namespace DotNetNuke.UI.WebControls
         {
             get
             {
-                if (_ListName == Null.NullString)
+                if (_listName == Null.NullString)
                 {
-                    _ListName = Name;
+                    _listName = Name;
                 }
-                return _ListName;
+                return _listName;
             }
             set
             {
-                _ListName = value;
+                _listName = value;
             }
         }
 
@@ -171,25 +187,10 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
-        /// ParentKey is the parent key of the List to display
+        /// The parent key of the List to display
         /// </summary>
-        /// <history>
-        ///     [cnurse]	05/04/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected virtual string ParentKey
-        {
-            get
-            {
-                return _ParentKey;
-            }
-            set
-            {
-                _ParentKey = value;
-            }
-        }
+        protected virtual string ParentKey { get; set; }
 
         protected int PortalId
         {
@@ -199,45 +200,15 @@ namespace DotNetNuke.UI.WebControls
             }
         }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
-        /// TextField is the field to display in the combo
+        /// The field to display in the combo
         /// </summary>
-        /// <history>
-        ///     [cnurse]	05/04/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected virtual ListBoundField TextField
-        {
-            get
-            {
-                return _TextField;
-            }
-            set
-            {
-                _TextField = value;
-            }
-        }
+        protected virtual ListBoundField TextField { get; set; }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
-        /// ValueField is the field to use as the combo item values
+        /// The field to use as the combo item values
         /// </summary>
-        /// <history>
-        ///     [cnurse]	05/04/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected virtual ListBoundField ValueField
-        {
-            get
-            {
-                return _ValueField;
-            }
-            set
-            {
-                _ValueField = value;
-            }
-        }
+        protected virtual ListBoundField ValueField { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -474,9 +445,9 @@ namespace DotNetNuke.UI.WebControls
             writer.RenderBeginTag(HtmlTextWriterTag.Option);
             writer.Write("<" + Localization.GetString("Not_Specified", Localization.SharedResourceFile) + ">");
             writer.RenderEndTag();
-            for (int I = 0; I <= List.Count - 1; I++)
+            
+            foreach (ListEntryInfo item in ListEntries)
             {
-                ListEntryInfo item = List[I];
                 string itemValue = Null.NullString;
                 
 				//Add the Value Attribute

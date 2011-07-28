@@ -99,7 +99,7 @@ namespace DotNetNuke.Common.Lists
         private void BindTree()
         {
             var ctlLists = new ListController();
-            var colLists = ctlLists.GetListInfoCollection();
+            var colLists = ctlLists.GetListInfoCollection(string.Empty, string.Empty, PortalSettings.ActiveTab.PortalID);
             var indexLookup = new Hashtable();
 
             DNNtree.TreeNodes.Clear();

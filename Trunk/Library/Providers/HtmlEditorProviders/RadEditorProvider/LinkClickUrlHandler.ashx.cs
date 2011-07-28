@@ -26,6 +26,7 @@ using DotNetNuke.Data;
 using DotNetNuke.Entities;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Framework;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Modules;
 using DotNetNuke.Security;
 using DotNetNuke.Services;
@@ -292,8 +293,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 									int tabId = 0;
 									if (int.TryParse(link, out tabId)) //if it's a tabid get the tab path
 									{
-										TabController _tabController = new TabController();
-										dialogParams.LinkClickUrl = _tabController.GetTab(tabId, dialogParams.PortalId, true).FullUrl;
+										var tabController = new TabController();
+										dialogParams.LinkClickUrl = tabController.GetTab(tabId, dialogParams.PortalId, true).FullUrl;
 										linkTrackingInfo = _urlController.GetUrlTracking(dialogParams.PortalId, tabId.ToString(), dialogParams.ModuleId);
 									}
 									else
@@ -305,6 +306,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 								}
 								catch (Exception ex)
 								{
+								    DnnLog.Error(ex);
 									dialogParams.LinkClickUrl = dialogParams.LinkUrl;
 								}
 							}

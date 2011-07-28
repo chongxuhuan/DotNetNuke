@@ -697,6 +697,8 @@ namespace DotNetNuke.Modules.Admin.Users
 					//Add User
                     ModuleConfiguration.ModuleTitle = Localization.GetString("AddUser.Title", LocalResourceFile);
                 }
+
+            	ctlUser.CssClass = "register";
             }
         }
 

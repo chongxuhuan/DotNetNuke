@@ -1461,14 +1461,15 @@ namespace DotNetNuke.Entities.Portals
         /// -----------------------------------------------------------------------------
         private void ParseProfileDefinitions(XmlNode nodeProfileDefinitions, int PortalId)
         {
-            ListController objListController = new ListController();
-            ListEntryInfoCollection colDataTypes = objListController.GetListEntryInfoCollection("DataType");
-            int OrderCounter = -1;
+            var listController = new ListController();
+            Dictionary<string, ListEntryInfo> colDataTypes = listController.GetListEntryInfoDictionary("DataType");
+
+            int orderCounter = -1;
             ProfilePropertyDefinition objProfileDefinition;
             bool preferredTimeZoneFound = false;            
             foreach (XmlNode node in nodeProfileDefinitions.SelectNodes("//profiledefinition"))
             {
-                OrderCounter += 2;
+                orderCounter += 2;
                 ListEntryInfo typeInfo = colDataTypes["DataType:" + XmlUtils.GetNodeValue(node.CreateNavigator(), "datatype")];
                 if (typeInfo == null)
                 {
@@ -1482,7 +1483,7 @@ namespace DotNetNuke.Entities.Portals
                 objProfileDefinition.PropertyName = XmlUtils.GetNodeValue(node.CreateNavigator(), "propertyname");
                 objProfileDefinition.Required = false;
                 objProfileDefinition.Visible = true;
-                objProfileDefinition.ViewOrder = OrderCounter;
+                objProfileDefinition.ViewOrder = orderCounter;
                 objProfileDefinition.Length = XmlUtils.GetNodeValueInt(node, "length");                
 
                 switch (XmlUtils.GetNodeValueInt(node, "defaultvisibility", 2))
@@ -1517,7 +1518,7 @@ namespace DotNetNuke.Entities.Portals
             // it should be added. Situation will mostly happen while using an older template file.
             if (!preferredTimeZoneFound)
             {
-                OrderCounter += 2;
+                orderCounter += 2;
 
                 ListEntryInfo typeInfo = colDataTypes["DataType:TimeZoneInfo"];
                 if (typeInfo == null)
@@ -1533,7 +1534,7 @@ namespace DotNetNuke.Entities.Portals
                 objProfileDefinition.PropertyName = "PreferredTimeZone";
                 objProfileDefinition.Required = false;
                 objProfileDefinition.Visible = true;
-                objProfileDefinition.ViewOrder = OrderCounter;
+                objProfileDefinition.ViewOrder = orderCounter;
                 objProfileDefinition.Length = 0;
                 objProfileDefinition.DefaultVisibility = UserVisibilityMode.AdminOnly;
                 ProfileController.AddPropertyDefinition(objProfileDefinition);

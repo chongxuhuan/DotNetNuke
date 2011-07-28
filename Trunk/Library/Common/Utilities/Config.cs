@@ -581,12 +581,25 @@ namespace DotNetNuke.Common.Utilities
         ///   Gets the path for the specificed Config file
         /// </summary>
         /// <param name = "file">The config.file to get the path for</param>
+        /// <returns>fully qualified path to the file</returns>
+        /// <remarks>
+        ///   Will copy the file from the template directory as requried
+        /// </remarks>
+        public static string GetPathToFile(ConfigFileType file)
+        {
+            return GetPathToFile(file, false);
+        }
+
+        /// <summary>
+        ///   Gets the path for the specificed Config file
+        /// </summary>
+        /// <param name = "file">The config.file to get the path for</param>
         /// <param name = "overwrite">force an overwrite of the config file</param>
         /// <returns>fully qualified path to the file</returns>
         /// <remarks>
         ///   Will copy the file from the template directory as requried
         /// </remarks>
-        public static string GetPathToFile(ConfigFileType file, bool overwrite = false)
+        public static string GetPathToFile(ConfigFileType file, bool overwrite)
         {
             string fileName = EnumToFileName(file);
             string path = Path.Combine(Globals.ApplicationMapPath, fileName);

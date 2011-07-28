@@ -79,7 +79,12 @@ namespace DotNetNuke.Tests.Core
             retryable.TryIt();
         }
 
-        private static RetryableAction CreateRetryable(Action action, int factor = 1)
+        private static RetryableAction CreateRetryable(Action action)
+        {
+            return CreateRetryable(action, 1);
+        }
+
+        private static RetryableAction CreateRetryable(Action action, int factor)
         {
             return new RetryableAction(action, "foo", 10, TimeSpan.FromMilliseconds(5), factor);
         }
@@ -90,7 +95,9 @@ namespace DotNetNuke.Tests.Core
         private int _failuresRemaining;
         private readonly List<DateTime> _callTimes = new List<DateTime>();
 
-        public ActionMonitor(int failureCount = 0)
+        public ActionMonitor() : this(0) {}
+
+        public ActionMonitor(int failureCount)
         {
             _failuresRemaining = failureCount;
         }

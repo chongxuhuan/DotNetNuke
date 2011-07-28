@@ -19,6 +19,6 @@
 			<asp:ListItem Value="Page" ResourceKey="Page" />
 			<asp:ListItem Value="Site" ResourceKey="Site" />
 		</asp:RadioButtonList>
-		<asp:CheckBox ID="chkReplace" runat="server" resourcekey="chkReplace" />
+		<asp:CheckBox ID="chkReplace" runat="server" resourcekey="chkReplace" CssClass="inline" />
 	</div>
 </div>

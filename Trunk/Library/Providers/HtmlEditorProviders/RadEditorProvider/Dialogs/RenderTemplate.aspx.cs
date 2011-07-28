@@ -25,6 +25,7 @@ using System.Collections.Specialized;
 using System.Web;
 
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.FileSystem;
 
 namespace DotNetNuke.Providers.RadEditorProvider
@@ -144,6 +145,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 						catch (Exception ex)
 						{
 							returnValue = -1;
+                            DnnLog.Error(ex);
 						}
 					}
 				}

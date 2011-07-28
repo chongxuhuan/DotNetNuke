@@ -257,7 +257,7 @@ namespace DotNetNuke.Modules.Admin.Portals
         private void BindPaymentProcessor(PortalInfo portal)
         {
             var listController = new ListController();
-            currencyCombo.DataSource = listController.GetListEntryInfoCollection("Currency", "");
+            currencyCombo.DataSource = listController.GetListEntryInfoItems("Currency", "");
             var currency = portal.Currency;
             if (String.IsNullOrEmpty(currency))
             {
@@ -265,7 +265,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
             currencyCombo.DataBind(currency);
 
-            processorCombo.DataSource = listController.GetListEntryInfoCollection("Processor", "");
+            processorCombo.DataSource = listController.GetListEntryInfoItems("Processor", "");
             processorCombo.DataBind();
             processorCombo.InsertItem(0, "<" + Localization.GetString("None_Specified") + ">", "");
             processorCombo.Select(Host.PaymentProcessor, true);

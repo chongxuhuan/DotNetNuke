@@ -1106,9 +1106,9 @@ namespace DotNetNuke.Providers.RadEditorProvider
             {
                 xmlConfigFile.Load(GetXmlFilePath(ConfigFile));
             }
-            catch (Exception generatedExceptionName)
+            catch (Exception ex)
             {
-                throw new Exception("Invalid Configuration File:" + ConfigFile);
+                throw new Exception("Invalid Configuration File:" + ConfigFile, ex);
             }
             return xmlConfigFile;
         }

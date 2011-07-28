@@ -16,6 +16,9 @@
                             var refresh = popup.dialog("option", "refresh");
                             var closingUrl = popup.dialog("option", "closingUrl");
 
+                            if (closingUrl == "")
+                            { closingUrl = location.href }
+
                             if (popup.dialog('isOpen') === true) {
                                 popup.dialog("option", {
                                     close: function (event, ui) { dnnModal.closePopUp(refresh, closingUrl); }

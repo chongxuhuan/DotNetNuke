@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Linq;
 using System.Web.UI;
 
 #endregion
@@ -76,7 +77,7 @@ namespace DotNetNuke.UI.WebControls
         /// -----------------------------------------------------------------------------
         protected override void RenderEditMode(HtmlTextWriter writer)
         {
-            if ((List == null) || List.Count == 0)
+            if (ListEntries == null || !ListEntries.Any())
             {
 				//No List so use a Text Box
                 string propValue = Convert.ToString(Value);

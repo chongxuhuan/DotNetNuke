@@ -20,6 +20,7 @@
 
 //INSTANT C# NOTE: Formerly VB project-level imports:
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
@@ -202,12 +203,11 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 		public virtual string OnRenameFile(string virtualPathAndFile)
 		{
-			string returnValue = string.Empty;
-			try
+		    try
 			{
-				string virtualPath = (string)RemoveFileName(virtualPathAndFile);
+				string virtualPath = RemoveFileName(virtualPathAndFile);
 
-				returnValue = Check_CanAddToFolder(virtualPath, true);
+				string returnValue = Check_CanAddToFolder(virtualPath, true);
 				if (! (string.IsNullOrEmpty(returnValue)))
 				{
 					return returnValue;
@@ -225,18 +225,15 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			{
 				return LogUnknownError(ex, virtualPathAndFile);
 			}
-
-			return returnValue;
 		}
 
 		public virtual string OnMoveFile(string virtualPathAndFile, string virtualNewPathAndFile)
 		{
-			string returnValue = string.Empty;
-			try
+		    try
 			{
-				string virtualPath = (string)RemoveFileName(virtualPathAndFile);
+				string virtualPath = RemoveFileName(virtualPathAndFile);
 
-				returnValue = Check_CanDeleteFolder(virtualPath, true);
+				string returnValue = Check_CanDeleteFolder(virtualPath, true);
 				if (! (string.IsNullOrEmpty(returnValue)))
 				{
 					return returnValue;
@@ -248,14 +245,11 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			{
 				return LogUnknownError(ex, virtualPathAndFile, virtualNewPathAndFile);
 			}
-
-			return returnValue;
 		}
 
 		public virtual string OnCopyFile(string virtualPathAndFile, string virtualNewPathAndFile)
 		{
-			string returnValue = string.Empty;
-			try
+		    try
 			{
 				int existingFileSize = GetFileSize(virtualPathAndFile);
 				if (existingFileSize < 0)
@@ -263,8 +257,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 					return LogDetailError(ErrorCodes.FileDoesNotExist, virtualPathAndFile, true);
 				}
 
-				string virtualPath = (string)RemoveFileName(virtualPathAndFile);
-				returnValue = Check_CanCopyFolder(virtualPath, true);
+				string virtualPath = RemoveFileName(virtualPathAndFile);
+				string returnValue = Check_CanCopyFolder(virtualPath, true);
 				if (! (string.IsNullOrEmpty(returnValue)))
 				{
 					return returnValue;
@@ -276,8 +270,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			{
 				return LogUnknownError(ex, virtualPathAndFile, virtualNewPathAndFile);
 			}
-
-			return returnValue;
 		}
 
 #endregion
@@ -933,7 +925,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 		}
 
-		private FileSystemValidation _PortalSettings = null;
 		private PortalSettings PortalSettings
 		{
 			get
@@ -1044,6 +1035,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
+                DnnLog.Error(ex);
 				return "An unknown error occurred.";
 			}
 		}
@@ -1056,6 +1048,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
+                DnnLog.Error(ex);
 				return "An unknown error occurred." + " " + string.Join(" | ", @params);
 			}
 		}

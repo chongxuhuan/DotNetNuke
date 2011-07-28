@@ -24,6 +24,8 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
@@ -136,17 +138,17 @@ namespace DotNetNuke.Common.Lists
         ///     [cnurse]  01/31/2007	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        protected ListEntryInfoCollection SelectedListItems
+        protected IEnumerable<ListEntryInfo> SelectedListItems
         {
             get
             {
-                ListEntryInfoCollection list = null;
                 if (SelectedList != null)
                 {
                     var ctlLists = new ListController();
-                    list = ctlLists.GetListEntryInfoCollection(SelectedList.Name, SelectedList.ParentKey, SelectedList.PortalID);
+                    return ctlLists.GetListEntryInfoItems(SelectedList.Name, SelectedList.ParentKey, SelectedList.PortalID);
                 }
-                return list;
+
+                return null;
             }
         }
 
@@ -354,7 +356,7 @@ namespace DotNetNuke.Common.Lists
             }
             else
             {
-                lblEntryCount.Text = SelectedListItems.Count + " " + Localization.GetString("Entries", LocalResourceFile);
+                lblEntryCount.Text = SelectedListItems.Count() + " " + Localization.GetString("Entries", LocalResourceFile);
             }
         }
 
@@ -425,7 +427,7 @@ namespace DotNetNuke.Common.Lists
                     var ctlLists = new ListController();
 
                     ddlSelectList.Enabled = true;
-                    ddlSelectList.DataSource = ctlLists.GetListInfoCollection();
+                    ddlSelectList.DataSource = ctlLists.GetListInfoCollection(string.Empty, string.Empty, PortalSettings.ActiveTab.PortalID);
                     ddlSelectList.DataTextField = "DisplayName";
                     ddlSelectList.DataValueField = "Key";
                     ddlSelectList.DataBind();
@@ -441,7 +443,7 @@ namespace DotNetNuke.Common.Lists
 
         private void DeleteItem(int entryId)
         {
-            if (SelectedListItems.Count > 1)
+            if (SelectedListItems.Any())
             {
                 try
                 {
@@ -689,7 +691,7 @@ namespace DotNetNuke.Common.Lists
                 ListInfo selList = GetList(ddlSelectList.SelectedItem.Value, false);
                 {
                     ddlSelectParent.Enabled = true;
-                    ddlSelectParent.DataSource = ctlLists.GetListEntryInfoCollection(selList.Name, selList.ParentKey);
+                    ddlSelectParent.DataSource = ctlLists.GetListEntryInfoItems(selList.Name, selList.ParentKey);
                     ddlSelectParent.DataTextField = "DisplayName";
                     ddlSelectParent.DataValueField = "EntryID";
                     ddlSelectParent.DataBind();
@@ -800,6 +802,8 @@ namespace DotNetNuke.Common.Lists
                         {
                             entry.SortOrder = 0;
                         }
+                        //save the list as system list when its edit by host user.
+                        entry.SystemList = ListPortalID == Null.NullInteger;
                         ctlLists.AddListEntry(entry);
 
                         SelectedKey = entry.ParentKey.Replace(":", ".") + ":" + entry.ListName;

@@ -228,7 +228,7 @@ namespace DotNetNuke.Modules.Admin.Host
         private void BindPaymentProcessor()
         {
             var listController = new ListController();
-            processorCombo.DataSource = listController.GetListEntryInfoCollection("Processor", "");
+            processorCombo.DataSource = listController.GetListEntryInfoItems("Processor", "");
             processorCombo.DataBind();
             processorCombo.InsertItem(0, "<" + Localization.GetString("None_Specified") + ">", "");
             processorCombo.Select(Entities.Host.Host.PaymentProcessor, true);
@@ -239,7 +239,7 @@ namespace DotNetNuke.Modules.Admin.Host
             txtPassword.Attributes.Add("value", Entities.Host.Host.ProcessorPassword);
             txtHostFee.Text = Entities.Host.Host.HostFee.ToString();
 
-            currencyCombo.DataSource = listController.GetListEntryInfoCollection("Currency", "");
+            currencyCombo.DataSource = listController.GetListEntryInfoItems("Currency", "");
             var currency = Entities.Host.Host.HostCurrency;
             if (String.IsNullOrEmpty(currency))
             {

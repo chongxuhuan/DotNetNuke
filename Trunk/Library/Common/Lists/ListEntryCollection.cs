@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 
 using DotNetNuke.Instrumentation;
 
@@ -33,57 +34,52 @@ using DotNetNuke.Instrumentation;
 namespace DotNetNuke.Common.Lists
 {
     [Serializable]
+    [Obsolete("Obsoleted in 6.0.1.  Replaced by using generic collections of ListEntryInfo objects"), EditorBrowsable(EditorBrowsableState.Never)]
     public class ListEntryInfoCollection : CollectionBase
     {
-        private readonly Hashtable mKeyIndexLookup = new Hashtable();
+        private readonly Hashtable _keyIndexLookup = new Hashtable();
 
-        public ListEntryInfo this[int index]
+        public ListEntryInfo Item(int index)
         {
-            get
+            try
             {
-                try
-                {
-                    return (ListEntryInfo) base.List[index];
-                }
-                catch (Exception exc)
-                {
-                    DnnLog.Error(exc);
-                    return null;
-                }
-            }
-        }
-
-        public ListEntryInfo this[string key]
-        {
-            get
-            {
-                int index;
-            	//<tam:note key to be lowercase for appropiated seeking>
-                try
-                {
-                    if (mKeyIndexLookup[key.ToLower()] == null)
-                    {
-                        return null;
-                    }
-                }
-                catch (Exception exc)
-                {
-                    DnnLog.Error(exc);
-                    return null;
-                }
-                index = Convert.ToInt32(mKeyIndexLookup[key.ToLower()]);
                 return (ListEntryInfo) base.List[index];
             }
+            catch (Exception exc)
+            {
+                DnnLog.Error(exc);
+                return null;
+            }
         }
 
-        public ListEntryInfo GetChildren(string ParentName)
+        public ListEntryInfo Item(string key)
         {
-            return this[ParentName];
+            int index;
+            //<tam:note key to be lowercase for appropiated seeking>
+            try
+            {
+                if (_keyIndexLookup[key.ToLower()] == null)
+                {
+                    return null;
+                }
+            }
+            catch (Exception exc)
+            {
+                DnnLog.Error(exc);
+                return null;
+            }
+            index = Convert.ToInt32(_keyIndexLookup[key.ToLower()]);
+            return (ListEntryInfo) base.List[index];
+        }
+
+        public ListEntryInfo GetChildren(string parentName)
+        {
+            return Item(parentName);
         }
 
         internal new void Clear()
         {
-            mKeyIndexLookup.Clear();
+            _keyIndexLookup.Clear();
             base.Clear();
         }
 
@@ -93,7 +89,7 @@ namespace DotNetNuke.Common.Lists
             try //Do validation first
             {
                 index = base.List.Add(value);
-                mKeyIndexLookup.Add(key.ToLower(), index);
+                _keyIndexLookup.Add(key.ToLower(), index);
             }
             catch (Exception exc)
             {

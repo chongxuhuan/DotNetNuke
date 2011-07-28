@@ -78,7 +78,7 @@ namespace DotNetNuke.Entities.Profile
         ///     [cnurse]	02/22/2006	created
         /// </history>
         /// -----------------------------------------------------------------------------
-        private static void AddDefaultDefinition(int portalId, string category, string name, string strType, int length, UserVisibilityMode defaultVisibility, ListEntryInfoCollection types)
+        private static void AddDefaultDefinition(int portalId, string category, string name, string strType, int length, UserVisibilityMode defaultVisibility, Dictionary<string, ListEntryInfo> types)
         {
             _orderCounter += 2;
             AddDefaultDefinition(portalId, category, name, strType, length, _orderCounter, defaultVisibility, types);
@@ -101,7 +101,7 @@ namespace DotNetNuke.Entities.Profile
         /// </history>
         /// -----------------------------------------------------------------------------
         internal static void AddDefaultDefinition(int portalId, string category, string name, string type, int length, int viewOrder, UserVisibilityMode defaultVisibility,
-                                                  ListEntryInfoCollection types)
+                                                  Dictionary<string, ListEntryInfo> types)
         {
             ListEntryInfo typeInfo = types["DataType:" + type];
             if (typeInfo == null)
@@ -369,8 +369,9 @@ namespace DotNetNuke.Entities.Profile
         public static void AddDefaultDefinitions(int PortalId)
         {
             _orderCounter = 1;
-            var objListController = new ListController();
-            ListEntryInfoCollection dataTypes = objListController.GetListEntryInfoCollection("DataType");
+            var listController = new ListController();
+            Dictionary<string, ListEntryInfo> dataTypes = listController.GetListEntryInfoDictionary("DataType");
+
             AddDefaultDefinition(PortalId, "Name", "Prefix", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
             AddDefaultDefinition(PortalId, "Name", "FirstName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
             AddDefaultDefinition(PortalId, "Name", "MiddleName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);

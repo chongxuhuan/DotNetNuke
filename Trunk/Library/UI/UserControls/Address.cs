@@ -24,7 +24,7 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using DotNetNuke.Common.Lists;
@@ -434,9 +434,9 @@ namespace DotNetNuke.UI.UserControls
 			var ctlEntry = new ListController();
 			//listKey in format "Country.US:Region"
 			var listKey = "Country." + countryCode;
-			var entryCollection = ctlEntry.GetListEntryInfoCollection("Region", listKey);
+			var entryCollection = ctlEntry.GetListEntryInfoItems("Region", listKey);
 
-			if (entryCollection.Count != 0)
+			if (entryCollection.Any())
 			{
 				cboRegion.Visible = true;
 				txtRegion.Visible = false;
@@ -698,7 +698,7 @@ namespace DotNetNuke.UI.UserControls
 					//<this test using method 2: get empty collection then get each entry list on demand & store into cache
 
 					var ctlEntry = new ListController();
-					var entryCollection = ctlEntry.GetListEntryInfoCollection("Country");
+					var entryCollection = ctlEntry.GetListEntryInfoItems("Country");
 
 					cboCountry.DataSource = entryCollection;
 					cboCountry.DataBind();
