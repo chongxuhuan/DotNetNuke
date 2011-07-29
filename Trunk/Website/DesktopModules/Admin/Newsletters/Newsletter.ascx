@@ -7,7 +7,6 @@
 <div class="dnnForm dnnNewsletters dnnClear" id="dnnNewsletters">
     <ul class="dnnAdminTabNav dnnClear">
 		<li><a href="#newBasicSettings"><%=LocalizeString("BasicSettings")%></a></li>
-		<li><a href="#newMessage"><%=LocalizeString("Message")%></a></li>
 		<li><a href="#newAdvancedSettings"><%=LocalizeString("AdvancedSettings")%></a></li>
 	</ul>
     <div class="newBasicSettings" id="newBasicSettings">
@@ -40,13 +39,11 @@
                 <dnn:Label ID="plSubject" runat="server" ControlName="txtSubject" />
                 <asp:TextBox ID="txtSubject" runat="server" MaxLength="100" />
             </div>
+            <div class="dnnFormItem dnnTextEditor">
+                <dnn:TextEditor ID="teMessage" runat="server" Width="750" TextRenderMode="Raw" HtmlEncode="False" defaultmode="Rich" height="350" choosemode="True" chooserender="False" />
+            </div>
         </fieldset>
     </div>
-    <div class="newMessage" id="newMessage">
-        <div class="dnnFormItem dnnTextEditor">
-            <dnn:TextEditor ID="teMessage" runat="server" Width="750" TextRenderMode="Raw" HtmlEncode="False" defaultmode="Rich" height="350" choosemode="True" chooserender="False" />
-        </div>
-    </div>    
     <div class="newAdvancedSettings" id="newAdvancedSettings">
         <fieldset>
             <div class="dnnFormItem dnnNewsletterAttachment">

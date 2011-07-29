@@ -415,7 +415,7 @@ div.SearchIcon img{margin-top:3px;}
 				.dnnFormPopup .ui-resizable-se{width:14px;height:14px;float:right;background:url(../../images/modal-resize-icn.png) no-repeat bottom;height:24px;width:24px;}
 	
 	.dnnFormPopup .dnnDialog {padding:10px;}
-	.dnnLoading{ background: url(../../images/loading.gif) no-repeat center center;}
+	.dnnLoading{ background: #fff url(../../images/loading.gif) no-repeat center center;position: absolute;z-index: 9999;}
 	            
 	/* Component containers
 	----------------------------------*/

@@ -78,10 +78,14 @@
 
             //hide menu if user double clicks while they are outside of the
             //control panel
-            $(document).dblclick(function () {
-                if (!canHide)
-                    hideAll();
-            })
+        	$(document).dblclick(function() {
+        		if (!canHide)
+        			hideAll();
+        	});
+
+        	$controlPanel.dblclick(function(e) {
+        		e.stopPropagation();
+        	});
 
             //Hide menu if Esc key is pressed
             $(document).keyup(function (e) {

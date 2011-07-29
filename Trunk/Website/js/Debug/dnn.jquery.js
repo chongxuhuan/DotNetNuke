@@ -145,7 +145,7 @@
         resizable: false,
         modal: true,
         title: 'Confirm',
-        dialogClass: 'dnnFormPopup',
+        dialogClass: 'dnnFormPopup dnnClear',
         isButton: false
     };
 
@@ -178,7 +178,7 @@
         autoOpen: false,
         resizable: false,
         modal: true,
-        dialogClass: 'dnnFormPopup'
+        dialogClass: 'dnnFormPopup dnnClear'
     };
 
 })(jQuery);

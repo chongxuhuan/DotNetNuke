@@ -105,12 +105,10 @@
 					, height: $modal.height()
                 });
                 $modal.before(loading);
-                $modal.hide();
             };
 
             var hideLoading = function () {
                 $modal.prev(".dnnLoading").remove();
-                $modal.show();
             };
 
             showLoading();

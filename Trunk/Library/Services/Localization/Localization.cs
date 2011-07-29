@@ -1107,16 +1107,9 @@ namespace DotNetNuke.Services.Localization
             {
                 try
                 {
-                    if (portalSettings.ContentLocalizationEnabled && HttpContext.Current.Request.IsAuthenticated && portalSettings.UserMode == PortalSettings.Mode.Edit)
-                    {
-                        //Check Cookie only
-                        preferredLocale = HttpContext.Current.Request.Cookies["language"].Value;
-                    }
-                    else
-                    {
-                        //Check Cookie or Qs
-                        preferredLocale = HttpContext.Current.Request["language"];
-                    }
+                    //get language from request collection: querystring / cookie
+					preferredLocale = HttpContext.Current.Request["language"];
+
                     if (!String.IsNullOrEmpty(preferredLocale))
                     {
                         if (_localeController.IsEnabled(ref preferredLocale, portalSettings.PortalId))

@@ -3,7 +3,7 @@
 <%@ Register TagPrefix="Telerik" Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" TagName="label" Src="~/controls/LabelControl.ascx" %>
-<div class="dnnForm dnnProviderConfig dnnClear" id="dnnProviderConfig">
+<div class="dnnProviderConfig dnnClear" id="dnnProviderConfig">
 	<div class="dnnTreeArea">
 		<asp:Panel id="pnlSelectProvider" runat="server" class="dnnProviderSelect">
 			<h3><asp:Label ID="lblSelectedProvider" runat="server" resourcekey="lblSelectedProvider" /></h3>
@@ -16,7 +16,7 @@
 		</div>  
 	</div>     
 	<asp:Panel ID="pnlTabContent" runat="server" class="dnnpcTabs">                                                                                       
-		<asp:Panel ID="pnlEditor" runat="server">                   
+		<asp:Panel ID="pnlEditor" runat="server" CssClass="dnnForm">                   
 			<ul class="dnnAdminTabNav dnnClear">
 				<li><a href="#dnnEditorConfig"><%=LocalizeString("EditConfigTab")%></a></li>
 				<li><a href="#dnnToolbarConfig"><%=LocalizeString("ToolbarConfigTab")%></a></li>

@@ -44,6 +44,21 @@ namespace DotNetNuke.Common.Utilities.Internal
             new RetryableAction(action, description, 30, TimeSpan.FromSeconds(1)).TryIt();
         }
 
+        /// <summary>
+        /// Method that allows thread to sleep until next retry meant for unit testing purposes
+        /// </summary>
+        public static Action<int> SleepAction { get; set; }
+
+        static RetryableAction()
+        {
+            SleepAction = GoToSleep;
+        }
+
+        private static void GoToSleep(int delay)
+        {
+            Thread.Sleep(delay);
+        }
+
         public RetryableAction(Action action, string description, int maxRetries, TimeSpan delay) : this(action, description, maxRetries, delay, 1) {}
 
         public RetryableAction(Action action, string description, int maxRetries, TimeSpan delay, float delayMultiplier)
@@ -82,7 +97,7 @@ namespace DotNetNuke.Common.Utilities.Internal
                     }
 
                     DnnLog.Trace("Retrying action {0} - {1}", retrysRemaining, Description);
-                    Thread.Sleep(currentDelay);
+                    SleepAction.Invoke(currentDelay);
 
                     const double epsilon = 0.0001;
                     if(Math.Abs(DelayMultiplier - 1) > epsilon)

@@ -31,6 +31,15 @@ namespace DotNetNuke.Tests.Core
     [TestFixture]
     public class RetryableActionTests
     {
+        private SleepMonitor _sleepMonitor;
+
+        [SetUp]
+        public void Setup()
+        {
+            _sleepMonitor = new SleepMonitor();
+            RetryableAction.SleepAction = _sleepMonitor.GoToSleep;
+        }
+
         [Test]
         public void ActionSucceedsFirstTime()
         {
@@ -61,12 +70,13 @@ namespace DotNetNuke.Tests.Core
 
             retryable.TryIt();
 
-            var firstRetry = (monitor.CallTime[1] - monitor.CallTime[0]).TotalMilliseconds;
-            var secondRetry = (monitor.CallTime[2] - monitor.CallTime[1]).TotalMilliseconds;
-            var thirdRetry = (monitor.CallTime[3] - monitor.CallTime[2]).TotalMilliseconds;
+            var firstRetry = _sleepMonitor.SleepPeriod[0];
+            var secondRetry = _sleepMonitor.SleepPeriod[1];
+            var thirdRetry = _sleepMonitor.SleepPeriod[2];
 
-            Assert.IsTrue(secondRetry > firstRetry * 5); //factor of 5 vs 10 to allow for lots of slop in the thread.sleep
-            Assert.IsTrue(thirdRetry > secondRetry * 5);
+            Assert.AreEqual(5, firstRetry);
+            Assert.AreEqual(50, secondRetry);
+            Assert.AreEqual(500, thirdRetry);
         }
 
         [Test]
@@ -89,8 +99,26 @@ namespace DotNetNuke.Tests.Core
             return new RetryableAction(action, "foo", 10, TimeSpan.FromMilliseconds(5), factor);
         }
     }
-    
-    public class ActionMonitor
+
+    class SleepMonitor
+    {
+        private readonly List<int> _periods = new List<int>();
+
+        public void GoToSleep(int delay)
+        {
+            _periods.Add(delay);
+        }
+
+        public IList<int> SleepPeriod
+        {
+            get
+            {
+                return _periods.AsReadOnly();
+            }
+        }
+    }
+
+    class ActionMonitor
     {
         private int _failuresRemaining;
         private readonly List<DateTime> _callTimes = new List<DateTime>();
