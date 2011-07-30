@@ -133,7 +133,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
                 //get current user
                 UserInfo objUserInfo = UserController.GetCurrentUserInfo();
                 //load default tools file
-                string tempConfigFile = _configFile;
+                string tempConfigFile = ConfigFileName;
                 //get absolute path of default tools file
                 string path = HttpContext.Current.Server.MapPath(tempConfigFile).ToLower();
 
@@ -228,6 +228,16 @@ namespace DotNetNuke.Providers.RadEditorProvider
             }
         }
 
+        internal static void EnsureDefaultConfigFileExists()
+        {
+            EnsureDefaultFileExists(HttpContext.Current.Server.MapPath(ConfigFileName));
+        }
+
+        internal static void EnsurecDefaultToolsFileExists()
+        {
+            EnsureDefaultFileExists(HttpContext.Current.Server.MapPath(ToolsFileName));
+        }
+
         private static void EnsureDefaultFileExists(string path)
         {
             if (!File.Exists(path))
@@ -249,7 +259,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
                 //get current user
                 UserInfo objUserInfo = UserController.GetCurrentUserInfo();
                 //load default tools file
-                string tempToolsFile = _toolsFile;
+                string tempToolsFile = ToolsFileName;
                 //get absolute path of default tools file
                 string path = HttpContext.Current.Server.MapPath(tempToolsFile).ToLower();
 
@@ -1150,8 +1160,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
         private bool _ShowPortalLinks = true;
 
         //must override properties
-        private string _configFile = moduleFolderPath + "/ConfigFile/ConfigFile.xml";
-
+        private const string ConfigFileName = moduleFolderPath + "/ConfigFile/ConfigFile.xml";
+            
         //other provider specific properties
 
         private bool _languageSet;
@@ -1159,7 +1169,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
         private bool _linksUseTabNames = true;
         private string _localeFile = moduleFolderPath + "/App_LocalResources/RadEditor.Main.resx";
         private string _scripttoload = "";
-        private string _toolsFile = moduleFolderPath + "/ToolsFile/ToolsFile.xml";
+        private const string ToolsFileName = moduleFolderPath + "/ToolsFile/ToolsFile.xml";
 
         public EditorProvider()
         {

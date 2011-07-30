@@ -255,17 +255,16 @@ namespace DotNetNuke.Common
         /// <param name="app">The app.</param>
         public static void Init(HttpApplication app)
         {
-            HttpResponse Response = app.Response;
-            string redirect = Null.NullString;
+            string redirect;
             //Check if app is initialised
-            if ((InitializedAlready && Globals.Status == Globals.UpgradeStatus.None))
+            if (InitializedAlready && Globals.Status == Globals.UpgradeStatus.None)
             {
                 return;
             }
             lock (InitializeLock)
             {
                 //Double-Check if app was initialised by another request
-                if ((InitializedAlready && Globals.Status == Globals.UpgradeStatus.None))
+                if (InitializedAlready && Globals.Status == Globals.UpgradeStatus.None)
                 {
                     return;
                 }
@@ -276,7 +275,7 @@ namespace DotNetNuke.Common
             }
             if (!string.IsNullOrEmpty(redirect))
             {
-                Response.Redirect(redirect, true);
+                app.Response.Redirect(redirect, true);
             }
         }
 

@@ -2394,6 +2394,50 @@ namespace DotNetNuke.Services.Upgrade
             }
         }
 
+        private static void UpgradeToVersion601()
+        {
+            //List module needs to be available to Portals also
+            var pkg = PackageController.GetPackageByName("DotNetNuke.Lists");
+            if (pkg != null)
+            {
+                //List package is no longer a system package
+                pkg.IsSystemPackage = false; 
+                PackageController.UpdatePackage(pkg);
+
+                //List desktop module is no longer premium or admin module
+                var desktopModule = DesktopModuleController.GetDesktopModuleByPackageID(pkg.PackageID);
+                desktopModule.IsAdmin = false;
+                desktopModule.IsPremium = false;
+                DesktopModuleController.SaveDesktopModule(desktopModule, false, true);
+
+                var permissionController = new PermissionController();
+                ArrayList permissions = permissionController.GetPermissionByCodeAndKey("SYSTEM_DESKTOPMODULE", "DEPLOY");
+                if (permissions.Count == 1)
+                {
+                    var permission = permissions[0] as PermissionInfo;
+                    if (permission != null)
+                    {
+                        var portalController = new PortalController();
+                        foreach (PortalInfo portal in portalController.GetPortals())
+                        {
+                            //ensure desktop module is not present in the portal
+                            var pdmi = DesktopModuleController.GetPortalDesktopModule(portal.PortalID, desktopModule.DesktopModuleID);
+                            if (pdmi == null)
+                            {
+                                //Parse the permissions
+                                var deployPermissions = new DesktopModulePermissionCollection();
+                                var deployPermission = new DesktopModulePermissionInfo {PermissionID = permission.PermissionID, AllowAccess = true, RoleID = portal.AdministratorRoleId};
+                                deployPermissions.Add(deployPermission);
+
+                                //Add Portal/Module to PortalDesktopModules
+                                DesktopModuleController.AddDesktopModuleToPortal(portal.PortalID, desktopModule, deployPermissions, true);
+                            }
+                        }
+                    }
+                }                
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -2633,7 +2677,6 @@ namespace DotNetNuke.Services.Upgrade
                 }
             }
         }
-
         /// -----------------------------------------------------------------------------
         /// <summary>
         ///   AddPortal manages the Installation of a new DotNetNuke Portal
@@ -3814,6 +3857,9 @@ namespace DotNetNuke.Services.Upgrade
                         break;
                     case "6.0.0":
                         UpgradeToVersion600();
+                        break;
+                    case "6.0.1":
+                        UpgradeToVersion601();
                         break;
                 }
             }

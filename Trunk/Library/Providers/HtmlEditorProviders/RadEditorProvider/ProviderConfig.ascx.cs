@@ -1470,30 +1470,30 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			pnlEditor.Visible = false;
 			pnlForm.Visible = false;
 
-			RadTreeNode rootnode = new RadTreeNode("Default Configuration");
+			var rootnode = new RadTreeNode("Default Configuration");
 			rootnode.Expanded = true;
 
-			foreach (string file in System.IO.Directory.GetFiles(Server.MapPath(this.TemplateSourceDirectory + "/ConfigFile")))
+            EditorProvider.EnsureDefaultConfigFileExists();
+            EditorProvider.EnsurecDefaultToolsFileExists();
+
+			foreach (string file in Directory.GetFiles(Server.MapPath(this.TemplateSourceDirectory + "/ConfigFile")))
 			{
 				if (file.ToLower().EndsWith("configfile.xml.original.xml"))
 				{
-
-					rootnode.Value = file;
-
+                    rootnode.Value = file;
 				}
 				else
 				{
-
 					//fix for codeplex issue #187
 					bool blnAddNode = true;
 
-					string nodename = file.Substring(file.LastIndexOf("\\") + 1).Replace(".xml", "");
-					if (nodename.StartsWith("ConfigFile") && file.EndsWith(".xml"))
+					string nodename = file.Substring(file.LastIndexOf("\\") + 1).Replace(".xml", "").ToLowerInvariant();
+					if (nodename.StartsWith("configfile") && file.EndsWith(".xml"))
 					{
 
 						string nodeTitle = "Everyone";
 
-						string strTargetGroup = nodename.Replace("ConfigFile.", "");
+						string strTargetGroup = nodename.Replace("configfile.", "");
 						string strTargetTab = "";
 
 						if (strTargetGroup.Length > 0)

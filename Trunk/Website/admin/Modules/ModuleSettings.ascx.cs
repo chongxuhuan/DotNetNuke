@@ -124,6 +124,13 @@ namespace DotNetNuke.Modules.Admin.Modules
         #endregion
 
         #region Private Methods
+        
+        private void DisableHostAdminFunctions()
+        {
+            chkNewTabs.Enabled = false;
+            chkDefault.Enabled = false;
+            chkAllModules.Enabled = false;
+        }
 
         /// <summary>
         /// BindData loads the settings from the Database
@@ -316,7 +323,7 @@ namespace DotNetNuke.Modules.Admin.Modules
             base.OnInit(e);
 
             jQuery.RequestDnnPluginsRegistration();
-
+            DisableHostAdminFunctions();
             var objModules = new ModuleController();
             ModuleControlInfo objModuleControlInfo;
 
@@ -334,7 +341,7 @@ namespace DotNetNuke.Modules.Admin.Modules
             }
 
             //Verify that the current user has access to edit this module
-            if (!ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "MANAGE", Module))
+            if (!ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Admin, "MANAGE", Module))
             {
                 Response.Redirect(Globals.AccessDeniedURL(), true);
             }

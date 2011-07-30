@@ -26,6 +26,7 @@
 using System;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Security;
 using DotNetNuke.Services.Installer;
@@ -98,7 +99,8 @@ namespace DotNetNuke.Modules.Admin.Extensions
             get
             {
                 var actions = new ModuleActionCollection();
-                if (ModuleContext.IsHostMenu)
+
+                if (ModuleContext.PortalSettings.UserInfo.IsSuperUser)
                 {
                     actions.Add(ModuleContext.GetNextActionID(),
                                 Localization.GetString("ExtensionInstall.Action", LocalResourceFile),
@@ -110,6 +112,10 @@ namespace DotNetNuke.Modules.Admin.Extensions
                                 SecurityAccessLevel.Host,
                                 true,
                                 false);
+                }
+
+                if (ModuleContext.IsHostMenu)
+                {
                     actions.Add(ModuleContext.GetNextActionID(),
                                 Localization.GetString("CreateExtension.Action", LocalResourceFile),
                                 ModuleActionType.AddContent,

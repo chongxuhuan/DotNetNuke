@@ -12,10 +12,12 @@
             <asp:Panel ID="pnlLoginContainer" runat="server" CssClass="LoginPanel" Visible="false" />
             <div class="dnnLoginRememberMe"><asp:checkbox id="chkCookie" resourcekey="Remember" runat="server" /></div>
             <div><asp:label id="lblLogin" runat="server" /></div>
-            <ul class="dnnActions dnnClear">
-                <li id="liRegister" runat="server"><asp:HyperLink ID="registerLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdRegister" /></li>
-                <li id="liPassword" runat="server"><asp:HyperLink ID="passwordLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdPassword" /></li>
-            </ul>
+            <div class="dnnLoginActions">
+                <ul class="dnnActions dnnClear">
+                    <li id="liRegister" runat="server"><asp:HyperLink ID="registerLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdRegister" /></li>                
+                    <li id="liPassword" runat="server"><asp:HyperLink ID="passwordLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdPassword" /></li>
+                </ul>
+            </div>
         </div>
     </asp:panel>
     <asp:Panel ID="pnlAssociate" runat="Server" Visible="false">

@@ -2886,7 +2886,10 @@ namespace DotNetNuke.Common
         {
             string strURL = "";
             var portalSettings = PortalController.GetCurrentPortalSettings();
-            returnURL = String.Format("returnurl={0}", returnURL);
+            if (!string.IsNullOrEmpty(returnURL))
+            {
+                returnURL = String.Format("returnurl={0}", returnURL);
+            }
             if (portalSettings.LoginTabId != -1 && !@override)
             {
                 if (ValidateLoginTabID(portalSettings.LoginTabId))

@@ -1107,8 +1107,16 @@ namespace DotNetNuke.Services.Localization
             {
                 try
                 {
-                    //get language from request collection: querystring / cookie
-					preferredLocale = HttpContext.Current.Request["language"];
+					if (portalSettings.ContentLocalizationEnabled && HttpContext.Current.Request.IsAuthenticated && portalSettings.UserMode == PortalSettings.Mode.Edit)
+					{
+						//use user's prefer locale if user is in edit mode so that the static text will be shown with the user's understand language.
+						preferredLocale = UserController.GetCurrentUserInfo().Profile.PreferredLocale;
+					}
+					else
+					{
+						//Check Cookie or Qs
+						preferredLocale = HttpContext.Current.Request["language"];
+					}
 
                     if (!String.IsNullOrEmpty(preferredLocale))
                     {

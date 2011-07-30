@@ -298,7 +298,7 @@
     <value>Copy design</value>
   </data>
   <data name="plCopySkin.Help" xml:space="preserve">
-    <value>Copies the currently selected design (skin and container) for the page to descendant pages.</value>
+    <value>Copies the currently selected design (skin and container) for the page to descendant pages. Option only available to Portal Admins and Superusers.</value>
   </data>
   <data name="plCopySkin.Text" xml:space="preserve">
     <value>Copy design to descendants:</value>
