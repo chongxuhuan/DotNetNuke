@@ -33,10 +33,11 @@ namespace DotNetNuke.Web.UI.WebControls
 {
     public class DnnComboBox : RadComboBox
     {
+
         protected override void OnInit(EventArgs e)
         {
-            Utilities.ApplySkin(this);
             base.OnInit(e);
+            Utilities.ApplySkin(this);
         }
 
         public void AddItem(string text, string value)

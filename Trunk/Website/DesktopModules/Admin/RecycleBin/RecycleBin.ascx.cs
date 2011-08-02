@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Linq;
 using System.Web.UI.WebControls;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
@@ -219,9 +220,35 @@ namespace DotNetNuke.Modules.Admin.RecycleBin
 				else
 				{
 					TabController.RestoreTab(objTab, PortalSettings, UserId);
+
+					//restore modules in this tab
+					lstModules.Items.Cast<ListItem>().ToList().ForEach(i =>
+					                                                   	{
+																			var values = i.Value.Split('-');
+																			var tabId = int.Parse(values[0]);
+																			var moduleId = int.Parse(values[1]);
+																			if(tabId == objTab.TabID)
+																			{
+																				RestoreModule(moduleId, tabId);
+																			}
+					                                                   	});
 				}
 			}
 			return success;
+		}
+
+		private void RestoreModule(int moduleId, int tabId)
+		{
+			var objEventLog = new EventLogController();
+			var objModules = new ModuleController();
+
+			// restore module
+			var objModule = objModules.GetModule(moduleId, tabId, false);
+			if ((objModule != null))
+			{
+				objModules.RestoreModule(objModule);
+				objEventLog.AddLog(objModule, PortalSettings, UserId, "", EventLogController.EventLogType.MODULE_RESTORED);
+			}
 		}
 
 		#endregion
@@ -408,9 +435,6 @@ namespace DotNetNuke.Modules.Admin.RecycleBin
 		/// </history>
 		protected void OnModuleRestoreClick(Object sender, EventArgs e)
 		{
-			var objEventLog = new EventLogController();
-			var objModules = new ModuleController();
-
 			foreach (ListItem item in lstModules.Items)
 			{
 				if (item.Selected)
@@ -420,14 +444,10 @@ namespace DotNetNuke.Modules.Admin.RecycleBin
 					var moduleId = int.Parse(values[1]);
 
 					// restore module
-					var objModule = objModules.GetModule(moduleId, tabId, false);
-					if ((objModule != null))
-					{
-						objModules.RestoreModule(objModule);
-						objEventLog.AddLog(objModule, PortalSettings, UserId, "", EventLogController.EventLogType.MODULE_RESTORED);
-					}
+					RestoreModule(moduleId, tabId);
 				}
 			}
+
 			BindData();
 		}
 

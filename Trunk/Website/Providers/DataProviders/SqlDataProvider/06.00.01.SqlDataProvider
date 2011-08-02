@@ -133,6 +133,24 @@ AS
 		AND    DateTime < @DateTime
 GO
 
+/* DNN-17243 - Sorting in the schedule history grid should be ordered (last started at the top) */
+/**************************************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetScheduleHistory]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetScheduleHistory]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetScheduleHistory @ScheduleID INT
+AS 
+    SELECT  S.* ,
+            SH.*
+    FROM    {databaseOwner}{objectQualifier}Schedule S
+            INNER JOIN {databaseOwner}{objectQualifier}ScheduleHistory SH ON S.ScheduleID = SH.ScheduleID
+    WHERE   S.ScheduleID = @ScheduleID
+            OR @ScheduleID = -1
+    ORDER BY SH.StartDate DESC
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

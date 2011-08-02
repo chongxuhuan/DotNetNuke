@@ -111,7 +111,7 @@ namespace DotNetNuke.Web.UI
                 string systemWebControlSkin = string.Empty;
                 if ((!string.IsNullOrEmpty(skinName) && !string.IsNullOrEmpty(skinVirtualFolder)))
                 {
-                    systemWebControlSkin = telerikControl.Page.Server.MapPath(skinVirtualFolder);
+					systemWebControlSkin = HttpContext.Current.Server.MapPath(skinVirtualFolder);
                     systemWebControlSkin = Path.Combine(systemWebControlSkin, "WebControlSkin");
                     systemWebControlSkin = Path.Combine(systemWebControlSkin, skinName);
                     systemWebControlSkin = Path.Combine(systemWebControlSkin, webControlSkinSubFolderName);
@@ -136,7 +136,7 @@ namespace DotNetNuke.Web.UI
 
                         if ((!string.IsNullOrEmpty(skinName) && !string.IsNullOrEmpty(skinVirtualFolder)))
                         {
-                            systemWebControlSkin = telerikControl.Page.Server.MapPath(skinVirtualFolder);
+                            systemWebControlSkin = HttpContext.Current.Server.MapPath(skinVirtualFolder);
                             systemWebControlSkin = Path.Combine(systemWebControlSkin, "WebControlSkin");
                             systemWebControlSkin = Path.Combine(systemWebControlSkin, skinName);
                             systemWebControlSkin = Path.Combine(systemWebControlSkin, webControlSkinSubFolderName);
@@ -159,11 +159,11 @@ namespace DotNetNuke.Web.UI
                     cssVirtual = Path.Combine(cssVirtual, string.Format("{0}.{1}.css", controlName, skinName));
                     cssLink = string.Format(cssLink, cssVirtual.Replace('\\', '/').Replace("//", "/"));
 
-                    if (((HttpContext.Current != null)))
+					if (HttpContext.Current != null && HttpContext.Current.Handler is Page)
                     {
                         if ((!HttpContext.Current.Items.Contains(cssVirtual)))
                         {
-                            telerikControl.Page.Header.Controls.Add(new LiteralControl(cssLink));
+							(HttpContext.Current.Handler as Page).Header.Controls.Add(new LiteralControl(cssLink));
                             HttpContext.Current.Items.Add(cssVirtual, "");
                         }
                     }

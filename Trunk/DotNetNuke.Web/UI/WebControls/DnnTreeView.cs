@@ -33,12 +33,11 @@ namespace DotNetNuke.Web.UI.WebControls
 {
     public class DnnTreeView : RadTreeView
     {
-        //TODO: Hide properties that we don't want to expose
 
-        protected override void OnInit(EventArgs e)
-        {
-            Utilities.ApplySkin(this);
-            base.OnInit(e);
-        }
+        //public DnnTreeView()
+        //{
+        //    Utilities.ApplySkin(this);
+        //}
+
     }
 }

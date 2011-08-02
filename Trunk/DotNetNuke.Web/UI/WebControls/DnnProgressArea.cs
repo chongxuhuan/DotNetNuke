@@ -33,15 +33,11 @@ namespace DotNetNuke.Web.UI.WebControls
 {
     public class DnnProgressArea : RadProgressArea
     {
-        #region "Protected Methods"
 
-        protected override void OnInit(EventArgs e)
-        {
-            Utilities.ApplySkin(this);
+        //public DnnProgressArea()
+        //{
+        //    Utilities.ApplySkin(this);
+        //}
 
-            base.OnInit(e);
-        }
-
-        #endregion
     }
 }

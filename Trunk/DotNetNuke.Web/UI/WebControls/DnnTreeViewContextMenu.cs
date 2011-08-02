@@ -35,11 +35,10 @@ namespace DotNetNuke.Web.UI.WebControls
     public class DnnTreeViewContextMenu : RadTreeViewContextMenu
     {
 
-        protected override void OnInit(EventArgs e)
-        {
-            Utilities.ApplySkin(this);
-            base.OnInit(e);
-        }
+        //public DnnTreeViewContextMenu()
+        //{
+        //    Utilities.ApplySkin(this);
+        //}
 
     }
 }

@@ -39,6 +39,8 @@ namespace DotNetNuke.Web.UI.WebControls
         public DnnRibbonBar() : base("div")
         {
             CssClass = "dnnRibbon";
+            Control control = this;
+            Utilities.ApplySkin(control, "", "RibbonBar", "RibbonBar");
         }
 
         [Category("Behavior"), PersistenceMode(PersistenceMode.InnerProperty), DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -65,13 +67,6 @@ namespace DotNetNuke.Web.UI.WebControls
         protected override ControlCollection CreateControlCollection()
         {
             return new DnnRibbonBarGroupCollection(this);
-        }
-
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-            Control control = this;
-            Utilities.ApplySkin(control, "", "RibbonBar", "RibbonBar");
         }
 
         protected override void OnPreRender(EventArgs e)

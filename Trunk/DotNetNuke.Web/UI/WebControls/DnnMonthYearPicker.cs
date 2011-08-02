@@ -29,10 +29,5 @@ namespace DotNetNuke.Web.UI.WebControls
     class DnnMonthYearPicker : RadMonthYearPicker
     {
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-        }
-
     }
 }

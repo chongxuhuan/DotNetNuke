@@ -53,10 +53,11 @@ namespace DotNetNuke.Web.UI.WebControls
 {
     public class DnnSlider : RadSlider
     {
-        protected override void OnInit(EventArgs e)
-        {
-            //Utilities.ApplySkin(Me)
-            base.OnInit(e);
-        }
+
+        //public DnnSlider()
+        //{
+        //    Utilities.ApplySkin(this);
+        //}
+
     }
 }

@@ -33,12 +33,11 @@ namespace DotNetNuke.Web.UI.WebControls
 {
     public class DnnListBox : RadListBox
     {
-        //TODO: Hide properties that we don't want to expose
 
-        protected override void OnInit(EventArgs e)
-        {
-            Utilities.ApplySkin(this);
-            base.OnInit(e);
-        }
+        //public DnnListBox()
+        //{
+        //    Utilities.ApplySkin(this);
+        //}
+
     }
 }

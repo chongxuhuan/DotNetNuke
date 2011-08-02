@@ -33,10 +33,12 @@ namespace DotNetNuke.Web.UI.WebControls
 {
     public class DnnTabStrip : RadTabStrip
     {
+
         protected override void OnInit(EventArgs e)
         {
-            Utilities.ApplySkin(this);
             base.OnInit(e);
+            Utilities.ApplySkin(this);
         }
+
     }
 }

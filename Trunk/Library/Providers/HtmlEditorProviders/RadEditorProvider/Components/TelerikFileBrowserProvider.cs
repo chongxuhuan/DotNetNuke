@@ -72,16 +72,17 @@ namespace DotNetNuke.Providers.RadEditorProvider
 		{
 			try
 			{
-				string virtualPath = (string)(string)FileSystemValidation.ToVirtualPath(path);
+                var directoryName = name.Trim();
+				var virtualPath = FileSystemValidation.ToVirtualPath(path);
 
-				string returnValue = DNNValidator.OnCreateFolder(virtualPath, name);
+                var returnValue = DNNValidator.OnCreateFolder(virtualPath, directoryName);
 				if (! (string.IsNullOrEmpty(returnValue)))
 				{
 					return returnValue;
 				}
 
 				//Returns errors or empty string when successful (ie: DirectoryAlreadyExists, InvalidCharactersInPath)
-				returnValue = TelerikContent.CreateDirectory(virtualPath, name);
+                returnValue = TelerikContent.CreateDirectory(virtualPath, directoryName);
 
 				if (! (string.IsNullOrEmpty(returnValue)))
 				{
@@ -90,8 +91,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 				if (string.IsNullOrEmpty(returnValue))
 				{
-					string virtualNewPath = (string)(string)FileSystemValidation.CombineVirtualPath(virtualPath, name);
-					int newFolderID = DNNFolderCtrl.AddFolder(PortalSettings.PortalId, FileSystemValidation.ToDBPath(virtualNewPath));
+                    var virtualNewPath = FileSystemValidation.CombineVirtualPath(virtualPath, directoryName);
+					var newFolderID = DNNFolderCtrl.AddFolder(PortalSettings.PortalId, FileSystemValidation.ToDBPath(virtualNewPath));
 					FileSystemUtils.SetFolderPermissions(PortalSettings.PortalId, newFolderID, FileSystemValidation.ToDBPath(virtualNewPath));
 				}
 
@@ -99,7 +100,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 			catch (Exception ex)
 			{
-				return DNNValidator.LogUnknownError(ex, path, name);
+                return DNNValidator.LogUnknownError(ex, path, name);
 			}
 		}
 

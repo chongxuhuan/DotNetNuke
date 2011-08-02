@@ -144,6 +144,22 @@ namespace DotNetNuke.Modules.Dashboard.Components.Host
             }
         }
 
+        public string JQueryVersion
+        {
+            get
+            {
+                return jQuery.Version;
+            }
+        }
+
+        public string JQueryUIVersion
+        {
+            get
+            {
+                return jQuery.UIVersion;
+            }
+        }
+
         #region IXmlSerializable Members
 
         public XmlSchema GetSchema()
@@ -170,6 +186,9 @@ namespace DotNetNuke.Modules.Dashboard.Components.Host
             writer.WriteElementString("loggingProvider", LoggingProvider);
             writer.WriteElementString("schedulerMode", SchedulerMode);
             writer.WriteElementString("webFarmEnabled", WebFarmEnabled);
+
+            writer.WriteElementString("JQueryVersion", JQueryVersion);
+            writer.WriteElementString("JQueryUIVersion", JQueryUIVersion);
         }
 
         #endregion

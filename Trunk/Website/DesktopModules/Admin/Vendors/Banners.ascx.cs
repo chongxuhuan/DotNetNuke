@@ -212,7 +212,7 @@ namespace DotNetNuke.Modules.Admin.Vendors
         /// -----------------------------------------------------------------------------
         public string FormatURL(string strKeyName, string strKeyValue)
         {
-            return EditUrl(strKeyName, strKeyValue, "Banner", "VendorId=" + VendorID, "mid=" + ModuleId);
+            return EditUrl(strKeyName, strKeyValue, "Banner", "VendorId=" + VendorID);
         }
 
 		#endregion

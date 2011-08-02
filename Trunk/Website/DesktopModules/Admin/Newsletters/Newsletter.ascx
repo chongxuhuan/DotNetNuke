@@ -6,10 +6,10 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <div class="dnnForm dnnNewsletters dnnClear" id="dnnNewsletters">
     <ul class="dnnAdminTabNav dnnClear">
-		<li><a href="#newBasicSettings"><%=LocalizeString("BasicSettings")%></a></li>
+		<li><a href="#newMessage"><%=LocalizeString("Message")%></a></li>
 		<li><a href="#newAdvancedSettings"><%=LocalizeString("AdvancedSettings")%></a></li>
 	</ul>
-    <div class="newBasicSettings" id="newBasicSettings">
+    <div class="newMessage" id="newMessage">
         <fieldset>
             <div class="dnnFormItem">
                 <dnn:Label ID="plRoles" runat="server" ControlName="chkRoles" />
@@ -39,7 +39,7 @@
                 <dnn:Label ID="plSubject" runat="server" ControlName="txtSubject" />
                 <asp:TextBox ID="txtSubject" runat="server" MaxLength="100" />
             </div>
-            <div class="dnnFormItem dnnTextEditor">
+            <div>
                 <dnn:TextEditor ID="teMessage" runat="server" Width="750" TextRenderMode="Raw" HtmlEncode="False" defaultmode="Rich" height="350" choosemode="True" chooserender="False" />
             </div>
         </fieldset>
@@ -92,15 +92,15 @@
 <asp:Panel ID="pnlPreview" runat="server" EnableViewState="false" Visible="false">
     <table>
         <tr>
-            <td style="width:100px; vertical-align:top"><asp:Label ID="label3" runat="server" resourcekey="Preview" >Preview</asp:Label></td>
+            <td style="width:100px; vertical-align:top"><asp:Label ID="label3" runat="server" resourcekey="Preview">Preview</asp:Label></td>
             <td style="width:460px;"></td>
         </tr>
         <tr>
-            <td style="width:100px; vertical-align:top"><asp:Label ID="label1" runat="server" resourcekey="plSubject" ></asp:Label></td>
+            <td style="width:100px; vertical-align:top"><asp:Label ID="label1" runat="server" resourcekey="plSubject"></asp:Label></td>
             <td style="width:460px;"><asp:Label id="lblPreviewSubject" runat="server"></asp:Label></td>
         </tr>
         <tr>
-            <td style="width:100px; vertical-align:top"><asp:Label ID="label2" runat="server" resourcekey="Message" ></asp:Label></td>
+            <td style="width:100px; vertical-align:top"><asp:Label ID="label2" runat="server" resourcekey="Message"></asp:Label></td>
             <td style="width:460px;"><asp:Label id="lblPreviewBody" runat="server"></asp:Label></td>
         </tr>
     </table>

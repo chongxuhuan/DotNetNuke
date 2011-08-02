@@ -22,6 +22,8 @@
             <dnn:FieldEditorControl ID="fldFriendlyUrlType" runat="server" DataField="FriendlyUrlType" />
             <dnn:FieldEditorControl ID="fldSchedulerMode" runat="server" DataField="SchedulerMode" />
             <dnn:FieldEditorControl ID="fldWebFarmEnabled" runat="server" DataField="WebFarmEnabled" />
+            <dnn:FieldEditorControl ID="fldjQueryVersion" runat="server" DataField="JQueryVersion" />
+            <dnn:FieldEditorControl ID="fldjQueryUIVersion" runat="server" DataField="JQueryUIVersion" />
         </Fields>
     </dnn:propertyeditorcontrol>
 </div>

@@ -29,10 +29,5 @@ namespace DotNetNuke.Web.UI.WebControls
     public class DnnRadRibbonBar : RadRibbonBar
     {
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-        }
-
     }
 }

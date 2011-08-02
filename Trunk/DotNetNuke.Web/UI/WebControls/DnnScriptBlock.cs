@@ -29,10 +29,5 @@ namespace DotNetNuke.Web.UI.WebControls
     public class DnnScriptBlock : RadScriptBlock
     {
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-        }
-
     }
 }
