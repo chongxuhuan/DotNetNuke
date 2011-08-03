@@ -264,9 +264,15 @@
     <value>{0} Messages were sent out successfully</value>
   </data>
   <data name="NoMessagesSent.Text" xml:space="preserve">
-    <value>No Messages were sent, you may want to check the Event Viewer to see if any Exceptions were logged.</value>
+    <value>No Messages were sent. A confirmation email has been sent to {0} with a description of the errors that happened during the sending process.</value>
   </data>
   <data name="cmdPreview.Text" xml:space="preserve">
     <value>Preview Email</value>
+  </data>
+  <data name="NoMessagesSentPlusError.Text" xml:space="preserve">
+    <value>An error occurred while sending the email: {0}</value>
+  </data>
+  <data name="NoRecipients.Text" xml:space="preserve">
+    <value>No Messages were sent because there are no recipients for this email.</value>
   </data>
 </root>

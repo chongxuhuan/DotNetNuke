@@ -206,10 +206,14 @@ namespace DotNetNuke.Common.Utilities
                 if (_paramList == null)
                 {
                     _paramList = new ArrayList();
-                    foreach (object param in Params)
-                    {
-                        _paramList.Add(param);
-                    }
+					//add additional params to this list if its not null
+					if (Params != null)
+					{
+						foreach (object param in Params)
+						{
+							_paramList.Add(param);
+						}
+					}
                 }
 
                 return _paramList;

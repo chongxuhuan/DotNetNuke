@@ -1264,6 +1264,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             tabController.UpdateTab(tab);
 
             //Update the moving tabs level and tabpath
+        	var oldLevel = tab.Level;
             tab.Level = targetTab.Level;
 
             //Update TabOrder as the previous UpdateTab call pushes the tab to the bottom
@@ -1280,7 +1281,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             UpdateTabOrder(tab, true);
 
             //Update the Descendents of the moving tab
-            UpdateDescendantLevel(descendantTabs, tab.Level + 1);
+            UpdateDescendantLevel(descendantTabs, tab.Level - oldLevel);
             ShowSuccessMessage(string.Format(Localization.GetString("TabMoved", LocalResourceFile), tab.TabName));
             return true;
         }

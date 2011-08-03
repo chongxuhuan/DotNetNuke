@@ -208,5 +208,17 @@ namespace DotNetNuke.Services.Localization
         }
 
         #endregion
-    }
+
+		#region "Override Methods"
+		/// <summary>
+		/// Return Locale Code.
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return _Code;
+		}
+
+		#endregion
+	}
 }

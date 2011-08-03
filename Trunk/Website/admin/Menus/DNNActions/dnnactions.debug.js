@@ -1,4 +1,4 @@
-(function ($, window, console) {
+(function ($, window) {
     $.fn.dnnActionMenu = function (options) {
         var opts = $.extend({},
             $.fn.dnnActionMenu.defaultOptions, options),
@@ -123,4 +123,4 @@
         $('.DnnModule').dnnActionMenu();
     });
 
-})(jQuery, window, console);
+})(jQuery, window);

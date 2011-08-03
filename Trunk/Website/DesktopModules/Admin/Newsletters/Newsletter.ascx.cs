@@ -231,7 +231,7 @@ namespace DotNetNuke.Modules.Admin.Newsletters
             }
             else
             {
-                message = Localization.GetString("NoMessagesSent", LocalResourceFile);
+                message = string.Format(Localization.GetString("NoMessagesSentPlusError", LocalResourceFile), sendMailResult);
                 messageType = ModuleMessage.ModuleMessageType.YellowWarning;
             }
         }
@@ -255,7 +255,7 @@ namespace DotNetNuke.Modules.Admin.Newsletters
             }
             else
             {
-                strResult = Localization.GetString("NoMessagesSent", LocalResourceFile);
+                strResult = string.Format(Localization.GetString("NoMessagesSent", LocalResourceFile), email.SendingUser.Email);
                 msgResult = ModuleMessage.ModuleMessageType.YellowWarning;
             }
         }
@@ -356,7 +356,7 @@ namespace DotNetNuke.Modules.Admin.Newsletters
                  
             if (users.Count == 0 && roleNames.Count == 0)
             {
-                message = string.Format(Localization.GetString("NoMessagesSent", LocalResourceFile), -1);
+                message = string.Format(Localization.GetString("NoRecipients", LocalResourceFile), -1);
                 messageType = ModuleMessage.ModuleMessageType.YellowWarning;
                 return false;
             }
