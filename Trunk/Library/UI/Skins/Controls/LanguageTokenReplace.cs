@@ -217,7 +217,7 @@ namespace DotNetNuke.UI.Skins.Controls
 
         	return
                 objSecurity.InputFilter(
-                    Globals.NavigateURL(tabId, objPortal.ActiveTab.IsSuperTab, objPortal, HttpContext.Current.Request.QueryString["ctl"], newLanguage, getQSParams(newLocale.ToString(), islocalized)),
+                    Globals.NavigateURL(tabId, objPortal.ActiveTab.IsSuperTab, objPortal, HttpContext.Current.Request.QueryString["ctl"], newLanguage, getQSParams(newLocale.Code, islocalized)),
                     PortalSecurity.FilterFlag.NoScripting);
         }
     }

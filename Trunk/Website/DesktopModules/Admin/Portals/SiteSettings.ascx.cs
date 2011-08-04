@@ -356,12 +356,19 @@ namespace DotNetNuke.Modules.Admin.Portals
             editContainerCombo.DataSource = containers;
             editContainerCombo.DataBind(PortalController.GetPortalSetting("DefaultAdminContainer", portal.PortalID, Host.DefaultAdminContainer));
 
-            uploadSkinLink.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "");
+			if (ModuleContext.PortalSettings.UserInfo.IsSuperUser)
+			{
+				uploadSkinLink.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "");
 
-            if (PortalSettings.EnablePopUps)
-            {
-                uploadSkinLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(uploadSkinLink.NavigateUrl, this, PortalSettings, true, false));
-            }
+				if (PortalSettings.EnablePopUps)
+				{
+					uploadSkinLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(uploadSkinLink.NavigateUrl, this, PortalSettings, true, false));
+				}
+			}
+			else
+			{
+				uploadSkinLink.Visible = false;
+			}
         }
 
         private void BindSSLSettings(PortalInfo portal)
