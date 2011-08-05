@@ -2078,7 +2078,7 @@ namespace DotNetNuke.Services.Localization
                                UserController.GetCurrentUserInfo().UserID,
                                EventLogController.EventLogType.LANGUAGETOPORTAL_DELETED);
 
-            DataCache.RemoveCache(string.Format(DataCache.LocalesCacheKey, portalID));
+			DataCache.ClearPortalCache(portalID, false);
         }
 
         public static void RemoveLanguageFromPortals(int languageID)
