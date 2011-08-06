@@ -19,6 +19,7 @@
 //
 
 //INSTANT C# NOTE: Formerly VB project-level imports:
+using System.Text.RegularExpressions;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Exceptions;
@@ -770,7 +771,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				string extension = Path.GetExtension(fileName).Replace(".", "").ToLowerInvariant();
 				string validExtensions = DotNetNuke.Entities.Host.Host.FileExtensions.ToLowerInvariant();
 
-				if (string.IsNullOrEmpty(extension) || ("," + validExtensions + ",").IndexOf("," + extension + ",") == -1)
+                if (string.IsNullOrEmpty(extension) || ("," + validExtensions + ",").IndexOf("," + extension + ",") == -1 || Regex.IsMatch(fileName, @"\..+;"))
 				{
 					if (HttpContext.Current != null)
 					{
