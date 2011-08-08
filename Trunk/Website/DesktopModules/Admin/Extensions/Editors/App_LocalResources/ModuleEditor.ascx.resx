@@ -351,4 +351,7 @@
   <data name="None.Text" xml:space="preserve">
     <value>&lt; None &gt;</value>
   </data>
+  <data name="FriendlyName.Required" xml:space="preserve">
+    <value>The friendly name is required.</value>
+  </data>
 </root>

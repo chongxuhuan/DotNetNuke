@@ -69,7 +69,7 @@
             </asp:Panel>
             <div class="dnnFormItem"><asp:Label ID="lblDefinitionError" runat="server" CssClass="dnnFormMessage dnnFormError" Visible="false" ResourceKey="DuplicateName" /> </div>
             <ul class="dnnActions dnnClear">
-    	        <li><asp:LinkButton id="cmdUpdateDefinition" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUpdateDefinition" /></li>
+    	        <li><asp:LinkButton id="cmdUpdateDefinition" runat="server" CssClass="dnnPrimaryAction" /></li>
                 <li><asp:LinkButton id="cmdDeleteDefinition" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdDeleteDefinition" Causesvalidation="False" /></li>
             </ul>
         </asp:Panel>

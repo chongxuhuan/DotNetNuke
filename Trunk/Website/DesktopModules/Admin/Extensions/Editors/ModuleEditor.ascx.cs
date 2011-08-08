@@ -416,6 +416,12 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 ModuleDefinitionID = int.Parse(cboDefinitions.SelectedValue);
                 //Force Module Definition to refresh
                 _ModuleDefinition = null;
+
+				//empty definition form's content
+				definitionsEditor.Items.ForEach(i =>
+				                                	{
+				                                		i.Value = null;
+				                                	});
                 BindDefinition();
             }
         }
@@ -425,6 +431,13 @@ namespace DotNetNuke.Modules.Admin.Extensions
             IsAddDefinitionMode = true;
             ModuleDefinitionID = Null.NullInteger;
             _ModuleDefinition = null;
+
+			////empty definition form's content
+        	definitionsEditor.Items.ForEach(i =>
+        	                                	{
+        	                                		i.Value = null;
+        	                                	});
+			
             BindDefinition();
         }
 
@@ -437,6 +450,12 @@ namespace DotNetNuke.Modules.Admin.Extensions
             ModuleDefinitionID = Null.NullInteger;
             _ModuleDefinition = null;
             _DesktopModule = null;
+
+			//empty definition form's content
+			definitionsEditor.Items.ForEach(i =>
+			                                	{
+			                                		i.Value = null;
+			                                	});
             BindDesktopModule(true);
         }
 
