@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.FileBasedCachingProvider" type="Provider" version="06.00.01">
+    <package name="DotNetNuke.FileBasedCachingProvider" type="Provider" version="06.01.00">
       <friendlyName>DotNetNuke File Based Caching Provider</friendlyName>
       <description>DotNetNuke File Based Caching Provider Project provides a File based Caching service.</description>
       <dependencies/>

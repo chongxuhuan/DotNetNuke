@@ -157,7 +157,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Community", "Community", "{
 		Community\Templates\Default Website.template.resources = Community\Templates\Default Website.template.resources
 	EndProjectSection
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = "SAK"
 		SccAuxPath = "SAK"
@@ -179,7 +179,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website", "http://localhost
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "37559"
+		SlnRelativePath = "Website\"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{93532801-CD42-40D1-B765-77676362F98C} = {93532801-CD42-40D1-B765-77676362F98C}
@@ -241,9 +241,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.Clo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.RadEditorProvider", "Library\Providers\HtmlEditorProviders\RadEditorProvider\DotNetNuke.RadEditorProvider.csproj", "{2671B9D5-A788-4DE3-93D6-20D6895A2979}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Automation", "Automation", "{29DD979B-9EA7-49D0-90B9-4410600745B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.UI.WatiN.Common", "Tests\DotNetNuke.Tests.UI.WatiN.Common\DotNetNuke.Tests.UI.WatiN.Common.csproj", "{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.UI.WatiN.Utilities", "Tests\DotNetNuke.Tests.UI.WatiN.Utilities\DotNetNuke.Tests.UI.WatiN.Utilities.csproj", "{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Website.Specs", "DotNetNuke.Website.Specs\DotNetNuke.Website.Specs.csproj", "{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 62
+		SccNumberOfProjects = 65
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -487,6 +495,17 @@ Global
 		SccProjectName61 = Website
 		SccLocalPath61 = http://localhost/DotNetNuke_Community/
 		SccProjectEnlistmentChoice61 = 2
+		SccProjectUniqueName62 = Tests\\DotNetNuke.Tests.UI.WatiN.Common\\DotNetNuke.Tests.UI.WatiN.Common.csproj
+		SccProjectTopLevelParentUniqueName62 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName62 = Tests/DotNetNuke.Tests.UI.WatiN.Common
+		SccLocalPath62 = Tests\\DotNetNuke.Tests.UI.WatiN.Common
+		SccProjectUniqueName63 = Tests\\DotNetNuke.Tests.UI.WatiN.Utilities\\DotNetNuke.Tests.UI.WatiN.Utilities.csproj
+		SccProjectTopLevelParentUniqueName63 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName63 = Tests/DotNetNuke.Tests.UI.WatiN.Utilities
+		SccLocalPath63 = Tests\\DotNetNuke.Tests.UI.WatiN.Utilities
+		SccProjectUniqueName64 = DotNetNuke.Website.Specs\\DotNetNuke.Website.Specs.csproj
+		SccProjectName64 = DotNetNuke.Website.Specs
+		SccLocalPath64 = DotNetNuke.Website.Specs
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1243,6 +1262,42 @@ Global
 		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2671B9D5-A788-4DE3-93D6-20D6895A2979}.Release|x86.ActiveCfg = Release|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Release|.NET.ActiveCfg = Release|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9}.Release|x86.ActiveCfg = Release|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Release|.NET.ActiveCfg = Release|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}.Release|x86.ActiveCfg = Release|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Release|.NET.ActiveCfg = Release|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1296,12 +1351,15 @@ Global
 		{88EB9E19-DC0D-465A-9EB2-711C9351A9EE} = {1AFF238A-8147-47D6-8234-56C7A5B88DE1}
 		{8F979B13-D28D-4C5D-AB8F-E11C296F964C} = {1AFF238A-8147-47D6-8234-56C7A5B88DE1}
 		{7A6B6744-5C25-4D21-9070-ECABC545E16F} = {1AFF238A-8147-47D6-8234-56C7A5B88DE1}
+		{29DD979B-9EA7-49D0-90B9-4410600745B5} = {1AFF238A-8147-47D6-8234-56C7A5B88DE1}
 		{F63E5020-B498-4EAF-B86D-F01712379C72} = {88EB9E19-DC0D-465A-9EB2-711C9351A9EE}
 		{5AECE021-E449-4A7F-BF82-2FA7B236ED3E} = {88EB9E19-DC0D-465A-9EB2-711C9351A9EE}
 		{F16CB7EB-4F1E-49F3-A7F4-04C04F1458DA} = {88EB9E19-DC0D-465A-9EB2-711C9351A9EE}
 		{9108D6A3-B570-4778-87C6-7B9424A7EA67} = {92CD4708-95B8-425B-B2BD-B0F77EB93170}
 		{1CA23A12-DA34-49B4-833A-76F3CA8D554C} = {92CD4708-95B8-425B-B2BD-B0F77EB93170}
 		{649E7B07-2170-4471-97C5-0941FBA12159} = {C82EAC40-C9BA-49B7-9D65-BB562F704A8C}
+		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9} = {29DD979B-9EA7-49D0-90B9-4410600745B5}
+		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40} = {29DD979B-9EA7-49D0-90B9-4410600745B5}
 	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution
 		TextTemplating = 1

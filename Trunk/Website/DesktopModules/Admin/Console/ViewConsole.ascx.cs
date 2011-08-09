@@ -362,7 +362,7 @@ namespace DotNetNuke.Modules.Admin.Console
 			}
 			else
 			{
-				const string contentHtml = "<div>" + "<a href=\"{0}\"><img src=\"{1}\" width=\"16px\" heigh=\"16px\"/><img src=\"{2}\" width=\"32px\" heigh=\"32px\"/></a>" + "<h3>{3}</h3>" + "<div>{4}</div>" + "</div>";
+                const string contentHtml = "<div>" + "<a href=\"{0}\"><img src=\"{1}\" alt=\"{3}\" width=\"16px\" heigh=\"16px\"/><img src=\"{2}\" alt=\"{3}\" width=\"32px\" heigh=\"32px\"/></a>" + "<h3>{3}</h3>" + "<div>{4}</div>" + "</div>";
 				returnValue += string.Format(contentHtml,
 											 DataBinder.Eval(dataItem, "FullUrl"),
 											 GetIconUrl(dataItem, "IconFile"),
