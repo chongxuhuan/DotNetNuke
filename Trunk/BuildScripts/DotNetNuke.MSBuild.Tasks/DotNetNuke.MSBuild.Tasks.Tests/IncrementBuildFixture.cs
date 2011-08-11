@@ -1,5 +1,4 @@
-﻿using MbUnit.Framework;
-using Gallio.Framework;
+﻿using NUnit.Framework;
 
 namespace DotNetNuke.MSBuild.Tasks.Tests
 {
@@ -15,6 +14,7 @@ namespace DotNetNuke.MSBuild.Tasks.Tests
     {
         private const string CsVersionStart = "[assembly: AssemblyVersion";
         private const string CsVersionEnd = ")]";
+        private string[] _assemblyFiles = new string[] { "Community/AssemblyInfoTest.cs", "Professional/AssemblyInfoTest.cs", "Enterprise/AssemblyInfoTest.cs" };
 
         [SetUp]
         private void Setup()
@@ -27,13 +27,13 @@ namespace DotNetNuke.MSBuild.Tasks.Tests
             File.Copy("../Community/AssemblyInfo.cs", "Community/AssemblyInfoTest.cs");
             if (File.Exists("Professional/AssemblyInfoTest.cs"))
             {
-                var professionalAssemblyFile = new FileInfo("Community/AssemblyInfoTest.cs") { IsReadOnly = false };
+                var professionalAssemblyFile = new FileInfo("Professional/AssemblyInfoTest.cs") { IsReadOnly = false };
                 File.Delete("Professional/AssemblyInfoTest.cs");
             }
             File.Copy("../Professional/AssemblyInfo.cs", "Professional/AssemblyInfoTest.cs");
             if (File.Exists("Enterprise/AssemblyInfoTest.cs"))
             {
-                var enterpriseAssemblyFile = new FileInfo("Community/AssemblyInfoTest.cs") { IsReadOnly = false };
+                var enterpriseAssemblyFile = new FileInfo("Enterprise/AssemblyInfoTest.cs") { IsReadOnly = false };
                 File.Delete("Enterprise/AssemblyInfoTest.cs");
             }
             File.Copy("../Enterprise/AssemblyInfo.cs", "Enterprise/AssemblyInfoTest.cs");
@@ -49,7 +49,7 @@ namespace DotNetNuke.MSBuild.Tasks.Tests
         [Test]
         public void IncrementBuild_Does_Not_Increment_AutoIncrementVersion_False()
         {
-            var incrementBuild = new IncrementBuild { FilePath = "Community/AssemblyInfoTest.cs", AutoIncrementVersion = false };
+            var incrementBuild = new IncrementBuild { AssemblyFiles = _assemblyFiles, AutoIncrementVersion = false };
             incrementBuild.Execute();
             Assert.AreEqual("6.0.0.0", incrementBuild.BuildVersion);
         }
@@ -57,7 +57,7 @@ namespace DotNetNuke.MSBuild.Tasks.Tests
         [Test]
         public void IncrementBuild_Does_Increment_BuildVersion_AutoIncrementVersion_True()
         {
-            var incrementBuild = new IncrementBuild { FilePath = "Community/AssemblyInfoTest.cs", AutoIncrementVersion = true };
+            var incrementBuild = new IncrementBuild { AssemblyFiles = _assemblyFiles, AutoIncrementVersion = true };
             incrementBuild.Execute();
             Assert.AreEqual("6.0.0.1", incrementBuild.BuildVersion);
         }
@@ -65,7 +65,7 @@ namespace DotNetNuke.MSBuild.Tasks.Tests
         [Test]
         public void IncrementBuild_Sets_BuildVersion_To_Default_Value()
         {
-            var incrementBuild = new IncrementBuild { FilePath = "Community/AssemblyInfoTest.cs", DefaultVersion = "6.0.0.25" };
+            var incrementBuild = new IncrementBuild { AssemblyFiles = _assemblyFiles, DefaultVersion = "6.0.0.25" };
             incrementBuild.Execute();
             Assert.AreEqual("6.0.0.25", incrementBuild.BuildVersion);
         }
@@ -73,7 +73,7 @@ namespace DotNetNuke.MSBuild.Tasks.Tests
         [Test]
         public void IncrementBuild_Updates_File_To_Default_Value()
         {
-            var incrementBuild = new IncrementBuild { FilePath = "Community/AssemblyInfoTest.cs", DefaultVersion = "6.0.0.25" };
+            var incrementBuild = new IncrementBuild { AssemblyFiles = _assemblyFiles, DefaultVersion = "6.0.0.25" };
             incrementBuild.Execute();
             var content = File.ReadAllText("Community/AssemblyInfoTest.cs");
             var indexStart = content.IndexOf(CsVersionStart) + 28;

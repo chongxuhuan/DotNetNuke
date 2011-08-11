@@ -1,14 +1,9 @@
-﻿using MbUnit.Framework;
-using Gallio.Framework;
+﻿
+using NUnit.Framework;
 
 namespace DotNetNuke.MSBuild.Tasks.Tests
 {
     using System.IO;
-    using System.Xml;
-    using System.Xml.XPath;
-    using System.Xml.Linq;
-    using System.Collections.Generic;
-    using System.Linq;
 
     [TestFixture]
     class GenerateSolutionFilesFixture

@@ -1,5 +1,4 @@
-﻿using MbUnit.Framework;
-using Gallio.Framework;
+﻿using NUnit.Framework;
 
 namespace DotNetNuke.MSBuild.Tasks.Tests
 {

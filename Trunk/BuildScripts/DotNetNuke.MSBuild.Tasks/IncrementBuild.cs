@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using log4net;
 using Microsoft.Build.Framework;
@@ -15,26 +16,27 @@ namespace DotNetNuke.MSBuild.Tasks
         private const string CsVersionEnd = ")]";
         private string _versionStart = CsVersionStart;
         private string _versionEnd = CsVersionEnd;
+        public string[] AssemblyFiles { get; set; }
 
-        private string _filePath;
-        public string FilePath
-        {
-            get
-            {
-                if (_filePath.EndsWith("cs"))
-                {
-                    _versionStart = CsVersionStart;
-                    _versionEnd = CsVersionEnd;
-                }
-                else
-                {
-                    _versionStart = VbVersionStart;
-                    _versionEnd = VbVersionEnd;
-                }
-                return _filePath;
-            }
-            set { _filePath = value; }
-        }
+        //private string _filePath;
+        //public string AssemblyFile
+        //{
+        //    get
+        //    {
+        //        if (_filePath.EndsWith("cs"))
+        //        {
+        //            _versionStart = CsVersionStart;
+        //            _versionEnd = CsVersionEnd;
+        //        }
+        //        else
+        //        {
+        //            _versionStart = VbVersionStart;
+        //            _versionEnd = VbVersionEnd;
+        //        }
+        //        return _filePath;
+        //    }
+        //    set { _filePath = value; }
+        //}
 
         public bool AutoIncrementVersion { get; set; }
         [Output]
@@ -54,48 +56,66 @@ namespace DotNetNuke.MSBuild.Tasks
 
         public override bool Execute()
         {
+            LogFormat("Message", "Start");
+
             try
             {
-                if (_filePath == null)
+                foreach(var assemblyFile in AssemblyFiles)
                 {
-                    return false;
-                }
+                    LogFormat("Message", assemblyFile);
+                    if (assemblyFile == null)
+                    {
+                        return false;
+                    }
 
-                var content = File.ReadAllText(FilePath);
-                var indexStart = content.IndexOf(_versionStart) + 28;
-                var indexEnd = content.IndexOf(_versionEnd, indexStart);
-                var originalVersionNumber = content.Substring(indexStart, indexEnd - indexStart - 1);
-                var versionNumber = originalVersionNumber;
-                if (DefaultVersion != default(string))
-                {
-                    versionNumber = DefaultVersion;
-                }
-                var values = versionNumber.Split(".".ToCharArray());
-                ErrorCode = versionNumber;
-                int main;
-                int minor;
-                int version;
-                int revision;
-                int.TryParse(values[0], out main);
-                int.TryParse(values[1], out minor);
-                int.TryParse(values[2], out version);
-                int.TryParse(values[3], out revision);
-                if (AutoIncrementVersion)
-                {
-                    revision = revision + 1;
-                }
+                    if (assemblyFile.EndsWith("cs"))
+                    {
+                        _versionStart = CsVersionStart;
+                        _versionEnd = CsVersionEnd;
+                    }
+                    else
+                    {
+                        _versionStart = VbVersionStart;
+                        _versionEnd = VbVersionEnd;
+                    }
 
-                BuildVersion = String.Format("{0}.{1}.{2}.{3}", main, minor, version, revision);
-                FormattedBuildVersion = String.Format("{0}.{1}.{2}", main.ToString("00"), minor.ToString("00"), version.ToString("00"));
-                Revision = revision.ToString();
-                if (AutoIncrementVersion || DefaultVersion != default(string))
-                {
-                    var projectFileInfo = new FileInfo(FilePath) { IsReadOnly = false };
-                    content = content.Replace(originalVersionNumber, BuildVersion);
-                    var newProjectFile = new StreamWriter(FilePath);
-                    newProjectFile.Write(content);
-                    newProjectFile.Close();
-                    var projectFileInfo2 = new FileInfo(FilePath) { IsReadOnly = true };
+                    var content = File.ReadAllText(assemblyFile);
+                    var indexStart = content.IndexOf(_versionStart) + 28;
+                    var indexEnd = content.IndexOf(_versionEnd, indexStart);
+                    var originalVersionNumber = content.Substring(indexStart, indexEnd - indexStart - 1);
+                    var versionNumber = originalVersionNumber;
+                    if (DefaultVersion != default(string))
+                    {
+                        versionNumber = DefaultVersion;
+                    }
+                    var values = versionNumber.Split(".".ToCharArray());
+                    ErrorCode = versionNumber;
+                    int main;
+                    int minor;
+                    int version;
+                    int revision;
+                    int.TryParse(values[0], out main);
+                    int.TryParse(values[1], out minor);
+                    int.TryParse(values[2], out version);
+                    int.TryParse(values[3], out revision);
+                    if (AutoIncrementVersion)
+                    {
+                        revision = revision + 1;
+                    }
+
+                    BuildVersion = String.Format("{0}.{1}.{2}.{3}", main, minor, version, revision);
+                    FormattedBuildVersion = String.Format("{0}.{1}.{2}", main.ToString("00"), minor.ToString("00"), version.ToString("00"));
+                    Revision = revision.ToString();
+                    if (AutoIncrementVersion || DefaultVersion != default(string))
+                    {
+                        var projectFileInfo = new FileInfo(assemblyFile) { IsReadOnly = false };
+                        content = content.Replace(originalVersionNumber, BuildVersion);
+                        var newProjectFile = new StreamWriter(assemblyFile);
+                        newProjectFile.Write(content);
+                        newProjectFile.Close();
+                        var projectFileInfo2 = new FileInfo(assemblyFile) { IsReadOnly = true };
+                    }
+
                 }
 
                 return true;
@@ -103,8 +123,28 @@ namespace DotNetNuke.MSBuild.Tasks
             }
             catch (Exception ex)
             {
-                log.Info(ex.StackTrace);
+                LogFormat("Error", ex.StackTrace);
                 return false;
+            }
+        }
+
+        private void LogFormat(string level, string message, params object[] args)
+        {
+            if (BuildEngine != null)
+            {
+                switch (level)
+                {
+                    case "Message":
+                        Log.LogMessage(message, args);
+                        break;
+                    case "Error":
+                        Log.LogError(message, args);
+                        break;
+                }
+            }
+            else
+            {
+                Debug.Print(message, args);
             }
         }
     }
