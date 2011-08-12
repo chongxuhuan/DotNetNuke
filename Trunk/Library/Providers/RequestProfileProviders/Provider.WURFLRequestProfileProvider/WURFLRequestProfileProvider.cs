@@ -24,12 +24,11 @@
 #region Usings
 using System;
 using System.Linq;
-using DotNetNuke.Services.RequestProfile;
 #endregion
 
-namespace Provider.WURFLRequestProfileProvider
+namespace DotNetNuke.Services.RequestProfile
 {
-    public class WURFLRequestProfileProvider : IRequestProfileProvider
+    public class WURFLRequestProfileProvider : BaseRequestProfileProvider, IRequestProfileProvider
     {
         public IRequestProfile GetRequestProfile(string userAgent)
         {

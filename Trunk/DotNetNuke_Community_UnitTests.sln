@@ -235,10 +235,6 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "htt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Externally.Sourced", "Externally Sourced\Externally.Sourced.csproj", "{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.Commerce", "Modules\Commerce\DotNetNuke.Professional.Commerce.csproj", "{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.CloudFolderProviders", "Professional\Providers\FolderProviders\CloudFolderProviders\DotNetNuke.Professional.CloudFolderProviders.csproj", "{2A1157E2-27F8-4D72-86CC-10FE142E98D9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.RadEditorProvider", "Library\Providers\HtmlEditorProviders\RadEditorProvider\DotNetNuke.RadEditorProvider.csproj", "{2671B9D5-A788-4DE3-93D6-20D6895A2979}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Automation", "Automation", "{29DD979B-9EA7-49D0-90B9-4410600745B5}"
@@ -248,8 +244,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.UI.WatiN.Utilities", "Tests\DotNetNuke.Tests.UI.WatiN.Utilities\DotNetNuke.Tests.UI.WatiN.Utilities.csproj", "{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Website.Specs", "DotNetNuke.Website.Specs\DotNetNuke.Website.Specs.csproj", "{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.MobileManagement", "Modules\MobileManagement\DotNetNuke.Professional.MobileManagement.csproj", "{912F54A8-46D9-4135-B181-B594510EF94C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.WURFLRequestProfileProvider", "Library\Providers\RequestProfileProviders\Provider.WURFLRequestProfileProvider\Provider.WURFLRequestProfileProvider.csproj", "{77CC3D39-8526-4554-832A-8537BD1441CB}"
 EndProject
@@ -1378,9 +1372,6 @@ Global
 		{6F0A5B23-E09F-431A-879A-993CB77E23D8} = {8F128F7A-C68D-49E4-B37F-56EBB70A5A67}
 		{89093FD0-076F-48CD-9232-B665226CDBF0} = {2DEA2A27-CB45-43C8-9743-93F167B86D6C}
 		{86AF9531-D270-4C18-A8B9-C67A8782AF69} = {2DEA2A27-CB45-43C8-9743-93F167B86D6C}
-		{B6D0D6D7-D2FA-4F50-A4E5-04CB9DF40EDC} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{2A1157E2-27F8-4D72-86CC-10FE142E98D9} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
-		{912F54A8-46D9-4135-B181-B594510EF94C} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{F54DCA33-F35C-4F57-893E-FF4AE823E598} = {08C74AF4-F6FF-43B1-8A91-CCE17D43E28A}
 		{CADB2B3B-46DD-417D-BBF9-E935D25C4A92} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}
 		{AF064E35-1BEF-4337-A462-C708F441AD1B} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}

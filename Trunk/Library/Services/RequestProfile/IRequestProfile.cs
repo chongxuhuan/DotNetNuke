@@ -29,21 +29,79 @@ using System.Web;
 
 namespace DotNetNuke.Services.RequestProfile
 {
+    /// <summary>
+    ///   RequestProfile provides capabilities supported by the web requester (e.g. Mobile Device, TV, Desktop)
+    /// </summary>
+    /// <remarks>
+    ///   The capabilities are primarily derived based on UserAgent.  
+    /// </remarks>          
     public interface IRequestProfile
     {
+        /// <summary>
+        ///   Unique ID of the requester.
+        /// </summary>
         string ID { get; }
-        string UserAgent { get; }        
+
+        /// <summary>
+        ///   User Agent of the requester
+        /// </summary>
+        string UserAgent { get; }
+
+        /// <summary>
+        ///   Is request coming from a mobile device.
+        /// </summary>
         bool IsMobile { get; }
+
+        /// <summary>
+        ///   Is request coming from a tablet device.
+        /// </summary>
         bool IsTablet { get; }
+
+        /// <summary>
+        ///   Does the requesting device supports touch screen.
+        /// </summary>
         bool IsTouchScreen { get; }
+
+        /// <summary>
+        ///   Is request coming from Facebook iframe.
+        /// </summary>
+        /// <remarks>
+        ///   Pesence of "signed_request" in the headers is used to detect of request is coming from facebook.
+        ///   No further analysis is performed on the value of "signed_request".
+        /// </remarks>         
+        bool IsFacebook { get; }
+
+        /// <summary>
+        ///   Screen Width of the requester.
+        /// </summary>
+        /// <remarks>
+        ///   If IsFacebook is true, then this value represents iframe width, otherwise this value is device width
+        /// </remarks>          
         int Width { get; }
+
+        /// <summary>
+        ///   Screen Height of the requester.
+        /// </summary>
+        /// <remarks>
+        ///   If IsFacebook is true, then this value represents iframe height, otherwise this value is device height
+        /// </remarks>                  
         int Height { get; }
+
+        /// <summary>
+        ///   Does requester supports Flash.
+        /// </summary>
         bool SupportsFlash { get; }
 
         /// <summary>
-        /// Gets the capabilities.
+        /// A key-value collection containing all capabilities supported by requester
+        /// </summary>        
+        IDictionary<string, string> Capabilities { get; }
+
+        /// <summary>
+        /// Gets the capability.
         /// </summary>
-        /// <value>The capabilities.</value>
-        IDictionary<string, string> Capabilities { get; }      
+        /// <param name="capabilityName">Name of the capability.</param>
+        /// <returns></returns>
+        string GetCapability(string capabilityName);
     }
 }
