@@ -36,6 +36,7 @@ using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Profile;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Cache;
+using DotNetNuke.Services.ClientCapability;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.ModuleCache;
@@ -101,6 +102,7 @@ namespace DotNetNuke.Common
             RegisterIfNotAlreadyRegistered<PermissionProvider>();
             ComponentFactory.InstallComponents(new ProviderInstaller("htmlEditor", typeof(HtmlEditorProvider), ComponentLifeStyleType.Transient));
             ComponentFactory.InstallComponents(new ProviderInstaller("navigationControl", typeof(NavigationProvider), ComponentLifeStyleType.Transient));
+            ComponentFactory.InstallComponents(new ProviderInstaller("ClientCapability", typeof(ClientCapabilityProvider)));
 
             DnnLog.Info("Application Started");
         }
