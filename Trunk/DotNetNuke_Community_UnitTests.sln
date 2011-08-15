@@ -245,9 +245,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.UI.WatiN.U
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Website.Specs", "DotNetNuke.Website.Specs\DotNetNuke.Website.Specs.csproj", "{7D117E3B-5610-48F7-9BAE-1E0CE08AF035}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.WURFLRequestProfileProvider", "Library\Providers\RequestProfileProviders\Provider.WURFLRequestProfileProvider\Provider.WURFLRequestProfileProvider.csproj", "{77CC3D39-8526-4554-832A-8537BD1441CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.WURFLClientCapabilityProvider", "Library\Providers\ClientCapabilityProviders\Provider.WURFLClientCapabilityProvider\Provider.WURFLClientCapabilityProvider.csproj", "{77CC3D39-8526-4554-832A-8537BD1441CB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RequestProfile Providers", "RequestProfile Providers", "{6E53B51E-6753-4EB6-BCD0-941CDCEF4672}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClientCapability Providers", "ClientCapability Providers", "{6E53B51E-6753-4EB6-BCD0-941CDCEF4672}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -510,10 +510,10 @@ Global
 		SccProjectTopLevelParentUniqueName65 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName65 = Modules/IntegrityChecker/Components/IntegrityLibrary
 		SccLocalPath65 = Modules\\IntegrityChecker\\Components\\IntegrityLibrary
-		SccProjectUniqueName66 = Library\\Providers\\RequestProfileProviders\\Provider.WURFLRequestProfileProvider\\Provider.WURFLRequestProfileProvider.csproj
+		SccProjectUniqueName66 = Library\\Providers\\ClientCapabilityProviders\\Provider.WURFLClientCapabilityProvider\\Provider.WURFLClientCapabilityProvider.csproj
 		SccProjectTopLevelParentUniqueName66 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName66 = Library/Providers/RequestProfileProviders/Provider.WURFLRequestProfileProvider
-		SccLocalPath66 = Library\\Providers\\RequestProfileProviders\\Provider.WURFLRequestProfileProvider
+		SccProjectName66 = Library/Providers/ClientCapabilityProviders/Provider.WURFLClientCapabilityProvider
+		SccLocalPath66 = Library\\Providers\\ClientCapabilityProviders\\Provider.WURFLClientCapabilityProvider
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET

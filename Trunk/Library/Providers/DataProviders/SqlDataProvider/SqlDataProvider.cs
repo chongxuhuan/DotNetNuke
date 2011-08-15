@@ -3228,5 +3228,53 @@ namespace DotNetNuke.Data
             return Convert.ToDateTime(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "GetDatabaseTime"));
         }
 
-    }
+		#region Mobile Stuff
+
+		public override void DeleteMobilePreviewProfile(int id)
+		{
+			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_DeleteMobilePreviewProfile", id);
+		}
+
+		public override void DeleteRedirection(int id)
+		{
+			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_DeleteRedirection", id);
+		}
+
+		public override void DeleteRedirectionRule(int id)
+		{
+			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_DeleteRedirectionRule", id);
+		}
+
+		public override IDataReader GetPreviewProfiles(int portalId)
+		{
+			return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_GetPreviewProfiles", portalId);
+		}
+
+		public override IDataReader GetRedirections(int portalId)
+		{
+			return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_GetRedirections", portalId);
+		}
+
+		public override IDataReader GetRedirectionRules(int redirectionId)
+		{
+			return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_GetRedirectionRules", redirectionId);
+		}
+
+		public override int SaveRedirection(int id, int portalId, string name, int type, int sortOrder, int sourceTabId, int targetType, object targetValue, int userId)
+		{
+			return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SaveRedirection", id, portalId, name, type, sortOrder, sourceTabId, targetType, targetValue, userId));
+		}
+
+		public override void SaveRedirectionRule(int id, int redirectionId, string capbility, string expression)
+		{
+			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SaveRedirectionRule", id, redirectionId, capbility, expression);
+		}
+
+		public override int SavePreviewProfile(int id, int portalId, string name, int width, int height, int userId)
+		{
+			return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SavePreviewProfile", id, portalId, name, width, height, userId));
+		}
+
+		#endregion
+	}
 }

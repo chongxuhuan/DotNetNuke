@@ -39,7 +39,12 @@ namespace DotNetNuke.MSBuild.Tasks
                         .Elements(msbuild + "PropertyGroup")
                         .Elements()
                         .Where(e => e.Name.LocalName.StartsWith("Scc")).Remove();
-                    
+
+                    xRoot.Element(msbuild + "Project")
+                        .Elements(msbuild + "PropertyGroup")
+                        .Elements()
+                        .Where(e => e.Name.LocalName.StartsWith("LangVersion")).Remove();
+
                     xRoot.Element(msbuild + "Project")
                         .Elements(msbuild + "Import")
                         .Where(x => x.Attribute("Project").Value.Contains("BuildScripts"))

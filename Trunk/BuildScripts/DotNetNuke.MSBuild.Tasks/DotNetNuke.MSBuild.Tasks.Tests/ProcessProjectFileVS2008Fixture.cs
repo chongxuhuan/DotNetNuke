@@ -139,5 +139,24 @@ namespace DotNetNuke.MSBuild.Tasks.Tests
 
             Assert.IsTrue(scc.Count() == 0);
         }
+
+        [Test]
+        public void ProcessProjectFileVS2008_Removes_Langversion()
+        {
+            var processProjectFileVS2008 = new ProcessProjectFileVS2008 { FileNames = ProjectFileNames };
+            processProjectFileVS2008.Execute();
+            var projectFile = new XmlDocument();
+            projectFile.Load(NewProjectFileNames[0]);
+            var sr = new StringReader(projectFile.OuterXml);
+            var xRoot = XDocument.Load(sr);
+
+            IEnumerable<string> scc = xRoot.Element(msbuild + "Project")
+                .Elements(msbuild + "PropertyGroup")
+                .Elements(msbuild + "LangVersion")
+                .Select(element => element.Value);
+
+            Assert.IsTrue(scc.Count() == 0);
+        }
+
     }
 }

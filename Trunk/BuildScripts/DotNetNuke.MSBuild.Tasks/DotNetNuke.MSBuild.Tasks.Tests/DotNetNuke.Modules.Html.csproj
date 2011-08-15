@@ -5,57 +5,74 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E1EB5BFB-5C4D-465B-A98A-5E50DFBC037E}</ProjectGuid>
+    <ProjectGuid>{40EDB581-6D12-42C0-A610-736AE97A0321}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>DotNetNuke.Modules.Html</RootNamespace>
     <AssemblyName>DotNetNuke.Modules.Html</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <MyType>Custom</MyType>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
     <OptionInfer>On</OptionInfer>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>4.0</OldToolsVersion>
-    <UpgradeBackupLocation />
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
     <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Modules.Html.xml</DocumentationFile>
-    <WarningLevel>4</WarningLevel>
+    <NoWarn>1591</NoWarn>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.Modules.Html.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>dnn_HTML</DNNFileName>
+    <PackageName>HTML_Community</PackageName>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <NoWarn>1591</NoWarn>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <OutputPath>bin\</OutputPath>
+    <NoWarn>1591</NoWarn>
+    <DocumentationFile>DotNetNuke.Modules.Html.XML</DocumentationFile>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="DotNetNuke.WebControls, Version=2.1.0.63, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DotNetNuke.WebControls, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Website\bin\DotNetNuke.WebControls.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\Library\Controls\DotNetNuke.WebControls\bin\DotNetNuke.WebControls.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetNuke.WebUtility, Version=4.1.2.7, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DotNetNuke.WebUtility, Version=4.2.0.185, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Website\bin\DotNetNuke.WebUtility.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\Library\Controls\DotNetNuke.WebUtility\bin\DotNetNuke.WebUtility.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Website\bin\Microsoft.ApplicationBlocks.Data.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\Library\Components\DataAccessBlock\bin\Microsoft.ApplicationBlocks.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -76,36 +93,13 @@
     <Reference Include="System.Xml.Linq, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Telerik.Web.UI">
+    <Reference Include="Telerik.Web.UI, Version=2010.2.929.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
-    <Import Include="System" />
-    <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
-    <Import Include="System.Diagnostics" />
-    <Import Include="System.Collections.Specialized" />
-    <Import Include="System.Configuration" />
-    <Import Include="System.Linq" />
-    <Import Include="System.Text" />
-    <Import Include="System.Text.RegularExpressions" />
-    <Import Include="System.Web" />
-    <Import Include="System.Web.Caching" />
-    <Import Include="System.Web.SessionState" />
-    <Import Include="System.Web.Security" />
-    <Import Include="System.Web.Profile" />
-    <Import Include="System.Web.UI" />
-    <Import Include="System.Web.UI.WebControls" />
-    <Import Include="System.Web.UI.WebControls.WebParts" />
-    <Import Include="System.Web.UI.HtmlControls" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Components\CompareWorkflowStatePermissions.cs" />
     <Compile Include="Components\DataProvider.cs" />
     <Compile Include="Components\HtmlTextController.cs" />
@@ -120,44 +114,58 @@
     <Compile Include="Components\WorkflowStatePermissionCollection.cs" />
     <Compile Include="Components\WorkflowStatePermissionController.cs" />
     <Compile Include="Components\WorkflowStatePermissionInfo.cs" />
+    <Compile Include="EditHtml.ascx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>EditHtml.ascx</DependentUpon>
+    </Compile>
     <Compile Include="EditHtml.ascx.designer.cs">
       <DependentUpon>EditHtml.ascx</DependentUpon>
     </Compile>
-    <Compile Include="EditHtml.ascx.cs">
-      <DependentUpon>EditHtml.ascx</DependentUpon>
+    <Compile Include="HtmlModule.ascx.cs">
       <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>HtmlModule.ascx</DependentUpon>
     </Compile>
     <Compile Include="HtmlModule.ascx.designer.cs">
       <DependentUpon>HtmlModule.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HtmlModule.ascx.cs">
-      <DependentUpon>HtmlModule.ascx</DependentUpon>
+    <Compile Include="MyWork.ascx.cs">
       <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>MyWork.ascx</DependentUpon>
     </Compile>
     <Compile Include="MyWork.ascx.designer.cs">
       <DependentUpon>MyWork.ascx</DependentUpon>
     </Compile>
-    <Compile Include="MyWork.ascx.cs">
-      <DependentUpon>MyWork.ascx</DependentUpon>
+    <Compile Include="Settings.ascx.cs">
       <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Settings.ascx</DependentUpon>
     </Compile>
     <Compile Include="Settings.ascx.designer.cs">
       <DependentUpon>Settings.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Settings.ascx.cs">
-      <DependentUpon>Settings.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="04.05.00.txt" />
+    <Content Include="04.06.00.txt" />
+    <Content Include="04.06.01.txt" />
+    <Content Include="04.07.00.txt" />
+    <Content Include="04.08.01.txt" />
+    <Content Include="05.01.00.txt" />
+    <Content Include="05.01.02.txt" />
+    <Content Include="05.01.03.txt" />
+    <Content Include="05.01.04.txt" />
+    <Content Include="05.02.00.txt" />
+    <Content Include="05.04.03.txt" />
     <Content Include="App_LocalResources\EditHtml.ascx.resx" />
     <Content Include="App_LocalResources\HtmlModule.ascx.resx" />
     <Content Include="App_LocalResources\MyWork.ascx.resx" />
     <Content Include="App_LocalResources\Settings.ascx.resx" />
     <Content Include="App_LocalResources\SharedResources.resx" />
-    <Content Include="App_LocalResources\Workflow.ascx.resx" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="EditHtml.ascx" />
+    <Content Include="Images\html.gif" />
+    <Content Include="HtmlModule.ascx" />
+    <Content Include="license.txt" />
+    <Content Include="module.css" />
+    <Content Include="MyWork.ascx" />
+    <Content Include="releaseNotes.txt" />
+    <Content Include="Settings.ascx" />
     <None Include="dnn_HTML.dnn" />
     <None Include="Providers\DataProviders\SqlDataProvider\03.00.00.SqlDataProvider" />
     <None Include="Providers\DataProviders\SqlDataProvider\03.01.00.SqlDataProvider" />
@@ -171,50 +179,28 @@
     <None Include="Providers\DataProviders\SqlDataProvider\05.01.03.SqlDataProvider" />
     <None Include="Providers\DataProviders\SqlDataProvider\05.01.04.SqlDataProvider" />
     <None Include="Providers\DataProviders\SqlDataProvider\05.02.00.SqlDataProvider" />
+    <None Include="Providers\DataProviders\SqlDataProvider\05.02.01.SqlDataProvider" />
+    <None Include="Providers\DataProviders\SqlDataProvider\05.05.00.SqlDataProvider" />
     <None Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="04.05.00.txt" />
-    <Content Include="04.06.00.txt" />
-    <Content Include="04.06.01.txt" />
-    <Content Include="04.07.00.txt" />
-    <Content Include="04.08.01.txt" />
-    <Content Include="05.01.00.txt" />
-    <Content Include="05.01.02.txt" />
-    <Content Include="05.01.03.txt" />
-    <Content Include="05.01.04.txt" />
-    <Content Include="05.02.00.txt" />
-    <Content Include="05.04.03.txt" />
-    <Content Include="EditHtml.ascx" />
-    <Content Include="HtmlModule.ascx" />
-    <Content Include="license.txt" />
-    <Content Include="MyWork.ascx" />
-    <Content Include="releaseNotes.txt" />
-    <Content Include="Settings.ascx" />
+    <None Include="Providers\DataProviders\SqlDataProvider\Upgrade.SqlDataProvider" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DotNetNuke.Web\DotNetNuke.Web.csproj">
-      <Project>{B1699614-39D4-468A-AB1D-A2FBA97CADDF}</Project>
+      <Project>{8DA31B98-5E8E-4243-8967-D4CF7DC622CB}</Project>
       <Name>DotNetNuke.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Library\DotNetNuke.Library.csproj">
-      <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Name>DotNetNuke.Library</Name>
-      <Private>False</Private>
+      <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>29653</DevelopmentServerPort>
+          <DevelopmentServerPort>60169</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
@@ -227,26 +213,53 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ItemGroup>
+    <Content Include="App_LocalResources\Workflow.ascx.resx" />
+    <Compile Include="Components\SqlDataProviderPro.cs" />
+    <Compile Include="Components\WorkflowStateControllerPro.cs" />
+    <Compile Include="Components\WorkflowStatePermissionControllerPro.cs" />
+    <Compile Include="Components\DataProviderPro.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
   <PropertyGroup>
     <Extension>zip</Extension>
     <DNNFileName>dnn_HTML</DNNFileName>
-    <PackageName>HTML_Community</PackageName>
+    <PackageName>DNNCE_HTML</PackageName>
     <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\BuildScripts</BuildScriptsPath>
+    <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\Website\Install\Module</WebsiteInstallPath>
   </PropertyGroup>
-  <Import Project="..\..\BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="DebugProject;PackageModule">
+  <Import Project="$(BuildScriptsPath)\Package.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="CopyBin;GetFiles;DebugProject;Package">
   </Target>
-  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <CreateItem Include="*.ascx">
-      <Output TaskParameter="Include" ItemName="MySourceFiles" />
-    </CreateItem>
-    <CreateItem Include="App_LocalResources\*.resx">
-      <Output TaskParameter="Include" ItemName="MyLocalResourceFilesFiles" />
-    </CreateItem>
+  <Target Name="GetFiles">
+    <ItemGroup>
+      <TextFiles Include="*.txt" Exclude="license.txt;releasenotes.txt" />
+    </ItemGroup>
+    <ItemGroup>
+      <Views Include="*.ascx" />
+    </ItemGroup>
+    <ItemGroup>
+      <ResourceFiles Include="App_LocalResources\*.resx" />
+    </ItemGroup>
+    <ItemGroup>
+      <Images Include="Images/*.*" />
+    </ItemGroup>
+    <ItemGroup>
+      <Resources Include="@(ResourceFiles);@(Views);@(Images);@(TextFiles)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="CopyBin">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../Website/bin" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../Website/bin" />
-    <Copy SourceFiles="@(MySourceFiles)" DestinationFolder="..\..\Website\DesktopModules\HTML" />
-    <Copy SourceFiles="@(MyLocalResourceFilesFiles)" DestinationFolder="..\..\Website\DesktopModules\HTML\App_LocalResources" />
+  </Target>
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Copy SourceFiles="@(Views)" DestinationFolder="..\..\Website\DesktopModules\HTML" />
+    <Copy SourceFiles="@(Images)" DestinationFolder="..\..\Website\DesktopModules\HTML\Images" />
+    <Copy SourceFiles="@(TextFiles)" DestinationFolder="..\..\Website\DesktopModules\HTML" />
+    <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="..\..\Website\DesktopModules\HTML\App_LocalResources" />
   </Target>
 </Project>

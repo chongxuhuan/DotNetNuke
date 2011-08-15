@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
@@ -24,17 +24,44 @@
 #region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Web;
+
+using DotNetNuke.Data;
+using DotNetNuke.Entities.Users;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("34127f21-2826-4b3b-bb87-78d6c9ef729f")]
-[assembly: AssemblyVersion("6.1.0.75")]
+namespace DotNetNuke.Services.Mobile
+{
+	public class RedirectionController : IRedirectController
+	{
+		public static void Redirect(HttpContext context)
+		{
+			
+		}
+
+		public void Save(IRedirection redirection)
+		{
+			DataProvider.Instance().SaveRedirection(redirection.Id,
+			                                        redirection.PortalId,
+			                                        redirection.Name,
+			                                        (int) redirection.Type,
+			                                        redirection.SortOrder,
+			                                        redirection.SourceTabId,
+			                                        (int) redirection.TargetType,
+			                                        redirection.TargetValue,
+			                                        UserController.GetCurrentUserInfo().UserID);
+		}
+
+		public void Delete(int id)
+		{
+			DataProvider.Instance().DeleteRedirection(id);
+		}
+
+		public IList<IRedirection> GetRedirectionsByPortal(int portalId)
+		{
+			throw new NotImplementedException();
+		}
+	}
+}
