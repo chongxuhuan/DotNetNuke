@@ -37,5 +37,6 @@ namespace DotNetNuke.Services.Mobile
 		void Delete(int redirectionId);
 
 		IList<IRedirection> GetRedirectionsByPortal(int portalId);
+
 	}
 }

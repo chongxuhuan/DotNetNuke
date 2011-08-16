@@ -143,6 +143,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 cmdUpdateDefinition.Text = Localization.GetString("cmdCreateDefinition", LocalResourceFile);
                 pnlDefinition.Visible = true;
                 pnlControls.Visible = false;
+            	definitionSelectRow.Visible = false;
             }
             else
             {
@@ -163,6 +164,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
                     pnlDefinition.Visible = true;
                     pnlControls.Visible = true;
+                	definitionSelectRow.Visible = true;
 
                     cmdAddControl.NavigateUrl = ModuleContext.EditUrl("ModuleControlID", "-1", "EditControl", "packageId=" + PackageID, "moduledefid=" + ModuleDefinition.ModuleDefID);
                 }

@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -322,6 +323,8 @@ namespace DotNetNuke.Modules.Admin.Languages
                     Locale defaultLocale = LocaleController.Instance.GetDefaultLocale(PortalId);
 
                     Dictionary<string, Locale> enabledLanguages = LocaleController.Instance.GetLocales(PortalId);
+
+                	var redirectUrl = string.Empty;
                     if (enabledCheckbox.Enabled)
                     {
                         // do not touch default language
@@ -337,11 +340,24 @@ namespace DotNetNuke.Modules.Admin.Languages
                         {
                             //remove language from portal
                             Localization.RemoveLanguageFromPortal(PortalId, languageId);
+
+							//if the disable language is current language, should redirect to default language.
+							if(locale.Code.Equals(Thread.CurrentThread.CurrentUICulture.ToString(), StringComparison.InvariantCultureIgnoreCase))
+							{
+								redirectUrl = Globals.NavigateURL(PortalSettings.ActiveTab.TabID, 
+																	PortalSettings.ActiveTab.IsSuperTab, 
+																	PortalSettings, "", defaultLocale.Code);
+							}
                         }
                     }
 
                     //Redirect to refresh page (and skinobjects)
-                    Response.Redirect(Globals.NavigateURL(), true);
+					if (string.IsNullOrEmpty(redirectUrl))
+					{
+						redirectUrl = Globals.NavigateURL();
+					}
+
+                    Response.Redirect(redirectUrl, true);
                 }
             }
             catch (Exception ex)

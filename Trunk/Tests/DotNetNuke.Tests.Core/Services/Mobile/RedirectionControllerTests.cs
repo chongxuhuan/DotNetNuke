@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
@@ -21,21 +21,31 @@
 
 #endregion
 
-#region Usings
-
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
 
-#endregion
+using DotNetNuke.ComponentModel;
+using DotNetNuke.Data;
+using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Tests.Utilities.Mocks;
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: ComVisible(false)]
-[assembly: Guid("a4fb04bb-7ce8-40ed-bad5-218f7687443c")]
-[assembly: AssemblyVersion("6.1.0.87")]
+using MbUnit.Framework;
+
+using Moq;
+
+namespace DotNetNuke.Tests.Core.Services.Mobile
+{
+    /// <summary>
+	///   Summary description for RedirectionControllerTests
+    /// </summary>
+    [TestFixture]
+	public class RedirectionControllerTests
+    {
+    	private Mock<DataProvider> _dataProvider;
+        [SetUp]
+        public void SetUp()
+        {
+            ComponentFactory.Container = new SimpleContainer();
+			_dataProvider = MockComponentProvider.CreateDataProvider();
+        }
+    }
+}

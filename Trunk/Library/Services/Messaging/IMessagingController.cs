@@ -44,7 +44,7 @@ namespace DotNetNuke.Services.Messaging
 
         Message GetNextMessageForDispatch(Guid SchedulerInstance);
 
-        void SaveMessage(Message objMessage);
+        long SaveMessage(Message objMessage);
 
         void UpdateMessage(Message objMessage);
 

@@ -10,7 +10,7 @@
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
-CREATE TABLE [dbo].[dnn_Mobile_PreviewProfiles](
+CREATE TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[PortalId] [int] NOT NULL,
 	[Name] [nvarchar](50) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[dnn_Mobile_PreviewProfiles](
 	[CreatedOn] [datetime] NOT NULL,
 	[LastModifiedBy] [int] NOT NULL,
 	[LastModifiedOn] [datetime] NOT NULL,
- CONSTRAINT [PK_dnn_Mobile_PreviewProfiles] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_{objectQualifier}Mobile_PreviewProfiles] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -28,60 +28,27 @@ CREATE TABLE [dbo].[dnn_Mobile_PreviewProfiles](
 
 GO
 
-CREATE TABLE [dbo].[dnn_Mobile_RedirectionRules](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[RedirectionId] [int] NOT NULL,
-	[Capability] [nvarchar](50) NOT NULL,
-	[Expression] [nvarchar](50) NOT NULL,
- CONSTRAINT [PK_dnn_Mobile_RedirectionRules] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Users] FOREIGN KEY([CreatedBy])
+REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_RedirectionRules]  WITH CHECK ADD  CONSTRAINT [FK_dnn_Mobile_RedirectionRules_dnn_Mobile_Redirections] FOREIGN KEY([RedirectionId])
-REFERENCES [dbo].[dnn_Mobile_Redirections] ([Id])
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Users]
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_RedirectionRules] CHECK CONSTRAINT [FK_dnn_Mobile_RedirectionRules_dnn_Mobile_Redirections]
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Users1] FOREIGN KEY([LastModifiedBy])
+REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
 GO
 
-
-
-ALTER TABLE [dbo].[dnn_Mobile_PreviewProfiles]  WITH CHECK ADD  CONSTRAINT [FK_dnn_Mobile_PreviewProfiles_dnn_Users] FOREIGN KEY([CreatedBy])
-REFERENCES [dbo].[dnn_Users] ([UserID])
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Users1]
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_PreviewProfiles] CHECK CONSTRAINT [FK_dnn_Mobile_PreviewProfiles_dnn_Users]
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles] ADD  CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_PreviewProfiles]  WITH CHECK ADD  CONSTRAINT [FK_dnn_Mobile_PreviewProfiles_dnn_Users1] FOREIGN KEY([LastModifiedBy])
-REFERENCES [dbo].[dnn_Users] ([UserID])
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles] ADD  CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_LastModifiedOn]  DEFAULT (getdate()) FOR [LastModifiedOn]
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_PreviewProfiles] CHECK CONSTRAINT [FK_dnn_Mobile_PreviewProfiles_dnn_Users1]
-GO
-
-ALTER TABLE [dbo].[dnn_Mobile_PreviewProfiles] ADD  CONSTRAINT [DF_dnn_Mobile_PreviewProfiles_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-
-ALTER TABLE [dbo].[dnn_Mobile_PreviewProfiles] ADD  CONSTRAINT [DF_dnn_Mobile_PreviewProfiles_LastModifiedOn]  DEFAULT (getdate()) FOR [LastModifiedOn]
-GO
-
-
-USE [D:\WORKSPACE\DOTNETNUKE\PUBLISHSITE\APP_DATA\DATABASE.MDF]
-GO
-
-/****** Object:  Table [dbo].[dnn_Mobile_Redirections]    Script Date: 08/15/2011 15:27:02 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[dnn_Mobile_Redirections](
+CREATE TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[PortalId] [int] NOT NULL,
 	[Name] [nvarchar](50) NOT NULL,
@@ -94,7 +61,7 @@ CREATE TABLE [dbo].[dnn_Mobile_Redirections](
 	[CreatedOn] [datetime] NOT NULL,
 	[LastModifiedBy] [int] NOT NULL,
 	[LastModifiedOn] [datetime] NOT NULL,
- CONSTRAINT [PK_dnn_Mobile_Redirections] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_{objectQualifier}Mobile_Redirections] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -102,83 +69,102 @@ CREATE TABLE [dbo].[dnn_Mobile_Redirections](
 
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_Redirections]  WITH CHECK ADD  CONSTRAINT [FK_dnn_Mobile_Redirections_dnn_Portals] FOREIGN KEY([PortalId])
-REFERENCES [dbo].[dnn_Portals] ([PortalID])
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Portals] FOREIGN KEY([PortalId])
+REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_Redirections] CHECK CONSTRAINT [FK_dnn_Mobile_Redirections_dnn_Portals]
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Portals]
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_Redirections]  WITH CHECK ADD  CONSTRAINT [FK_dnn_Mobile_Redirections_dnn_Users] FOREIGN KEY([CreatedBy])
-REFERENCES [dbo].[dnn_Users] ([UserID])
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Users] FOREIGN KEY([CreatedBy])
+REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_Redirections] CHECK CONSTRAINT [FK_dnn_Mobile_Redirections_dnn_Users]
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Users]
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_Redirections]  WITH CHECK ADD  CONSTRAINT [FK_dnn_Mobile_Redirections_dnn_Users1] FOREIGN KEY([LastModifiedBy])
-REFERENCES [dbo].[dnn_Users] ([UserID])
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Users1] FOREIGN KEY([LastModifiedBy])
+REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_Redirections] CHECK CONSTRAINT [FK_dnn_Mobile_Redirections_dnn_Users1]
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Users1]
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_Redirections] ADD  CONSTRAINT [DF_dnn_Mobile_Redirections_SortOrder]  DEFAULT ((0)) FOR [SortOrder]
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] ADD  CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_SortOrder]  DEFAULT ((0)) FOR [SortOrder]
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_Redirections] ADD  CONSTRAINT [DF_dnn_Mobile_Redirections_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] ADD  CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
 GO
 
-ALTER TABLE [dbo].[dnn_Mobile_Redirections] ADD  CONSTRAINT [DF_dnn_Mobile_Redirections_LastModifiedOn]  DEFAULT (getdate()) FOR [LastModifiedOn]
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] ADD  CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_LastModifiedOn]  DEFAULT (getdate()) FOR [LastModifiedOn]
+GO
+
+CREATE TABLE {databaseOwner}[{objectQualifier}Mobile_RedirectionRules](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[RedirectionId] [int] NOT NULL,
+	[Capability] [nvarchar](50) NOT NULL,
+	[Expression] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_{objectQualifier}Mobile_RedirectionRules] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_RedirectionRules]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_RedirectionRules_{objectQualifier}Mobile_Redirections] FOREIGN KEY([RedirectionId])
+REFERENCES {databaseOwner}[{objectQualifier}Mobile_Redirections] ([Id])
+GO
+
+ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_RedirectionRules] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_RedirectionRules_{objectQualifier}Mobile_Redirections]
 GO
 
 
-
-CREATE PROCEDURE [dbo].[dnn_Mobile_DeletePreviewProfile] @Id INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_DeletePreviewProfile] @Id INT
 AS 
 		
-    DELETE  FROM dbo.dnn_Mobile_PreviewProfiles
+    DELETE  FROM {databaseOwner}{objectQualifier}Mobile_PreviewProfiles
     WHERE   Id = @Id
 
 GO
 
-CREATE PROCEDURE [dbo].[dnn_Mobile_DeleteRedirection] @Id INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_DeleteRedirection] @Id INT
 AS 
-    DELETE  FROM dbo.dnn_Mobile_RedirectionRules
+    DELETE  FROM {databaseOwner}{objectQualifier}Mobile_RedirectionRules
     WHERE   RedirectionId = @id
 		
-    DELETE  FROM dbo.dnn_Mobile_Redirections
+    DELETE  FROM {databaseOwner}{objectQualifier}Mobile_Redirections
     WHERE   Id = @Id
 
 GO
 	
-CREATE PROCEDURE [dbo].[dnn_Mobile_DeleteRedirectionRule] @Id INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_DeleteRedirectionRule] @Id INT
 AS 
-    DELETE  FROM dbo.dnn_Mobile_RedirectionRules
+    DELETE  FROM {databaseOwner}{objectQualifier}Mobile_RedirectionRules
     WHERE   Id = @id
 
 GO
 
-CREATE PROCEDURE [dbo].[dnn_Mobile_GetPreviewProfiles] @PortalId INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetPreviewProfiles] @PortalId INT
 AS 
     SELECT  Id, PortalId, Name, Width, Height, CreatedBy, CreatedOn, LastModifiedBy, LastModifiedOn
-    FROM    dbo.dnn_Mobile_PreviewProfiles
+    FROM    {databaseOwner}{objectQualifier}Mobile_PreviewProfiles
     WHERE   PortalId = @PortalId
 
 GO
 	
-CREATE PROCEDURE [dbo].[dnn_Mobile_GetRedirectionRules] @RedirectionId INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetRedirectionRules] @RedirectionId INT
 AS 
     SELECT  Id ,
             RedirectionId ,
             Capability ,
             Expression
-    FROM    dnn_Mobile_RedirectionRules
+    FROM    {objectQualifier}Mobile_RedirectionRules
     WHERE RedirectionId = @RedirectionId
 
 GO
 
-CREATE PROCEDURE [dbo].[dnn_Mobile_GetRedirections] @PortalId INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetRedirections] @PortalId INT
 AS 
     SELECT  Id ,
             PortalId ,
@@ -192,12 +178,12 @@ AS
             CreatedOn ,
             LastModifiedBy ,
             LastModifiedOn
-    FROM    dbo.dnn_Mobile_Redirections
+    FROM    {databaseOwner}{objectQualifier}Mobile_Redirections
     WHERE   PortalId = @PortalId
 
 GO
 
-CREATE PROCEDURE [dbo].[dnn_Mobile_SavePreviewProfile]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SavePreviewProfile]
     @Id INT ,
     @PortalId INT ,
     @Name NVARCHAR(50) ,
@@ -207,7 +193,7 @@ CREATE PROCEDURE [dbo].[dnn_Mobile_SavePreviewProfile]
 AS 
     IF ( @Id = -1 ) 
         BEGIN
-            INSERT  dbo.dnn_Mobile_PreviewProfiles
+            INSERT  {databaseOwner}{objectQualifier}Mobile_PreviewProfiles
                     ( PortalId ,
                       Name ,
                       Width ,
@@ -233,7 +219,7 @@ AS
         END
     ELSE 
         BEGIN
-            UPDATE  dbo.dnn_Mobile_PreviewProfiles
+            UPDATE  {databaseOwner}{objectQualifier}Mobile_PreviewProfiles
             SET     Name = @Name ,
                     Width = @Width ,
                     Height = @Height ,
@@ -246,7 +232,7 @@ AS
 
 GO
 
-CREATE PROCEDURE [dbo].[dnn_Mobile_SaveRedirection]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SaveRedirection]
     @Id INT ,
     @PortalId INT ,
     @Name NVARCHAR(50) ,
@@ -259,7 +245,7 @@ CREATE PROCEDURE [dbo].[dnn_Mobile_SaveRedirection]
 AS 
     IF ( @Id = -1 ) 
         BEGIN
-            INSERT  dbo.dnn_Mobile_Redirections
+            INSERT  {databaseOwner}{objectQualifier}Mobile_Redirections
                     ( PortalId ,
                       Name ,
                       Type ,
@@ -289,7 +275,7 @@ AS
         END
     ELSE 
         BEGIN
-            UPDATE  dbo.dnn_Mobile_Redirections
+            UPDATE  {databaseOwner}{objectQualifier}Mobile_Redirections
             SET     Name = @Name ,
                     [Type] = @Type ,
                     SortOrder = @SortOrder ,
@@ -304,7 +290,7 @@ AS
 
 GO
 
-CREATE PROC [dbo].[dnn_Mobile_SaveRedirectionRule]
+CREATE PROC {databaseOwner}[{objectQualifier}Mobile_SaveRedirectionRule]
     @Id INT ,
     @RedirectionId INT ,
     @Capbility NVARCHAR(50) ,
@@ -312,7 +298,7 @@ CREATE PROC [dbo].[dnn_Mobile_SaveRedirectionRule]
 AS 
     IF @Id = -1 
         BEGIN
-            INSERT  INTO dbo.dnn_Mobile_RedirectionRules
+            INSERT  INTO {databaseOwner}{objectQualifier}Mobile_RedirectionRules
                     ( RedirectionId ,
                       Capability ,
                       Expression
@@ -324,14 +310,11 @@ AS
         END
     ELSE 
         BEGIN
-            UPDATE  dbo.dnn_Mobile_RedirectionRules
+            UPDATE  {databaseOwner}{objectQualifier}Mobile_RedirectionRules
             SET     Capability = @Capbility ,
                     Expression = @Expression
             WHERE   Id = @Id
         END
 
 GO
-
-
-
 

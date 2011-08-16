@@ -151,7 +151,7 @@ namespace DotNetNuke.Services.Messaging
         }
 
 
-        public void SaveMessage(Message message)
+        public long SaveMessage(Message message)
         {
             if ((PortalSettings.Current != null))
             {
@@ -163,7 +163,7 @@ namespace DotNetNuke.Services.Messaging
                 message.Conversation = Guid.NewGuid();
             }
 
-            _DataService.SaveMessage(message);
+            return _DataService.SaveMessage(message);
         }
 
         public void UpdateMessage(Message message)

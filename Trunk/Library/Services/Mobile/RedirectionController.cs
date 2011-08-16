@@ -61,7 +61,7 @@ namespace DotNetNuke.Services.Mobile
 
 		public IList<IRedirection> GetRedirectionsByPortal(int portalId)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 	}
 }

@@ -40,7 +40,7 @@
 <asp:Panel ID="pnlDefinitions" runat="server" Visible="False">
     <h2 class="dnnFormSectionHead"><a href="" class="dnnLabelExpanded"><%=LocalizeString("Definitions")%></a></h2>
     <fieldset>
-        <div class="dnnFormItem">
+        <div id="definitionSelectRow" class="dnnFormItem" runat="server">
             <dnn:label id="plSelectDefinition" controlname="cboDefinitions" runat="server" />
             <asp:dropdownlist id="cboDefinitions" runat="server" datatextfield="FriendlyName" datavaluefield="ModuleDefId" autopostback="True" />
             <asp:LinkButton id="cmdAddDefinition" resourcekey="cmdAddDefinition" runat="server" CssClass="SecondaryAction" CausesValidation="false" />

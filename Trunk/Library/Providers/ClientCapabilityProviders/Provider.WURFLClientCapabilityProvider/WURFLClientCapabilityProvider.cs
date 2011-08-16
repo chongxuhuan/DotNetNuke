@@ -23,15 +23,18 @@
 
 #region Usings
 using System;
+using System.Collections.Generic;
 using System.Linq;
+
+using WURFL;
+using DotNetNuke.Provider.WURFLClientCapabilityProvider.Helpers;
 
 #endregion
 
 namespace DotNetNuke.Services.ClientCapability
 {
-    public class WURFLClientCapabilityProvider : ClientCapabilityProvider
-    {
-        #region static methods
+    public class WURFLClientCapabilityProvider
+    {        
         static object _Managerlock = new object();
         static IWURFLManager _wurflManager;
         private static IWURFLManager Manager
@@ -41,28 +44,25 @@ namespace DotNetNuke.Services.ClientCapability
                 lock (_Managerlock)
                 {
                     if (_wurflManager != null) return _wurflManager;
-                    WURFLManagerProvider provider = new WURFLManagerProvider();
-                    _wurflManager = provider.WURFLManager;
+                    _wurflManager = WurflLoader.GetManager();
                     return _wurflManager;
                 }
             }
         }
-        #endregion
 
-        public override IClientCapability GetClientCapability(string userAgent)
+        public IDictionary<string,string> GetClientCapability(string userAgent)
         {
-            IDevice device = Manager.GetDeviceForRequest(userAgent);
-            if (device != null)
-                return new WURLClientCapability(device);
-            return null;
+            var device = Manager.GetDeviceForRequest(userAgent);
+            return device != null ? device.GetCapabilities() : null;
         }
 
-        public override IClientCapability GetClientCapabilityById(string clientId)
+        public IDictionary<string, string> GetClientCapabilityById(string clientId)
         {
-            throw new NotImplementedException();
+            var device = Manager.GetDeviceById(clientId);
+            return device != null ? device.GetCapabilities() : null;
         }
 
-        public override IQueryable<IClientCapability> GeAllClientCapabilitys()
+        public IQueryable<IClientCapability> GeAllClientCapabilitys()
         {
             throw new NotImplementedException();
         }
