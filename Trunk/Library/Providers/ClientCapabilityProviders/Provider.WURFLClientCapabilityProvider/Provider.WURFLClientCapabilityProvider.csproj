@@ -21,20 +21,20 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\Providers\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\DotNetNuke.Provider.WURFLClientCapabilityProvider.XML</DocumentationFile>
+    <DocumentationFile>bin\Providers\DotNetNuke.Provider.WURFLClientCapabilityProvider.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\Providers\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\DotNetNuke.Provider.WURFLClientCapabilityProvider.XML</DocumentationFile>
+    <DocumentationFile>bin\Providers\DotNetNuke.Provider.WURFLClientCapabilityProvider.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetNuke.Log4Net, Version=3.0.0.0, Culture=neutral, PublicKeyToken=53eb1fac7b60111f, processorArchitecture=MSIL">
@@ -58,7 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers\WurflLoader.cs" />
+    <Compile Include="WURFLClientCapability.cs" />
     <Compile Include="WURFLClientCapabilityProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -72,13 +72,35 @@
       <Name>DotNetNuke.Library</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="license.txt" />
+    <Content Include="releaseNotes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WURFLClientCapabilityProvider.dnn" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>WURFLClientCapabilityProvider</DNNFileName>
+    <PackageName>WURFLClientCapabilityProvider</PackageName>
+    <Providers>/Providers</Providers>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\BuildScripts</BuildScriptsPath>
+	<WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\..\..\Website\Install\Provider</WebsiteInstallPath>
+  </PropertyGroup>
+  <Import Project="..\..\..\..\BuildScripts\Package.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;GetFiles;Package">
   </Target>
-  <Target Name="AfterBuild">
+  <Target Name="GetFiles">
+    <ItemGroup>
+      <TextFiles Include="*.txt" Exclude="license.txt;releasenotes.txt" />
+      <Resources Include="@(TextFiles)" />
+    </ItemGroup>
   </Target>
-  -->
+  <Target Name="DebugProject">
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin$(Providers)" />
+  </Target>
 </Project>
+

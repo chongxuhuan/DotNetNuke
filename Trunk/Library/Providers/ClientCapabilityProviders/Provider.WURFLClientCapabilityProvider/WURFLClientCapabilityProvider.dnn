@@ -1,0 +1,65 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="DotNetNuke.WURFLClientCapabilityProvider" type="Provider" version="06.01.00">
+      <friendlyName>DotNetNuke WURFL Client Capability Provider</friendlyName>
+      <description>DotNetNuke WURFL Based Client Capability Provider. This provider is needed to detect capabilities ( height, width, etc.) of device (mobile / table / facebook). </description>
+      <dependencies/>
+      <owner>
+        <name>DotNetNuke</name>
+        <organization>DotNetNuke Corporation</organization>
+        <url>www.dotnetnuke.com</url>
+        <email>support@dotnetnuke.com</email>
+      </owner>
+      <license src="license.txt" />
+      <releaseNotes src="releaseNotes.txt" />
+      <components>
+        <component type="Assembly">
+          <assemblies>
+            <basePath>bin\Providers</basePath>
+            <assembly>
+              <path>bin\Providers</path>
+              <name>DotNetNuke.Provider.WURFLClientCapabilityProvider.dll</name>
+            </assembly>
+            <assembly>              
+              <path>bin\Providers</path>
+              <name>WURFL.dll</name>
+            </assembly>
+          </assemblies>
+        </component>
+        <component type="File">
+          <files>
+            <basePath>\Providers\ClientCapabilityProvider\WURFLClientCapabilityProvider</basePath>
+            <file>
+              <name>license.txt</name>
+            </file>
+            <file>
+              <name>releaseNotes.txt</name>
+            </file>
+          </files>
+        </component>
+        <component type="Config">
+          <config>
+            <configFile>web.config</configFile>
+            <install>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/dotnetnuke/clientcapability/providers" action="update" key="name" collision="overwrite">
+                    <add name="WURFLClientCapabilityProvider"
+                         type="DotNetNuke.Services.ClientCapability.WURFLClientCapabilityProvider, DotNetNuke.Provider.WURFLClientCapabilityProvider" />
+                  </node>
+                </nodes>
+              </configuration>
+            </install>
+            <uninstall>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/dotnetnuke/clientcapability/providers/add[@name='WURFLClientCapabilityProvider']" action="remove" />
+                </nodes>
+              </configuration>
+            </uninstall>
+          </config>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

@@ -5,20 +5,45 @@ using System.Text;
 
 using DotNetNuke.Services.ClientCapability;
 
+using WURFL;
+
 namespace DotNetNuke.Services.ClientCapability
 {
-    public class WURLClientCapability : KnownDevice, IClientCapability
+    public class WURLClientCapability : IClientCapability
     {
 
-        public WURLClientCapability(IDevice device)
-            : base(device)
+        public WURLClientCapability(IDevice device)            
         {
-            this.ID = base.ID;
-            this.UserAgent = base.UserAgent;
-            this.IsMobile = base.IsMobileDevice;
-            //this.IsTablet = base.IsMobileDevice;
-            this.Capabilities = base.Capabilities;
+            this.ID = device.Id;
+            this.UserAgent = device.UserAgent;
+            this.IsMobile = !string.IsNullOrEmpty(device.GetCapability("mobile_browser"));
+
+            this.IsTablet = Capability<bool>(device, "is_tablet");
+            this.IsTouchScreen = Capability<String>(device, "pointing_method").Equals("touchscreen");
+            this.Width = Capability<int>(device, "physical_screen_width");
+            this.Height = Capability<int>(device, "physical_screen_height");
+            this.SupportsFlash = Capability<bool>(device, "full_flash_support");
+            
+            this.Capabilities = device.GetCapabilities();
         }
+
+        #region Private methods
+       
+        private T Capability<T>(IDevice device, string name)
+        {
+            string ret = String.Empty;
+            if (device.GetCapabilities().ContainsKey(name))
+            {
+                ret = device.GetCapabilities()[name];
+            }
+            else
+            {
+                ret = null;
+            }
+
+            return (T)Convert.ChangeType(ret, typeof(T));
+        }
+        #endregion
 
         #region Implementation of IClientCapability
 
@@ -40,7 +65,7 @@ namespace DotNetNuke.Services.ClientCapability
         /// <summary>
         ///   Is request coming from a tablet device.
         /// </summary>
-        public bool IsTablet { get; set; }
+        public bool IsTablet { get; set; }        
 
         /// <summary>
         ///   Does the requesting device supports touch screen.

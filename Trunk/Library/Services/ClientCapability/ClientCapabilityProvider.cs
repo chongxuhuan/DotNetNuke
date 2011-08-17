@@ -58,7 +58,10 @@ namespace DotNetNuke.Services.ClientCapability
         public virtual IClientCapability GetClientCapability(HttpRequest httpRequest)
         {
             IClientCapability clientCapability = GetClientCapability(httpRequest.UserAgent);
-            clientCapability.IsFacebook = IsFacebook(httpRequest);
+
+        	var fbRequest = FacebookRequest.RequestToSignedRequest(httpRequest);
+			clientCapability.IsFacebook = fbRequest != null && fbRequest.IsValid;
+
             return clientCapability;
         }
 

@@ -102,7 +102,7 @@ namespace DotNetNuke.Common
             RegisterIfNotAlreadyRegistered<PermissionProvider>();
             ComponentFactory.InstallComponents(new ProviderInstaller("htmlEditor", typeof(HtmlEditorProvider), ComponentLifeStyleType.Transient));
             ComponentFactory.InstallComponents(new ProviderInstaller("navigationControl", typeof(NavigationProvider), ComponentLifeStyleType.Transient));
-            ComponentFactory.InstallComponents(new ProviderInstaller("ClientCapability", typeof(ClientCapabilityProvider)));
+            ComponentFactory.InstallComponents(new ProviderInstaller("clientcapability", typeof(ClientCapabilityProvider)));
 
             DnnLog.Info("Application Started");
         }

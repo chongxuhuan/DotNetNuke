@@ -25,8 +25,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
+using System.Web.Caching;
 
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Users;
 
@@ -43,7 +46,7 @@ namespace DotNetNuke.Services.Mobile
 
 		public void Save(IRedirection redirection)
 		{
-			DataProvider.Instance().SaveRedirection(redirection.Id,
+			int id = DataProvider.Instance().SaveRedirection(redirection.Id,
 			                                        redirection.PortalId,
 			                                        redirection.Name,
 			                                        (int) redirection.Type,
@@ -52,6 +55,11 @@ namespace DotNetNuke.Services.Mobile
 			                                        (int) redirection.TargetType,
 			                                        redirection.TargetValue,
 			                                        UserController.GetCurrentUserInfo().UserID);
+
+			foreach (IMatchRules rule in redirection.MatchRules)
+			{
+				DataProvider.Instance().SaveRedirectionRule(rule.Id, id, rule.Capability, rule.Expression);
+			}
 		}
 
 		public void Delete(int id)
@@ -61,7 +69,15 @@ namespace DotNetNuke.Services.Mobile
 
 		public IList<IRedirection> GetRedirectionsByPortal(int portalId)
 		{
-			return null;
+			//string cacheKey = string.Format("MobileRedirections{0}", portalId);
+			//return CBO.GetCachedObject<IList<IRedirection>>(new CacheItemArgs(cacheKey, 20, CacheItemPriority.Default, portalId), GetRedirectionsByPortalCallBack);
+			return CBO.FillCollection<Redirection>(DataProvider.Instance().GetRedirections(portalId)).Cast<IRedirection>().ToList();
+		}
+
+		private IList<IRedirection> GetRedirectionsByPortalCallBack(CacheItemArgs cacheItemArgs)
+		{
+			int portalId = (int)cacheItemArgs.ParamList[0];
+			return CBO.FillCollection<IRedirection>(DataProvider.Instance().GetRedirections(portalId));
 		}
 	}
 }

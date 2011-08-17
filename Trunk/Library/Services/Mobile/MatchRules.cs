@@ -1,7 +1,7 @@
-#region Copyright
+﻿#region Copyright
 
 // 
-// DotNetNuke� - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
@@ -24,17 +24,60 @@
 #region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.ComponentModel;
+
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Modules;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("9F3C6661-29F0-4440-9084-7CF9D1D164D6")]
-[assembly: AssemblyVersion("6.1.0.110")]
+namespace DotNetNuke.Services.Mobile
+{
+	public class MatchRules : IMatchRules, IHydratable
+	{
+		private int _id = -1;
+		public int Id
+		{
+			get
+			{
+				return _id;
+			}
+			set
+			{
+				_id = value;
+			}
+		}
+
+		public string Capability
+		{
+			get;
+			set;
+		}
+
+		public string Expression
+		{
+			get;
+			set;
+		}
+
+		public int KeyID
+		{
+			get
+			{
+				return this.Id;
+			}
+			set
+			{
+				this.Id = value;
+			}
+		}
+
+		public void Fill(System.Data.IDataReader dr)
+		{
+			this.Id = Convert.ToInt32(dr["Id"]);
+			this.Capability = dr["Capability"].ToString();
+			this.Expression = dr["Expression"].ToString();
+		}
+	}
+}

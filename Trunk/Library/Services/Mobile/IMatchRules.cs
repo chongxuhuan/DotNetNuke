@@ -32,6 +32,10 @@ namespace DotNetNuke.Services.Mobile
 	public interface IMatchRules
 	{
 		/// <summary>
+		/// Primary Id.
+		/// </summary>
+		int Id { get; }
+		/// <summary>
 		/// capbility name.
 		/// </summary>
 		string Capability { get; }

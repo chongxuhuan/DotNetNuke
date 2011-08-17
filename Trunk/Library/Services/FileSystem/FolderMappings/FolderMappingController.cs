@@ -83,7 +83,7 @@ namespace DotNetNuke.Services.FileSystem
             if (folderMappingFolders.Count() > 0)
             {
                 // Delete files in folders with the provided mapping (only in the database)
-                foreach (var file in folderMappingFolders.Select(folderManager.GetFiles).SelectMany(files => files))
+				foreach (var file in folderMappingFolders.Select<IFolderInfo, IEnumerable<IFileInfo>>(folderManager.GetFiles).SelectMany(files => files))
                 {
                     dataProvider.DeleteFile(portalID, file.FileName, file.FolderId);
                 }

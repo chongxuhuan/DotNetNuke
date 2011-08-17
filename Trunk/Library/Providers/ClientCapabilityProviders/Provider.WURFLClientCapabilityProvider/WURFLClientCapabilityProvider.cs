@@ -23,18 +23,27 @@
 
 #region Usings
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using WURFL;
-using DotNetNuke.Provider.WURFLClientCapabilityProvider.Helpers;
+using WURFL.Config;
 
 #endregion
 
 namespace DotNetNuke.Services.ClientCapability
 {
-    public class WURFLClientCapabilityProvider
-    {        
+    public class WURFLClientCapabilityProvider : ClientCapabilityProvider
+    {
+        #region Constants
+        /// <summary>
+        /// WURFL data paths
+        /// </summary>
+        public const String DefaultWurflDataFilePath = "/App_Data/WURFLDeviceDatabase/wurfl-latest.zip";
+        public const String DefaultWurflPatchFilePath = "/App_Data/WURFLDeviceDatabase/web_browsers_patch.xml";
+        #endregion
+
+
+        #region static methods
         static object _Managerlock = new object();
         static IWURFLManager _wurflManager;
         private static IWURFLManager Manager
@@ -43,26 +52,38 @@ namespace DotNetNuke.Services.ClientCapability
             {
                 lock (_Managerlock)
                 {
-                    if (_wurflManager != null) return _wurflManager;
-                    _wurflManager = WurflLoader.GetManager();
+                    if (_wurflManager != null) 
+                        return _wurflManager;
+                    // Get the absolute path of required data files
+                    var wurflDataFile = Common.Globals.ApplicationMapPath + DefaultWurflDataFilePath;
+                    var wurflPatchFile = Common.Globals.ApplicationMapPath + DefaultWurflPatchFilePath;
+
+                    // Initializes the WURFL infrastructure
+                    var configurer = new InMemoryConfigurer()
+                        .MainFile(wurflDataFile)
+                        .PatchFile(wurflPatchFile);
+                    _wurflManager = WURFLManagerBuilder.Build(configurer);
+
                     return _wurflManager;
                 }
             }
         }
+        #endregion
 
-        public IDictionary<string,string> GetClientCapability(string userAgent)
-        {
-            var device = Manager.GetDeviceForRequest(userAgent);
-            return device != null ? device.GetCapabilities() : null;
+        public override IClientCapability GetClientCapability(string userAgent)
+        {            
+            IDevice device = Manager.GetDeviceForRequest(userAgent);
+            if (device != null)
+                return new WURLClientCapability(device);
+            return null;
         }
 
-        public IDictionary<string, string> GetClientCapabilityById(string clientId)
+        public override IClientCapability GetClientCapabilityById(string clientId)
         {
-            var device = Manager.GetDeviceById(clientId);
-            return device != null ? device.GetCapabilities() : null;
+            throw new NotImplementedException();
         }
 
-        public IQueryable<IClientCapability> GeAllClientCapabilitys()
+        public override IQueryable<IClientCapability> GeAllClientCapabilitys()
         {
             throw new NotImplementedException();
         }

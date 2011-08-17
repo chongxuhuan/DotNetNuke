@@ -22,10 +22,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Data;
 
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Services.Mobile;
 using DotNetNuke.Tests.Utilities.Mocks;
 
 using MbUnit.Framework;
@@ -34,18 +37,211 @@ using Moq;
 
 namespace DotNetNuke.Tests.Core.Services.Mobile
 {
-    /// <summary>
+	/// <summary>
 	///   Summary description for RedirectionControllerTests
-    /// </summary>
-    [TestFixture]
+	/// </summary>
+	[TestFixture]
 	public class RedirectionControllerTests
-    {
-    	private Mock<DataProvider> _dataProvider;
-        [SetUp]
-        public void SetUp()
-        {
-            ComponentFactory.Container = new SimpleContainer();
+	{
+		private Mock<DataProvider> _dataProvider;
+
+		private DataTable _dtRedirections;
+		private DataTable _dtRules;
+
+		[SetUp]
+		public void SetUp()
+		{
+			ComponentFactory.Container = new SimpleContainer();
 			_dataProvider = MockComponentProvider.CreateDataProvider();
-        }
-    }
+
+			_dtRedirections = new DataTable("Redirections");
+			var pkCol = _dtRedirections.Columns.Add("Id", typeof(int));
+			_dtRedirections.Columns.Add("PortalId", typeof(int));
+			_dtRedirections.Columns.Add("Name", typeof(string));
+			_dtRedirections.Columns.Add("Type", typeof(int));
+			_dtRedirections.Columns.Add("SortOrder", typeof(int));
+			_dtRedirections.Columns.Add("SourceTabId", typeof(int));
+			_dtRedirections.Columns.Add("TargetType", typeof(int));
+			_dtRedirections.Columns.Add("TargetValue", typeof(int));
+
+			_dtRedirections.PrimaryKey = new[] { pkCol };
+
+			_dtRules = new DataTable("Rules");
+			var pkCol1 = _dtRules.Columns.Add("Id", typeof(int));
+			_dtRules.Columns.Add("RedirectionId", typeof(int));
+			_dtRules.Columns.Add("Capability", typeof(string));
+			_dtRules.Columns.Add("Expression", typeof(string));
+
+			_dtRules.PrimaryKey = new[] { pkCol1 };
+
+			_dataProvider.Setup(d =>
+								d.SaveRedirection(It.IsAny<int>(),
+								It.IsAny<int>(),
+								It.IsAny<string>(),
+								It.IsAny<int>(),
+								It.IsAny<int>(),
+								It.IsAny<int>(),
+								It.IsAny<int>(),
+								It.IsAny<object>(),
+								It.IsAny<int>())).Returns<int, int, string, int, int, int, int, object, int>(
+															(id, portalId, name, type, sortOrder, sourceTabId, targetType, targetValue, userId) =>
+															{
+																if (id == -1)
+																{
+																	if(_dtRedirections.Rows.Count == 0)
+																	{
+																		id = 1;
+																	}
+																	else
+																	{
+																		id = Convert.ToInt32(_dtRedirections.Select("", "Id Desc")[0]["Id"]) + 1;
+																	}
+
+																	var row = _dtRedirections.NewRow();
+																	row["Id"] = id;
+																	row["PortalId"] = portalId;
+																	row["name"] = name;
+																	row["type"] = type;
+																	row["sortOrder"] = sortOrder;
+																	row["sourceTabId"] = sourceTabId;
+																	row["targetType"] = targetType;
+																	row["targetValue"] = targetValue;
+
+																	_dtRedirections.Rows.Add(row);
+																}
+																else
+																{
+																	var rows = _dtRedirections.Select("Id = " + id);
+																	if(rows.Length == 1)
+																	{
+																		var row = rows[0];
+
+																		row["name"] = name;
+																		row["type"] = type;
+																		row["sortOrder"] = sortOrder;
+																		row["sourceTabId"] = sourceTabId;
+																		row["targetType"] = targetType;
+																		row["targetValue"] = targetValue;
+																	}
+																}
+
+																return id;
+															});
+
+			_dataProvider.Setup(d => d.GetRedirections(It.IsAny<int>())).Returns<int>((portalId) => { return GetRedirectionsCallBack(portalId); });
+			_dataProvider.Setup(d => d.DeleteRedirection(It.IsAny<int>())).Callback<int>((id) =>
+																							{
+																								var rows = _dtRedirections.Select("Id = " + id);
+																								if (rows.Length == 1)
+																								{
+																									_dtRedirections.Rows.Remove(rows[0]);
+																								}
+																							});
+
+			_dataProvider.Setup(d => d.SaveRedirectionRule(It.IsAny<int>(),
+				It.IsAny<int>(),
+				It.IsAny<string>(),
+				It.IsAny<string>())).Callback<int, int, string, string>((id, rid, capbility, expression) =>
+				                                                        	{
+																				if (id == -1)
+																				{
+																					if (_dtRules.Rows.Count == 0)
+																					{
+																						id = 1;
+																					}
+																					else
+																					{
+																						id = Convert.ToInt32(_dtRules.Select("", "Id Desc")[0]["Id"]) + 1;
+																					}
+
+																					var row = _dtRules.NewRow();
+																					row["Id"] = id;
+																					row["RedirectionId"] = rid;
+																					row["capability"] = capbility;
+																					row["expression"] = expression;
+
+																					_dtRules.Rows.Add(row);
+																				}
+																				else
+																				{
+																					var rows = _dtRules.Select("Id = " + id);
+																					if (rows.Length == 1)
+																					{
+																						var row = rows[0];
+
+																						row["capability"] = capbility;
+																						row["expression"] = expression;
+																					}
+																				}
+				                                                        	});
+
+			_dataProvider.Setup(d => d.GetRedirectionRules(It.IsAny<int>())).Returns<int>((rid) => { return GetRedirectionRulesCallBack(rid); });
+			_dataProvider.Setup(d => d.DeleteRedirectionRule(It.IsAny<int>())).Callback<int>((id) =>
+			{
+				var rows = _dtRules.Select("Id = " + id);
+				if (rows.Length == 1)
+				{
+					_dtRules.Rows.Remove(rows[0]);
+				}
+			});
+		}
+
+		[Test]
+		public void Test_Add_Valid_Redirection()
+		{
+			var redirection = new Redirection { Name = "Test R", PortalId = 0, SortOrder = 1, SourceTabId = -1, Type = RedirectionType.Mobile, TargetType = TargetType.Portal, TargetValue = 2 };
+			new RedirectionController().Save(redirection);
+
+			var dataReader = _dataProvider.Object.GetRedirections(0);
+			var affectedCount = 0;
+			while (dataReader.Read())
+			{
+				affectedCount++;
+			}
+			Assert.AreEqual(1, affectedCount);
+		}
+
+		[Test]
+		public void Test_Add_ValidRedirection_With_Rules()
+		{
+			var redirection = new Redirection { Name = "Test R", PortalId = 0, SortOrder = 1, SourceTabId = -1, Type = RedirectionType.Other, TargetType = TargetType.Portal, TargetValue = 2 };
+			redirection.MatchRules.Add(new MatchRules{Capability = "Platform", Expression = "IOS"});
+			redirection.MatchRules.Add(new MatchRules { Capability = "Version", Expression = "5" });
+			new RedirectionController().Save(redirection);
+
+			var dataReader = _dataProvider.Object.GetRedirections(0);
+			var affectedCount = 0;
+			while (dataReader.Read())
+			{
+				affectedCount++;
+			}
+			Assert.AreEqual(1, affectedCount);
+
+			var getRe = new RedirectionController().GetRedirectionsByPortal(0)[0];
+			Assert.AreEqual(2, getRe.MatchRules.Count);
+		}
+
+		private IDataReader GetRedirectionsCallBack(int portalId)
+		{
+			var dtCheck = _dtRedirections.Clone();
+			foreach (var row in _dtRedirections.Select("PortalId = " + portalId))
+			{
+				dtCheck.Rows.Add(row.ItemArray);
+			}
+
+			return dtCheck.CreateDataReader();
+		}
+
+		private IDataReader GetRedirectionRulesCallBack(int rid)
+		{
+			var dtCheck = _dtRules.Clone();
+			foreach (var row in _dtRules.Select("RedirectionId = " + rid))
+			{
+				dtCheck.Rows.Add(row.ItemArray);
+			}
+
+			return dtCheck.CreateDataReader();
+		}
+
+	}
 }

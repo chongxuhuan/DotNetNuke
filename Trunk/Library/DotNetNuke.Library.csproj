@@ -488,6 +488,7 @@
     <Compile Include="Services\Cache\PurgeCache.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\ClientCapability\FacebookRequest.cs" />
     <Compile Include="Services\FileSystem\Exceptions\FolderAlreadyExistsException.cs" />
     <Compile Include="Services\FileSystem\Exceptions\NoNetworkAvailableException.cs" />
     <Compile Include="Services\FileSystem\Internal\DefaultFolderProviders.cs" />
@@ -495,6 +496,7 @@
     <Compile Include="Services\FileSystem\Wrappers\IIconController.cs" />
     <Compile Include="Services\ClientCapability\ClientCapabilityProvider.cs" />
     <Compile Include="Services\ClientCapability\IClientCapability.cs" />
+    <Compile Include="Services\Mobile\MatchRules.cs" />
     <Compile Include="Services\Mobile\PreviewProfile.cs" />
     <Compile Include="Services\Mobile\IMatchRules.cs" />
     <Compile Include="Services\Mobile\IPreviewProfile.cs" />

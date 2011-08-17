@@ -25,7 +25,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.ComponentModel;
 
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Data;
 using DotNetNuke.Entities.Modules;
 
 #endregion
@@ -44,6 +48,7 @@ namespace DotNetNuke.Services.Mobile
 			set
 			{
 				_id = value;
+				_matchRules = null;
 			}
 		}
 
@@ -76,6 +81,19 @@ namespace DotNetNuke.Services.Mobile
 		{
 			get
 			{
+				if(_matchRules == null)
+				{
+					if(_id == Null.NullInteger)
+					{
+						_matchRules = new List<IMatchRules>();
+					}
+					else
+					{
+						//get from database
+						_matchRules = CBO.FillCollection<MatchRules>(DataProvider.Instance().GetRedirectionRules(this.Id)).Cast<IMatchRules>().ToList();
+					}
+				}
+
 				return _matchRules;
 			}
 			set
@@ -116,7 +134,14 @@ namespace DotNetNuke.Services.Mobile
 
 		public void Fill(System.Data.IDataReader dr)
 		{
-
+			this.Id = Convert.ToInt32(dr["Id"]);
+			this.PortalId = Convert.ToInt32(dr["PortalId"]);
+			this.Name = dr["Name"].ToString();
+			this.Type = (RedirectionType)Convert.ToInt32(dr["Type"]);
+			this.SourceTabId = Convert.ToInt32(dr["SourceTabId"]);
+			this.SortOrder = Convert.ToInt32(dr["SortOrder"]);
+			this.TargetType = (TargetType)Convert.ToInt32(dr["TargetType"]);
+			this.TargetValue = dr["TargetValue"];
 		}
 	}
 }
