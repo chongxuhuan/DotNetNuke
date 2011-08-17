@@ -24,6 +24,10 @@
               <path>bin\Providers</path>
               <name>WURFL.dll</name>
             </assembly>
+            <assembly>
+              <path>bin\Providers</path>
+              <name>ICSharpCode.SharpZipLib.dll</name>
+            </assembly>
           </assemblies>
         </component>
         <component type="File">

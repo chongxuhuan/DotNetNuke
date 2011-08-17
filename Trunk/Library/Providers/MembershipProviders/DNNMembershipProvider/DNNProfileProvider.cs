@@ -33,7 +33,9 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
+using DotNetNuke.Security;
 using DotNetNuke.Security.Membership.Data;
+using DotNetNuke.Security.Profile;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 
@@ -52,43 +54,78 @@ namespace DotNetNuke.Security.Profile
     /// </summary>
     /// <remarks>
     /// </remarks>
-    /// <history>
-    /// 	[cnurse]	03/29/2006	Created
-    /// </history>
     /// -----------------------------------------------------------------------------
     public class DNNProfileProvider : ProfileProvider
     {
-        private readonly DataProvider dataProvider;
+        #region Private Members
+
+        private readonly DataProvider _dataProvider;
+
+        #endregion
+
+        #region Constructors
 
         public DNNProfileProvider()
         {
-            dataProvider = DataProvider.Instance();
-            if (dataProvider == null)
+            _dataProvider = DataProvider.Instance();
+            if (_dataProvider == null)
             {
 				//get the provider configuration based on the type
                 string defaultprovider = Data.DataProvider.Instance().DefaultProviderName;
                 string dataProviderNamespace = "DotNetNuke.Security.Membership.Data";
                 if (defaultprovider == "SqlDataProvider")
                 {
-                    dataProvider = new SqlDataProvider();
+                    _dataProvider = new SqlDataProvider();
                 }
                 else
                 {
                     string providerType = dataProviderNamespace + "." + defaultprovider;
-                    dataProvider = (DataProvider) Reflection.CreateObject(providerType, providerType, true);
+                    _dataProvider = (DataProvider) Reflection.CreateObject(providerType, providerType, true);
                 }
-                ComponentFactory.RegisterComponentInstance<DataProvider>(dataProvider);
+                ComponentFactory.RegisterComponentInstance<DataProvider>(_dataProvider);
             }
         }
+
+        #endregion
+
+        #region Private Methods
+
+        private void UpdateTimeZoneInfo(UserInfo user, ProfilePropertyDefinitionCollection properties)
+        {
+            ProfilePropertyDefinition newTimeZone = properties["PreferredTimeZone"];
+            ProfilePropertyDefinition oldTimeZone = properties["TimeZone"];
+            if (newTimeZone != null && oldTimeZone != null)
+            {
+                //Old timezone is present but new is not...we will set that up.
+                if (!string.IsNullOrEmpty(oldTimeZone.PropertyValue) && string.IsNullOrEmpty(newTimeZone.PropertyValue))
+                {
+                    int oldOffset;
+                    int.TryParse(oldTimeZone.PropertyValue, out oldOffset);
+                    TimeZoneInfo timeZoneInfo = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(oldOffset);
+                    newTimeZone.PropertyValue = timeZoneInfo.Id;
+                    UpdateUserProfile(user);
+                }
+                //It's also possible that the new value is set but not the old value. We need to make them backwards compatible
+                else if (!string.IsNullOrEmpty(newTimeZone.PropertyValue) && string.IsNullOrEmpty(oldTimeZone.PropertyValue))
+                {
+                    TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(newTimeZone.PropertyValue);
+                    if (timeZoneInfo != null)
+                    {
+                        oldTimeZone.PropertyValue = timeZoneInfo.BaseUtcOffset.TotalMinutes.ToString();
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets whether the Provider Properties can be edited
         /// </summary>
         /// <returns>A Boolean</returns>
-        /// <history>
-        /// 	[cnurse]	03/29/2006	Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override bool CanEditProviderProperties
         {
@@ -105,31 +142,18 @@ namespace DotNetNuke.Security.Profile
         /// <remarks>
         /// </remarks>
         /// <param name="user">The user whose Profile information we are retrieving.</param>
-        /// <history>
-        /// 	[cnurse]	03/29/2006	Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override void GetUserProfile(ref UserInfo user)
         {
-            int portalId;
-            int definitionId;
-
             ProfilePropertyDefinition profProperty;
-            ProfilePropertyDefinitionCollection properties;
-            if (user.IsSuperUser)
-            {
-                portalId = Globals.glbSuperUserAppName;
-            }
-            else
-            {
-                portalId = user.PortalID;
-            }
-            properties = ProfileController.GetPropertyDefinitionsByPortal(portalId, true);
+
+            int portalId = user.IsSuperUser ? Globals.glbSuperUserAppName : user.PortalID;
+            var properties = ProfileController.GetPropertyDefinitionsByPortal(portalId, true);
 
             //Load the Profile properties
             if (user.UserID > Null.NullInteger)
             {
-                IDataReader dr = dataProvider.GetUserProfile(user.UserID);
+                IDataReader dr = _dataProvider.GetUserProfile(user.UserID);
                 try
                 {
                     while (dr.Read())
@@ -139,7 +163,7 @@ namespace DotNetNuke.Security.Profile
                         {
                             break;
                         }
-                        definitionId = Convert.ToInt32(dr["PropertyDefinitionId"]);
+                        int definitionId = Convert.ToInt32(dr["PropertyDefinitionId"]);
                         profProperty = properties.GetById(definitionId);
                         if (profProperty != null)
                         {
@@ -172,29 +196,7 @@ namespace DotNetNuke.Security.Profile
             user.Profile.ClearIsDirty();
 
             //Ensure old and new TimeZone properties are in synch
-            ProfilePropertyDefinition newTimeZone = properties["PreferredTimeZone"];
-            ProfilePropertyDefinition oldTimeZone = properties["TimeZone"];
-            if (newTimeZone != null && oldTimeZone != null)
-            {
-                //Old timezone is present but new is not...we will set that up.
-                if (!string.IsNullOrEmpty(oldTimeZone.PropertyValue) && string.IsNullOrEmpty(newTimeZone.PropertyValue))
-                {
-                    int oldOffset;
-                    int.TryParse(oldTimeZone.PropertyValue, out oldOffset);
-                    TimeZoneInfo timeZoneInfo = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(oldOffset);
-                    newTimeZone.PropertyValue = timeZoneInfo.Id;
-                    UpdateUserProfile(user);
-                }
-                //It's also possible that the new value is set but not the old value. We need to make them backwards compatible
-                else if (!string.IsNullOrEmpty(newTimeZone.PropertyValue) && string.IsNullOrEmpty(oldTimeZone.PropertyValue))
-                {
-                    TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(newTimeZone.PropertyValue);
-                    if (timeZoneInfo != null)
-                    {
-                        oldTimeZone.PropertyValue = timeZoneInfo.BaseUtcOffset.TotalMinutes.ToString();                        
-                    }
-                }
-            }			
+            UpdateTimeZoneInfo(user, properties);
         }
 
         /// -----------------------------------------------------------------------------
@@ -204,9 +206,6 @@ namespace DotNetNuke.Security.Profile
         /// <remarks>
         /// </remarks>
         /// <param name="user">The user to persist to the Data Store.</param>
-        /// <history>
-        /// 	[cnurse]	03/29/2006	Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override void UpdateUserProfile(UserInfo user)
         {
@@ -238,11 +237,13 @@ namespace DotNetNuke.Security.Profile
                 {
                     var objSecurity = new PortalSecurity();
                     string propertyValue = objSecurity.InputFilter(profProperty.PropertyValue, PortalSecurity.FilterFlag.NoScripting);
-                    dataProvider.UpdateProfileProperty(Null.NullInteger, user.UserID, profProperty.PropertyDefinitionId, propertyValue, (int) profProperty.Visibility, DateTime.Now);
+                    _dataProvider.UpdateProfileProperty(Null.NullInteger, user.UserID, profProperty.PropertyDefinitionId, propertyValue, (int) profProperty.Visibility, DateTime.Now);
                     var objEventLog = new EventLogController();
                     objEventLog.AddLog(user, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", "USERPROFILE_UPDATED");
                 }
             }
         }
+
+        #endregion
     }
 }

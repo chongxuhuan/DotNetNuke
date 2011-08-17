@@ -1,7 +1,7 @@
-#region Copyright
+﻿#region Copyright
 
 // 
-// DotNetNuke� - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
@@ -24,17 +24,46 @@
 #region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Data;
+
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Modules;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("7BB1CA24-7770-42D7-9B89-282BAC5E38E5")]
-[assembly: AssemblyVersion("6.1.0.125")]
+namespace DotNetNuke.Entities.Portals
+{
+    public class PortalGroupInfo : BaseEntityInfo, IHydratable
+    {
+        public int PortalGroupId { get; set; }
+        public string PortalGroupDescription { get; set; }
+        public string PortalGroupName { get; set; }
+        public int MasterPortalId { get; set; }
+
+        #region IHydratable Members
+
+        public int KeyID
+        {
+            get
+            {
+                return PortalGroupId;
+            }
+            set
+            {
+                PortalGroupId = value;
+            }
+        }
+
+        public void Fill(IDataReader dr)
+        {
+            FillInternal(dr);
+
+            PortalGroupId = Null.SetNullInteger(dr["PortalGroupID"]);
+            PortalGroupName = Null.SetNullString(dr["PortalGroupName"]);
+            PortalGroupDescription = Null.SetNullString(dr["PortalGroupDescription"]);
+            MasterPortalId = Null.SetNullInteger(dr["MasterPortalID"]);
+        }
+
+        #endregion
+    }
+}

@@ -24,7 +24,6 @@
 #region Usings
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 
@@ -53,101 +52,43 @@ namespace DotNetNuke.Entities.Profile
     /// </summary>
     /// <remarks>
     /// </remarks>
-    /// <history>
-    ///     [cnurse]	01/31/2006	created
-    /// </history>
     /// -----------------------------------------------------------------------------
     public class ProfileController
     {
-        private static readonly DataProvider provider = DataProvider.Instance();
-        private static readonly ProfileProvider profileProvider = ProfileProvider.Instance();
+        #region Private Members
+
+        private static readonly DataProvider _dataProvider = DataProvider.Instance();
+        private static readonly ProfileProvider _profileProvider = ProfileProvider.Instance();
         private static int _orderCounter;
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Adds a single default property definition
-        /// </summary>
-        /// <param name="portalId">Id of the Portal</param>
-        /// <param name="category">Category of the Property</param>
-        /// <param name="name">Name of the Property</param>
-		/// <param name="strType">DataType</param>
-		/// <param name="length">length</param>
-		/// <param name="defaultVisibility">Default visibility</param>
-		/// <param name="types">List of types</param>		
-        /// <history>
-        ///     [cnurse]	02/22/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
+        #endregion
+
+        #region Private Methdods
+
         private static void AddDefaultDefinition(int portalId, string category, string name, string strType, int length, UserVisibilityMode defaultVisibility, Dictionary<string, ListEntryInfo> types)
         {
             _orderCounter += 2;
             AddDefaultDefinition(portalId, category, name, strType, length, _orderCounter, defaultVisibility, types);
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        ///   Adds a single default property definition
-        /// </summary>
-        /// <param name = "portalId">Id of the Portal</param>
-        /// <param name = "category">Category of the Property</param>
-        /// <param name = "name">Name of the Property</param>
-        /// <param name="type">DataType</param>
-        /// <param name="length">length</param>
-        /// <param name="viewOrder">for sort order</param>
-        /// <param name="defaultVisibility">Default visibility</param>
-        /// <param name="types">List of types</param>
-        /// <history>
-        ///   [cnurse]	02/22/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         internal static void AddDefaultDefinition(int portalId, string category, string name, string type, int length, int viewOrder, UserVisibilityMode defaultVisibility,
                                                   Dictionary<string, ListEntryInfo> types)
         {
-            ListEntryInfo typeInfo = types["DataType:" + type];
-            if (typeInfo == null)
-            {
-                typeInfo = types["DataType:Unknown"];
-            }
-            var propertyDefinition = new ProfilePropertyDefinition(portalId);
-            propertyDefinition.DataType = typeInfo.EntryID;
-            propertyDefinition.DefaultValue = "";
-            propertyDefinition.ModuleDefId = Null.NullInteger;
-            propertyDefinition.PropertyCategory = category;
-            propertyDefinition.PropertyName = name;
-            propertyDefinition.Required = false;
-            propertyDefinition.ViewOrder = viewOrder;
-            propertyDefinition.Visible = true;
-            propertyDefinition.Length = length;
-            propertyDefinition.DefaultVisibility = defaultVisibility;
+            ListEntryInfo typeInfo = types["DataType:" + type] ?? types["DataType:Unknown"];
+            var propertyDefinition = new ProfilePropertyDefinition(portalId)
+                                         {
+                                             DataType = typeInfo.EntryID,
+                                             DefaultValue = "",
+                                             ModuleDefId = Null.NullInteger,
+                                             PropertyCategory = category,
+                                             PropertyName = name,
+                                             Required = false,
+                                             ViewOrder = viewOrder,
+                                             Visible = true,
+                                             Length = length,
+                                             DefaultVisibility = defaultVisibility
+                                         };
             AddPropertyDefinition(propertyDefinition);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Fills a ProfilePropertyDefinitionCollection from a DataReader
-        /// </summary>
-        /// <param name="dr">An IDataReader object</param>
-        /// <returns>The ProfilePropertyDefinitionCollection</returns>
-        /// <history>
-        ///     [cnurse]	02/01/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static ProfilePropertyDefinitionCollection FillCollection(IDataReader dr)
-        {
-            ArrayList arrDefinitions = CBO.FillCollection(dr, typeof (ProfilePropertyDefinition));
-            var definitionsCollection = new ProfilePropertyDefinitionCollection();
-            foreach (ProfilePropertyDefinition definition in arrDefinitions)
-            {
-				//Clear the Is Dirty Flag
-                definition.ClearIsDirty();
-
-                //Initialise the Visibility
-                definition.Visibility = definition.DefaultVisibility;
-
-                //Add to collection
-                definitionsCollection.Add(definition);
-            }
-            return definitionsCollection;
         }
 
         private static ProfilePropertyDefinition FillPropertyDefinitionInfo(IDataReader dr)
@@ -210,13 +151,12 @@ namespace DotNetNuke.Entities.Profile
             var arr = new List<ProfilePropertyDefinition>();
             try
             {
-                ProfilePropertyDefinition obj;
                 while (dr.Read())
                 {
-					//fill business object
-                    obj = FillPropertyDefinitionInfo(dr, false);
+                    //fill business object
+                    ProfilePropertyDefinition definition = FillPropertyDefinitionInfo(dr, false);
                     //add to collection
-                    arr.Add(obj);
+                    arr.Add(definition);
                 }
             }
             catch (Exception exc)
@@ -231,7 +171,7 @@ namespace DotNetNuke.Entities.Profile
             return arr;
         }
 
-        private static List<ProfilePropertyDefinition> GetPropertyDefinitions(int portalId)
+        private static IEnumerable<ProfilePropertyDefinition> GetPropertyDefinitions(int portalId)
         {
 			//Get the Cache Key
             string key = string.Format(DataCache.ProfileDefinitionsCacheKey, portalId);
@@ -244,7 +184,7 @@ namespace DotNetNuke.Entities.Profile
                 Int32 timeOut = DataCache.ProfileDefinitionsCacheTimeOut*Convert.ToInt32(Host.Host.PerformanceSetting);
 
                 //Get the List from the database
-                definitions = FillPropertyDefinitionInfoCollection(provider.GetPropertyDefinitionsByPortal(portalId));
+                definitions = FillPropertyDefinitionInfoCollection(_dataProvider.GetPropertyDefinitionsByPortal(portalId));
 
                 //Cache the List
                 if (timeOut > 0)
@@ -255,19 +195,257 @@ namespace DotNetNuke.Entities.Profile
             return definitions;
         }
 
+        #endregion
+
+        #region Public Methods
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Adds the default property definitions for a portal
+        /// </summary>
+        /// <param name="portalId">Id of the Portal</param>
+        /// -----------------------------------------------------------------------------
+        public static void AddDefaultDefinitions(int portalId)
+        {
+            _orderCounter = 1;
+            var listController = new ListController();
+            Dictionary<string, ListEntryInfo> dataTypes = listController.GetListEntryInfoDictionary("DataType");
+
+            AddDefaultDefinition(portalId, "Name", "Prefix", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
+            AddDefaultDefinition(portalId, "Name", "FirstName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
+            AddDefaultDefinition(portalId, "Name", "MiddleName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
+            AddDefaultDefinition(portalId, "Name", "LastName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
+            AddDefaultDefinition(portalId, "Name", "Suffix", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
+            AddDefaultDefinition(portalId, "Address", "Unit", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Address", "Street", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Address", "City", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Address", "Region", "Region", 0, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Address", "Country", "Country", 0, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Address", "PostalCode", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Contact Info", "Telephone", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Contact Info", "Cell", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Contact Info", "Fax", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Contact Info", "Website", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Contact Info", "IM", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Preferences", "Photo", "Image", 0, UserVisibilityMode.AllUsers, dataTypes);
+            AddDefaultDefinition(portalId, "Preferences", "Biography", "RichText", 0, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Preferences", "TimeZone", "TimeZone", 0, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Preferences", "PreferredTimeZone", "TimeZoneInfo", 0, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Preferences", "PreferredLocale", "Locale", 0, UserVisibilityMode.AdminOnly, dataTypes);
+
+            //6.0 requires the old TimeZone property to be marked as Deleted
+            ProfilePropertyDefinition pdf = GetPropertyDefinitionByName(portalId, "TimeZone");
+            if(pdf != null)
+            {
+                DeletePropertyDefinition(pdf);
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Adds a Property Defintion to the Data Store
+        /// </summary>
+        /// <param name="definition">An ProfilePropertyDefinition object</param>
+        /// <returns>The Id of the definition (or if negative the errorcode of the error)</returns>
+        /// -----------------------------------------------------------------------------
+        public static int AddPropertyDefinition(ProfilePropertyDefinition definition)
+        {
+            if (definition.Required)
+            {
+                definition.Visible = true;
+            }
+            int intDefinition = _dataProvider.AddPropertyDefinition(definition.PortalId,
+                                                               definition.ModuleDefId,
+                                                               definition.DataType,
+                                                               definition.DefaultValue,
+                                                               definition.PropertyCategory,
+                                                               definition.PropertyName,
+                                                               definition.Required,
+                                                               definition.ValidationExpression,
+                                                               definition.ViewOrder,
+                                                               definition.Visible,
+                                                               definition.Length,
+                                                               (int) definition.DefaultVisibility,
+                                                               UserController.GetCurrentUserInfo().UserID);
+            var objEventLog = new EventLogController();
+            objEventLog.AddLog(definition, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.PROFILEPROPERTY_CREATED);
+            ClearProfileDefinitionCache(definition.PortalId);
+            return intDefinition;
+        }
+
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Clears the Profile Definitions Cache
+		/// </summary>
+		/// <param name="portalId">Id of the Portal</param>
+		/// -----------------------------------------------------------------------------
+        public static void ClearProfileDefinitionCache(int portalId)
+        {
+            DataCache.ClearDefinitionsCache(portalId);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Deletes a Property Defintion from the Data Store
+        /// </summary>
+        /// <param name="definition">The ProfilePropertyDefinition object to delete</param>
+        /// -----------------------------------------------------------------------------
+        public static void DeletePropertyDefinition(ProfilePropertyDefinition definition)
+        {
+            _dataProvider.DeletePropertyDefinition(definition.PropertyDefinitionId);
+            var objEventLog = new EventLogController();
+            objEventLog.AddLog(definition, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.PROFILEPROPERTY_DELETED);
+            ClearProfileDefinitionCache(definition.PortalId);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a Property Defintion from the Data Store by id
+        /// </summary>
+        /// <param name="definitionId">The id of the ProfilePropertyDefinition object to retrieve</param>
+        /// <param name="portalId">Portal Id.</param>
+        /// <returns>The ProfilePropertyDefinition object</returns>
+        /// -----------------------------------------------------------------------------
+        public static ProfilePropertyDefinition GetPropertyDefinition(int definitionId, int portalId)
+        {
+            bool bFound = Null.NullBoolean;
+            ProfilePropertyDefinition definition = null;
+            foreach (ProfilePropertyDefinition def in GetPropertyDefinitions(portalId))
+            {
+                if (def.PropertyDefinitionId == definitionId)
+                {
+                    definition = def;
+                    bFound = true;
+                    break;
+                }
+            }
+            if (!bFound)
+            {
+				//Try Database
+                definition = FillPropertyDefinitionInfo(_dataProvider.GetPropertyDefinition(definitionId));
+            }
+            return definition;
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a Property Defintion from the Data Store by name
+        /// </summary>
+        /// <param name="portalId">The id of the Portal</param>
+        /// <param name="name">The name of the ProfilePropertyDefinition object to retrieve</param>
+        /// <returns>The ProfilePropertyDefinition object</returns>
+        /// -----------------------------------------------------------------------------
+        public static ProfilePropertyDefinition GetPropertyDefinitionByName(int portalId, string name)
+        {
+            bool bFound = Null.NullBoolean;
+            ProfilePropertyDefinition definition = null;
+            foreach (ProfilePropertyDefinition def in GetPropertyDefinitions(portalId))
+            {
+                if (def.PropertyName == name)
+                {
+                    definition = def;
+                    bFound = true;
+                    break;
+                }
+            }
+            if (!bFound)
+            {
+				//Try Database
+                definition = FillPropertyDefinitionInfo(_dataProvider.GetPropertyDefinitionByName(portalId, name));
+            }
+            return definition;
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a collection of Property Defintions from the Data Store by category
+        /// </summary>
+        /// <param name="portalId">The id of the Portal</param>
+        /// <param name="category">The category of the Property Defintions to retrieve</param>
+        /// <returns>A ProfilePropertyDefinitionCollection object</returns>
+        /// -----------------------------------------------------------------------------
+        public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByCategory(int portalId, string category)
+        {
+            var definitions = new ProfilePropertyDefinitionCollection();
+            foreach (ProfilePropertyDefinition definition in GetPropertyDefinitions(portalId))
+            {
+                if (definition.PropertyCategory == category)
+                {
+                    definitions.Add(definition);
+                }
+            }
+            return definitions;
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a collection of Property Defintions from the Data Store by portal
+        /// </summary>
+        /// <param name="portalId">The id of the Portal</param>
+        /// <returns>A ProfilePropertyDefinitionCollection object</returns>
+        /// -----------------------------------------------------------------------------
+        public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByPortal(int portalId)
+        {
+            return GetPropertyDefinitionsByPortal(portalId, true);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a collection of Property Defintions from the Data Store by portal
+        /// </summary>
+        /// <param name="portalId">The id of the Portal</param>
+        /// <param name="clone">Whether to use a clone object.</param>
+        /// <returns>A ProfilePropertyDefinitionCollection object</returns>
+        /// -----------------------------------------------------------------------------
+        public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByPortal(int portalId, bool clone)
+        {
+            var definitions = new ProfilePropertyDefinitionCollection();
+            foreach (ProfilePropertyDefinition definition in GetPropertyDefinitions(portalId))
+            {
+                definitions.Add(clone ? definition.Clone() : definition);
+            }
+            return definitions;
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets the Profile Information for the User
         /// </summary>
         /// <remarks></remarks>
         /// <param name="objUser">The user whose Profile information we are retrieving.</param>
-        /// <history>
-        /// 	[cnurse]	12/13/2005	Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public static void GetUserProfile(ref UserInfo objUser)
         {
-            profileProvider.GetUserProfile(ref objUser);
+            _profileProvider.GetUserProfile(ref objUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Updates a Property Defintion in the Data Store
+        /// </summary>
+        /// <param name="definition">The ProfilePropertyDefinition object to update</param>
+        /// -----------------------------------------------------------------------------
+        public static void UpdatePropertyDefinition(ProfilePropertyDefinition definition)
+        {
+            if (definition.Required)
+            {
+                definition.Visible = true;
+            }
+            _dataProvider.UpdatePropertyDefinition(definition.PropertyDefinitionId,
+                                              definition.DataType,
+                                              definition.DefaultValue,
+                                              definition.PropertyCategory,
+                                              definition.PropertyName,
+                                              definition.Required,
+                                              definition.ValidationExpression,
+                                              definition.ViewOrder,
+                                              definition.Visible,
+                                              definition.Length,
+                                              (int) definition.DefaultVisibility,
+                                              UserController.GetCurrentUserInfo().UserID);
+            var objEventLog = new EventLogController();
+            objEventLog.AddLog(definition, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.PROFILEPROPERTY_UPDATED);
+            ClearProfileDefinitionCache(definition.PortalId);
         }
 
         /// -----------------------------------------------------------------------------
@@ -277,18 +455,15 @@ namespace DotNetNuke.Entities.Profile
         /// <param name="objUser">The use to update</param>
         /// <remarks>
         /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/18/2005	Documented
-        /// </history>
         /// -----------------------------------------------------------------------------
         public static void UpdateUserProfile(UserInfo objUser)
         {
-			//Update the User Profile
+            //Update the User Profile
             if (objUser.Profile.IsDirty)
             {
-                profileProvider.UpdateUserProfile(objUser);
+                _profileProvider.UpdateUserProfile(objUser);
             }
-			
+
             //Remove the UserInfo from the Cache, as it has been modified
             DataCache.ClearUserCache(objUser.PortalID, objUser.Username);
         }
@@ -300,9 +475,6 @@ namespace DotNetNuke.Entities.Profile
         /// <param name="objUser">The use to update</param>
         /// <param name="profileProperties">The collection of profile properties</param>
         /// <returns>The updated User</returns>
-        /// <history>
-        /// 	[cnurse]	03/02/2006  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public static UserInfo UpdateUserProfile(UserInfo objUser, ProfilePropertyDefinitionCollection profileProperties)
         {
@@ -339,16 +511,13 @@ namespace DotNetNuke.Entities.Profile
         /// </summary>
         /// <param name="portalId">The Id of the portal.</param>
         /// <param name="objProfile">The profile.</param>
-        /// <history>
-        /// 	[cnurse]	03/13/2006	Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public static bool ValidateProfile(int portalId, UserProfile objProfile)
         {
             bool isValid = true;
             foreach (ProfilePropertyDefinition propertyDefinition in objProfile.ProfileProperties)
             {
-				if (propertyDefinition.Required && string.IsNullOrEmpty(propertyDefinition.PropertyValue))
+                if (propertyDefinition.Required && string.IsNullOrEmpty(propertyDefinition.PropertyValue))
                 {
                     isValid = false;
                     break;
@@ -357,284 +526,16 @@ namespace DotNetNuke.Entities.Profile
             return isValid;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Adds the default property definitions for a portal
-        /// </summary>
-        /// <param name="PortalId">Id of the Portal</param>
-        /// <history>
-        ///     [cnurse]	02/22/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static void AddDefaultDefinitions(int PortalId)
-        {
-            _orderCounter = 1;
-            var listController = new ListController();
-            Dictionary<string, ListEntryInfo> dataTypes = listController.GetListEntryInfoDictionary("DataType");
+        #endregion
 
-            AddDefaultDefinition(PortalId, "Name", "Prefix", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
-            AddDefaultDefinition(PortalId, "Name", "FirstName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
-            AddDefaultDefinition(PortalId, "Name", "MiddleName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
-            AddDefaultDefinition(PortalId, "Name", "LastName", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
-            AddDefaultDefinition(PortalId, "Name", "Suffix", "Text", 50, UserVisibilityMode.AllUsers, dataTypes);
-            AddDefaultDefinition(PortalId, "Address", "Unit", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Address", "Street", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Address", "City", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Address", "Region", "Region", 0, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Address", "Country", "Country", 0, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Address", "PostalCode", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Contact Info", "Telephone", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Contact Info", "Cell", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Contact Info", "Fax", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Contact Info", "Website", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Contact Info", "IM", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Preferences", "Photo", "Image", 0, UserVisibilityMode.AllUsers, dataTypes);
-            AddDefaultDefinition(PortalId, "Preferences", "Biography", "RichText", 0, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Preferences", "TimeZone", "TimeZone", 0, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Preferences", "PreferredTimeZone", "TimeZoneInfo", 0, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(PortalId, "Preferences", "PreferredLocale", "Locale", 0, UserVisibilityMode.AdminOnly, dataTypes);
-
-            //6.0 requires the old TimeZone property to be marked as Deleted
-            ProfilePropertyDefinition pdf = GetPropertyDefinitionByName(PortalId, "TimeZone");
-            if(pdf != null)
-            {
-                DeletePropertyDefinition(pdf);
-            }
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Adds a Property Defintion to the Data Store
-        /// </summary>
-        /// <param name="definition">An ProfilePropertyDefinition object</param>
-        /// <returns>The Id of the definition (or if negative the errorcode of the error)</returns>
-        /// <history>
-        ///     [cnurse]	02/01/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static int AddPropertyDefinition(ProfilePropertyDefinition definition)
-        {
-            if (definition.Required)
-            {
-                definition.Visible = true;
-            }
-            int intDefinition = provider.AddPropertyDefinition(definition.PortalId,
-                                                               definition.ModuleDefId,
-                                                               definition.DataType,
-                                                               definition.DefaultValue,
-                                                               definition.PropertyCategory,
-                                                               definition.PropertyName,
-                                                               definition.Required,
-                                                               definition.ValidationExpression,
-                                                               definition.ViewOrder,
-                                                               definition.Visible,
-                                                               definition.Length,
-                                                               (int) definition.DefaultVisibility,
-                                                               UserController.GetCurrentUserInfo().UserID);
-            var objEventLog = new EventLogController();
-            objEventLog.AddLog(definition, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.PROFILEPROPERTY_CREATED);
-            ClearProfileDefinitionCache(definition.PortalId);
-            return intDefinition;
-        }
-
-		/// -----------------------------------------------------------------------------
-		/// <summary>
-		/// Clears the Profile Definitions Cache
-		/// </summary>
-		/// <param name="PortalId">Id of the Portal</param>
-		/// <history>
-		///     [cnurse]	02/22/2006	created
-		/// </history>
-		/// -----------------------------------------------------------------------------
-        public static void ClearProfileDefinitionCache(int PortalId)
-        {
-            DataCache.ClearDefinitionsCache(PortalId);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Deletes a Property Defintion from the Data Store
-        /// </summary>
-        /// <param name="definition">The ProfilePropertyDefinition object to delete</param>
-        /// <history>
-        ///     [cnurse]	02/01/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static void DeletePropertyDefinition(ProfilePropertyDefinition definition)
-        {
-            provider.DeletePropertyDefinition(definition.PropertyDefinitionId);
-            var objEventLog = new EventLogController();
-            objEventLog.AddLog(definition, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.PROFILEPROPERTY_DELETED);
-            ClearProfileDefinitionCache(definition.PortalId);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets a Property Defintion from the Data Store by id
-        /// </summary>
-        /// <param name="definitionId">The id of the ProfilePropertyDefinition object to retrieve</param>
-        /// <param name="portalId">Portal Id.</param>
-        /// <returns>The ProfilePropertyDefinition object</returns>
-        /// <history>
-        ///     [cnurse]	02/01/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static ProfilePropertyDefinition GetPropertyDefinition(int definitionId, int portalId)
-        {
-            bool bFound = Null.NullBoolean;
-            ProfilePropertyDefinition definition = null;
-            foreach (ProfilePropertyDefinition def in GetPropertyDefinitions(portalId))
-            {
-                if (def.PropertyDefinitionId == definitionId)
-                {
-                    definition = def;
-                    bFound = true;
-                    break;
-                }
-            }
-            if (!bFound)
-            {
-				//Try Database
-                definition = FillPropertyDefinitionInfo(provider.GetPropertyDefinition(definitionId));
-            }
-            return definition;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets a Property Defintion from the Data Store by name
-        /// </summary>
-        /// <param name="portalId">The id of the Portal</param>
-        /// <param name="name">The name of the ProfilePropertyDefinition object to retrieve</param>
-        /// <returns>The ProfilePropertyDefinition object</returns>
-        /// <history>
-        ///     [cnurse]	02/01/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static ProfilePropertyDefinition GetPropertyDefinitionByName(int portalId, string name)
-        {
-            bool bFound = Null.NullBoolean;
-            ProfilePropertyDefinition definition = null;
-            foreach (ProfilePropertyDefinition def in GetPropertyDefinitions(portalId))
-            {
-                if (def.PropertyName == name)
-                {
-                    definition = def;
-                    bFound = true;
-                    break;
-                }
-            }
-            if (!bFound)
-            {
-				//Try Database
-                definition = FillPropertyDefinitionInfo(provider.GetPropertyDefinitionByName(portalId, name));
-            }
-            return definition;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets a collection of Property Defintions from the Data Store by category
-        /// </summary>
-        /// <param name="portalId">The id of the Portal</param>
-        /// <param name="category">The category of the Property Defintions to retrieve</param>
-        /// <returns>A ProfilePropertyDefinitionCollection object</returns>
-        /// <history>
-        ///     [cnurse]	02/01/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByCategory(int portalId, string category)
-        {
-            var definitions = new ProfilePropertyDefinitionCollection();
-            foreach (ProfilePropertyDefinition definition in GetPropertyDefinitions(portalId))
-            {
-                if (definition.PropertyCategory == category)
-                {
-                    definitions.Add(definition);
-                }
-            }
-            return definitions;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets a collection of Property Defintions from the Data Store by portal
-        /// </summary>
-        /// <param name="portalId">The id of the Portal</param>
-        /// <returns>A ProfilePropertyDefinitionCollection object</returns>
-        /// <history>
-        ///     [cnurse]	02/01/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByPortal(int portalId)
-        {
-            return GetPropertyDefinitionsByPortal(portalId, true);
-        }
-
-         /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets a collection of Property Defintions from the Data Store by portal
-        /// </summary>
-        /// <param name="portalId">The id of the Portal</param>
-        /// <param name="clone">Whether to use a clone object.</param>
-        /// <returns>A ProfilePropertyDefinitionCollection object</returns>
-        /// <history>
-        ///     [cnurse]	02/01/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-       public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByPortal(int portalId, bool clone)
-        {
-            var definitions = new ProfilePropertyDefinitionCollection();
-            foreach (ProfilePropertyDefinition definition in GetPropertyDefinitions(portalId))
-            {
-                if (clone)
-                {
-                    definitions.Add(definition.Clone());
-                }
-                else
-                {
-                    definitions.Add(definition);
-                }
-            }
-            return definitions;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Updates a Property Defintion in the Data Store
-        /// </summary>
-        /// <param name="definition">The ProfilePropertyDefinition object to update</param>
-        /// <history>
-        ///     [cnurse]	02/01/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static void UpdatePropertyDefinition(ProfilePropertyDefinition definition)
-        {
-            if (definition.Required)
-            {
-                definition.Visible = true;
-            }
-            provider.UpdatePropertyDefinition(definition.PropertyDefinitionId,
-                                              definition.DataType,
-                                              definition.DefaultValue,
-                                              definition.PropertyCategory,
-                                              definition.PropertyName,
-                                              definition.Required,
-                                              definition.ValidationExpression,
-                                              definition.ViewOrder,
-                                              definition.Visible,
-                                              definition.Length,
-                                              (int) definition.DefaultVisibility,
-                                              UserController.GetCurrentUserInfo().UserID);
-            var objEventLog = new EventLogController();
-            objEventLog.AddLog(definition, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.PROFILEPROPERTY_UPDATED);
-            ClearProfileDefinitionCache(definition.PortalId);
-        }
+        #region Obsolete Methods
 
         [Obsolete("This method has been deprecated.  Please use GetPropertyDefinition(ByVal definitionId As Integer, ByVal portalId As Integer) instead")]
         public static ProfilePropertyDefinition GetPropertyDefinition(int definitionId)
         {
-            return (ProfilePropertyDefinition) CBO.FillObject(provider.GetPropertyDefinition(definitionId), typeof (ProfilePropertyDefinition));
+            return (ProfilePropertyDefinition) CBO.FillObject(_dataProvider.GetPropertyDefinition(definitionId), typeof (ProfilePropertyDefinition));
         }
+
+        #endregion
     }
 }

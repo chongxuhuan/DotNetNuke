@@ -22,6 +22,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 
@@ -88,7 +89,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 															{
 																if (id == -1)
 																{
-																	if(_dtRedirections.Rows.Count == 0)
+																	if (_dtRedirections.Rows.Count == 0)
 																	{
 																		id = 1;
 																	}
@@ -112,7 +113,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 																else
 																{
 																	var rows = _dtRedirections.Select("Id = " + id);
-																	if(rows.Length == 1)
+																	if (rows.Length == 1)
 																	{
 																		var row = rows[0];
 
@@ -142,7 +143,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 				It.IsAny<int>(),
 				It.IsAny<string>(),
 				It.IsAny<string>())).Callback<int, int, string, string>((id, rid, capbility, expression) =>
-				                                                        	{
+																			{
 																				if (id == -1)
 																				{
 																					if (_dtRules.Rows.Count == 0)
@@ -173,7 +174,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 																						row["expression"] = expression;
 																					}
 																				}
-				                                                        	});
+																			});
 
 			_dataProvider.Setup(d => d.GetRedirectionRules(It.IsAny<int>())).Returns<int>((rid) => { return GetRedirectionRulesCallBack(rid); });
 			_dataProvider.Setup(d => d.DeleteRedirectionRule(It.IsAny<int>())).Callback<int>((id) =>
@@ -205,7 +206,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		public void Test_Add_ValidRedirection_With_Rules()
 		{
 			var redirection = new Redirection { Name = "Test R", PortalId = 0, SortOrder = 1, SourceTabId = -1, Type = RedirectionType.Other, TargetType = TargetType.Portal, TargetValue = 2 };
-			redirection.MatchRules.Add(new MatchRules{Capability = "Platform", Expression = "IOS"});
+			redirection.MatchRules.Add(new MatchRules { Capability = "Platform", Expression = "IOS" });
 			redirection.MatchRules.Add(new MatchRules { Capability = "Version", Expression = "5" });
 			new RedirectionController().Save(redirection);
 
@@ -219,6 +220,27 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 			var getRe = new RedirectionController().GetRedirectionsByPortal(0)[0];
 			Assert.AreEqual(2, getRe.MatchRules.Count);
+		}
+
+		[Test]
+		public void Test_Get_Redirections()
+		{
+			PrepareData();
+
+			IList<IRedirection> list = new RedirectionController().GetRedirectionsByPortal(0);
+
+			Assert.AreEqual(3, list.Count);
+		}
+
+		[Test]
+		public void Test_Delete_Redirections()
+		{
+			PrepareData();
+			new RedirectionController().Delete(1);
+
+			IList<IRedirection> list = new RedirectionController().GetRedirectionsByPortal(0);
+
+			Assert.AreEqual(2, list.Count);
 		}
 
 		private IDataReader GetRedirectionsCallBack(int portalId)
@@ -241,6 +263,16 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			}
 
 			return dtCheck.CreateDataReader();
+		}
+
+		private void PrepareData()
+		{
+			_dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
+			_dtRedirections.Rows.Add(2, 0, "R2", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
+			_dtRedirections.Rows.Add(3, 0, "R3", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
+			_dtRedirections.Rows.Add(4, 1, "R4", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
+			_dtRedirections.Rows.Add(5, 1, "R5", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
+			_dtRedirections.Rows.Add(6, 1, "R6", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
 		}
 
 	}

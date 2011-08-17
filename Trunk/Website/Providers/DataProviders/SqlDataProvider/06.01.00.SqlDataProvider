@@ -10,115 +10,66 @@
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
-CREATE TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[PortalId] [int] NOT NULL,
-	[Name] [nvarchar](50) NOT NULL,
-	[Width] [int] NOT NULL,
-	[Height] [int] NOT NULL,
-	[CreatedBy] [int] NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
-	[LastModifiedBy] [int] NOT NULL,
-	[LastModifiedOn] [datetime] NOT NULL,
- CONSTRAINT [PK_{objectQualifier}Mobile_PreviewProfiles] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_PreviewProfiles]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles]
+		(
+			[Id] [int] IDENTITY(1,1) NOT NULL,
+			[PortalId] [int] NOT NULL,
+			[Name] [nvarchar](50) NOT NULL,
+			[Width] [int] NOT NULL,
+			[Height] [int] NOT NULL,
+			[CreatedBy] [int] NOT NULL,
+			[CreatedOn] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_CreatedOn]  DEFAULT (getdate()) NOT NULL ,
+			[LastModifiedBy] [int] NOT NULL,
+			[LastModifiedOn] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_LastModifiedOn]  DEFAULT (getdate()) NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}Mobile_PreviewProfiles] PRIMARY KEY CLUSTERED ( [Id] ASC )
+		)
+	END
 GO
 
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Users] FOREIGN KEY([CreatedBy])
-REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_Redirections]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections]
+		(
+			[Id] [int] IDENTITY(1,1) NOT NULL,
+			[PortalId] [int] NOT NULL,
+			[Name] [nvarchar](50) NOT NULL,
+			[Type] [int] NOT NULL,
+			[SortOrder] [int] CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_SortOrder]  DEFAULT ((0)) NOT NULL,
+			[SourceTabId] [int] NOT NULL,
+			[TargetType] [int] NOT NULL,
+			[TargetValue] [nvarchar](260) NOT NULL,
+			[CreatedBy] [int] NOT NULL,
+			[CreatedOn] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_CreatedOn]  DEFAULT (getdate()) NOT NULL ,
+			[LastModifiedBy] [int] NOT NULL,
+			[LastModifiedOn] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_LastModifiedOn]  DEFAULT (getdate()) NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}Mobile_Redirections] PRIMARY KEY CLUSTERED ([Id] ASC)
+		)
+
+		ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections]  
+			ADD CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Portals] FOREIGN KEY([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+
+	END
 GO
 
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Users]
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_RedirectionRules]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Mobile_RedirectionRules]
+		(
+			[Id] [int] IDENTITY(1,1) NOT NULL,
+			[RedirectionId] [int] NOT NULL,
+			[Capability] [nvarchar](50) NOT NULL,
+			[Expression] [nvarchar](50) NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}Mobile_RedirectionRules] PRIMARY KEY CLUSTERED ([Id] ASC)
+		)
+
+		ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_RedirectionRules]  
+			ADD CONSTRAINT [FK_{objectQualifier}Mobile_RedirectionRules_{objectQualifier}Mobile_Redirections] FOREIGN KEY([RedirectionId]) REFERENCES {databaseOwner}[{objectQualifier}Mobile_Redirections] ([Id])
+
+	END
 GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Users1] FOREIGN KEY([LastModifiedBy])
-REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Users1]
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles] ADD  CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles] ADD  CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_LastModifiedOn]  DEFAULT (getdate()) FOR [LastModifiedOn]
-GO
-
-CREATE TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[PortalId] [int] NOT NULL,
-	[Name] [nvarchar](50) NOT NULL,
-	[Type] [int] NOT NULL,
-	[SortOrder] [int] NOT NULL,
-	[SourceTabId] [int] NOT NULL,
-	[TargetType] [int] NOT NULL,
-	[TargetValue] [nvarchar](260) NOT NULL,
-	[CreatedBy] [int] NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
-	[LastModifiedBy] [int] NOT NULL,
-	[LastModifiedOn] [datetime] NOT NULL,
- CONSTRAINT [PK_{objectQualifier}Mobile_Redirections] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Portals] FOREIGN KEY([PortalId])
-REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Portals]
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Users] FOREIGN KEY([CreatedBy])
-REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Users]
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Users1] FOREIGN KEY([LastModifiedBy])
-REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Users1]
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] ADD  CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_SortOrder]  DEFAULT ((0)) FOR [SortOrder]
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] ADD  CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections] ADD  CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_LastModifiedOn]  DEFAULT (getdate()) FOR [LastModifiedOn]
-GO
-
-CREATE TABLE {databaseOwner}[{objectQualifier}Mobile_RedirectionRules](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[RedirectionId] [int] NOT NULL,
-	[Capability] [nvarchar](50) NOT NULL,
-	[Expression] [nvarchar](50) NOT NULL,
- CONSTRAINT [PK_{objectQualifier}Mobile_RedirectionRules] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_RedirectionRules]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Mobile_RedirectionRules_{objectQualifier}Mobile_Redirections] FOREIGN KEY([RedirectionId])
-REFERENCES {databaseOwner}[{objectQualifier}Mobile_Redirections] ([Id])
-GO
-
-ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_RedirectionRules] CHECK CONSTRAINT [FK_{objectQualifier}Mobile_RedirectionRules_{objectQualifier}Mobile_Redirections]
-GO
-
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_DeletePreviewProfile] @Id INT
 AS 
@@ -318,3 +269,111 @@ AS
 
 GO
 
+/* Add PortalGroups Table */
+/**************************/
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}PortalGroup]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}PortalGroups]
+		(
+			[PortalGroupID] [int] IDENTITY(1,1) NOT NULL,
+			[MasterPortalID] [int] NULL,
+			[PortalGroupName] [nvarchar](100) NULL,
+			[PortalGroupDescription] [nvarchar](2000) NULL,
+			[CreatedByUserID] [int] NULL,
+			[CreatedOnDate] [datetime] NULL,
+			[LastModifiedByUserID] [int] NULL,
+			[LastModifiedOnDate] [datetime] NULL,
+			CONSTRAINT [PK_{objectQualifier}PortalGroup] PRIMARY KEY CLUSTERED  ([PortalGroupID] ASC)
+		)
+	END
+GO
+
+/* Add AddPortalGroup Procedure */
+/********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddPortalGroup]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddPortalGroup]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddPortalGroup]
+	@PortalGroupName			nvarchar(100),
+	@PortalGroupDescription		nvarchar(2000),
+	@CreatedByUserID			int
+AS 
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}PortalGroups  
+		( 
+			PortalGroupName  , 
+			PortalGroupDescription  , 
+			CreatedByUserID , 
+			CreatedOnDate , 
+			LastModifiedByUserID , 
+			LastModifiedOnDate  
+		)  
+		VALUES  
+		( 
+			@PortalGroupName , 
+			@PortalGroupDescription , 
+			@CreatedByUserID , 
+			getdate() , 
+			@CreatedByUserID , 
+			getdate() 
+		) 
+		 
+		SELECT SCOPE_IDENTITY()
+	END
+GO
+
+/* Add DeletePortalGroup Procedure */
+/***********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeletePortalGroup]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeletePortalGroup]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeletePortalGroup]
+	@PortalGroupID	int
+AS 
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}PortalGroups  
+			WHERE PortalGroupID = @PortalGroupID
+	END
+GO
+
+/* Add GetPortalGroups Procedure */
+/*********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetPortalGroups]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortalGroups]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortalGroups]
+
+AS 
+	SELECT * FROM {databaseOwner}{objectQualifier}PortalGroups 
+GO
+
+/* Add UpdatePortalGroup Procedure */
+/***********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdatePortalGroup]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalGroup]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalGroup]
+	@PortalGroupID				int,
+	@PortalGroupName			nvarchar(100),
+	@PortalGroupDescription		nvarchar(2000),
+	@LastModifiedByUserID		int
+AS 
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}PortalGroups 
+			SET 
+				PortalGroupName = @PortalGroupName,
+				PortalGroupDescription = @PortalGroupDescription,
+				LastModifiedByUserID = @LastModifiedByUserID,
+				LastModifiedOnDate = getdate()
+			WHERE PortalGroupID = @PortalGroupID
+	END
+GO

@@ -88,9 +88,14 @@ namespace DotNetNuke.Common.Utilities
         public const string PortalCacheKey = "Portal{0}_{1}";
         public const CacheItemPriority PortalCachePriority = CacheItemPriority.High;
         public const int PortalCacheTimeOut = 20;
+
         public const string PortalUserCountCacheKey = "PortalUserCount{0}";
         public const CacheItemPriority PortalUserCountCachePriority = CacheItemPriority.High;
         public const int PortalUserCountCacheTimeOut = 20;
+
+        public const string PortalGroupsCacheKey = "PortalGroups";
+        public const CacheItemPriority PortalGroupsCachePriority = CacheItemPriority.High;
+        public const int PortalGroupsCacheTimeOut = 20;
 
         //Tab cache keys
         public const string TabCacheKey = "Tab_Tabs{0}";

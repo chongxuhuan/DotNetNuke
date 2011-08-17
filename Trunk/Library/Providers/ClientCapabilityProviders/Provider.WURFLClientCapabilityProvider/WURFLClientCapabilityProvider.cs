@@ -34,12 +34,39 @@ namespace DotNetNuke.Services.ClientCapability
 {
     public class WURFLClientCapabilityProvider : ClientCapabilityProvider
     {
-        #region Constants
+
+        #region Constructors
+        /// <summary>
+        /// Default Contructor
+        /// </summary>
+        public WURFLClientCapabilityProvider()
+        {
+            DefaultWurflDataFilePath = "/App_Data/WURFLDeviceDatabase/wurfl-latest.zip";
+            DefaultWurflPatchFilePath = "/App_Data/WURFLDeviceDatabase/web_browsers_patch.xml";
+        }
+
+        /// <summary>
+        /// Constructotr injecting the path to data source 
+        /// </summary>
+        /// <param name="wurflDataFilePath"></param>
+        /// <param name="tWurflPatchFilePath"></param>
+        public WURFLClientCapabilityProvider(String wurflDataFilePath, String tWurflPatchFilePath)
+        {
+            DefaultWurflDataFilePath = wurflDataFilePath;
+            DefaultWurflPatchFilePath = tWurflPatchFilePath;
+        }
+
+        #endregion
+
+
+        #region Attributes
+
         /// <summary>
         /// WURFL data paths
         /// </summary>
-        public const String DefaultWurflDataFilePath = "/App_Data/WURFLDeviceDatabase/wurfl-latest.zip";
-        public const String DefaultWurflPatchFilePath = "/App_Data/WURFLDeviceDatabase/web_browsers_patch.xml";
+        private static String DefaultWurflDataFilePath;
+        private static String DefaultWurflPatchFilePath;
+
         #endregion
 
 

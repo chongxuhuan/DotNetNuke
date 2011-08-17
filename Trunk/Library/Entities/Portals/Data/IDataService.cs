@@ -1,7 +1,7 @@
-#region Copyright
+﻿#region Copyright
 
 // 
-// DotNetNuke� - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
@@ -24,17 +24,20 @@
 #region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Data;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("7BB1CA24-7770-42D7-9B89-282BAC5E38E5")]
-[assembly: AssemblyVersion("6.1.0.125")]
+namespace DotNetNuke.Entities.Portals.Data
+{
+    public interface IDataService
+    {
+        int AddPortalGroup(PortalGroupInfo portalGroup, int createdByUserId);
+
+        void DeletePortalGroup(PortalGroupInfo portalGroup);
+
+        IDataReader GetPortalGroups();
+
+        void UpdatePortalGroup(PortalGroupInfo portalGroup, int lastModifiedByUserId);
+    }
+}

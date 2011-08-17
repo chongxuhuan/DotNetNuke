@@ -38,15 +38,13 @@ using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership.Data;
 using DotNetNuke.Services.Exceptions;
 
-using AspNetSecurity = System.Web.Security;
-
 #endregion
 
 namespace DotNetNuke.Security.Membership
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.Security.Membership
+    /// Namespace:  DotNetNuke.Provider.AspNetProvider
     /// Class:      AspNetMembershipProvider
     /// -----------------------------------------------------------------------------
     /// <summary>
@@ -55,13 +53,16 @@ namespace DotNetNuke.Security.Membership
     /// </summary>
     /// <remarks>
     /// </remarks>
-    /// <history>
-    ///     [cnurse]	12/09/2005	created
-    /// </history>
     /// -----------------------------------------------------------------------------
     public class AspNetMembershipProvider : MembershipProvider
     {
+        #region Private Members
+
         private readonly DataProvider _dataProvider;
+
+        #endregion
+
+        #region Constructors
 
         public AspNetMembershipProvider()
         {
@@ -83,6 +84,10 @@ namespace DotNetNuke.Security.Membership
                 ComponentFactory.RegisterComponentInstance<DataProvider>(_dataProvider);
             }
         }
+
+        #endregion
+
+        #region Public Properties
 
         public override bool CanEditProviderProperties
         {
@@ -184,11 +189,11 @@ namespace DotNetNuke.Security.Membership
             }
         }
 
-        public override bool RequiresQuestionAndAnswer
+        public override string PasswordStrengthRegularExpression
         {
             get
             {
-                return System.Web.Security.Membership.RequiresQuestionAndAnswer;
+                return System.Web.Security.Membership.PasswordStrengthRegularExpression;
             }
             set
             {
@@ -196,11 +201,11 @@ namespace DotNetNuke.Security.Membership
             }
         }
 
-        public override string PasswordStrengthRegularExpression
+        public override bool RequiresQuestionAndAnswer
         {
             get
             {
-                return System.Web.Security.Membership.PasswordStrengthRegularExpression;
+                return System.Web.Security.Membership.RequiresQuestionAndAnswer;
             }
             set
             {
@@ -220,7 +225,11 @@ namespace DotNetNuke.Security.Membership
             }
         }
 
-        private bool AutoUnlockUser(MembershipUser aspNetUser)
+        #endregion
+
+        #region Private Methods
+
+        private static bool AutoUnlockUser(MembershipUser aspNetUser)
         {
             if (Host.AutoAccountUnlockDuration != 0)
             {
@@ -236,18 +245,6 @@ namespace DotNetNuke.Security.Membership
             return false;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// CreateDNNUser persists the DNN User information to the Database
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="user">The user to persist to the Data Store.</param>
-        /// <returns>The UserId of the newly created user.</returns>
-        /// <history>
-        ///     [cnurse]	12/13/2005	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private UserCreateStatus CreateDNNUser(ref UserInfo user)
         {
             var objSecurity = new PortalSecurity();
@@ -284,42 +281,34 @@ namespace DotNetNuke.Security.Membership
             return createStatus;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// CreateMemberhipUser persists the User as an AspNet MembershipUser to the AspNet
-        /// Data Store
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="user">The user to persist to the Data Store.</param>
-        /// <returns>A UserCreateStatus enumeration indicating success or reason for failure.</returns>
-        /// <history>
-        ///     [cnurse]	12/13/2005	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private UserCreateStatus CreateMemberhipUser(UserInfo user)
+        private static UserCreateStatus CreateMemberhipUser(UserInfo user)
         {
-            var objSecurity = new PortalSecurity();
-            string userName = objSecurity.InputFilter(user.Username, PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
-            string email = objSecurity.InputFilter(user.Email, PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
-            MembershipCreateStatus objStatus = MembershipCreateStatus.Success;
-            MembershipUser objMembershipUser;
+            var portalSecurity = new PortalSecurity();
+            string userName = portalSecurity.InputFilter(user.Username, PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
+            string email = portalSecurity.InputFilter(user.Email, PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
+            MembershipCreateStatus status;
             if (MembershipProviderConfig.RequiresQuestionAndAnswer)
             {
-                objMembershipUser = System.Web.Security.Membership.CreateUser(userName,
-                                                                              user.Membership.Password,
-                                                                              email,
-                                                                              user.Membership.PasswordQuestion,
-                                                                              user.Membership.PasswordAnswer,
-                                                                              true,
-                                                                              out objStatus);
+                System.Web.Security.Membership.CreateUser(userName,
+                                        user.Membership.Password,
+                                        email,
+                                        user.Membership.PasswordQuestion,
+                                        user.Membership.PasswordAnswer,
+                                        true,
+                                        out status);
             }
             else
             {
-                objMembershipUser = System.Web.Security.Membership.CreateUser(userName, user.Membership.Password, email, null, null, true, out objStatus);
-            }
+                System.Web.Security.Membership.CreateUser(userName, 
+                                        user.Membership.Password, 
+                                        email, 
+                                        null, 
+                                        null, 
+                                        true, 
+                                        out status);
+}
             UserCreateStatus createStatus = UserCreateStatus.Success;
-            switch (objStatus)
+            switch (status)
             {
                 case MembershipCreateStatus.DuplicateEmail:
                     createStatus = UserCreateStatus.DuplicateEmail;
@@ -358,22 +347,8 @@ namespace DotNetNuke.Security.Membership
             return createStatus;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// DeleteMembershipUser deletes the User as an AspNet MembershipUser from the AspNet
-        /// Data Store
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="user">The user to delete from the Data Store.</param>
-        /// <returns>A Boolean indicating success or failure.</returns>
-        /// <history>
-        ///     [cnurse]	12/22/2005	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private bool DeleteMembershipUser(UserInfo user)
+        private static void DeleteMembershipUser(UserInfo user)
         {
-            bool retValue = true;
             try
             {
                 System.Web.Security.Membership.DeleteUser(user.Username, true);
@@ -381,25 +356,10 @@ namespace DotNetNuke.Security.Membership
             catch (Exception exc)
             {
                 DnnLog.Error(exc);
-
-                retValue = false;
             }
-            return retValue;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Builds a UserMembership object from an AspNet MembershipUser
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="aspNetUser">The MembershipUser object to use to fill the DNN UserMembership.</param>
-        /// <param name="user">The use need to fill</param>
-        /// <history>
-        /// 	[cnurse]	12/10/2005	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void FillUserMembership(MembershipUser aspNetUser, UserInfo user)
+        private static void FillUserMembership(MembershipUser aspNetUser, UserInfo user)
         {
 			//Fill Membership Property
             if (aspNetUser != null)
@@ -425,37 +385,17 @@ namespace DotNetNuke.Security.Membership
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets an AspNet MembershipUser from the DataStore
-        /// </summary>
-        /// <param name="user">The user to get from the Data Store.</param>
-        /// <returns>The User as a AspNet MembershipUser object</returns>
-        /// <history>
-        ///     [cnurse]	12/10/2005	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private MembershipUser GetMembershipUser(UserInfo user)
+        private static MembershipUser GetMembershipUser(UserInfo user)
         {
             return GetMembershipUser(user.Username);
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets an AspNet MembershipUser from the DataStore
-        /// </summary>
-        /// <param name="userName">The name of the user.</param>
-        /// <returns>The User as a AspNet MembershipUser object</returns>
-        /// <history>
-        ///     [cnurse]	04/25/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private MembershipUser GetMembershipUser(string userName)
+        private static MembershipUser GetMembershipUser(string userName)
         {
             return CBO.GetCachedObject<MembershipUser>(new CacheItemArgs(GetCacheKey(userName), DataCache.UserCacheTimeOut, DataCache.UserCachePriority, userName), GetMembershipUserCallBack);
         }
 
-        private string GetCacheKey(string userName)
+        private static string GetCacheKey(string userName)
         {
             return String.Format("MembershipUser_{0}", userName);
         }
@@ -467,49 +407,6 @@ namespace DotNetNuke.Security.Membership
             return System.Web.Security.Membership.GetUser(userName);
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// The GetTotalRecords method gets the number of Records returned.
-        /// </summary>
-        /// <param name="dr">An <see cref="IDataReader"/> containing the Total no of records</param>
-        /// <returns>An Integer</returns>
-        /// <history>
-        /// 	[cnurse]	03/30/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static int GetTotalRecords(ref IDataReader dr)
-        {
-            int total = 0;
-            if (dr.Read())
-            {
-                try
-                {
-                    total = Convert.ToInt32(dr["TotalRecords"]);
-                }
-                catch (Exception exc)
-                {
-                    DnnLog.Error(exc);
-
-                    total = -1;
-                }
-            }
-            return total;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetUserByAuthToken retrieves a User from the DataStore using an Authentication Token
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="portalId">The Id of the Portal</param>
-        /// <param name="userToken">The authentication token of the user being retrieved from the Data Store.</param>
-        /// <param name="authType">The type of Authentication Used</param>
-        /// <returns>The User as a UserInfo object</returns>
-        /// <history>
-        ///     [cnurse]	07/09/2007	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private UserInfo GetUserByAuthToken(int portalId, string userToken, string authType)
         {
             IDataReader dr = _dataProvider.GetUserByAuthToken(portalId, userToken, authType);
@@ -517,53 +414,71 @@ namespace DotNetNuke.Security.Membership
             return objUserInfo;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// UpdateUserMembership persists a user's Membership to the Data Store
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="user">The user to persist to the Data Store.</param>
-        /// <history>
-        ///     [cnurse]	12/13/2005	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void UpdateUserMembership(UserInfo user)
+        private static void UpdateUserMembership(UserInfo user)
         {
-            var objSecurity = new PortalSecurity();
-            string email = objSecurity.InputFilter(user.Email, PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
+            var portalSecurity = new PortalSecurity();
+            string email = portalSecurity.InputFilter(user.Email, PortalSecurity.FilterFlag.NoScripting | PortalSecurity.FilterFlag.NoAngleBrackets | PortalSecurity.FilterFlag.NoMarkup);
 
             //Persist the Membership Properties to the AspNet Data Store
-            MembershipUser objMembershipUser;
-            objMembershipUser = System.Web.Security.Membership.GetUser(user.Username);
-            objMembershipUser.Email = email;
-            objMembershipUser.LastActivityDate = DateTime.Now;
+            MembershipUser membershipUser = System.Web.Security.Membership.GetUser(user.Username);
+            membershipUser.Email = email;
+            membershipUser.LastActivityDate = DateTime.Now;
             if (user.IsSuperUser)
             {
-                objMembershipUser.IsApproved = user.Membership.Approved;
+                membershipUser.IsApproved = user.Membership.Approved;
             }
-            System.Web.Security.Membership.UpdateUser(objMembershipUser);
+            System.Web.Security.Membership.UpdateUser(membershipUser);
 			DataCache.RemoveCache(GetCacheKey(user.Username));
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Validates the users credentials against the Data Store
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="portalId">The Id of the Portal the user belongs to</param>
-        /// <param name="username">The user name of the User attempting to log in</param>
-        /// <param name="password">The password of the User attempting to log in</param>
-        /// <returns>A Boolean result</returns>
-        /// <history>
-        ///     [cnurse]	12/12/2005	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private bool ValidateUser(int portalId, string username, string password)
+        private static UserLoginStatus ValidateLogin(string username, string authType, UserInfo user, UserLoginStatus loginStatus, string password, ref bool bValid)
+        {
+            if (loginStatus != UserLoginStatus.LOGIN_USERLOCKEDOUT && loginStatus != UserLoginStatus.LOGIN_USERNOTAPPROVED)
+            {
+                if (authType == "DNN")
+                {
+                    if (user.IsSuperUser)
+                    {
+                        if (ValidateUser(username, password))
+                        {
+                            loginStatus = UserLoginStatus.LOGIN_SUPERUSER;
+                            bValid = true;
+                        }
+                    }
+                    else
+                    {
+                        if (ValidateUser(username, password))
+                        {
+                            loginStatus = UserLoginStatus.LOGIN_SUCCESS;
+                            bValid = true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (user.IsSuperUser)
+                    {
+                        loginStatus = UserLoginStatus.LOGIN_SUPERUSER;
+                        bValid = true;
+                    }
+                    else
+                    {
+                        loginStatus = UserLoginStatus.LOGIN_SUCCESS;
+                        bValid = true;
+                    }
+                }
+            }
+            return loginStatus;
+        }
+
+        private static bool ValidateUser(string username, string password)
         {
             return System.Web.Security.Membership.ValidateUser(username, password);
         }
+
+        #endregion
+
+        #region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -575,27 +490,22 @@ namespace DotNetNuke.Security.Membership
         /// <param name="oldPassword">The old password.</param>
         /// <param name="newPassword">The new password.</param>
         /// <returns>A Boolean indicating success or failure.</returns>
-        /// <history>
-        ///     [cnurse]	12/13/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override bool ChangePassword(UserInfo user, string oldPassword, string newPassword)
         {
-            bool retValue = false;
             MembershipUser aspnetUser = GetMembershipUser(user);
             if (oldPassword == Null.NullString)
             {
                 aspnetUser.UnlockUser();
                 oldPassword = aspnetUser.GetPassword();
             }
-            retValue = aspnetUser.ChangePassword(oldPassword, newPassword);
+            bool retValue = aspnetUser.ChangePassword(oldPassword, newPassword);
             if (retValue && PasswordRetrievalEnabled && !RequiresQuestionAndAnswer)
             {
                 string confirmPassword = aspnetUser.GetPassword();
                 if (confirmPassword == newPassword)
                 {
                     user.Membership.Password = confirmPassword;
-                    retValue = true;
                 }
                 else
                 {
@@ -617,20 +527,15 @@ namespace DotNetNuke.Security.Membership
         /// <param name="passwordQuestion">The new password question.</param>
         /// <param name="passwordAnswer">The new password answer.</param>
         /// <returns>A Boolean indicating success or failure.</returns>
-        /// <history>
-        ///     [cnurse]	02/08/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override bool ChangePasswordQuestionAndAnswer(UserInfo user, string password, string passwordQuestion, string passwordAnswer)
         {
-            bool retValue = false;
             MembershipUser aspnetUser = GetMembershipUser(user);
             if (password == Null.NullString)
             {
                 password = aspnetUser.GetPassword();
             }
-            retValue = aspnetUser.ChangePasswordQuestionAndAnswer(password, passwordQuestion, passwordAnswer);
-            return retValue;
+            return aspnetUser.ChangePasswordQuestionAndAnswer(password, passwordQuestion, passwordAnswer);
         }
 
         /// -----------------------------------------------------------------------------
@@ -641,9 +546,6 @@ namespace DotNetNuke.Security.Membership
         /// </remarks>
         /// <param name="user">The user to persist to the Data Store.</param>
         /// <returns>A UserCreateStatus enumeration indicating success or reason for failure.</returns>
-        /// <history>
-        ///     [cnurse]	12/13/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override UserCreateStatus CreateUser(ref UserInfo user)
         {
@@ -662,20 +564,11 @@ namespace DotNetNuke.Security.Membership
                     else
                     {
 						//the username exists so we should now verify the password
-                        if (ValidateUser(objVerifyUser.PortalID, user.Username, user.Membership.Password))
+                        if (ValidateUser(user.Username, user.Membership.Password))
                         {
                             //check if user exists for the portal specified
                             objVerifyUser = GetUserByUserName(user.PortalID, user.Username);
-                            if (objVerifyUser != null)
-                            {
-								//the user is already registered for this portal
-                                createStatus = UserCreateStatus.UserAlreadyRegistered;
-                            }
-                            else
-                            {
-								//the user does not exist in this portal - add them
-                                createStatus = UserCreateStatus.AddUserToPortal;
-                            }
+                            createStatus = objVerifyUser != null ? UserCreateStatus.UserAlreadyRegistered : UserCreateStatus.AddUserToPortal;
                         }
                         else
                         {
@@ -726,9 +619,6 @@ namespace DotNetNuke.Security.Membership
         /// </remarks>
         /// <param name="user">The user to delete from the Data Store.</param>
         /// <returns>A Boolean indicating success or failure.</returns>
-        /// <history>
-        ///     [cnurse]	12/13/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override bool DeleteUser(UserInfo user)
         {
@@ -755,47 +645,6 @@ namespace DotNetNuke.Security.Membership
             return retValue;
         }
 
-        public override bool RestoreUser(UserInfo user)
-        {
-            var retValue = true;
-
-            try
-            {
-                _dataProvider.RestoreUser(user.UserID, user.PortalID);
-            }
-            catch (Exception ex)
-            {
-
-                Exceptions.LogException(ex);
-                retValue = false;
-            }
-
-            return retValue;
-        }
-
-        public override bool RemoveUser(UserInfo user)
-        {
-            bool retValue = true;
-
-            try
-            {
-                _dataProvider.RemoveUser(user.UserID, user.PortalID);
-                //Prior to removing membership, ensure user is not present in any other portal
-                UserInfo otherUser = GetUserByUserName(Null.NullInteger, user.Username);
-                if (otherUser == null)
-                {
-                    DeleteMembershipUser(user);
-                }   
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                retValue = false;
-            }
-
-            return retValue;
-        }
-
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Deletes all UserOnline inof from the database that has activity outside of the
@@ -803,10 +652,7 @@ namespace DotNetNuke.Security.Membership
         /// </summary>
         /// <remarks>
         /// </remarks>
-		/// <param name="timeWindow">Time Window in Minutes</param>
-        /// <history>
-        ///     [cnurse]	03/15/2006	created
-        /// </history>
+        /// <param name="timeWindow">Time Window in Minutes</param>
         /// -----------------------------------------------------------------------------
         public override void DeleteUsersOnline(int timeWindow)
         {
@@ -818,9 +664,6 @@ namespace DotNetNuke.Security.Membership
         /// Generates a new random password (Length = Minimum Length + 4)
         /// </summary>
         /// <returns>A String</returns>
-        /// <history>
-        ///     [cnurse]	03/08/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override string GeneratePassword()
         {
@@ -833,13 +676,15 @@ namespace DotNetNuke.Security.Membership
         /// </summary>
         /// <param name="length">The length of password to generate.</param>
         /// <returns>A String</returns>
-        /// <history>
-        ///     [cnurse]	03/08/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override string GeneratePassword(int length)
         {
             return System.Web.Security.Membership.GeneratePassword(length, MinNonAlphanumericCharacters);
+        }
+
+        public override ArrayList GetDeletedUsers(int portalId)
+        {
+            return UserController.FillUserCollection(portalId, _dataProvider.GetDeletedUsers(portalId));
         }
 
         /// -----------------------------------------------------------------------------
@@ -848,9 +693,6 @@ namespace DotNetNuke.Security.Membership
         /// </summary>
         /// <param name="portalId">The Id of the Portal</param>
         /// <returns>An ArrayList of UserInfo objects</returns>
-        /// <history>
-        ///     [cnurse]	03/15/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override ArrayList GetOnlineUsers(int portalId)
         {
@@ -868,28 +710,20 @@ namespace DotNetNuke.Security.Membership
         /// <param name="passwordAnswer">The answer to the Password Question, ues to confirm the user
         /// has the right to obtain the password.</param>
         /// <returns>A String</returns>
-        /// <history>
-        ///     [cnurse]	12/10/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override string GetPassword(UserInfo user, string passwordAnswer)
         {
-            string retValue = "";
-            bool unLocked = true;
             MembershipUser aspnetUser = GetMembershipUser(user);
             if (aspnetUser.IsLockedOut)
             {
-                unLocked = AutoUnlockUser(aspnetUser);
+                AutoUnlockUser(aspnetUser);
             }
-            if (RequiresQuestionAndAnswer)
-            {
-                retValue = aspnetUser.GetPassword(passwordAnswer);
-            }
-            else
-            {
-                retValue = aspnetUser.GetPassword();
-            }
-            return retValue;
+            return RequiresQuestionAndAnswer ? aspnetUser.GetPassword(passwordAnswer) : aspnetUser.GetPassword();
+        }
+
+        public override ArrayList GetUnAuthorizedUsers(int portalId)
+        {
+            return GetUnAuthorizedUsers(portalId, false, false);
         }
 
         public override ArrayList GetUnAuthorizedUsers(int portalId, bool includeDeleted, bool superUsersOnly)
@@ -897,16 +731,6 @@ namespace DotNetNuke.Security.Membership
             return UserController.FillUserCollection(portalId, _dataProvider.GetUnAuthorizedUsers(portalId, includeDeleted, superUsersOnly));
         }
         
-        public override ArrayList GetUnAuthorizedUsers(int portalId)
-        {
-            return GetUnAuthorizedUsers(portalId, false, false);
-        }
-
-        public override ArrayList GetDeletedUsers(int portalId)
-        {
-            return UserController.FillUserCollection(portalId, _dataProvider.GetDeletedUsers(portalId));
-        }
-
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// GetUserByUserName retrieves a User from the DataStore
@@ -916,9 +740,6 @@ namespace DotNetNuke.Security.Membership
         /// <param name="portalId">The Id of the Portal</param>
         /// <param name="userId">The id of the user being retrieved from the Data Store.</param>
         /// <returns>The User as a UserInfo object</returns>
-        /// <history>
-        ///     [cnurse]	12/10/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override UserInfo GetUser(int portalId, int userId)
         {
@@ -936,9 +757,6 @@ namespace DotNetNuke.Security.Membership
         /// <param name="portalId">The Id of the Portal</param>
         /// <param name="username">The username of the user being retrieved from the Data Store.</param>
         /// <returns>The User as a UserInfo object</returns>
-        /// <history>
-        ///     [cnurse]	12/10/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override UserInfo GetUserByUserName(int portalId, string username)
         {
@@ -955,9 +773,6 @@ namespace DotNetNuke.Security.Membership
         /// </remarks>
         /// <param name="portalId">The Id of the Portal</param>
         /// <returns>The no of users</returns>
-        /// <history>
-        ///     [cnurse]	05/01/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override int GetUserCountByPortal(int portalId)
         {
@@ -971,16 +786,11 @@ namespace DotNetNuke.Security.Membership
         /// <remarks>
         /// </remarks>
         /// <param name="user">The user whose Membership information we are retrieving.</param>
-        /// <history>
-        ///     [cnurse]	12/13/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override void GetUserMembership(ref UserInfo user)
         {
-            MembershipUser aspnetUser = null;
-
             //Get AspNet MembershipUser
-            aspnetUser = GetMembershipUser(user);
+            MembershipUser aspnetUser = GetMembershipUser(user);
 
             //Fill Membership Property
             FillUserMembership(aspnetUser, user);
@@ -998,12 +808,25 @@ namespace DotNetNuke.Security.Membership
         /// <param name="pageIndex">The page of records to return.</param>
         /// <param name="pageSize">The size of the page</param>
         /// <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        /// <returns>An ArrayList of UserInfo objects.</returns>
+        /// -----------------------------------------------------------------------------
+        public override ArrayList GetUsers(int portalId, int pageIndex, int pageSize, ref int totalRecords)
+        {
+            return GetUsers(portalId, pageIndex, pageSize, ref totalRecords, false, false);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetUsers gets all the users of the portal
+        /// </summary>
+        /// <remarks>If all records are required, (ie no paging) set pageSize = -1</remarks>
+        /// <param name="portalId">The Id of the Portal</param>
+        /// <param name="pageIndex">The page of records to return.</param>
+        /// <param name="pageSize">The size of the page</param>
+        /// <param name="totalRecords">The total no of records that satisfy the criteria.</param>
         /// <param name="includeDeleted">Include deleted users.</param>
         /// <param name="superUsersOnly">Only select super users.</param>
         /// <returns>An ArrayList of UserInfo objects.</returns>
-        /// <history>
-        ///     [cnurse]	12/14/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override ArrayList GetUsers(int portalId, int pageIndex, int pageSize, ref int totalRecords, bool includeDeleted, bool superUsersOnly)
         {
@@ -1016,9 +839,22 @@ namespace DotNetNuke.Security.Membership
             return UserController.FillUserCollection(portalId, _dataProvider.GetAllUsers(portalId, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
         }
 
-        public override ArrayList GetUsers(int portalId, int pageIndex, int pageSize, ref int totalRecords)
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetUsersByEmail gets all the users of the portal whose email matches a provided
+        /// filter expression
+        /// </summary>
+        /// <remarks>If all records are required, (ie no paging) set pageSize = -1</remarks>
+        /// <param name="portalId">The Id of the Portal</param>
+        /// <param name="emailToMatch">The email address to use to find a match.</param>
+        /// <param name="pageIndex">The page of records to return.</param>
+        /// <param name="pageSize">The size of the page</param>
+        /// <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        /// <returns>An ArrayList of UserInfo objects.</returns>
+        /// -----------------------------------------------------------------------------
+        public override ArrayList GetUsersByEmail(int portalId, string emailToMatch, int pageIndex, int pageSize, ref int totalRecords)
         {
-            return GetUsers(portalId, pageIndex, pageSize, ref totalRecords, false, false);
+            return GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize, ref totalRecords, false, false);
         }
 
         /// -----------------------------------------------------------------------------
@@ -1035,9 +871,6 @@ namespace DotNetNuke.Security.Membership
 		/// <param name="includeDeleted">Include deleted users.</param>
 		/// <param name="superUsersOnly">Only select super users.</param>
         /// <returns>An ArrayList of UserInfo objects.</returns>
-        /// <history>
-        ///     [cnurse]	12/14/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override ArrayList GetUsersByEmail(int portalId, string emailToMatch, int pageIndex, int pageSize, ref int totalRecords, bool includeDeleted, bool superUsersOnly)
         {
@@ -1050,9 +883,22 @@ namespace DotNetNuke.Security.Membership
             return UserController.FillUserCollection(portalId, _dataProvider.GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
         }
 
-        public override ArrayList GetUsersByEmail(int portalId, string emailToMatch, int pageIndex, int pageSize, ref int totalRecords)
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetUsersByUserName gets all the users of the portal whose username matches a provided
+        /// filter expression
+        /// </summary>
+        /// <remarks>If all records are required, (ie no paging) set pageSize = -1</remarks>
+        /// <param name="portalId">The Id of the Portal</param>
+        /// <param name="userNameToMatch">The username to use to find a match.</param>
+        /// <param name="pageIndex">The page of records to return.</param>
+        /// <param name="pageSize">The size of the page</param>
+        /// <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        /// <returns>An ArrayList of UserInfo objects.</returns>
+        /// -----------------------------------------------------------------------------
+        public override ArrayList GetUsersByUserName(int portalId, string userNameToMatch, int pageIndex, int pageSize, ref int totalRecords)
         {
-            return GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize, ref totalRecords, false, false);
+            return GetUsersByUserName(portalId, userNameToMatch, pageIndex, pageSize, ref totalRecords, false, false);
         }
 
         /// -----------------------------------------------------------------------------
@@ -1069,9 +915,6 @@ namespace DotNetNuke.Security.Membership
 		/// <param name="includeDeleted">Include deleted users.</param>
 		/// <param name="superUsersOnly">Only select super users.</param>
         /// <returns>An ArrayList of UserInfo objects.</returns>
-        /// <history>
-        ///     [cnurse]	12/14/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override ArrayList GetUsersByUserName(int portalId, string userNameToMatch, int pageIndex, int pageSize, ref int totalRecords, bool includeDeleted, bool superUsersOnly)
         {
@@ -1083,10 +926,25 @@ namespace DotNetNuke.Security.Membership
 
             return UserController.FillUserCollection(portalId, _dataProvider.GetUsersByUsername(portalId, userNameToMatch, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
         }
-      
-        public override ArrayList GetUsersByUserName(int portalId, string userNameToMatch, int pageIndex, int pageSize, ref int totalRecords)
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetUsersByProfileProperty gets all the users of the portal whose profile matches
+        /// the profile property pased as a parameter
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="portalId">The Id of the Portal</param>
+        /// <param name="propertyName">The name of the property being matched.</param>
+        /// <param name="propertyValue">The value of the property being matched.</param>
+        /// <param name="pageIndex">The page of records to return.</param>
+        /// <param name="pageSize">The size of the page</param>
+        /// <param name="totalRecords">The total no of records that satisfy the criteria.</param>
+        /// <returns>An ArrayList of UserInfo objects.</returns>
+        /// -----------------------------------------------------------------------------
+        public override ArrayList GetUsersByProfileProperty(int portalId, string propertyName, string propertyValue, int pageIndex, int pageSize, ref int totalRecords)
         {
-            return GetUsersByUserName(portalId, userNameToMatch, pageIndex, pageSize, ref totalRecords, false, false);
+            return GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, ref totalRecords, false, false);
         }
 
         /// -----------------------------------------------------------------------------
@@ -1105,9 +963,6 @@ namespace DotNetNuke.Security.Membership
 		/// <param name="includeDeleted">Include deleted users.</param>
 		/// <param name="superUsersOnly">Only select super users.</param>
         /// <returns>An ArrayList of UserInfo objects.</returns>
-        /// <history>
-        ///     [cnurse]	02/01/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override ArrayList GetUsersByProfileProperty(int portalId, string propertyName, string propertyValue, int pageIndex, int pageSize, ref int totalRecords, bool includeDeleted, bool superUsersOnly)
         {
@@ -1120,11 +975,6 @@ namespace DotNetNuke.Security.Membership
             return UserController.FillUserCollection(portalId, _dataProvider.GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
         }
 
-        public override ArrayList GetUsersByProfileProperty(int portalId, string propertyName, string propertyValue, int pageIndex, int pageSize, ref int totalRecords)
-        {
-            return GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, ref totalRecords, false, false);
-        }
-
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets whether the user in question is online
@@ -1133,9 +983,6 @@ namespace DotNetNuke.Security.Membership
         /// </remarks>
         /// <param name="user">The user.</param>
         /// <returns>A Boolean indicating whether the user is online.</returns>
-        /// <history>
-        ///     [cnurse]	03/14/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override bool IsUserOnline(UserInfo user)
         {
@@ -1162,6 +1009,29 @@ namespace DotNetNuke.Security.Membership
             return isOnline;
         }
 
+        public override bool RemoveUser(UserInfo user)
+        {
+            bool retValue = true;
+
+            try
+            {
+                _dataProvider.RemoveUser(user.UserID, user.PortalID);
+                //Prior to removing membership, ensure user is not present in any other portal
+                UserInfo otherUser = GetUserByUserName(Null.NullInteger, user.Username);
+                if (otherUser == null)
+                {
+                    DeleteMembershipUser(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                retValue = false;
+            }
+
+            return retValue;
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// ResetPassword resets a user's password and returns the newly created password
@@ -1171,25 +1041,30 @@ namespace DotNetNuke.Security.Membership
         /// <param name="user">The user to update.</param>
         /// <param name="passwordAnswer">The answer to the user's password Question.</param>
         /// <returns>The new Password.</returns>
-        /// <history>
-        ///     [cnurse]	02/08/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override string ResetPassword(UserInfo user, string passwordAnswer)
         {
-            string retValue = "";
-
             //Get AspNet MembershipUser
             MembershipUser aspnetUser = GetMembershipUser(user);
 
-            if (RequiresQuestionAndAnswer)
+            return RequiresQuestionAndAnswer ? aspnetUser.ResetPassword(passwordAnswer) : aspnetUser.ResetPassword();
+        }
+
+        public override bool RestoreUser(UserInfo user)
+        {
+            var retValue = true;
+
+            try
             {
-                retValue = aspnetUser.ResetPassword(passwordAnswer);
+                _dataProvider.RestoreUser(user.UserID, user.PortalID);
             }
-            else
+            catch (Exception ex)
             {
-                retValue = aspnetUser.ResetPassword();
+
+                Exceptions.LogException(ex);
+                retValue = false;
             }
+
             return retValue;
         }
 
@@ -1201,15 +1076,11 @@ namespace DotNetNuke.Security.Membership
         /// </remarks>
         /// <param name="user">The user whose account is being Unlocked.</param>
         /// <returns>True if successful, False if unsuccessful.</returns>
-        /// <history>
-        ///     [cnurse]	12/13/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override bool UnLockUser(UserInfo user)
         {
-            MembershipUser objMembershipUser;
-            objMembershipUser = System.Web.Security.Membership.GetUser(user.Username);
-            return objMembershipUser.UnlockUser();
+            MembershipUser membershipUser = System.Web.Security.Membership.GetUser(user.Username);
+            return membershipUser != null && membershipUser.UnlockUser();
         }
 
         /// -----------------------------------------------------------------------------
@@ -1219,9 +1090,6 @@ namespace DotNetNuke.Security.Membership
         /// <remarks>
         /// </remarks>
         /// <param name="user">The user to persist to the Data Store.</param>
-        /// <history>
-        ///     [cnurse]	12/13/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override void UpdateUser(UserInfo user)
         {
@@ -1264,9 +1132,6 @@ namespace DotNetNuke.Security.Membership
         /// time window
         /// </summary>
 		/// <param name="userList">List of users to update</param>
-        /// <history>
-        ///     [cnurse]	03/15/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override void UpdateUsersOnline(Hashtable userList)
         {
@@ -1285,9 +1150,6 @@ namespace DotNetNuke.Security.Membership
 		/// <param name="verificationCode">The verification code of the User attempting to log in</param>
         /// <param name="loginStatus">An enumerated value indicating the login status.</param>
         /// <returns>The User as a UserInfo object</returns>
-        /// <history>
-        ///     [cnurse]	12/10/2005	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override UserInfo UserLogin(int portalId, string username, string password, string verificationCode, ref UserLoginStatus loginStatus)
         {
@@ -1307,9 +1169,6 @@ namespace DotNetNuke.Security.Membership
 		/// <param name="verificationCode">The verification code of the User attempting to log in</param>
         /// <param name="loginStatus">An enumerated value indicating the login status.</param>
         /// <returns>The User as a UserInfo object</returns>
-        /// <history>
-        ///     [cnurse]	07/09/2007	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override UserInfo UserLogin(int portalId, string username, string password, string authType, string verificationCode, ref UserLoginStatus loginStatus)
         {
@@ -1323,20 +1182,11 @@ namespace DotNetNuke.Security.Membership
             DataCache.ClearCache(GetCacheKey(username));
 
             //Get a light-weight (unhydrated) DNN User from the Database, we will hydrate it later if neccessary
-            UserInfo user;
-            if (authType == "DNN")
-            {
-                user = GetUserByUserName(portalId, username);
-            }
-            else
-            {
-                user = GetUserByAuthToken(portalId, username, authType);
-            }
+            var user = (authType == "DNN") ? GetUserByUserName(portalId, username) : GetUserByAuthToken(portalId, username, authType);
             if (user != null && !user.IsDeleted)
             {
                 //Get AspNet MembershipUser
-                MembershipUser aspnetUser = null;
-                aspnetUser = GetMembershipUser(user);
+                MembershipUser aspnetUser = GetMembershipUser(user);
 
                 //Fill Membership Property from AspNet MembershipUser
                 FillUserMembership(aspnetUser, user);
@@ -1375,41 +1225,7 @@ namespace DotNetNuke.Security.Membership
 				
                 //Verify User Credentials
                 bool bValid = false;
-                if (loginStatus != UserLoginStatus.LOGIN_USERLOCKEDOUT && loginStatus != UserLoginStatus.LOGIN_USERNOTAPPROVED)
-                {
-                    if (authType == "DNN")
-                    {
-                        if (user.IsSuperUser)
-                        {
-                            if (ValidateUser(Null.NullInteger, username, password))
-                            {
-                                loginStatus = UserLoginStatus.LOGIN_SUPERUSER;
-                                bValid = true;
-                            }
-                        }
-                        else
-                        {
-                            if (ValidateUser(portalId, username, password))
-                            {
-                                loginStatus = UserLoginStatus.LOGIN_SUCCESS;
-                                bValid = true;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (user.IsSuperUser)
-                        {
-                            loginStatus = UserLoginStatus.LOGIN_SUPERUSER;
-                            bValid = true;
-                        }
-                        else
-                        {
-                            loginStatus = UserLoginStatus.LOGIN_SUCCESS;
-                            bValid = true;
-                        }
-                    }
-                }
+                loginStatus = ValidateLogin(username, authType, user, loginStatus, password, ref bValid);
                 if (!bValid)
                 {
 					//Clear the user object
@@ -1423,6 +1239,10 @@ namespace DotNetNuke.Security.Membership
             }
             return user;
         }
+
+        #endregion
+
+        #region Obsolete Methods
 
         [Obsolete("Deprecated in 5.1 as Ishydrated is no longer supported")]
         public override ArrayList GetUnAuthorizedUsers(int portalId, bool isHydrated)
@@ -1465,5 +1285,7 @@ namespace DotNetNuke.Security.Membership
         {
             return GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, ref totalRecords);
         }
+
+        #endregion
     }
 }

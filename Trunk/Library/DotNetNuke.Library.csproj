@@ -276,6 +276,9 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Entities\Modules\VisibilityState.cs" />
+    <Compile Include="Entities\Portals\Data\DataService.cs" />
+    <Compile Include="Entities\Portals\Data\IDataService.cs" />
+    <Compile Include="Entities\Portals\IPortalGroupController.cs" />
     <Compile Include="Entities\Portals\PortalAliasCollection.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -288,6 +291,8 @@
     <Compile Include="Entities\Portals\PortalController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\Portals\PortalGroupController.cs" />
+    <Compile Include="Entities\Portals\PortalGroupInfo.cs" />
     <Compile Include="Entities\Portals\PortalInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1094,7 +1099,6 @@
     <None Include="Entities\Content\Data\Scripts\Vocabularies\DeleteVocabulary.sql" />
     <None Include="Entities\Content\Data\Scripts\Vocabularies\GetVocabularies.sql" />
     <None Include="Entities\Content\Data\Scripts\Vocabularies\UpdateVocabulary.sql" />
-    <None Include="Entities\Content\Diagrams\ContentMetaData.cd" />
     <None Include="UI\Diagrams\Skinning.cd" />
   </ItemGroup>
   <ItemGroup>

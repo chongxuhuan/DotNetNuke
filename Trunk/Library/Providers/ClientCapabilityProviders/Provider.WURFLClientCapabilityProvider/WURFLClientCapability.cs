@@ -9,9 +9,15 @@ using WURFL;
 
 namespace DotNetNuke.Services.ClientCapability
 {
+    /// <summary>
+    /// WURFL Implementation of IClientCapability
+    /// </summary>
     public class WURLClientCapability : IClientCapability
     {
 
+        /// <summary>
+        /// WURLClientCapability constructor
+        /// </summary>
         public WURLClientCapability(IDevice device)            
         {
             this.ID = device.Id;
