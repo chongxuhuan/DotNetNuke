@@ -54,6 +54,7 @@ namespace DotNetNuke.Services.Mobile
 			                                        redirection.SourceTabId,
 			                                        (int) redirection.TargetType,
 			                                        redirection.TargetValue,
+													redirection.Enabled,
 			                                        UserController.GetCurrentUserInfo().UserID);
 
 			foreach (IMatchRules rule in redirection.MatchRules)

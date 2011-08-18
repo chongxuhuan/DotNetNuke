@@ -52,38 +52,22 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
-		public int PortalId
-		{
-			get;
-			set;
-		}
+		public int PortalId { get; set; }
 
-		public string Name
-		{
-			get;
-			set;
-		}
+		public string Name { get; set; }
 
-		public int SourceTabId
-		{
-			get;
-			set;
-		}
+		public int SourceTabId { get; set; }
 
-		public RedirectionType Type
-		{
-			get;
-			set;
-		}
+		public RedirectionType Type { get; set; }
 
 		private IList<IMatchRules> _matchRules;
 		public IList<IMatchRules> MatchRules
 		{
 			get
 			{
-				if(_matchRules == null)
+				if (_matchRules == null)
 				{
-					if(_id == Null.NullInteger)
+					if (_id == Null.NullInteger)
 					{
 						_matchRules = new List<IMatchRules>();
 					}
@@ -102,23 +86,13 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
-		public TargetType TargetType
-		{
-			get;
-			set;
-		}
+		public TargetType TargetType { get; set; }
 
-		public object TargetValue
-		{
-			get;
-			set;
-		}
+		public object TargetValue { get; set; }
 
-		public int SortOrder
-		{
-			get;
-			set;
-		}
+		public bool Enabled { get; set; }
+
+		public int SortOrder { get; set; }
 
 		public int KeyID
 		{
@@ -142,6 +116,7 @@ namespace DotNetNuke.Services.Mobile
 			this.SortOrder = Convert.ToInt32(dr["SortOrder"]);
 			this.TargetType = (TargetType)Convert.ToInt32(dr["TargetType"]);
 			this.TargetValue = dr["TargetValue"];
+			this.Enabled = Convert.ToBoolean(dr["Enabled"]);
 		}
 	}
 }

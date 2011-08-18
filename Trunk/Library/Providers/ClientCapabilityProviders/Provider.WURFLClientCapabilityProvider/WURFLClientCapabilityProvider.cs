@@ -34,6 +34,15 @@ namespace DotNetNuke.Services.ClientCapability
 {
     public class WURFLClientCapabilityProvider : ClientCapabilityProvider
     {
+        #region Attributes
+
+        /// <summary>
+        /// WURFL data paths
+        /// </summary>
+        private static String _wurflDataFile;
+        private static String _wurflPatchFile;
+
+        #endregion
 
         #region Constructors
         /// <summary>
@@ -41,34 +50,22 @@ namespace DotNetNuke.Services.ClientCapability
         /// </summary>
         public WURFLClientCapabilityProvider()
         {
-            DefaultWurflDataFilePath = "/App_Data/WURFLDeviceDatabase/wurfl-latest.zip";
-            DefaultWurflPatchFilePath = "/App_Data/WURFLDeviceDatabase/web_browsers_patch.xml";
+            _wurflDataFile = Common.Globals.ApplicationMapPath + "/App_Data/WURFLDeviceDatabase/wurfl-latest.zip";
+            _wurflPatchFile = Common.Globals.ApplicationMapPath + "/App_Data/WURFLDeviceDatabase/web_browsers_patch.xml";
         }
 
         /// <summary>
-        /// Constructotr injecting the path to data source 
+        /// Constructotr injecting the path to data source.  The client code is responsible for passing the full path for the data source xml files 
         /// </summary>
         /// <param name="wurflDataFilePath"></param>
         /// <param name="tWurflPatchFilePath"></param>
         public WURFLClientCapabilityProvider(String wurflDataFilePath, String tWurflPatchFilePath)
         {
-            DefaultWurflDataFilePath = wurflDataFilePath;
-            DefaultWurflPatchFilePath = tWurflPatchFilePath;
+            _wurflDataFile = wurflDataFilePath;
+            _wurflPatchFile = tWurflPatchFilePath;
         }
 
         #endregion
-
-
-        #region Attributes
-
-        /// <summary>
-        /// WURFL data paths
-        /// </summary>
-        private static String DefaultWurflDataFilePath;
-        private static String DefaultWurflPatchFilePath;
-
-        #endregion
-
 
         #region static methods
         static object _Managerlock = new object();
@@ -81,14 +78,11 @@ namespace DotNetNuke.Services.ClientCapability
                 {
                     if (_wurflManager != null) 
                         return _wurflManager;
-                    // Get the absolute path of required data files
-                    var wurflDataFile = Common.Globals.ApplicationMapPath + DefaultWurflDataFilePath;
-                    var wurflPatchFile = Common.Globals.ApplicationMapPath + DefaultWurflPatchFilePath;
 
                     // Initializes the WURFL infrastructure
                     var configurer = new InMemoryConfigurer()
-                        .MainFile(wurflDataFile)
-                        .PatchFile(wurflPatchFile);
+                        .MainFile(_wurflDataFile)
+                        .PatchFile(_wurflPatchFile);
                     _wurflManager = WURFLManagerBuilder.Build(configurer);
 
                     return _wurflManager;

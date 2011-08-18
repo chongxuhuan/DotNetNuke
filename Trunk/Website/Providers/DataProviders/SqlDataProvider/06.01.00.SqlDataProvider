@@ -20,10 +20,10 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			[Name] [nvarchar](50) NOT NULL,
 			[Width] [int] NOT NULL,
 			[Height] [int] NOT NULL,
-			[CreatedBy] [int] NOT NULL,
-			[CreatedOn] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_CreatedOn]  DEFAULT (getdate()) NOT NULL ,
-			[LastModifiedBy] [int] NOT NULL,
-			[LastModifiedOn] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_LastModifiedOn]  DEFAULT (getdate()) NOT NULL,
+			[CreatedByUserID] [int] NOT NULL,
+			[CreatedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_CreatedOnDate]  DEFAULT (getdate()) NOT NULL ,
+			[LastModifiedByUserID] [int] NOT NULL,
+			[LastModifiedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_LastModifiedOnDate]  DEFAULT (getdate()) NOT NULL,
 			CONSTRAINT [PK_{objectQualifier}Mobile_PreviewProfiles] PRIMARY KEY CLUSTERED ( [Id] ASC )
 		)
 	END
@@ -41,10 +41,11 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			[SourceTabId] [int] NOT NULL,
 			[TargetType] [int] NOT NULL,
 			[TargetValue] [nvarchar](260) NOT NULL,
-			[CreatedBy] [int] NOT NULL,
-			[CreatedOn] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_CreatedOn]  DEFAULT (getdate()) NOT NULL ,
-			[LastModifiedBy] [int] NOT NULL,
-			[LastModifiedOn] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_LastModifiedOn]  DEFAULT (getdate()) NOT NULL,
+			[Enabled] BIT NOT NULL,
+			[CreatedByUserID] [int] NOT NULL,
+			[CreatedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_CreatedOnDate]  DEFAULT (getdate()) NOT NULL ,
+			[LastModifiedByUserID] [int] NOT NULL,
+			[LastModifiedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_LastModifiedOnDate]  DEFAULT (getdate()) NOT NULL,
 			CONSTRAINT [PK_{objectQualifier}Mobile_Redirections] PRIMARY KEY CLUSTERED ([Id] ASC)
 		)
 
@@ -71,12 +72,20 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 	END
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_DeletePreviewProfile]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_DeletePreviewProfile]
+GO
+
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_DeletePreviewProfile] @Id INT
 AS 
 		
     DELETE  FROM {databaseOwner}{objectQualifier}Mobile_PreviewProfiles
     WHERE   Id = @Id
 
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_DeleteRedirection]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_DeleteRedirection]
 GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_DeleteRedirection] @Id INT
@@ -89,6 +98,10 @@ AS
 
 GO
 	
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_DeleteRedirectionRule]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_DeleteRedirectionRule]
+GO
+
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_DeleteRedirectionRule] @Id INT
 AS 
     DELETE  FROM {databaseOwner}{objectQualifier}Mobile_RedirectionRules
@@ -96,14 +109,22 @@ AS
 
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_GetPreviewProfiles]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetPreviewProfiles]
+GO
+
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetPreviewProfiles] @PortalId INT
 AS 
-    SELECT  Id, PortalId, Name, Width, Height, CreatedBy, CreatedOn, LastModifiedBy, LastModifiedOn
+    SELECT  Id, PortalId, Name, Width, Height, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate
     FROM    {databaseOwner}{objectQualifier}Mobile_PreviewProfiles
     WHERE   PortalId = @PortalId
 
 GO
 	
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_GetRedirectionRules]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetRedirectionRules]
+GO
+
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetRedirectionRules] @RedirectionId INT
 AS 
     SELECT  Id ,
@@ -113,6 +134,10 @@ AS
     FROM    {objectQualifier}Mobile_RedirectionRules
     WHERE RedirectionId = @RedirectionId
 
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_GetRedirections]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetRedirections]
 GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetRedirections] @PortalId INT
@@ -125,13 +150,18 @@ AS
             SourceTabId ,
             TargetType ,
             TargetValue ,
-            CreatedBy ,
-            CreatedOn ,
-            LastModifiedBy ,
-            LastModifiedOn
+			Enabled ,
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
     FROM    {databaseOwner}{objectQualifier}Mobile_Redirections
     WHERE   PortalId = @PortalId
 
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_SavePreviewProfile]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SavePreviewProfile]
 GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SavePreviewProfile]
@@ -149,10 +179,10 @@ AS
                       Name ,
                       Width ,
                       Height ,
-                      CreatedBy ,
-                      CreatedOn ,
-                      LastModifiedBy ,
-                      LastModifiedOn
+                      CreatedByUserID ,
+                      CreatedOnDate ,
+                      LastModifiedByUserID ,
+                      LastModifiedOnDate
 			        
                     )
             VALUES  ( @PortalId , -- PortalId - int
@@ -174,13 +204,17 @@ AS
             SET     Name = @Name ,
                     Width = @Width ,
                     Height = @Height ,
-                    LastModifiedBy = @UserId ,
-                    LastModifiedOn = GETDATE()
+                    LastModifiedByUserID = @UserId ,
+                    LastModifiedOnDate = GETDATE()
             WHERE   Id = @Id
         END
         
     SELECT  @Id
 
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_SaveRedirection]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SaveRedirection]
 GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SaveRedirection]
@@ -192,6 +226,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SaveRedirection]
     @SourceTabId INT ,
     @TargetType INT ,
     @TargetValue NVARCHAR(50) ,
+	@Enabled BIT,
     @UserId INT
 AS 
     IF ( @Id = -1 ) 
@@ -204,10 +239,11 @@ AS
                       SourceTabId ,
                       TargetType ,
                       TargetValue ,
-                      CreatedBy ,
-                      CreatedOn ,
-                      LastModifiedBy ,
-                      LastModifiedOn
+					  Enabled ,
+                      CreatedByUserID ,
+                      CreatedOnDate ,
+                      LastModifiedByUserID ,
+                      LastModifiedOnDate
 			        
                     )
             VALUES  ( @PortalId , -- PortalId - int
@@ -217,6 +253,7 @@ AS
                       @SourceTabId , -- SourceTabId - int
                       @TargetType ,
                       @TargetValue ,
+					  @Enabled ,
                       @UserId , -- CreatedBy - int
                       GETDATE() , -- CreatedOn - datetime
                       @UserId , -- LastModifiedBy - int
@@ -233,12 +270,17 @@ AS
                     SourceTabId = @SourceTabId ,
                     TargetType = @TargetType ,
                     TargetValue = @TargetValue ,
-                    LastModifiedBy = @UserId ,
-                    LastModifiedOn = GETDATE()
+					Enabled = @Enabled ,
+                    LastModifiedByUserID = @UserId ,
+                    LastModifiedOnDate = GETDATE()
             WHERE   Id = @Id
         END
 	
 
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_SaveRedirectionRule]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SaveRedirectionRule]
 GO
 
 CREATE PROC {databaseOwner}[{objectQualifier}Mobile_SaveRedirectionRule]

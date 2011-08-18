@@ -64,6 +64,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			_dtRedirections.Columns.Add("SourceTabId", typeof(int));
 			_dtRedirections.Columns.Add("TargetType", typeof(int));
 			_dtRedirections.Columns.Add("TargetValue", typeof(int));
+			_dtRedirections.Columns.Add("Enabled", typeof(bool));
 
 			_dtRedirections.PrimaryKey = new[] { pkCol };
 
@@ -84,8 +85,9 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 								It.IsAny<int>(),
 								It.IsAny<int>(),
 								It.IsAny<object>(),
-								It.IsAny<int>())).Returns<int, int, string, int, int, int, int, object, int>(
-															(id, portalId, name, type, sortOrder, sourceTabId, targetType, targetValue, userId) =>
+								It.IsAny<bool>(),
+								It.IsAny<int>())).Returns<int, int, string, int, int, int, int, object, bool, int>(
+															(id, portalId, name, type, sortOrder, sourceTabId, targetType, targetValue, enabled, userId) =>
 															{
 																if (id == -1)
 																{
@@ -107,6 +109,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 																	row["sourceTabId"] = sourceTabId;
 																	row["targetType"] = targetType;
 																	row["targetValue"] = targetValue;
+																	row["enabled"] = enabled;
 
 																	_dtRedirections.Rows.Add(row);
 																}
@@ -123,6 +126,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 																		row["sourceTabId"] = sourceTabId;
 																		row["targetType"] = targetType;
 																		row["targetValue"] = targetValue;
+																		row["enabled"] = enabled;
 																	}
 																}
 
@@ -267,12 +271,12 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 		private void PrepareData()
 		{
-			_dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
-			_dtRedirections.Rows.Add(2, 0, "R2", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
-			_dtRedirections.Rows.Add(3, 0, "R3", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
-			_dtRedirections.Rows.Add(4, 1, "R4", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
-			_dtRedirections.Rows.Add(5, 1, "R5", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
-			_dtRedirections.Rows.Add(6, 1, "R6", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2);
+			_dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(2, 0, "R2", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(3, 0, "R3", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(4, 1, "R4", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(5, 1, "R5", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(6, 1, "R6", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
 		}
 
 	}

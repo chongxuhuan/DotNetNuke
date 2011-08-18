@@ -47,10 +47,16 @@
             <install>
               <configuration>
                 <nodes>
-                  <node path="/configuration/dotnetnuke/clientcapability/providers" action="update" key="name" collision="overwrite">
-                    <add name="WURFLClientCapabilityProvider"
-                         type="DotNetNuke.Services.ClientCapability.WURFLClientCapabilityProvider, DotNetNuke.Provider.WURFLClientCapabilityProvider" />
+                  <node path="/configuration/configSections/sectionGroup[@name='dotnetnuke']" action="update" key="name" collision="ignore">
+                    <section name="clientcapability" requirePermission="false" type="DotNetNuke.Framework.Providers.ProviderConfigurationHandler, DotNetNuke" />
                   </node>
+                  <node path="/configuration/dotnetnuke" action="update" targetpath="/configuration/dotnetnuke/clientcapability" collision="ignore">
+                    <clientcapability defaultProvider="WURFLClientCapabilityProvider">
+                      <providers>
+                        <clear />
+                        <add name="WURFLClientCapabilityProvider" type="DotNetNuke.Services.ClientCapability.WURFLClientCapabilityProvider, DotNetNuke.Provider.WURFLClientCapabilityProvider" />
+                      </providers>
+                    </clientcapability>                  </node>                  
                 </nodes>
               </configuration>
             </install>

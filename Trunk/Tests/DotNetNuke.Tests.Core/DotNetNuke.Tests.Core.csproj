@@ -101,6 +101,7 @@
     <Compile Include="Collections\SharedListTests.cs" />
     <Compile Include="ComponentModel\ComponentFactoryTests.cs" />
     <Compile Include="Controllers\ConfigurationSettingsComparer.cs" />
+    <Compile Include="Controllers\PortalGroupControllerTests.cs" />
     <Compile Include="Controllers\HostControllerTest.cs" />
     <Compile Include="CBOTest.cs" />
     <Compile Include="Providers\Folder\DatabaseFolderProviderTests.cs" />

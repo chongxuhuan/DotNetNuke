@@ -26,8 +26,8 @@ namespace DotNetNuke.Services.ClientCapability
 
             this.IsTablet = Capability<bool>(device, "is_tablet");
             this.IsTouchScreen = Capability<String>(device, "pointing_method").Equals("touchscreen");
-            this.Width = Capability<int>(device, "physical_screen_width");
-            this.Height = Capability<int>(device, "physical_screen_height");
+            this.Width = Capability<int>(device, "resolution_width");
+            this.Height = Capability<int>(device, "resolution_height");
             this.SupportsFlash = Capability<bool>(device, "full_flash_support");
             
             this.Capabilities = device.GetCapabilities();

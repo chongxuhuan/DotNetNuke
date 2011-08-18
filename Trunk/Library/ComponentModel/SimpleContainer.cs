@@ -222,7 +222,7 @@ namespace DotNetNuke.ComponentModel
             {
                 foreach (KeyValuePair<Type, string> kvp in _registeredComponents)
                 {
-                    if (ReferenceEquals(kvp.Key.BaseType, contractType))
+                    if(kvp.Key.IsSubclassOf(contractType))
                     {
                         components.Add(kvp.Value);
                     }

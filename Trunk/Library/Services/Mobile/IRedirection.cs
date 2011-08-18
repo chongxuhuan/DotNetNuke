@@ -73,6 +73,11 @@ namespace DotNetNuke.Services.Mobile
 		object TargetValue { get; }
 
 		/// <summary>
+		/// Enabled the Redirection.
+		/// </summary>
+		bool Enabled { get; }
+
+		/// <summary>
 		/// Redirection's Order
 		/// </summary>
 		int SortOrder { get; }

@@ -36,6 +36,23 @@ namespace DotNetNuke.Tests.Utilities
 
         #endregion
 
+        #region PortalGroup Constants
+
+        public const int PORTALGROUP_ValidPortalGroupId = 1;
+        public const int PORTALGROUP_AddPortalGroupId = 2;
+        public const int PORTALGROUP_DeletePortalGroupId = 3;
+        public const string PORTALGROUP_ValidName = "PortalGroupName";
+        public const string PORTALGROUP_ValidDescription = "PortalGroupDescription";
+        public const int PORTALGROUP_UpdatePortalGroupId = 4;
+
+        public const string PORTALGROUP_UpdateName = "UpdateName";
+        public const string PORTALGROUP_UpdateDescription = "UpdateDescription";
+
+        public const int PORTALGROUP_ValidPortalGroupCount = 5;
+        public const string PORTALGROUP_ValidNameFormat = "PortalGroupName {0}";
+        public const string PORTALGROUP_ValidDescriptionFormat = "PortalGroupDescription {0}";        
+        #endregion
+
         #region ContentItem Constants
 
         //Valid Content values
