@@ -51,7 +51,8 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 
 		ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections]  
 			ADD CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Portals] FOREIGN KEY([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
-
+		
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Mobile_Redirections_SortOrder] ON {databaseOwner}[{objectQualifier}Mobile_Redirections] ([SortOrder] ASC)
 	END
 GO
 
@@ -157,6 +158,7 @@ AS
             LastModifiedOnDate
     FROM    {databaseOwner}{objectQualifier}Mobile_Redirections
     WHERE   PortalId = @PortalId
+	ORDER BY SortOrder ASC
 
 GO
 

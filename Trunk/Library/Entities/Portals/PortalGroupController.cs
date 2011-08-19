@@ -25,12 +25,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
-using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals.Data;
 using DotNetNuke.Entities.Users;
 
@@ -55,10 +53,14 @@ namespace DotNetNuke.Entities.Portals
 
         #endregion
 
+        #region Private Methods
+
         private object GetPortalGroupsCallback(CacheItemArgs cacheItemArgs)
         {
             return CBO.FillCollection<PortalGroupInfo>(_dataService.GetPortalGroups());
         }
+
+        #endregion
 
         #region IPortalGroupController Members
 
@@ -98,125 +100,5 @@ namespace DotNetNuke.Entities.Portals
 
         #endregion
 
-        //private static Object GetNull(Object Field)
-        //{
-        //    return Null.GetNull(Field, DBNull.Value);
-        //}
-
-        //private static PortalGroupInfo FillPortalGroupInfo(IDataReader dr, bool checkForOpenDataReader)
-        //{
-        //    PortalGroupInfo obj = null;
-        //    bool canContinue = true;
-        //    if (checkForOpenDataReader)
-        //    {
-        //        canContinue = false;
-        //        if (dr.Read())
-        //        {
-        //            canContinue = true;
-        //        }
-        //    }
-
-        //    if (canContinue)
-        //    {
-        //        obj = new PortalGroupInfo();
-        //        obj.PortalGroupId = Convert.ToInt32(Null.SetNull(dr["PortalGroupID"], obj.PortalGroupId));
-        //        obj.PortalGroupName = Convert.ToString(Null.SetNull(dr["PortalGroupName"], obj.PortalGroupName));
-        //        obj.PortalGroupDescription = Convert.ToString(Null.SetNull(dr["PortalGroupDescription"], obj.PortalGroupDescription));
-        //    }
-
-        //    return obj;
-        //}
-
-        //public static PortalGroupInfo STD_GetPortalGroup(Int32 PortalGroupID)
-        //{
-        //    PortalGroupInfo obj = null;
-        //    using (IDataReader dr = DataProvider.Instance().ExecuteReader("STD_GetPortalGroup", PortalGroupID))
-        //    {
-        //        obj = FillPortalGroupInfo(dr, true);
-        //    }
-
-        //    return obj;
-        //}
-
-        //public static List<PortalGroupInfo> PortalGroup_DefaultList()
-        //{
-        //    var list = new List<PortalGroupInfo>();
-        //    using (IDataReader dr = DataProvider.Instance().ExecuteReader("PortalGroup_DefaultList"))
-        //    {
-        //        while (dr.Read())
-        //        {
-        //            list.Add(FillPortalGroupInfo(dr, false));
-        //        }
-        //    }
-
-        //    return list;
-        //}
-
-        //public static List<PortalGroupInfo> PortalGroup_DefaultList_Where(String Where, String OrderBy)
-        //{
-        //    var list = new List<PortalGroupInfo>();
-        //    using (IDataReader dr = DataProvider.Instance().ExecuteReader("PortalGroup_DefaultList_Where", Where, OrderBy))
-        //    {
-        //        while (dr.Read())
-        //        {
-        //            list.Add(FillPortalGroupInfo(dr, false));
-        //        }
-        //    }
-
-        //    return list;
-        //}
-
-        //public static Int32 InsertPortalGroup(String PortalGroupName, String PortalGroupDescription, Int32 CreatedByUserID, DateTime CreatedOnDate, Int32 LastModifiedByUserID,
-        //                                      DateTime LastModifiedOnDate)
-        //{
-        //    return
-        //        Convert.ToInt32(DataProvider.Instance().ExecuteScalar("InsertPortalGroup",
-        //                                                              PortalGroupName,
-        //                                                              PortalGroupDescription,
-        //                                                              CreatedByUserID,
-        //                                                              CreatedOnDate,
-        //                                                              LastModifiedByUserID,
-        //                                                              LastModifiedOnDate));
-        //}
-
-        //public static void UpdatePortalGroup(String PortalGroupName, String PortalGroupDescription, Int32 CreatedByUserID, DateTime CreatedOnDate, Int32 LastModifiedByUserID,
-        //                                     DateTime LastModifiedOnDate, Int32 PortalGroupID)
-        //{
-        //    DataProvider.Instance().ExecuteNonQuery("UpdatePortalGroup",
-        //                                            PortalGroupName,
-        //                                            PortalGroupDescription,
-        //                                            CreatedByUserID,
-        //                                            CreatedOnDate,
-        //                                            LastModifiedByUserID,
-        //                                            LastModifiedOnDate,
-        //                                            PortalGroupID);
-        //}
-
-        //public static void DeletePortalGroup(Int32 PortalGroupID)
-        //{
-        //    DataProvider.Instance().ExecuteNonQuery("DeletePortalGroup", PortalGroupID);
-        //}
-
-        //public static PortalGroupInfo Detail_SP_PortalGroup_DefaultView()
-        //{
-        //    PortalGroupInfo obj = null;
-        //    using (IDataReader dr = DataProvider.Instance().ExecuteReader("Detail_SP_PortalGroup_DefaultView"))
-        //    {
-        //        obj = FillPortalGroupInfo(dr, true);
-        //    }
-
-        //    return obj;
-        //}
-
-        //public static PortalGroupInfo Detail_SP_PortalGroupDetail(Int32 PortalGroupID)
-        //{
-        //    PortalGroupInfo obj = null;
-        //    using (IDataReader dr = DataProvider.Instance().ExecuteReader("Detail_SP_PortalGroupDetail", PortalGroupID))
-        //    {
-        //        obj = FillPortalGroupInfo(dr, true);
-        //    }
-
-        //    return obj;
-        //}
     }
 }

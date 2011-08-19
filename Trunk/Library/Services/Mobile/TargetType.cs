@@ -34,16 +34,16 @@ namespace DotNetNuke.Services.Mobile
 		/// <summary>
 		/// Redirect when request from a mobile
 		/// </summary>
-		Portal,
+		Portal = 1,
 
 		/// <summary>
 		/// Redirect when request from a tablet
 		/// </summary>
-		Tab,
+		Tab = 2,
 
 		/// <summary>
 		/// Redirect when request from some unknown device, should be determine by match rules; 
 		/// </summary>
-		Url
+		Url = 3
 	}
 }

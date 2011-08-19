@@ -219,7 +219,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
         {
             var defaultProviders = DefaultFolderProviders.GetDefaultProviders();
 
-            foreach (var provider in FolderProvider.GetProviderList().Keys.Where(provider => !defaultProviders.Contains(provider)))
+            foreach (var provider in FolderProvider.GetProviderList().Keys.Where(provider => !defaultProviders.Contains(provider)).OrderBy(provider => provider))
             {
                 cboFolderProviders.Items.Add(provider);
             }

@@ -32,6 +32,9 @@ using WURFL.Config;
 
 namespace DotNetNuke.Services.ClientCapability
 {
+    /// <summary>
+    ///   WURFL implementation of ClientCapabilityProvider
+    /// </summary>
     public class WURFLClientCapabilityProvider : ClientCapabilityProvider
     {
         #region Attributes
@@ -91,22 +94,38 @@ namespace DotNetNuke.Services.ClientCapability
         }
         #endregion
 
+        #region ClientCapabilityProvider Methods
+
+        /// <summary>
+        ///   Returns ClientCapability based on HttpRequest
+        /// </summary>
         public override IClientCapability GetClientCapability(string userAgent)
         {            
-            IDevice device = Manager.GetDeviceForRequest(userAgent);
+            var device = Manager.GetDeviceForRequest(userAgent);
             if (device != null)
                 return new WURLClientCapability(device);
             return null;
         }
 
+        /// <summary>
+        ///   Returns ClientCapability based on ClientCapabilityId
+        /// </summary>
         public override IClientCapability GetClientCapabilityById(string clientId)
         {
-            throw new NotImplementedException();
+            var device = Manager.GetDeviceById(clientId);
+            if (device != null)
+                return new WURLClientCapability(device);
+            return null;
         }
 
+        /// <summary>
+        ///   Returns All ClientCapabilitys available
+        /// </summary>
         public override IQueryable<IClientCapability> GeAllClientCapabilitys()
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

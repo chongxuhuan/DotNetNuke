@@ -46,6 +46,11 @@ namespace DotNetNuke.Services.Mobile
 
 		public void Save(IRedirection redirection)
 		{
+			if(redirection.Id == Null.NullInteger || redirection.SortOrder == 0)
+			{
+				redirection.SortOrder = GetRedirectionsByPortal(redirection.PortalId).Count + 1;
+			}
+
 			int id = DataProvider.Instance().SaveRedirection(redirection.Id,
 			                                        redirection.PortalId,
 			                                        redirection.Name,
@@ -68,11 +73,21 @@ namespace DotNetNuke.Services.Mobile
 			DataProvider.Instance().DeleteRedirection(id);
 		}
 
+		public void DeleteRule(int redirectionId, int ruleId)
+		{
+			DataProvider.Instance().DeleteRedirectionRule(ruleId);
+		}
+
 		public IList<IRedirection> GetRedirectionsByPortal(int portalId)
 		{
 			//string cacheKey = string.Format("MobileRedirections{0}", portalId);
 			//return CBO.GetCachedObject<IList<IRedirection>>(new CacheItemArgs(cacheKey, 20, CacheItemPriority.Default, portalId), GetRedirectionsByPortalCallBack);
 			return CBO.FillCollection<Redirection>(DataProvider.Instance().GetRedirections(portalId)).Cast<IRedirection>().ToList();
+		}
+
+		public IRedirection GetRedirectionById(int portalId, int id)
+		{
+			return GetRedirectionsByPortal(portalId).Where(r => r.Id == id).FirstOrDefault();
 		}
 
 		private IList<IRedirection> GetRedirectionsByPortalCallBack(CacheItemArgs cacheItemArgs)

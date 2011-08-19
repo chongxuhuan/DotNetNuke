@@ -194,7 +194,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		[Test]
 		public void Test_Add_Valid_Redirection()
 		{
-			var redirection = new Redirection { Name = "Test R", PortalId = 0, SortOrder = 1, SourceTabId = -1, Type = RedirectionType.Mobile, TargetType = TargetType.Portal, TargetValue = 2 };
+			var redirection = new Redirection { Name = "Test R", PortalId = 0, SortOrder = 1, SourceTabId = -1, Type = RedirectionType.MobilePhone, TargetType = TargetType.Portal, TargetValue = 2 };
 			new RedirectionController().Save(redirection);
 
 			var dataReader = _dataProvider.Object.GetRedirections(0);
@@ -271,12 +271,12 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 		private void PrepareData()
 		{
-			_dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
-			_dtRedirections.Rows.Add(2, 0, "R2", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
-			_dtRedirections.Rows.Add(3, 0, "R3", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
-			_dtRedirections.Rows.Add(4, 1, "R4", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
-			_dtRedirections.Rows.Add(5, 1, "R5", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
-			_dtRedirections.Rows.Add(6, 1, "R6", (int)RedirectionType.Mobile, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.MobilePhone, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(2, 0, "R2", (int)RedirectionType.MobilePhone, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(3, 0, "R3", (int)RedirectionType.MobilePhone, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(4, 1, "R4", (int)RedirectionType.MobilePhone, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(5, 1, "R5", (int)RedirectionType.MobilePhone, 1, -1, (int)TargetType.Portal, 2, true);
+			_dtRedirections.Rows.Add(6, 1, "R6", (int)RedirectionType.MobilePhone, 1, -1, (int)TargetType.Portal, 2, true);
 		}
 
 	}

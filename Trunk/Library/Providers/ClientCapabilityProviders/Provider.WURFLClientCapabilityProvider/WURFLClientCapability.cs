@@ -26,15 +26,22 @@ namespace DotNetNuke.Services.ClientCapability
 
             this.IsTablet = Capability<bool>(device, "is_tablet");
             this.IsTouchScreen = Capability<String>(device, "pointing_method").Equals("touchscreen");
-            this.Width = Capability<int>(device, "resolution_width");
-            this.Height = Capability<int>(device, "resolution_height");
+            this.ScreenResolutionWidthInPixels = Capability<int>(device, "resolution_width");
+            this.ScreenResolutionHeightInPixels = Capability<int>(device, "resolution_height");
             this.SupportsFlash = Capability<bool>(device, "full_flash_support");
+            this.BrowserName = Capability<string>(device, "mobile_browser");
             
             this.Capabilities = device.GetCapabilities();
         }
 
         #region Private methods
-       
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <typeparam name="T"></typeparam>
+        /// <param name="device">A <see cref="IDevice"/> IDevice representing the device of interest</param>
+       /// <param name="name">A user Agent String</param>
+       /// <returns></returns>
         private T Capability<T>(IDevice device, string name)
         {
             string ret = String.Empty;
@@ -79,32 +86,26 @@ namespace DotNetNuke.Services.ClientCapability
         public bool IsTouchScreen { get; set; }
 
         /// <summary>
-        ///   Is request coming from Facebook iframe.
+        ///   FacebookRequest property is filled when request is coming though Facebook iFrame (e.g. fan pages).
         /// </summary>
         /// <remarks>
-        ///   Pesence of "signed_request" in the headers is used to detect of request is coming from facebook.
-        ///   No further analysis is performed on the value of "signed_request".
+        ///   FacebookRequest property is populated based on data in "signed_request" headers coming from Facebook.  
+        ///   In order to ensure request is coming from Facebook, FacebookRequest.IsValidSignature method should be called with the secrety key provided by Facebook.
         /// </remarks>         
-        public bool IsFacebook { get; set; }
+        public FacebookRequest FacebookRequest { get; set; }
 
         /// <summary>
-        ///   Screen Width of the requester.
+        ///   ScreenResolution Width of the requester in Pixels.
         /// </summary>
-        /// <remarks>
-        ///   If IsFacebook is true, then this value represents iframe width, otherwise this value is device width
-        /// </remarks>          
-        public int Width { get; set; }
+        public int ScreenResolutionWidthInPixels { get; set; }
 
         /// <summary>
-        ///   Screen Height of the requester.
+        ///   ScreenResolution Height of the requester in Pixels.
         /// </summary>
-        /// <remarks>
-        ///   If IsFacebook is true, then this value represents iframe height, otherwise this value is device height
-        /// </remarks>                  
-        public int Height { get; set; }
+        public int ScreenResolutionHeightInPixels { get; set; }
 
         /// <summary>
-        ///   Does requester supports Flash.
+        ///   Does requester support Flash.
         /// </summary>
         public bool SupportsFlash { get; set; }
 
@@ -113,6 +114,10 @@ namespace DotNetNuke.Services.ClientCapability
         /// </summary>        
         public IDictionary<string, string> Capabilities { get; set; }
 
+        /// <summary>
+        /// Represents the name of the broweser in the request
+        /// </summary>
+        public string BrowserName { get; set; }
         #endregion
     }
 }

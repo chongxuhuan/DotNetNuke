@@ -57,10 +57,8 @@ namespace DotNetNuke.Services.ClientCapability
         /// </summary>
         public virtual IClientCapability GetClientCapability(HttpRequest httpRequest)
         {
-            IClientCapability clientCapability = GetClientCapability(httpRequest.UserAgent);
-
-        	var fbRequest = FacebookRequest.RequestToSignedRequest(httpRequest);
-			clientCapability.IsFacebook = fbRequest != null && fbRequest.IsValid;
+            IClientCapability clientCapability = GetClientCapability(httpRequest.UserAgent);        	
+            clientCapability.FacebookRequest = FacebookRequestController.GetFacebookDetailsFromRequest(httpRequest);
 
             return clientCapability;
         }
@@ -72,7 +70,6 @@ namespace DotNetNuke.Services.ClientCapability
             return httpRequest["signed_request"] != null;
         }
         #endregion
-
 
         #region static methods
         public static ClientCapabilityProvider Instance()

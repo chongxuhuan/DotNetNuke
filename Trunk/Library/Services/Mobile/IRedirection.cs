@@ -39,23 +39,23 @@ namespace DotNetNuke.Services.Mobile
 		/// <summary>
 		/// Portal Id.
 		/// </summary>
-		int PortalId { get; }
+		int PortalId { get; set; }
 		/// <summary>
 		/// Redirection name.
 		/// </summary>
-		string Name { get; }
+		string Name { get; set; }
 
 		/// <summary>
 		/// if redirect by visit the whole portal, this value should be -1; 
 		/// otherwise should be the exactly page id for redirection.
 		/// </summary>
-		int SourceTabId { get; }
+		int SourceTabId { get; set; }
 
 		/// <summary>
 		/// The redirection type: should be Mobile, Tablet, Both of mobile and tablet, and all other unknown devices.
 		/// if this value is Other, should use MatchRules to match the special request need to redirect.
 		/// </summary>
-		RedirectionType Type { get; }
+		RedirectionType Type { get; set; }
 
 		/// <summary>
 		/// request match rules.
@@ -65,21 +65,21 @@ namespace DotNetNuke.Services.Mobile
 		/// <summary>
 		/// Redirection target type.
 		/// </summary>
-		TargetType TargetType { get; }
+		TargetType TargetType { get; set; }
 
 		/// <summary>
 		/// Redirection target value, can a portal id, tab id or a specific url.
 		/// </summary>
-		object TargetValue { get; }
+		object TargetValue { get; set; }
 
 		/// <summary>
 		/// Enabled the Redirection.
 		/// </summary>
-		bool Enabled { get; }
+		bool Enabled { get; set; }
 
 		/// <summary>
 		/// Redirection's Order
 		/// </summary>
-		int SortOrder { get; }
+		int SortOrder { get; set; }
 	}
 }

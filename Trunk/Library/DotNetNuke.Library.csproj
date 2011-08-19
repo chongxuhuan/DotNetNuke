@@ -493,6 +493,7 @@
     <Compile Include="Services\Cache\PurgeCache.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\ClientCapability\FacebookRequestController.cs" />
     <Compile Include="Services\ClientCapability\FacebookRequest.cs" />
     <Compile Include="Services\FileSystem\Exceptions\FolderAlreadyExistsException.cs" />
     <Compile Include="Services\FileSystem\Exceptions\NoNetworkAvailableException.cs" />

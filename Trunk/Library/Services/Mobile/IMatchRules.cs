@@ -38,11 +38,11 @@ namespace DotNetNuke.Services.Mobile
 		/// <summary>
 		/// capbility name.
 		/// </summary>
-		string Capability { get; }
+		string Capability { get; set; }
 
 		/// <summary>
 		/// reg expression to match the request
 		/// </summary>
-		string Expression { get; }
+		string Expression { get; set; }
 	}
 }

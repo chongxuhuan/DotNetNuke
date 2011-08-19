@@ -245,9 +245,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.Por
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Test.WURFLClientCapabilityProvider", "Tests\DotNetNuke.Test.WURFLClientCapabilityProvider\DotNetNuke.Test.WURFLClientCapabilityProvider.csproj", "{BA2F5F90-7BEA-429A-8E48-21EF33F2C7D2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{24103C42-E505-4DA8-89A0-F650828F2DFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.PortalGroups", "Tests\DotNetNuke.Tests.PortalGroups\DotNetNuke.Tests.PortalGroups.csproj", "{21C7359C-FCFE-470E-BE34-C853870A6D4F}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 69
+		SccNumberOfProjects = 70
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -518,6 +522,10 @@ Global
 		SccProjectTopLevelParentUniqueName68 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName68 = Tests/DotNetNuke.Test.WURFLClientCapabilityProvider
 		SccLocalPath68 = Tests\\DotNetNuke.Test.WURFLClientCapabilityProvider
+		SccProjectUniqueName69 = Tests\\DotNetNuke.Tests.PortalGroups\\DotNetNuke.Tests.PortalGroups.csproj
+		SccProjectTopLevelParentUniqueName69 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName69 = Tests/DotNetNuke.Tests.PortalGroups
+		SccLocalPath69 = Tests\\DotNetNuke.Tests.PortalGroups
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1358,6 +1366,18 @@ Global
 		{BA2F5F90-7BEA-429A-8E48-21EF33F2C7D2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{BA2F5F90-7BEA-429A-8E48-21EF33F2C7D2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{BA2F5F90-7BEA-429A-8E48-21EF33F2C7D2}.Release|x86.ActiveCfg = Release|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Release|.NET.ActiveCfg = Release|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1413,12 +1433,14 @@ Global
 		{2671B9D5-A788-4DE3-93D6-20D6895A2979} = {6DA8666D-9980-4875-BAC6-F6B45A0FAB2D}
 		{29DD979B-9EA7-49D0-90B9-4410600745B5} = {1AFF238A-8147-47D6-8234-56C7A5B88DE1}
 		{BA2F5F90-7BEA-429A-8E48-21EF33F2C7D2} = {1AFF238A-8147-47D6-8234-56C7A5B88DE1}
+		{24103C42-E505-4DA8-89A0-F650828F2DFD} = {1AFF238A-8147-47D6-8234-56C7A5B88DE1}
 		{9108D6A3-B570-4778-87C6-7B9424A7EA67} = {92CD4708-95B8-425B-B2BD-B0F77EB93170}
 		{1CA23A12-DA34-49B4-833A-76F3CA8D554C} = {92CD4708-95B8-425B-B2BD-B0F77EB93170}
 		{649E7B07-2170-4471-97C5-0941FBA12159} = {C82EAC40-C9BA-49B7-9D65-BB562F704A8C}
 		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9} = {29DD979B-9EA7-49D0-90B9-4410600745B5}
 		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40} = {29DD979B-9EA7-49D0-90B9-4410600745B5}
 		{77CC3D39-8526-4554-832A-8537BD1441CB} = {6E53B51E-6753-4EB6-BCD0-941CDCEF4672}
+		{21C7359C-FCFE-470E-BE34-C853870A6D4F} = {24103C42-E505-4DA8-89A0-F650828F2DFD}
 	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution
 		TextTemplating = 1

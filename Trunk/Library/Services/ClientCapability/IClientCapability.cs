@@ -63,32 +63,32 @@ namespace DotNetNuke.Services.ClientCapability
         bool IsTouchScreen { get; set; }
 
         /// <summary>
-        ///   Is request coming from Facebook iframe.
+        ///   FacebookRequest property is filled when request is coming though Facebook iFrame (e.g. fan pages).
         /// </summary>
         /// <remarks>
-        ///   Pesence of "signed_request" in the headers is used to detect of request is coming from facebook.
-        ///   No further analysis is performed on the value of "signed_request".
-        /// </remarks>         
-        bool IsFacebook { get; set; }
+        ///   FacebookRequest property is populated based on data in "signed_request" headers coming from Facebook.  
+        ///   In order to ensure request is coming from Facebook, FacebookRequest.IsValidSignature method should be called with the secrety key provided by Facebook.
+        ///   Most of the properties in IClientCapability doesnot apply to Facebook
+        /// </remarks>                
+        FacebookRequest FacebookRequest { get; set; }
 
         /// <summary>
-        ///   Screen Width of the requester.
+        ///   ScreenResolution Width of the requester in Pixels.
         /// </summary>
-        /// <remarks>
-        ///   If IsFacebook is true, then this value represents iframe width, otherwise this value is device width
-        /// </remarks>          
-        int Width { get; set; }
+        int ScreenResolutionWidthInPixels { get; set; }
 
         /// <summary>
-        ///   Screen Height of the requester.
+        ///   ScreenResolution Height of the requester in Pixels.
         /// </summary>
-        /// <remarks>
-        ///   If IsFacebook is true, then this value represents iframe height, otherwise this value is device height
-        /// </remarks>                  
-        int Height { get; set; }
+        int ScreenResolutionHeightInPixels { get; set; }
 
         /// <summary>
-        ///   Does requester supports Flash.
+        /// Represents the name of the broweser in the request
+        /// </summary>        
+        string BrowserName { get; set; }
+
+        /// <summary>
+        ///   Does requester support Flash.
         /// </summary>
         bool SupportsFlash { get; set; }
 

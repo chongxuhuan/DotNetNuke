@@ -33,7 +33,7 @@ using DotNetNuke.Data;
 
 namespace DotNetNuke.Entities.Portals.Data
 {
-    internal class DataService : ComponentBase<IDataService, DataService>, IDataService
+    public class DataService : ComponentBase<IDataService, DataService>, IDataService
     {
         private readonly DataProvider _provider = DataProvider.Instance();
 

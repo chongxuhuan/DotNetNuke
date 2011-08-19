@@ -32,14 +32,19 @@ namespace DotNetNuke.Services.Mobile
 	public enum RedirectionType
 	{
 		/// <summary>
-		/// Redirect when request from a mobile
+		/// Redirect when request from a mobile phone
 		/// </summary>
-		Mobile = 1,
+		MobilePhone = 1,
 
 		/// <summary>
 		/// Redirect when request from a tablet
 		/// </summary>
 		Tablet = 2,
+
+        /// <summary>
+        /// Redirect when request from either a mobile phone or a tablet
+        /// </summary>
+        AllMobile = 3,
 
 		/// <summary>
 		/// Redirect when request from some unknown device, should be determine by match rules; 
