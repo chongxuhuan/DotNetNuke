@@ -23,6 +23,7 @@
 
 #region Usings
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
@@ -46,9 +47,22 @@ namespace DotNetNuke.Services.ClientCapability
         public abstract IClientCapability GetClientCapabilityById(string clientId);
 
         /// <summary>
-        ///   Returns All ClientCapabilitys available
+        /// Returns available Capability Values for every  Capability Name
         /// </summary>
-        public abstract IQueryable<IClientCapability> GeAllClientCapabilitys();
+        /// <returns>
+        /// Dictionary of Capability Name along with List of possible values of the Capability
+        /// </returns>
+        /// <example>Capability Name = mobile_browser, value = Safari, Andriod Webkit </example>
+        public abstract IDictionary<string, List<string>> GetAllClientCapabilityValues();
+
+        /// <summary>
+        /// Returns All available Client Capabilities present
+        /// </summary>
+        /// <returns>
+        /// List of IClientCapability present
+        /// </returns>        
+        public abstract IQueryable<IClientCapability> GetAllClientCapabilities();
+
         #endregion
 
         #region Virtual Methods

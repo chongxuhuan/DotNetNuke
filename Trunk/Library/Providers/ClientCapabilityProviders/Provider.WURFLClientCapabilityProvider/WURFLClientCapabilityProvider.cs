@@ -23,7 +23,10 @@
 
 #region Usings
 using System;
+using System.Collections.Generic;
 using System.Linq;
+
+using DotNetNuke.Collections.Internal;
 
 using WURFL;
 using WURFL.Config;
@@ -71,13 +74,13 @@ namespace DotNetNuke.Services.ClientCapability
         #endregion
 
         #region static methods
-        static object _Managerlock = new object();
+        static object _managerLock = new object();
         static IWURFLManager _wurflManager;
         private static IWURFLManager Manager
         {
             get
             {
-                lock (_Managerlock)
+                lock (_managerLock)
                 {
                     if (_wurflManager != null) 
                         return _wurflManager;
@@ -92,6 +95,46 @@ namespace DotNetNuke.Services.ClientCapability
                 }
             }
         }
+
+        static object _capabiliyValueLock = new object();        
+        static IDictionary<string, List<string>> _capabilityValues;
+        private static IDictionary<string, List<string>> CapabilityValues
+        {
+            get
+            {
+                lock (_capabiliyValueLock)
+                {
+                    if (_capabilityValues != null)
+                        return _capabilityValues;
+
+                    _capabilityValues = new Dictionary<string, List<string>>();
+
+                    var devices = Manager.GetAllDevices();
+                    foreach (var device in devices)
+                    {
+                        foreach (var capability in device.GetCapabilities())
+                        {
+                            if (_capabilityValues.ContainsKey(capability.Key))
+                            {
+                                if (!_capabilityValues[capability.Key].Contains(capability.Value))
+                                {
+                                    //check for empty capability.Value
+                                    if (!String.IsNullOrEmpty((capability.Value)))_capabilityValues[capability.Key].Add(capability.Value);
+                                }
+                            }
+                            else
+                            {
+                                //check for empty capability.Value
+                                if (!String.IsNullOrEmpty((capability.Value)))_capabilityValues.Add(capability.Key, new List<string>() { capability.Value });
+                            }
+                        }
+                    }
+
+                    return _capabilityValues;
+                }
+            }
+        }
+
         #endregion
 
         #region ClientCapabilityProvider Methods
@@ -119,11 +162,31 @@ namespace DotNetNuke.Services.ClientCapability
         }
 
         /// <summary>
-        ///   Returns All ClientCapabilitys available
+        /// Returns available Capability Values for every  Capability Name
         /// </summary>
-        public override IQueryable<IClientCapability> GeAllClientCapabilitys()
+        /// <returns>
+        /// Dictionary of Capability Name along with List of possible values of the Capability
+        /// </returns>
+        /// <example>Capability Name = mobile_browser, value = Safari, Andriod Webkit </example>
+        public override IDictionary<string, List<string>> GetAllClientCapabilityValues()
+        {
+            return CapabilityValues;       
+        }
+
+        /// <summary>
+        /// Returns All available Client Capabilities present
+        /// </summary>
+        /// <returns>
+        /// List of IClientCapability present
+        /// </returns>        
+        public override IQueryable<IClientCapability> GetAllClientCapabilities()
         {
             throw new NotImplementedException();
+            var devices = Manager.GetAllDevices();
+            foreach (var device in devices)
+            {
+                
+            }            
         }
 
         #endregion

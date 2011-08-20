@@ -95,6 +95,11 @@ namespace DotNetNuke.Services.ClientCapability
         /// <summary>
         /// A key-value collection containing all capabilities supported by requester
         /// </summary>        
-        IDictionary<string, string> Capabilities { get; set; }      
+        IDictionary<string, string> Capabilities { get; set; }
+
+        /// <summary>
+        /// Returns the request prefered HTML DTD
+        /// </summary>
+        string HtmlPreferedDTD { get; set; }
     }
 }

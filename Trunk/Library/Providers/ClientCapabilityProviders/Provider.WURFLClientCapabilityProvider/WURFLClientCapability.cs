@@ -30,7 +30,8 @@ namespace DotNetNuke.Services.ClientCapability
             this.ScreenResolutionHeightInPixels = Capability<int>(device, "resolution_height");
             this.SupportsFlash = Capability<bool>(device, "full_flash_support");
             this.BrowserName = Capability<string>(device, "mobile_browser");
-            
+            this.HtmlPreferedDTD = Capability<string>(device, "html_preferred_dtd");
+
             this.Capabilities = device.GetCapabilities();
         }
 
@@ -118,6 +119,11 @@ namespace DotNetNuke.Services.ClientCapability
         /// Represents the name of the broweser in the request
         /// </summary>
         public string BrowserName { get; set; }
+
+        /// <summary>
+        /// Returns the request prefered HTML DTD
+        /// </summary>
+        public string HtmlPreferedDTD { get; set; }
         #endregion
     }
 }

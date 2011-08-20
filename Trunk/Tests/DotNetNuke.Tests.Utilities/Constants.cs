@@ -41,6 +41,8 @@ namespace DotNetNuke.Tests.Utilities
         public const int PORTALGROUP_ValidPortalGroupId = 1;
         public const int PORTALGROUP_AddPortalGroupId = 2;
         public const int PORTALGROUP_DeletePortalGroupId = 3;
+        public const int PORTALGROUP_InValidPortalGroupId = 999; 
+        
         public const string PORTALGROUP_ValidName = "PortalGroupName";
         public const string PORTALGROUP_ValidDescription = "PortalGroupDescription";
         public const int PORTALGROUP_UpdatePortalGroupId = 4;

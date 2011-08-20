@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 
 using DotNetNuke.Common.Utilities;
@@ -36,8 +37,13 @@ namespace DotNetNuke.Entities.Portals
     public class PortalGroupInfo : BaseEntityInfo, IHydratable
     {
         public int PortalGroupId { get; set; }
+
+        [Required()]
         public string PortalGroupDescription { get; set; }
+
+        [Required()]
         public string PortalGroupName { get; set; }
+
         public int MasterPortalId { get; set; }
 
         #region IHydratable Members
