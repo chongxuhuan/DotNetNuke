@@ -26,14 +26,10 @@ using System.IO;
 
 using DotNetNuke.ComponentModel;
 
-namespace DotNetNuke.Services.FileSystem
+namespace DotNetNuke.Services.FileSystem.Internal
 {
-    internal class FileWrapper : ComponentBase<IFile, FileWrapper>, IFile
+    public class FileWrapper : ComponentBase<IFile, FileWrapper>, IFile
     {
-        internal FileWrapper()
-        {
-        }
-
         public Stream Create(string path)
         {
             return File.Create(path);
