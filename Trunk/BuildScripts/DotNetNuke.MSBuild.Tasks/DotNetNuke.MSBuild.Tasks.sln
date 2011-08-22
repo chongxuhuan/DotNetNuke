@@ -13,9 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.MSBuild.Tasks", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.MSBuild.Tasks.Tests", "DotNetNuke.MSBuild.Tasks.Tests\DotNetNuke.MSBuild.Tasks.Tests.csproj", "{E8822783-385E-4BF3-AF63-0BA4115E637F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Integrity", "..\DotNetNuke.Integrity\DotNetNuke.Integrity.csproj", "{B0670CA4-5A14-4C2A-9BAA-CC22C9C1B0C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Integrity.DatabaseBuilder", "..\DotNetNuke.Integrity.DatabaseBuilder\DotNetNuke.Integrity.DatabaseBuilder.csproj", "{8CFB1077-DD0D-4E4D-92B7-11AF0B1933CB}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -24,6 +28,12 @@ Global
 		SccProjectUniqueName2 = DotNetNuke.MSBuild.Tasks.Tests\\DotNetNuke.MSBuild.Tasks.Tests.csproj
 		SccProjectName2 = DotNetNuke.MSBuild.Tasks.Tests
 		SccLocalPath2 = DotNetNuke.MSBuild.Tasks.Tests
+		SccProjectUniqueName3 = ..\\DotNetNuke.Integrity\\DotNetNuke.Integrity.csproj
+		SccProjectName3 = ../DotNetNuke.Integrity
+		SccLocalPath3 = ..\\DotNetNuke.Integrity
+		SccProjectUniqueName4 = ..\\DotNetNuke.Integrity.DatabaseBuilder\\DotNetNuke.Integrity.DatabaseBuilder.csproj
+		SccProjectName4 = ../DotNetNuke.Integrity.DatabaseBuilder
+		SccLocalPath4 = ..\\DotNetNuke.Integrity.DatabaseBuilder
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = DotNetNuke.MSBuild.Tasks2.vsmdi
@@ -41,6 +51,14 @@ Global
 		{E8822783-385E-4BF3-AF63-0BA4115E637F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8822783-385E-4BF3-AF63-0BA4115E637F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8822783-385E-4BF3-AF63-0BA4115E637F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0670CA4-5A14-4C2A-9BAA-CC22C9C1B0C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0670CA4-5A14-4C2A-9BAA-CC22C9C1B0C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0670CA4-5A14-4C2A-9BAA-CC22C9C1B0C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0670CA4-5A14-4C2A-9BAA-CC22C9C1B0C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CFB1077-DD0D-4E4D-92B7-11AF0B1933CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CFB1077-DD0D-4E4D-92B7-11AF0B1933CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CFB1077-DD0D-4E4D-92B7-11AF0B1933CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CFB1077-DD0D-4E4D-92B7-11AF0B1933CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

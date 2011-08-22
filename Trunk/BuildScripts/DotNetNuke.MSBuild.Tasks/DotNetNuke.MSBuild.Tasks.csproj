@@ -103,6 +103,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildSignatureDatabaseTask.cs" />
     <Compile Include="CodePlexDelete.cs" />
     <Compile Include="TFSComments.cs" />
     <Compile Include="DirectoryManager.cs" />
@@ -142,6 +143,16 @@
   <ItemGroup>
     <Content Include="Dependencies\DotNetNuke.Log4Net.dll" />
     <Content Include="HTMLPage1.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotNetNuke.Integrity.DatabaseBuilder\DotNetNuke.Integrity.DatabaseBuilder.csproj">
+      <Project>{8CFB1077-DD0D-4E4D-92B7-11AF0B1933CB}</Project>
+      <Name>DotNetNuke.Integrity.DatabaseBuilder</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DotNetNuke.Integrity\DotNetNuke.Integrity.csproj">
+      <Project>{B0670CA4-5A14-4C2A-9BAA-CC22C9C1B0C6}</Project>
+      <Name>DotNetNuke.Integrity</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

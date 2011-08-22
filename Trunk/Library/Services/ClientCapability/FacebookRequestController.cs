@@ -37,36 +37,42 @@ namespace DotNetNuke.Services.ClientCapability
         public static FacebookRequest GetFacebookDetailsFromRequest(string rawSignedRequest)
         {
             if (string.IsNullOrEmpty(rawSignedRequest)) return null;
-            
-            var facebookRequest = new FacebookRequest();
-            facebookRequest.RawSignedRequest = rawSignedRequest;
-            facebookRequest.IsValid = false;         
 
-            string[] signedRequestSplit = rawSignedRequest.Split('.');
-            string expectedSignature = signedRequestSplit[0];
-            string payload = signedRequestSplit[1];          
+			try
+			{
+				var facebookRequest = new FacebookRequest();
+				facebookRequest.RawSignedRequest = rawSignedRequest;
+				facebookRequest.IsValid = false;
 
-            var decodedJson = ReplaceSpecialCharactersInSignedRequest(payload);
-            var base64JsonArray = Convert.FromBase64String(decodedJson.PadRight(decodedJson.Length + (4 - decodedJson.Length % 4) % 4, '='));
+				string[] signedRequestSplit = rawSignedRequest.Split('.');
+				string expectedSignature = signedRequestSplit[0];
+				string payload = signedRequestSplit[1];
 
-            var encoding = new UTF8Encoding();
-            FaceBookData faceBookData = encoding.GetString(base64JsonArray).FromJson<FaceBookData>();
-            facebookRequest.Algorithm = faceBookData.algorithm;
+				var decodedJson = ReplaceSpecialCharactersInSignedRequest(payload);
+				var base64JsonArray = Convert.FromBase64String(decodedJson.PadRight(decodedJson.Length + (4 - decodedJson.Length%4)%4, '='));
 
-            if (faceBookData.algorithm == "HMAC-SHA256")
-            {
-                long profId;
-                if (!Int64.TryParse(faceBookData.profile_id, out profId)) 
-                    profId = 0L;
+				var encoding = new UTF8Encoding();
+				FaceBookData faceBookData = encoding.GetString(base64JsonArray).FromJson<FaceBookData>();
+				facebookRequest.Algorithm = faceBookData.algorithm;
 
-                facebookRequest.AccessToken = faceBookData.oauth_token;
-                facebookRequest.Expires = ConvertToTimestamp(faceBookData.expires);
-                facebookRequest.UserID = (long)Int64.Parse(faceBookData.user_id);
-                facebookRequest.ProfileId = profId;
-                if (facebookRequest.UserID > 0 && facebookRequest.Expires > System.DateTime.Now) facebookRequest.IsValid = true;
-            }
+				if (faceBookData.algorithm == "HMAC-SHA256")
+				{
+					long profId;
+					if (!Int64.TryParse(faceBookData.profile_id, out profId)) profId = 0L;
 
-            return facebookRequest;
+					facebookRequest.AccessToken = faceBookData.oauth_token;
+					facebookRequest.Expires = ConvertToTimestamp(faceBookData.expires);
+					facebookRequest.UserID = (long) Int64.Parse(faceBookData.user_id);
+					facebookRequest.ProfileId = profId;
+					if (facebookRequest.UserID > 0 && facebookRequest.Expires > System.DateTime.Now) facebookRequest.IsValid = true;
+				}
+
+				return facebookRequest;
+			}
+			catch(Exception)
+			{
+				return null;
+			}
         }
 
         public static bool IsValidSignature(string rawSignedRequest, string secretKey)

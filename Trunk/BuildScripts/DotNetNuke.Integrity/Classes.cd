@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DotNetNuke.Integrity.FileIntegrityDatabase" BaseTypeListCollapsed="true">
+    <Position X="5.5" Y="2.5" Width="3" />
+    <Members>
+      <Field Name="_certificate" Hidden="true" />
+      <Field Name="_files" Hidden="true" />
+      <Field Name="_readOnly" Hidden="true" />
+      <Field Name="_rootFolder" Hidden="true" />
+      <Field Name="_serializer" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>QARAAIAAQCAAAQIAKAAACCAAARwQCAEAQAAIEESAEIA=</HashCode>
+      <FileName>FileIntegrityDatabase.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Files" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DotNetNuke.Integrity.FileIntegrityDatabaseSerializer">
+    <Position X="3" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAA=</HashCode>
+      <FileName>FileIntegrityDatabaseSerializer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DotNetNuke.Integrity.SignedFile">
+    <Position X="10.5" Y="2.5" Width="2.75" />
+    <Members>
+      <Field Name="_hash" Hidden="true" />
+      <Field Name="_hashAlgorithm" Hidden="true" />
+      <Field Name="_relativePath" Hidden="true" />
+      <Field Name="_rootFolder" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAIAAQAAABAAECAAAUBIAABAAQAAAAEAAAA=</HashCode>
+      <FileName>SignedFile.cs</FileName>
+      <NewMemberFileName>Spec\SignedFile.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DotNetNuke.Integrity.SignedFileCollection" Collapsed="true">
+    <Position X="8.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SignedFile.cs</FileName>
+      <NewMemberFileName>Spec\SignedFile.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DotNetNuke.Integrity.SignedXmlHashListSerializer">
+    <Position X="3" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAFSBAEIAAAAAARAAAgABAAABAAIMAAIBAA=</HashCode>
+      <FileName>SignedXmlHashListSerializer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="DotNetNuke.Integrity.SignedFileState">
+    <Position X="8.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAgAAAAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SignedFileState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="DotNetNuke.Integrity.CertificateVerifier">
+    <Position X="8.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileIntegrityDatabase.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
