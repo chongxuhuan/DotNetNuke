@@ -3230,7 +3230,7 @@ namespace DotNetNuke.Data
 
 		#region Mobile Stuff
 
-		public override void DeleteMobilePreviewProfile(int id)
+		public override void DeletePreviewProfile(int id)
 		{
 			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_DeleteMobilePreviewProfile", id);
 		}

@@ -12,7 +12,7 @@ using System.IO;
 
 namespace DotNetNuke.MSBuild.Tasks
 {
-    public class BuildSignatureDatabaseTask : Task
+    public class BuildSignatureDatabase : Task
     {
         private string _outputFile;
         private string _inputDirectory;
@@ -120,9 +120,12 @@ namespace DotNetNuke.MSBuild.Tasks
         private static List<FileFilter> BuildFileFiltersList(string inputStrings)
         {
             List<FileFilter> excludeFilters = new List<FileFilter>();
-            foreach (string exclude in inputStrings.Split(';'))
+            if (inputStrings != null)
             {
-                excludeFilters.Add(new RegexFileFilter(new Regex(exclude)));
+                foreach (string exclude in inputStrings.Split(';'))
+                {
+                    excludeFilters.Add(new RegexFileFilter(new Regex(exclude)));
+                }
             }
             return excludeFilters;
         }

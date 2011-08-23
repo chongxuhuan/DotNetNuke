@@ -37,6 +37,8 @@ namespace DotNetNuke.Services.Mobile
 
 		void Delete(int id);
 
-		IList<IPreviewProfile> GetProfiles(int portalId);
+		IList<IPreviewProfile> GetProfilesByPortal(int portalId);
+
+		IPreviewProfile GetProfileById(int portalId, int id);
 	}
 }

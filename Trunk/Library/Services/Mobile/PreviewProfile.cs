@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 using DotNetNuke.Entities.Modules;
 
@@ -32,6 +33,7 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Services.Mobile
 {
+	[Serializable]
 	public class PreviewProfile : IPreviewProfile, IHydratable
 	{
 		private int _id = -1;
@@ -75,9 +77,13 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
-		public void Fill(System.Data.IDataReader dr)
+		public void Fill(IDataReader dr)
 		{
-
+			this.Id = Convert.ToInt32(dr["Id"]);
+			this.PortalId = Convert.ToInt32(dr["PortalId"]);
+			this.Name = dr["Name"].ToString();
+			this.Width = Convert.ToInt32(dr["Width"]);
+			this.Height = Convert.ToInt32(dr["Height"]);
 		}
 	}
 }

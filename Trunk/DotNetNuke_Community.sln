@@ -143,7 +143,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Community", "Community", "{
 		Community\Templates\Default Website.template.resources = Community\Templates\Default Website.template.resources
 	EndProjectSection
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = "SAK"
 		SccAuxPath = "SAK"
@@ -165,7 +165,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website", "http://localhost
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "14927"
+		SlnRelativePath = "website\"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{93532801-CD42-40D1-B765-77676362F98C} = {93532801-CD42-40D1-B765-77676362F98C}
@@ -251,9 +251,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.PortalGrou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.Professional", "Tests\DotNetNuke.Tests.Professional\DotNetNuke.Tests.Professional.csproj", "{F92FAF1D-D195-4746-B355-820C3610A41C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.PreviewProfile", "Modules\PreviewProfile\DotNetNuke.Professional.PreviewProfile.csproj", "{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 71
+		SccNumberOfProjects = 72
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -532,6 +534,10 @@ Global
 		SccProjectTopLevelParentUniqueName70 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName70 = Tests/DotNetNuke.Tests.Professional
 		SccLocalPath70 = Tests\\DotNetNuke.Tests.Professional
+		SccProjectUniqueName71 = Modules\\PreviewProfile\\DotNetNuke.Professional.PreviewProfile.csproj
+		SccProjectTopLevelParentUniqueName71 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName71 = Modules/PreviewProfile
+		SccLocalPath71 = Modules\\PreviewProfile
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1396,6 +1402,18 @@ Global
 		{F92FAF1D-D195-4746-B355-820C3610A41C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F92FAF1D-D195-4746-B355-820C3610A41C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F92FAF1D-D195-4746-B355-820C3610A41C}.Release|x86.ActiveCfg = Release|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Release|.NET.ActiveCfg = Release|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1442,6 +1460,7 @@ Global
 		{2A1157E2-27F8-4D72-86CC-10FE142E98D9} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{EA66DE17-1484-449C-AA83-8AF159E95AFB} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{2BAA3105-D1DA-45ED-83F2-2A641B5466D0} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
+		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23} = {6E81B26F-BA7B-457B-9184-BCB9969FC0BC}
 		{F54DCA33-F35C-4F57-893E-FF4AE823E598} = {08C74AF4-F6FF-43B1-8A91-CCE17D43E28A}
 		{CADB2B3B-46DD-417D-BBF9-E935D25C4A92} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}
 		{AF064E35-1BEF-4337-A462-C708F441AD1B} = {6FB2E0C0-3F2C-4635-8E3D-03F98B61E54D}

@@ -94,6 +94,7 @@
     <Content Include="Professional\AssemblyInfo.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Compile Include="BuildSignatureDatabaseFixture.cs" />
     <Compile Include="TFSCommentFixture.cs" />
     <Compile Include="DotNetNukeDeployFixture.cs" />
     <Compile Include="ExtensionPackagerFixture.cs" />

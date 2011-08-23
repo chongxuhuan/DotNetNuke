@@ -34,14 +34,14 @@ namespace DotNetNuke.Services.Mobile
 {
 	public interface IPreviewProfile
 	{
-		int Id { get; }
+		int Id { get; set; }
 
-		int PortalId { get; }
+		int PortalId { get; set; }
 
-		string Name { get; }
+		string Name { get; set; }
 
-		int Width { get; }
+		int Width { get; set; }
 
-		int Height { get; }
+		int Height { get; set; }
 	}
 }

@@ -25,6 +25,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Data;
+using DotNetNuke.Entities.Users;
 
 #endregion
 
@@ -34,17 +39,33 @@ namespace DotNetNuke.Services.Mobile
 	{
 		public void Save(IPreviewProfile profile)
 		{
-			throw new NotImplementedException();
+			DataProvider.Instance().SavePreviewProfile(profile.Id, 
+														profile.PortalId, 
+														profile.Name, 
+														profile.Width, 
+														profile.Height, 
+														UserController.GetCurrentUserInfo().UserID);
 		}
 
 		public void Delete(int id)
 		{
-			throw new NotImplementedException();
+			DataProvider.Instance().DeletePreviewProfile(id);
 		}
 
-		public IList<IPreviewProfile> GetProfiles(int portalId)
+		public IList<IPreviewProfile> GetProfilesByPortal(int portalId)
 		{
-			throw new NotImplementedException();
+			return CBO.FillCollection<Redirection>(DataProvider.Instance().GetPreviewProfiles(portalId)).Cast<IPreviewProfile>().ToList();
+		}
+
+		public IPreviewProfile GetProfileById(int portalId, int id)
+		{
+			return GetProfilesByPortal(portalId).Where(r => r.Id == id).FirstOrDefault();
+		}
+
+		private IList<IRedirection> GetProfilesByPortalIdCallBack(CacheItemArgs cacheItemArgs)
+		{
+			int portalId = (int)cacheItemArgs.ParamList[0];
+			return CBO.FillCollection<IRedirection>(DataProvider.Instance().GetPreviewProfiles(portalId));
 		}
 	}
 }
