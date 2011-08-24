@@ -186,6 +186,15 @@ namespace DotNetNuke.Common.Utilities
         public const string BannersCacheKey = "Banners:{0}:{1}:{2}";
         public const CacheItemPriority BannersCachePriority = CacheItemPriority.Normal;
         public const int BannersCacheTimeOut = 20;
+
+		public const string RedirectionsCacheKey = "Redirections:{0}";
+		public const CacheItemPriority RedirectionsCachePriority = CacheItemPriority.Default;
+		public const int RedirectionsCacheTimeOut = 20;
+
+		public const string PreviewProfilesCacheKey = "PreviewProfiles:{0}";
+		public const CacheItemPriority PreviewProfilesCachePriority = CacheItemPriority.Default;
+		public const int PreviewProfilesCacheTimeOut = 20;
+
         private static string _CachePersistenceEnabled = "";
 
         private static readonly ReaderWriterLock dictionaryLock = new ReaderWriterLock();

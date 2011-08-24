@@ -113,6 +113,7 @@
     <Compile Include="EscapedStringTest.cs" />
     <Compile Include="RetryableActionTests.cs" />
     <Compile Include="Services\ClientCapability\FacebookRequestControllerTests.cs" />
+    <Compile Include="Services\Mobile\PreviewProfileControllerTests.cs" />
     <Compile Include="Services\Mobile\RedirectionControllerTests.cs" />
     <Compile Include="TabCollectionTest.cs" />
     <Compile Include="Services\HtmlUtilsTest.cs" />

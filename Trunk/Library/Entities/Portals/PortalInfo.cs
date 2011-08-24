@@ -415,6 +415,14 @@ namespace DotNetNuke.Entities.Portals
         public int PortalID { get; set; }
 
         /// <summary>
+        /// Identifies if the Portal is a member of a Portal group
+        /// </summary>
+        /// <value>Portal Group identifier</value>
+        /// <returns>Portal Group Identifier</returns>
+        /// <remarks></remarks>
+        public int PortalGroupID { get; set; }
+
+        /// <summary>
         /// Name of the portal. Can be set at creation time, Admin can change the name in the portal settings
         /// </summary>
         /// <value>Name of the portal</value>
@@ -724,6 +732,7 @@ namespace DotNetNuke.Entities.Portals
         public void Fill(IDataReader dr)
         {
             PortalID = Null.SetNullInteger(dr["PortalID"]);
+            PortalGroupID = Null.SetNullInteger(dr["PortalGroupID"]);
             PortalName = Null.SetNullString(dr["PortalName"]);
             LogoFile = Null.SetNullString(dr["LogoFile"]);
             FooterText = Null.SetNullString(dr["FooterText"]);

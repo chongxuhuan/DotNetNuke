@@ -87,6 +87,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void PortalGroupController_AddPortalGroup_Calls_DataService_On_Valid_Arguments()
         {
             //Arrange
+            var mockCache = MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
             var controller = new PortalGroupController(mockDataService.Object);
 
@@ -104,6 +105,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void PortalGroupController_AddPortalGroup_Returns_ValidId_On_Valid_PortalGroup()
         {
             //Arrange
+            var mockCache = MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddPortalGroup(It.IsAny<PortalGroupInfo>(), It.IsAny<int>())).Returns(Constants.PORTALGROUP_AddPortalGroupId);
             var controller = new PortalGroupController(mockDataService.Object);
@@ -122,6 +124,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void PortalGroupController_AddPortalGroup_Sets_PortalGroupId_Property_On_Valid_PortalGroup()
         {
             //Arrange
+            var mockCache = MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddPortalGroup(It.IsAny<PortalGroupInfo>(), It.IsAny<int>())).Returns(Constants.PORTALGROUP_AddPortalGroupId);
             var controller = new PortalGroupController(mockDataService.Object);
@@ -170,6 +173,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void PortalGroupController_DeletePortalGroup_Calls_DataService_On_Valid_PortalGroupId()
         {
             //Arrange
+            var mockCache = MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
             var controller = new PortalGroupController(mockDataService.Object);
 
@@ -277,6 +281,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void PortalGroupController_UpdatePortalGroup_Calls_DataService_On_Valid_PortalGroup()
         {
             //Arrange
+            var mockCache = MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
             var controller = new PortalGroupController(mockDataService.Object);
 

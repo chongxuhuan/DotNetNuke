@@ -3232,7 +3232,7 @@ namespace DotNetNuke.Data
 
 		public override void DeletePreviewProfile(int id)
 		{
-			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_DeleteMobilePreviewProfile", id);
+			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_DeletePreviewProfile", id);
 		}
 
 		public override void DeleteRedirection(int id)

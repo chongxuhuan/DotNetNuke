@@ -31,7 +31,9 @@ using System.Web.Caching;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.Log.EventLog;
 
 #endregion
 
@@ -39,11 +41,12 @@ namespace DotNetNuke.Services.Mobile
 {
 	public class RedirectionController : IRedirectController
 	{
-		public static void Redirect(HttpContext context)
-		{
-			
-		}
-
+		#region "Public Methods"
+		/// <summary>
+		/// save a redirection. If redirection.Id equals Null.NullInteger(-1), that means need to add a new redirection;
+		/// otherwise will update the redirection by redirection.Id.
+		/// </summary>
+		/// <param name="redirection">redirection object.</param>
 		public void Save(IRedirection redirection)
 		{
 			if(redirection.Id == Null.NullInteger || redirection.SortOrder == 0)
@@ -66,34 +69,88 @@ namespace DotNetNuke.Services.Mobile
 			{
 				DataProvider.Instance().SaveRedirectionRule(rule.Id, id, rule.Capability, rule.Expression);
 			}
+
+			var logContent = string.Format("{0} Mobile Redirection '{1}'", redirection.Id == Null.NullInteger ? "Add" : "Update", redirection.Name);
+			AddLog(logContent);
+
+			ClearCache(redirection.PortalId);
 		}
 
-		public void Delete(int id)
+		/// <summary>
+		/// delete a redirection.
+		/// </summary>
+		/// <param name="portalId">Portal's id.</param>
+		/// <param name="id">the redirection's id.</param>
+		public void Delete(int portalId, int id)
 		{
 			DataProvider.Instance().DeleteRedirection(id);
+
+			var logContent = string.Format("Delete Mobile Redirection '{0}'", id);
+			AddLog(logContent);
+
+			ClearCache(portalId);
 		}
 
-		public void DeleteRule(int redirectionId, int ruleId)
+		/// <summary>
+		/// delete a redirection's match rule.
+		/// </summary>
+		/// <param name="portalId">Portal's id.</param>
+		/// <param name="redirectionId">the redirection's id.</param>
+		/// <param name="ruleId">the rule's id.</param>
+		public void DeleteRule(int portalId, int redirectionId, int ruleId)
 		{
 			DataProvider.Instance().DeleteRedirectionRule(ruleId);
+
+			var logContent = string.Format("Delete A Rule '{0}' from Redirection '{1}'", ruleId, redirectionId);
+			AddLog(logContent);
+
+			ClearCache(portalId);
 		}
 
+		/// <summary>
+		/// get a redirection list for portal.
+		/// </summary>
+		/// <param name="portalId">redirection id.</param>
+		/// <returns>List of redirection.</returns>
 		public IList<IRedirection> GetRedirectionsByPortal(int portalId)
 		{
-			//string cacheKey = string.Format("MobileRedirections{0}", portalId);
-			//return CBO.GetCachedObject<IList<IRedirection>>(new CacheItemArgs(cacheKey, 20, CacheItemPriority.Default, portalId), GetRedirectionsByPortalCallBack);
-			return CBO.FillCollection<Redirection>(DataProvider.Instance().GetRedirections(portalId)).Cast<IRedirection>().ToList();
+			string cacheKey = string.Format(DataCache.RedirectionsCacheKey, portalId);
+			var cacheArg = new CacheItemArgs(cacheKey, DataCache.RedirectionsCacheTimeOut, DataCache.RedirectionsCachePriority, portalId);
+			return CBO.GetCachedObject<IList<IRedirection>>(cacheArg, GetRedirectionsByPortalCallBack);
 		}
 
+		/// <summary>
+		/// get a specific redirection by id.
+		/// </summary>
+		/// <param name="portalId">the redirection belong's portal.</param>
+		/// <param name="id">redirection's id.</param>
+		/// <returns>redirection object.</returns>
 		public IRedirection GetRedirectionById(int portalId, int id)
 		{
 			return GetRedirectionsByPortal(portalId).Where(r => r.Id == id).FirstOrDefault();
 		}
 
+		#endregion
+
+		#region "Private Methods"
+
 		private IList<IRedirection> GetRedirectionsByPortalCallBack(CacheItemArgs cacheItemArgs)
 		{
 			int portalId = (int)cacheItemArgs.ParamList[0];
-			return CBO.FillCollection<IRedirection>(DataProvider.Instance().GetRedirections(portalId));
+			return CBO.FillCollection<Redirection>(DataProvider.Instance().GetRedirections(portalId)).Cast<IRedirection>().ToList();
 		}
+
+		private void ClearCache(int portalId)
+		{
+			DataCache.RemoveCache(string.Format(DataCache.RedirectionsCacheKey, portalId));
+		}
+
+		private void AddLog(string logContent)
+		{
+			var objEventLog = new EventLogController();
+			objEventLog.AddLog("Message", logContent, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.ADMIN_ALERT);
+		}
+
+		#endregion
 	}
 }

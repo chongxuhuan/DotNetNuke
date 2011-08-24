@@ -34,6 +34,8 @@ namespace DotNetNuke.Entities.Portals
     {
         IEnumerable<PortalGroupInfo> GetPortalGroups();
 
+        IEnumerable<PortalInfo> GetPortalsByGroup(int portalGroupId);
+
         int AddPortalGroup(PortalGroupInfo portalGroup);
 
         void DeletePortalGroup(PortalGroupInfo portalGroup);

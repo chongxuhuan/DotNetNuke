@@ -35,7 +35,7 @@ namespace DotNetNuke.Services.Mobile
 	{
 		void Save(IPreviewProfile profile);
 
-		void Delete(int id);
+		void Delete(int portalId, int id);
 
 		IList<IPreviewProfile> GetProfilesByPortal(int portalId);
 

@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -60,6 +61,11 @@ namespace DotNetNuke.Entities.Portals
             return CBO.FillCollection<PortalGroupInfo>(_dataService.GetPortalGroups());
         }
 
+        private static void ClearCache()
+        {
+            DataCache.RemoveCache(DataCache.PortalGroupsCacheKey);
+        }
+
         #endregion
 
         #region IPortalGroupController Members
@@ -71,6 +77,8 @@ namespace DotNetNuke.Entities.Portals
 
             portalGroup.PortalGroupId = _dataService.AddPortalGroup(portalGroup, UserController.GetCurrentUserInfo().UserID);
 
+            ClearCache();
+
             return portalGroup.PortalGroupId;
         }
 
@@ -81,12 +89,26 @@ namespace DotNetNuke.Entities.Portals
             Requires.PropertyNotNegative("portalGroup", "PortalGroupId", portalGroup.PortalGroupId);
 
             _dataService.DeletePortalGroup(portalGroup);
+
+            ClearCache();
         }
 
         public IEnumerable<PortalGroupInfo> GetPortalGroups()
         {
-            string cacheKey = string.Format(DataCache.PortalGroupsCacheKey);
-            return CBO.GetCachedObject<IEnumerable<PortalGroupInfo>>(new CacheItemArgs(cacheKey, DataCache.PortalGroupsCacheTimeOut, DataCache.PortalGroupsCachePriority), GetPortalGroupsCallback);
+            return CBO.GetCachedObject<IEnumerable<PortalGroupInfo>>(new CacheItemArgs(DataCache.PortalGroupsCacheKey, 
+                                                                                    DataCache.PortalGroupsCacheTimeOut, 
+                                                                                    DataCache.PortalGroupsCachePriority), 
+                                                                                GetPortalGroupsCallback);
+        }
+
+        public IEnumerable<PortalInfo> GetPortalsByGroup(int portalGroupId)
+        {
+            var controller = new PortalController();
+            var portals = controller.GetPortals();
+
+            return portals.Cast<PortalInfo>()
+                            .Where(portal => portal.PortalGroupID == portalGroupId)
+                            .ToList();
         }
 
         public void UpdatePortalGroup(PortalGroupInfo portalGroup)
@@ -96,6 +118,8 @@ namespace DotNetNuke.Entities.Portals
             Requires.PropertyNotNegative("portalGroup", "PortalGroupId", portalGroup.PortalGroupId);
 
             _dataService.UpdatePortalGroup(portalGroup, UserController.GetCurrentUserInfo().UserID);
+
+            ClearCache();
         }
 
         #endregion

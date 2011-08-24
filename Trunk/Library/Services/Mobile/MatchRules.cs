@@ -37,6 +37,10 @@ namespace DotNetNuke.Services.Mobile
 	public class MatchRules : IMatchRules, IHydratable
 	{
 		private int _id = -1;
+
+		/// <summary>
+		/// Match rule's primary key.
+		/// </summary>
 		public int Id
 		{
 			get
@@ -49,18 +53,27 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
+		/// <summary>
+		/// Capability's name.
+		/// </summary>
 		public string Capability
 		{
 			get;
 			set;
 		}
 
+		/// <summary>
+		/// The value to match the capability from request.
+		/// </summary>
 		public string Expression
 		{
 			get;
 			set;
 		}
 
+		/// <summary>
+		/// IHydratable.KeyID.
+		/// </summary>
 		public int KeyID
 		{
 			get
@@ -73,6 +86,10 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
+		/// <summary>
+		/// Fill the object with data from database.
+		/// </summary>
+		/// <param name="dr">the data reader.</param>
 		public void Fill(System.Data.IDataReader dr)
 		{
 			this.Id = Convert.ToInt32(dr["Id"]);

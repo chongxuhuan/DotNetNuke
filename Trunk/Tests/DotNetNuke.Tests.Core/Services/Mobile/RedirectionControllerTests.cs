@@ -29,6 +29,8 @@ using System.Data;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Services.Cache;
+using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Mobile;
 using DotNetNuke.Tests.Utilities.Mocks;
 
@@ -54,6 +56,9 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		{
 			ComponentFactory.Container = new SimpleContainer();
 			_dataProvider = MockComponentProvider.CreateDataProvider();
+			_dataProvider.Setup(d => d.GetProviderPath()).Returns("");
+			MockComponentProvider.CreateDataCacheProvider();
+			MockComponentProvider.CreateEventLogController();
 
 			_dtRedirections = new DataTable("Redirections");
 			var pkCol = _dtRedirections.Columns.Add("Id", typeof(int));
@@ -240,7 +245,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		public void Test_Delete_Redirections()
 		{
 			PrepareData();
-			new RedirectionController().Delete(1);
+			new RedirectionController().Delete(0, 1);
 
 			IList<IRedirection> list = new RedirectionController().GetRedirectionsByPortal(0);
 

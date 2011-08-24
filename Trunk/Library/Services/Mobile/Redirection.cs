@@ -39,6 +39,10 @@ namespace DotNetNuke.Services.Mobile
 	public class Redirection : IRedirection, IHydratable
 	{
 		private int _id = -1;
+
+		/// <summary>
+		/// Redirection's primary key.
+		/// </summary>
 		public int Id
 		{
 			get
@@ -52,15 +56,32 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
+		/// <summary>
+		/// The portal Redirection is belong to.
+		/// </summary>
 		public int PortalId { get; set; }
 
+		/// <summary>
+		/// Redirection name.
+		/// </summary>
 		public string Name { get; set; }
 
+		/// <summary>
+		/// The redirection's match source tab. if this value is Null.NullInteger(-1) means should redirect when request the whole current portal;
+		/// otherwise means this redirection will be available for the specific tab.
+		/// </summary>
 		public int SourceTabId { get; set; }
 
+		/// <summary>
+		/// Redirection Type: Mobile, Tablet, Both or Other.
+		/// </summary>
 		public RedirectionType Type { get; set; }
 
 		private IList<IMatchRules> _matchRules;
+
+		/// <summary>
+		/// When redirection type is RedirectionType.Other, should use this collection to match the request by capability info.
+		/// </summary>
 		public IList<IMatchRules> MatchRules
 		{
 			get
@@ -86,14 +107,34 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
+		/// <summary>
+		/// Redirection's target type, should be: Portal, Tab, Url
+		/// </summary>
 		public TargetType TargetType { get; set; }
 
+		/// <summary>
+		/// the redirection's target value, this value will determine by TargetType as:
+		/// <list type="bullet">
+		///	<item>TargetType.Portal: this value should be a portal id.</item>
+		/// <item>TargetType.Tab: this value should be a tab id.</item>
+		/// <item>TargetType.Url: this value should be a valid url.</item>
+		/// </list>
+		/// </summary>
 		public object TargetValue { get; set; }
 
+		/// <summary>
+		/// Whether this redirection is available.
+		/// </summary>
 		public bool Enabled { get; set; }
 
+		/// <summary>
+		/// Redirection's piority.
+		/// </summary>
 		public int SortOrder { get; set; }
 
+		/// <summary>
+		/// IHydratable.KeyID.
+		/// </summary>
 		public int KeyID
 		{
 			get
@@ -106,6 +147,10 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
+		/// <summary>
+		/// Fill the object with data from database.
+		/// </summary>
+		/// <param name="dr">the data reader.</param>
 		public void Fill(System.Data.IDataReader dr)
 		{
 			this.Id = Convert.ToInt32(dr["Id"]);

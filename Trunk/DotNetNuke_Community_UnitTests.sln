@@ -265,7 +265,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.PortalGrou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.Professional", "Tests\DotNetNuke.Tests.Professional\DotNetNuke.Tests.Professional.csproj", "{F92FAF1D-D195-4746-B355-820C3610A41C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.PreviewProfile", "Modules\PreviewProfile\DotNetNuke.Professional.PreviewProfile.csproj", "{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.PreviewProfileManagement", "Modules\PreviewProfileManagement\DotNetNuke.Professional.PreviewProfileManagement.csproj", "{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -548,10 +548,10 @@ Global
 		SccProjectTopLevelParentUniqueName70 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName70 = Tests/DotNetNuke.Tests.Professional
 		SccLocalPath70 = Tests\\DotNetNuke.Tests.Professional
-		SccProjectUniqueName71 = Modules\\PreviewProfile\\DotNetNuke.Professional.PreviewProfile.csproj
+		SccProjectUniqueName71 = Modules\\PreviewProfileManagement\\DotNetNuke.Professional.PreviewProfileManagement.csproj
 		SccProjectTopLevelParentUniqueName71 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName71 = Modules/PreviewProfile
-		SccLocalPath71 = Modules\\PreviewProfile
+		SccProjectName71 = Modules/PreviewProfileManagement
+		SccLocalPath71 = Modules\\PreviewProfileManagement
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1240,7 +1240,6 @@ Global
 		{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}.Release|x86.ActiveCfg = Release|Any CPU
 		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Debug|.NET.ActiveCfg = Debug|Any CPU
 		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Release|.NET.ActiveCfg = Debug|Any CPU

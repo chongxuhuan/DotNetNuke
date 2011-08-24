@@ -44,7 +44,9 @@ namespace DotNetNuke.MSBuild.Tasks
                 autoFailed = (data.Contains("Error") || data.Contains("bypasses"));
                 if (!autoFailed)
                 {
-                    var homePage = wc.DownloadString(string.Format("http://localhost/{0}/default.aspx", WebsiteName));
+                    var homePageUrl = string.Format("http://localhost/{0}/default.aspx", WebsiteName);
+                    var homePage = wc.DownloadString(homePageUrl);
+                    LogFormat("Message", "Install URL: - " + homePageUrl + "\r\n");
                 }
                 LogFormat("Message", "-----------------------------");
                 LogFormat("Message", "DNN INSTALL LOGGING INFO");

@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Xml.Serialization;
 
 using DotNetNuke.Entities.Modules;
 
@@ -37,6 +38,11 @@ namespace DotNetNuke.Services.Mobile
 	public class PreviewProfile : IPreviewProfile, IHydratable
 	{
 		private int _id = -1;
+
+		/// <summary>
+		/// Primary key.
+		/// </summary>
+		[XmlAttribute]
 		public int Id
 		{
 			get
@@ -49,22 +55,42 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
+		/// <summary>
+		/// the profiles' effected portal.
+		/// </summary>
+		[XmlAttribute]
 		public int PortalId
 		{
 			get;
 			set;
 		}
 
+		/// <summary>
+		/// profile's name.
+		/// </summary>
+		[XmlAttribute]
 		public string Name
 		{
 			get;
 			set;
 		}
 
+		/// <summary>
+		/// the preview device's width.
+		/// </summary>
+		[XmlAttribute]
 		public int Width { get; set; }
 
+		/// <summary>
+		/// the preview device's height.
+		/// </summary>
+		[XmlAttribute]
 		public int Height { get; set; }
 
+		/// <summary>
+		/// IHydratable.KeyID.
+		/// </summary>
+		[XmlIgnore]
 		public int KeyID
 		{
 			get
@@ -77,6 +103,10 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
+		/// <summary>
+		/// Fill the object with data from database.
+		/// </summary>
+		/// <param name="dr">the data reader.</param>
 		public void Fill(IDataReader dr)
 		{
 			this.Id = Convert.ToInt32(dr["Id"]);

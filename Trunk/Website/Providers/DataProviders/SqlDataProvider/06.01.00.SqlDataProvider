@@ -421,3 +421,173 @@ AS
 			WHERE PortalGroupID = @PortalGroupID
 	END
 GO
+
+/* Add PortalGroupID Column To Portals Table */
+/*********************************************/
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Portals' AND COLUMN_NAME='PortalGroupID')
+	BEGIN
+		-- Add new Column
+		ALTER TABLE {databaseOwner}{objectQualifier}Portals
+			ADD PortalGroupID int NULL
+	END
+GO
+
+/* Update Portals View */
+/***********************/
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}vw_Portals]') AND OBJECTPROPERTY(id, N'IsView') = 1)
+	DROP VIEW {databaseOwner}[{objectQualifier}vw_Portals]
+GO
+
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_Portals]
+AS
+	SELECT DISTINCT 
+		P.PortalID,
+		P.PortalGroupID, 
+		PL.PortalName, 
+		CASE WHEN LEFT(LOWER(PL.LogoFile), 7) = 'fileid=' THEN
+				(SELECT Folder + FileName FROM {databaseOwner}{objectQualifier}Files WHERE fileid = CAST((RIGHT(LOWER(PL.LogoFile), Len(PL.LogoFile) - 7)) AS int)) 
+			ELSE 
+				PL.LogoFile 
+			END AS LogoFile, 
+		PL.FooterText, 
+		P.ExpiryDate, 
+		P.UserRegistration, 
+		P.BannerAdvertising, 
+		P.AdministratorId, 
+		P.Currency, 
+		P.HostFee, 
+		P.HostSpace, 
+		P.PageQuota, 
+		P.UserQuota, 
+		P.AdministratorRoleId, 
+		P.RegisteredRoleId, 
+		PL.Description, 
+		PL.KeyWords, 
+		CASE WHEN LEFT(LOWER(PL.BackgroundFile), 7) = 'fileid=' THEN
+				(SELECT Folder + FileName FROM {databaseOwner}{objectQualifier}Files WHERE fileid = CAST((RIGHT(LOWER(PL.BackgroundFile), Len(PL.BackgroundFile) - 7)) AS int)) 
+			ELSE 
+				PL.BackgroundFile 
+			END AS BackgroundFile, 
+		P.GUID, 
+		P.PaymentProcessor, 
+		P.ProcessorUserId, 
+		P.ProcessorPassword, 
+		P.SiteLogHistory, 
+		U.Email, 
+		P.DefaultLanguage, 
+		P.TimezoneOffset, 
+		PL.AdminTabId, 
+		P.HomeDirectory, 
+		PL.SplashTabId, 
+		PL.HomeTabId, 
+		PL.LoginTabId, 
+		PL.RegisterTabId, 
+		PL.UserTabId, 
+		PL.SearchTabId,
+		(SELECT  TOP (1) TabID
+			FROM   {databaseOwner}{objectQualifier}Tabs
+				WHERE      (PortalID IS NULL) AND (ParentId IS NULL))
+			AS SuperTabId, 
+		P.CreatedByUserID, 
+		P.CreatedOnDate, 
+		P.LastModifiedByUserID, 
+		P.LastModifiedOnDate, 
+		PL.CultureCode
+	FROM {databaseOwner}{objectQualifier}Portals AS P 
+		INNER JOIN {databaseOwner}{objectQualifier}PortalLocalization AS PL ON P.PortalID = PL.PortalID 
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS U ON P.AdministratorId = U.UserID
+GO
+
+/* Update PortalsDefaultLanguage View */
+/**************************************/
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}vw_PortalsDefaultLanguage]') AND OBJECTPROPERTY(id, N'IsView') = 1)
+	DROP VIEW {databaseOwner}[{objectQualifier}vw_PortalsDefaultLanguage]
+GO
+
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_PortalsDefaultLanguage]
+AS
+	SELECT DISTINCT 
+        P.PortalID, 
+		P.PortalGroupID, 
+		PL.PortalName, 
+		PL.LogoFile, 
+		PL.FooterText, 
+		P.ExpiryDate, 
+		P.UserRegistration, 
+		P.BannerAdvertising, 
+		P.AdministratorId, 
+		P.Currency, 
+		P.HostFee, 
+        P.HostSpace, 
+		P.PageQuota, 
+		P.UserQuota, 
+		P.AdministratorRoleId, 
+		P.RegisteredRoleId, 
+		PL.Description, 
+		PL.KeyWords, 
+		PL.BackgroundFile, 
+		P.GUID, 
+		P.PaymentProcessor,
+        P.ProcessorUserId, 
+		P.ProcessorPassword, 
+		P.SiteLogHistory, 
+		U.Email, 
+		P.DefaultLanguage, 
+		P.TimezoneOffset, 
+		PL.AdminTabId, 
+		P.HomeDirectory, 
+		PL.SplashTabId, 
+        PL.HomeTabId, 
+		PL.LoginTabId, 
+		PL.RegisterTabId, 
+		PL.UserTabId, 
+		PL.SearchTabId,
+        (SELECT     TOP (1) TabID
+			FROM          {databaseOwner}{objectQualifier}Tabs
+				WHERE      (PortalID IS NULL) AND (ParentId IS NULL))
+			AS SuperTabId, 
+		P.CreatedByUserID, 
+		P.CreatedOnDate, 
+		P.LastModifiedByUserID, 
+		P.LastModifiedOnDate, 
+        PL.CultureCode
+	FROM	{databaseOwner}{objectQualifier}Portals AS P 
+		INNER JOIN (SELECT  
+						PortalID, 
+						PortalName, 
+						CASE WHEN LEFT(LOWER(LogoFile), 7) = 'fileid=' THEN
+								(SELECT Folder + FileName
+									FROM {databaseOwner}{objectQualifier}Files
+									WHERE fileid = CAST((RIGHT(LOWER(LogoFile), LEN(LogoFile) - 7)) AS INT)) 
+							ELSE 
+								LogoFile
+							END AS LogoFile,
+						FooterText, 
+						Description, 
+						KeyWords, 
+                        CASE WHEN LEFT(LOWER(BackgroundFile), 7) = 'fileid=' THEN
+								(SELECT Folder + FileName
+									FROM {databaseOwner}{objectQualifier}Files
+									WHERE fileid = CAST((RIGHT(LOWER(BackgroundFile), LEN(BackgroundFile) - 7)) AS INT)) 
+							ELSE 
+								BackgroundFile 
+							END AS BackgroundFile, 
+						AdminTabId, 
+						SplashTabId, 
+						HomeTabId, 
+						LoginTabId, 
+						RegisterTabId, 
+						UserTabId, 
+						SearchTabId, 
+						CultureCode
+				FROM    {databaseOwner}{objectQualifier}PortalLocalization) 
+			AS PL ON P.PortalID = PL.PortalID AND PL.CultureCode = P.DefaultLanguage 
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS U ON P.AdministratorId = U.UserID
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/
