@@ -415,7 +415,8 @@ namespace DotNetNuke.Entities.Portals
         public int PortalID { get; set; }
 
         /// <summary>
-        /// Identifies if the Portal is a member of a Portal group
+        /// Contains the id of the portal group that the portal belongs to
+        /// Will be null or -1 (null.nullinteger) if the portal does not belong to a portal group
         /// </summary>
         /// <value>Portal Group identifier</value>
         /// <returns>Portal Group Identifier</returns>

@@ -46,7 +46,13 @@ namespace DotNetNuke.Tests.Core.Services.ClientCapability
 	[TestFixture]
 	public class FacebookRequestControllerTests
 	{
+		#region "Private Properties"
+
 		private IDictionary<string, string> _requestDics;
+
+		#endregion
+
+		#region "Set Up"
 
 		[SetUp]
 		public void SetUp()
@@ -56,6 +62,10 @@ namespace DotNetNuke.Tests.Core.Services.ClientCapability
 			_requestDics.Add("Valid", "vlXgu64BQGFSQrY0ZcJBZASMvYvTHu9GQ0YM9rjPSso.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsIjAiOiJwYXlsb2FkIiwidXNlcl9pZCI6ICIxIiwiZXhwaXJlcyI6IjEzMjUzNzU5OTkifQ==");
 			_requestDics.Add("Invalid", "Invalid Content");
 		}
+
+		#endregion
+
+		#region "Tests"
 
 		[Test]
 		public void Test_With_Empty_Request_String()
@@ -88,7 +98,7 @@ namespace DotNetNuke.Tests.Core.Services.ClientCapability
 		[Test]
 		public void Test_With_Get_Request()
 		{
-			
+
 		}
 
 		[Test]
@@ -102,5 +112,7 @@ namespace DotNetNuke.Tests.Core.Services.ClientCapability
 		{
 
 		}
+
+		#endregion
 	}
 }

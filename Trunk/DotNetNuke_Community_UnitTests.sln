@@ -257,7 +257,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClientCapability Providers"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.PortalGroups", "Modules\PortalGroups\DotNetNuke.Professional.PortalGroups.csproj", "{2BAA3105-D1DA-45ED-83F2-2A641B5466D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Test.WURFLClientCapabilityProvider", "Tests\DotNetNuke.Test.WURFLClientCapabilityProvider\DotNetNuke.Test.WURFLClientCapabilityProvider.csproj", "{BA2F5F90-7BEA-429A-8E48-21EF33F2C7D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.WURFLClientCapabilityProvider", "Tests\DotNetNuke.Tests.WURFLClientCapabilityProvider\DotNetNuke.Tests.WURFLClientCapabilityProvider.csproj", "{BA2F5F90-7BEA-429A-8E48-21EF33F2C7D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{24103C42-E505-4DA8-89A0-F650828F2DFD}"
 EndProject
@@ -531,10 +531,10 @@ Global
 		SccProjectTopLevelParentUniqueName66 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName66 = Modules/PortalGroups
 		SccLocalPath66 = Modules\\PortalGroups
-		SccProjectUniqueName67 = Tests\\DotNetNuke.Test.WURFLClientCapabilityProvider\\DotNetNuke.Test.WURFLClientCapabilityProvider.csproj
+		SccProjectUniqueName67 = Tests\\DotNetNuke.Tests.WURFLClientCapabilityProvider\\DotNetNuke.Tests.WURFLClientCapabilityProvider.csproj
 		SccProjectTopLevelParentUniqueName67 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName67 = Tests/DotNetNuke.Test.WURFLClientCapabilityProvider
-		SccLocalPath67 = Tests\\DotNetNuke.Test.WURFLClientCapabilityProvider
+		SccProjectName67 = Tests/DotNetNuke.Tests.WURFLClientCapabilityProvider
+		SccLocalPath67 = Tests\\DotNetNuke.Tests.WURFLClientCapabilityProvider
 		SccProjectUniqueName68 = Tests\\DotNetNuke.Tests.PortalGroups\\DotNetNuke.Tests.PortalGroups.csproj
 		SccProjectTopLevelParentUniqueName68 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName68 = Tests/DotNetNuke.Tests.PortalGroups

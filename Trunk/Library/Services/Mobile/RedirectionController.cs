@@ -29,10 +29,13 @@ using System.Linq;
 using System.Web;
 using System.Web.Caching;
 
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.ClientCapability;
 using DotNetNuke.Services.Log.EventLog;
 
 #endregion
@@ -42,6 +45,70 @@ namespace DotNetNuke.Services.Mobile
 	public class RedirectionController : IRedirectController
 	{
 		#region "Public Methods"
+        /// <summary>
+        /// Get Redirection Url based on Http Context and Portal Id.         
+        /// </summary>
+        /// <returns>string - Empty if redirection rules are not defined or no match found</returns>
+        /// <param name="userAgent">User Agent - used for client capability.</param>
+        /// <param name="portalId">Portal Id from which Redirection Rules should be applied.</param>
+        /// <param name="currentTabId">Current Tab Id that needs to be evaluated.</param>
+        public string GetRedirectUrl(string userAgent, int portalId, int currentTabId)
+        {
+            string redirectUrl = string.Empty;
+            IList<IRedirection> allItems = GetRedirectionsByPortal(portalId);
+            //check for redirect only when redirect rules are defined
+            if (allItems != null && allItems.Count > 0)
+            {
+                var clientCapability = ClientCapabilityProvider.Instance().GetClientCapability(userAgent);
+                var tabController = new TabController();
+                foreach (var redirection in allItems)
+                {
+                    bool checkFurther = false;
+                    //redirection is based on source tab
+                    if (redirection.SourceTabId != Null.NullInteger)
+                    {
+                        //source tab matches current tab
+                        if (currentTabId == redirection.SourceTabId)
+                        {
+                            checkFurther = true;
+                        }
+                        //is child tabs to be included as well
+                        else if(redirection.IncludeChildTabs) 
+                        {
+                            //Get all the descendents of the source tab and find out if current tab is in source tab's hierarchy or not.
+                            foreach (var childTab in tabController.GetTabsByPortal(portalId).DescendentsOf(redirection.SourceTabId))
+                            {
+                                if (childTab.TabID == currentTabId)
+                                {
+                                    checkFurther = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    //redirection is based on portal
+                    else if (redirection.SourceTabId == Null.NullInteger)
+                    {
+                        checkFurther = true;
+                    }
+
+                    if(checkFurther)
+                    {
+                        //check if client capability matches with this rule
+                        if(DoesCapabilityMatchWithRule(clientCapability,redirection))
+                        {   
+                            //find the redirect url
+                            redirectUrl = GetRedirectUrlFromRule(redirection);
+                            break;
+                        }
+                    }                    
+                }
+            }
+
+            return redirectUrl;
+        }
+
+
 		/// <summary>
 		/// save a redirection. If redirection.Id equals Null.NullInteger(-1), that means need to add a new redirection;
 		/// otherwise will update the redirection by redirection.Id.
@@ -60,6 +127,7 @@ namespace DotNetNuke.Services.Mobile
 			                                        (int) redirection.Type,
 			                                        redirection.SortOrder,
 			                                        redirection.SourceTabId,
+													redirection.IncludeChildTabs,
 			                                        (int) redirection.TargetType,
 			                                        redirection.TargetValue,
 													redirection.Enabled,
@@ -150,6 +218,59 @@ namespace DotNetNuke.Services.Mobile
 			var objEventLog = new EventLogController();
 			objEventLog.AddLog("Message", logContent, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.ADMIN_ALERT);
 		}
+
+        private bool DoesCapabilityMatchWithRule(IClientCapability clientCapability, IRedirection redirection)
+        {
+            bool match = false;
+            //check for Tablet first as IsTablet = true also means IsMobile true
+            if (redirection.Type == RedirectionType.Tablet && clientCapability.IsTablet)
+            {
+                match = true;
+            }
+            else if (redirection.Type == RedirectionType.MobilePhone && clientCapability.IsMobile)
+            {
+                match = true;
+            }
+            else if (redirection.Type == RedirectionType.AllMobile && clientCapability.IsMobile)
+            {
+                match = true;
+            }
+            else if (redirection.Type == RedirectionType.Other)
+            {
+                //match all the capabilities defined in the rule
+                foreach (IMatchRules rule in redirection.MatchRules)
+                {
+                    if (clientCapability.Capabilities.ContainsKey(rule.Capability))
+                    {
+                        if (clientCapability.Capabilities[rule.Capability] == rule.Expression)
+                        {
+                            match = true;
+                            break;
+                        }
+                    }
+                }
+            }
+                           
+            return match;
+        }
+
+        private string GetRedirectUrlFromRule(IRedirection redirection)
+        {
+            string redirectUrl = string.Empty;
+
+            if (redirection.TargetType == TargetType.Url)
+                redirectUrl = redirection.TargetValue.ToString();
+            else if (redirection.TargetType == TargetType.Tab)
+                redirectUrl = Globals.NavigateURL(int.Parse(redirection.TargetValue.ToString()));
+            else if (redirection.TargetType == TargetType.Portal)
+            {
+                var portal = new PortalController().GetPortal(redirection.PortalId);
+                if (portal != null && portal.HomeTabId != Null.NullInteger)
+                    redirectUrl = Globals.NavigateURL(int.Parse(redirection.TargetValue.ToString()));                
+            }
+
+            return redirectUrl;
+        }
 
 		#endregion
 	}

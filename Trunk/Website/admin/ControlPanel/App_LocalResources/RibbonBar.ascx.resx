@@ -429,4 +429,7 @@
   <data name="Tool.RecycleApp.ToolTip" xml:space="preserve">
     <value>Forces the application pool to recycle. Your website will be unavilable for a few moments.</value>
   </data>
+  <data name="ModeMobilePreview.Text" xml:space="preserve">
+    <value>Preview</value>
+  </data>
 </root>

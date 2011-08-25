@@ -52,6 +52,12 @@ namespace DotNetNuke.Services.Mobile
 		int SourceTabId { get; set; }
 
 		/// <summary>
+		/// This value will be available when SourceTabId have a specific value, in that way when this value is true, page will rediect
+		/// to target when request source tab and all child tabs under source tab.
+		/// </summary>
+		bool IncludeChildTabs { get; set; }
+
+		/// <summary>
 		/// The redirection type: should be Mobile, Tablet, Both of mobile and tablet, and all other unknown devices.
 		/// if this value is Other, should use MatchRules to match the special request need to redirect.
 		/// </summary>

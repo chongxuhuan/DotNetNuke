@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
@@ -118,6 +119,44 @@ namespace DotNetNuke.Entities.Users
             //create log record
             objEventLogInfo.LogTypeKey = loginStatus.ToString();
             objEventLog.AddLog(objEventLogInfo);
+        }
+
+        private static void AutoAssignUsersToPublicRoles(UserInfo user, int portalId)
+        {
+            var roleController = new RoleController();
+
+            foreach (RoleInfo role in roleController.GetPortalRoles(portalId))
+            {
+                if (role.AutoAssignment)
+                {
+                    roleController.AddUserRole(portalId, user.UserID, role.RoleID, Null.NullDate, Null.NullDate);
+                }
+            }
+        }
+
+        private static int GetEffectivePortalId(int portalId)
+        {
+            var portalController = new PortalController();
+            var portal = portalController.GetPortal(portalId);
+            var portalGroup = (from p in PortalGroupController.Instance.GetPortalGroups()
+                               where p.PortalGroupId == portal.PortalGroupID
+                               select p)
+                            .SingleOrDefault();
+
+            if (portalGroup != null)
+            {
+                portalId = portalGroup.MasterPortalId;
+            }
+            
+            return portalId;
+        }
+
+        private static bool IsMemberOfPortalGroup(int portalId)
+        {
+            var portalController = new PortalController();
+            var portal = portalController.GetPortal(portalId);
+
+            return (portal.PortalGroupID > Null.NullInteger);
         }
 
         private static object GetCachedUserByPortalCallBack(CacheItemArgs cacheItemArgs)
@@ -344,40 +383,45 @@ namespace DotNetNuke.Entities.Users
         /// Creates a new User in the Data Store
         /// </summary>
         /// <remarks></remarks>
-        /// <param name="objUser">The userInfo object to persist to the Database</param>
+        /// <param name="user">The userInfo object to persist to the Database</param>
         /// <returns>The Created status ot the User</returns>
         /// -----------------------------------------------------------------------------
-        public static UserCreateStatus CreateUser(ref UserInfo objUser)
+        public static UserCreateStatus CreateUser(ref UserInfo user)
         {
+            int portalId = GetEffectivePortalId(user.PortalID);
+            user.PortalID = portalId;
 
             //Create the User
-            var createStatus = MemberProvider.CreateUser(ref objUser);
+            var createStatus = MemberProvider.CreateUser(ref user);
 
             if (createStatus == UserCreateStatus.Success)
             {
                 var objEventLog = new EventLogController();
-                objEventLog.AddLog(objUser, PortalController.GetCurrentPortalSettings(), GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.USER_CREATED);
-                DataCache.ClearPortalCache(objUser.PortalID, false);
-                if (!objUser.IsSuperUser)
+                objEventLog.AddLog(user, PortalController.GetCurrentPortalSettings(), GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.USER_CREATED);
+                DataCache.ClearPortalCache(portalId, false);
+                if (!user.IsSuperUser)
                 {
-                    var objRoles = new RoleController();
-                    RoleInfo objRole;
-
                     //autoassign user to portal roles
-                    var arrRoles = objRoles.GetPortalRoles(objUser.PortalID);
-                    int i;
-                    for (i = 0; i <= arrRoles.Count - 1; i++)
+                    if (IsMemberOfPortalGroup(portalId))
                     {
-                        objRole = (RoleInfo) arrRoles[i];
-                        if (objRole.AutoAssignment)
+                        var portalController = new PortalController();
+                        PortalInfo thisPortal = portalController.GetPortal(portalId);
+
+                        foreach (PortalInfo portal in PortalGroupController.Instance.GetPortalsByGroup(thisPortal.PortalGroupID))
                         {
-                            objRoles.AddUserRole(objUser.PortalID, objUser.UserID, objRole.RoleID, Null.NullDate, Null.NullDate);
+                            AutoAssignUsersToPublicRoles(user, portal.PortalID);
                         }
+                    }
+                    else
+                    {
+                        AutoAssignUsersToPublicRoles(user, portalId);
                     }
                 }
             }
             return createStatus;
         }
+
+
 
         /// -----------------------------------------------------------------------------
         /// <summary>

@@ -25,7 +25,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -111,7 +113,13 @@ namespace DotNetNuke.Services.Mobile
 		private IList<IPreviewProfile> GetProfilesByPortalIdCallBack(CacheItemArgs cacheItemArgs)
 		{
 			int portalId = (int)cacheItemArgs.ParamList[0];
-			return CBO.FillCollection<PreviewProfile>(DataProvider.Instance().GetPreviewProfiles(portalId)).Cast<IPreviewProfile>().ToList();
+			var profiles = CBO.FillCollection<PreviewProfile>(DataProvider.Instance().GetPreviewProfiles(portalId));
+			if(profiles.Count == 0)
+			{
+				profiles = CreateDefaultDevices(portalId);
+			}
+
+			return profiles.Cast<IPreviewProfile>().ToList();
 		}
 
 		private void ClearCache(int portalId)
@@ -125,6 +133,45 @@ namespace DotNetNuke.Services.Mobile
 			objEventLog.AddLog("Message", logContent, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.ADMIN_ALERT);
 		}
 
+
+		private List<PreviewProfile> CreateDefaultDevices(int portalId)
+		{
+			string defaultPreviewProfiles;
+			var settings = PortalController.GetPortalSettingsDictionary(portalId);
+			List<PreviewProfile> profiles = new List<PreviewProfile>();
+
+			if (!settings.TryGetValue("DefPreviewProfiles_Created", out defaultPreviewProfiles))
+			{
+				try
+				{
+					var dataPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, Config.GetSetting("DefaultDevicesDatabase"));
+
+					if (!string.IsNullOrEmpty(dataPath) && File.Exists(dataPath))
+					{
+						var serializer = new XmlSerializer(typeof (List<PreviewProfile>));
+						profiles = (List<PreviewProfile>) serializer.Deserialize(File.OpenRead(dataPath));
+
+						if (profiles != null)
+						{
+							profiles.ForEach(p =>
+							                 	{
+							                 		p.PortalId = portalId;
+
+							                 		Save(p);
+							                 	});
+						}
+					}
+
+					PortalController.UpdatePortalSetting(portalId, "DefPreviewProfiles_Created", "true");
+				}
+				catch(Exception ex)
+				{
+					Exceptions.Exceptions.LogException(ex);
+				}
+			}
+
+			return profiles;
+		}
 		#endregion
 	}
 }

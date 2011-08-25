@@ -3260,9 +3260,9 @@ namespace DotNetNuke.Data
 			return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_GetRedirectionRules", redirectionId);
 		}
 
-		public override int SaveRedirection(int id, int portalId, string name, int type, int sortOrder, int sourceTabId, int targetType, object targetValue, bool enabled, int userId)
+		public override int SaveRedirection(int id, int portalId, string name, int type, int sortOrder, int sourceTabId, bool includeChildTabs, int targetType, object targetValue, bool enabled, int userId)
 		{
-			return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SaveRedirection", id, portalId, name, type, sortOrder, sourceTabId, targetType, targetValue, enabled, userId));
+			return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SaveRedirection", id, portalId, name, type, sortOrder, sourceTabId, includeChildTabs, targetType, targetValue, enabled, userId));
 		}
 
 		public override void SaveRedirectionRule(int id, int redirectionId, string capbility, string expression)

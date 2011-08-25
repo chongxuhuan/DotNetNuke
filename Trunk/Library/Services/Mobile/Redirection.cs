@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
@@ -36,6 +37,7 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Services.Mobile
 {
+    [Serializable]
 	public class Redirection : IRedirection, IHydratable
 	{
 		private int _id = -1;
@@ -56,32 +58,45 @@ namespace DotNetNuke.Services.Mobile
 			}
 		}
 
-		/// <summary>
+        /// <summary>
 		/// The portal Redirection is belong to.
 		/// </summary>
-		public int PortalId { get; set; }
-
-		/// <summary>
+        [XmlAttribute]
+        public int PortalId { get; set; }
+        
+        /// <summary>
 		/// Redirection name.
 		/// </summary>
-		public string Name { get; set; }
-
+        [XmlAttribute]
+        public string Name { get; set; }
+        
 		/// <summary>
 		/// The redirection's match source tab. if this value is Null.NullInteger(-1) means should redirect when request the whole current portal;
 		/// otherwise means this redirection will be available for the specific tab.
 		/// </summary>
+        [XmlAttribute]
 		public int SourceTabId { get; set; }
 
 		/// <summary>
+		/// This value will be available when SourceTabId have a specific value, in that way when this value is true, page will rediect
+		/// to target when request source tab and all child tabs under source tab.
+		/// </summary>
+		[XmlAttribute]
+		public bool IncludeChildTabs { get; set; }
+                
+		/// <summary>
 		/// Redirection Type: Mobile, Tablet, Both or Other.
 		/// </summary>
-		public RedirectionType Type { get; set; }
-
+        [XmlAttribute]
+        public RedirectionType Type { get; set; }
+        
+        [XmlIgnore]
 		private IList<IMatchRules> _matchRules;
 
 		/// <summary>
 		/// When redirection type is RedirectionType.Other, should use this collection to match the request by capability info.
-		/// </summary>
+		/// </summary>        
+        [XmlIgnore]
 		public IList<IMatchRules> MatchRules
 		{
 			get
@@ -110,8 +125,9 @@ namespace DotNetNuke.Services.Mobile
 		/// <summary>
 		/// Redirection's target type, should be: Portal, Tab, Url
 		/// </summary>
+        [XmlAttribute]
 		public TargetType TargetType { get; set; }
-
+        
 		/// <summary>
 		/// the redirection's target value, this value will determine by TargetType as:
 		/// <list type="bullet">
@@ -120,21 +136,25 @@ namespace DotNetNuke.Services.Mobile
 		/// <item>TargetType.Url: this value should be a valid url.</item>
 		/// </list>
 		/// </summary>
-		public object TargetValue { get; set; }
-
+        [XmlAttribute]
+        public object TargetValue { get; set; }
+        
 		/// <summary>
 		/// Whether this redirection is available.
 		/// </summary>
+        [XmlAttribute]
 		public bool Enabled { get; set; }
-
+        
 		/// <summary>
 		/// Redirection's piority.
 		/// </summary>
+        [XmlAttribute]
 		public int SortOrder { get; set; }
-
+        
 		/// <summary>
 		/// IHydratable.KeyID.
 		/// </summary>
+        [XmlIgnore]
 		public int KeyID
 		{
 			get
@@ -158,6 +178,7 @@ namespace DotNetNuke.Services.Mobile
 			this.Name = dr["Name"].ToString();
 			this.Type = (RedirectionType)Convert.ToInt32(dr["Type"]);
 			this.SourceTabId = Convert.ToInt32(dr["SourceTabId"]);
+			this.IncludeChildTabs = Convert.ToBoolean(dr["IncludeChildTabs"]);
 			this.SortOrder = Convert.ToInt32(dr["SortOrder"]);
 			this.TargetType = (TargetType)Convert.ToInt32(dr["TargetType"]);
 			this.TargetValue = dr["TargetValue"];

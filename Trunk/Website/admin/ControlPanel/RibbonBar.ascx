@@ -16,6 +16,7 @@
                 <asp:listitem value="VIEW" ResourceKey="ModeView" />
                 <asp:listitem value="EDIT" ResourceKey="ModeEdit" />
                 <asp:listitem value="LAYOUT" ResourceKey="ModeLayout" />
+				<asp:listitem value="PREVIEW" ResourceKey="ModeMobilePreview" />
             </asp:DropDownList>
             <asp:LinkButton ID="cmdVisibility" runat="server" CausesValidation="False">
 			<asp:Image ID="imgVisibility" runat="server" /></asp:LinkButton>

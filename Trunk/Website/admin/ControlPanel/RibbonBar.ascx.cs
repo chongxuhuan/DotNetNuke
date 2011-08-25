@@ -37,6 +37,7 @@ using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.Services.Mobile;
 using DotNetNuke.Services.Upgrade;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.Web.UI.WebControls;
@@ -77,6 +78,11 @@ namespace DotNetNuke.UI.ControlPanels
             {
                 ddlMode.Items.Remove(ddlMode.Items.FindByValue("LAYOUT"));
             }
+
+			if(!(new PreviewProfileController().GetProfilesByPortal(this.PortalSettings.PortalId).Count > 0))
+			{
+				ddlMode.Items.Remove(ddlMode.Items.FindByValue("PREVIEW"));
+			}
 
             switch (UserMode)
             {

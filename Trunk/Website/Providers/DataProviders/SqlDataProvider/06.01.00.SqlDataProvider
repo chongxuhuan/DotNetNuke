@@ -39,6 +39,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			[Type] [int] NOT NULL,
 			[SortOrder] [int] CONSTRAINT [DF_{objectQualifier}Mobile_Redirections_SortOrder]  DEFAULT ((0)) NOT NULL,
 			[SourceTabId] [int] NOT NULL,
+			[IncludeChildTabs] [BIT] NOT NULL,
 			[TargetType] [int] NOT NULL,
 			[TargetValue] [nvarchar](260) NOT NULL,
 			[Enabled] BIT NOT NULL,
@@ -149,6 +150,7 @@ AS
             [Type] ,
             SortOrder ,
             SourceTabId ,
+			IncludeChildTabs ,
             TargetType ,
             TargetValue ,
 			Enabled ,
@@ -226,6 +228,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SaveRedirection]
     @Type INT ,
     @SortOrder INT ,
     @SourceTabId INT ,
+	@IncludeChildTabs BIT ,
     @TargetType INT ,
     @TargetValue NVARCHAR(50) ,
 	@Enabled BIT,
@@ -239,6 +242,7 @@ AS
                       Type ,
                       SortOrder ,
                       SourceTabId ,
+					  IncludeChildTabs ,
                       TargetType ,
                       TargetValue ,
 					  Enabled ,
@@ -253,6 +257,7 @@ AS
                       @Type , -- Type - int
                       @SortOrder , -- SortOrder - int
                       @SourceTabId , -- SourceTabId - int
+					  @IncludeChildTabs ,
                       @TargetType ,
                       @TargetValue ,
 					  @Enabled ,
@@ -270,6 +275,7 @@ AS
                     [Type] = @Type ,
                     SortOrder = @SortOrder ,
                     SourceTabId = @SourceTabId ,
+					IncludeChildTabs = @IncludeChildTabs ,
                     TargetType = @TargetType ,
                     TargetValue = @TargetValue ,
 					Enabled = @Enabled ,
