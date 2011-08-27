@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 using DotNetNuke.Common.Lists;
 using DotNetNuke.Common.Utilities;
@@ -171,6 +172,11 @@ namespace DotNetNuke.Entities.Profile
             return arr;
         }
 
+        private static int GetEffectivePortalId(int portalId)
+        {
+            return PortalController.GetEffectivePortalId(portalId);
+        }
+
         private static IEnumerable<ProfilePropertyDefinition> GetPropertyDefinitions(int portalId)
         {
 			//Get the Cache Key
@@ -207,6 +213,8 @@ namespace DotNetNuke.Entities.Profile
         /// -----------------------------------------------------------------------------
         public static void AddDefaultDefinitions(int portalId)
         {
+            portalId = GetEffectivePortalId(portalId); 
+            
             _orderCounter = 1;
             var listController = new ListController();
             Dictionary<string, ListEntryInfo> dataTypes = listController.GetListEntryInfoDictionary("DataType");
@@ -250,11 +258,12 @@ namespace DotNetNuke.Entities.Profile
         /// -----------------------------------------------------------------------------
         public static int AddPropertyDefinition(ProfilePropertyDefinition definition)
         {
+            int portalId = GetEffectivePortalId(definition.PortalId);
             if (definition.Required)
             {
                 definition.Visible = true;
             }
-            int intDefinition = _dataProvider.AddPropertyDefinition(definition.PortalId,
+            int intDefinition = _dataProvider.AddPropertyDefinition(portalId,
                                                                definition.ModuleDefId,
                                                                definition.DataType,
                                                                definition.DefaultValue,
@@ -281,7 +290,7 @@ namespace DotNetNuke.Entities.Profile
 		/// -----------------------------------------------------------------------------
         public static void ClearProfileDefinitionCache(int portalId)
         {
-            DataCache.ClearDefinitionsCache(portalId);
+            DataCache.ClearDefinitionsCache(GetEffectivePortalId(portalId));
         }
 
         /// -----------------------------------------------------------------------------
@@ -310,7 +319,7 @@ namespace DotNetNuke.Entities.Profile
         {
             bool bFound = Null.NullBoolean;
             ProfilePropertyDefinition definition = null;
-            foreach (ProfilePropertyDefinition def in GetPropertyDefinitions(portalId))
+            foreach (ProfilePropertyDefinition def in GetPropertyDefinitions(GetEffectivePortalId(portalId)))
             {
                 if (def.PropertyDefinitionId == definitionId)
                 {
@@ -337,6 +346,8 @@ namespace DotNetNuke.Entities.Profile
         /// -----------------------------------------------------------------------------
         public static ProfilePropertyDefinition GetPropertyDefinitionByName(int portalId, string name)
         {
+            portalId = GetEffectivePortalId(portalId);
+
             bool bFound = Null.NullBoolean;
             ProfilePropertyDefinition definition = null;
             foreach (ProfilePropertyDefinition def in GetPropertyDefinitions(portalId))
@@ -366,6 +377,8 @@ namespace DotNetNuke.Entities.Profile
         /// -----------------------------------------------------------------------------
         public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByCategory(int portalId, string category)
         {
+            portalId = GetEffectivePortalId(portalId); 
+            
             var definitions = new ProfilePropertyDefinitionCollection();
             foreach (ProfilePropertyDefinition definition in GetPropertyDefinitions(portalId))
             {
@@ -399,6 +412,8 @@ namespace DotNetNuke.Entities.Profile
         /// -----------------------------------------------------------------------------
         public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByPortal(int portalId, bool clone)
         {
+            portalId = GetEffectivePortalId(portalId);
+            
             var definitions = new ProfilePropertyDefinitionCollection();
             foreach (ProfilePropertyDefinition definition in GetPropertyDefinitions(portalId))
             {
@@ -412,11 +427,14 @@ namespace DotNetNuke.Entities.Profile
         /// Gets the Profile Information for the User
         /// </summary>
         /// <remarks></remarks>
-        /// <param name="objUser">The user whose Profile information we are retrieving.</param>
+        /// <param name="user">The user whose Profile information we are retrieving.</param>
         /// -----------------------------------------------------------------------------
-        public static void GetUserProfile(ref UserInfo objUser)
+        public static void GetUserProfile(ref UserInfo user)
         {
-            _profileProvider.GetUserProfile(ref objUser);
+            int portalId = GetEffectivePortalId(user.PortalID);
+            user.PortalID = portalId;
+
+            _profileProvider.GetUserProfile(ref user);
         }
 
         /// -----------------------------------------------------------------------------
@@ -427,6 +445,7 @@ namespace DotNetNuke.Entities.Profile
         /// -----------------------------------------------------------------------------
         public static void UpdatePropertyDefinition(ProfilePropertyDefinition definition)
         {
+            
             if (definition.Required)
             {
                 definition.Visible = true;
@@ -452,32 +471,38 @@ namespace DotNetNuke.Entities.Profile
         /// <summary>
         /// Updates a User's Profile
         /// </summary>
-        /// <param name="objUser">The use to update</param>
+        /// <param name="user">The use to update</param>
         /// <remarks>
         /// </remarks>
         /// -----------------------------------------------------------------------------
-        public static void UpdateUserProfile(UserInfo objUser)
+        public static void UpdateUserProfile(UserInfo user)
         {
+            int portalId = GetEffectivePortalId(user.PortalID);
+            user.PortalID = portalId;
+           
             //Update the User Profile
-            if (objUser.Profile.IsDirty)
+            if (user.Profile.IsDirty)
             {
-                _profileProvider.UpdateUserProfile(objUser);
+                _profileProvider.UpdateUserProfile(user);
             }
 
             //Remove the UserInfo from the Cache, as it has been modified
-            DataCache.ClearUserCache(objUser.PortalID, objUser.Username);
+            DataCache.ClearUserCache(user.PortalID, user.Username);
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Updates a User's Profile
         /// </summary>
-        /// <param name="objUser">The use to update</param>
+        /// <param name="user">The use to update</param>
         /// <param name="profileProperties">The collection of profile properties</param>
         /// <returns>The updated User</returns>
         /// -----------------------------------------------------------------------------
-        public static UserInfo UpdateUserProfile(UserInfo objUser, ProfilePropertyDefinitionCollection profileProperties)
+        public static UserInfo UpdateUserProfile(UserInfo user, ProfilePropertyDefinitionCollection profileProperties)
         {
+            int portalId = GetEffectivePortalId(user.PortalID);
+            user.PortalID = portalId;
+            
             bool updateUser = Null.NullBoolean;
             //Iterate through the Definitions
             if (profileProperties != null)
@@ -488,20 +513,20 @@ namespace DotNetNuke.Entities.Profile
                     string propertyValue = propertyDefinition.PropertyValue;
                     if (propertyDefinition.IsDirty)
                     {
-                        objUser.Profile.SetProfileProperty(propertyName, propertyValue);
+                        user.Profile.SetProfileProperty(propertyName, propertyValue);
                         if (propertyName.ToLower() == "firstname" || propertyName.ToLower() == "lastname")
                         {
                             updateUser = true;
                         }
                     }
                 }
-                UpdateUserProfile(objUser);
+                UpdateUserProfile(user);
                 if (updateUser)
                 {
-                    UserController.UpdateUser(objUser.PortalID, objUser);
+                    UserController.UpdateUser(portalId, user);
                 }
             }
-            return objUser;
+            return user;
         }
 
         /// -----------------------------------------------------------------------------

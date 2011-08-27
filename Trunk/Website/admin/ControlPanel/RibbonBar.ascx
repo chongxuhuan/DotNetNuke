@@ -83,34 +83,49 @@
     </div>
 
 	<script type="text/javascript">
-	    jQuery(document).ready(function ($) {
-	    	if(!$(".dnnControlPanel").data("loaded")) {
-	    		var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
-	    		var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
-	    		var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
+		jQuery(document).ready(function ($) {
+			if (!$(".dnnControlPanel").data("loaded")) {
+				var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
+				var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
+				var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
 
-	    		// Client IDs for the following three have _CPCommandBtn appended as a rule
-	    		$('#<%= DeletePage.ClientID %>_CPCommandBtn').dnnConfirm({
-	    				text: '<%= GetButtonConfirmMessage("DeletePage") %>',
-	    				yesText: yesText,
-	    				noText: noText,
-	    				title: titleText
-	    			});
-	    		$('#<%= CopyPermissionsToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
-	    				text: '<%= GetButtonConfirmMessage("CopyPermissionsToChildren") %>',
-	    				yesText: yesText,
-	    				noText: noText,
-	    				title: titleText
-	    			});
-	    		$('#<%= CopyDesignToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
-	    				text: '<%= GetButtonConfirmMessage("CopyDesignToChildren") %>',
-	    				yesText: yesText,
-	    				noText: noText,
-	    				title: titleText
-	    			});
-	    		
-	    		$(".dnnControlPanel").data("loaded", true);
-	    	}
-	    });
+				// Client IDs for the following three have _CPCommandBtn appended as a rule
+				$('#<%= DeletePage.ClientID %>_CPCommandBtn').dnnConfirm({
+					text: '<%= GetButtonConfirmMessage("DeletePage") %>',
+					yesText: yesText,
+					noText: noText,
+					title: titleText
+				});
+				$('#<%= CopyPermissionsToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
+					text: '<%= GetButtonConfirmMessage("CopyPermissionsToChildren") %>',
+					yesText: yesText,
+					noText: noText,
+					title: titleText
+				});
+				$('#<%= CopyDesignToChildren.ClientID %>_CPCommandBtn').dnnConfirm({
+					text: '<%= GetButtonConfirmMessage("CopyDesignToChildren") %>',
+					yesText: yesText,
+					noText: noText,
+					title: titleText
+				});
+
+				$("#<%=ddlMode.ClientID %>").each(function (e) {
+					var changeEvent = $(this).attr("onchange");
+					$(this).attr("onchange", "");
+
+					$(this).change(function (e) {
+						if ($(this).val() === "PREVIEW") {
+							<%=PreviewPopup() %> ;
+							return false;
+						}
+						else {
+							eval(changeEvent);
+						}
+					});
+				});
+
+				$(".dnnControlPanel").data("loaded", true);
+			};
+		});
 	</script>
 </asp:Panel>

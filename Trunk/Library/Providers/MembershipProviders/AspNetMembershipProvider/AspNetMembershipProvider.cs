@@ -28,6 +28,7 @@ using System.Collections;
 using System.Data;
 using System.Web.Security;
 
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Host;
@@ -359,6 +360,117 @@ namespace DotNetNuke.Security.Membership
             }
         }
 
+        private static ArrayList FillUserCollection(int portalId, IDataReader dr, ref int totalRecords)
+        {
+            //Note:  the DataReader returned from this method should contain 2 result sets.  The first set
+            //       contains the TotalRecords, that satisfy the filter, the second contains the page
+            //       of data
+            var arrUsers = new ArrayList();
+            try
+            {
+                while (dr.Read())
+                {
+                    //fill business object
+                    UserInfo user = FillUserInfo(portalId, dr, false);
+                    //add to collection
+                    arrUsers.Add(user);
+                }
+                //Get the next result (containing the total)
+                dr.NextResult();
+
+                //Get the total no of records from the second result
+                totalRecords = Globals.GetTotalRecords(ref dr);
+            }
+            catch (Exception exc)
+            {
+                Exceptions.LogException(exc);
+            }
+            finally
+            {
+                //close datareader
+                CBO.CloseDataReader(dr, true);
+            }
+            return arrUsers;
+        }
+
+        private static ArrayList FillUserCollection(int portalId, IDataReader dr)
+        {
+            //Note:  the DataReader returned from this method should contain 2 result sets.  The first set
+            //       contains the TotalRecords, that satisfy the filter, the second contains the page
+            //       of data
+            var arrUsers = new ArrayList();
+            try
+            {
+                while (dr.Read())
+                {
+                    //fill business object
+                    UserInfo user = FillUserInfo(portalId, dr, false);
+                    //add to collection
+                    arrUsers.Add(user);
+                }
+            }
+            catch (Exception exc)
+            {
+                Exceptions.LogException(exc);
+            }
+            finally
+            {
+                //close datareader
+                CBO.CloseDataReader(dr, true);
+            }
+            return arrUsers;
+        }
+
+        private static UserInfo FillUserInfo(int portalId, IDataReader dr, bool closeDataReader)
+        {
+            UserInfo objUserInfo = null;
+            try
+            {
+                //read datareader
+                var bContinue = true;
+                if (closeDataReader)
+                {
+                    bContinue = false;
+                    if (dr.Read())
+                    {
+                        //Ensure the data reader returned is valid
+                        if (string.Equals(dr.GetName(0), "UserID", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            bContinue = true;
+                        }
+                    }
+                }
+                if (bContinue)
+                {
+                    objUserInfo = new UserInfo
+                    {
+                        PortalID = portalId,
+                        IsSuperUser = Null.SetNullBoolean(dr["IsSuperUser"]),
+                        IsDeleted = Null.SetNullBoolean(dr["IsDeleted"]),
+                        UserID = Null.SetNullInteger(dr["UserID"]),
+                        FirstName = Null.SetNullString(dr["FirstName"]),
+                        LastName = Null.SetNullString(dr["LastName"]),
+                        RefreshRoles = Null.SetNullBoolean(dr["RefreshRoles"]),
+                        DisplayName = Null.SetNullString(dr["DisplayName"])
+                    };
+                    objUserInfo.AffiliateID = Null.SetNullInteger(Null.SetNull(dr["AffiliateID"], objUserInfo.AffiliateID));
+                    objUserInfo.Username = Null.SetNullString(dr["Username"]);
+                    UserController.GetUserMembership(objUserInfo);
+                    objUserInfo.Email = Null.SetNullString(dr["Email"]);
+                    objUserInfo.Membership.UpdatePassword = Null.SetNullBoolean(dr["UpdatePassword"]);
+                    if (!objUserInfo.IsSuperUser)
+                    {
+                        objUserInfo.Membership.Approved = Null.SetNullBoolean(dr["Authorised"]);
+                    }
+                }
+            }
+            finally
+            {
+                CBO.CloseDataReader(dr, closeDataReader);
+            }
+            return objUserInfo;
+        }
+
         private static void FillUserMembership(MembershipUser aspNetUser, UserInfo user)
         {
 			//Fill Membership Property
@@ -410,7 +522,7 @@ namespace DotNetNuke.Security.Membership
         private UserInfo GetUserByAuthToken(int portalId, string userToken, string authType)
         {
             IDataReader dr = _dataProvider.GetUserByAuthToken(portalId, userToken, authType);
-            UserInfo objUserInfo = UserController.FillUserInfo(portalId, dr, true);
+            UserInfo objUserInfo = FillUserInfo(portalId, dr, true);
             return objUserInfo;
         }
 
@@ -684,7 +796,7 @@ namespace DotNetNuke.Security.Membership
 
         public override ArrayList GetDeletedUsers(int portalId)
         {
-            return UserController.FillUserCollection(portalId, _dataProvider.GetDeletedUsers(portalId));
+            return FillUserCollection(portalId, _dataProvider.GetDeletedUsers(portalId));
         }
 
         /// -----------------------------------------------------------------------------
@@ -697,7 +809,7 @@ namespace DotNetNuke.Security.Membership
         public override ArrayList GetOnlineUsers(int portalId)
         {
             int totalRecords = 0;
-            return UserController.FillUserCollection(portalId, _dataProvider.GetOnlineUsers(portalId), ref totalRecords);
+            return FillUserCollection(portalId, _dataProvider.GetOnlineUsers(portalId), ref totalRecords);
         }
 
         /// -----------------------------------------------------------------------------
@@ -728,7 +840,7 @@ namespace DotNetNuke.Security.Membership
 
         public override ArrayList GetUnAuthorizedUsers(int portalId, bool includeDeleted, bool superUsersOnly)
         {
-            return UserController.FillUserCollection(portalId, _dataProvider.GetUnAuthorizedUsers(portalId, includeDeleted, superUsersOnly));
+            return FillUserCollection(portalId, _dataProvider.GetUnAuthorizedUsers(portalId, includeDeleted, superUsersOnly));
         }
         
         /// -----------------------------------------------------------------------------
@@ -744,7 +856,7 @@ namespace DotNetNuke.Security.Membership
         public override UserInfo GetUser(int portalId, int userId)
         {
             IDataReader dr = _dataProvider.GetUser(portalId, userId);
-            UserInfo objUserInfo = UserController.FillUserInfo(portalId, dr, true);
+            UserInfo objUserInfo = FillUserInfo(portalId, dr, true);
             return objUserInfo;
         }
 
@@ -761,7 +873,7 @@ namespace DotNetNuke.Security.Membership
         public override UserInfo GetUserByUserName(int portalId, string username)
         {
             IDataReader dr = _dataProvider.GetUserByUsername(portalId, username);
-            UserInfo objUserInfo = UserController.FillUserInfo(portalId, dr, true);
+            UserInfo objUserInfo = FillUserInfo(portalId, dr, true);
             return objUserInfo;
         }
 
@@ -836,7 +948,7 @@ namespace DotNetNuke.Security.Membership
                 pageSize = int.MaxValue;
             }
 
-            return UserController.FillUserCollection(portalId, _dataProvider.GetAllUsers(portalId, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
+            return FillUserCollection(portalId, _dataProvider.GetAllUsers(portalId, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
         }
 
         /// -----------------------------------------------------------------------------
@@ -880,7 +992,7 @@ namespace DotNetNuke.Security.Membership
                 pageSize = int.MaxValue;
             }
 
-            return UserController.FillUserCollection(portalId, _dataProvider.GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
+            return FillUserCollection(portalId, _dataProvider.GetUsersByEmail(portalId, emailToMatch, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
         }
 
         /// -----------------------------------------------------------------------------
@@ -924,7 +1036,7 @@ namespace DotNetNuke.Security.Membership
                 pageSize = int.MaxValue;
             }
 
-            return UserController.FillUserCollection(portalId, _dataProvider.GetUsersByUsername(portalId, userNameToMatch, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
+            return FillUserCollection(portalId, _dataProvider.GetUsersByUsername(portalId, userNameToMatch, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
         }
 
         /// -----------------------------------------------------------------------------
@@ -972,7 +1084,7 @@ namespace DotNetNuke.Security.Membership
                 pageSize = int.MaxValue;
             }
 
-            return UserController.FillUserCollection(portalId, _dataProvider.GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
+            return FillUserCollection(portalId, _dataProvider.GetUsersByProfileProperty(portalId, propertyName, propertyValue, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
         }
 
         /// -----------------------------------------------------------------------------

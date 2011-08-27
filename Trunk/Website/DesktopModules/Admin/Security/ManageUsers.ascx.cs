@@ -296,17 +296,6 @@ namespace DotNetNuke.Modules.Admin.Users
 
 		#region "Private Methods"
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// BindData binds the controls to the Data
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	9/13/2004	Updated to reflect design changes for Help, 508 support
-        ///                       and localisation
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private void BindData()
         {
             if (User != null)
@@ -319,8 +308,8 @@ namespace DotNetNuke.Modules.Admin.Users
                     return;
                 }
 				
-                //Check if User is a member of the Current Portal
-                if (User.PortalID != Null.NullInteger && User.PortalID != PortalId)
+                //Check if User is a member of the Current Portal (or a member of the MasterPortal if PortalGroups enabled)
+                if (User.PortalID != Null.NullInteger && User.PortalID != PortalController.GetEffectivePortalId(PortalId))
                 {
                     AddModuleMessage("InvalidUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
                     DisableForm();
@@ -419,14 +408,6 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// BindMembership binds the membership controls
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/13/2006
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private void BindMembership()
         {
             ctlMembership.User = User;
@@ -436,14 +417,6 @@ namespace DotNetNuke.Modules.Admin.Users
             imgOnline.Visible = ctlMembership.UserMembership.IsOnLine;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// BindRegister binds the register controls
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/20/2006
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private void BindRegister()
         {
             if (UseCaptcha)
@@ -480,14 +453,6 @@ namespace DotNetNuke.Modules.Admin.Users
             captchaRow.Visible = UseCaptcha;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// BindUser binds the user controls
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/13/2006
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private void BindUser()
         {
             if (AddUser)
@@ -509,16 +474,6 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// CheckQuota checks whether the User Quota will be exceeded
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	11/16/2006	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private void CheckQuota()
         {
             if (PortalSettings.Users < PortalSettings.UserQuota || UserInfo.IsSuperUser || PortalSettings.UserQuota == 0)
@@ -539,28 +494,12 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// DisableForm disbles the form (if the user is not authorised)
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/13/2006
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private void DisableForm()
         {
             adminTabNav.Visible = false;
 
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// ShowPanel displays the correct "panel"
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	03/13/2006
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private void ShowPanel()
         {
             if (AddUser)
@@ -652,6 +591,25 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             base.OnInit(e);
 
+            cmdCancel.Click += cmdCancel_Click;
+            cmdRegister.Click += cmdRegister_Click;
+
+            ctlUser.UserCreateCompleted += UserCreateCompleted;
+            ctlUser.UserDeleted += UserDeleted;
+            ctlUser.UserRemoved += UserRemoved;
+            ctlUser.UserRestored += UserRestored;
+            ctlUser.UserUpdateCompleted += UserUpdateCompleted;
+            ctlUser.UserUpdateError += UserUpdateError;
+
+            ctlServices.SubscriptionUpdated += SubscriptionUpdated;
+            ctlProfile.ProfileUpdateCompleted += ProfileUpdateCompleted;
+            ctlPassword.PasswordUpdated += PasswordUpdated;
+            ctlPassword.PasswordQuestionAnswerUpdated += PasswordQuestionAnswerUpdated;
+            ctlMembership.MembershipAuthorized += MembershipAuthorized;
+            ctlMembership.MembershipPasswordUpdateChanged += MembershipPasswordUpdateChanged;
+            ctlMembership.MembershipUnAuthorized += MembershipUnAuthorized;
+            ctlMembership.MembershipUnLocked += MembershipUnLocked;
+            
             jQuery.RequestDnnPluginsRegistration();
 
             //Set the Membership Control Properties
@@ -716,26 +674,6 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             base.OnLoad(e);
 
-            cmdCancel.Click += cmdCancel_Click;
-             cmdRegister.Click += cmdRegister_Click;
-
-
-            ctlUser.UserCreateCompleted += UserCreateCompleted;
-            ctlUser.UserDeleted += UserDeleted;
-            ctlUser.UserRemoved += UserRemoved;
-            ctlUser.UserRestored += UserRestored;
-            ctlUser.UserUpdateCompleted += UserUpdateCompleted;
-            ctlUser.UserUpdateError += UserUpdateError;
-
-            ctlServices.SubscriptionUpdated += SubscriptionUpdated;
-            ctlProfile.ProfileUpdateCompleted += ProfileUpdateCompleted;
-            ctlPassword.PasswordUpdated += PasswordUpdated;
-            ctlPassword.PasswordQuestionAnswerUpdated += PasswordQuestionAnswerUpdated;
-            ctlMembership.MembershipAuthorized += MembershipAuthorized;
-            ctlMembership.MembershipPasswordUpdateChanged += MembershipPasswordUpdateChanged;
-            ctlMembership.MembershipUnAuthorized += MembershipUnAuthorized;
-            ctlMembership.MembershipUnLocked += MembershipUnLocked;
-
             try
             {
                 //Add an Action Event Handler to the Skin
@@ -761,7 +699,6 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             Response.Redirect(Globals.NavigateURL(), true);
         }
-
 
         /// -----------------------------------------------------------------------------
         /// <summary>

@@ -598,6 +598,8 @@ namespace DotNetNuke.Entities.Portals
         [XmlElement("usertabid")]
         public int UserTabId { get; set; }
 
+        private int _users;
+
         /// <summary>
         /// Actual number of actual users for this portal
         /// </summary>
@@ -605,7 +607,18 @@ namespace DotNetNuke.Entities.Portals
         /// <returns>Number of users for the portal</returns>
         /// <remarks></remarks>
         [XmlElement("users")]
-        public int Users { get; set; }
+        public int Users
+        {
+            get
+            {
+                if (_users < 0)
+                {
+                    _users = UserController.GetUserCountByPortal(PortalID);
+                }
+                return _users;
+            }
+            set { _users = value; }
+        }
 
         /// <summary>
         /// DNN Version # of the portal installation
@@ -776,8 +789,7 @@ namespace DotNetNuke.Entities.Portals
             AdministratorRoleName = Null.NullString;
             RegisteredRoleName = Null.NullString;
 
-            //Aggressively load Users
-            Users = UserController.GetUserCountByPortal(PortalID);
+            Users = Null.NullInteger;
             Pages = Null.NullInteger;
         }
 

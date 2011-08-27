@@ -25,7 +25,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals;
@@ -51,14 +50,35 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		#region "Private Properties"
 
 		private Mock<DataProvider> _dataProvider;
-		private RedirectionController _controller;
+		private RedirectionController _redirectionController;
+        private Mock<ClientCapabilityProvider> _clientCapabilityProvider;	    
 
 		private DataTable _dtRedirections;
 		private DataTable _dtRules;
-		private IDictionary<string, string> _userAgents;
+		
+        public const string iphoneUserAgent = "Mozilla/5.0 (iPod; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7";
+        public const string wp7UserAgent = "Mozilla/4.0 (compatible; MSIE 7.0; Windows Phone OS 7.0; Trident/3.1; IEMobile/7.0) Asus;Galaxy6";
+        public const string msIE8UserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E; InfoPath.3; Creative AutoUpdate v1.40.02)";
+        public const string msIE9UserAgent = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)";
+        public const string msIE10UserAgent = "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)";
+        public const string fireFox5NT61UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:5.0) Gecko/20110619 Firefox/5.0";
+        public const string iPadTabletUserAgent = "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10";
+        public const string samsungGalaxyTablet = "Mozilla/5.0 (Linux; U; Android 2.2; en-gb; SAMSUNG GT-P1000 Tablet Build/MASTER) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
+        public const string winTabletPC = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705; Tablet PC 2.0)";
+        public const string htcDesireVer1Sub22UserAgent = "Mozilla/5.0 (Linux; U; Android 2.2; sv-se; Desire_A8181 Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
+        public const string blackBerry9105V1 = "BlackBerry9105/5.0.0.696 Profile/MIDP-2.1 Configuration/CLDC-1.1 VendorID/133";
+        public const string motorolaRIZRSymbianOSOpera865 = "MOTORIZR-Z8/46.00.00 Mozilla/4.0 (compatible; MSIE 6.0; Symbian OS; 356) Opera 8.65 [it] UP.Link/6.3.0.0.0";
 
-		private String wurflDataFilePath = "..\\..\\..\\..\\Website\\App_Data\\WURFLDeviceDatabase\\wurfl-latest.zip";
-		private String wurflPatchFilePath = "..\\..\\..\\..\\Website\\App_Data\\WURFLDeviceDatabase\\web_browsers_patch.xml";
+	    public const int Portal0 = 0;
+        public const int Portal1 = 1;
+        public const int AnotherPageOnSamePortal = 56;
+        public const int HomePageOnPortal0 = 55;
+        public const int HomePageOnPortal1 = 57;
+        public const int MobileLandingPage = 91;
+        public const int TabletLandingPage = 92;
+        public const int AllMobileLandingPage = 93;
+	    public const string ExternalSite = "http://www.dotnetnuke.com";
+
 
 		#endregion
 
@@ -71,12 +91,12 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			_dataProvider = MockComponentProvider.CreateDataProvider();
 			MockComponentProvider.CreateDataCacheProvider();
 			MockComponentProvider.CreateEventLogController();
+            _clientCapabilityProvider = MockComponentProvider.CreateNew<ClientCapabilityProvider>();
 
-			_controller = new RedirectionController();
+			_redirectionController = new RedirectionController();
 
 			SetupDataProvider();
-			SetupClientCapabilityProvider();
-			SetupUserAgents();
+			SetupClientCapabilityProvider();			
 		}
 
 		#endregion
@@ -89,7 +109,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		public void Test_Add_Valid_Redirection()
 		{
 			var redirection = new Redirection { Name = "Test R", PortalId = 0, SortOrder = 1, SourceTabId = -1, Type = RedirectionType.MobilePhone, TargetType = TargetType.Portal, TargetValue = 2 };
-			_controller.Save(redirection);
+			_redirectionController.Save(redirection);
 
 			var dataReader = _dataProvider.Object.GetRedirections(0);
 			var affectedCount = 0;
@@ -106,7 +126,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			var redirection = new Redirection { Name = "Test R", PortalId = 0, SortOrder = 1, SourceTabId = -1, IncludeChildTabs = true, Type = RedirectionType.Other, TargetType = TargetType.Portal, TargetValue = 2 };
 			redirection.MatchRules.Add(new MatchRules { Capability = "Platform", Expression = "IOS" });
 			redirection.MatchRules.Add(new MatchRules { Capability = "Version", Expression = "5" });
-			_controller.Save(redirection);
+			_redirectionController.Save(redirection);
 
 			var dataReader = _dataProvider.Object.GetRedirections(0);
 			var affectedCount = 0;
@@ -116,7 +136,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			}
 			Assert.AreEqual(1, affectedCount);
 
-			var getRe = _controller.GetRedirectionsByPortal(0)[0];
+			var getRe = _redirectionController.GetRedirectionsByPortal(0)[0];
 			Assert.AreEqual(2, getRe.MatchRules.Count);
 		}
 
@@ -125,7 +145,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		{
 			PrepareData();
 
-			IList<IRedirection> list = _controller.GetRedirectionsByPortal(0);
+			IList<IRedirection> list = _redirectionController.GetRedirectionsByPortal(0);
 
 			Assert.AreEqual(7, list.Count);
 		}
@@ -134,9 +154,9 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		public void Test_Delete_Redirections()
 		{
 			PrepareData();
-			_controller.Delete(0, 1);
+			_redirectionController.Delete(0, 1);
 
-			IList<IRedirection> list = _controller.GetRedirectionsByPortal(0);
+			IList<IRedirection> list = _redirectionController.GetRedirectionsByPortal(0);
 
 			Assert.AreEqual(6, list.Count);
 		}
@@ -145,22 +165,117 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 		#region "Get Redirections URL Tests"
 
-		[Test]
-		public void Test_GetRedirectionUrl_For_iPhone_Request()
+        [Test]
+        [ExpectedArgumentException]
+        public void RedirectionController_GetRedirectionUrl_Throws_On_Null_UserAgent()
+        {
+            _redirectionController.GetRedirectUrl(null,0,0);
+        }
+        
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_EmptyString_When_Redirection_IsNotSet()
 		{
-		}
+            Assert.AreEqual(string.Empty, _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, HomePageOnPortal0));
+		}        
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_EmptyString_When_UserAgent_Is_Desktop()
+        {
+            PrepareData();
+            Assert.AreEqual(string.Empty, _redirectionController.GetRedirectUrl(msIE9UserAgent, 0, HomePageOnPortal0));
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_EmptyString_When_CurrentPage_IsSameAs_TargetPage_OnMobile()
+        {
+            PreparePortalToAnotherPageOnSamePortal();
+            Assert.AreEqual(string.Empty, _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, AnotherPageOnSamePortal));
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_EmptyString_When_CurrentPortal_IsSameAs_TargetPortal_OnMobile()
+        {
+            PrepareSamePortalToSamePortalRedirectionRule();
+            Assert.AreEqual(string.Empty, _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, AnotherPageOnSamePortal));
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_TargetPageOnSamePortal_When_Surfing_HomePage_OnMobile()
+        {
+            PreparePortalToAnotherPageOnSamePortal();
+            Assert.AreEqual(NavigateUrl(AnotherPageOnSamePortal), _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 1));
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_HomePageOfOtherPortal_When_Surfing_AnyPageOfCurrentPortal_OnMobile()
+        {
+            PrepareHomePageToHomePageRedirectionRule();
+            Assert.AreEqual(NavigateUrl(HomePageOnPortal1), _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 1));
+            Assert.AreEqual(NavigateUrl(HomePageOnPortal1), _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 2));            
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_ExternalSite_When_Surfing_AnyPageOfCurrentPortal_OnMobile()
+        {
+            PrepareExternalSiteRedirectionRule();
+            Assert.AreEqual(ExternalSite, _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 1));
+            Assert.AreEqual(ExternalSite, _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 2));
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_MobileLanding_ForMobile_And_TabletLanding_ForTablet()
+        {
+            PrepareMobileAndTabletRedirectionRuleWithMobileFirst();
+            Assert.AreEqual(NavigateUrl(MobileLandingPage), _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 1));
+            Assert.AreEqual(NavigateUrl(TabletLandingPage), _redirectionController.GetRedirectUrl(iPadTabletUserAgent, 0, 1));                        
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_TabletLanding_ForTablet_And_MobileLanding_ForMobile()
+        {
+            PrepareMobileAndTabletRedirectionRuleWithAndTabletRedirectionRuleTabletFirst();
+            Assert.AreEqual(NavigateUrl(MobileLandingPage), _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 1));
+            Assert.AreEqual(NavigateUrl(TabletLandingPage), _redirectionController.GetRedirectUrl(iPadTabletUserAgent, 0, 1));
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_SameLandingPage_For_AllMobile()
+        {
+            PrepareAllMobileRedirectionRule();
+            string mobileLandingPage = _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 1);
+            string tabletLandingPage = _redirectionController.GetRedirectUrl(iPadTabletUserAgent, 0, 1);
+            Assert.AreEqual(NavigateUrl(AllMobileLandingPage), mobileLandingPage);
+            Assert.AreEqual(NavigateUrl(AllMobileLandingPage), tabletLandingPage);
+            Assert.AreEqual(mobileLandingPage, tabletLandingPage);
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_EmptyString_When_Capability_DoesNot_Match()
+        {
+            PrepareOperaBrowserOnSymbianOSRedirectionRule();
+            Assert.AreEqual(string.Empty, _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 1));
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_ValidUrl_When_Capability_Matches()
+        {
+            PrepareOperaBrowserOnSymbianOSRedirectionRule();
+            Assert.AreEqual(NavigateUrl(AnotherPageOnSamePortal), _redirectionController.GetRedirectUrl(motorolaRIZRSymbianOSOpera865, 0, 1));
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_EmptyString_When_NotAll_Capability_Matches()
+        {
+            PrepareOperaBrowserOnIPhoneOSRedirectionRule();
+            Assert.AreEqual(string.Empty, _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 1));
+        }
+                
 
 		#endregion
 
 		#endregion
 
 		#region "Private Methods"
-
-		private void SetupUserAgents()
-		{
-			_userAgents = new Dictionary<string, string>();
-			_userAgents.Add("iPhone4", "Mozilla/5.0 (iPod; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7");
-		}
 
 		private void SetupDataProvider()
 		{
@@ -309,10 +424,8 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		}
 
 		private void SetupClientCapabilityProvider()
-		{
-			var provider = MockComponentProvider.CreateNew<ClientCapabilityProvider>();
-
-			provider.Setup(p => p.GetClientCapability(It.IsAny<string>())).Returns<string>(GetClientCapabilityCallBack);
+		{		    
+            _clientCapabilityProvider.Setup(p => p.GetClientCapability(It.IsAny<string>())).Returns<string>(GetClientCapabilityCallBack);
 		}
 
 		private IDataReader GetRedirectionsCallBack(int portalId)
@@ -354,26 +467,52 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 				table.Columns.Add(col);
 			}
 
-			table.Rows.Add(portalId,null,"My Website","Logo.png","Copyright 2011 by DotNetNuke Corporation",null,"2","0","2","USD","0","0","0","0","0","1","My Website","DotNetNuke, DNN, Content, Management, CMS",null,"1057AC7A-3C08-4849-A3A6-3D2AB4662020",null,null,null,"0","admin@change.me","en-US","-8","58","Portals/0",null,"55",null,null,"57","56","7","-1","2011-08-25 07:34:11","-1","2011-08-25 07:34:29",culture);
+		    int homePage = 55;
+            if (portalId == Portal0)
+                homePage = HomePageOnPortal0;
+            else if (portalId == Portal1)
+                homePage = HomePageOnPortal1;
+
+            table.Rows.Add(portalId, null, "My Website", "Logo.png", "Copyright 2011 by DotNetNuke Corporation", null, "2", "0", "2", "USD", "0", "0", "0", "0", "0", "1", "My Website", "DotNetNuke, DNN, Content, Management, CMS", null, "1057AC7A-3C08-4849-A3A6-3D2AB4662020", null, null, null, "0", "admin@change.me", "en-US", "-8", "58", "Portals/0", null, homePage.ToString(), null, null, "57", "56", "7", "-1", "2011-08-25 07:34:11", "-1", "2011-08-25 07:34:29", culture);
 
 			return table.CreateDataReader();
 		}
 
 		private IClientCapability GetClientCapabilityCallBack(string userAgent)
 		{
-			return null;
+            IClientCapability clientCapability = new DotNetNuke.Services.ClientCapability.ClientCapability();
+            if (userAgent == iphoneUserAgent)
+            {
+                clientCapability.IsMobile = true;
+                clientCapability.Capabilities.Add("mobile_browser", "Safari");
+                clientCapability.Capabilities.Add("device_os", "iPhone OS");
+            }
+            else if (userAgent == iPadTabletUserAgent)
+            {
+                clientCapability.IsTablet = true;
+                clientCapability.Capabilities.Add("mobile_browser", "Safari");
+                clientCapability.Capabilities.Add("device_os", "iPhone OS");
+            }
+            else if (userAgent == motorolaRIZRSymbianOSOpera865)
+            {
+                clientCapability.IsMobile  = true;
+                clientCapability.Capabilities.Add("mobile_browser", "Opera Mini");
+                clientCapability.Capabilities.Add("device_os", "Symbian OS");
+            }
+            
+            return clientCapability;
 		}
 
 		private void PrepareData()
 		{
 			//id, portalId, name, type, sortOrder, sourceTabId, includeChildTabs, targetType, targetValue, enabled
-			_dtRedirections.Rows.Add(1, 0, "R4", 4, 4, -1, 0, 1, "1", 1);
-			_dtRedirections.Rows.Add(2, 0, "R2", 2, 2, -1, 0, 1, "1", 1);
-			_dtRedirections.Rows.Add(3, 0, "R3", 3, 3, -1, 0, 1, "1", 1);
-			_dtRedirections.Rows.Add(4, 0, "R1", 1, 1, -1, 0, 1, "1", 1);
-			_dtRedirections.Rows.Add(5, 0, "R5", 1, 5, 55, 1, 1, "1", 1);
-			_dtRedirections.Rows.Add(6, 0, "R6", 1, 6, -1, 0, 2, 55, 1);
-			_dtRedirections.Rows.Add(7, 0, "R7", 1, 7, -1, 0, 3, "http://www.dotnetnuke.com", 1);
+            _dtRedirections.Rows.Add(1, 0, "R4", (int)RedirectionType.Other, 4, -1, 0, (int)TargetType.Portal, "1", 1);
+            _dtRedirections.Rows.Add(2, 0, "R2", (int)RedirectionType.Tablet, 2, -1, 0, (int)TargetType.Portal, "1", 1);
+            _dtRedirections.Rows.Add(3, 0, "R3", (int)RedirectionType.AllMobile, 3, -1, 0, (int)TargetType.Portal, "1", 1);
+            _dtRedirections.Rows.Add(4, 0, "R1", (int)RedirectionType.MobilePhone, 1, -1, 0, (int)TargetType.Portal, "1", 1);
+            _dtRedirections.Rows.Add(5, 0, "R5", (int)RedirectionType.MobilePhone, 5, HomePageOnPortal0, 1, (int)TargetType.Portal, "1", 1);
+            _dtRedirections.Rows.Add(6, 0, "R6", (int)RedirectionType.MobilePhone, 6, -1, 0, (int)TargetType.Tab, HomePageOnPortal0, 1);
+            _dtRedirections.Rows.Add(7, 0, "R7", (int)RedirectionType.MobilePhone, 7, -1, 0, (int)TargetType.Url, ExternalSite, 1);
 
 			//id, redirectionId, capability, expression
 			_dtRules.Rows.Add(1, 1, "mobile_browser", "Safari");
@@ -383,6 +522,67 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			_dtRedirections.Rows.Add(9, 1, "R9", (int)RedirectionType.Tablet, 1, -1, true, (int)TargetType.Portal, 2, true);
 			_dtRedirections.Rows.Add(10, 1, "R10", (int)RedirectionType.AllMobile, 1, -1, true, (int)TargetType.Portal, 2, true);
 		}
+
+        private void PrepareOperaBrowserOnSymbianOSRedirectionRule()
+        {
+            _dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.Other, 1, -1, 0, (int)TargetType.Tab, AnotherPageOnSamePortal, 1);
+
+            //id, redirectionId, capability, expression
+            _dtRules.Rows.Add(1, 1, "mobile_browser", "Opera Mini");
+            _dtRules.Rows.Add(2, 1, "device_os", "Symbian OS");
+        }
+
+        private void PrepareOperaBrowserOnIPhoneOSRedirectionRule()
+        {
+            _dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.Other, 1, -1, 0, (int)TargetType.Tab, AnotherPageOnSamePortal, 1);
+
+            //id, redirectionId, capability, expression
+            _dtRules.Rows.Add(1, 1, "mobile_browser", "Opera Mini");
+            _dtRules.Rows.Add(2, 1, "device_os", "iPhone OS");
+        }
+
+        private void PreparePortalToAnotherPageOnSamePortal()
+        {
+            _dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.MobilePhone, 1, -1, 0, (int)TargetType.Tab, AnotherPageOnSamePortal, 1);
+        }
+
+        private void PrepareSamePortalToSamePortalRedirectionRule()
+        {
+            _dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.MobilePhone, 1, -1, 0, (int)TargetType.Portal, Portal0, 1);
+        }
+
+        private void PrepareHomePageToHomePageRedirectionRule()
+        {
+            _dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.MobilePhone, 1, -1, 0, (int)TargetType.Portal, Portal1, 1);
+        }
+
+        private void PrepareExternalSiteRedirectionRule()
+        {
+            _dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.MobilePhone, 7, -1, 0, (int)TargetType.Url, ExternalSite, 1);
+        }
+
+        private void PrepareMobileAndTabletRedirectionRuleWithMobileFirst()
+        {
+            _dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.MobilePhone, 1, -1, 0, (int)TargetType.Tab, MobileLandingPage, 1);
+            _dtRedirections.Rows.Add(2, 0, "R2", (int)RedirectionType.Tablet, 2, -1, 0, (int)TargetType.Tab, TabletLandingPage, 1);
+        }
+
+        private void PrepareMobileAndTabletRedirectionRuleWithAndTabletRedirectionRuleTabletFirst()
+        {
+            _dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.Tablet, 1, -1, 0, (int)TargetType.Tab, TabletLandingPage, 1);
+            _dtRedirections.Rows.Add(2, 0, "R2", (int)RedirectionType.MobilePhone, 2, -1, 0, (int)TargetType.Tab, MobileLandingPage, 1);
+            
+        }
+
+        private void PrepareAllMobileRedirectionRule()
+        {
+            _dtRedirections.Rows.Add(1, 0, "R1", (int)RedirectionType.AllMobile, 1, -1, 0, (int)TargetType.Tab, AllMobileLandingPage, 1);            
+        }
+
+        private string NavigateUrl(int tabId)
+        {
+            return string.Format("/Default.aspx?tabid={0}", tabId);
+        }
 
 		#endregion
 	}

@@ -94,6 +94,15 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
+        ///// <summary>
+        ///// Gets the effective portalId for User (returns the current PortalId unless Portal
+        ///// is in a PortalGroup, when it will return the PortalId of the Master Portal).
+        ///// </summary>
+        //protected int EffectivePortalId
+        //{
+        //    get { return PortalController.GetEffectivePortalId(PortalId); }
+        //}
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets whether the current user is an Administrator (or SuperUser)
@@ -324,15 +333,6 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
-        [Obsolete("In DotNetNuke 5.0 there is no longer the concept of an Admin Page.  All pages are controlled by Permissions")]
-        protected bool IsAdminTab
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets a Setting for the Module
@@ -349,7 +349,7 @@ namespace DotNetNuke.Entities.Modules
             Hashtable settings = UserController.GetUserSettings(portalId);
             if (settings[settingKey] == null)
             {
-                settings = UserController.GetUserSettings(settings);
+                settings = UserController.GetUserSettings(portalId, settings);
             }
             return settings[settingKey];
         }
@@ -610,6 +610,15 @@ namespace DotNetNuke.Entities.Modules
             return strMessage;
         }
 
+        [Obsolete("In DotNetNuke 5.0 there is no longer the concept of an Admin Page.  All pages are controlled by Permissions")]
+        protected bool IsAdminTab
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         [Obsolete("In DotNetNuke 5.2 replaced by UserController.GetDefaultUserSettings().")]
         public static Hashtable GetDefaultSettings()
         {
@@ -619,7 +628,7 @@ namespace DotNetNuke.Entities.Modules
         [Obsolete("In DotNetNuke 5.2 replaced by UserController.GetUserSettings(settings).")]
         public static Hashtable GetSettings(Hashtable settings)
         {
-            return UserController.GetUserSettings(settings);
+            return UserController.GetUserSettings(PortalController.GetCurrentPortalSettings().PortalId, settings);
         }
     }
 }

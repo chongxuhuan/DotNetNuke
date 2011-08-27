@@ -51,9 +51,11 @@ namespace DotNetNuke.Services.Mobile
         /// <returns>string - Empty if redirection rules are not defined or no match found</returns>
         /// <param name="userAgent">User Agent - used for client capability.</param>
         /// <param name="portalId">Portal Id from which Redirection Rules should be applied.</param>
-        /// <param name="currentTabId">Current Tab Id that needs to be evaluated.</param>
+        /// <param name="currentTabId">Current Tab Id that needs to be evaluated.</param>        
         public string GetRedirectUrl(string userAgent, int portalId, int currentTabId)
         {
+            Requires.NotNull("userAgent", userAgent);
+
             string redirectUrl = string.Empty;
             IList<IRedirection> allItems = GetRedirectionsByPortal(portalId);
             //check for redirect only when redirect rules are defined
@@ -98,7 +100,7 @@ namespace DotNetNuke.Services.Mobile
                         if(DoesCapabilityMatchWithRule(clientCapability,redirection))
                         {   
                             //find the redirect url
-                            redirectUrl = GetRedirectUrlFromRule(redirection);
+                            redirectUrl = GetRedirectUrlFromRule(redirection, portalId, currentTabId);
                             break;
                         }
                     }                    
@@ -198,6 +200,48 @@ namespace DotNetNuke.Services.Mobile
 			return GetRedirectionsByPortal(portalId).Where(r => r.Id == id).FirstOrDefault();
 		}
 
+        /// <summary>
+        /// returns a target URL for the specific redirection
+        /// </summary>
+        /// <param name="redirection"></param>
+        /// <param name="portalId"></param>
+        /// <param name="currentTabId"></param>
+        /// <returns></returns>
+        public string GetRedirectUrlFromRule(IRedirection redirection, int portalId, int currentTabId)
+        {
+            string redirectUrl = string.Empty;
+
+            if (redirection.TargetType == TargetType.Url) //independent url base
+            {
+                redirectUrl = redirection.TargetValue.ToString();
+            }
+            else if (redirection.TargetType == TargetType.Tab) //page within same site
+            {
+                int targetTabId = int.Parse(redirection.TargetValue.ToString());
+                if (targetTabId != currentTabId) //ensure it's not redirecting to itself
+                {
+                    redirectUrl = Globals.NavigateURL(targetTabId);
+                }
+            }
+            else if (redirection.TargetType == TargetType.Portal) //home page of another portal
+            {
+                int targetPortalId = int.Parse(redirection.TargetValue.ToString());
+                if (targetPortalId != portalId) //ensure it's not redirecting to itself
+                {
+                    var portal = new PortalController().GetPortal(targetPortalId);
+                    if (portal != null && portal.HomeTabId != Null.NullInteger)
+                    {
+                        if (portal.HomeTabId != currentTabId) //ensure it's not redirecting to itself
+                        {
+                            redirectUrl = Globals.NavigateURL(portal.HomeTabId);
+                        }
+                    }
+                }
+            }
+
+            return redirectUrl;
+        }
+
 		#endregion
 
 		#region "Private Methods"
@@ -221,8 +265,7 @@ namespace DotNetNuke.Services.Mobile
 
         private bool DoesCapabilityMatchWithRule(IClientCapability clientCapability, IRedirection redirection)
         {
-            bool match = false;
-            //check for Tablet first as IsTablet = true also means IsMobile true
+            bool match = false;            
             if (redirection.Type == RedirectionType.Tablet && clientCapability.IsTablet)
             {
                 match = true;
@@ -231,45 +274,31 @@ namespace DotNetNuke.Services.Mobile
             {
                 match = true;
             }
-            else if (redirection.Type == RedirectionType.AllMobile && clientCapability.IsMobile)
+            else if (redirection.Type == RedirectionType.AllMobile && (clientCapability.IsMobile || clientCapability.IsTablet))
             {
                 match = true;
             }
             else if (redirection.Type == RedirectionType.Other)
             {
                 //match all the capabilities defined in the rule
+                int matchCount = 0;
                 foreach (IMatchRules rule in redirection.MatchRules)
                 {
-                    if (clientCapability.Capabilities.ContainsKey(rule.Capability))
+                    if (clientCapability.Capabilities != null && clientCapability.Capabilities.ContainsKey(rule.Capability))
                     {
                         if (clientCapability.Capabilities[rule.Capability] == rule.Expression)
                         {
-                            match = true;
-                            break;
+                            matchCount++;
                         }
                     }
+                }
+                if(matchCount > 0 && matchCount == redirection.MatchRules.Count)
+                {
+                    match = true;
                 }
             }
                            
             return match;
-        }
-
-        private string GetRedirectUrlFromRule(IRedirection redirection)
-        {
-            string redirectUrl = string.Empty;
-
-            if (redirection.TargetType == TargetType.Url)
-                redirectUrl = redirection.TargetValue.ToString();
-            else if (redirection.TargetType == TargetType.Tab)
-                redirectUrl = Globals.NavigateURL(int.Parse(redirection.TargetValue.ToString()));
-            else if (redirection.TargetType == TargetType.Portal)
-            {
-                var portal = new PortalController().GetPortal(redirection.PortalId);
-                if (portal != null && portal.HomeTabId != Null.NullInteger)
-                    redirectUrl = Globals.NavigateURL(int.Parse(redirection.TargetValue.ToString()));                
-            }
-
-            return redirectUrl;
         }
 
 		#endregion

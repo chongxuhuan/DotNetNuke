@@ -1,0 +1,20 @@
+﻿#emulator {position: relative;display: inline-block;}
+
+#emulator .dimension_h {display: inline-block;position: absolute;height: 10px;left: 20px;}
+#emulator .dimension_h span { display: block;text-align: center;vertical-align: middle;color: #939393;float: left;}
+#emulator .dimension_h span.left{ background: url(images/arrow.png) no-repeat 0 -3px;width: 3px;height: 5px;}
+#emulator .dimension_h span.center{ border-bottom: 1px solid #e0e0e0;height: 23px;margin-top: -21px;}
+#emulator .dimension_h span.right{ background: url(images/arrow.png) no-repeat -8px -3px;width: 3px;height: 5px;}
+
+#emulator .dimension_v {display: inline-block;position: absolute;width: 10px;top: 20px;}
+#emulator .dimension_v span { display: block;text-align: center;vertical-align: middle;color: #939393;}
+#emulator .dimension_v span.top{ background: url(images/arrow.png) no-repeat -3px 0;width: 5px;height: 3px;}
+#emulator .dimension_v span.middle{ border-right: 1px solid #e0e0e0;width: 60px;margin-left: -58px;}
+#emulator .dimension_v span.bottom{ background: url(images/arrow.png) no-repeat -3px -8px;width: 5px;height: 3px;}
+
+
+
+#emulator .emulator_c{ margin: 20px 0 0 20px;border: 1px solid #e0e0e0; overflow: hidden;}
+#emulator .emulator_c iframe{ border: none;}
+
+div.dnnFormItem label, div.dnnFormItem .dnnFormLabel, div.dnnFormItem .dnnTooltip{ width: 20%;}

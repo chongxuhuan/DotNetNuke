@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Web;
@@ -406,6 +407,26 @@ namespace DotNetNuke.Entities.Portals
                 objPortalSettings = (PortalSettings)HttpContext.Current.Items["PortalSettings"];
             }
             return objPortalSettings;
+        }
+
+        public static int GetEffectivePortalId(int portalId)
+        {
+            if (portalId > Null.NullInteger)
+            {
+                var portalController = new PortalController();
+                var portal = portalController.GetPortal(portalId);
+                var portalGroup = (from p in PortalGroupController.Instance.GetPortalGroups()
+                                   where p.PortalGroupId == portal.PortalGroupID
+                                   select p)
+                                .SingleOrDefault();
+
+                if (portalGroup != null)
+                {
+                    portalId = portalGroup.MasterPortalId;
+                }
+            }
+
+            return portalId;
         }
 
 		/// <summary>

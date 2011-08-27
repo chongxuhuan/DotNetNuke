@@ -29,6 +29,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Application;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
@@ -319,5 +320,20 @@ namespace DotNetNuke.UI.ControlPanels
         }
 
         #endregion
-    }
+
+		#region "Protected Methods"
+
+		protected string PreviewPopup()
+		{
+			var popupUrl = string.Format("{0}?portalid={1}&ctl={2}&previewTab={3}", 
+										ResolveUrl("~/" + Globals.glbDefaultPage), 
+										PortalSettings.PortalId, 
+										"MobilePreview",
+										PortalSettings.ActiveTab.TabID);
+
+			return UrlUtils.PopUpUrl(popupUrl, this, PortalSettings, true, false, 660, 800);
+		}
+
+		#endregion
+	}
 }

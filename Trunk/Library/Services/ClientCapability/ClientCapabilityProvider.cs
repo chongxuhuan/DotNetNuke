@@ -33,7 +33,7 @@ using DotNetNuke.ComponentModel;
 
 namespace DotNetNuke.Services.ClientCapability
 {
-    public abstract class ClientCapabilityProvider
+    public abstract class ClientCapabilityProvider : IClientCapabilityProvider
     {
         #region Abstract Methods
         /// <summary>
@@ -75,13 +75,6 @@ namespace DotNetNuke.Services.ClientCapability
             clientCapability.FacebookRequest = FacebookRequestController.GetFacebookDetailsFromRequest(httpRequest);
 
             return clientCapability;
-        }
-
-        public virtual bool IsFacebook(HttpRequest httpRequest)
-        {
-            if (httpRequest == null) return false;
-            if (httpRequest.RequestType != "POST") return false;
-            return httpRequest["signed_request"] != null;
         }
         #endregion
 
