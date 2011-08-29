@@ -71,10 +71,6 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 			base.OnPreRender(e);
 
 			Page.ClientScript.RegisterClientScriptInclude("mobilepreview", string.Format("{0}Scripts/PreviewEmulator.js", this.ControlPath));
-			Page.ClientScript.RegisterClientScriptInclude("jscrollpane", string.Format("{0}Scripts/jquery.jscrollpane.min.js", this.ControlPath));
-			Page.ClientScript.RegisterClientScriptInclude("mousewheel", string.Format("{0}Scripts/jquery.mousewheel.js", this.ControlPath));
-
-			PageBase.RegisterStyleSheet(Page, string.Format("{0}jquery.jscrollpane.css", this.ControlPath));
 		}
 
 		private void BindProfiles()

@@ -106,7 +106,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		#region "CURD API Tests"
 
 		[Test]
-		public void Test_Add_Valid_Redirection()
+		public void RedirectionController_Save_Valid_Redirection()
 		{
 			var redirection = new Redirection { Name = "Test R", PortalId = 0, SortOrder = 1, SourceTabId = -1, Type = RedirectionType.MobilePhone, TargetType = TargetType.Portal, TargetValue = 2 };
 			_redirectionController.Save(redirection);
@@ -121,7 +121,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		}
 
 		[Test]
-		public void Test_Add_ValidRedirection_With_Rules()
+		public void RedirectionController_Save_ValidRedirection_With_Rules()
 		{
 			var redirection = new Redirection { Name = "Test R", PortalId = 0, SortOrder = 1, SourceTabId = -1, IncludeChildTabs = true, Type = RedirectionType.Other, TargetType = TargetType.Portal, TargetValue = 2 };
 			redirection.MatchRules.Add(new MatchRules { Capability = "Platform", Expression = "IOS" });
@@ -141,7 +141,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		}
 
 		[Test]
-		public void Test_Get_Redirections()
+		public void RedirectionController_GetRedirectionsByPortal_With_Valid_PortalID()
 		{
 			PrepareData();
 
@@ -151,7 +151,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		}
 
 		[Test]
-		public void Test_Delete_Redirections()
+		public void RedirectionController_Delete_With_ValidID()
 		{
 			PrepareData();
 			_redirectionController.Delete(0, 1);

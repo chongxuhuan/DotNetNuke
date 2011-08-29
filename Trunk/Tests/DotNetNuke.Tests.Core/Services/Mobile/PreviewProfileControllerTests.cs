@@ -135,7 +135,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		#region "Test"
 
 		[Test]
-		public void Test_Add_Valid_Profile()
+		public void PreviewProfileController_Save_Valid_Profile()
 		{
 			var profile = new PreviewProfile { Name = "Test R", PortalId = 0, Width = 800, Height = 480 };
 			new PreviewProfileController().Save(profile);
@@ -151,7 +151,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 
 		[Test]
-		public void Test_Get_Profiles()
+		public void PreviewProfileController_GetProfilesByPortal_With_Valid_PortalID()
 		{
 			PrepareData();
 
@@ -161,7 +161,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		}
 
 		[Test]
-		public void Test_Delete_PreviewProfiles()
+		public void PreviewProfileController_Delete_With_ValidID()
 		{
 			PrepareData();
 			new PreviewProfileController().Delete(0, 1);

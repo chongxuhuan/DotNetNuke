@@ -14,7 +14,13 @@
 
 
 
-#emulator .emulator_c{ margin: 20px 0 0 20px;border: 1px solid #e0e0e0; overflow: hidden;}
-#emulator .emulator_c iframe{ border: none;}
+#emulator .emulator_c{ margin: 20px 0 0 20px;border: 1px solid #e0e0e0; overflow: hidden;position: relative;-webkit-user-select: none;}
+#emulator .emulator_c iframe{ border: none;position: relative;}
+#emulator .emulator_c .scroll{ background-color: #e0e0e0;position: absolute;overflow: hidden;}
+#emulator .emulator_c .scroll .bar{ background-color: #939393;cursor:pointer;-webkit-user-select: none;}
+#emulator .emulator_c .vertical{top: 0; right: 0;width: 10px;height: 100%;-moz-user-select:none;}
+#emulator .emulator_c .horizontal{bottom: 0; left: 0;height: 10px;width: 100%;-moz-user-select:none;}
+#emulator .emulator_c .horizontal .bar{ height: 100%;}
+#emulator .emulator_c .status{ bottom: 0;right: 0;width: 10px;height: 10px;background-color: #fff;position: absolute;}
 
 div.dnnFormItem label, div.dnnFormItem .dnnFormLabel, div.dnnFormItem .dnnTooltip{ width: 20%;}

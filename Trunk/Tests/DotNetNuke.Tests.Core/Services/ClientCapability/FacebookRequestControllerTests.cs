@@ -24,7 +24,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data;
+using System.Reflection;
 using System.Web;
 
 using DotNetNuke.ComponentModel;
@@ -68,49 +70,78 @@ namespace DotNetNuke.Tests.Core.Services.ClientCapability
 		#region "Tests"
 
 		[Test]
-		public void Test_With_Empty_Request_String()
+		public void FacebookRequestController_GetFacebookDetailsFromRequest_With_Empty_Request_String()
 		{
 			var request = FacebookRequestController.GetFacebookDetailsFromRequest(_requestDics["Empty"]);
 			Assert.IsNull(request);
 		}
 
 		[Test]
-		public void Test_With_Invalid_Request_String()
+		public void FacebookRequestController_GetFacebookDetailsFromRequest_With_Invalid_Request_String()
 		{
 			var request = FacebookRequestController.GetFacebookDetailsFromRequest(_requestDics["Invalid"]);
 			Assert.IsNull(request);
 		}
 
 		[Test]
-		public void Test_With_Valid_Request_String()
+		public void FacebookRequestController_GetFacebookDetailsFromRequest_With_Valid_Request_String()
 		{
 			var request = FacebookRequestController.GetFacebookDetailsFromRequest(_requestDics["Valid"]);
 			Assert.AreEqual(true, request.IsValid);
 		}
 
 		[Test]
-		public void Test_With_Empty_Request()
+		public void FacebookRequestController_GetFacebookDetailsFromRequest_With_Empty_Request()
 		{
 			var request = FacebookRequestController.GetFacebookDetailsFromRequest(null as HttpRequest);
 			Assert.IsNull(request);
 		}
 
 		[Test]
-		public void Test_With_Get_Request()
+		public void FacebookRequestController_GetFacebookDetailsFromRequest_With_Get_Request()
 		{
+			HttpRequest httpRequest = new HttpRequest("unittest.aspx", "http://localhost/unittest.aspx", "");
+			httpRequest.RequestType = "GET";
 
+			var request = FacebookRequestController.GetFacebookDetailsFromRequest(httpRequest);
+			Assert.IsNull(request);
 		}
 
 		[Test]
-		public void Test_With_Post_Invalid_Request()
+		public void FacebookRequestController_GetFacebookDetailsFromRequest_With_Post_Invalid_Request()
 		{
+			HttpRequest httpRequest = new HttpRequest("unittest.aspx", "http://localhost/unittest.aspx", "");
+			httpRequest.RequestType = "POST";
+			SetReadonly(httpRequest.Form, false);
+			httpRequest.Form.Add("signed_request", _requestDics["Invalid"]);
 
+			var request = FacebookRequestController.GetFacebookDetailsFromRequest(httpRequest);
+			Assert.IsNull(request);
 		}
 
 		[Test]
-		public void Test_With_Post_Valid_Request()
+		public void FacebookRequestController_GetFacebookDetailsFromRequest_With_Post_Valid_Request()
 		{
+			HttpRequest httpRequest = new HttpRequest("unittest.aspx", "http://localhost/unittest.aspx", "");
+			httpRequest.RequestType = "POST";
+			SetReadonly(httpRequest.Form, false);
+			httpRequest.Form.Add("signed_request", _requestDics["Valid"]);
 
+			var request = FacebookRequestController.GetFacebookDetailsFromRequest(httpRequest);
+			Assert.AreEqual(true, request.IsValid);
+		}
+
+		#endregion
+
+		#region "Private Methods"
+
+		private void SetReadonly(NameValueCollection collection, bool readOnly)
+		{
+			var readOnlyProperty = collection.GetType().GetProperty("IsReadOnly", BindingFlags.NonPublic | BindingFlags.Instance);
+			if(readOnlyProperty != null)
+			{
+				readOnlyProperty.SetValue(collection, readOnly, null);
+			}
 		}
 
 		#endregion
