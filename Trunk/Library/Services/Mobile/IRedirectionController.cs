@@ -41,5 +41,7 @@ namespace DotNetNuke.Services.Mobile
 		IList<IRedirection> GetRedirectionsByPortal(int portalId);
 
 		IRedirection GetRedirectionById(int portalId, int id);
+
+	    string GetRedirectUrl(string userAgent, int portalId, int currentTabId);
 	}
 }

@@ -12,13 +12,13 @@ namespace DotNetNuke.Services.ClientCapability
     /// <summary>
     /// WURFL Implementation of IClientCapability
     /// </summary>
-    public class WURLClientCapability : ClientCapability
+    public class WURFLClientCapability : ClientCapability
     {
 
         /// <summary>
-        /// WURLClientCapability constructor
+        /// WURFLClientCapability constructor
         /// </summary>
-        public WURLClientCapability(IDevice device)            
+        public WURFLClientCapability(IDevice device)            
         {
             ID = device.Id;
             UserAgent = device.UserAgent;

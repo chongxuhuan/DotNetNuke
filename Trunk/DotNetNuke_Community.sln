@@ -253,9 +253,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.Profession
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Professional.PreviewProfileManagement", "Modules\PreviewProfileManagement\DotNetNuke.Professional.PreviewProfileManagement.csproj", "{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.Instance.Utilities", "Tests\DotNetNuke.Tests.Instance.Utilities\DotNetNuke.Tests.Instance.Utilities.csproj", "{0BD44D27-6F8D-4A94-9E01-E57860B500E4}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 72
+		SccNumberOfProjects = 73
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -538,6 +540,10 @@ Global
 		SccProjectTopLevelParentUniqueName71 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName71 = Modules/PreviewProfileManagement
 		SccLocalPath71 = Modules\\PreviewProfileManagement
+		SccProjectUniqueName72 = Tests\\DotNetNuke.Tests.Instance.Utilities\\DotNetNuke.Tests.Instance.Utilities.csproj
+		SccProjectTopLevelParentUniqueName72 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName72 = Tests/DotNetNuke.Tests.Instance.Utilities
+		SccLocalPath72 = Tests\\DotNetNuke.Tests.Instance.Utilities
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1413,6 +1419,18 @@ Global
 		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{BB64270B-FFF0-414D-B8A7-AE965BFDFB23}.Release|x86.ActiveCfg = Release|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Release|.NET.ActiveCfg = Release|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1472,6 +1490,7 @@ Global
 		{BA2F5F90-7BEA-429A-8E48-21EF33F2C7D2} = {1AFF238A-8147-47D6-8234-56C7A5B88DE1}
 		{F92FAF1D-D195-4746-B355-820C3610A41C} = {1AFF238A-8147-47D6-8234-56C7A5B88DE1}
 		{21C7359C-FCFE-470E-BE34-C853870A6D4F} = {24103C42-E505-4DA8-89A0-F650828F2DFD}
+		{0BD44D27-6F8D-4A94-9E01-E57860B500E4} = {88EB9E19-DC0D-465A-9EB2-711C9351A9EE}
 		{9108D6A3-B570-4778-87C6-7B9424A7EA67} = {92CD4708-95B8-425B-B2BD-B0F77EB93170}
 		{1CA23A12-DA34-49B4-833A-76F3CA8D554C} = {92CD4708-95B8-425B-B2BD-B0F77EB93170}
 		{649E7B07-2170-4471-97C5-0941FBA12159} = {C82EAC40-C9BA-49B7-9D65-BB562F704A8C}

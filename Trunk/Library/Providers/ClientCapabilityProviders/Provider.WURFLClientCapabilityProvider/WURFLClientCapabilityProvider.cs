@@ -135,6 +135,31 @@ namespace DotNetNuke.Services.ClientCapability
             }
         }
 
+
+        static object _allCapabilitiesLock = new object();
+        static IQueryable<IClientCapability> _allCapabilities;
+        private static IQueryable<IClientCapability> AllCapabilities
+        {
+            get
+            {
+                lock (_allCapabilitiesLock)
+                {
+                    if (_allCapabilities != null)
+                        return _allCapabilities;
+
+                    var capabilities = new List<IClientCapability>();
+
+                    var devices = Manager.GetAllDevices();
+                    foreach (var device in devices)
+                    {
+                        capabilities.Add(new WURFLClientCapability(device));
+                    }
+
+                    _allCapabilities = capabilities.AsQueryable();
+                    return _allCapabilities;
+                }
+            }
+        }
         #endregion
 
         #region ClientCapabilityProvider Methods
@@ -146,7 +171,7 @@ namespace DotNetNuke.Services.ClientCapability
         {            
             var device = Manager.GetDeviceForRequest(userAgent);
             if (device != null)
-                return new WURLClientCapability(device);
+                return new WURFLClientCapability(device);
             return null;
         }
 
@@ -157,7 +182,7 @@ namespace DotNetNuke.Services.ClientCapability
         {
             var device = Manager.GetDeviceById(clientId);
             if (device != null)
-                return new WURLClientCapability(device);
+                return new WURFLClientCapability(device);
             return null;
         }
 
@@ -181,12 +206,7 @@ namespace DotNetNuke.Services.ClientCapability
         /// </returns>        
         public override IQueryable<IClientCapability> GetAllClientCapabilities()
         {
-            throw new NotImplementedException();
-            var devices = Manager.GetAllDevices();
-            foreach (var device in devices)
-            {
-                
-            }            
+            return AllCapabilities;
         }
 
         #endregion
