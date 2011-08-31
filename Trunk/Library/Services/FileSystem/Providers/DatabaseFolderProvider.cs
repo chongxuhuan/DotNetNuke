@@ -30,7 +30,6 @@ using System.Linq;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
-using DotNetNuke.Services.FileSystem.Internal;
 
 namespace DotNetNuke.Services.FileSystem
 {

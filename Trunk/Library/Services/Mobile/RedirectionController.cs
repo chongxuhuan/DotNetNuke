@@ -153,12 +153,22 @@ namespace DotNetNuke.Services.Mobile
 		/// <param name="id">the redirection's id.</param>
 		public void Delete(int portalId, int id)
 		{
-			DataProvider.Instance().DeleteRedirection(id);
+			var delRedirection = GetRedirectionById(portalId, id);
+			if (delRedirection != null)
+			{
+				//update the list order
+				GetRedirectionsByPortal(portalId).Where(p => p.SortOrder > delRedirection.SortOrder).ToList().ForEach(p =>
+				                                                                                              	{
+				                                                                                              		p.SortOrder--;
+				                                                                                              		Save(p);
+				                                                                                              	});
+				DataProvider.Instance().DeleteRedirection(id);
 
-			var logContent = string.Format("Delete Mobile Redirection '{0}'", id);
-			AddLog(logContent);
+				var logContent = string.Format("Delete Mobile Redirection '{0}'", id);
+				AddLog(logContent);
 
-			ClearCache(portalId);
+				ClearCache(portalId);
+			}
 		}
 
 		/// <summary>

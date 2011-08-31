@@ -30,7 +30,7 @@
 
 			});
 
-			viewer.attr("scrolling", "no").bind("load", function () {
+			viewer.bind("load", function () {
 				if (!$(this).data("loaded")) {
 					var width = this.contentWindow.document.documentElement.scrollWidth;
 					var height = this.contentWindow.document.documentElement.scrollHeight;
@@ -69,6 +69,7 @@
 	$.fn.scroll = function (options) {
 		var handler = this;
 		var scrollTemplate = "<div class=\"scroll\" unselectable=\"on\"><div class=\"bar\" unselectable=\"on\"></div></div>";
+		var mask = $("<div class=\"mask\"></div");
 		var hScroll = this.find(".horizontal");
 		var vScroll = this.find(".vertical");
 		var contentArea = this.find("iframe");
@@ -113,7 +114,7 @@
 
 			vScrollBar.height(parseInt((handler.data("viewHeight") / contentArea.height()) * vScroll.height()));
 
-			vScrollBar.mousedown(function (e) {
+			vScrollBar.unbind("mousedown").mousedown(function (e) {
 				startDragOnY($(this), e);
 			});
 		};
@@ -127,12 +128,13 @@
 				hScroll.after("<div class=\"status\"></div>");
 			}
 
-			hScrollBar.mousedown(function (e) {
+			hScrollBar.unbind("mousedown").mousedown(function (e) {
 				startDragOnX($(this), e);
 			});
 		};
 
 		var startDragOnY = function (bar, event) {
+			initDrag(bar);
 			bar.data("position", event.pageY);
 			$(document).mousemove(function (e) {
 				if (bar.data("position") !== undefined && bar.data("position") !== null) {
@@ -142,12 +144,12 @@
 					bar.data("position", e.pageY);
 				}
 			}).mouseup(function (e) {
-				bar.data("position", null);
-				$(document).unbind();
+				endDrag(bar);
 			});
 		};
 
 		var startDragOnX = function (bar, event) {
+			initDrag(bar);
 			bar.data("position", event.pageX);
 			$(document).mousemove(function (e) {
 				if (bar.data("position") !== undefined && bar.data("position") !== null) {
@@ -157,15 +159,25 @@
 					bar.data("position", e.pageX);
 				}
 			}).mouseup(function (e) {
-				bar.data("position", null);
-				$(document).unbind();
+				endDrag(bar);
 			});
 		};
 
+		var initDrag = function (bar) {
+			mask.appendTo(handler).width(handler.data("viewWidth")).height(handler.data("viewHeight")).css({opacity: 0});
+		};
+
+		var endDrag = function (bar) {
+			bar.data("position", null);
+			$(document).unbind();
+
+			mask.remove();
+		};
+
 		var scrollOnY = function (offset) {
-			var margin = parseInt(vScrollBar.css("margin-top")) + offset;
+			var margin = parseInt(vScrollBar.css("top")) + offset;
 			if (margin >= 0 && margin <= vScroll.height() - vScrollBar.height()) {
-				vScrollBar.css({ marginTop: margin + "px" });
+				vScrollBar.css({ top: margin + "px" });
 
 				var percent = margin / (vScroll.height() - vScrollBar.height());
 				var contentTop = (contentArea.height() - handler.data("viewHeight")) * percent * -1;
@@ -175,9 +187,9 @@
 		};
 
 		var scrollOnX = function (offset) {
-			var margin = parseInt(hScrollBar.css("margin-left")) + offset;
+			var margin = parseInt(hScrollBar.css("left")) + offset;
 			if (margin >= 0 && margin <= hScroll.width() - hScrollBar.width()) {
-				hScrollBar.css({ marginLeft: margin + "px" });
+				hScrollBar.css({ left: margin + "px" });
 
 				var percent = margin / (hScroll.width() - hScrollBar.width());
 				var contentLeft = (contentArea.width() - handler.data("viewWidth")) * percent * -1;

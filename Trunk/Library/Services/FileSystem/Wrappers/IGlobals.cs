@@ -21,9 +21,9 @@
 
 #endregion
 
-namespace DotNetNuke.Services.FileSystem.Internal
+namespace DotNetNuke.Services.FileSystem
 {
-    public interface IGlobals
+    internal interface IGlobals
     {
         string GetImageFileTypes();
         string GetProtectedExtension();

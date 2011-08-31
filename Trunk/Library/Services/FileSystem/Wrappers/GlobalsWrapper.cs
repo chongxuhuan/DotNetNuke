@@ -26,10 +26,14 @@ using System;
 using DotNetNuke.Common;
 using DotNetNuke.ComponentModel;
 
-namespace DotNetNuke.Services.FileSystem.Internal
+namespace DotNetNuke.Services.FileSystem
 {
-    public class GlobalsWrapper : ComponentBase<IGlobals, GlobalsWrapper>, IGlobals
+    internal class GlobalsWrapper : ComponentBase<IGlobals, GlobalsWrapper>, IGlobals
     {
+        internal GlobalsWrapper()
+        {
+        }
+
         public string GetImageFileTypes()
         {
             return Globals.glbImageFileTypes;

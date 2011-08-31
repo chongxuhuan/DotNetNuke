@@ -20,12 +20,16 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			[Name] [nvarchar](50) NOT NULL,
 			[Width] [int] NOT NULL,
 			[Height] [int] NOT NULL,
+			[SortOrder] [int] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_SortOrder]  DEFAULT ((0)) NOT NULL,
 			[CreatedByUserID] [int] NOT NULL,
 			[CreatedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_CreatedOnDate]  DEFAULT (getdate()) NOT NULL ,
 			[LastModifiedByUserID] [int] NOT NULL,
 			[LastModifiedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_LastModifiedOnDate]  DEFAULT (getdate()) NOT NULL,
 			CONSTRAINT [PK_{objectQualifier}Mobile_PreviewProfiles] PRIMARY KEY CLUSTERED ( [Id] ASC )
 		)
+		ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles]  
+			ADD CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Portals] FOREIGN KEY([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Mobile_PreviewProfiles_SortOrder] ON {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles] ([SortOrder] ASC)
 	END
 GO
 
@@ -117,9 +121,10 @@ GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetPreviewProfiles] @PortalId INT
 AS 
-    SELECT  Id, PortalId, Name, Width, Height, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate
+    SELECT  Id, PortalId, Name, Width, Height, SortOrder, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate
     FROM    {databaseOwner}{objectQualifier}Mobile_PreviewProfiles
     WHERE   PortalId = @PortalId
+	ORDER BY SortOrder ASC
 
 GO
 	
@@ -174,6 +179,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SavePreviewProfile]
     @Name NVARCHAR(50) ,
     @Width INT ,
     @Height INT ,
+	@SortOrder INT ,
     @UserId INT
 AS 
     IF ( @Id = -1 ) 
@@ -183,6 +189,7 @@ AS
                       Name ,
                       Width ,
                       Height ,
+					  SortOrder ,
                       CreatedByUserID ,
                       CreatedOnDate ,
                       LastModifiedByUserID ,
@@ -193,6 +200,7 @@ AS
                       @Name , -- Name - nvarchar(50)
                       @Width , -- Width - int
                       @Height , -- Height - int
+					  @SortOrder ,
                       @UserId , -- CreatedBy - int
                       GETDATE() , -- CreatedOn - datetime
                       @UserId , -- LastModifiedBy - int
@@ -208,6 +216,7 @@ AS
             SET     Name = @Name ,
                     Width = @Width ,
                     Height = @Height ,
+					SortOrder = @SortOrder ,
                     LastModifiedByUserID = @UserId ,
                     LastModifiedOnDate = GETDATE()
             WHERE   Id = @Id
@@ -249,7 +258,8 @@ AS
                       CreatedByUserID ,
                       CreatedOnDate ,
                       LastModifiedByUserID ,
-                      LastModifiedOnDate			        
+                      LastModifiedOnDate
+			        
                     )
             VALUES  ( @PortalId , -- PortalId - int
                       @Name , -- Name - nvarchar(50)
@@ -263,7 +273,8 @@ AS
                       @UserId , -- CreatedBy - int
                       GETDATE() , -- CreatedOn - datetime
                       @UserId , -- LastModifiedBy - int
-                      GETDATE() -- LastModifiedOn - datetime			        
+                      GETDATE() -- LastModifiedOn - datetime
+			        
                     )
 		SELECT  @Id = SCOPE_IDENTITY()
         END
@@ -349,13 +360,15 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddPortalGroup]
 	@PortalGroupName			nvarchar(100),
 	@PortalGroupDescription		nvarchar(2000),
+	@MasterPortalID				INT,
 	@CreatedByUserID			int
 AS 
 	BEGIN
 		INSERT INTO {databaseOwner}{objectQualifier}PortalGroups  
 		( 
 			PortalGroupName  , 
-			PortalGroupDescription  , 
+			PortalGroupDescription  ,
+			MasterPortalID, 
 			CreatedByUserID , 
 			CreatedOnDate , 
 			LastModifiedByUserID , 
@@ -365,6 +378,7 @@ AS
 		( 
 			@PortalGroupName , 
 			@PortalGroupDescription , 
+			@MasterPortalID, 
 			@CreatedByUserID , 
 			getdate() , 
 			@CreatedByUserID , 
@@ -592,6 +606,141 @@ AS
 				FROM    {databaseOwner}{objectQualifier}PortalLocalization) 
 			AS PL ON P.PortalID = PL.PortalID AND PL.CultureCode = P.DefaultLanguage 
 		LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS U ON P.AdministratorId = U.UserID
+GO
+
+/* Add UpdatePortalInfo Procedure */
+/***********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdatePortalInfo]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalInfo]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalInfo]
+	@PortalID				int,
+	@PortalGroupID			int,
+	@PortalName				nvarchar(128),
+	@LogoFile				nvarchar(50),
+	@FooterText				nvarchar(100),
+	@ExpiryDate				datetime,
+	@UserRegistration		int,
+	@BannerAdvertising		int,
+	@Currency				char(3),
+	@AdministratorId		int,
+	@HostFee				money,
+	@HostSpace				int,
+	@PageQuota				int,
+	@UserQuota				int,
+	@PaymentProcessor		nvarchar(50),
+	@ProcessorUserId		nvarchar(50),
+	@ProcessorPassword		nvarchar(50),
+	@Description			nvarchar(500),
+	@KeyWords				nvarchar(500),
+	@BackgroundFile			nvarchar(50),
+	@SiteLogHistory			int,
+	@SplashTabId			int,
+	@HomeTabId				int,
+	@LoginTabId				int,
+	@RegisterTabId			int,
+	@UserTabId				int,
+	@SearchTabId			int,
+	@DefaultLanguage		nvarchar(10),
+	@HomeDirectory			varchar(100),
+	@LastModifiedByUserID	int,
+	@CultureCode			nvarchar(50)
+
+AS
+
+	UPDATE {databaseOwner}{objectQualifier}Portals
+		SET    
+		   PortalGroupID		= @PortalGroupID,
+		   ExpiryDate			= @ExpiryDate,
+		   UserRegistration		= @UserRegistration,
+		   BannerAdvertising	= @BannerAdvertising,
+		   Currency				= @Currency,
+		   AdministratorId		= @AdministratorId,
+		   HostFee				= @HostFee,
+		   HostSpace			= @HostSpace,
+		   PageQuota			= @PageQuota,
+		   UserQuota			= @UserQuota,
+		   PaymentProcessor		= @PaymentProcessor,
+		   ProcessorUserId		= @ProcessorUserId,
+		   ProcessorPassword	= @ProcessorPassword,
+		   SiteLogHistory		= @SiteLogHistory,
+		   DefaultLanguage		= @DefaultLanguage,
+		   HomeDirectory		= @HomeDirectory,
+		   LastModifiedByUserID = @LastModifiedByUserID,
+		   LastModifiedOnDate	= getdate()
+	WHERE  PortalId = @PortalID
+
+IF EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}PortalLocalization WHERE PortalId = @PortalID AND CultureCode = @CultureCode)
+	BEGIN 
+		UPDATE {databaseOwner}{objectQualifier}PortalLocalization
+			SET
+				PortalName				= @PortalName,
+				LogoFile				= @LogoFile,
+				FooterText				= @FooterText,
+				Description				= @Description,
+				KeyWords				= @KeyWords,
+				BackgroundFile			= @BackgroundFile,
+				HomeTabId				= @HomeTabId,
+				LoginTabId				= @LoginTabId,
+				RegisterTabId			= @RegisterTabId,
+				UserTabId				= @UserTabId,
+				SplashTabId				= @SplashTabId,
+				SearchTabId				= @SearchTabId,
+				LastModifiedByUserID	= @LastModifiedByUserID,
+				LastModifiedOnDate		= getdate()
+		WHERE	PortalId = @PortalID 
+			AND CultureCode = @CultureCode
+	END 
+ELSE
+	BEGIN 
+		DECLARE @AdminTabId int
+		SET @AdminTabId = (SELECT AdminTabId 
+								FROM {databaseOwner}{objectQualifier}PortalLocalization 
+								WHERE PortalID = @PortalID AND CultureCode='en-US')
+
+		INSERT INTO {databaseOwner}{objectQualifier}PortalLocalization (
+			[PortalID],
+			[CultureCode],
+			[PortalName],
+			[LogoFile],
+			[FooterText],
+			[Description],
+			[KeyWords],
+			[BackgroundFile],
+			[HomeTabId],
+			[LoginTabId],
+			[UserTabId],
+			[AdminTabId],
+			[SplashTabId],
+			[SearchTabId],
+			[CreatedByUserID],
+			[CreatedOnDate],
+			[LastModifiedByUserID],
+			[LastModifiedOnDate]
+		)
+		VALUES (
+			@PortalID,
+			@CultureCode,
+			@PortalName,
+			@LogoFile, 
+			@FooterText,
+			@Description,
+			@KeyWords,
+			@BackgroundFile,
+			@HomeTabId ,
+			@LoginTabId ,
+			@UserTabId,
+			@AdminTabid,
+			@SplashTabId  ,
+			@SearchTabId,
+			-1,
+			getdate(),
+			-1,
+			getdate()
+		)
+	END
 GO
 
 /************************************************************/

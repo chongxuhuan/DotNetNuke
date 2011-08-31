@@ -1008,43 +1008,44 @@ namespace DotNetNuke.Data
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPortalSpaceUsed", GetNull(PortalId));
         }
 
-        public override void UpdatePortalInfo(int PortalId, string PortalName, string LogoFile, string FooterText, DateTime ExpiryDate, int UserRegistration, int BannerAdvertising, string Currency,
-                                              int AdministratorId, double HostFee, double HostSpace, int PageQuota, int UserQuota, string PaymentProcessor, string ProcessorUserId,
-                                              string ProcessorPassword, string Description, string KeyWords, string BackgroundFile, int SiteLogHistory, int SplashTabId, int HomeTabId, int LoginTabId,
-                                              int RegisterTabId, int UserTabId, int SearchTabId, string DefaultLanguage, string HomeDirectory, int lastModifiedByUserID, string CultureCode)
+        public override void UpdatePortalInfo(int portalId, int portalGroupId, string portalName, string logoFile, string footerText, DateTime expiryDate, int userRegistration, int bannerAdvertising, string currency,
+                                              int administratorId, double hostFee, double hostSpace, int pageQuota, int userQuota, string paymentProcessor, string processorUserId,
+                                              string processorPassword, string description, string keyWords, string backgroundFile, int siteLogHistory, int splashTabId, int homeTabId, int loginTabId,
+                                              int registerTabId, int userTabId, int searchTabId, string defaultLanguage, string homeDirectory, int lastModifiedByUserID, string cultureCode)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString,
                                       DatabaseOwner + ObjectQualifier + "UpdatePortalInfo",
-                                      PortalId,
-                                      PortalName,
-                                      GetNull(LogoFile),
-                                      GetNull(FooterText),
-                                      GetNull(ExpiryDate),
-                                      UserRegistration,
-                                      BannerAdvertising,
-                                      Currency,
-                                      GetNull(AdministratorId),
-                                      HostFee,
-                                      HostSpace,
-                                      PageQuota,
-                                      UserQuota,
-                                      GetNull(PaymentProcessor),
-                                      GetNull(ProcessorUserId),
-                                      GetNull(ProcessorPassword),
-                                      GetNull(Description),
-                                      GetNull(KeyWords),
-                                      GetNull(BackgroundFile),
-                                      GetNull(SiteLogHistory),
-                                      GetNull(SplashTabId),
-                                      GetNull(HomeTabId),
-                                      GetNull(LoginTabId),
-                                      GetNull(RegisterTabId),
-                                      GetNull(UserTabId),
-                                      GetNull(SearchTabId),
-                                      GetNull(DefaultLanguage),
-                                      HomeDirectory,
+                                      portalId,
+                                      portalGroupId,
+                                      portalName,
+                                      GetNull(logoFile),
+                                      GetNull(footerText),
+                                      GetNull(expiryDate),
+                                      userRegistration,
+                                      bannerAdvertising,
+                                      currency,
+                                      GetNull(administratorId),
+                                      hostFee,
+                                      hostSpace,
+                                      pageQuota,
+                                      userQuota,
+                                      GetNull(paymentProcessor),
+                                      GetNull(processorUserId),
+                                      GetNull(processorPassword),
+                                      GetNull(description),
+                                      GetNull(keyWords),
+                                      GetNull(backgroundFile),
+                                      GetNull(siteLogHistory),
+                                      GetNull(splashTabId),
+                                      GetNull(homeTabId),
+                                      GetNull(loginTabId),
+                                      GetNull(registerTabId),
+                                      GetNull(userTabId),
+                                      GetNull(searchTabId),
+                                      GetNull(defaultLanguage),
+                                      homeDirectory,
                                       lastModifiedByUserID,
-                                      CultureCode);
+                                      cultureCode);
         }
 
         public override void UpdatePortalSetting(int PortalId, string SettingName, string SettingValue, int UserID, string CultureCode)
@@ -3270,9 +3271,9 @@ namespace DotNetNuke.Data
 			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SaveRedirectionRule", id, redirectionId, capbility, expression);
 		}
 
-		public override int SavePreviewProfile(int id, int portalId, string name, int width, int height, int userId)
+		public override int SavePreviewProfile(int id, int portalId, string name, int width, int height, int sortOrder, int userId)
 		{
-			return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SavePreviewProfile", id, portalId, name, width, height, userId));
+			return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SavePreviewProfile", id, portalId, name, width, height, sortOrder, userId));
 		}
 
 		#endregion

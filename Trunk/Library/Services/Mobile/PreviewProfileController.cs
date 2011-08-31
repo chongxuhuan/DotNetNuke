@@ -55,16 +55,24 @@ namespace DotNetNuke.Services.Mobile
 		{
 			Requires.NotNull("The profile can't be null", profile);
 
-			DataProvider.Instance().SavePreviewProfile(profile.Id, 
-														profile.PortalId, 
-														profile.Name, 
-														profile.Width, 
-														profile.Height, 
+			if (profile.Id == Null.NullInteger || profile.SortOrder == 0)
+			{
+				profile.SortOrder = GetProfilesByPortal(profile.PortalId, false).Count + 1;
+			}
+
+			int id = DataProvider.Instance().SavePreviewProfile(profile.Id,
+														profile.PortalId,
+														profile.Name,
+														profile.Width,
+														profile.Height,
+														profile.SortOrder,
 														UserController.GetCurrentUserInfo().UserID);
+
+			profile.Id = id;
 
 			var logContent = string.Format("{0} Mobile Preview Profile '{1}'", profile.Id == Null.NullInteger ? "Add" : "Update", profile.Name);
 			AddLog(logContent);
-			
+
 			ClearCache(profile.PortalId);
 		}
 
@@ -75,12 +83,22 @@ namespace DotNetNuke.Services.Mobile
 		/// <param name="id">the profile's id.</param>
 		public void Delete(int portalId, int id)
 		{
-			DataProvider.Instance().DeletePreviewProfile(id);
+			var delProfile = GetProfileById(portalId, id);
+			if (delProfile != null)
+			{
+				//update the list order
+				GetProfilesByPortal(portalId).Where(p => p.SortOrder > delProfile.SortOrder).ToList().ForEach(p =>
+																												{
+																													p.SortOrder--;
+																													Save(p);
+																												});
+				DataProvider.Instance().DeletePreviewProfile(id);
 
-			var logContent = string.Format("Delete Mobile Preview Profile '{0}'", id);
-			AddLog(logContent);
+				var logContent = string.Format("Delete Mobile Preview Profile '{0}'", id);
+				AddLog(logContent);
 
-			ClearCache(portalId);
+				ClearCache(portalId);
+			}
 		}
 
 		/// <summary>
@@ -90,9 +108,7 @@ namespace DotNetNuke.Services.Mobile
 		/// <returns>List of preview profile.</returns>
 		public IList<IPreviewProfile> GetProfilesByPortal(int portalId)
 		{
-			string cacheKey = string.Format(DataCache.PreviewProfilesCacheKey, portalId);
-			var cacheArg = new CacheItemArgs(cacheKey, DataCache.PreviewProfilesCacheTimeOut, DataCache.PreviewProfilesCachePriority, portalId);
-			return CBO.GetCachedObject<IList<IPreviewProfile>>(cacheArg, GetProfilesByPortalIdCallBack);
+			return GetProfilesByPortal(portalId, true);
 		}
 
 		/// <summary>
@@ -110,11 +126,20 @@ namespace DotNetNuke.Services.Mobile
 
 		#region "Private Methods"
 
+		private IList<IPreviewProfile> GetProfilesByPortal(int portalId, bool addDefault)
+		{
+			string cacheKey = string.Format(DataCache.PreviewProfilesCacheKey, portalId);
+			var cacheArg = new CacheItemArgs(cacheKey, DataCache.PreviewProfilesCacheTimeOut, DataCache.PreviewProfilesCachePriority, portalId, addDefault);
+			return CBO.GetCachedObject<IList<IPreviewProfile>>(cacheArg, GetProfilesByPortalIdCallBack);
+		}
+
 		private IList<IPreviewProfile> GetProfilesByPortalIdCallBack(CacheItemArgs cacheItemArgs)
 		{
 			int portalId = (int)cacheItemArgs.ParamList[0];
+			bool addDefault = (bool)cacheItemArgs.ParamList[1];
+
 			var profiles = CBO.FillCollection<PreviewProfile>(DataProvider.Instance().GetPreviewProfiles(portalId));
-			if(profiles.Count == 0)
+			if (profiles.Count == 0 && addDefault)
 			{
 				profiles = CreateDefaultDevices(portalId);
 			}
@@ -148,23 +173,23 @@ namespace DotNetNuke.Services.Mobile
 
 					if (!string.IsNullOrEmpty(dataPath) && File.Exists(dataPath))
 					{
-						var serializer = new XmlSerializer(typeof (List<PreviewProfile>));
-						profiles = (List<PreviewProfile>) serializer.Deserialize(File.OpenRead(dataPath));
+						var serializer = new XmlSerializer(typeof(List<PreviewProfile>));
+						profiles = (List<PreviewProfile>)serializer.Deserialize(File.OpenRead(dataPath));
 
 						if (profiles != null)
 						{
 							profiles.ForEach(p =>
-							                 	{
-							                 		p.PortalId = portalId;
+												{
+													p.PortalId = portalId;
 
-							                 		Save(p);
-							                 	});
+													Save(p);
+												});
 						}
 					}
 
 					PortalController.UpdatePortalSetting(portalId, "DefPreviewProfiles_Created", "true");
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					Exceptions.Exceptions.LogException(ex);
 				}

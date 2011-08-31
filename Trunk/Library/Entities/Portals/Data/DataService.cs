@@ -42,6 +42,7 @@ namespace DotNetNuke.Entities.Portals.Data
             return _provider.ExecuteScalar<int>("AddPortalGroup",
                                                portalGroup.PortalGroupName,
                                                portalGroup.PortalGroupDescription,
+                                               portalGroup.MasterPortalId,
                                                createdByUserId);
         }
 

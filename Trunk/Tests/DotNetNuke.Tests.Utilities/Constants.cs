@@ -248,8 +248,6 @@ namespace DotNetNuke.Tests.Utilities
         public const string FOLDER_ValidSubFolderName = "subfolder";
         public const string FOLDER_ValidSubFolderPath = "C:\\folder\\subfolder";
         public const string FOLDER_ValidSubFolderRelativePath = "folder/subfolder/";
-        public const string FOLDER_ValidUNCFolderPath = @"\\SERVER\folder";
-        public const string FOLDER_ValidUNCSubFolderPath = @"\\SERVER\folder\subfolder";
         public const string FOLDER_ValidZipFileName = "file.zip";
         public const string FOLDER_ValidZipFilePath = "C:\\folder\\file.zip";
         public const string FOLDER_OtherValidFileName = "otherfile.txt";
@@ -265,6 +263,7 @@ namespace DotNetNuke.Tests.Utilities
 
         #endregion
 
+        public const int PORTAL_ValidPortalId = 1;
         public const int USER_ValidId = 200;
         public const int USER_InValidId = 42;
         public const int USER_AnonymousUserId = -1;

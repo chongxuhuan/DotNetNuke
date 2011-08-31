@@ -21,15 +21,14 @@
 
 #endregion
 
-namespace DotNetNuke.Services.FileSystem.Internal
+namespace DotNetNuke.Services.FileSystem
 {
-    public interface IDirectory
+    internal interface IDirectory
     {
         void Delete(string path, bool recursive);
         bool Exists(string path);
         string[] GetDirectories(string path);
         string[] GetFiles(string path);
         void Move(string sourceDirName, string destDirName);
-        void CreateDirectory(string path);
     }
 }

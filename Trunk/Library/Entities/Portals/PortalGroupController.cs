@@ -23,7 +23,6 @@
 
 #region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,16 +39,22 @@ namespace DotNetNuke.Entities.Portals
     public class PortalGroupController : ComponentBase<IPortalGroupController, PortalGroupController>, IPortalGroupController
     {
         private readonly IDataService _dataService;
+        private readonly IPortalController _portalController;
 
         #region Constructors
 
-        public PortalGroupController() : this(DataService.Instance)
+        public PortalGroupController() : this(DataService.Instance, new PortalController())
         {
         }
 
-        public PortalGroupController(IDataService dataService)
+        public PortalGroupController(IDataService dataService, IPortalController portalController)
         {
+            //Argument Contract
+            Requires.NotNull("dataService", dataService);
+            Requires.NotNull("portalController", portalController);
+
             _dataService = dataService;
+            _portalController = portalController;
         }
 
         #endregion
@@ -76,6 +81,14 @@ namespace DotNetNuke.Entities.Portals
             Requires.NotNull("portalGroup", portalGroup);
 
             portalGroup.PortalGroupId = _dataService.AddPortalGroup(portalGroup, UserController.GetCurrentUserInfo().UserID);
+
+            //Update portal
+            var portal = _portalController.GetPortal(portalGroup.MasterPortalId);
+            if (portal != null)
+            {
+                portal.PortalGroupID = portalGroup.PortalGroupId;
+                _portalController.UpdatePortalInfo(portal);
+            }
 
             ClearCache();
 

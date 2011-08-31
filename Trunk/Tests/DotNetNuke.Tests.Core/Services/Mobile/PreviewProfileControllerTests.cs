@@ -71,6 +71,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			_dtProfiles.Columns.Add("Name", typeof(string));
 			_dtProfiles.Columns.Add("Width", typeof(int));
 			_dtProfiles.Columns.Add("Height", typeof(int));
+			_dtProfiles.Columns.Add("SortOrder", typeof(int));
 
 			_dtProfiles.PrimaryKey = new[] { pkCol };
 
@@ -80,8 +81,9 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 								It.IsAny<string>(),
 								It.IsAny<int>(),
 								It.IsAny<int>(),
-								It.IsAny<int>())).Returns<int, int, string, int, int, int>(
-															(id, portalId, name, width, height, userId) =>
+								It.IsAny<int>(),
+								It.IsAny<int>())).Returns<int, int, string, int, int, int, int>(
+															(id, portalId, name, width, height, sortOrder, userId) =>
 															{
 																if (id == -1)
 																{
@@ -100,6 +102,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 																	row["name"] = name;
 																	row["width"] = width;
 																	row["height"] = height;
+																	row["sortorder"] = sortOrder;
 
 																	_dtProfiles.Rows.Add(row);
 																}
@@ -113,6 +116,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 																		row["name"] = name;
 																		row["width"] = width;
 																		row["height"] = height;
+																		row["sortorder"] = sortOrder;
 																	}
 																}
 
@@ -188,12 +192,12 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 		private void PrepareData()
 		{
-			_dtProfiles.Rows.Add(1, 0, "R1", 640, 480);
-			_dtProfiles.Rows.Add(2, 0, "R2", 640, 480);
-			_dtProfiles.Rows.Add(3, 0, "R3", 640, 480);
-			_dtProfiles.Rows.Add(4, 1, "R4", 640, 480);
-			_dtProfiles.Rows.Add(5, 1, "R5", 640, 480);
-			_dtProfiles.Rows.Add(6, 1, "R6", 640, 480);
+			_dtProfiles.Rows.Add(1, 0, "R1", 640, 480, 1);
+			_dtProfiles.Rows.Add(2, 0, "R2", 640, 480, 2);
+			_dtProfiles.Rows.Add(3, 0, "R3", 640, 480, 3);
+			_dtProfiles.Rows.Add(4, 1, "R4", 640, 480, 4);
+			_dtProfiles.Rows.Add(5, 1, "R5", 640, 480, 5);
+			_dtProfiles.Rows.Add(6, 1, "R6", 640, 480, 6);
 		}
 
 		#endregion

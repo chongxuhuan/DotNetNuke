@@ -2,6 +2,7 @@
     CodeFile="Default.aspx.cs" %>
 
 <%@ Register TagPrefix="dnnui" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
+<%@ Register TagPrefix="dnncrm" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Common.Controls" Assembly="DotNetNuke" %>
 <%@ Register TagPrefix="telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI" %>
 <asp:literal id="skinDocType" runat="server"></asp:literal>
@@ -28,6 +29,7 @@
 </head>
 <body id="Body" runat="server">
     <asp:PlaceHolder ID="BodySCRIPTS" runat="server" />
+    <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader" />
     <dnn:Form ID="Form" runat="server" ENCTYPE="multipart/form-data">
         <asp:Label ID="SkinError" runat="server" CssClass="NormalRed" Visible="False"></asp:Label>
         <asp:PlaceHolder ID="SkinPlaceHolder" runat="server" />

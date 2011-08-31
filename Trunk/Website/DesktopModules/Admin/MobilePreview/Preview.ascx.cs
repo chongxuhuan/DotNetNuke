@@ -40,6 +40,8 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 {
     public partial class Preview : PortalModuleBase
     {
+		#region "Public Properties"
+
     	protected string PreviewUrl
     	{
     		get
@@ -54,6 +56,11 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 				return Globals.NavigateURL(tabId, string.Empty, "dnnprintmode=true");
     		}
     	}
+
+		#endregion
+
+		#region "Event Handlers"
+
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
@@ -73,17 +80,35 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 			Page.ClientScript.RegisterClientScriptInclude("mobilepreview", string.Format("{0}Scripts/PreviewEmulator.js", this.ControlPath));
 		}
 
+		#endregion
+
+		#region "Private Methods"
+
 		private void BindProfiles()
 		{
 			var profiles = new PreviewProfileController().GetProfilesByPortal(ModuleContext.PortalId);
 			ddlProfileList.Items.Clear();
 
+			var selectedProfile = -1;
+			if(Request.QueryString["profile"] != null)
+			{
+				selectedProfile = Convert.ToInt32(Request.QueryString["profile"]);
+			}
+
 			foreach (var previewProfile in profiles)
 			{
 				var value = string.Format("width : \"{0}\", height : \"{1}\"", previewProfile.Width, previewProfile.Height);
 
-				ddlProfileList.Items.Add(new ListItem(previewProfile.Name, value));
+				var listItem = new ListItem(previewProfile.Name, value);
+				if(selectedProfile == previewProfile.Id)
+				{
+					listItem.Selected = true;
+				}
+
+				ddlProfileList.Items.Add(listItem);
 			}
 		}
-    }
+
+		#endregion
+	}
 }

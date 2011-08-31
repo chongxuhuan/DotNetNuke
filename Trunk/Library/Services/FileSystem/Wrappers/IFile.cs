@@ -24,9 +24,9 @@
 using System;
 using System.IO;
 
-namespace DotNetNuke.Services.FileSystem.Internal
+namespace DotNetNuke.Services.FileSystem
 {
-    public interface IFile
+    internal interface IFile
     {
         Stream Create(string path);
         void Delete(string path);

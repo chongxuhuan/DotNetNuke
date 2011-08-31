@@ -27,7 +27,6 @@ using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.FileSystem;
-using DotNetNuke.Services.FileSystem.Internal;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 

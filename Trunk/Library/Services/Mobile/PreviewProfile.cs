@@ -88,6 +88,12 @@ namespace DotNetNuke.Services.Mobile
 		public int Height { get; set; }
 
 		/// <summary>
+		/// Profile's sort order.
+		/// </summary>
+		[XmlAttribute]
+		public int SortOrder { get; set; }
+
+		/// <summary>
 		/// IHydratable.KeyID.
 		/// </summary>
 		[XmlIgnore]
@@ -114,6 +120,7 @@ namespace DotNetNuke.Services.Mobile
 			this.Name = dr["Name"].ToString();
 			this.Width = Convert.ToInt32(dr["Width"]);
 			this.Height = Convert.ToInt32(dr["Height"]);
+			this.SortOrder = Convert.ToInt32(dr["SortOrder"]);
 		}
 	}
 }
