@@ -135,7 +135,7 @@ namespace DotNetNuke.Services.Mobile
 													redirection.Enabled,
 			                                        UserController.GetCurrentUserInfo().UserID);
 
-			foreach (IMatchRules rule in redirection.MatchRules)
+			foreach (IMatchRule rule in redirection.MatchRules)
 			{
 				DataProvider.Instance().SaveRedirectionRule(rule.Id, id, rule.Capability, rule.Expression);
 			}
@@ -238,13 +238,13 @@ namespace DotNetNuke.Services.Mobile
                 int targetPortalId = int.Parse(redirection.TargetValue.ToString());
                 if (targetPortalId != portalId) //ensure it's not redirecting to itself
                 {
-                    var portal = new PortalController().GetPortal(targetPortalId);
-                    if (portal != null && portal.HomeTabId != Null.NullInteger)
+                    var portalSettings = new PortalSettings(targetPortalId);                   
+                    if (portalSettings.HomeTabId != Null.NullInteger && portalSettings.HomeTabId != currentTabId) //ensure it's not redirecting to itself
                     {
-                        if (portal.HomeTabId != currentTabId) //ensure it's not redirecting to itself
-                        {
-                            redirectUrl = Globals.NavigateURL(portal.HomeTabId);
-                        }
+                        //the commented line doesn't work because the call to NavigateUrl returns url from the current portal not target portal
+                        //possible issue in FriendlyUrlProvider.GetFriendlyAlias method
+                        //redirectUrl = Globals.NavigateURL(portalSettings.HomeTabId, portalSettings, Null.NullString, null);
+                        redirectUrl = Globals.AddHTTP(portalSettings.DefaultPortalAlias);
                     }
                 }
             }
@@ -292,7 +292,7 @@ namespace DotNetNuke.Services.Mobile
             {
                 //match all the capabilities defined in the rule
                 int matchCount = 0;
-                foreach (IMatchRules rule in redirection.MatchRules)
+                foreach (IMatchRule rule in redirection.MatchRules)
                 {
                     if (clientCapability.Capabilities != null && clientCapability.Capabilities.ContainsKey(rule.Capability))
                     {

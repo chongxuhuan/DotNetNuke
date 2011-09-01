@@ -46,6 +46,24 @@ namespace DotNetNuke.Entities.Portals
 
         public int MasterPortalId { get; set; }
 
+        public string MasterPortalName
+        {
+            get
+            {
+                string portalName = String.Empty;
+                if (MasterPortalId > -1)
+                {
+                    var portalController = new PortalController();
+                    var portal = portalController.GetPortal(MasterPortalId);
+                    if (portal != null)
+                    {
+                        portalName = portal.PortalName;
+                    }
+                }
+                return portalName;
+            }
+        }
+
         #region IHydratable Members
 
         public int KeyID

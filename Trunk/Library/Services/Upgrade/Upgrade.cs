@@ -2438,6 +2438,41 @@ namespace DotNetNuke.Services.Upgrade
             }
         }
 
+        private static void UpgradeToVersion610()
+        {
+            //Add new MobileRedirect httpmodules
+            XmlDocument xmlDocument = Config.Load();
+            bool saveXml = false;
+
+            XmlNode mobileRedirectModuleNode = xmlDocument.CreateElement("add");
+
+            var mobileRedirectModuleNameAttribute = xmlDocument.CreateAttribute("name");
+            var mobileRedirectModuleTypeAttribute = xmlDocument.CreateAttribute("type");
+
+            mobileRedirectModuleNameAttribute.Value = "MobileRedirect";
+            mobileRedirectModuleTypeAttribute.Value = "DotNetNuke.HttpModules.MobileRedirectModule, DotNetNuke.HttpModules";
+
+            mobileRedirectModuleNode.Attributes.Append(mobileRedirectModuleNameAttribute);
+            mobileRedirectModuleNode.Attributes.Append(mobileRedirectModuleTypeAttribute);
+
+            if (xmlDocument.DocumentElement.SelectSingleNode("system.web/httpModules/add[@name=\"MobileRedirect\"]") == null)
+            {
+                xmlDocument.DocumentElement.SelectSingleNode("system.web/httpModules").AppendChild(mobileRedirectModuleNode);
+                saveXml = true;
+            }
+
+            if (xmlDocument.DocumentElement.SelectSingleNode("system.webServer/modules/add[@name=\"MobileRedirect\"]") == null)
+            {
+                xmlDocument.DocumentElement.SelectSingleNode("system.webServer/modules").AppendChild(mobileRedirectModuleNode);
+                saveXml = true;
+            }
+
+            if (saveXml)
+            {
+                Config.Save(xmlDocument);
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -3860,6 +3895,9 @@ namespace DotNetNuke.Services.Upgrade
                         break;
                     case "6.0.1":
                         UpgradeToVersion601();
+                        break;
+                    case "6.1.0":
+                        UpgradeToVersion610();
                         break;
                 }
             }

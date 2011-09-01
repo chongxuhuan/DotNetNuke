@@ -29,6 +29,7 @@ using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.ClientCapability;
 using DotNetNuke.Services.Log.EventLog;
@@ -71,6 +72,8 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 	    public const int Portal0 = 0;
         public const int Portal1 = 1;
+		public const string PortalAlias0 = "www.portal0.com";
+		public const string PortalAlias1 = "www.portal1.com";
         public const int AnotherPageOnSamePortal = 56;
         public const int HomePageOnPortal0 = 55;
         public const int HomePageOnPortal1 = 57;
@@ -96,7 +99,8 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			_redirectionController = new RedirectionController();
 
 			SetupDataProvider();
-			SetupClientCapabilityProvider();			
+			SetupClientCapabilityProvider();
+			SetupRoleProvider();
 		}
 
 		#endregion
@@ -124,8 +128,8 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		public void RedirectionController_Save_ValidRedirection_With_Rules()
 		{
 			var redirection = new Redirection { Name = "Test R", PortalId = 0, SortOrder = 1, SourceTabId = -1, IncludeChildTabs = true, Type = RedirectionType.Other, TargetType = TargetType.Portal, TargetValue = 2 };
-			redirection.MatchRules.Add(new MatchRules { Capability = "Platform", Expression = "IOS" });
-			redirection.MatchRules.Add(new MatchRules { Capability = "Version", Expression = "5" });
+			redirection.MatchRules.Add(new MatchRule { Capability = "Platform", Expression = "IOS" });
+			redirection.MatchRules.Add(new MatchRule { Capability = "Version", Expression = "5" });
 			_redirectionController.Save(redirection);
 
 			var dataReader = _dataProvider.Object.GetRedirections(0);
@@ -209,9 +213,9 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
         [Test]
         public void RedirectionController_GetRedirectionUrl_Returns_HomePageOfOtherPortal_When_Surfing_AnyPageOfCurrentPortal_OnMobile()
         {
-            PrepareHomePageToHomePageRedirectionRule();
-            Assert.AreEqual(NavigateUrl(HomePageOnPortal1), _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 1));
-            Assert.AreEqual(NavigateUrl(HomePageOnPortal1), _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 2));            
+			PrepareHomePageToHomePageRedirectionRule();
+			Assert.AreEqual(DotNetNuke.Common.Globals.AddHTTP(PortalAlias1), _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 1));
+			Assert.AreEqual(DotNetNuke.Common.Globals.AddHTTP(PortalAlias1), _redirectionController.GetRedirectUrl(iphoneUserAgent, 0, 2));            
         }
 
         [Test]
@@ -421,11 +425,35 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			});
 
 			_dataProvider.Setup(d => d.GetPortal(It.IsAny<int>(), It.IsAny<string>())).Returns<int, string>(GetPortalCallBack);
+			_dataProvider.Setup(d => d.GetTabs(It.IsAny<int>())).Returns<int>(GetTabsCallBack);
+			_dataProvider.Setup(d => d.GetTabModules(It.IsAny<int>())).Returns<int>(GetTabModulesCallBack);
+			_dataProvider.Setup(d => d.GetPortalSettings(It.IsAny<int>(), It.IsAny<string>())).Returns<int, string>(GetPortalSettingsCallBack);
+
+			var portalDataService = MockComponentProvider.CreateNew<DotNetNuke.Entities.Portals.Data.IDataService>();
+			portalDataService.Setup(p => p.GetPortalGroups()).Returns(GetPortalGroupsCallBack);
 		}
 
 		private void SetupClientCapabilityProvider()
 		{		    
             _clientCapabilityProvider.Setup(p => p.GetClientCapability(It.IsAny<string>())).Returns<string>(GetClientCapabilityCallBack);
+		}
+
+		private void SetupRoleProvider()
+		{
+			var mockRoleProvider = MockComponentProvider.CreateNew<RoleProvider>();
+
+			mockRoleProvider.Setup(p => p.GetRole(It.IsAny<int>(), It.IsAny<int>())).Returns<int, int>((portalId, roleId) =>
+			{
+				RoleInfo roleInfo = new RoleInfo();
+				roleInfo.RoleID = roleId;
+				roleInfo.PortalID = portalId;
+				if (roleId == 1)
+				{
+					roleInfo.RoleName = "Administrators";
+				}
+
+				return roleInfo;
+			});
 		}
 
 		private IDataReader GetRedirectionsCallBack(int portalId)
@@ -474,6 +502,89 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
                 homePage = HomePageOnPortal1;
 
             table.Rows.Add(portalId, null, "My Website", "Logo.png", "Copyright 2011 by DotNetNuke Corporation", null, "2", "0", "2", "USD", "0", "0", "0", "0", "0", "1", "My Website", "DotNetNuke, DNN, Content, Management, CMS", null, "1057AC7A-3C08-4849-A3A6-3D2AB4662020", null, null, null, "0", "admin@change.me", "en-US", "-8", "58", "Portals/0", null, homePage.ToString(), null, null, "57", "56", "7", "-1", "2011-08-25 07:34:11", "-1", "2011-08-25 07:34:29", culture);
+
+			return table.CreateDataReader();
+		}
+
+		private IDataReader GetTabsCallBack(int portalId)
+		{
+			DataTable table = new DataTable("Tabs");
+
+			var cols = new string[]
+			           	{
+							"TabID","UniqueId","VersionGuid","DefaultLanguageGuid","LocalizedVersionGuid","TabOrder","PortalID","TabName","IsVisible","ParentId","Level","IconFile","IconFileLarge","DisableLink","Title","Description","KeyWords","IsDeleted","SkinSrc","ContainerSrc","TabPath","StartDate","EndDate","Url","HasChildren","RefreshInterval","PageHeadText","IsSecure","PermanentRedirect","SiteMapPriority","ContentItemID","Content","ContentTypeID","ModuleID","ContentKey","Indexed","CultureCode","CreatedByUserID","CreatedOnDate","LastModifiedByUserID","LastModifiedOnDate"
+			           	};
+
+			foreach (var col in cols)
+			{
+				table.Columns.Add(col);
+			}
+
+			int tabId = portalId == Portal1 ? tabId = HomePageOnPortal1 : HomePageOnPortal0;
+
+			table.Rows.Add(tabId, Guid.NewGuid(), Guid.NewGuid(), null, Guid.NewGuid(), "3", "0", "Getting Started", true, null, "0", null, null, false, "", "", "", false, "[G]Skins/DarkKnight/Home-Mega-Menu.ascx", "[G]Containers/DarkKnight/SubTitle_Grey.ascx", "//GettingStarted", null, null, "", false, null, null, false, false, "0.5", "89", "Getting Started", "1", "-1", null, false, null, "-1", DateTime.Now, "-1", DateTime.Now);
+
+			return table.CreateDataReader();
+		}
+
+		private IDataReader GetTabModulesCallBack(int tabId)
+		{
+			DataTable table = new DataTable("TabModules");
+
+			var cols = new string[]
+			           	{
+							"PortalID","TabID","TabModuleID","ModuleID","ModuleDefID","ModuleOrder","PaneName","ModuleTitle","CacheTime","CacheMethod","Alignment","Color","Border","IconFile","AllTabs","Visibility","IsDeleted","Header","Footer","StartDate","EndDate","ContainerSrc","DisplayTitle","DisplayPrint","DisplaySyndicate","IsWebSlice","WebSliceTitle","WebSliceExpiryDate","WebSliceTTL","InheritViewPermissions","DesktopModuleID","DefaultCacheTime","ModuleControlID","BusinessControllerClass","IsAdmin","SupportedFeatures","ContentItemID","Content","ContentTypeID","ContentKey","Indexed","CreatedByUserID","CreatedOnDate","LastModifiedByUserID","LastModifiedOnDate","LastContentModifiedOnDate","UniqueId","VersionGuid","DefaultLanguageGuid","LocalizedVersionGuid","CultureCode"
+			           	};
+
+			foreach (var col in cols)
+			{
+				table.Columns.Add(col);
+			}
+			table.Columns["ModuleID"].DataType = typeof (int);
+
+			var portalId = tabId == HomePageOnPortal0 ? Portal0 : Portal1;
+
+			table.Rows.Add(portalId, tabId, 51, 362, 117, 1, "ContentPane", "DotNetNuke® Enterprise Edition", "3600", "FileModuleCachingProvider", "left", null, null, null, false, "2", false, null, null, null, null, "[G]Containers/DarkKnight/Banner.ascx", true, false, false, false, null, null, "0", true, "75", "1200", "240", "DotNetNuke.Modules.HtmlPro.HtmlTextController", false, "7", "90", "DotNetNuke® Enterprise Edition", "2", null, false, "-1", DateTime.Now, "-1", DateTime.Now, DateTime.Now, Guid.NewGuid(), Guid.NewGuid(), null, Guid.NewGuid(), null);
+
+			return table.CreateDataReader();
+		}
+
+		private IDataReader GetPortalSettingsCallBack(int portalId, string culture)
+		{
+			DataTable table = new DataTable("PortalSettings");
+
+			var cols = new string[]
+			           	{
+							"SettingName","SettingValue","CreatedByUserID","CreatedOnDate","LastModifiedByUserID","LastModifiedOnDate","CultureCode"
+			           	};
+
+			foreach (var col in cols)
+			{
+				table.Columns.Add(col);
+			}
+
+			var alias = portalId == Portal0 ? PortalAlias0 : PortalAlias1;
+
+			table.Rows.Add("DefaultPortalAlias", alias, "-1", DateTime.Now, "-1", DateTime.Now, "en-us");
+
+			return table.CreateDataReader();
+		}
+
+		private IDataReader GetPortalGroupsCallBack()
+		{
+			DataTable table = new DataTable("PortalGroups");
+
+			var cols = new string[]
+			           	{
+							"PortalGroupID","MasterPortalID","PortalGroupName","PortalGroupDescription","CreatedByUserID","CreatedOnDate","LastModifiedByUserID","LastModifiedOnDate"
+			           	};
+
+			foreach (var col in cols)
+			{
+				table.Columns.Add(col);
+			}
+
+			table.Rows.Add(1, 0, "Portal Group", "", -1, DateTime.Now, -1, DateTime.Now);
 
 			return table.CreateDataReader();
 		}

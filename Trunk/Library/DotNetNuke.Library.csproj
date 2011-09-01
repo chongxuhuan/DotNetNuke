@@ -505,9 +505,9 @@
     <Compile Include="Services\FileSystem\Wrappers\IIconController.cs" />
     <Compile Include="Services\ClientCapability\ClientCapabilityProvider.cs" />
     <Compile Include="Services\ClientCapability\IClientCapability.cs" />
-    <Compile Include="Services\Mobile\MatchRules.cs" />
+    <Compile Include="Services\Mobile\IMatchRule.cs" />
+    <Compile Include="Services\Mobile\MatchRule.cs" />
     <Compile Include="Services\Mobile\PreviewProfile.cs" />
-    <Compile Include="Services\Mobile\IMatchRules.cs" />
     <Compile Include="Services\Mobile\IPreviewProfile.cs" />
     <Compile Include="Services\Mobile\IPreviewProfileController.cs" />
     <Compile Include="Services\Mobile\IRedirection.cs" />

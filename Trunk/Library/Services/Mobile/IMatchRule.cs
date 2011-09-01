@@ -29,7 +29,7 @@ using System;
 
 namespace DotNetNuke.Services.Mobile
 {
-	public interface IMatchRules
+	public interface IMatchRule
 	{
 		/// <summary>
 		/// Primary Id.

@@ -66,7 +66,7 @@ namespace DotNetNuke.Services.Mobile
 		/// <summary>
 		/// request match rules.
 		/// </summary>
-        IList<IMatchRules> MatchRules { get; set; }
+        IList<IMatchRule> MatchRules { get; set; }
 
 		/// <summary>
 		/// Redirection target type.

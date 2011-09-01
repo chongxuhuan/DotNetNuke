@@ -91,13 +91,13 @@ namespace DotNetNuke.Services.Mobile
         public RedirectionType Type { get; set; }
         
         [XmlIgnore]
-		private IList<IMatchRules> _matchRules;
+		private IList<IMatchRule> _matchRules;
 
 		/// <summary>
 		/// When redirection type is RedirectionType.Other, should use this collection to match the request by capability info.
 		/// </summary>        
         [XmlIgnore]
-		public IList<IMatchRules> MatchRules
+		public IList<IMatchRule> MatchRules
 		{
 			get
 			{
@@ -105,12 +105,12 @@ namespace DotNetNuke.Services.Mobile
 				{
 					if (_id == Null.NullInteger)
 					{
-						_matchRules = new List<IMatchRules>();
+						_matchRules = new List<IMatchRule>();
 					}
 					else
 					{
 						//get from database
-						_matchRules = CBO.FillCollection<MatchRules>(DataProvider.Instance().GetRedirectionRules(this.Id)).Cast<IMatchRules>().ToList();
+						_matchRules = CBO.FillCollection<MatchRule>(DataProvider.Instance().GetRedirectionRules(this.Id)).Cast<IMatchRule>().ToList();
 					}
 				}
 

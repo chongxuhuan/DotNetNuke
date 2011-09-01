@@ -102,12 +102,12 @@ namespace DotNetNuke.Services.ClientCapability
         {
             get
             {
+                if (_capabilityValues != null)
+                    return _capabilityValues;
+
                 lock (_capabiliyValueLock)
                 {
-                    if (_capabilityValues != null)
-                        return _capabilityValues;
-
-                    _capabilityValues = new Dictionary<string, List<string>>();
+                    IDictionary<string, List<string>> capabilityValues = new Dictionary<string, List<string>>();
 
                     var devices = Manager.GetAllDevices();
                     foreach (var device in devices)
@@ -130,6 +130,7 @@ namespace DotNetNuke.Services.ClientCapability
                         }
                     }
 
+                    _capabilityValues = capabilityValues;
                     return _capabilityValues;
                 }
             }
@@ -142,11 +143,11 @@ namespace DotNetNuke.Services.ClientCapability
         {
             get
             {
+                if (_allCapabilities != null)
+                    return _allCapabilities;
+
                 lock (_allCapabilitiesLock)
                 {
-                    if (_allCapabilities != null)
-                        return _allCapabilities;
-
                     var capabilities = new List<IClientCapability>();
 
                     var devices = Manager.GetAllDevices();

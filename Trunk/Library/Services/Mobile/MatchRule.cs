@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
@@ -34,13 +35,15 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Services.Mobile
 {
-	public class MatchRules : IMatchRules, IHydratable
+    [Serializable]
+	public class MatchRule : IMatchRule, IHydratable
 	{
 		private int _id = -1;
 
 		/// <summary>
 		/// Match rule's primary key.
 		/// </summary>
+        [XmlAttribute]
 		public int Id
 		{
 			get
@@ -56,7 +59,8 @@ namespace DotNetNuke.Services.Mobile
 		/// <summary>
 		/// Capability's name.
 		/// </summary>
-		public string Capability
+        [XmlAttribute]
+        public string Capability
 		{
 			get;
 			set;
@@ -65,7 +69,8 @@ namespace DotNetNuke.Services.Mobile
 		/// <summary>
 		/// The value to match the capability from request.
 		/// </summary>
-		public string Expression
+        [XmlAttribute]
+        public string Expression
 		{
 			get;
 			set;
@@ -74,7 +79,8 @@ namespace DotNetNuke.Services.Mobile
 		/// <summary>
 		/// IHydratable.KeyID.
 		/// </summary>
-		public int KeyID
+        [XmlAttribute]
+        public int KeyID
 		{
 			get
 			{
