@@ -47,6 +47,7 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Containers.EventListeners;
 using DotNetNuke.UI.Modules;
 using DotNetNuke.UI.Skins;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 #endregion
 
@@ -410,7 +411,7 @@ namespace DotNetNuke.UI.Containers
 				if (InjectActionMenu && ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, string.Empty, ModuleConfiguration) && Request.QueryString["dnnprintmode"] != "true")
                 {
                     ContentPane.Controls.Add(LoadControl("~/admin/Menus/DNNActions/DDRActionsMenu.ascx"));
-                    Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
+                    jQuery.RequestHoverIntentRegistration();
                 }
 
                 //Process Module Header
@@ -446,9 +447,8 @@ namespace DotNetNuke.UI.Containers
 
         private void ProcessStylesheets(bool includeModuleCss)
         {
-            PageBase.RegisterStyleSheet(Page, ContainerPath + "container.css");
-
-            PageBase.RegisterStyleSheet(Page,ContainerSrc.Replace(".ascx", ".css"));
+            ClientResourceManager.RegisterStyleSheet(Page, ContainerPath + "container.css", 4);
+            ClientResourceManager.RegisterStyleSheet(Page, ContainerSrc.Replace(".ascx", ".css"), 5);
 
             //process the base class module properties 
             if (includeModuleCss)
@@ -456,11 +456,11 @@ namespace DotNetNuke.UI.Containers
                 string controlSrc = ModuleConfiguration.ModuleControl.ControlSrc;
                 string folderName = ModuleConfiguration.DesktopModule.FolderName;
 
-                PageBase.RegisterStyleSheet(Page, Globals.ApplicationPath + "/DesktopModules/" + folderName + "/module.css", true);
+                ClientResourceManager.RegisterStyleSheet(Page, Globals.ApplicationPath + "/DesktopModules/" + folderName + "/module.css", 0);
 
                 if (controlSrc.LastIndexOf("/") > 0)
                 {
-                    PageBase.RegisterStyleSheet(Page, Globals.ApplicationPath + "/" + controlSrc.Substring(0, controlSrc.LastIndexOf("/") + 1) + "module.css", true);
+                    ClientResourceManager.RegisterStyleSheet(Page, Globals.ApplicationPath + "/" + controlSrc.Substring(0, controlSrc.LastIndexOf("/") + 1) + "module.css", 0);
                 }
             }
         }

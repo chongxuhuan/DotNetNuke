@@ -35,6 +35,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 using Globals = DotNetNuke.Common.Globals;
 
@@ -61,6 +62,7 @@ namespace DotNetNuke.Framework
 
         private const string jQueryUIDebugFile = "~/Resources/Shared/Scripts/jquery/jquery-ui.js";
         private const string jQueryUIMinFile = "~/Resources/Shared/Scripts/jquery/jquery-ui.min.js";
+        private const string jQueryHoverIntentFile = "~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js";
         private const string jQueryUIVersionKey = "jQueryUIVersionKey";
         private const string jQueryUIVersionMatch = "(?<=version:\\s\")(.*)(?=\")";
         public const string DefaultUIHostedUrl = "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js";
@@ -159,6 +161,14 @@ namespace DotNetNuke.Framework
             get
             {
                 return GetSettingAsBoolean("jQueryDnnPluginsRequested", false);
+            }
+        }
+
+        public static bool IsHoverIntentRequested
+        {
+            get
+            {
+                return GetSettingAsBoolean("jQueryHoverIntentRequested", false);
             }
         }
 
@@ -301,39 +311,6 @@ namespace DotNetNuke.Framework
             return retValue;
         }
 
-        private static bool IsScriptRegistered(string key)
-        {
-            return HttpContext.Current.Items[key] != null;
-        }
-
-        private static void RegisterScript(Page page, string key, string script)
-        {
-            if (!IsScriptRegistered(key))
-            {
-                HttpContext.Current.Items[key] = true;
-                var headscript = new Literal { Text = script };
-                PlaceHolder placeHolder;
-                if (key == "jQuery")
-                {
-                    //load in Head
-                    placeHolder = page.Header.FindControl("SCRIPTS") as PlaceHolder;
-                    if (placeHolder != null)
-                    {
-                        placeHolder.Controls.AddAt(0, headscript);
-                    }
-                }
-                else
-                {
-                    //load in Body
-                    placeHolder = page.FindControl("BodySCRIPTS") as PlaceHolder;
-                    if (placeHolder != null)
-                    {
-                        placeHolder.Controls.AddAt(0, headscript);
-                    }
-                }
-            }
-        }
-
         #endregion
 
         #region Public Methods
@@ -355,7 +332,7 @@ namespace DotNetNuke.Framework
             {
                 jfile = jQueryMinFile;
             }
-            return Globals.ResolveUrl(jfile);
+            return jfile;
         }
 
         public static string JQueryUIFile(bool getMinFile)
@@ -365,7 +342,7 @@ namespace DotNetNuke.Framework
             {
                 jfile = jQueryUIMinFile;
             }
-            return Globals.ResolveUrl(jfile);
+            return jfile;
         }
 
         public static string GetJQueryScriptReference()
@@ -373,9 +350,9 @@ namespace DotNetNuke.Framework
             string scriptsrc = HostedUrl;
             if (!UseHostedScript)
             {
-                scriptsrc = string.Format("{0}?{1}", JQueryFile(!UseDebugScript), Version);
+                scriptsrc = JQueryFile(!UseDebugScript);
             }
-            return string.Format(Globals.glbScriptFormat, scriptsrc);
+            return scriptsrc;
         }
 
         public static string GetJQueryUIScriptReference()
@@ -383,35 +360,36 @@ namespace DotNetNuke.Framework
             string scriptsrc = HostedUIUrl;
             if (!UseHostedScript)
             {
-                scriptsrc = string.Format("{0}?{1}", JQueryUIFile(!UseDebugScript), UIVersion);
+                scriptsrc = JQueryUIFile(!UseDebugScript);
             }
-            return string.Format(Globals.glbScriptFormat, scriptsrc);
+            return scriptsrc;
         }
 
         public static void RegisterJQuery(Page page)
         {
-            RegisterScript(page, "jQuery", GetJQueryScriptReference());
+            ClientResourceManager.RegisterScript(page, GetJQueryScriptReference(), 0);
         }
 
         public static void RegisterJQueryUI(Page page)
         {
-            //Ensure jQuery is registered first
             RegisterJQuery(page);
-
-            RegisterScript(page, "jQueryUI", GetJQueryUIScriptReference());
+            ClientResourceManager.RegisterScript(page, GetJQueryUIScriptReference(), 1);
         }
 
         public static void RegisterDnnJQueryPlugins(Page page)
         {
             RegisterJQueryUI(page);
-            if (HttpContext.Current.IsDebuggingEnabled)
-            {
-                page.ClientScript.RegisterClientScriptInclude("dnnJqueryPlugins", page.ResolveUrl("~/js/Debug/dnn.jquery.js"));
-            }
-            else
-            {
-                page.ClientScript.RegisterClientScriptInclude("dnnJqueryPlugins", page.ResolveUrl("~/js/dnn.jquery.js"));
-            }
+
+            var dnnJqueryPath = HttpContext.Current.IsDebuggingEnabled
+                   ? "~/js/Debug/dnn.jquery.js"
+                   : "~/js/dnn.jquery.js";
+
+            ClientResourceManager.RegisterScript(page, dnnJqueryPath);
+        }
+
+        public static void RegisterHoverIntent(Page page)
+        {
+            ClientResourceManager.RegisterScript(page, jQueryHoverIntentFile);
         }
 
         public static void RequestRegistration()
@@ -427,6 +405,11 @@ namespace DotNetNuke.Framework
         public static void RequestDnnPluginsRegistration()
         {
             HttpContext.Current.Items["jQueryDnnPluginsRequested"] = true;
+        }
+
+        public static void RequestHoverIntentRegistration()
+        {
+            HttpContext.Current.Items["jQueryHoverIntentRequested"] = true;
         }
 
         #endregion
@@ -451,7 +434,7 @@ namespace DotNetNuke.Framework
         [Obsolete("Deprecated in DNN 6.0 Replaced by RegisterJQuery.")]
         public static void RegisterScript(Page page, string script)
         {
-            RegisterScript(page, "jQuery", script);
+            ClientResourceManager.RegisterScript(page, script);
         }
 
         #endregion

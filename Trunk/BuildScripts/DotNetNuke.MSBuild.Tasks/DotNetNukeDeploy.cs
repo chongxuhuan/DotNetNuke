@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using log4net;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -44,6 +45,7 @@ namespace DotNetNuke.MSBuild.Tasks
                 autoFailed = (data.Contains("Error") || data.Contains("bypasses"));
                 if (!autoFailed)
                 {
+                    Thread.Sleep(2000);
                     var homePageUrl = string.Format("http://localhost/{0}/default.aspx", WebsiteName);
                     var homePage = wc.DownloadString(homePageUrl);
                     LogFormat("Message", "Install URL: - " + homePageUrl + "\r\n");

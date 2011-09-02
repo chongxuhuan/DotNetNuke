@@ -1,6 +1,4 @@
-#region Copyright
-
-// 
+﻿// 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
 // by DotNetNuke Corporation
@@ -19,22 +17,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 
-#endregion
+namespace DotNetNuke.Web.Client.ClientResourceManagement
+{
+    using ClientDependency.Core.Controls;
 
-#region Usings
-
-using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-
-#endregion
-
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("34127f21-2826-4b3b-bb87-78d6c9ef729f")]
-[assembly: AssemblyVersion("6.1.0.333")]
+    /// <summary>
+    /// Represents a collection of client resource paths.
+    /// </summary>
+    public class ClientResourcePathCollection : ClientDependencyPathCollection
+    {
+    }
+}

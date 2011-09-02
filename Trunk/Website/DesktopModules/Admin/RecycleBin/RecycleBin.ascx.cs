@@ -35,6 +35,8 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
+using DotNetNuke.Web.Client.ClientResourceManagement;
+
 using Globals = DotNetNuke.Common.Globals;
 
 #endregion
@@ -270,7 +272,7 @@ namespace DotNetNuke.Modules.Admin.RecycleBin
 			base.OnLoad(e);
 
 			jQuery.RequestDnnPluginsRegistration();
-			PageBase.RegisterStyleSheet(Page, Globals.HostPath + "admin.css");
+            ClientResourceManager.RegisterStyleSheet(Page, Globals.HostPath + "admin.css");
 
 			cmdDeleteModule.Click += OnModuleDeleteClick;
 			cmdDeleteTab.Click += OnTabDeleteClick;

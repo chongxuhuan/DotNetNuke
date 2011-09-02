@@ -31,6 +31,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 using Globals = DotNetNuke.Common.Globals;
 using DotNetNuke.Entities.Icons;
@@ -518,12 +519,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
 
                 ClientAPI.RegisterClientReference(this.Page, ClientAPI.ClientNamespaceReferences.dnn);
-                string script = string.Format(Globals.glbScriptFormat, ResolveUrl("~/Resources/Search/Search.js"));
-
-                ClientAPI.RegisterStartUpScript(Page, "initSearch", script);
-
-
-
+                ClientResourceManager.RegisterScript(Page, "~/Resources/Search/Search.js");
             }
             else
             {

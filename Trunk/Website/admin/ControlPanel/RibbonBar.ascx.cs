@@ -41,6 +41,7 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Mobile;
 using DotNetNuke.Services.Upgrade;
 using DotNetNuke.UI.Utilities;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 using DotNetNuke.Web.UI.WebControls;
 
 using Globals = DotNetNuke.Common.Globals;
@@ -182,6 +183,13 @@ namespace DotNetNuke.UI.ControlPanels
                 AdminPanel.Visible = false;
                 AdvancedToolsPanel.Visible = false;
 
+                if (ControlPanel.Visible)
+                {
+                    ClientResourceManager.RegisterStyleSheet(this.Page, "~/admin/ControlPanel/module.css");
+                    jQuery.RequestHoverIntentRegistration();
+                    ClientResourceManager.RegisterScript(this.Page, "~/Resources/ControlPanel/ControlPanel.debug.js");
+                }
+
                 jQuery.RequestDnnPluginsRegistration();
 
                 Control copyPageButton = CurrentPagePanel.FindControl("CopyPage");
@@ -278,29 +286,7 @@ namespace DotNetNuke.UI.ControlPanels
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-
-			if (ControlPanel.Visible)
-			{
-				PageBase.RegisterStyleSheet(Page, "~/admin/ControlPanel/module.css");
-				ClientScriptManager cs = Page.ClientScript;
-				if (!cs.IsClientScriptIncludeRegistered("hoverintent"))
-				{
-					cs.RegisterClientScriptInclude("hoverintent", Globals.ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
-				}
-
-				if (!cs.IsClientScriptIncludeRegistered("ControlPanel"))
-				{
-                    if (HttpContext.Current.IsDebuggingEnabled)
-                    {
-                        cs.RegisterClientScriptInclude("ControlPanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.debug.js"));
-                    }
-                    else
-                    {
-                        cs.RegisterClientScriptInclude("ControlPanel", Globals.ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
-                    }
-				}
-			}
-        	cmdVisibility.Visible = false;
+            cmdVisibility.Visible = false;
         }
 
         protected void CmdVisibilityClick(object sender, EventArgs e)

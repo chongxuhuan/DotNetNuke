@@ -40,6 +40,7 @@ using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Personalization;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 #endregion
 
@@ -261,10 +262,7 @@ namespace DotNetNuke.Modules.Admin.Console
 			try
 			{
 				jQuery.RequestRegistration();
-
-				string consoleJs = ResolveUrl("~/desktopmodules/admin/console/jquery.console.js");
-
-				Page.ClientScript.RegisterClientScriptInclude("ConsoleJS", consoleJs);
+                ClientResourceManager.RegisterScript(this.Page, "~/desktopmodules/admin/console/jquery.console.js");
 
 				//Save User Preferences
 				SavePersonalizedSettings();

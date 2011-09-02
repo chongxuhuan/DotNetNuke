@@ -54,6 +54,7 @@ using DotNetNuke.UI.Internals;
 using DotNetNuke.UI.Modules;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 using DataCache = DotNetNuke.UI.Utilities.DataCache;
 using Globals = DotNetNuke.Common.Globals;
@@ -139,6 +140,14 @@ namespace DotNetNuke.Framework
             }
         }
 
+        public string CurrentSkinPath
+        {
+            get
+            {
+                return ((PortalSettings)HttpContext.Current.Items["PortalSettings"]).ActiveTab.SkinPath;
+            }
+        }
+
         private bool IsPopUp
         {
             get
@@ -146,6 +155,7 @@ namespace DotNetNuke.Framework
                 return HttpContext.Current.Request.Url.ToString().Contains("popUp=true");
             }
         }
+
         #endregion
 
         #region IClientAPICallbackEventHandler Members
@@ -202,8 +212,7 @@ namespace DotNetNuke.Framework
             //redirect to a specific tab based on name
             if (!String.IsNullOrEmpty(Request.QueryString["tabname"]))
             {
-                objTab = objTabs.GetTabByName(Request.QueryString["TabName"],
-                                              ((PortalSettings)HttpContext.Current.Items["PortalSettings"]).PortalId);
+                objTab = objTabs.GetTabByName(Request.QueryString["TabName"], ((PortalSettings)HttpContext.Current.Items["PortalSettings"]).PortalId);
                 if (objTab != null)
                 {
                     var parameters = new List<string>(); //maximum number of elements
@@ -402,10 +411,8 @@ namespace DotNetNuke.Framework
             if (PortalSettings.EnableSkinWidgets)
             {
                 jQuery.RequestRegistration();
-                ClientAPI.RegisterStartUpScript(Page, "initWidgets",
-                                                string.Format(
-                                                    "<script type=\"text/javascript\" src=\"{0}\" ></script>",
-                                                    ResolveUrl("~/Resources/Shared/scripts/initWidgets.js")));
+                // don't use the new API to register widgets until we better understand their asynchronous script loading requirements.
+                ClientAPI.RegisterStartUpScript(Page, "initWidgets", string.Format("<script type=\"text/javascript\" src=\"{0}\" ></script>", ResolveUrl("~/Resources/Shared/scripts/initWidgets.js")));
             }
         }
 
@@ -626,19 +633,19 @@ namespace DotNetNuke.Framework
                 //register popup js
                 jQuery.RegisterJQueryUI(Page);
 
-                if (HttpContext.Current.IsDebuggingEnabled)
-                {
-                    ClientScript.RegisterClientScriptInclude("modalPopUp", ResolveUrl("~/js/Debug/dnn.modalpopup.js"));
-                }
-                else
-                {
-                    ClientScript.RegisterClientScriptInclude("modalPopUp", ResolveUrl("~/js/dnn.modalpopup.js"));
-                }
+                var popupFilePath = HttpContext.Current.IsDebuggingEnabled
+                                   ? "~/js/Debug/dnn.modalpopup.js"
+                                   : "~/js/dnn.modalpopup.js";
+
+                ClientResourceManager.RegisterScript(this, popupFilePath);
             }
             else
             {
                 ctlSkin = UI.Skins.Skin.GetSkin(this);
             }
+
+            // DataBind common paths for the client resource loader
+            this.ClientResourceLoader.DataBind();
 
             //check for and read skin package level doctype
             SetSkinDoctype();
@@ -694,14 +701,14 @@ namespace DotNetNuke.Framework
             }
 
             //add CSS links
-            RegisterStyleSheet(this, Globals.HostPath + "default.css");
-            RegisterStyleSheet(this, ctlSkin.SkinPath + "skin.css");
-            RegisterStyleSheet(this, ctlSkin.SkinSrc.Replace(".ascx", ".css"));
+            ClientResourceManager.RegisterStyleSheet(this, Globals.HostPath + "default.css", 1);
+            ClientResourceManager.RegisterStyleSheet(this, ctlSkin.SkinPath + "skin.css", 2);
+            ClientResourceManager.RegisterStyleSheet(this, ctlSkin.SkinSrc.Replace(".ascx", ".css"), 3);
 
             //add skin to page
             SkinPlaceHolder.Controls.Add(ctlSkin);
 
-            RegisterStyleSheet(this, PortalSettings.HomeDirectory + "portal.css");
+            ClientResourceManager.RegisterStyleSheet(this, PortalSettings.HomeDirectory + "portal.css", 6);
 
             //add Favicon
             ManageFavicon();

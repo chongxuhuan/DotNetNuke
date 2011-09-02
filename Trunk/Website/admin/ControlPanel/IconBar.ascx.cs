@@ -43,6 +43,7 @@ using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Upgrade;
 using DotNetNuke.UI.Utilities;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 using Globals = DotNetNuke.Common.Globals;
 
@@ -728,17 +729,7 @@ namespace DotNetNuke.UI.ControlPanels
         private void cboPanes_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadPositions();
-            string script;
-            if (HttpContext.Current.IsDebuggingEnabled)
-            {
-                script = string.Format(Globals.glbScriptFormat, ResolveUrl("~/Resources/ControlPanel/ControlPanel.debug.js"));
-            }
-            else
-            {
-                script = string.Format(Globals.glbScriptFormat, ResolveUrl("~/Resources/ControlPanel/ControlPanel.js"));
-            }
-
-            ClientAPI.RegisterStartUpScript(Page, "ControlPanel", script);
+            ClientResourceManager.RegisterScript(this.Page, "~/Resources/ControlPanel/ControlPanel.debug.js");
         }
 
         protected void cboPosition_SelectedIndexChanged(object sender, EventArgs e)

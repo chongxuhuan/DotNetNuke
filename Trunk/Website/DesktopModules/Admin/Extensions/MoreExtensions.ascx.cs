@@ -30,6 +30,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Framework;
 using DotNetNuke.UI.Modules;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 #endregion
 
@@ -48,27 +49,9 @@ namespace DotNetNuke.Modules.Admin.Extensions
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-
-            ClientScriptManager cs = Page.ClientScript;
-            if (!cs.IsClientScriptIncludeRegistered("jquery.tmpl"))
-            {
-                cs.RegisterClientScriptInclude("jquery.tmpl", Globals.ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.tmpl.js"));
-            };
-            if (!cs.IsClientScriptIncludeRegistered("json2"))
-            {
-                cs.RegisterClientScriptInclude("json2", Globals.ResolveUrl("~/Resources/Shared/Scripts/json2.js"));
-            };
-            if (!cs.IsClientScriptIncludeRegistered("gallery"))
-            {
-                //if (IsDebugEnabled())
-                //{
-                cs.RegisterClientScriptInclude("gallery", Globals.ResolveUrl("~/DesktopModules/Admin/Extensions/Scripts/Gallery.js"));
-                //}
-                //else
-                //{
-                //    cs.RegisterClientScriptInclude("gallery", Globals.ResolveUrl("~/DesktopModules/Admin/Extensions/Scripts/Gallery-compiled.js"));
-                //}
-            }
+            ClientResourceManager.RegisterScript(this.Page, "~/Resources/Shared/Scripts/jquery/jquery.tmpl.js");
+            ClientResourceManager.RegisterScript(this.Page, "~/Resources/Shared/Scripts/json2.js");
+            ClientResourceManager.RegisterScript(this.Page, "~/DesktopModules/Admin/Extensions/Scripts/Gallery.js");
         }
 
         protected bool IsDebugEnabled()

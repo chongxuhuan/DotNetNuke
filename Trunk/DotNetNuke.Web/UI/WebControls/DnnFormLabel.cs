@@ -9,6 +9,7 @@ using DotNetNuke.Framework;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.UserControls;
 using DotNetNuke.UI.Utilities;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 using Telerik.Web.UI;
 
@@ -60,7 +61,7 @@ namespace DotNetNuke.Web.UI.WebControls
 				panel.Controls.Add(pinLink);
 
 				ClientAPI.RegisterClientReference(Page, ClientAPI.ClientNamespaceReferences.dnn);
-				Page.ClientScript.RegisterClientScriptInclude("hoverintent", ResolveUrl("~/Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"));
+                jQuery.RequestHoverIntentRegistration();
 				jQuery.RequestDnnPluginsRegistration();
                 Page.ClientScript.RegisterClientScriptBlock(typeof(LabelControl), "dnnTooltip", "jQuery(document).ready(function($){ $('.dnnTooltip').dnnTooltip();Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function(){$('.dnnTooltip').dnnTooltip();}); });", true);
 			}

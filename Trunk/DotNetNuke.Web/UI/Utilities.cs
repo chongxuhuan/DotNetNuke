@@ -36,6 +36,7 @@ using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.ControlPanels;
 using DotNetNuke.UI.Modules;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 using FileInfo = DotNetNuke.Services.FileSystem.FileInfo;
 
@@ -50,7 +51,7 @@ namespace DotNetNuke.Web.UI
 
         private static void AddMessageWindow(Control ctrl)
         {
-            ctrl.Page.ClientScript.RegisterClientScriptInclude("postBackConfirm", ctrl.ResolveUrl("~/js/dnn.postbackconfirm.js"));
+            ClientResourceManager.RegisterScript(ctrl.Page, ctrl.ResolveUrl("~/js/dnn.postbackconfirm.js"));
         }
 
         #endregion

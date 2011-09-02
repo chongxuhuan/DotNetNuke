@@ -23,6 +23,7 @@
 
 #region Usings
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -107,35 +108,77 @@ namespace DotNetNuke.Services.ClientCapability
 
                 lock (_capabiliyValueLock)
                 {
-                    IDictionary<string, List<string>> capabilityValues = new Dictionary<string, List<string>>();
+                    var capabilityValues = new Dictionary<string, List<string>>();
 
                     var devices = Manager.GetAllDevices();
                     foreach (var device in devices)
                     {
                         foreach (var capability in device.GetCapabilities())
                         {
-                            if (_capabilityValues.ContainsKey(capability.Key))
-                            {
-                                if (!_capabilityValues[capability.Key].Contains(capability.Value))
-                                {
-                                    //check for empty capability.Value
-                                    if (!String.IsNullOrEmpty((capability.Value)))_capabilityValues[capability.Key].Add(capability.Value);
-                                }
-                            }
-                            else
-                            {
-                                //check for empty capability.Value
-                                if (!String.IsNullOrEmpty((capability.Value)))_capabilityValues.Add(capability.Key, new List<string>() { capability.Value });
-                            }
+							//if the capability is high piority item, add it to high piority list for later add them in top of list.
+							if (HighPiorityCapabilityValues.ContainsKey(capability.Key))
+							{
+								if (!HighPiorityCapabilityValues[capability.Key].Contains(capability.Value))
+								{
+									//check for empty capability.Value
+									if (!String.IsNullOrEmpty((capability.Value))) HighPiorityCapabilityValues[capability.Key].Add(capability.Value);
+								}
+							}
+							else
+							{
+								if (capabilityValues.ContainsKey(capability.Key))
+								{
+									if (!capabilityValues[capability.Key].Contains(capability.Value))
+									{
+										//check for empty capability.Value
+										if (!String.IsNullOrEmpty((capability.Value))) capabilityValues[capability.Key].Add(capability.Value);
+									}
+								}
+								else
+								{
+									//check for empty capability.Value
+									if (!String.IsNullOrEmpty((capability.Value))) capabilityValues.Add(capability.Key, new List<string>() { capability.Value });
+								}
+							}
                         }
+						//order the capability list
+						var sortedCapabilityValues = capabilityValues.OrderBy(c => c.Key);
+						//add high piority items into top of the list
+						_capabilityValues = HighPiorityCapabilityValues.Concat(sortedCapabilityValues).ToDictionary(c => c.Key, c => c.Value);
                     }
 
-                    _capabilityValues = capabilityValues;
-                    return _capabilityValues;
+                	return _capabilityValues;
                 }
             }
         }
 
+    	private static IDictionary<string, List<string>> _highPiorityCapabilityValues;
+		private static IDictionary<string, List<string>> HighPiorityCapabilityValues
+    	{
+    		get
+    		{
+    			if(_highPiorityCapabilityValues == null)
+    			{
+    				//add is_wireless_device,is_tablet,device_os,mobile_browser,mobile_browser_version,
+					//pointing_method,device_os_version,resolution_width,resolution_height,brand_name
+					//as high piority capability values, it will appear at the top of capability values list.
+					_highPiorityCapabilityValues = new Dictionary<string, List<string>>();
+
+					_highPiorityCapabilityValues.Add("is_wireless_device", new List<string>());
+					_highPiorityCapabilityValues.Add("is_tablet", new List<string>());
+					_highPiorityCapabilityValues.Add("device_os", new List<string>());
+					_highPiorityCapabilityValues.Add("mobile_browser", new List<string>());
+					_highPiorityCapabilityValues.Add("mobile_browser_version", new List<string>());
+					_highPiorityCapabilityValues.Add("pointing_method", new List<string>());
+					_highPiorityCapabilityValues.Add("device_os_version", new List<string>());
+					_highPiorityCapabilityValues.Add("resolution_width", new List<string>());
+					_highPiorityCapabilityValues.Add("resolution_height", new List<string>());
+					_highPiorityCapabilityValues.Add("brand_name", new List<string>());
+    			}
+
+    			return _highPiorityCapabilityValues;
+    		}
+    	}
 
         static object _allCapabilitiesLock = new object();
         static IQueryable<IClientCapability> _allCapabilities;

@@ -47,6 +47,7 @@ using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 #endregion
 
@@ -92,6 +93,41 @@ namespace DotNetNuke.Framework
 
         #endregion
 
+        #region "Private Methods"
+
+        protected static void AddStyleSheetInternal(Page page, string id, string styleSheet, bool isFirst)
+        {
+            Control objCSS = page.FindControl("CSS");
+            if (objCSS != null)
+            {
+                Control objCtrl = page.Header.FindControl(id);
+                if (objCtrl == null)
+                {
+                    var objLink = new HtmlLink { ID = id };
+                    objLink.Attributes["rel"] = "stylesheet";
+                    objLink.Attributes["type"] = "text/css";
+                    objLink.Href = styleSheet;
+                    if (isFirst)
+                    {
+                        int iLink;
+                        for (iLink = 0; iLink <= objCSS.Controls.Count - 1; iLink++)
+                        {
+                            if (objCSS.Controls[iLink] is HtmlLink)
+                            {
+                                break;
+                            }
+                        }
+                        objCSS.Controls.AddAt(iLink, objLink);
+                    }
+                    else
+                    {
+                        objCSS.Controls.Add(objLink);
+                    }
+                }
+            }
+        }
+
+        #endregion
 
         #region "Protected Properties"
 
@@ -180,59 +216,7 @@ namespace DotNetNuke.Framework
 
         #endregion
 
-        #region "Private Methpds"
-
-        protected static void AddStyleSheetInternal(Page page, string id, string styleSheet, bool isFirst)
-        {
-            Control objCSS = page.FindControl("CSS");
-            if (objCSS != null)
-            {
-                Control objCtrl = page.Header.FindControl(id);
-                if (objCtrl == null)
-                {
-                    var objLink = new HtmlLink { ID = id };
-                    objLink.Attributes["rel"] = "stylesheet";
-                    objLink.Attributes["type"] = "text/css";
-                    objLink.Href = styleSheet;
-                    if (isFirst)
-                    {
-                        int iLink;
-                        for (iLink = 0; iLink <= objCSS.Controls.Count - 1; iLink++)
-                        {
-                            if (objCSS.Controls[iLink] is HtmlLink)
-                            {
-                                break;
-                            }
-                        }
-                        objCSS.Controls.AddAt(iLink, objLink);
-                    }
-                    else
-                    {
-                        objCSS.Controls.Add(objLink);
-                    }
-                }
-            }
-        }
-
-        private static void AddStyleSheetInternal(Page page, string key, bool isFirst)
-        {
-            var styleSheetDictionary = CBO.GetCachedObject<SharedDictionary<string, string>>(
-                                                new CacheItemArgs("StyleSheets", 200, CacheItemPriority.NotRemovable),
-                                                cacheItemArgs => new SharedDictionary<string, string>(),
-                                                true
-                                            );
-
-            using (ISharedCollectionLock readLock = styleSheetDictionary.GetReadLock())
-            {
-                if (styleSheetDictionary.ContainsKey(key) && !String.IsNullOrEmpty(styleSheetDictionary[key]))
-                {
-                    string styleSheet = styleSheetDictionary[key];
-                    string id = Globals.CreateValidID(key);
-
-                    AddStyleSheetInternal(page, id, styleSheet, isFirst);
-                }
-            }
-        }
+        #region "Private Methods"
 
         private static bool IsStyleSheetRegistered(string key)
         {
@@ -351,14 +335,12 @@ namespace DotNetNuke.Framework
 
             AJAX.AddScriptManager(this);
 
-            if (HttpContext.Current.IsDebuggingEnabled)
-            {
-                Page.ClientScript.RegisterClientScriptInclude("dnncore", Page.ResolveUrl("~/js/Debug/dnncore.js"));
-            }
-            else
-            {
-                Page.ClientScript.RegisterClientScriptInclude("dnncore", Page.ResolveUrl("~/js/dnncore.js"));
-            }
+            var dnncoreFilePath = HttpContext.Current.IsDebuggingEnabled
+                   ? "~/js/Debug/dnncore.js"
+                   : "~/js/dnncore.js";
+
+            ClientResourceManager.RegisterScript(this, dnncoreFilePath);
+
             base.OnInit(e);
         }
 
@@ -381,6 +363,10 @@ namespace DotNetNuke.Framework
             if (jQuery.AreDnnPluginsRequested)
             {
                 jQuery.RegisterDnnJQueryPlugins(Page);
+            }
+            if (jQuery.IsHoverIntentRequested)
+            {
+                jQuery.RegisterHoverIntent(Page);
             }
         }
 
@@ -699,11 +685,13 @@ namespace DotNetNuke.Framework
             }
         }
 
+        [Obsolete("Deprecated in DNN 6.1. Replaced by ClientResourceManager.RegisterStyleSheet.")]
         public static void RegisterStyleSheet(Page page, string styleSheet)
         {
             RegisterStyleSheet(page, styleSheet, false);
         }
 
+        [Obsolete("Deprecated in DNN 6.1. Replaced by ClientResourceManager.RegisterStyleSheet.")]
         public static void RegisterStyleSheet(Page page, string styleSheet, bool isFirst)
         {
             if (!IsStyleSheetRegistered(styleSheet))
@@ -711,7 +699,14 @@ namespace DotNetNuke.Framework
                 RegisterStyleSheet(page, styleSheet, styleSheet);
             }
 
-            AddStyleSheetInternal(page, styleSheet, isFirst);
+            if (isFirst)
+            {
+                ClientResourceManager.RegisterStyleSheet(page, styleSheet, 0);
+            }
+            else
+            {
+                ClientResourceManager.RegisterStyleSheet(page, styleSheet);
+            }
         }
 
         /// <summary>

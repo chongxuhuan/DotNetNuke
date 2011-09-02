@@ -24,13 +24,18 @@
     <meta name="RATING" content="GENERAL" />
     <meta http-equiv="PAGE-ENTER" content="RevealTrans(Duration=0,Transition=1)" />
     <style type="text/css" id="StylePlaceholder" runat="server"></style>
+    <asp:placeholder runat="server" id="ClientResourceCssIncludes" />
     <asp:placeholder id="CSS" runat="server" />
     <asp:placeholder id="SCRIPTS" runat="server" />
 </head>
 <body id="Body" runat="server">
     <asp:PlaceHolder ID="BodySCRIPTS" runat="server" />
-    <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader" />
     <dnn:Form ID="Form" runat="server" ENCTYPE="multipart/form-data">
+        <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader">
+            <Paths>
+                <dnncrm:ClientResourcePath Name="SkinPath" Path="<%# this.CurrentSkinPath %>" />
+            </Paths>
+        </dnncrm:ClientResourceLoader>
         <asp:Label ID="SkinError" runat="server" CssClass="NormalRed" Visible="False"></asp:Label>
         <asp:PlaceHolder ID="SkinPlaceHolder" runat="server" />
         <input id="ScrollTop" runat="server" name="ScrollTop" type="hidden" />

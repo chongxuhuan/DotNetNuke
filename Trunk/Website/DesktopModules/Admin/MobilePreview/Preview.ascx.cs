@@ -32,6 +32,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework;
 using DotNetNuke.Services.Mobile;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 using DotNetNuke.Web.UI.WebControls;
 
 #endregion
@@ -76,8 +77,7 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 		protected override void OnPreRender(EventArgs e)
 		{
 			base.OnPreRender(e);
-
-			Page.ClientScript.RegisterClientScriptInclude("mobilepreview", string.Format("{0}Scripts/PreviewEmulator.js", this.ControlPath));
+		    ClientResourceManager.RegisterScript(this.Page, string.Format("{0}Scripts/PreviewEmulator.js", this.ControlPath));
 		}
 
 		#endregion

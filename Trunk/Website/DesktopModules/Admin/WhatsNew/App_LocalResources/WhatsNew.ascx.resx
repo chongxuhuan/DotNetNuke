@@ -1563,4 +1563,50 @@ corrected with each release. &lt;/p&gt;
           &lt;/ul&gt;
       </value>
       </data>
+  <data name="WhatsNew.06.00.01" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed behavior of Language detection when Content Localization is not enabled.
+	&lt;/li&gt;
+	&lt;li&gt;Fixed issue in the HTML Module with links to secure pages (https) &lt;/li&gt;
+	&lt;li&gt;Fixed issue with subfolders in Cloud providers &lt;/li&gt;
+	&lt;li&gt;Fixed issue with the Telerik Editor in full screen mode when popups are 
+	disabled &lt;/li&gt;
+	&lt;li&gt;Included the RadEditor in the upgrade package &lt;/li&gt;
+	&lt;li&gt;Fixed issue caused by loading a DotNetNuke site in an iFrame with Modal 
+	Popus enabled &lt;/li&gt;
+	&lt;li&gt;Fixed issue with having the same skin in the _default folder and site skin 
+	folder &lt;/li&gt;
+	&lt;li&gt;Fixed issue with managing Users in Role &lt;/li&gt;
+	&lt;li&gt;Resolved the conflict between the Whitespace Filter and the File Manager
+	&lt;/li&gt;
+	&lt;li&gt;Fixed issue with setting the icon of the homepage &lt;/li&gt;
+	&lt;li&gt;Fixed issue with folder duplicates in the File Manager &lt;/li&gt;
+	&lt;li&gt;Updated extension catalog to show &amp;quot;friendly&amp;quot; extension name, rather than 
+	the extensionname field &lt;/li&gt;
+	&lt;li&gt;Added regular expression validation to the account creation process. This 
+	allows admin to enforce policies like: user names must be valid email addresses
+	&lt;/li&gt;
+	&lt;li&gt;Users can now use CAPTCHA during the password retrieval process &lt;/li&gt;
+	&lt;li&gt;Reordered text on screen to make default site warning more obvious&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;HTML Module&lt;/li&gt;
+	&lt;li&gt;Messaging Module&lt;/li&gt;
+	&lt;li&gt;Taxonomy Manager&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
 </root>
