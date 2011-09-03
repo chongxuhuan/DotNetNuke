@@ -59,7 +59,7 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
         /// </summary>
         /// <param name="page">The current page. Used to get a reference to the client resource loader.</param>
         /// <param name="filePath">The relative file path to the JavaScript resource.</param>
-        /// <param name="priority">The relative priority in which the file should be loaded.</param>
+        /// <param name="priority">The relative priority in which the file should be loaded. Established convention starts at 0 and increments by five for each subsequent priority. Default priority is set to 100.</param>
         public static void RegisterScript(Page page, string filePath, int priority)
         {
             var loader = GetLoader(page);
@@ -84,7 +84,7 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
         /// </summary>
         /// <param name="page">The current page. Used to get a reference to the client resource loader.</param>
         /// <param name="filePath">The relative file path to the CSS resource.</param>
-        /// <param name="priority">The relative priority in which the file should be loaded.</param>
+        /// <param name="priority">The relative priority in which the file should be loaded. Established convention starts at 0 and increments by five for each subsequent priority. Default priority is set to 100.</param>
         public static void RegisterStyleSheet(Page page, string filePath, int priority)
         {
             RegisterStyleSheet(page, filePath, priority, DefaultProvider);
@@ -95,7 +95,7 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
         /// </summary>
         /// <param name="page">The current page. Used to get a reference to the client resource loader.</param>
         /// <param name="filePath">The relative file path to the CSS resource.</param>
-        /// <param name="priority">The relative priority in which the file should be loaded.</param>
+        /// <param name="priority">The relative priority in which the file should be loaded. Established convention starts at 0 and increments by five for each subsequent priority. Default priority is set to 100.</param>
         /// <param name="provider">The provider name to be used to render the css file on the page.</param>
         public static void RegisterStyleSheet(Page page, string filePath, int priority, string provider)
         {

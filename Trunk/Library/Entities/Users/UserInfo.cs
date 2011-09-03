@@ -57,12 +57,18 @@ namespace DotNetNuke.Entities.Users
     [Serializable]
     public class UserInfo : BaseEntityInfo, IPropertyAccess
     {
+        #region Private Members
+
         private string _FullName;
         private UserMembership _Membership;
         private UserProfile _Profile;
         private string[] _Roles;
         private bool _RolesHydrated = Null.NullBoolean;
         private string strAdministratorRoleName;
+
+        #endregion
+
+        #region Constructors
 
         public UserInfo()
         {
@@ -74,6 +80,10 @@ namespace DotNetNuke.Entities.Users
             AffiliateID = Null.NullInteger;
             _Roles = new string[] {};
         }
+
+        #endregion
+
+        #region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -310,40 +320,6 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Gets current time in User's timezone
-        /// </summary>
-        /// <history>
-        ///     [aprasad]	07/19/2011	Added
-        /// </history>
-        /// -----------------------------------------------------------------------------        
-        public DateTime LocalTime()
-        {
-            return LocalTime(SystemDateTime.GetCurrentTimeUtc());
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Convert utc time in User's timezone
-        /// </summary>
-        /// <param name="utcTime">Utc time to convert</param>
-        /// <history>
-        ///     [aprasad]	07/19/2011	Added
-        /// </history>
-        /// -----------------------------------------------------------------------------       
-        public DateTime LocalTime(DateTime utcTime)
-        {
-            if (UserID > Null.NullInteger)
-            {
-                return TimeZoneInfo.ConvertTime(utcTime, TimeZoneInfo.Utc, this.Profile.PreferredTimeZone);
-            }
-            else
-            {
-                return TimeZoneInfo.ConvertTime(utcTime, TimeZoneInfo.Utc, PortalController.GetCurrentPortalSettings().TimeZone);
-            }                            
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
         /// Gets and sets the User Name
         /// </summary>
         /// <history>
@@ -550,6 +526,10 @@ namespace DotNetNuke.Entities.Users
             DisplayName = format;
         }
 
+        #endregion
+
+        #region Private Methods
+
         /// <summary>
         /// Determine, if accessing user is Administrator
         /// </summary>
@@ -572,6 +552,48 @@ namespace DotNetNuke.Entities.Users
             return AccessingUser.IsInRole(strAdministratorRoleName) || AccessingUser.IsSuperUser;
         }
 
+        #endregion
+
+        #region Public Methods
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets current time in User's timezone
+        /// </summary>
+        /// <history>
+        ///     [aprasad]	07/19/2011	Added
+        /// </history>
+        /// -----------------------------------------------------------------------------        
+        public DateTime LocalTime()
+        {
+            return LocalTime(SystemDateTime.GetCurrentTimeUtc());
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Convert utc time in User's timezone
+        /// </summary>
+        /// <param name="utcTime">Utc time to convert</param>
+        /// <history>
+        ///     [aprasad]	07/19/2011	Added
+        /// </history>
+        /// -----------------------------------------------------------------------------       
+        public DateTime LocalTime(DateTime utcTime)
+        {
+            if (UserID > Null.NullInteger)
+            {
+                return TimeZoneInfo.ConvertTime(utcTime, TimeZoneInfo.Utc, this.Profile.PreferredTimeZone);
+            }
+            else
+            {
+                return TimeZoneInfo.ConvertTime(utcTime, TimeZoneInfo.Utc, PortalController.GetCurrentPortalSettings().TimeZone);
+            }
+        }
+
+        #endregion
+
+        #region Obsolete
+
         [Browsable(false), Obsolete("Deprecated in DNN 5.1. This property has been deprecated in favour of Display Name")]
         public string FullName
         {
@@ -589,5 +611,7 @@ namespace DotNetNuke.Entities.Users
                 _FullName = value;
             }
         }
+
+        #endregion
     }
 }

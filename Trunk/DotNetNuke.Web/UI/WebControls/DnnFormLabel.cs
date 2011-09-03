@@ -63,7 +63,7 @@ namespace DotNetNuke.Web.UI.WebControls
 				ClientAPI.RegisterClientReference(Page, ClientAPI.ClientNamespaceReferences.dnn);
                 jQuery.RequestHoverIntentRegistration();
 				jQuery.RequestDnnPluginsRegistration();
-                Page.ClientScript.RegisterClientScriptBlock(typeof(LabelControl), "dnnTooltip", "jQuery(document).ready(function($){ $('.dnnTooltip').dnnTooltip();Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function(){$('.dnnTooltip').dnnTooltip();}); });", true);
+                ClientResourceManager.RegisterScript(this.Page, "~/Resources/Shared/Scripts/initTooltips.js");
 			}
 		}
 

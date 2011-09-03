@@ -477,6 +477,92 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// <summary>
+        /// Copys a user to a different portal.
+        /// </summary>
+        /// <param name="user">The user to copy</param>
+        /// <param name="portal">The destination portal</param>
+        /// <param name="deleteUser">A flag that indicates whether to delete the original user</param>
+        public static void CopyUserToPortal(UserInfo user, PortalInfo portal, bool deleteUser)
+        {
+            //Check if user already exists in target portal
+            UserInfo targetUser = GetUserById(portal.PortalID, user.UserID);
+
+            if (targetUser == null)
+            {
+                //Clone User
+                targetUser = new UserInfo
+                                {
+                                    AffiliateID = user.AffiliateID,
+                                    DisplayName = user.DisplayName,
+                                    Email = user.Email,
+                                    FirstName = user.FirstName,
+                                    IsDeleted = user.IsDeleted,
+                                    IsSuperUser = user.IsSuperUser,
+                                    LastIPAddress = user.LastIPAddress,
+                                    LastName = user.LastName,
+                                    RefreshRoles = user.RefreshRoles,
+                                    UserID = user.UserID,
+                                    Username = user.Username
+                                };
+
+                //Set Portal ID to new Portal
+                targetUser.PortalID = portal.PortalID;
+
+                //Clone Membership
+                targetUser.Membership.Approved = user.Membership.Approved;
+                targetUser.Membership.IsDeleted = user.Membership.IsDeleted;
+                targetUser.Membership.IsOnLine = user.Membership.IsOnLine;
+                targetUser.Membership.Password = GetPassword(ref user, user.Membership.PasswordAnswer);
+                targetUser.Membership.PasswordAnswer = user.Membership.PasswordAnswer;
+                targetUser.Membership.PasswordQuestion = user.Membership.PasswordQuestion;
+                targetUser.Membership.UpdatePassword = user.Membership.UpdatePassword;
+
+                //Clone the profile
+                foreach (ProfilePropertyDefinition property in user.Profile.ProfileProperties)
+                {
+                    targetUser.Profile.SetProfileProperty(property.PropertyName, property.PropertyValue);
+                }
+
+                //Create new user
+                CreateUser(ref targetUser);
+            }
+            else
+            {
+                //Update Properties
+                targetUser.DisplayName = (String.IsNullOrEmpty(targetUser.DisplayName))
+                                             ? user.DisplayName
+                                             : targetUser.DisplayName;
+                targetUser.Email = (String.IsNullOrEmpty(targetUser.Email))
+                                             ? user.Email
+                                             : targetUser.Email;
+                targetUser.FirstName = (String.IsNullOrEmpty(targetUser.FirstName))
+                                             ? user.FirstName
+                                             : targetUser.FirstName;
+                targetUser.LastName = (String.IsNullOrEmpty(targetUser.LastName))
+                                             ? user.LastName
+                                             : targetUser.LastName;
+
+                //Update the profile
+                foreach (ProfilePropertyDefinition property in user.Profile.ProfileProperties)
+                {
+                    if (String.IsNullOrEmpty(targetUser.Profile.GetPropertyValue(property.PropertyName)))
+                    {
+                        targetUser.Profile.SetProfileProperty(property.PropertyName, property.PropertyValue);
+                    }
+                }
+
+                //Update the user
+                UpdateUser(targetUser.PortalID, targetUser);
+            }
+
+            //Delete original user
+            if (deleteUser)
+            {
+                RemoveUser(user);
+            }
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Creates a new User in the Data Store
@@ -569,7 +655,6 @@ namespace DotNetNuke.Entities.Users
             }
             return canDelete;
         }
-
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -1118,7 +1203,7 @@ namespace DotNetNuke.Entities.Users
             int portalId = GetEffectivePortalId(user.PortalID);
             user.PortalID = portalId;
             
-            //Restore the User
+            //Remove the User
             var retValue = MemberProvider.RemoveUser(user);
 
             if ((retValue))
@@ -1182,7 +1267,6 @@ namespace DotNetNuke.Entities.Users
 
             return retValue;
         }
-
 
         public static string SettingsKey(int portalId)
         {

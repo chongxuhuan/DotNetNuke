@@ -68,16 +68,12 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 
 			this.Page.Title = LocalizeString("PageTitle");
 
+            ClientResourceManager.RegisterScript(this.Page, string.Format("{0}Scripts/PreviewEmulator.js", this.ControlPath));
+
 			if(!IsPostBack)
 			{
 				BindProfiles();
 			}
-		}
-
-		protected override void OnPreRender(EventArgs e)
-		{
-			base.OnPreRender(e);
-		    ClientResourceManager.RegisterScript(this.Page, string.Format("{0}Scripts/PreviewEmulator.js", this.ControlPath));
 		}
 
 		#endregion

@@ -23,6 +23,7 @@
 
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,6 +31,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Portals.Data;
+using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 
 #endregion
@@ -74,6 +76,34 @@ namespace DotNetNuke.Entities.Portals
         #endregion
 
         #region IPortalGroupController Members
+
+        public void AddPortalToGroup(PortalInfo portal, PortalGroupInfo portalGroup)
+        {
+            //Argument Contract
+            Requires.NotNull("portal", portal);
+            Requires.PropertyNotNegative("portal", "PortalId", portal.PortalID);
+            Requires.NotNull("portalGroup", portalGroup);
+            Requires.PropertyNotNegative("portalGroup", "PortalGroupId", portalGroup.PortalGroupId);
+            Requires.PropertyNotNegative("portalGroup", "MasterPortalId", portalGroup.MasterPortalId);
+
+            var masterPortal = _portalController.GetPortal(portalGroup.MasterPortalId);
+
+            foreach (UserInfo user in UserController.GetUsers(portal.PortalID))
+            {
+                //move user to master portal
+                UserController.CopyUserToPortal(user, masterPortal, true);
+            }
+
+            //Remove Profile Definitions
+            foreach(ProfilePropertyDefinition definition in ProfileController.GetPropertyDefinitionsByPortal(portal.PortalID))
+            {
+                ProfileController.DeletePropertyDefinition(definition);
+            }
+
+            //Add portal to group
+            portal.PortalGroupID = portalGroup.PortalGroupId;
+            _portalController.UpdatePortalInfo(portal);
+        }
 
         public int AddPortalGroup(PortalGroupInfo portalGroup)
         {
@@ -122,6 +152,37 @@ namespace DotNetNuke.Entities.Portals
             return portals.Cast<PortalInfo>()
                             .Where(portal => portal.PortalGroupID == portalGroupId)
                             .ToList();
+        }
+
+        public void RemovePortalFromGroup(PortalInfo portal, PortalGroupInfo portalGroup, bool copyUsers)
+        {
+            //Argument Contract
+            Requires.NotNull("portal", portal);
+            Requires.PropertyNotNegative("portal", "PortalId", portal.PortalID);
+            Requires.NotNull("portalGroup", portalGroup);
+            Requires.PropertyNotNegative("portalGroup", "PortalGroupId", portalGroup.PortalGroupId);
+            Requires.PropertyNotNegative("portalGroup", "MasterPortalId", portalGroup.MasterPortalId);
+
+            //Get admin user before we remove portal from Group
+            var adminUser = UserController.GetUserById(portal.PortalID, portal.AdministratorId);
+
+            //Remove portal from group
+            portal.PortalGroupID = -1;
+            _portalController.UpdatePortalInfo(portal);
+
+            if (copyUsers)
+            {
+                foreach (UserInfo masterUser in UserController.GetUsers(portalGroup.MasterPortalId))
+                {
+                    //Copy user to portal
+                    UserController.CopyUserToPortal(masterUser, portal, false);
+                }
+            }
+            else
+            {
+                //Copy Administrator to portal
+                UserController.CopyUserToPortal(adminUser, portal, false);
+            }
         }
 
         public void UpdatePortalGroup(PortalGroupInfo portalGroup)

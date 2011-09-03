@@ -97,7 +97,74 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         #endregion
-        
+
+        #region AddPortalToGroup Tests
+
+        [Test]
+        [ExpectedArgumentNullException]
+        public void PortalGroupController_AddPortalToGroup_Throws_On_Null_PortalGroup()
+        {
+            //Arrange
+            var mockDataService = new Mock<IDataService>();
+            var mockPortalController = new Mock<IPortalController>();
+            var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
+            var portal = new PortalInfo { PortalID = Constants.PORTAL_ValidPortalId };
+
+            //Act, Assert
+            controller.AddPortalToGroup(portal, null);
+        }
+
+        [Test]
+        [ExpectedArgumentNullException]
+        public void PortalGroupController_AddPortalToGroup_Throws_On_Null_Portal()
+        {
+            //Arrange
+            var mockDataService = new Mock<IDataService>();
+            var mockPortalController = new Mock<IPortalController>();
+            var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
+            var portalGroup = new PortalGroupInfo { PortalGroupId = Constants.PORTALGROUP_ValidPortalGroupId };
+
+
+            //Act, Assert
+            controller.AddPortalToGroup(null, portalGroup);
+        }
+
+        [Test]
+        [ExpectedArgumentException]
+        public void PortalGroupController_AddPortalToGroup_Throws_On_Negative_PortalGroupId()
+        {
+            //Arrange
+            var mockDataService = new Mock<IDataService>();
+            var mockPortalController = new Mock<IPortalController>();
+            var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
+
+            var portal = new PortalInfo {PortalID = Constants.PORTAL_ValidPortalId};
+
+            PortalGroupInfo portalGroup = new PortalGroupInfo { PortalGroupId = -1 };
+
+            //Act, Assert
+            controller.AddPortalToGroup(portal, portalGroup);
+        }
+
+        [Test]
+        [ExpectedArgumentException]
+        public void PortalGroupController_AddPortalToGroup_Throws_On_Negative_PortalId()
+        {
+            //Arrange
+            var mockDataService = new Mock<IDataService>();
+            var mockPortalController = new Mock<IPortalController>();
+            var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
+
+            var portal = new PortalInfo { PortalID = -1 };
+
+            PortalGroupInfo portalGroup = new PortalGroupInfo { PortalGroupId = Constants.PORTALGROUP_ValidPortalGroupId };
+
+            //Act, Assert
+            controller.AddPortalToGroup(portal, portalGroup);
+        }
+
+        #endregion
+
         #region AddPortalGroup Tests
 
         [Test]
@@ -311,6 +378,73 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             //Assert
             Assert.AreEqual(Constants.PORTALGROUP_ValidPortalGroupCount, portalGroups.Count());
+        }
+
+        #endregion
+
+        #region RemovePortalFromGroup Tests
+
+        [Test]
+        [ExpectedArgumentNullException]
+        public void PortalGroupController_RemovePortalFromGroup_Throws_On_Null_PortalGroup()
+        {
+            //Arrange
+            var mockDataService = new Mock<IDataService>();
+            var mockPortalController = new Mock<IPortalController>();
+            var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
+            var portal = new PortalInfo { PortalID = Constants.PORTAL_ValidPortalId };
+
+            //Act, Assert
+            controller.RemovePortalFromGroup(portal, null, false);
+        }
+
+        [Test]
+        [ExpectedArgumentNullException]
+        public void PortalGroupController_RemovePortalFromGroup_Throws_On_Null_Portal()
+        {
+            //Arrange
+            var mockDataService = new Mock<IDataService>();
+            var mockPortalController = new Mock<IPortalController>();
+            var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
+            var portalGroup = new PortalGroupInfo { PortalGroupId = Constants.PORTALGROUP_ValidPortalGroupId };
+
+
+            //Act, Assert
+            controller.RemovePortalFromGroup(null, portalGroup, false);
+        }
+
+        [Test]
+        [ExpectedArgumentException]
+        public void PortalGroupController_RemovePortalFromGroup_Throws_On_Negative_PortalGroupId()
+        {
+            //Arrange
+            var mockDataService = new Mock<IDataService>();
+            var mockPortalController = new Mock<IPortalController>();
+            var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
+
+            var portal = new PortalInfo { PortalID = Constants.PORTAL_ValidPortalId };
+
+            PortalGroupInfo portalGroup = new PortalGroupInfo { PortalGroupId = -1 };
+
+            //Act, Assert
+            controller.RemovePortalFromGroup(portal, portalGroup, false);
+        }
+
+        [Test]
+        [ExpectedArgumentException]
+        public void PortalGroupController_RemovePortalFromGroup_Throws_On_Negative_PortalId()
+        {
+            //Arrange
+            var mockDataService = new Mock<IDataService>();
+            var mockPortalController = new Mock<IPortalController>();
+            var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
+
+            var portal = new PortalInfo { PortalID = -1 };
+
+            PortalGroupInfo portalGroup = new PortalGroupInfo { PortalGroupId = Constants.PORTALGROUP_ValidPortalGroupId };
+
+            //Act, Assert
+            controller.RemovePortalFromGroup(portal, portalGroup, false);
         }
 
         #endregion

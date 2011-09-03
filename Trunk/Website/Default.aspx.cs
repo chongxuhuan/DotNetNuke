@@ -701,14 +701,14 @@ namespace DotNetNuke.Framework
             }
 
             //add CSS links
-            ClientResourceManager.RegisterStyleSheet(this, Globals.HostPath + "default.css", 1);
-            ClientResourceManager.RegisterStyleSheet(this, ctlSkin.SkinPath + "skin.css", 2);
-            ClientResourceManager.RegisterStyleSheet(this, ctlSkin.SkinSrc.Replace(".ascx", ".css"), 3);
+            ClientResourceManager.RegisterStyleSheet(this, Globals.HostPath + "default.css", 10);
+            ClientResourceManager.RegisterStyleSheet(this, ctlSkin.SkinPath + "skin.css", 20);
+            ClientResourceManager.RegisterStyleSheet(this, ctlSkin.SkinSrc.Replace(".ascx", ".css"), 30);
 
             //add skin to page
             SkinPlaceHolder.Controls.Add(ctlSkin);
 
-            ClientResourceManager.RegisterStyleSheet(this, PortalSettings.HomeDirectory + "portal.css", 6);
+            ClientResourceManager.RegisterStyleSheet(this, PortalSettings.HomeDirectory + "portal.css", 60);
 
             //add Favicon
             ManageFavicon();

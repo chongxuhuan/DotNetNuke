@@ -55,7 +55,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 		)
 
 		ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_Redirections]  
-			ADD CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Portals] FOREIGN KEY([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+			ADD CONSTRAINT [FK_{objectQualifier}Mobile_Redirections_{objectQualifier}Portals] FOREIGN KEY([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
 		
 		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Mobile_Redirections_SortOrder] ON {databaseOwner}[{objectQualifier}Mobile_Redirections] ([SortOrder] ASC)
 	END
@@ -73,7 +73,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 		)
 
 		ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_RedirectionRules]  
-			ADD CONSTRAINT [FK_{objectQualifier}Mobile_RedirectionRules_{objectQualifier}Mobile_Redirections] FOREIGN KEY([RedirectionId]) REFERENCES {databaseOwner}[{objectQualifier}Mobile_Redirections] ([Id])
+			ADD CONSTRAINT [FK_{objectQualifier}Mobile_RedirectionRules_{objectQualifier}Mobile_Redirections] FOREIGN KEY([RedirectionId]) REFERENCES {databaseOwner}[{objectQualifier}Mobile_Redirections] ([Id]) ON DELETE CASCADE
 
 	END
 GO
@@ -276,7 +276,7 @@ AS
                       GETDATE() -- LastModifiedOn - datetime
 			        
                     )
-		SELECT  @Id = SCOPE_IDENTITY()
+		SELECT  SCOPE_IDENTITY()
         END
     ELSE 
         BEGIN

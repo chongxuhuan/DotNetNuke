@@ -29,13 +29,14 @@
     <asp:placeholder id="SCRIPTS" runat="server" />
 </head>
 <body id="Body" runat="server">
+    <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader">
+        <Paths>
+            <dnncrm:ClientResourcePath Name="SkinPath" Path="<%# this.CurrentSkinPath %>" />
+            <dnncrm:ClientResourcePath Name="SharedScripts" Path="~/Resources/Shared/Scripts/" />
+        </Paths>
+    </dnncrm:ClientResourceLoader>
     <asp:PlaceHolder ID="BodySCRIPTS" runat="server" />
     <dnn:Form ID="Form" runat="server" ENCTYPE="multipart/form-data">
-        <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader">
-            <Paths>
-                <dnncrm:ClientResourcePath Name="SkinPath" Path="<%# this.CurrentSkinPath %>" />
-            </Paths>
-        </dnncrm:ClientResourceLoader>
         <asp:Label ID="SkinError" runat="server" CssClass="NormalRed" Visible="False"></asp:Label>
         <asp:PlaceHolder ID="SkinPlaceHolder" runat="server" />
         <input id="ScrollTop" runat="server" name="ScrollTop" type="hidden" />

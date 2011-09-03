@@ -447,8 +447,8 @@ namespace DotNetNuke.UI.Containers
 
         private void ProcessStylesheets(bool includeModuleCss)
         {
-            ClientResourceManager.RegisterStyleSheet(Page, ContainerPath + "container.css", 4);
-            ClientResourceManager.RegisterStyleSheet(Page, ContainerSrc.Replace(".ascx", ".css"), 5);
+            ClientResourceManager.RegisterStyleSheet(Page, ContainerPath + "container.css", 40);
+            ClientResourceManager.RegisterStyleSheet(Page, ContainerSrc.Replace(".ascx", ".css"), 50);
 
             //process the base class module properties 
             if (includeModuleCss)
