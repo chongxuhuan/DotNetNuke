@@ -42,13 +42,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
             jQuery.RequestRegistration();
-        }
-
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
             ClientResourceManager.RegisterScript(this.Page, "~/Resources/Shared/Scripts/jquery/jquery.tmpl.js");
             ClientResourceManager.RegisterScript(this.Page, "~/Resources/Shared/Scripts/json2.js");
             ClientResourceManager.RegisterScript(this.Page, "~/DesktopModules/Admin/Extensions/Scripts/Gallery.js");
