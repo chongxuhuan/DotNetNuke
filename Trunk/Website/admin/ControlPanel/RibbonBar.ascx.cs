@@ -311,13 +311,20 @@ namespace DotNetNuke.UI.ControlPanels
 
 		protected string PreviewPopup()
 		{
-			var popupUrl = string.Format("{0}?portalid={1}&ctl={2}&previewTab={3}", 
+			var previewUrl = string.Format("{0}?portalid={1}&ctl={2}&previewTab={3}", 
 										ResolveUrl("~/" + Globals.glbDefaultPage), 
 										PortalSettings.PortalId, 
 										"MobilePreview",
 										PortalSettings.ActiveTab.TabID);
 
-			return UrlUtils.PopUpUrl(popupUrl, this, PortalSettings, true, false, 660, 800);
+			if(PortalSettings.EnablePopUps)
+			{
+				return UrlUtils.PopUpUrl(previewUrl, this, PortalSettings, true, false, 660, 800);
+			}
+			else
+			{
+				return string.Format("location.href = \"{0}\"", previewUrl);
+			}
 		}
 
 		#endregion

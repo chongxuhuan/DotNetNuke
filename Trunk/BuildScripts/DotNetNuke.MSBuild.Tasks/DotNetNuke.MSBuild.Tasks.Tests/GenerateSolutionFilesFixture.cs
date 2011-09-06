@@ -71,5 +71,23 @@ namespace DotNetNuke.MSBuild.Tasks.Tests
             Assert.IsFalse(content.Contains("DotNetNuke.Enterprise.SharePoint.Contracts"));
         }
 
+        [Test]
+        public void GenerateSolutionFiles_Saves_With_Same_Encoding()
+        {
+            var generateSolutionFiles = new GenerateSolutionFiles { ProjectNames = Projects, OriginalFile = "DotNetNuke_Enterprise_UnitTests.sln", CreatedFile = "DNNTest.txt", Replacements = Replacements, RemoveTfsBindings = false };
+            generateSolutionFiles.Execute();
+
+            var tr = new StreamReader("DotNetNuke_Enterprise_UnitTests.sln", true);
+            tr.Peek();
+            var fileEncoding = tr.CurrentEncoding;
+            tr.Close();
+
+            var newFileSr = new StreamReader("DNNTest.txt", true);
+            newFileSr.Peek();
+            var newFileEncoding = newFileSr.CurrentEncoding;
+            newFileSr.Close();
+            Assert.AreEqual(fileEncoding, newFileEncoding);
+        }
+
     }
 }

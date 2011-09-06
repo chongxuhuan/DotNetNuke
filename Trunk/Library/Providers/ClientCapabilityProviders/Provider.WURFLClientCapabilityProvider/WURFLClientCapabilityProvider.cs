@@ -113,15 +113,21 @@ namespace DotNetNuke.Services.ClientCapability
                     var devices = Manager.GetAllDevices();
                     foreach (var device in devices)
                     {
-                        foreach (var capability in device.GetCapabilities())
+                    	var capabilities = device.GetCapabilities();
+						foreach (var capability in capabilities)
                         {
+							//check for empty capability.Value
+							if (string.IsNullOrEmpty((capability.Value)))
+							{
+								continue;
+							}
+
 							//if the capability is high piority item, add it to high piority list for later add them in top of list.
 							if (HighPiorityCapabilityValues.ContainsKey(capability.Key))
 							{
 								if (!HighPiorityCapabilityValues[capability.Key].Contains(capability.Value))
 								{
-									//check for empty capability.Value
-									if (!String.IsNullOrEmpty((capability.Value))) HighPiorityCapabilityValues[capability.Key].Add(capability.Value);
+									HighPiorityCapabilityValues[capability.Key].Add(capability.Value);
 								}
 							}
 							else
@@ -130,22 +136,21 @@ namespace DotNetNuke.Services.ClientCapability
 								{
 									if (!capabilityValues[capability.Key].Contains(capability.Value))
 									{
-										//check for empty capability.Value
-										if (!String.IsNullOrEmpty((capability.Value))) capabilityValues[capability.Key].Add(capability.Value);
+										capabilityValues[capability.Key].Add(capability.Value);
 									}
 								}
 								else
 								{
-									//check for empty capability.Value
-									if (!String.IsNullOrEmpty((capability.Value))) capabilityValues.Add(capability.Key, new List<string>() { capability.Value });
+									capabilityValues.Add(capability.Key, new List<string>() { capability.Value });
 								}
 							}
                         }
-						//order the capability list
-						var sortedCapabilityValues = capabilityValues.OrderBy(c => c.Key);
-						//add high piority items into top of the list
-						_capabilityValues = HighPiorityCapabilityValues.Concat(sortedCapabilityValues).ToDictionary(c => c.Key, c => c.Value);
                     }
+
+					//order the capability list
+					var sortedCapabilityValues = capabilityValues.OrderBy(c => c.Key);
+					//add high piority items into top of the list
+					_capabilityValues = HighPiorityCapabilityValues.Concat(sortedCapabilityValues).ToDictionary(c => c.Key, c => c.Value);
 
                 	return _capabilityValues;
                 }

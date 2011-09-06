@@ -48,6 +48,7 @@ namespace DotNetNuke.MSBuild.Tasks
                 var fileEncoding = tr.CurrentEncoding;
                 var content = tr.ReadToEnd();
                 tr.Close();
+                LogFormat("Message", "File Encoding " + fileEncoding);
                 var globalIndex = content.IndexOf("Global");
                 var globalSection = content.Substring(globalIndex, content.Length - globalIndex);
                 var globalSections = globalSection.Split(new string[] { "GlobalSection(" }, StringSplitOptions.RemoveEmptyEntries);
@@ -118,6 +119,12 @@ namespace DotNetNuke.MSBuild.Tasks
                 newSolutionFile.WriteLine(content);
                 newSolutionFile.Close();
 
+                var newFileSr = new StreamReader(OriginalFile, true);
+                newFileSr.Peek();
+                var newFileEncoding = newFileSr.CurrentEncoding;
+
+                LogFormat("Message", "New File " + CreatedFile);
+                LogFormat("Message", "File Encoding " + newFileEncoding);
                 LogFormat("Message", "--------------------------------------");
                 LogFormat("Message", "End GenerateSolutionFiles Logging Info");
                 LogFormat("Message", "--------------------------------------");

@@ -40,12 +40,11 @@ namespace DotNetNuke.MSBuild.Tasks
                 autoFailed = false;
                 var url = string.Format("http://localhost/{0}/Install/Install.aspx?mode=install", WebsiteName);
                 LogFormat("Message", "Install URL: - " + url + "\r\n");
-                var wc = new WebClient();
+                var wc = new DotNetNukeDeployWebClient();
                 var data = wc.DownloadString(url);
                 autoFailed = (data.Contains("Error") || data.Contains("bypasses"));
                 if (!autoFailed)
                 {
-                    Thread.Sleep(2000);
                     var homePageUrl = string.Format("http://localhost/{0}/default.aspx", WebsiteName);
                     var homePage = wc.DownloadString(homePageUrl);
                     LogFormat("Message", "Install URL: - " + homePageUrl + "\r\n");
@@ -77,9 +76,9 @@ namespace DotNetNuke.MSBuild.Tasks
                 {
                     case "Message":
                         Log.LogMessage(message, args);
-                       break;
+                        break;
                     case "Error":
-                       Log.LogError(message, args);
+                        Log.LogError(message, args);
                         break;
                 }
             }

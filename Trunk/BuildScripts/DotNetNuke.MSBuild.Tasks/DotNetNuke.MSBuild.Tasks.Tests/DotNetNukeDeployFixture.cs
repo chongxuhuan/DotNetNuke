@@ -10,7 +10,7 @@ namespace DotNetNuke.MSBuild.Tasks.Tests
         [Test]
         public void CIBuildDeploy_Works()
         {
-            var ci = new DotNetNukeDeploy() { PhysicalPath = @"D:\DotNetNuke\Releases\EE\6.0.0\DotNetNuke_Enterprise_6.0.0.1190_Source\Website", AppPool = "DotNetNukeAppPool", WebsiteName = "DotNetNuke_Enterprise_6001190_Source" };
+            var ci = new DotNetNukeDeploy() { PhysicalPath = @"D:\Releases\PE\DotNetNukeProfessional060100Install", AppPool = "ASP.NET v4.0", WebsiteName = "DotNetNuke_DeployTest" };
             ci.Execute();
             //Assert.IsTrue();
         }

@@ -28,7 +28,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			CONSTRAINT [PK_{objectQualifier}Mobile_PreviewProfiles] PRIMARY KEY CLUSTERED ( [Id] ASC )
 		)
 		ALTER TABLE {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles]  
-			ADD CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Portals] FOREIGN KEY([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+			ADD CONSTRAINT [FK_{objectQualifier}Mobile_PreviewProfiles_{objectQualifier}Portals] FOREIGN KEY([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
 		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Mobile_PreviewProfiles_SortOrder] ON {databaseOwner}[{objectQualifier}Mobile_PreviewProfiles] ([SortOrder] ASC)
 	END
 GO
