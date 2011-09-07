@@ -154,7 +154,7 @@
     <value>Add Role</value>
   </data>
   <data name="valExpiryDate.Text" xml:space="preserve">
-    <value>&lt;br&gt;Invalid expiry date</value>
+    <value>Invalid expiry date</value>
   </data>
   <data name="RoleRemoveError.Text" xml:space="preserve">
     <value>You Can Not Remove The Portal Administrator Or The Registered Users Role</value>
@@ -187,10 +187,10 @@
     <value>Specify The Date This Role Assignment Should Start ( Optional ). Entering No Value Will Indicate that the role will start immediately.</value>
   </data>
   <data name="valEffectiveDate.Text" xml:space="preserve">
-    <value>&lt;br&gt; Invalid effective date</value>
+    <value>Invalid effective date</value>
   </data>
   <data name="valDates.Text" xml:space="preserve">
-    <value>&lt;br&gt;Expiry Date must be Greater than Effective Date</value>
+    <value>Expiry Date must be Greater than Effective Date</value>
   </data>
   <data name="UpdateRole.Text" xml:space="preserve">
     <value>Update User Role</value>

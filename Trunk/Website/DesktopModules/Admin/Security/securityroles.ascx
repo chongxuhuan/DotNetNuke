@@ -37,13 +37,13 @@
                 </td>
                 <td width="30"></td>
                 <td valign="top" width="200" nowrap="nowrap">
-                    <asp:LinkButton ID="cmdAdd" CssClass="dnnPrimaryAction" runat="server"  CausesValidation="true" />
+                    <asp:LinkButton ID="cmdAdd" CssClass="dnnPrimaryAction" runat="server"  CausesValidation="true" ValidationGroup="SecurityRole" />
                 </td>
             </tr>
         </table>
-        <asp:CompareValidator ID="valEffectiveDate" CssClass="dnnFormError" runat="server" resourcekey="valEffectiveDate" Display="Dynamic" Type="Date" Operator="DataTypeCheck" ControlToValidate="txtEffectiveDate" />
-        <asp:CompareValidator ID="valExpiryDate" CssClass="dnnFormError" runat="server" resourcekey="valExpiryDate" Display="Dynamic" Type="Date" Operator="DataTypeCheck" ControlToValidate="txtExpiryDate" />
-        <asp:CompareValidator ID="valDates" CssClass="dnnFormError" runat="server" resourcekey="valDates" Display="Dynamic" Type="Date" Operator="GreaterThan" ControlToValidate="txtExpiryDate" ControlToCompare="txtEffectiveDate" />
+        <asp:CompareValidator ID="valEffectiveDate" CssClass="dnnFormError" runat="server" resourcekey="valEffectiveDate" Display="Dynamic" Type="Date" Operator="DataTypeCheck" ControlToValidate="txtEffectiveDate" ValidationGroup="SecurityRole" />
+        <asp:CompareValidator ID="valExpiryDate" CssClass="dnnFormError" runat="server" resourcekey="valExpiryDate" Display="Dynamic" Type="Date" Operator="DataTypeCheck" ControlToValidate="txtExpiryDate" ValidationGroup="SecurityRole" />
+        <asp:CompareValidator ID="valDates" CssClass="dnnFormError" runat="server" resourcekey="valDates" Display="Dynamic" Type="Date" Operator="GreaterThan" ControlToValidate="txtExpiryDate" ControlToCompare="txtEffectiveDate" ValidationGroup="SecurityRole" />
     </asp:Panel>
     <asp:CheckBox ID="chkNotify" resourcekey="SendNotification" runat="server" Checked="True" />
 

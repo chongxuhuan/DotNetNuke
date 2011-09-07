@@ -62,13 +62,15 @@
 
         PortalSettings portal = PortalController.GetCurrentPortalSettings();
 
+		var queryString = Request.Url.Query.TrimStart('?');
+
         if (portal.HomeTabId > Null.NullInteger)
         {
-            Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(portal.HomeTabId, portal, string.Empty, string.Empty), true);
+			Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(portal.HomeTabId, portal, string.Empty, queryString), true);
         }
         else
         {
-            DomainName = ServerPath + "Default.aspx?alias=" + DomainName;
+			DomainName = string.Format("{0}Default.aspx?alias={1}&{2}", ServerPath, DomainName, queryString);
 
             Response.Redirect(DomainName, true);
         }

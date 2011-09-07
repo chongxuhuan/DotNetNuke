@@ -23,7 +23,11 @@
 
 #region Usings
 
+using System;
+using System.Collections;
+
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
@@ -46,7 +50,27 @@ namespace DotNetNuke.Security.Permissions
     /// </history>
     /// -----------------------------------------------------------------------------
     public class TabPermissionController
-    {
+	{
+		#region "Private Shared Methods"
+
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// ClearPermissionCache clears the Tab Permission Cache
+		/// </summary>
+		/// <param name="tabId">The ID of the Tab</param>
+		/// <history>
+		/// 	[cnurse]	01/15/2008   Documented
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		private static void ClearPermissionCache(int tabId)
+		{
+			TabController objTabs = new TabController();
+			TabInfo objTab = objTabs.GetTab(tabId, Null.NullInteger, false);
+			DataCache.ClearTabPermissionsCache(objTab.PortalID);
+		}
+
+		#endregion
+		
 		#region Private Members
 		
         private static readonly PermissionProvider provider = PermissionProvider.Instance();
@@ -256,7 +280,98 @@ namespace DotNetNuke.Security.Permissions
             new EventLogController().AddLog(tabInfo, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TABPERMISSION_UPDATED);
             DataCache.ClearTabPermissionsCache(tabInfo.PortalID);
         }
-		
+
+		#endregion
+
+		#region "Obsolete Methods"
+
+		[Obsolete("Deprecated in DNN 5.1.")]
+		public int AddTabPermission(TabPermissionInfo objTabPermission)
+		{
+			int id = Convert.ToInt32(DataProvider.Instance().AddTabPermission(objTabPermission.TabID, objTabPermission.PermissionID, objTabPermission.RoleID, objTabPermission.AllowAccess, objTabPermission.UserID, UserController.GetCurrentUserInfo().UserID));
+			ClearPermissionCache(objTabPermission.TabID);
+			return id;
+		}
+
+		[Obsolete("Deprecated in DNN 5.1.")]
+		public void DeleteTabPermission(int tabPermissionID)
+		{
+			DataProvider.Instance().DeleteTabPermission(tabPermissionID);
+		}
+
+		[Obsolete("Deprecated in DNN 5.1.")]
+		public void DeleteTabPermissionsByTabID(int tabID)
+		{
+			DataProvider.Instance().DeleteTabPermissionsByTabID(tabID);
+			ClearPermissionCache(tabID);
+		}
+
+		[Obsolete("Deprecated in DNN 5.0.  Use DeleteTabPermissionsByUser(UserInfo) ")]
+		public void DeleteTabPermissionsByUserID(UserInfo objUser)
+		{
+			DataProvider.Instance().DeleteTabPermissionsByUserID(objUser.PortalID, objUser.UserID);
+			DataCache.ClearTabPermissionsCache(objUser.PortalID);
+		}
+
+		[Obsolete("Deprecated in DNN 5.0. Please use TabPermissionCollection.ToString(String)")]
+		public string GetTabPermissions(TabPermissionCollection tabPermissions, string permissionKey)
+		{
+			return tabPermissions.ToString(permissionKey);
+		}
+
+		[Obsolete("Deprecated in DNN 5.0.  This should have been declared as Friend as it was never meant to be used outside of the core.")]
+		public ArrayList GetTabPermissionsByPortal(int PortalID)
+		{
+			return CBO.FillCollection(DataProvider.Instance().GetTabPermissionsByPortal(PortalID), typeof(TabPermissionInfo));
+		}
+
+		[Obsolete("Deprecated in DNN 5.0.  Please use GetTabPermissions(TabId, PortalId)")]
+		public ArrayList GetTabPermissionsByTabID(int TabID)
+		{
+			return CBO.FillCollection(DataProvider.Instance().GetTabPermissionsByTabID(TabID, -1), typeof(TabPermissionInfo));
+		}
+
+		[Obsolete("Deprecated in DNN 5.0. Please use TabPermissionCollection.ToString(String)")]
+		public string GetTabPermissionsByTabID(ArrayList arrTabPermissions, int TabID, string PermissionKey)
+		{
+			//Create a Tab Permission Collection from the ArrayList
+			TabPermissionCollection tabPermissions = new TabPermissionCollection(arrTabPermissions, TabID);
+
+			//Return the permission string for permissions with specified TabId
+			return tabPermissions.ToString(PermissionKey);
+		}
+
+		[Obsolete("Deprecated in DNN 5.0.  Please use GetTabPermissions(TabId, PortalId)")]
+		public TabPermissionCollection GetTabPermissionsByTabID(ArrayList arrTabPermissions, int TabID)
+		{
+			return new TabPermissionCollection(arrTabPermissions, TabID);
+		}
+
+		[Obsolete("Deprecated in DNN 5.0.  Please use GetTabPermissions(TabId, PortalId)")]
+		public Security.Permissions.TabPermissionCollection GetTabPermissionsCollectionByTabID(int TabID)
+		{
+			return new TabPermissionCollection(CBO.FillCollection(DataProvider.Instance().GetTabPermissionsByTabID(TabID, -1), typeof(TabPermissionInfo)));
+		}
+
+		[Obsolete("Deprecated in DNN 5.0.  Please use GetTabPermissions(TabId, PortalId)")]
+		public TabPermissionCollection GetTabPermissionsCollectionByTabID(ArrayList arrTabPermissions, int TabID)
+		{
+			return new TabPermissionCollection(arrTabPermissions, TabID);
+		}
+
+		[Obsolete("Deprecated in DNN 5.1.  Please use GetTabPermissions(TabId, PortalId)")]
+		public TabPermissionCollection GetTabPermissionsCollectionByTabID(int tabID, int portalID)
+		{
+			return GetTabPermissions(tabID, portalID);
+		}
+
+		[Obsolete("Deprecated in DNN 5.1.")]
+		public void UpdateTabPermission(TabPermissionInfo objTabPermission)
+		{
+			DataProvider.Instance().UpdateTabPermission(objTabPermission.TabPermissionID, objTabPermission.TabID, objTabPermission.PermissionID, objTabPermission.RoleID, objTabPermission.AllowAccess, objTabPermission.UserID, UserController.GetCurrentUserInfo().UserID);
+			ClearPermissionCache(objTabPermission.TabID);
+		}
+
 		#endregion
     }
 }

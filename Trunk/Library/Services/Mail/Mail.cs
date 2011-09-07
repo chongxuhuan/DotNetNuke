@@ -292,13 +292,6 @@ namespace DotNetNuke.Services.Mail
                                       string Body, List<Attachment> Attachments, string SMTPServer, string SMTPAuthentication, string SMTPUsername, string SMTPPassword, bool SMTPEnableSSL)
         {
             string retValue = "";
-            if (!IsValidEmailAddress(MailFrom, PortalSettings.Current != null ? PortalSettings.Current.PortalId : Null.NullInteger))
-            {
-				//TODO: Add more robust logging that handles validation of all params
-                var ex = new ArgumentException(string.Format(Localize.GetString("EXCEPTION_InvalidEmailAddress", PortalSettings.Current), MailFrom));
-                Exceptions.Exceptions.LogException(ex);
-                return ex.Message;
-            }
 
             //SMTP server configuration
             if (string.IsNullOrEmpty(SMTPServer) && !string.IsNullOrEmpty(Host.SMTPServer))

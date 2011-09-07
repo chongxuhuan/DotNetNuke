@@ -721,7 +721,9 @@ namespace DotNetNuke.Services.Localization
                     break;
             }
 
-            if (resourceFileName.StartsWith("desktopmodules", StringComparison.InvariantCultureIgnoreCase) || resourceFileName.StartsWith("admin", StringComparison.InvariantCultureIgnoreCase))
+            if (resourceFileName.StartsWith("desktopmodules", StringComparison.InvariantCultureIgnoreCase) 
+				|| resourceFileName.StartsWith("admin", StringComparison.InvariantCultureIgnoreCase)
+				|| resourceFileName.StartsWith("controls", StringComparison.InvariantCultureIgnoreCase))
             {
                 resourceFileName = "~/" + resourceFileName;
             }

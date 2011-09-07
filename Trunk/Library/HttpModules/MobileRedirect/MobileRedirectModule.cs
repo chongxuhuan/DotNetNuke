@@ -80,10 +80,13 @@ namespace DotNetNuke.HttpModules
                 if (portalSettings != null && portalSettings.ActiveTab != null)
                 {
                     var app = (HttpApplication)s;
-                    string redirectUrl = _redirectionController.GetRedirectUrl(app.Request.UserAgent, portalSettings.PortalId, portalSettings.ActiveTab.TabID);
-                    if (!string.IsNullOrEmpty(redirectUrl) && string.Compare(redirectUrl, portalSettings.ActiveTab.FullUrl, true, CultureInfo.InvariantCulture) != 0)
-                    {                        
-                        app.Response.Redirect(redirectUrl);
+                    if (app != null && app.Request != null && !string.IsNullOrEmpty(app.Request.UserAgent))
+                    {
+                        string redirectUrl = _redirectionController.GetRedirectUrl(app.Request.UserAgent, portalSettings.PortalId, portalSettings.ActiveTab.TabID);
+                        if (!string.IsNullOrEmpty(redirectUrl) && string.Compare(redirectUrl, portalSettings.ActiveTab.FullUrl, true, CultureInfo.InvariantCulture) != 0)
+                        {
+                            app.Response.Redirect(redirectUrl);
+                        }
                     }
                 }
             }

@@ -35,6 +35,7 @@
 				<ul class="dnnActions dnnClear">
 					<li><asp:LinkButton id="cmdSave" runat="server" class="dnnPrimaryAction" resourcekey="cmdSave" /></li>
 					<li><asp:LinkButton id="cmdPreview" runat="server" class="dnnSecondaryAction" resourcekey="cmdPreview" /></li>
+					<li><asp:HyperLink id="hlCancel" runat="server" class="dnnSecondaryAction" resourcekey="cmdCancel" /></li>
 				</ul>
 			</fieldset>
 			<h2 id="dnnPanel-EditHtmlPreview" class="dnnFormSectionHead"><a href=""><%=LocalizeString("dshPreview")%></a></h2>
@@ -115,9 +116,6 @@
             </fieldset>
 		</div>
 	</div>
-	<ul class="dnnActions dnnClear">
-		<li><asp:HyperLink id="hlCancel" runat="server" class="dnnSecondaryAction" resourcekey="cmdCancel" /></li>
-	</ul>
 </div>
 <script language="javascript" type="text/javascript">
 /*globals jQuery, window, Sys */
