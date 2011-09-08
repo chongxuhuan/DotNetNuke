@@ -435,12 +435,17 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 request.Write(Data, 0, Data.Length);
                 request.Close();
             }
+
             Filename = "";
             var wrsp = wreq.GetResponse();
             var cd = wrsp.Headers["Content-Disposition"];
-            if (cd != null && cd.Trim() != "" && cd.StartsWith("attachment"))
+            if (cd != null && cd.Trim() != string.Empty && cd.StartsWith("attachment"))
             {
-                Filename = cd.Substring(cd.IndexOf("\"")).Replace("\"", "");
+                if (cd.IndexOf("filename") > -1 && cd.Substring(cd.IndexOf("filename")).IndexOf("=") > -1)
+                {
+                    var filenameParam = cd.Substring(cd.IndexOf("filename"));
+                    Filename = filenameParam.LastIndexOf("\"") > -1 ? filenameParam.Substring(filenameParam.LastIndexOf("\"") + 1) : filenameParam.Substring(filenameParam.IndexOf("=") + 1);
+                }
             }
             return wrsp;
         }

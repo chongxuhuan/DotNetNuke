@@ -2438,6 +2438,13 @@ namespace DotNetNuke.Services.Upgrade
             }
         }
 
+        private static void UpgradeToVersion602()
+        {
+            //Add avi,mpg,mpeg,mp3,wmv,mov,wav extensions
+            var exts = new List<string> { ".avi", ".mpg", ".mpeg", ".mp3", ".wmv", ".mov", ".wav" };
+            HostController.Instance.Update("FileExtensions", Host.AllowedExtensionWhitelist.ToStorageString(exts));
+        }
+
         private static void UpgradeToVersion610()
         {
         }
@@ -3864,6 +3871,9 @@ namespace DotNetNuke.Services.Upgrade
                         break;
                     case "6.0.1":
                         UpgradeToVersion601();
+                        break;
+                    case "6.0.2":
+                        UpgradeToVersion602();
                         break;
                     case "6.1.0":
                         UpgradeToVersion610();

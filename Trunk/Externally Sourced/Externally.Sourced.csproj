@@ -50,10 +50,10 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DDRMenu_01.99.05_Install.zip" />
+    <Compile Include="Class1.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <None Include="DDRMenu_02.00.01_Install.zip" />
   </ItemGroup>
   <PropertyGroup>
     <BuildScriptsPath>$(MSBuildProjectDirectory)\..\BuildScripts</BuildScriptsPath>

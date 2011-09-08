@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.Telerik.Web" type="Library" version="06.00.00">
+    <package name="DotNetNuke.Telerik.Web" type="Library" version="06.00.02">
       <friendlyName>DotNetNuke Telerik Web Components</friendlyName>
       <description>Provides Telerik Components for DotNetNuke.</description>
       <dependencies/>
@@ -12,7 +12,7 @@
       </owner>
       <license>Please refer to the Telerik EULA.pdf in your site's documentation folder.</license>
       <releaseNotes>
-        This package includes Telerik.Web.UI assembly version 2011.1.315.35.
+        This package includes Telerik.Web.UI assembly version 2011.2.712.35.
         Please go to www.telerik.com to view release notes on this particular version.</releaseNotes>
       <components>
         <component type="Assembly">
@@ -20,7 +20,7 @@
             <assembly>
               <path>bin</path>
               <name>Telerik.Web.UI.dll</name>
-              <version>2011.1.519.35</version>
+              <version>2011.2.712.35</version>
             </assembly>
           </assemblies>
         </component>
@@ -57,7 +57,7 @@
                     <add name="Telerik.Web.UI.ChartHttpHandler" verb="*" path="ChartImage.axd" type="Telerik.Web.UI.ChartHttpHandler, Telerik.Web.UI, Culture=neutral, PublicKeyToken=121fae78165ba3d4"/>
                   </node>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Telerik.Web.UI']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Telerik.Web.UI']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="2008.0.0.0-2020.0.0.0" newVersion="2011.1.519.35" />
+                    <bindingRedirect oldVersion="2008.0.0.0-2020.0.0.0" newVersion="2011.2.712.35" />
                   </node>
                 </nodes>
               </configuration>
