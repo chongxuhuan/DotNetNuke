@@ -22,6 +22,8 @@
 using System;
 using System.Web;
 
+using DotNetNuke.Common.Utilities;
+
 namespace DotNetNuke.Providers.RadEditorProvider
 {
 
@@ -30,9 +32,9 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 		public void ProcessRequest(HttpContext context)
 		{
-			//context.Response.Clear()
-			//context.Response.ContentType = "text/html"
-			//context.Response.Write(context.Server.HtmlEncode(DotNetNuke.Common.Utilities.FileSystemUtils.ReadFile(context.Request.PhysicalPath)))
+		    context.Response.Clear();
+		    context.Response.ContentType = "text/html";
+		    context.Response.Write(FileSystemUtils.ReadFile(context.Request.PhysicalPath));
 		}
 
 		public bool IsReusable

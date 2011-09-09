@@ -850,7 +850,7 @@
     <value>Page Output Cache Provider</value>
   </data>
   <data name="plUseCustomModuleCssClass.Help" xml:space="preserve">
-    <value>Check this option to enable a custom css class based on the module definition to be rendered.  This can be used be skin designers to apply specific css styles to specific module types.</value>
+    <value>Check this option to enable a custom css class based on the module definition to be rendered.  This can be used by skin designers to apply specific css styles to specific module types.</value>
   </data>
   <data name="plUseCustomModuleCssClass.Text" xml:space="preserve">
     <value>Use Custom Module Css Class?</value>

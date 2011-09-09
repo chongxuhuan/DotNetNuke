@@ -1783,6 +1783,10 @@ namespace DotNetNuke.Services.Install
                     //Page 1 - File Permissions
                     BindPermissions(true);
                     break;
+				case 2:
+					//Page 2 - Bind database connection form
+					BindConnectionString();
+            		break;
                 case 4: //Page 4 - SMTP Settings
                     if (installTypeRadioButton.SelectedValue == "Full")
                     {

@@ -124,9 +124,7 @@ namespace DotNetNuke.Common.Lists
         {
             bool EnableSortOrder = (ListEntry.SortOrder > 0);
             ClearCache(ListEntry.PortalID);
-            var objEventLog = new EventLogController();
-            objEventLog.AddLog(ListEntry, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.LISTENTRY_CREATED);
-            return DataProvider.Instance().AddListEntry(ListEntry.ListName,
+            int entryId = DataProvider.Instance().AddListEntry(ListEntry.ListName,
                                                         ListEntry.Value,
                                                         ListEntry.Text,
                                                         ListEntry.ParentID,
@@ -137,6 +135,14 @@ namespace DotNetNuke.Common.Lists
                                                         ListEntry.PortalID,
                                                         ListEntry.SystemList,
                                                         UserController.GetCurrentUserInfo().UserID);
+
+            if (entryId != Null.NullInteger)
+            {
+                var objEventLog = new EventLogController();
+                objEventLog.AddLog(ListEntry, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.LISTENTRY_CREATED);
+            }
+
+            return entryId;
         }
 
         public void DeleteList(string ListName, string ParentKey)
@@ -145,11 +151,17 @@ namespace DotNetNuke.Common.Lists
             var objEventLog = new EventLogController();
             objEventLog.AddLog("ListName", ListName, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.LISTENTRY_DELETED);
             DataProvider.Instance().DeleteList(ListName, ParentKey);
-            ClearCache(list.PortalID);
+            if (list != null)
+                ClearCache(list.PortalID);
         }
 
         public void DeleteList(ListInfo list, bool includeChildren)
         {
+            if (list == null)
+            {
+                return;
+            }
+
             var lists = new SortedList<string, ListInfo>();
             lists.Add(list.Key, list);
             //add Children

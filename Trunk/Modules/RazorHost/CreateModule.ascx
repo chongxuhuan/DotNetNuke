@@ -10,8 +10,8 @@
             <dnn:Label id="scriptsLabel" runat="Server" controlname="scriptList" />
             <asp:DropDownList ID="scriptList" runat="server" AutoPostBack="true" />
         </div>
-		<div class="dnnFormItem razorHostModSource"><asp:Label ID="lblSourceFile" runat="server" CssClass="dnnFormMessage dnnFormInfo" /></div>
-        <div class="dnnFormItem razorHostModSource"><asp:Label ID="lblModuleControl" runat="server" CssClass="dnnFormMessage dnnFormInfo" /></div>
+		<div class="dnnFormItem razorHostModSource"><asp:Label ID="lblSourceFile" runat="server" /></div>
+        <div class="dnnFormItem razorHostModSource"><asp:Label ID="lblModuleControl" runat="server" /></div>
         <div class="dnnFormItem">
             <dnn:label id="plFolder" controlname="txtFolder" runat="server" />
             <asp:TextBox ID="txtFolder" runat="server" />

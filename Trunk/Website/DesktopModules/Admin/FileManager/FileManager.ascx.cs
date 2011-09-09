@@ -2342,8 +2342,8 @@ namespace DotNetNuke.Modules.Admin.FileManager
             {
                 FolderManager.Instance.Synchronize(IsHostMenu ? Null.NullInteger : PortalId, "", true, false);
 
-                ////reload page to make treeview update.
-                //Response.Redirect(Globals.NavigateURL(), true);
+                //reload page to make treeview update.
+                Response.Redirect(Globals.NavigateURL(), true);
             }
             catch (Exception ex)
             {

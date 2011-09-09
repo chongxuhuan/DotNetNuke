@@ -83,7 +83,6 @@ namespace DotNetNuke.HttpModules.Exceptions
                     }
 					catch (Exception ex)
 					{
-						lex = new Exception(lex.Message, ex);
 						DnnLog.Error(ex);
 					}
                 }
@@ -92,8 +91,6 @@ namespace DotNetNuke.HttpModules.Exceptions
             {
                 //it is possible when terminating the request for the context not to exist
                 //in this case we just want to exit since there is nothing else we can do
-                DnnLog.Error(exc);
-
             }
         }
     }

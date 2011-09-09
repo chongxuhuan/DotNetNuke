@@ -43,6 +43,7 @@
         <input id="__dnnVariable" runat="server" name="__dnnVariable" type="hidden" />
     </dnn:Form>
     <script type="text/javascript">
+        //<![CDATA[
         
         //This code is to force a refresh of browser cache
         //in case an old version of dnn.js is loaded
@@ -54,6 +55,7 @@
                 }
             }
         });
+         //]]>
     </script>
 </body>
 </html>

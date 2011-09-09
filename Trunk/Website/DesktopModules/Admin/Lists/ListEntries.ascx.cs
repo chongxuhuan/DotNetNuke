@@ -32,6 +32,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.UI.WebControls;
 
@@ -141,14 +142,14 @@ namespace DotNetNuke.Common.Lists
         protected IEnumerable<ListEntryInfo> SelectedListItems
         {
             get
-            {
+            {                                
+                var ctlLists = new ListController();
                 if (SelectedList != null)
-                {
-                    var ctlLists = new ListController();
+                {                    
                     return ctlLists.GetListEntryInfoItems(SelectedList.Name, SelectedList.ParentKey, SelectedList.PortalID);
                 }
-
-                return null;
+                
+                return ctlLists.GetListEntryInfoItems(ListName, ParentKey, ListPortalID);
             }
         }
 
@@ -357,6 +358,15 @@ namespace DotNetNuke.Common.Lists
             else
             {
                 lblEntryCount.Text = SelectedListItems.Count() + " " + Localization.GetString("Entries", LocalResourceFile);
+                foreach (var item in SelectedListItems)
+                {
+                    //list cannot be deleted if any of the item belongs to host
+                    if (item.SystemList)
+                    {
+                        cmdDeleteList.Visible = false;
+                        break;
+                    }
+                }
             }
         }
 
@@ -600,6 +610,7 @@ namespace DotNetNuke.Common.Lists
             base.OnLoad(e);
 
             grdEntries.ItemCommand += EntriesGridItemCommand;
+            grdEntries.ItemDataBound += EntriesGridItemDataBound;
             ddlSelectList.SelectedIndexChanged += SelectListIndexChanged;
             cmdAddEntry.Click += OnAddEntryClick;
             cmdCancel.Click += OnCancelClick;
@@ -672,6 +683,37 @@ namespace DotNetNuke.Common.Lists
             }
         }
 
+        protected void EntriesGridItemDataBound(object sender, DataGridItemEventArgs e)
+        {
+            DataGridItem item = e.Item;
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.EditItem || e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.SelectedItem)
+            {
+                //Hide Edit option for system list
+                var editCommand = e.Item.Controls[0].Controls[0] as ImageButton;
+                if (editCommand != null)
+                {
+                    var entry = (ListEntryInfo)item.DataItem;
+                    if(entry != null)
+                    {
+                        if (entry.SystemList || entry.PortalID == Null.NullInteger)
+                            editCommand.Visible = false;
+                    }
+                }
+
+                //Hide Delete option for system list
+                var delCommand = e.Item.Controls[1].Controls[0] as ImageButton;
+                if (delCommand != null)
+                {
+                    var entry = (ListEntryInfo)item.DataItem;
+                    if (entry != null)
+                    {
+                        if (entry.SystemList || entry.PortalID == Null.NullInteger)
+                            delCommand.Visible = false;
+                    }
+                }
+            }
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         ///     Select a list in dropdownlist
@@ -740,7 +782,7 @@ namespace DotNetNuke.Common.Lists
         /// -----------------------------------------------------------------------------
         protected void OnSaveEntryClick(object sender, EventArgs e)
         {
-            var ctlLists = new ListController();
+            var listController = new ListController();
             var entry = new ListEntryInfo();
             {
                 entry.DefinitionID = Null.NullInteger;
@@ -757,10 +799,26 @@ namespace DotNetNuke.Common.Lists
                     case "update":
                         entry.ParentKey = SelectedList.ParentKey;
                         entry.EntryID = Int16.Parse(txtEntryID.Text);
+                        bool canUpdate = true;
+                        foreach (var curEntry in listController.GetListEntryInfoItems(SelectedList.Name, entry.ParentKey, entry.PortalID))
+                        {
+                            if (entry.EntryID != curEntry.EntryID) //not the same item we are trying to update
+                            {
+                                if (entry.Value == curEntry.Value && entry.Text == curEntry.Text)
+                                {
+                                    UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("ItemAlreadyPresent", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);                            
+                                    canUpdate = false;
+                                    break;
+                                }
+                                
+                            }
+                        }
 
-                        ctlLists.UpdateListEntry(entry);
-
-                        DataBind();
+                        if (canUpdate)
+                        {
+                            listController.UpdateListEntry(entry);
+                            DataBind();
+                        }
                         break;
                     case "saveentry":
                         if (SelectedList != null)
@@ -777,10 +835,14 @@ namespace DotNetNuke.Common.Lists
                         {
                             entry.SortOrder = 0;
                         }
-						//save the list as system list when its edit by host user.
+						//save the list as system list when its edited by host user.
                 		entry.SystemList = ListPortalID == Null.NullInteger;
+                        
+                        if (listController.AddListEntry(entry) == Null.NullInteger) //entry already found in database
+                        {                            
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("ItemAlreadyPresent", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);                            
+                        }
 
-                        ctlLists.AddListEntry(entry);
 
                         DataBind();
                         break;
@@ -788,7 +850,7 @@ namespace DotNetNuke.Common.Lists
                         if (ddlSelectParent.SelectedIndex != -1)
                         {
                             int parentID = Int32.Parse(ddlSelectParent.SelectedItem.Value);
-                            ListEntryInfo parentEntry = ctlLists.GetListEntryInfo(parentID);
+                            ListEntryInfo parentEntry = listController.GetListEntryInfo(parentID);
                             entry.ParentID = parentID;
                             entry.DefinitionID = parentEntry.DefinitionID;
                             entry.Level = parentEntry.Level + 1;
@@ -802,13 +864,17 @@ namespace DotNetNuke.Common.Lists
                         {
                             entry.SortOrder = 0;
                         }
-                        //save the list as system list when its edit by host user.
-                        entry.SystemList = ListPortalID == Null.NullInteger;
-                        ctlLists.AddListEntry(entry);
-
-                        SelectedKey = entry.ParentKey.Replace(":", ".") + ":" + entry.ListName;
-
-                        Response.Redirect(Globals.NavigateURL(TabId, "", "Key=" + SelectedKey));
+                        //save the list as system list when its edited by host user.
+                        entry.SystemList = ListPortalID == Null.NullInteger;                        
+                        if (listController.AddListEntry(entry) == Null.NullInteger) //entry already found in database
+                        {
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("ItemAlreadyPresent", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);                            
+                        }
+                        else
+                        {
+                            SelectedKey = entry.ParentKey.Replace(":", ".") + ":" + entry.ListName;
+                            Response.Redirect(Globals.NavigateURL(TabId, "", "Key=" + SelectedKey));
+                        }
                         break;
                 }
             }

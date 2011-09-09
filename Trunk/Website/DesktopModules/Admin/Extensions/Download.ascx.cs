@@ -444,7 +444,15 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 if (cd.IndexOf("filename") > -1 && cd.Substring(cd.IndexOf("filename")).IndexOf("=") > -1)
                 {
                     var filenameParam = cd.Substring(cd.IndexOf("filename"));
-                    Filename = filenameParam.LastIndexOf("\"") > -1 ? filenameParam.Substring(filenameParam.LastIndexOf("\"") + 1) : filenameParam.Substring(filenameParam.IndexOf("=") + 1);
+
+                    if (filenameParam.IndexOf("\"") > -1)
+                    {
+                        Filename = filenameParam.Substring(filenameParam.IndexOf("\"") + 1).TrimEnd(Convert.ToChar("\"")).TrimEnd(Convert.ToChar("\\"));
+                    }
+                    else
+                    {
+                        Filename = filenameParam.Substring(filenameParam.IndexOf("=") + 1);
+                    }
                 }
             }
             return wrsp;

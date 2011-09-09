@@ -293,7 +293,7 @@ namespace DotNetNuke.HttpModules
 
                             foreach (string culturePart in splitUrl)
                             {
-                                if (culturePart.Length.Equals(5))
+                                if (culturePart.IndexOf("-") > -1)
                                 {
                                     foreach (KeyValuePair<string, Locale> key in dicLocales)
                                     {

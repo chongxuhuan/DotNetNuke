@@ -174,7 +174,7 @@ namespace DotNetNuke.UI.WebControls
 				writer.AddAttribute(HtmlTextWriterAttribute.Selected, "true");
 			}
 			writer.RenderBeginTag(HtmlTextWriterTag.Option);
-			writer.Write(Localization.GetString("MemberOnly"));
+			writer.Write(Localization.GetString("MembersOnly"));
 			writer.RenderEndTag();
 
 			writer.AddAttribute(HtmlTextWriterAttribute.Value, "2");

@@ -867,7 +867,7 @@
   <data name="AdminOnly.Text" xml:space="preserve">
     <value>Admin Only</value>
   </data>
-  <data name="MemberOnly.Text" xml:space="preserve">
+  <data name="MembersOnly.Text" xml:space="preserve">
     <value>Members Only</value>
   </data>
   <data name="Public.Text" xml:space="preserve">

@@ -56,7 +56,8 @@
         </div>
         <div id="rowListName" runat="server" class="dnnFormItem">
             <dnn:Label ID="plEntryName" Text="Entry Name:" runat="server" ControlName="txtEntryName" />
-			<asp:TextBox ID="txtEntryName" runat="server" MaxLength="100" />
+			<asp:TextBox ID="txtEntryName" CssClass="dnnFormRequired" runat="server" MaxLength="100" />
+            <asp:RequiredFieldValidator ID="valEntryName" CssClass="dnnFormMessage dnnFormError" runat="server" resourcekey="valEntryName.ErrorMessage" Display="Dynamic" ControlToValidate="txtEntryName" />
 			<asp:TextBox ID="txtEntryID" runat="server" Visible="false" />
         </div>
         <div  id="rowSelectList" runat="server" class="dnnFormItem">

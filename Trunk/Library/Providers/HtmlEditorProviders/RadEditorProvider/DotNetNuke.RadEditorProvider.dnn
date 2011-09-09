@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-	<package name="DotNetNuke.RadEditorProvider" type="Provider" version="06.01.00">
+	<package name="DotNetNuke.RadEditorProvider" type="Provider" version="06.00.02">
 	<friendlyName>RadEditor Manager</friendlyName>
 	<description>A module used to configure toolbar items, behavior, and other options used in the DotNetNuke RadEditor Provider.</description>
 	  <owner>
@@ -78,7 +78,14 @@
 								type="DotNetNuke.Providers.RadEditorProvider.EditorProvider, DotNetNuke.RadEditorProvider"
 								providerPath="~/DesktopModules/Admin/RadEditorProvider" />
 						</node>
-					</nodes>
+            <node path="/configuration/system.webServer/handlers" action="update" key="name" collision="overwrite">
+              <add name="HtmTemplateFileHandler"
+                 verb="*"
+                 path="*.htmtemplate"
+                 type="DotNetNuke.Providers.RadEditorProvider.HtmTemplateFileHandler, DotNetNuke.RadEditorProvider"
+                 preCondition="integratedMode" />
+            </node>
+          </nodes>
 				</configuration>
 			</install>
 			<uninstall>
