@@ -108,3 +108,33 @@ IKVM
 used to allow bridge between PDFBox and C#: http://www.ikvm.net
 License Type: Public
 License Link: http://sourceforge.net/apps/mediawiki/ikvm/index.php?title=License
+
+jquery-ui
+Used in many places in UI
+License Type: MIT
+License Link: http://jquery-ui.googlecode.com/svn/tags/latest/MIT-LICENSE.txt
+
+log4net
+Used to provide Instrumentation throughout the core
+License Type: Apache
+License Link: http://logging.apache.org/log4net/license.html
+
+Sharepoint Logging Library
+Used to provide logging in Sharepoint connnector
+License Type: LGPL
+License Link: http://splogginglibrary.codeplex.com/license
+
+hoverintent
+Used throughout UI
+License Type: MIT or GPL
+License Link: http://cherne.net/brian/resources/jquery.hoverIntent.js
+
+jQuery Cycle
+Used throughout UI
+License Type: MIT or GPL
+License Link: https://raw.github.com/malsup/cycle/master/jquery.cycle.all.js
+
+jQuery Templates
+Used throughout UI
+License Type: MIT or GPL
+License Link: http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js

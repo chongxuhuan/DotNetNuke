@@ -279,4 +279,7 @@
   <data name="NoData.Text" xml:space="preserve">
     <value>There is no data to display</value>
   </data>
+  <data name="PackageErrors.Text" xml:space="preserve">
+    <value>&lt;u&gt;The following packages are invalid:&lt;/u&gt;&lt;br/&gt;</value>
+  </data>
 </root>

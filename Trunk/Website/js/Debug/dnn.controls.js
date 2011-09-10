@@ -16,7 +16,7 @@ dnn.controls.action.prototype = {
 dnn.controls.action.registerEnum("dnn.controls.action");
 
 dnn.extend(dnn.controls, {
-    version: new Number('02.02'),
+    version: new Number('02.03'),
 	pns: 'dnn',
 	ns: 'controls',
 	isLoaded: false,

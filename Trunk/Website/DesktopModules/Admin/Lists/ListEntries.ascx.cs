@@ -695,8 +695,11 @@ namespace DotNetNuke.Common.Lists
                     var entry = (ListEntryInfo)item.DataItem;
                     if(entry != null)
                     {
-                        if (entry.SystemList || entry.PortalID == Null.NullInteger)
-                            editCommand.Visible = false;
+                        if (!PortalSettings.ActiveTab.IsSuperTab)
+                        {
+                            if (entry.SystemList || entry.PortalID == Null.NullInteger) 
+                                editCommand.Visible = false;
+                        }
                     }
                 }
 

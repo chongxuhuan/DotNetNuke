@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml.XPath;
@@ -38,6 +39,7 @@ using DotNetNuke.Services.Installer;
 using DotNetNuke.Services.Installer.Packages;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
+using DotNetNuke.UI.Skins.Controls;
 
 using ICSharpCode.SharpZipLib.Zip;
 using System.Net;
@@ -102,10 +104,11 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 return _packageTypes;
             }
         }
-        
+
         private void BindGrid(string installPath, DataGrid grid)
         {
             var packages = new List<PackageInfo>();
+            var invalidPackages = new List<string>();
 
             foreach (string file in Directory.GetFiles(installPath))
             {
@@ -117,6 +120,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     try
                     {
                         ZipEntry entry = unzip.GetNextEntry();
+
                         while (entry != null)
                         {
                             if (!entry.IsDirectory)
@@ -212,20 +216,26 @@ namespace DotNetNuke.Modules.Admin.Extensions
                             entry = unzip.GetNextEntry();
                         }
                     }
+                    catch (Exception)
+                    {
+                        invalidPackages.Add(file);
+                    }
                     finally
                     {
-                        if (unzip != null)
-                        {
-                            unzip.Close();
-                            unzip.Dispose();
-                        }
-                    }                    
+                        unzip.Close();
+                        unzip.Dispose();
+                    }
                 }
+            }
+
+            if (invalidPackages.Count > 0)
+            {
+                var pkgErrorsMsg = invalidPackages.Aggregate(string.Empty, (current, pkg) => current + (pkg + "<br />"));
+                UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("PackageErrors.Text", LocalResourceFile) + pkgErrorsMsg, ModuleMessage.ModuleMessageType.RedError);
             }
 
             grid.DataSource = packages;
             grid.DataBind();
-      
         }
 
         private void BindPackageTypes()

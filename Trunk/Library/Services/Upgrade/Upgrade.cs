@@ -2443,6 +2443,21 @@ namespace DotNetNuke.Services.Upgrade
             //Add avi,mpg,mpeg,mp3,wmv,mov,wav extensions
             var exts = new List<string> { ".avi", ".mpg", ".mpeg", ".mp3", ".wmv", ".mov", ".wav" };
             HostController.Instance.Update("FileExtensions", Host.AllowedExtensionWhitelist.ToStorageString(exts));
+
+            //Fix the icons for SiteMap page
+            var portalController = new PortalController();
+            foreach (PortalInfo portal in portalController.GetPortals())
+            {
+                var tabController = new TabController();
+                var siteMap = tabController.GetTabByName("Search Engine SiteMap", portal.PortalID);
+
+                if (siteMap != null)
+                {
+                    siteMap.IconFile = "~/Icons/Sigma/Sitemap_16X16_Standard.png";
+                    siteMap.IconFileLarge = "~/Icons/Sigma/Sitemap_32X32_Standard.png";
+                    tabController.UpdateTab(siteMap);
+                }
+            }
         }
 
         private static void UpgradeToVersion610()
