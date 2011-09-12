@@ -42,7 +42,7 @@ using DotNetNuke.Services.Log.EventLog;
 
 namespace DotNetNuke.Services.Mobile
 {
-	public class RedirectionController : IRedirectController
+	public class RedirectionController : IRedirectionController
 	{
 		#region "Public Methods"
         /// <summary>

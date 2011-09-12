@@ -30,7 +30,7 @@ using System.Collections.Generic;
 
 namespace DotNetNuke.Services.Mobile
 {
-	public interface IRedirectController
+	public interface IRedirectionController
 	{
 		void Save(IRedirection redirection);
 

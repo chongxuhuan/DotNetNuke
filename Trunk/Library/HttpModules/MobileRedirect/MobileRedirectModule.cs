@@ -49,7 +49,7 @@ namespace DotNetNuke.HttpModules
 {
     public class MobileRedirectModule : IHttpModule
     {
-        private IRedirectController _redirectionController;
+        private IRedirectionController _redirectionController;
         public string ModuleName
         {
             get

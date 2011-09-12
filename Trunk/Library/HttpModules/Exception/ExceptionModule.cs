@@ -60,6 +60,11 @@ namespace DotNetNuke.HttpModules.Exceptions
         {
             try
             {
+				if(HttpContext.Current == null)
+				{
+					return;
+				}
+
                 HttpContext Context = HttpContext.Current;
                 HttpServerUtility Server = Context.Server;
                 HttpRequest Request = Context.Request;
@@ -91,6 +96,7 @@ namespace DotNetNuke.HttpModules.Exceptions
             {
                 //it is possible when terminating the request for the context not to exist
                 //in this case we just want to exit since there is nothing else we can do
+				DnnLog.Error(exc);
             }
         }
     }
