@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AdminUser.Text" xml:space="preserve">
-    <value>Portal Administrator</value>
+    <value>Website Administrator</value>
   </data>
   <data name="AdminUserError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Administrator User Error:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
   <data name="Auto.Text" xml:space="preserve">
-    <value>&lt;b&gt;Auto&lt;/b&gt; - The "Auto" installation method bypasses the Wizard completely and uses the legacy Auto-Install procedure.</value>
+    <value>&lt;b&gt;Auto&lt;/b&gt; - the “Auto” option will install DotNetNuke using the default options including the preconfigured SQL Express Database.</value>
   </data>
   <data name="ChooseDatabase.Text" xml:space="preserve">
     <value>Select Database:</value>
@@ -199,7 +199,7 @@
     <value>Delete Folder</value>
   </data>
   <data name="Full.Text" xml:space="preserve">
-    <value>&lt;b&gt;Custom&lt;/b&gt; - The "Custom" installation method provides you with the ability to completely customise your DotNetNuke installation. Select this option if you wish to control which optional components get installed.</value>
+    <value>&lt;b&gt;Custom&lt;/b&gt; - the “Custom” installation method gives advanced users the ability to create a completely customized configuration for their DoteNetNuke website.</value>
   </data>
   <data name="HomePage.Text" xml:space="preserve">
     <value>Home Page</value>
@@ -298,9 +298,12 @@
     <value>Welcome</value>
   </data>
   <data name="IntroDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;Welcome to the DotNetNuke Installation Wizard. This wizard will guide you through the installation of your DotNetNuke Application.&lt;/p&gt;
-&lt;p&gt;You may navigate through the Wizard using the Next and Previous buttons.  On some pages you will see a third button "Test ...".  This button will allow you to test the configuration before you continue, to see the effects of changes.&lt;/p&gt;
-&lt;p&gt;The first step is to select the installation method to use and to choose  the language you would like to use for the Installation.&lt;/p&gt;
+    <value>&lt;p&gt;Welcome to the DotNetNuke Installation Wizard. This wizard will guide you through the installation of the DotNetNuke application and allow you to create a custom website. You may navigate through the Wizard using the Next and Previous buttons.&lt;/p&gt;
+&lt;p&gt;If this is your first time installing DotNetNuke, you might consider reviewing the installation guide to appropriately install the version that best fits your needs as well as avoiding common mistakes.&lt;/p&gt;
+&lt;ul&gt;
+    &lt;li style="list-style:none;"&gt;&lt;a class="dnnPrimaryAction" href="http://www.dotnetnuke.com"&gt;Download Installation Guide&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The first step is to select the installation method to use and to choose the language you wish to use for the Installation.&lt;/p&gt;
 
 </value>
   </data>
@@ -311,9 +314,9 @@
     <value>File Permissions</value>
   </data>
   <data name="PermissionsDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;DotNetNuke has extensive file upload capabilities for content, modules, and skins. These features require custom security settings so that the application is able to create and remove files in your website.&lt;/p&gt;
-&lt;p&gt;This page checks the current file permissions to ensure that these features will work correctly.&lt;/p&gt;
-&lt;p&gt; &lt;b&gt;Note: &lt;/b&gt;The test checks the root folder of your application.  In most cases this is good enough, as child folders usually inherit their file and folder permissions from their parent.  However, occasionally this test will pass, but there will be a more restrictive permission set on one of the descendant files/folders.&lt;/p&gt;</value>
+    <value>&lt;p&gt;DotNetNuke has extensive file upload and document management capabilities. These features require custom security settings so that the application is able to create and manage files in your website.&lt;/p&gt;
+&lt;p&gt;This page checks the current file permissions on your computer to ensure that these features will work correctly. If your system is not configured properly, you will be provided with guidance  on how to rectify the problem.&lt;/p&gt;
+&lt;p&gt; &lt;b&gt;Note: &lt;/b&gt; - the Wizard checks the permissions in the root folder of your website. In most cases this is sufficient, as child folders usually inherit their file and folder permissions from their parent. If the child folders on your system do not inherit their permissions from the root folder, you should manually configure them before proceeding any further with the installation.&lt;/p&gt;</value>
   </data>
   <data name="PermissionsTitle.Text" xml:space="preserve">
     <value>Checking File Permissions</value>
@@ -322,8 +325,7 @@
     <value>Database Configuration</value>
   </data>
   <data name="DatabaseConfigDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;You can configure the database settings used by DotNetNuke on this page.   If you are installing DotNetNuke in a "Hosting Account" your  hosting provider should have provided you with the information.&lt;/p&gt;
-&lt;p&gt;There are two options for SQL Server 2005/2008.  SQLServer 2005 and SQL Server 2008 support the use of Database Files.  In most situations you should choose the Database option, but if you are using SQL Server 2005/2008 Express then you should use the File option.&lt;/p&gt;</value>
+    <value>&lt;p&gt;DotNetNuke is a content management system that stores information about your website in a database. This page allows you to configure the settings used by DotNetNuke to connect to a database. If you are installing DotNetNuke in a “Hosting Account” your provider should have provided you with this information previously. If you are installing DotNetNuke on your local system, it is recommended that you utilize the default options.&lt;/p&gt;</value>
   </data>
   <data name="DatabaseConfigTitle.Text" xml:space="preserve">
     <value>Configure Database Connection</value>
@@ -332,10 +334,10 @@
     <value>Database Installation</value>
   </data>
   <data name="DatabaseInstallDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;The installation of the database scripts should have started when this page loaded.  The Next button will be disabled until the Installation of the Scripts is complete.&lt;/p&gt;</value>
+    <value>&lt;p&gt;Running database installation scripts. The “Next” button will be enabled when the process is complete.&lt;/p&gt;</value>
   </data>
   <data name="DatabaseInstallTitle.Text" xml:space="preserve">
-    <value>Run Database Installation Scripts</value>
+    <value>Database Installation Scripts</value>
   </data>
   <data name="Page4.Title" xml:space="preserve">
     <value>Host User</value>
@@ -350,8 +352,7 @@
     <value>Install Modules</value>
   </data>
   <data name="ModulesDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;DotNetNuke has a powerful extensibility.  This extensibility is provided through the concept of "installable" modules.&lt;/p&gt;
-&lt;p&gt;On this page you can choose the optional Modules to install.  Installing the Modules makes them available to Portal Administrators.&lt;/p&gt;</value>
+    <value>&lt;p&gt;DotNetNuke is very powerful and extensible, and one way of extending the functionality is through Modules. Please select the optional Modules you wish to install for use in your website.&lt;/p&gt;</value>
   </data>
   <data name="ModulesTitle.Text" xml:space="preserve">
     <value>Install Optional Modules</value>
@@ -360,21 +361,19 @@
     <value>Install Providers</value>
   </data>
   <data name="PortalDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;In this page you will configure the Host (or initial) Portal (website).&lt;/p&gt;
-&lt;p&gt;You will need to provide an administrator user account.  This user has access to all functionality of the portal, and as with the Host User care should be taken to provide a UserName/Password combination that is difficult to "hack" by malicious users.&lt;/p&gt;</value>
+    <value>&lt;p&gt;Please enter the information for the “Administrator” account. This account will have access to all websites created within this installation. We recommend using a strong password, for example: at least 6 characters long and including a mix of letters, numbers and symbols. You will be able to change this password in the future through the Administration section of your website.&lt;/p&gt;</value>
   </data>
   <data name="PortalTitle.Text" xml:space="preserve">
-    <value>Portal Title:</value>
+    <value>Website Title</value>
   </data>
   <data name="Page6.Title" xml:space="preserve">
     <value>Install Skins</value>
   </data>
   <data name="SkinsDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;DotNetNuke has a rich skinning capability.  On this page you can choose the Skins and Containers to install.&lt;/p&gt;
-&lt;p&gt;Installing a Skin and/or container does not automatically enable it, but it makes the skin available to you.&lt;/p&gt;</value>
+    <value>&lt;p&gt;The visual design of a DotNetNuke website can be customized using Skins and Containers. Please select the optional Skins and Containers you wish to install for use on your website.&lt;/p&gt;</value>
   </data>
   <data name="SkinsTitle.Text" xml:space="preserve">
-    <value>Install Skins and Containers</value>
+    <value>Skins and Containers</value>
   </data>
   <data name="Page7.Title" xml:space="preserve">
     <value>Install Languages</value>
@@ -421,7 +420,7 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>&lt;b&gt;&lt;font color='green'&gt;Your site passed the permissions check.&lt;/font?&lt;/b&gt;</value>
   </data>
   <data name="Portal.Text" xml:space="preserve">
-    <value>Portal Properties</value>
+    <value>Website Properties</value>
   </data>
   <data name="PortalTemplate.Text" xml:space="preserve">
     <value>Template:</value>
@@ -467,7 +466,7 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>DotNetNuke Installation Wizard</value>
   </data>
   <data name="Typical.Text" xml:space="preserve">
-    <value>&lt;b&gt;Typical&lt;/b&gt;  - The "Typical" installation method makes some "typical" choices for you.</value>
+    <value>&lt;b&gt;Typical&lt;/b&gt;  - the “Typical” installation method creates the most common configuration for you to start creating your website.</value>
   </data>
   <data name="Upgrade.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke version {0} is already Installed. Click the Next button to upgrade to the new version.&lt;/p&gt;</value>
@@ -494,11 +493,10 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>Authentication Systems</value>
   </data>
   <data name="AuthSystemsDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;DotNetNuke supports multiple authentication systems.  On this page you can choose the systems you wish to install.&lt;/p&gt;
-&lt;p&gt;Installing an Authentication System does not automatically enable it for each portal, but it makes the system available to a Portal Adminstrator.&lt;/p&gt;</value>
+    <value>&lt;p&gt;DotNetNuke supports multiple Authentication Systems. Please select the optional Authentication Systems you wish to install for use on your website.&lt;/p&gt;</value>
   </data>
   <data name="AuthSystemsTitle.Text" xml:space="preserve">
-    <value>Install Authentication Systems</value>
+    <value>Authentication Systems</value>
   </data>
   <data name="InstallContainerError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Error installing Container:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
@@ -510,11 +508,11 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>Providers</value>
   </data>
   <data name="ProvidersDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;DotNetNuke uses a provider model for extensions.  On this page you can choose the Providers to install.&lt;/p&gt;
+    <value>&lt;p&gt;Another way of extending the functionality of the DotNetNuke application is through Providers. Please select any optional Providers you wish to install for use on your website.&lt;/p&gt;
 </value>
   </data>
   <data name="ProvidersTitle.Text" xml:space="preserve">
-    <value>Install Providers</value>
+    <value>Providers</value>
   </data>
   <data name="SMTPAnonymous.Text" xml:space="preserve">
     <value>Anonymous</value>
@@ -602,5 +600,8 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
   </data>
   <data name="Page11.Title" xml:space="preserve">
     <value>Installation Complete</value>
+  </data>
+  <data name="AdminUserTitle.Text" xml:space="preserve">
+    <value>Configure your Administrator Account</value>
   </data>
 </root>

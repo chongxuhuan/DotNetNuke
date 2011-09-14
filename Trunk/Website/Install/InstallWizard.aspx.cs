@@ -45,11 +45,10 @@ using DotNetNuke.Entities.Controllers;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
-
-using Telerik.Web.UI;
 
 using DataCache = DotNetNuke.Common.Utilities.DataCache;
 using Globals = DotNetNuke.Common.Globals;
@@ -196,7 +195,7 @@ namespace DotNetNuke.Services.Install
         /// -----------------------------------------------------------------------------
         private void BindAuthSystems()
         {
-            BindPackageItems("AuthSystem", lstAuthSystems, lblNoAuthSystems, "NoAuthSystems", lblAuthSystemsError);
+            BindPackageItems("AuthSystem", lstAuthSystems, lblNoAuthSystems, "NoAuthSystems", AuthSystemsErrorLabel);
         }
 
         /// -----------------------------------------------------------------------------
@@ -212,7 +211,6 @@ namespace DotNetNuke.Services.Install
         private void BindConnectionString()
         {
             string connection = Config.GetConnectionString();
-            string[] connectionParams = connection.Split(';');
             foreach (string connectionParam in connection.Split(';'))
             {
                 int index = connectionParam.IndexOf("=");
@@ -338,7 +336,7 @@ namespace DotNetNuke.Services.Install
         /// -----------------------------------------------------------------------------
         private void BindLanguages()
         {
-            BindPackageItems("Language", lstLanguages, lblNoLanguages, "NoLanguages", lblLanguagesError);
+            BindPackageItems("Language", lstLanguages, lblNoLanguages, "NoLanguages", languagesErrorLabel);
         }
 
         /// -----------------------------------------------------------------------------
@@ -353,7 +351,7 @@ namespace DotNetNuke.Services.Install
         /// -----------------------------------------------------------------------------
         private void BindModules()
         {
-            BindPackageItems("Module", lstModules, lblNoModules, "NoModules", lblModulesError);
+            BindPackageItems("Module", lstModules, lblNoModules, "NoModules", modulesErrorLabel);
         }
 
         private void BindPackageItems(string packageType, CheckBoxList list, Label noItemsLabel, string noItemsKey, Label errorLabel)
@@ -469,7 +467,7 @@ namespace DotNetNuke.Services.Install
             lstPermissions.Items.Add(permissionItem);
             if (test)
             {
-                lblPermissionsError.Text = PermissionsValid ? LocalizeString("PermissionsOk") : LocalizeString("PermissionsError").Replace("{0}", Globals.ApplicationMapPath);
+                permissionsErrorLabel.Text = PermissionsValid ? LocalizeString("PermissionsOk") : LocalizeString("PermissionsError").Replace("{0}", Globals.ApplicationMapPath);
             }
         }
 
@@ -528,7 +526,7 @@ namespace DotNetNuke.Services.Install
                     }
                 }
             }
-            lblPortalError.Text = Null.NullString;
+            adminUserErrorLabel.Text = Null.NullString;
         }
 
         /// -----------------------------------------------------------------------------
@@ -543,7 +541,7 @@ namespace DotNetNuke.Services.Install
         /// -----------------------------------------------------------------------------
         private void BindProviders()
         {
-            BindPackageItems("Provider", lstProviders, lblNoProviders, "NoProviders", lblProvidersError);
+            BindPackageItems("Provider", lstProviders, lblNoProviders, "NoProviders", providersErrorLabel);
         }
 
         /// -----------------------------------------------------------------------------
@@ -558,32 +556,9 @@ namespace DotNetNuke.Services.Install
         /// -----------------------------------------------------------------------------
         private void BindSkins()
         {
-            BindPackageItems("Skin", lstSkins, lblNoSkins, "NoSkins", lblSkinsError);
+            BindPackageItems("Skin", lstSkins, lblNoSkins, "NoSkins", skinsErrorLabel);
 
             BindPackageItems("Container", lstContainers, lblNoContainers, "NoContainers", null);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// BindSiperUser binds the superuser information
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/16/2007 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void BindSuperUser()
-        {
-            UserInfo superUser = Upgrade.Upgrade.GetSuperUser(InstallTemplate, false);
-            if (superUser != null)
-            {
-                usrHost.FirstName = superUser.FirstName;
-                usrHost.LastName = superUser.LastName;
-                usrHost.UserName = superUser.Username;
-                usrHost.Email = superUser.Email;
-            }
-            //ShowButton(customButton, true);
         }
 
         /// -----------------------------------------------------------------------------
@@ -710,16 +685,6 @@ namespace DotNetNuke.Services.Install
             return button;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Initialise configures the first Wizard page
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/15/2007 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private void Initialise()
         {
             if (TestDataBaseInstalled())
@@ -733,8 +698,8 @@ namespace DotNetNuke.Services.Install
                 {
                     //Upgrade
                     languagePanel.Visible = false;
-                    lblStep0Title.Text = string.Format(LocalizeString("UpgradeTitle"), ApplicationVersion.ToString(3));
-                    lblStep0Detail.Text = string.Format(LocalizeString("Upgrade"), Upgrade.Upgrade.GetStringVersion(DatabaseVersion));
+                    introTitleLabel.Text = string.Format(LocalizeString("UpgradeTitle"), ApplicationVersion.ToString(3));
+                    introDetailLabel.Text = string.Format(LocalizeString("Upgrade"), Upgrade.Upgrade.GetStringVersion(DatabaseVersion));
                 }
                 else
                 {
@@ -744,31 +709,11 @@ namespace DotNetNuke.Services.Install
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InstallLanguages installs the Optional Languages
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/20/2007 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private bool InstallAuthSystems()
         {
             return InstallPackageItems("AuthSystem", lstAuthSystems, lblNoAuthSystems, "InstallAuthSystemError");
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InstallDatabase intsalls the base Database scripts
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/14/2007 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private string InstallDatabase()
         {
             string strErrorMessage;
@@ -796,105 +741,46 @@ namespace DotNetNuke.Services.Install
             return strErrorMessage;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InstallHost sets up the Host settings
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/16/2007 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private bool InstallHost()
         {
-            bool success = false;
-            string strErrorMessage = usrHost.Validate();
-
-            if (!string.IsNullOrEmpty(strErrorMessage))
+            bool success = true;
+            try
             {
-                string strError = LocalizeString(strErrorMessage);
-                if (strErrorMessage == "PasswordLength")
+                //Initialise Host Settings
+                Upgrade.Upgrade.InitialiseHostSettings(InstallTemplate, false);
+
+
+                Upgrade.Upgrade.InstallFiles(InstallTemplate, false);
+
+                if (!string.IsNullOrEmpty(txtSMTPServer.Text))
                 {
-                    strError = string.Format(strError, MembershipProviderConfig.MinPasswordLength);
+                    HostController.Instance.Update("SMTPServer", txtSMTPServer.Text);
+                    HostController.Instance.Update("SMTPAuthentication", optSMTPAuthentication.SelectedItem.Value);
+                    HostController.Instance.Update("SMTPUsername", txtSMTPUsername.Text, true);
+                    HostController.Instance.Update("SMTPPassword", txtSMTPPassword.Text, true);
+                    HostController.Instance.Update("SMTPEnableSSL", chkSMTPEnableSSL.Checked ? "Y" : "N");
                 }
-                lblHostUserError.Text = string.Format(LocalizeString("HostUserError"), strError);
+
+                //Clear Host Cache
+                DataCache.ClearHostCache(false);
             }
-            else
+            catch (Exception exc)
             {
-                try
-                {
-                    //Initialise Host Settings
-                    Upgrade.Upgrade.InitialiseHostSettings(InstallTemplate, false);
-
-                    //Create Host User
-                    UserInfo objSuperUserInfo = Upgrade.Upgrade.GetSuperUser(InstallTemplate, false);
-                    objSuperUserInfo.FirstName = usrHost.FirstName;
-                    objSuperUserInfo.LastName = usrHost.LastName;
-                    objSuperUserInfo.Username = usrHost.UserName;
-                    objSuperUserInfo.DisplayName = usrHost.FirstName + " " + usrHost.LastName;
-                    objSuperUserInfo.Membership.Password = usrHost.Password;
-                    objSuperUserInfo.Email = usrHost.Email;
-                    UserController.CreateUser(ref objSuperUserInfo);
-
-                    //Log superuser in to site
-                    UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
-                    UserController.UserLogin(-1, usrHost.UserName, usrHost.Password, "", "", "", ref loginStatus, false);
- 
-
-                    Upgrade.Upgrade.InstallFiles(InstallTemplate, false);
-
-                    if (!string.IsNullOrEmpty(txtSMTPServer.Text))
-                    {
-                        HostController.Instance.Update("SMTPServer", txtSMTPServer.Text);
-                        HostController.Instance.Update("SMTPAuthentication", optSMTPAuthentication.SelectedItem.Value);
-                        HostController.Instance.Update("SMTPUsername", txtSMTPUsername.Text, true);
-                        HostController.Instance.Update("SMTPPassword", txtSMTPPassword.Text, true);
-                        HostController.Instance.Update("SMTPEnableSSL", chkSMTPEnableSSL.Checked ? "Y" : "N");
-                    }
-
-                    //Clear Host Cache
-                    DataCache.ClearHostCache(false);
-
-                    success = true;
-                }
-                catch (Exception ex)
-                {
-                    Instrumentation.DnnLog.Error(ex);
-                    lblHostUserError.Text = string.Format(LocalizeString("HostUserError"), ex.Message);
-                }
+                DnnLog.Error(exc);
+                success = false;
             }
+
             return success;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InstallLanguages installs the Optional Languages
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/20/2007 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private bool InstallLanguages()
         {
-            return InstallPackageItems("Language", lstLanguages, lblLanguagesError, "InstallLanguageError");
+            return InstallPackageItems("Language", lstLanguages, languagesErrorLabel, "InstallLanguageError");
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InstallModules installs the Optional Modules
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/19/2007 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private bool InstallModules()
         {
-            return InstallPackageItems("Module", lstModules, lblModulesError, "InstallModuleError");
+            return InstallPackageItems("Module", lstModules, modulesErrorLabel, "InstallModuleError");
         }
 
         private bool InstallPackageItems(string packageType, CheckBoxList list, Label errorLabel, string errorKey)
@@ -928,7 +814,7 @@ namespace DotNetNuke.Services.Install
             }
             catch (Exception ex)
             {
-                Instrumentation.DnnLog.Error(ex);
+                DnnLog.Error(ex);
                 strErrorMessage = ex.StackTrace;
             }
             finally
@@ -943,16 +829,6 @@ namespace DotNetNuke.Services.Install
             return success;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InstallPortal installs the Host Portal
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/19/2007 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private bool InstallPortal()
         {
             bool success = false;
@@ -965,7 +841,7 @@ namespace DotNetNuke.Services.Install
                 {
                     strError = string.Format(strError, MembershipProviderConfig.MinPasswordLength);
                 }
-                lblPortalError.Text = string.Format(LocalizeString("AdminUserError"), strError);
+                adminUserErrorLabel.Text = string.Format(LocalizeString("AdminUserError"), strError);
             }
             else
             {
@@ -994,6 +870,15 @@ namespace DotNetNuke.Services.Install
                                                                 false);
                     success = (PortalId > Null.NullInteger);
 
+                    //Set admin user to be a superuser
+                    UserInfo adminUser = UserController.GetUserByName(PortalId, usrAdmin.UserName);
+                    adminUser.IsSuperUser = true;
+                    UserController.UpdateUser(PortalId, adminUser);
+
+                    //Log user in to site
+                    UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
+                    UserController.UserLogin(-1, usrAdmin.UserName, usrAdmin.Password, "", "", "", ref loginStatus, false);
+
                     Config.Touch();
                     Response.Redirect("~/Default.aspx", true);
                 }
@@ -1003,60 +888,30 @@ namespace DotNetNuke.Services.Install
                 }
                 catch (Exception ex)
                 {
-                    Instrumentation.DnnLog.Error(ex);
+                    DnnLog.Error(ex);
                     success = false;
                     strErrorMessage = ex.Message;
                 }
                 if (!success)
                 {
-                    lblPortalError.Text = string.Format(LocalizeString("InstallPortalError"), strErrorMessage);
+                    adminUserErrorLabel.Text = string.Format(LocalizeString("InstallPortalError"), strErrorMessage);
                 }
             }
             return success;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InstallProviders installs the Optional Providers
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	06/24/2008 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private bool InstallProviders()
         {
-            return InstallPackageItems("Provider", lstProviders, lblProvidersError, "InstallProviderError");
+            return InstallPackageItems("Provider", lstProviders, providersErrorLabel, "InstallProviderError");
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InstallSkins installs the Optional Skins
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/19/2007 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private bool InstallSkins()
         {
-            bool skinSuccess = InstallPackageItems("Skin", lstSkins, lblSkinsError, "InstallSkinError");
-            bool containerSuccess = InstallPackageItems("Container", lstContainers, lblSkinsError, "InstallContainerError");
+            bool skinSuccess = InstallPackageItems("Skin", lstSkins, skinsErrorLabel, "InstallSkinError");
+            bool containerSuccess = InstallPackageItems("Container", lstContainers, skinsErrorLabel, "InstallContainerError");
             return skinSuccess && containerSuccess;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InstallVersion intsalls the a single version script
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/16/2007 Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private string InstallVersion(string strVersion)
         {
             string strErrorMessage = Null.NullString;
@@ -1121,69 +976,56 @@ namespace DotNetNuke.Services.Install
             switch (wizInstall.ActiveStepIndex)
             {
                 case 0: //Page 0 - Welcome
-                    lblStep0Title.Text = string.Format(LocalizeString("IntroTitle"), Globals.FormatVersion(ApplicationVersion));
-                    lblStep0Detail.Text = LocalizeString("IntroDetail");
+                    introTitleLabel.Text = string.Format(LocalizeString("IntroTitle"), Globals.FormatVersion(ApplicationVersion));
+                    introDetailLabel.Text = LocalizeString("IntroDetail");
 
-                    installTypeRadioButton.Items[0].Text = LocalizeString("Full");
-                    installTypeRadioButton.Items[1].Text = LocalizeString("Typical");
-                    installTypeRadioButton.Items[2].Text = LocalizeString("Auto");
-                    break;
+                       break;
 				case 1: //Page 1 - File Permissions
                     BindPermissions(false);
+
+                    LinkButton customButton = GetWizardButton("StepNavigationTemplateContainerID", "CustomButton");
+                    customButton.Text = LocalizeString("TestPerm");
                     break;
 				case 2://Page 2 - Database Configuration
-					lblStep2Title.Text = LocalizeString("DatabaseConfigTitle");
-					lblStep2Detail.Text = LocalizeString("DatabaseConfigDetail");
+					databaseConfigTitleLabel.Text = LocalizeString("DatabaseConfigTitle");
+					databaseConfigDetailLabel.Text = LocalizeString("DatabaseConfigDetail");
 
 					rblDatabases.Items[0].Text = LocalizeString("SQLServerXPress");
 					rblDatabases.Items[1].Text = LocalizeString("SQLServer");
 					break;
 				case 3: //Page 3 - Database Installation
-                    lblStep3Title.Text = LocalizeString("DatabaseInstallTitle");
-                    lblStep3Detail.Text = LocalizeString("DatabaseInstallDetail");
+                    databaseInstallTitleLabel.Text = LocalizeString("DatabaseInstallTitle");
+                    databaseInstallDetailLabel.Text = LocalizeString("DatabaseInstallDetail");
                     break;
-                case 4: //Page 4 - SuperUser Configuration
-                    lblStep4Title.Text = LocalizeString("HostUserTitle");
-                    lblStep4Detail.Text = LocalizeString("HostUserDetail");
-                    usrHost.FirstNameLabel = LocalizeString("FirstName");
-                    usrHost.LastNameLabel = LocalizeString("LastName");
-                    usrHost.UserNameLabel = LocalizeString("UserName");
-                    usrHost.PasswordLabel = LocalizeString("Password");
-                    usrHost.ConfirmLabel = LocalizeString("Confirm");
-                    usrHost.EmailLabel = LocalizeString("Email");
-                    lblSMTPSettings.Text = LocalizeString("SMTPSettings");
-                    lblSMTPSettingsHelp.Text = LocalizeString("SMTPSettingsHelp");
-
-                    break;
-                case 5: //Page 5 - Modules
-                    lblStep5Title.Text = LocalizeString("ModulesTitle");
-                    lblStep5Detail.Text = LocalizeString("ModulesDetail");
+                case 4: //Page 4 - Modules
+                    modulesTitleLabel.Text = LocalizeString("ModulesTitle");
+                    modulesDetailLabel.Text = LocalizeString("ModulesDetail");
                     lblModules.Text = LocalizeString("Modules");
                     break;
-                case 6: //Page 6 - Skins/Conatiners
-                    lblStep6Title.Text = LocalizeString("SkinsTitle");
-                    lblStep6Detail.Text = LocalizeString("SkinsDetail");
+                case 5: //Page 5 - Skins/Conatiners
+                    skinsTitleLabel.Text = LocalizeString("SkinsTitle");
+                    skinsDetailLabel.Text = LocalizeString("SkinsDetail");
                     lblSkins.Text = LocalizeString("Skins");
                     lblContainers.Text = LocalizeString("Containers");
                     break;
-                case 7: //Page 7 - Languages
-                    lblStep7Title.Text = LocalizeString("LanguagesTitle");
-                    lblStep7Detail.Text = LocalizeString("LanguagesDetail");
+                case 6: //Page 6 - Languages
+                    languagesTitleLabel.Text = LocalizeString("LanguagesTitle");
+                    languagesDetailLabel.Text = LocalizeString("LanguagesDetail");
                     lblLanguages.Text = LocalizeString("Languages");
                     break;
-                case 8: //Page 8 - Auth Systems
-                    lblStep8Title.Text = LocalizeString("AuthSystemsTitle");
-                    lblStep8Detail.Text = LocalizeString("AuthSystemsDetail");
+                case 7: //Page 7 - Auth Systems
+                    authSystemsTitleLabel.Text = LocalizeString("AuthSystemsTitle");
+                    authSystemDetailLabel.Text = LocalizeString("AuthSystemsDetail");
                     lblAuthSystems.Text = LocalizeString("AuthSystems");
                     break;
-                case 9: //Page 9 - Providers
-                    lblStep9Title.Text = LocalizeString("ProvidersTitle");
-                    lblStep9Detail.Text = LocalizeString("ProvidersDetail");
+                case 8: //Page 8 - Providers
+                    providersTitleLabel.Text = LocalizeString("ProvidersTitle");
+                    providersDetailLabel.Text = LocalizeString("ProvidersDetail");
                     lblProviders.Text = LocalizeString("Providers");
                     break;
-                case 10: //Page 10 - Portal
-                    lblStep10Title.Text = LocalizeString("PortalTitle");
-                    lblStep10Detail.Text = LocalizeString("PortalDetail");
+                case 9: //Page 9 - User/Portal Configuration
+                    adminUserTitleLabel.Text = LocalizeString("AdminUserTitle");
+                    adminUserDetailLabel.Text = LocalizeString("PortalDetail");
                     usrAdmin.FirstNameLabel = LocalizeString("FirstName");
                     usrAdmin.LastNameLabel = LocalizeString("LastName");
                     usrAdmin.UserNameLabel = LocalizeString("UserName");
@@ -1192,7 +1034,9 @@ namespace DotNetNuke.Services.Install
                     usrAdmin.EmailLabel = LocalizeString("Email");
                     lblAdminUser.Text = LocalizeString("AdminUser");
                     lblPortal.Text = LocalizeString("Portal");
-                    break;
+                    lblSMTPSettings.Text = LocalizeString("SMTPSettings");
+                    lblSMTPSettingsHelp.Text = LocalizeString("SMTPSettingsHelp");
+                   break;
             }
         }
 
@@ -1240,47 +1084,48 @@ namespace DotNetNuke.Services.Install
             switch (wizInstall.ActiveStepIndex)
             {
                 case 0: //Page 0 - Welcome
-                    lblPermissionsError.Text = "";
+                    permissionsErrorLabel.Text = "";
                     break;
                 case 1:
-                    lblDataBaseError.Text = "";
+                    databaseErrorLabel.Text = "";
+                    ShowButton(customButton, true);
                     break;
                 case 2: //Page 2 - Database Configuration
-                    lblPermissionsError.Text = "";
+                    permissionsErrorLabel.Text = "";
                     SetupDatabasePage();
                     break;
                 case 3:
-                    lblDataBaseError.Text = "";
-                    lblInstallError.Text = "";
-                    lblInstallError.Visible = false;
+                    databaseErrorLabel.Text = "";
+                    installErrorLabel.Text = "";
+                    installErrorLabel.Visible = false;
                     EnableButton(nextButton, false);
                     ShowButton(prevButton, false);
                     break;
-                case 4: //Page 4 - SuperUser Configuration
-                    BindSuperUser();
-                    ShowButton(prevButton, false);
-                    break;
-                case 5: //Page 5 - Modules
+                case 4: //Page 4 - Modules
                     BindModules();
                     ShowButton(prevButton, false);
                     break;
-                case 6: //Page 6 - Skins/Conatiners
+                case 5: //Page 5 - Skins/Conatiners
                     BindSkins();
                     ShowButton(prevButton, false);
                     break;
-                case 7: //Page 7 - Languages
+                case 6: //Page 6 - Languages
                     BindLanguages();
                     ShowButton(prevButton, false);
                     break;
-                case 8: //Page 8 - Auth Systems
+                case 7: //Page 7 - Auth Systems
                     BindAuthSystems();
                     ShowButton(prevButton, false);
                     break;
-                case 9: //Page 9 - Providers
+                case 8: //Page 8 - Providers
                     BindProviders();
                     ShowButton(prevButton, false);
                     break;
-                case 10: //Page 10 - Portal
+                case 9: //Page 9 - User/Portal Configuration
+                //    BindSuperUser();
+                //    ShowButton(prevButton, false);
+                //    break;
+                //case 10: //Page 10 - Portal
                     BindPortal();
                     ShowButton(prevButton, false);
                     break;
@@ -1338,7 +1183,7 @@ namespace DotNetNuke.Services.Install
                 }
                 if (string.IsNullOrEmpty(txtDatabase.Text) && !isSQLFile)
                 {
-                    lblDataBaseError.Text = LocalizeString("DbNameError");
+                    databaseErrorLabel.Text = LocalizeString("DbNameError");
                     if (!isOracle) return false;
                 }
                 if (!string.IsNullOrEmpty(txtFile.Text) && isSQLFile)
@@ -1370,12 +1215,12 @@ namespace DotNetNuke.Services.Install
             }
             if (_connectionString.StartsWith("ERROR:"))
             {
-                lblDataBaseError.Text = string.Format(LocalizeString("ConnectError"), _connectionString.Replace("ERROR:", ""));
+                databaseErrorLabel.Text = string.Format(LocalizeString("ConnectError"), _connectionString.Replace("ERROR:", ""));
             }
             else
             {
                 success = true;
-                lblDataBaseError.Text = LocalizeString("ConnectSuccess");
+                databaseErrorLabel.Text = LocalizeString("ConnectSuccess");
             }
             return success;
         }
@@ -1399,18 +1244,18 @@ namespace DotNetNuke.Services.Install
             }
             if (!success)
             {
-                lblInstallError.Text = LocalizeString("Install.Error");
+                installErrorLabel.Text = LocalizeString("Install.Error");
             }
             return success;
         }
 
         private bool TestSMTPSettings()
         {
-            if (!string.IsNullOrEmpty(usrHost.Email))
+            if (!string.IsNullOrEmpty(usrAdmin.Email))
             {
                 try
                 {
-                    var emailMessage = new MailMessage(usrHost.Email, usrHost.Email, LocalizeString("EmailTestMessageSubject"), string.Empty);
+                    var emailMessage = new MailMessage(usrAdmin.Email, usrAdmin.Email, LocalizeString("EmailTestMessageSubject"), string.Empty);
 
                     var smtpClient = new SmtpClient(txtSMTPServer.Text);
 
@@ -1446,19 +1291,19 @@ namespace DotNetNuke.Services.Install
 
                     smtpClient.Send(emailMessage);
 
-                    lblHostUserError.Text = string.Format(LocalizeString("SMTPSuccess"), LocalizeString("EmailSentMessage"));
+                    adminUserErrorLabel.Text = string.Format(LocalizeString("SMTPSuccess"), LocalizeString("EmailSentMessage"));
 
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    Instrumentation.DnnLog.Error(ex);
-                    lblHostUserError.Text = string.Format(LocalizeString("SMTPError"), string.Format(LocalizeString("EmailErrorMessage"), ex.Message));
+                    DnnLog.Error(ex);
+                    adminUserErrorLabel.Text = string.Format(LocalizeString("SMTPError"), string.Format(LocalizeString("EmailErrorMessage"), ex.Message));
 
                     return false;
                 }
             }
-            lblHostUserError.Text = string.Format(LocalizeString("SMTPError"), LocalizeString("SpecifyHostEmailMessage"));
+            adminUserErrorLabel.Text = string.Format(LocalizeString("SMTPError"), LocalizeString("SpecifyHostEmailMessage"));
             return false;
         }
 
@@ -1571,7 +1416,7 @@ namespace DotNetNuke.Services.Install
             //[ACTIONTOKEN] will be replaced on the client side with real action
             ClientAPI.RegisterClientVariable(Page, "ActionCallback", ClientAPI.GetCallbackEventReference(this, "[ACTIONTOKEN]", "successFunc", "this", "errorFunc"), true);
 
-            lblHostWarning.Visible = !Regex.IsMatch(Request.Url.Host, "^([a-zA-Z0-9.-]+)$", RegexOptions.IgnoreCase);
+            hostWarningLabel.Visible = !Regex.IsMatch(Request.Url.Host, "^([a-zA-Z0-9.-]+)$", RegexOptions.IgnoreCase);
 
 			//update current thread culture to make dnn label work correctly
 			Thread.CurrentThread.CurrentUICulture = new CultureInfo(cboLanguages.SelectedValue);
@@ -1579,10 +1424,10 @@ namespace DotNetNuke.Services.Install
             if (!Page.IsPostBack)
             {
                 installTypeRadioButton.Items.Clear();
-                installTypeRadioButton.Items.Add(new ListItem(LocalizeString("Full"), "Full"));
                 installTypeRadioButton.Items.Add(new ListItem(LocalizeString("Typical"), "Typical"));
+                installTypeRadioButton.Items.Add(new ListItem(LocalizeString("Full"), "Full"));
                 installTypeRadioButton.Items.Add(new ListItem(LocalizeString("Auto"), "Auto"));
-                installTypeRadioButton.SelectedIndex = 1;
+                installTypeRadioButton.SelectedIndex = 0;
 
                 rblDatabases.Items.Clear();
                 rblDatabases.Items.Add(new ListItem(LocalizeString("SQLServerXPress"), "SQLFile"));
@@ -1599,7 +1444,7 @@ namespace DotNetNuke.Services.Install
                     Initialise();
 
                     installTypeRadioButton.Items[2].Enabled = true;
-                    lblDataBaseWarning.Visible = false;
+                    databaseWarningLabel.Visible = false;
                 }
                 else
                 {
@@ -1607,7 +1452,7 @@ namespace DotNetNuke.Services.Install
                     UpdateMachineKey();
 
                     installTypeRadioButton.Items[2].Enabled = false;
-                    lblDataBaseWarning.Visible = true;
+                    databaseWarningLabel.Visible = true;
                 }
                 cboLanguages.DataSource = GetInstallerLocales();
                 cboLanguages.DataBind();
@@ -1636,6 +1481,8 @@ namespace DotNetNuke.Services.Install
             txtPassword.Attributes["value"] = txtPassword.Text;
             txtSMTPPassword.Attributes["value"] = txtSMTPPassword.Text;
         }
+
+        // ReSharper disable InconsistentNaming
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -1672,6 +1519,11 @@ namespace DotNetNuke.Services.Install
             }
             chkOwner.Enabled = !chkIntegrated.Checked;
             LocalizePage();
+        }
+
+        protected void customButton_Click(object sender, EventArgs e)
+        {
+            BindPermissions(true);
         }
 
         /// -----------------------------------------------------------------------------
@@ -1779,76 +1631,72 @@ namespace DotNetNuke.Services.Install
 
             switch (wizInstall.ActiveStepIndex)
             {
-                case 1:
-                    //Page 1 - File Permissions
+                case 1: //Page 1 - File Permissions
                     BindPermissions(true);
                     break;
-				case 2:
-					//Page 2 - Bind database connection form
+				case 2: //Page 2 - Bind database connection form
 					BindConnectionString();
             		break;
-                case 4: //Page 4 - SMTP Settings
-                    if (installTypeRadioButton.SelectedValue == "Full")
-                    {
-                        SMTPSettingsPanel.Visible = true;
-                    }
-                    break;
-                case 5: //Page 5 - Modules
+                case 4: //Page 4 - Modules
                     if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindModules();
                         if (InstallModules())
                         {
                             //Skip Modules Page
-                            wizInstall.ActiveStepIndex = 6;
+                            wizInstall.ActiveStepIndex = 5;
                         }
                     }
                     break;
-                case 6: //Page 6 - Skins/Conatiners
+                case 5: //Page 5 - Skins/Conatiners
                     if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindSkins();
                         if (InstallSkins())
                         {
                             //Skip Skins Page
-                            wizInstall.ActiveStepIndex = 7;
+                            wizInstall.ActiveStepIndex = 6;
                         }
                     }
                     break;
-                case 7: //Page 7 - Languages
+                case 6: //Page 6 - Languages
                     if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindLanguages();
                         if (InstallLanguages())
                         {
                             //Skip Languages Page
-                            wizInstall.ActiveStepIndex = 8;
+                            wizInstall.ActiveStepIndex = 7;
                         }
                     }
                     break;
-                case 8: //Page 8 - Auth Systems
+                case 7: //Page 7 - Auth Systems
                     if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindAuthSystems();
                         if (InstallAuthSystems())
                         {
                             //Skip Auth Systems Page
-                            wizInstall.ActiveStepIndex = 9;
+                            wizInstall.ActiveStepIndex = 8;
                         }
                     }
                     break;
-                case 9: //Page 9 - Providers
+                case 8: //Page 8 - Providers
                     if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindProviders();
                         if (InstallProviders())
                         {
                             //Skip Providers Page
-                            wizInstall.ActiveStepIndex = 10;
+                            wizInstall.ActiveStepIndex = 9;
                         }
                     }
                     break;
-                default:
+                case 9: //Page 9 - SMTP Settings
+                    if (installTypeRadioButton.SelectedValue == "Full")
+                    {
+                        SMTPSettingsPanel.Visible = true;
+                    }
                     break;
             }
             
@@ -1917,8 +1765,22 @@ namespace DotNetNuke.Services.Install
                 case 3: //Page 3 - Database Installation
                     e.Cancel = !TestDataBaseInstalled();
                     break;
-                case 4:
-                    //Page 4 - Host User
+                case 4: //Page 4 - Modules
+                    e.Cancel = !InstallModules();
+                    break;
+                case 5: //Page 5 - Skins/Containers
+                    e.Cancel = !InstallSkins();
+                    break;
+                case 6: //Page 6 - Languages
+                    e.Cancel = !InstallLanguages();
+                    break;
+                case 7: //Page 7 - Auth Systems
+                    e.Cancel = !InstallAuthSystems();
+                    break;
+                case 8: //Page 8 - Providers
+                    e.Cancel = !InstallProviders();
+                    break;
+                case 9: //Page 9 - Admin/Host User
                     //Check if SMTP needs to be tested
                     if (!String.IsNullOrEmpty(txtSMTPServer.Text))
                     {
@@ -1928,28 +1790,17 @@ namespace DotNetNuke.Services.Install
                             return;
                         }
                     }
-                    e.Cancel = !InstallHost();
-                    break;
-                case 5: //Page 5 - Modules
-                    e.Cancel = !InstallModules();
-                    break;
-                case 6: //Page 6 - Skins/Containers
-                    e.Cancel = !InstallSkins();
-                    break;
-                case 7: //Page 7 - Languages
-                    e.Cancel = !InstallLanguages();
-                    break;
-                case 8: //Page 8 - Auth Systems
-                    e.Cancel = !InstallAuthSystems();
-                    break;
-                case 9: //Page 9 - Providers
-                    e.Cancel = !InstallProviders();
-                    break;
-                case 10: //Page 10 - Portal
+                    if (!InstallHost())
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
                     e.Cancel = !InstallPortal();
                     break;
             }
         }
+
+        // ReSharper restore InconsistentNaming
 
         #endregion
     }

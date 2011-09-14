@@ -670,7 +670,6 @@ namespace DotNetNuke.Security.Membership
                 {
                     if (objVerifyUser.IsSuperUser)
                     {
-						//the username belongs to an existing super user
                         createStatus = UserCreateStatus.UserAlreadyRegistered;
                     }
                     else
@@ -680,7 +679,9 @@ namespace DotNetNuke.Security.Membership
                         {
                             //check if user exists for the portal specified
                             objVerifyUser = GetUserByUserName(user.PortalID, user.Username);
-                            createStatus = objVerifyUser != null ? UserCreateStatus.UserAlreadyRegistered : UserCreateStatus.AddUserToPortal;
+                            createStatus = (objVerifyUser != null)
+                                                ? UserCreateStatus.UserAlreadyRegistered 
+                                                : UserCreateStatus.AddUserToPortal;
                         }
                         else
                         {
@@ -1225,6 +1226,7 @@ namespace DotNetNuke.Security.Membership
                                     user.PortalID,
                                     firstName,
                                     lastName,
+                                    user.IsSuperUser,
                                     email,
                                     displayName,
                                     updatePassword,

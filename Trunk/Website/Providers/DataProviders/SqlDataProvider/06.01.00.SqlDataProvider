@@ -743,6 +743,59 @@ ELSE
 	END
 GO
 
+/* Add UpdateUser Procedure */
+/****************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateUser]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateUser]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateUser]
+	@UserID         int,
+	@PortalID		int,
+	@FirstName		nvarchar(50),
+	@LastName		nvarchar(50),
+	@IsSuperUser    bit,
+	@Email          nvarchar(256),
+	@DisplayName    nvarchar(100),
+	@UpdatePassword	bit,
+	@Authorised		bit,
+	@RefreshRoles	bit,
+	@LastIPAddress	nvarchar(50),
+	@IsDeleted		bit,
+	@LastModifiedByUserID int
+AS
+	UPDATE {databaseOwner}{objectQualifier}Users
+		SET
+			FirstName = @FirstName,
+			LastName = @LastName,
+			IsSuperUser = @IsSuperUser,
+			Email = @Email,
+			DisplayName = @DisplayName,
+			UpdatePassword = @UpdatePassword,
+			LastIPAddress = @LastIPAddress,
+			LastModifiedByUserID = @LastModifiedByUserID,
+			LastModifiedOnDate = getdate()
+		WHERE  UserId = @UserID
+	
+	IF @PortalID IS NULL
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}Users
+				SET
+					IsDeleted = @IsDeleted
+				WHERE  UserId = @UserID
+		END
+	ELSE
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}UserPortals
+				SET
+					Authorised = @Authorised,
+					RefreshRoles = @RefreshRoles,
+					IsDeleted = @IsDeleted
+				WHERE  UserId = @UserID
+					AND PortalId = @PortalID
+		END
+GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

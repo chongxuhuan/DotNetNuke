@@ -138,7 +138,7 @@ namespace DotNetNuke.Security.Membership.Data
 	        SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("RemoveUser"), userId, GetNull(portalId));
         }
 
-        public override void UpdateUser(int userId, int portalID, string firstName, string lastName, string email, string displayName, bool updatePassword, bool isApproved, bool refreshRoles,
+        public override void UpdateUser(int userId, int portalID, string firstName, string lastName, bool isSuperUser, string email, string displayName, bool updatePassword, bool isApproved, bool refreshRoles,
                                         string lastIpAddress, bool isDeleted, int lastModifiedByUserID)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString,
@@ -147,6 +147,7 @@ namespace DotNetNuke.Security.Membership.Data
                                       GetNull(portalID),
                                       firstName,
                                       lastName,
+                                      isSuperUser,
                                       email,
                                       displayName,
                                       updatePassword,

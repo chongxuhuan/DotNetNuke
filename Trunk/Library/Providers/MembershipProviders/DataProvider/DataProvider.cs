@@ -77,7 +77,7 @@ namespace DotNetNuke.Security.Membership.Data
         public abstract IDataReader GetUsersByRolename(int portalID, string rolename);
         public abstract IDataReader GetUsersByUsername(int portalID, string username, int pageIndex, int pageSize);
         public abstract IDataReader GetSuperUsers();
-        public abstract void UpdateUser(int userId, int portalID, string firstName, string lastName, string email, string displayName, bool updatePassword, bool isApproved, bool refreshRoles, string lastIpAddress, bool isDeleted, int lastModifiedByUserID);
+        public abstract void UpdateUser(int userId, int portalID, string firstName, string lastName, bool isSuperUser, string email, string displayName, bool updatePassword, bool isApproved, bool refreshRoles, string lastIpAddress, bool isDeleted, int lastModifiedByUserID);
 
         // Roles
         public abstract IDataReader GetPortalRoles(int portalId);
