@@ -63,6 +63,8 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Framework
 {
+    using Web.Client;
+
     /// -----------------------------------------------------------------------------
     /// Project	 : DotNetNuke
     /// Class	 : CDefault
@@ -79,7 +81,7 @@ namespace DotNetNuke.Framework
     /// -----------------------------------------------------------------------------
     public partial class DefaultPage : CDefault, IClientAPICallbackEventHandler
     {
-        #region "Properties"
+        #region Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -185,7 +187,7 @@ namespace DotNetNuke.Framework
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -206,14 +208,13 @@ namespace DotNetNuke.Framework
         /// -----------------------------------------------------------------------------
         private void InitializePage()
         {
-            var objTabs = new TabController();
-            TabInfo objTab;
+            var tabController = new TabController();
 
             //redirect to a specific tab based on name
             if (!String.IsNullOrEmpty(Request.QueryString["tabname"]))
             {
-                objTab = objTabs.GetTabByName(Request.QueryString["TabName"], ((PortalSettings)HttpContext.Current.Items["PortalSettings"]).PortalId);
-                if (objTab != null)
+                TabInfo tab = tabController.GetTabByName(Request.QueryString["TabName"], ((PortalSettings)HttpContext.Current.Items["PortalSettings"]).PortalId);
+                if (tab != null)
                 {
                     var parameters = new List<string>(); //maximum number of elements
                     for (int intParam = 0; intParam <= Request.QueryString.Count - 1; intParam++)
@@ -229,7 +230,7 @@ namespace DotNetNuke.Framework
                                 break;
                         }
                     }
-                    Response.Redirect(Globals.NavigateURL(objTab.TabID, Null.NullString, parameters.ToArray()), true);
+                    Response.Redirect(Globals.NavigateURL(tab.TabID, Null.NullString, parameters.ToArray()), true);
                 }
                 else
                 {
@@ -589,16 +590,12 @@ namespace DotNetNuke.Framework
 
         #endregion
 
-        #region "Protected Methods"
+        #region Protected Methods
 
         protected bool NonProductionVersion()
         {
             return DotNetNukeContext.Current.Application.Status != ReleaseMode.Stable;
         }
-
-        #endregion
-
-        #region "Event Handlers"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -645,7 +642,7 @@ namespace DotNetNuke.Framework
             }
 
             // DataBind common paths for the client resource loader
-            this.ClientResourceLoader.DataBind();
+            ClientResourceLoader.DataBind();
 
             //check for and read skin package level doctype
             SetSkinDoctype();
@@ -701,9 +698,9 @@ namespace DotNetNuke.Framework
             }
 
             //add CSS links
-            ClientResourceManager.RegisterStyleSheet(this, Globals.HostPath + "default.css", 10);
-            ClientResourceManager.RegisterStyleSheet(this, ctlSkin.SkinPath + "skin.css", 20);
-            ClientResourceManager.RegisterStyleSheet(this, ctlSkin.SkinSrc.Replace(".ascx", ".css"), 30);
+            ClientResourceManager.RegisterStyleSheet(this, Globals.HostPath + "default.css", FileOrder.Css.DefaultCss);
+            ClientResourceManager.RegisterStyleSheet(this, ctlSkin.SkinPath + "skin.css", FileOrder.Css.SkinCss);
+            ClientResourceManager.RegisterStyleSheet(this, ctlSkin.SkinSrc.Replace(".ascx", ".css"), FileOrder.Css.SpecificSkinCss);
 
             //add skin to page
             SkinPlaceHolder.Controls.Add(ctlSkin);

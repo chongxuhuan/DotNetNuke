@@ -81,7 +81,7 @@ namespace DotNetNuke.UI.Skins
     /// -----------------------------------------------------------------------------
     public class Skin : UserControlBase
     {
-        #region "Public Constants"
+        #region Public Constants
 
         // ReSharper disable InconsistentNaming
         public static string MODULELOAD_ERROR = Localization.GetString("ModuleLoad.Error");
@@ -92,7 +92,7 @@ namespace DotNetNuke.UI.Skins
 
         #endregion
 
-        #region "Private Members"
+        #region Private Members
 
         private ArrayList _actionEventListeners;
         private Control _controlPanel;
@@ -100,7 +100,7 @@ namespace DotNetNuke.UI.Skins
 
         #endregion
 
-        #region "Protected Properties"
+        #region Protected Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -123,9 +123,8 @@ namespace DotNetNuke.UI.Skins
 
         #endregion
 
-        #region "Friend Properties"
-
-
+        #region Friend Properties
+        
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets the ModuleCommunicate instance for the skin
@@ -162,7 +161,7 @@ namespace DotNetNuke.UI.Skins
 
         #endregion
 
-        #region "Public Properties"
+        #region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -214,17 +213,38 @@ namespace DotNetNuke.UI.Skins
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// CheckExpired checks whether the portal has expired
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	12/04/2007  created
-        ///     [cnurse]    04/17/2009  Refactored from Skin
-        /// </history>
-        /// -----------------------------------------------------------------------------
+        private static void AddModuleMessage(Control control, string heading, string message, ModuleMessage.ModuleMessageType moduleMessageType, string iconSrc)
+        {
+            if (control != null)
+            {
+                if (!String.IsNullOrEmpty(message))
+                {
+                    var messagePlaceHolder = ControlUtilities.FindControl<PlaceHolder>(control, "MessagePlaceHolder", true);
+                    if (messagePlaceHolder != null)
+                    {
+                        messagePlaceHolder.Visible = true;
+                        ModuleMessage moduleMessage = GetModuleMessageControl(heading, message, moduleMessageType, iconSrc);
+                        messagePlaceHolder.Controls.Add(moduleMessage);
+                    }
+                }
+            }
+        }
+
+        private static void AddPageMessage(Control control, string heading, string message, ModuleMessage.ModuleMessageType moduleMessageType, string iconSrc)
+        {
+            if (!String.IsNullOrEmpty(message))
+            {
+                Control contentPane = control.FindControl(Globals.glbDefaultPane);
+                if (contentPane != null)
+                {
+                    ModuleMessage moduleMessage = GetModuleMessageControl(heading, message, moduleMessageType, iconSrc);
+                    contentPane.Controls.AddAt(0, moduleMessage);
+                }
+            }
+        }
+
         private bool CheckExpired()
         {
             bool blnExpired = false;
@@ -251,15 +271,6 @@ namespace DotNetNuke.UI.Skins
             return pane;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InjectControlPanel injects the ControlPanel into the ControlPanel pane
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	12/04/2007  created
-        ///     [cnurse]    04/17/2009  Refactored from Skin
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private void InjectControlPanel()
         {
             //if querystring dnnprintmode=true, controlpanel will not be shown
@@ -288,15 +299,19 @@ namespace DotNetNuke.UI.Skins
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// LoadPanes parses the Skin and loads the "Panes"
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	12/04/2007  created
-        ///     [cnurse]    04/17/2009  Refactored from Skin
-        /// </history>
-        /// -----------------------------------------------------------------------------
+        private void InvokeSkinEvents(SkinEventType skinEventType)
+        {
+            SharedList<SkinEventListener> list = ((NaiveLockingList<SkinEventListener>)DotNetNukeContext.Current.SkinEventListeners).SharedList;
+
+            using (list.GetReadLock())
+            {
+                foreach (var listener in list.Where(x => x.EventType == skinEventType))
+                {
+                    listener.SkinEvent.Invoke(this, new SkinEventArgs(this));
+                }
+            }
+        }
+
         private void LoadPanes()
         {
             //iterate page controls
@@ -334,6 +349,37 @@ namespace DotNetNuke.UI.Skins
             }
         }
 
+        private static Skin LoadSkin(PageBase page, string skinPath)
+        {
+            Skin ctlSkin = null;
+            try
+            {
+                string skinSrc = skinPath;
+                if (skinPath.ToLower().IndexOf(Globals.ApplicationPath) != -1)
+                {
+                    skinPath = skinPath.Remove(0, Globals.ApplicationPath.Length);
+                }
+                ctlSkin = ControlUtilities.LoadControl<Skin>(page, skinPath);
+                ctlSkin.SkinSrc = skinSrc;
+                //call databind so that any server logic in the skin is executed
+                ctlSkin.DataBind();
+            }
+            catch (Exception exc)
+            {
+                //could not load user control
+                var lex = new PageLoadException("Unhandled error loading page.", exc);
+                if (TabPermissionController.CanAdminPage())
+                {
+                    //only display the error to administrators
+                    var skinError = (Label)page.FindControl("SkinError");
+                    skinError.Text = string.Format(Localization.GetString("SkinLoadError", Localization.GlobalResourceFile), skinPath, page.Server.HtmlEncode(exc.Message));
+                    skinError.Visible = true;
+                }
+                Exceptions.LogException(lex);
+            }
+            return ctlSkin;
+        }
+
         private bool ProcessModule(ModuleInfo module)
         {
             bool success = true;
@@ -356,17 +402,6 @@ namespace DotNetNuke.UI.Skins
             return success;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// ProcessMasterModules processes all the master modules in the Active Tab's
-        /// Modules Collection.
-        /// </summary>
-        /// <returns>A flag that indicates whether the modules were successfully processed.</returns>
-        /// <history>
-        /// 	[cnurse]	12/04/2007  created
-        ///     [cnurse]    04/17/2009  Refactored from Skin
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private bool ProcessMasterModules()
         {
             bool success = true;
@@ -406,15 +441,6 @@ namespace DotNetNuke.UI.Skins
             return success;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// ProcessPanes processes the Attributes for the Panes
-        /// </summary>
-        /// <history>
-        /// 	[cnurse]	12/05/2007	Created
-        ///     [cnurse]    04/17/2009  Refactored from Skin
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private void ProcessPanes()
         {
             foreach (KeyValuePair<string, Pane> kvp in Panes)
@@ -423,16 +449,6 @@ namespace DotNetNuke.UI.Skins
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// ProcessSlaveModule processes the slave module specifeid by the "ctl=xxx" ControlKey.
-        /// </summary>
-        /// <returns>A flag that indicates whether the modules were successfully processed.</returns>
-        /// <history>
-        /// 	[cnurse]	12/04/2007  created
-        ///     [cnurse]    04/17/2009  Refactored from Skin
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private bool ProcessSlaveModule()
         {
             var success = true;
@@ -471,7 +487,7 @@ namespace DotNetNuke.UI.Skins
 
         #endregion
 
-        #region "Protected Methods"
+        #region Protected Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -560,166 +576,9 @@ namespace DotNetNuke.UI.Skins
             InvokeSkinEvents(SkinEventType.OnSkinUnLoad);
         }
 
-        private void InvokeSkinEvents(SkinEventType skinEventType)
-        {
-            SharedList<SkinEventListener> list = ((NaiveLockingList<SkinEventListener>)DotNetNukeContext.Current.SkinEventListeners).SharedList;
-
-            using (list.GetReadLock())
-            {
-                foreach (var listener in list.Where(x => x.EventType == skinEventType))
-                {
-                    listener.SkinEvent.Invoke(this, new SkinEventArgs(this));
-                }
-            }
-        }
-
         #endregion
 
-        #region "Public Methods"
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// InjectModule injects the module into the Pane
-        /// </summary>
-        /// <param name="module">The module to inject</param>
-        /// <param name="pane">The pane</param>
-        /// <history>
-        /// 	[cnurse]	12/04/2007  created
-        ///     [cnurse]    04/17/2009  Refactored to use SkinAdapter
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public bool InjectModule(Pane pane, ModuleInfo module)
-        {
-            bool bSuccess = true;
-
-            //try to inject the module into the pane
-            try
-            {
-                pane.InjectModule(module);
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                bSuccess = false;
-            }
-            return bSuccess;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// RegisterModuleActionEvent registers a Module Action Event
-        /// </summary>
-        /// <param name="moduleId">The ID of the module</param>
-        /// <param name="e">An Action Event Handler</param>
-        /// <history>
-        /// 	[cnurse]	12/04/2007  documented
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public void RegisterModuleActionEvent(int moduleId, ActionEventHandler e)
-        {
-            ActionEventListeners.Add(new ModuleActionEventListener(moduleId, e));
-        }
-
-        #endregion
-
-        #region "Private Shared/Static Methods"
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// LoadSkin loads the Skin
-        /// </summary>
-        /// <param name="page">The Page that will contain the Skin</param>
-        /// <param name="skinPath">The path to the Skin file</param>
-        /// <history>
-        /// 	[cnurse]	12/04/2007  documented
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static Skin LoadSkin(PageBase page, string skinPath)
-        {
-            Skin ctlSkin = null;
-            try
-            {
-                string skinSrc = skinPath;
-                if (skinPath.ToLower().IndexOf(Globals.ApplicationPath) != -1)
-                {
-                    skinPath = skinPath.Remove(0, Globals.ApplicationPath.Length);
-                }
-                ctlSkin = ControlUtilities.LoadControl<Skin>(page, skinPath);
-                ctlSkin.SkinSrc = skinSrc;
-                //call databind so that any server logic in the skin is executed
-                ctlSkin.DataBind();
-            }
-            catch (Exception exc)
-            {
-                //could not load user control
-                var lex = new PageLoadException("Unhandled error loading page.", exc);
-                if (TabPermissionController.CanAdminPage())
-                {
-                    //only display the error to administrators
-                    var skinError = (Label)page.FindControl("SkinError");
-                    skinError.Text = string.Format(Localization.GetString("SkinLoadError", Localization.GlobalResourceFile), skinPath, page.Server.HtmlEncode(exc.Message));
-                    skinError.Visible = true;
-                }
-                Exceptions.LogException(lex);
-            }
-            return ctlSkin;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// AddModuleMessage adds a Moduel Message control to the Skin
-        /// </summary>
-        /// <param name="heading">The Message Heading</param>
-        /// <param name="iconSrc">The Icon to diplay</param>
-        /// <param name="message">The Message Text</param>
-        /// <param name="control">The current control</param>
-        /// <param name="moduleMessageType">The type of the message</param>
-        /// <history>
-        /// 	[cnurse]	12/04/2007  documented
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static void AddModuleMessage(Control control, string heading, string message, ModuleMessage.ModuleMessageType moduleMessageType, string iconSrc)
-        {
-            if (control != null)
-            {
-                if (!String.IsNullOrEmpty(message))
-                {
-                    var messagePlaceHolder = ControlUtilities.FindControl<PlaceHolder>(control, "MessagePlaceHolder", true);
-                    if (messagePlaceHolder != null)
-                    {
-                        messagePlaceHolder.Visible = true;
-                        ModuleMessage moduleMessage = GetModuleMessageControl(heading, message, moduleMessageType, iconSrc);
-                        messagePlaceHolder.Controls.Add(moduleMessage);
-                    }
-                }
-            }
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// AddPageMessage adds a Page Message control to the Skin
-        /// </summary>
-        /// <param name="heading">The Message Heading</param>
-        /// <param name="iconSrc">The Icon to diplay</param>
-        /// <param name="message">The Message Text</param>
-        /// <param name="control">The current control</param>
-        /// <param name="moduleMessageType">The type of the message</param>
-        /// <history>
-        /// 	[cnurse]	12/04/2007  documented
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static void AddPageMessage(Control control, string heading, string message, ModuleMessage.ModuleMessageType moduleMessageType, string iconSrc)
-        {
-            if (!String.IsNullOrEmpty(message))
-            {
-                Control contentPane = control.FindControl(Globals.glbDefaultPane);
-                if (contentPane != null)
-                {
-                    ModuleMessage moduleMessage = GetModuleMessageControl(heading, message, moduleMessageType, iconSrc);
-                    contentPane.Controls.AddAt(0, moduleMessage);
-                }
-            }
-        }
+        #region Public Methods
 
         public static void AddModuleMessage(PortalModuleBase control, string message, ModuleMessage.ModuleMessageType moduleMessageType)
         {
@@ -920,6 +779,48 @@ namespace DotNetNuke.UI.Skins
 
         /// -----------------------------------------------------------------------------
         /// <summary>
+        /// GetPopUpSkin gets the Skin that is used in modal popup.
+        /// </summary>
+        /// <param name="page">The Page</param>
+        /// <history>
+        /// 	[vnguyen]   06/07/2011      Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public static Skin GetPopUpSkin(PageBase page)
+        {
+            Skin skin = null;
+            var skinSource = Null.NullString;
+
+            //attempt to find and load a popup skin from the assigned skinned source
+            skinSource = Globals.IsAdminSkin() ? SkinController.FormatSkinSrc(page.PortalSettings.DefaultAdminSkin, page.PortalSettings) : page.PortalSettings.ActiveTab.SkinSrc;
+            if (!String.IsNullOrEmpty(skinSource))
+            {
+                skinSource = SkinController.FormatSkinSrc(SkinController.FormatSkinPath(skinSource) + "popUpSkin.ascx", page.PortalSettings);
+
+                if (File.Exists(HttpContext.Current.Server.MapPath(SkinController.FormatSkinSrc(skinSource, page.PortalSettings))))
+                {
+                    skin = LoadSkin(page, skinSource);
+                }
+            }
+
+            //error loading popup skin - load default popup skin
+            if (skin == null)
+            {
+                skinSource = Globals.HostPath + "Skins/_default/popUpSkin.ascx";
+                skin = LoadSkin(page, skinSource);
+            }
+
+            //set skin path
+            page.PortalSettings.ActiveTab.SkinPath = SkinController.FormatSkinPath(skinSource);
+
+            //set skin id to an explicit short name to reduce page payload and make it standards compliant
+            skin.ID = "dnn";
+
+            return skin;
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
         /// GetSkin gets the Skin
         /// </summary>
         /// <param name="page">The Page</param>
@@ -982,45 +883,48 @@ namespace DotNetNuke.UI.Skins
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// GetPopUpSkin gets the Skin that is used in modal popup.
+        /// InjectModule injects the module into the Pane
         /// </summary>
-        /// <param name="page">The Page</param>
+        /// <param name="module">The module to inject</param>
+        /// <param name="pane">The pane</param>
         /// <history>
-        /// 	[vnguyen]   06/07/2011      Created
+        /// 	[cnurse]	12/04/2007  created
+        ///     [cnurse]    04/17/2009  Refactored to use SkinAdapter
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static Skin GetPopUpSkin(PageBase page)
+        public bool InjectModule(Pane pane, ModuleInfo module)
         {
-            Skin skin = null;
-            var skinSource = Null.NullString;
+            bool bSuccess = true;
 
-            //attempt to find and load a popup skin from the assigned skinned source
-            skinSource = Globals.IsAdminSkin() ? SkinController.FormatSkinSrc(page.PortalSettings.DefaultAdminSkin, page.PortalSettings) : page.PortalSettings.ActiveTab.SkinSrc;
-            if (!String.IsNullOrEmpty(skinSource))
+            //try to inject the module into the pane
+            try
             {
-                skinSource = SkinController.FormatSkinSrc(SkinController.FormatSkinPath(skinSource) + "popUpSkin.ascx", page.PortalSettings);
-
-                if (File.Exists(HttpContext.Current.Server.MapPath(SkinController.FormatSkinSrc(skinSource, page.PortalSettings))))
-                {
-                    skin = LoadSkin(page, skinSource);
-                }
+                pane.InjectModule(module);
             }
-
-            //error loading popup skin - load default popup skin
-            if (skin == null)
+            catch (Exception ex)
             {
-                skinSource = Globals.HostPath + "Skins/_default/popUpSkin.ascx";
-                skin = LoadSkin(page, skinSource);
+                Exceptions.LogException(ex);
+                bSuccess = false;
             }
-
-            //set skin path
-            page.PortalSettings.ActiveTab.SkinPath = SkinController.FormatSkinPath(skinSource);
-
-            //set skin id to an explicit short name to reduce page payload and make it standards compliant
-            skin.ID = "dnn";
-
-            return skin;
+            return bSuccess;
         }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// RegisterModuleActionEvent registers a Module Action Event
+        /// </summary>
+        /// <param name="moduleId">The ID of the module</param>
+        /// <param name="e">An Action Event Handler</param>
+        /// <history>
+        /// 	[cnurse]	12/04/2007  documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public void RegisterModuleActionEvent(int moduleId, ActionEventHandler e)
+        {
+            ActionEventListeners.Add(new ModuleActionEventListener(moduleId, e));
+        }
+
+
 
         #endregion
     }

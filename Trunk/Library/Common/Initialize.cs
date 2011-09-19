@@ -137,7 +137,7 @@ namespace DotNetNuke.Common
                 case Globals.UpgradeStatus.Upgrade:
                     if (AutoUpgrade)
                     {
-                        retValue = "~/Install/Install.aspx?mode=upgrade";
+                        retValue = "~/Install/UpgradeWizard.aspx";
                     }
                     else
                     {
@@ -175,7 +175,9 @@ namespace DotNetNuke.Common
             DnnLog.Trace("Request " + Request.Url.LocalPath);
 
             //Don't process some of the AppStart methods if we are installing
-            if (!Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx") && !Request.Url.LocalPath.ToLower().EndsWith("install.aspx"))
+            if (!Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx")
+                && !Request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
+                && !Request.Url.LocalPath.ToLower().EndsWith("install.aspx"))
             {
                 //Check whether the current App Version is the same as the DB Version
                 redirect = CheckVersion(app);
@@ -387,7 +389,9 @@ namespace DotNetNuke.Common
             DnnLog.MethodEntry();
 
             //First check if we are upgrading/installing
-            if (request.Url.LocalPath.ToLower().EndsWith("install.aspx") || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
+            if (request.Url.LocalPath.ToLower().EndsWith("install.aspx")
+                    || request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx") 
+                    || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
             {
                 return;
             }

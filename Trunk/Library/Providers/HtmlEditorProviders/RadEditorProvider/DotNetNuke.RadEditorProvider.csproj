@@ -43,7 +43,7 @@
     <OutputPath>bin\</OutputPath>
     <DocumentationFile>DotNetNuke.RadEditorProvider.xml</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>1591,612,618,672</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.0.185, Culture=neutral, processorArchitecture=MSIL">

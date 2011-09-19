@@ -59,10 +59,15 @@ namespace DotNetNuke.HttpModules.UsersOnline
         {
             //First check if we are upgrading/installing
             var app = (HttpApplication) s;
-            HttpRequest Request = app.Request;
+            HttpRequest request = app.Request;
+
             //check if we are upgrading/installing or if this is a captcha request
-            if (Request.Url.LocalPath.ToLower().EndsWith("install.aspx") || Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx") || Request.Url.LocalPath.ToLower().EndsWith("captcha.aspx") ||
-                Request.Url.LocalPath.ToLower().EndsWith("scriptresource.axd") || Request.Url.LocalPath.ToLower().EndsWith("webresource.axd"))
+            if (request.Url.LocalPath.ToLower().EndsWith("install.aspx") 
+                || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("captcha.aspx") 
+                || request.Url.LocalPath.ToLower().EndsWith("scriptresource.axd") 
+                || request.Url.LocalPath.ToLower().EndsWith("webresource.axd"))
             {
                 return;
             }

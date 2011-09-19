@@ -45,9 +45,9 @@
                     <asp:label id="lblUserHelp" runat="server" />
                 </div>
                 <div id="userRow" runat="server" class="dnnFormItem">
-                    <div class="dnnUser">
+                    <asp:Panel id="userContainer" cssClass="dnnUser" runat="server">
                         <dnn:user id="ctlUser" runat="Server" />
-                    </div>
+                    </asp:Panel>
                     <div id="membershipRow" runat="server" class="dnnMembership">
                         <dnn:membership id="ctlMembership" runat="Server" />
                     </div>

@@ -22,25 +22,23 @@
             </assembly>
             <assembly>              
               <path>bin\Providers</path>
-              <name>WURFL.dll</name>
-            </assembly>
-            <assembly>
-              <path>bin\Providers</path>
-              <name>ICSharpCode.SharpZipLib.dll</name>
+              <name>FiftyOne.Foundation.dll</name>
             </assembly>
           </assemblies>
         </component>
-        <component type="File">
-          <files>
-            <basePath>\Providers\ClientCapabilityProvider\WURFLClientCapabilityProvider</basePath>
-            <file>
-              <name>license.txt</name>
-            </file>
-            <file>
-              <name>releaseNotes.txt</name>
-            </file>
-          </files>
-        </component>
+		<component type="File">
+			<files>
+				<basePath>App_Data\WURFLDeviceDatabase</basePath>
+				<file>
+					<name>web_browsers_patch.xml</name>
+					<sourceFileName>WURFLDeviceDatabase\web_browsers_patch.xml</sourceFileName>
+				</file>
+				<file>
+					<name>wurfl.xml.gz</name>
+					<sourceFileName>WURFLDeviceDatabase\wurfl.xml.gz</sourceFileName>
+				</file>
+			</files>
+		</component>
         <component type="Config">
           <config>
             <configFile>web.config</configFile>

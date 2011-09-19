@@ -2306,8 +2306,8 @@ namespace DotNetNuke.Modules.Admin.FileManager
             {
                 FolderManager.Instance.Synchronize(FolderPortalID, relPath, isRecursive, true);
 
-                ////reload page to make treeview update.
-                //Response.Redirect(Globals.NavigateURL(), true);
+                //reload page to make treeview update.
+                Response.Redirect(Globals.NavigateURL(), true);
             }
             catch (Exception ex)
             {

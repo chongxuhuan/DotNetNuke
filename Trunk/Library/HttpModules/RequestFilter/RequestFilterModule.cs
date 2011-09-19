@@ -71,7 +71,9 @@ namespace DotNetNuke.HttpModules.RequestFilter
 			
             //Carry out first time initialization tasks
             Initialize.Init(app);
-            if (request.Url.LocalPath.ToLower().EndsWith("install.aspx") || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx") || request.Url.LocalPath.ToLower().EndsWith("captcha.aspx"))
+            if (request.Url.LocalPath.ToLower().EndsWith("install.aspx")
+                    || request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
+                    || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
             {
                 return;
             }

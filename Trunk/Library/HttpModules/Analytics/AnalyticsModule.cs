@@ -81,17 +81,19 @@ namespace DotNetNuke.HttpModules.Analytics
             {
                 //First check if we are upgrading/installing or if it is a non-page request
                 var app = (HttpApplication) sender;
-                HttpRequest Request = app.Request;
+                HttpRequest request = app.Request;
 
                 //First check if we are upgrading/installing
-                if (Request.Url.LocalPath.ToLower().EndsWith("install.aspx") || Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
+                if (request.Url.LocalPath.ToLower().EndsWith("install.aspx")
+                        || request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
+                        || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
                 {
                     return;
                 }
 				
                 //exit if a request for a .net mapping that isn't a content page is made i.e. axd
-                if (Request.Url.LocalPath.ToLower().EndsWith(".aspx") == false && Request.Url.LocalPath.ToLower().EndsWith(".asmx") == false &&
-                    Request.Url.LocalPath.ToLower().EndsWith(".ashx") == false)
+                if (request.Url.LocalPath.ToLower().EndsWith(".aspx") == false && request.Url.LocalPath.ToLower().EndsWith(".asmx") == false &&
+                    request.Url.LocalPath.ToLower().EndsWith(".ashx") == false)
                 {
                     return;
                 }

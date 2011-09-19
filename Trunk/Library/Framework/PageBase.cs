@@ -67,7 +67,7 @@ namespace DotNetNuke.Framework
     /// -----------------------------------------------------------------------------
     public abstract class PageBase : Page
     {
-        #region "Private Members"
+        #region Private Members
 
         private readonly NameValueCollection _htmlAttributes = new NameValueCollection();
         private readonly ArrayList _localizedControls;
@@ -76,7 +76,7 @@ namespace DotNetNuke.Framework
 
         #endregion
 
-        #region "Constructors"
+        #region Constructors
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -93,43 +93,7 @@ namespace DotNetNuke.Framework
 
         #endregion
 
-        #region "Private Methods"
-
-        protected static void AddStyleSheetInternal(Page page, string id, string styleSheet, bool isFirst)
-        {
-            Control objCSS = page.FindControl("CSS");
-            if (objCSS != null)
-            {
-                Control objCtrl = page.Header.FindControl(id);
-                if (objCtrl == null)
-                {
-                    var objLink = new HtmlLink { ID = id };
-                    objLink.Attributes["rel"] = "stylesheet";
-                    objLink.Attributes["type"] = "text/css";
-                    objLink.Href = styleSheet;
-                    if (isFirst)
-                    {
-                        int iLink;
-                        for (iLink = 0; iLink <= objCSS.Controls.Count - 1; iLink++)
-                        {
-                            if (objCSS.Controls[iLink] is HtmlLink)
-                            {
-                                break;
-                            }
-                        }
-                        objCSS.Controls.AddAt(iLink, objLink);
-                    }
-                    else
-                    {
-                        objCSS.Controls.Add(objLink);
-                    }
-                }
-            }
-        }
-
-        #endregion
-
-        #region "Protected Properties"
+        #region Protected Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -166,7 +130,7 @@ namespace DotNetNuke.Framework
 
         #endregion
 
-        #region "Public Properties"
+        #region Public Properties
 
         public PortalSettings PortalSettings
         {
@@ -216,82 +180,18 @@ namespace DotNetNuke.Framework
 
         #endregion
 
-        #region "Private Methods"
-
-        private static bool IsStyleSheetRegistered(string key)
-        {
-            var styleSheetDictionary = CBO.GetCachedObject<SharedDictionary<string, string>>(
-                                            new CacheItemArgs("StyleSheets", 200, CacheItemPriority.NotRemovable),
-                                                (CacheItemArgs cacheItemArgs) => new SharedDictionary<string, string>());
-
-            bool idFound = Null.NullBoolean;
-            using (ISharedCollectionLock readLock = styleSheetDictionary.GetReadLock())
-            {
-                if (styleSheetDictionary.ContainsKey(key))
-                {
-                    //Return value
-                    idFound = true;
-                }
-            }
-
-            return idFound;
-        }
+        #region Private Methods
 
         private bool IsViewStateFailure(Exception e)
         {
             return !User.Identity.IsAuthenticated && e != null && e.InnerException is ViewStateException;
         }
 
-        /// <summary>
-        /// <para>IterateControls performs the high level localization for each control on the page.</para>
-        /// <param name="affectedControls"></param>
-        /// <param name="controls"></param>
-        /// <param name="resourceFileRoot"></param>
-        /// </summary>
         private void IterateControls(ControlCollection controls, ArrayList affectedControls, string resourceFileRoot)
         {
             foreach (Control c in controls)
             {
                 ProcessControl(c, affectedControls, true, resourceFileRoot);
-            }
-        }
-
-        private static void RegisterStyleSheet(Page page, string key, string styleSheet)
-        {
-            var styleSheetDictionary = CBO.GetCachedObject<SharedDictionary<string, string>>(
-                                                new CacheItemArgs("StyleSheets", 200, CacheItemPriority.NotRemovable),
-                                                cacheItemArgs => new SharedDictionary<string, string>(),
-                                                true
-                                            );
-
-            using (styleSheetDictionary.GetWriteLock())
-            {
-                if (!styleSheetDictionary.ContainsKey(key))
-                {
-                	var filePath = page.Server.MapPath(styleSheet);
-					if (File.Exists(filePath))
-                    {
-						//add version number to stylesheet link
-                    	try
-                    	{
-							var lastWriteTime = File.GetLastWriteTime(filePath);
-                    		var beginTime = new DateTime(2002, 12, 24);
-                    		var version = (int)lastWriteTime.Subtract(beginTime).TotalMinutes;
-
-                    		styleSheet = string.Format("{0}?{1}", styleSheet, version);
-                    	}
-                    	catch (Exception ex)
-                    	{
-                    		DnnLog.Error(ex);
-                    	}
-
-						styleSheetDictionary[key] = styleSheet;
-                    }
-                    else
-                    {
-                        styleSheetDictionary[key] = "";
-                    }
-                }
             }
         }
 
@@ -381,8 +281,7 @@ namespace DotNetNuke.Framework
 
         #endregion
 
-
-        #region "Public Methods"
+        #region Public Methods
 
         /// <summary>
         /// <para>GetControlAttribute looks a the type of control and does it's best to find an AttributeCollection.</para>
@@ -685,30 +584,6 @@ namespace DotNetNuke.Framework
             }
         }
 
-        [Obsolete("Deprecated in DNN 6.1. Replaced by ClientResourceManager.RegisterStyleSheet.")]
-        public static void RegisterStyleSheet(Page page, string styleSheet)
-        {
-            RegisterStyleSheet(page, styleSheet, false);
-        }
-
-        [Obsolete("Deprecated in DNN 6.1. Replaced by ClientResourceManager.RegisterStyleSheet.")]
-        public static void RegisterStyleSheet(Page page, string styleSheet, bool isFirst)
-        {
-            if (!IsStyleSheetRegistered(styleSheet))
-            {
-                RegisterStyleSheet(page, styleSheet, styleSheet);
-            }
-
-            if (isFirst)
-            {
-                ClientResourceManager.RegisterStyleSheet(page, styleSheet, 0);
-            }
-            else
-            {
-                ClientResourceManager.RegisterStyleSheet(page, styleSheet);
-            }
-        }
-
         /// <summary>
         /// <para>RemoveKeyAttribute remove the key attribute from the control. If this isn't done, then the HTML output will have 
         /// a bad attribute on it which could cause some older browsers problems.</para>
@@ -732,5 +607,62 @@ namespace DotNetNuke.Framework
         }
 
         #endregion
+
+        #region Obsolete Methods
+
+        [Obsolete("Deprecated in DNN 6.1. Replaced by ClientResourceManager.RegisterStyleSheet.")]
+        protected static void AddStyleSheetInternal(Page page, string id, string styleSheet, bool isFirst)
+        {
+            Control objCSS = page.FindControl("CSS");
+            if (objCSS != null)
+            {
+                Control objCtrl = page.Header.FindControl(id);
+                if (objCtrl == null)
+                {
+                    var objLink = new HtmlLink { ID = id };
+                    objLink.Attributes["rel"] = "stylesheet";
+                    objLink.Attributes["type"] = "text/css";
+                    objLink.Href = styleSheet;
+                    if (isFirst)
+                    {
+                        int iLink;
+                        for (iLink = 0; iLink <= objCSS.Controls.Count - 1; iLink++)
+                        {
+                            if (objCSS.Controls[iLink] is HtmlLink)
+                            {
+                                break;
+                            }
+                        }
+                        objCSS.Controls.AddAt(iLink, objLink);
+                    }
+                    else
+                    {
+                        objCSS.Controls.Add(objLink);
+                    }
+                }
+            }
+        }
+
+        [Obsolete("Deprecated in DNN 6.1. Replaced by ClientResourceManager.RegisterStyleSheet.")]
+        public static void RegisterStyleSheet(Page page, string styleSheet)
+        {
+            RegisterStyleSheet(page, styleSheet, false);
+        }
+
+        [Obsolete("Deprecated in DNN 6.1. Replaced by ClientResourceManager.RegisterStyleSheet.")]
+        public static void RegisterStyleSheet(Page page, string styleSheet, bool isFirst)
+        {
+            if (isFirst)
+            {
+                ClientResourceManager.RegisterStyleSheet(page, styleSheet, 0);
+            }
+            else
+            {
+                ClientResourceManager.RegisterStyleSheet(page, styleSheet);
+            }
+        }
+
+        #endregion
+
     }
 }

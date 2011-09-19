@@ -34,6 +34,7 @@ using DotNetNuke.Application;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework.Providers;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Scheduling;
@@ -154,6 +155,16 @@ namespace DotNetNuke.Services.Install
 
         private void UpgradeApplication()
         {
+            if (!Request.IsAuthenticated)
+            {
+                return;
+            }
+            UserInfo hostUser = UserController.GetCachedUser(-1, User.Identity.Name);
+            if(!hostUser.IsSuperUser)
+            {
+                return;
+            }
+
             //Start Timer
             Upgrade.Upgrade.StartTimer();
 

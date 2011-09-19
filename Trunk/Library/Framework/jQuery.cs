@@ -43,6 +43,8 @@ using Globals = DotNetNuke.Common.Globals;
 
 namespace DotNetNuke.Framework
 {
+    using Web.Client;
+
     public class jQuery
     {
         private const string jQueryDebugFile = "~/Resources/Shared/Scripts/jquery/jquery.js";
@@ -367,13 +369,13 @@ namespace DotNetNuke.Framework
 
         public static void RegisterJQuery(Page page)
         {
-            ClientResourceManager.RegisterScript(page, GetJQueryScriptReference(), 0);
+            ClientResourceManager.RegisterScript(page, GetJQueryScriptReference(), FileOrder.Js.jQuery);
         }
 
         public static void RegisterJQueryUI(Page page)
         {
             RegisterJQuery(page);
-            ClientResourceManager.RegisterScript(page, GetJQueryUIScriptReference(), 10);
+            ClientResourceManager.RegisterScript(page, GetJQueryUIScriptReference(), FileOrder.Js.jQueryUI);
         }
 
         public static void RegisterDnnJQueryPlugins(Page page)

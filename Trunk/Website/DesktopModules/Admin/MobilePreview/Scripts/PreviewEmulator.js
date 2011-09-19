@@ -25,6 +25,13 @@
 				var vContentHeight = height - vDimension.find(".top").height() - vDimension.find(".bottom").height();
 				vDimension.find(".middle").height(vContentHeight).css("line-height", vContentHeight + "px").html(height + "px");
 
+				if (viewer.width() < viewContainer.width()) {
+					viewer.width(viewContainer.width());
+				}
+
+				if (viewer.height() < viewContainer.height()) {
+					viewer.height(viewContainer.height());
+				}
 
 				$(this).scroll();
 
@@ -164,7 +171,7 @@
 		};
 
 		var initDrag = function (bar) {
-			mask.appendTo(handler).width(handler.data("viewWidth")).height(handler.data("viewHeight")).css({opacity: 0});
+			mask.appendTo(handler).width(handler.data("viewWidth")).height(handler.data("viewHeight")).css({ opacity: 0 });
 		};
 
 		var endDrag = function (bar) {

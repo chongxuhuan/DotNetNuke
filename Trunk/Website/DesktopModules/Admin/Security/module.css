@@ -7,7 +7,7 @@
 	#dnnUsers select.dnnUsersSearchFilter{padding:5px;margin:0 8px;width:20%;}
 	#dnnUsers .uLetterSearch li{list-style-type:none; display:inline; padding-left: 1em;}
 .uLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;}
-.dnnRequireProfile .dnnForm , .dnnUser, .dnnMembership{width:75%; float:left;}
+.dnnRequireProfile .dnnForm , .dnnUser, .dnnMembership{width:45%; float:left;}
 .dnnProfileDetails .dnnFormItem .dnnTooltip{width:20%;}
 .dnnProfileDetails .dnnFormItem select.dnnFormVisibility{width:100px;}
 
@@ -41,4 +41,4 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 .dnnManageSecurityRoles .dnnFormItem input {float:none;}
 
 .dnnUser .dnnForm, .dnnMembership .dnnForm{ min-width: 500px;}
-.dnnUser .register{ min-width: 620px;}
+.dnnUser.register{ width: 750px;}

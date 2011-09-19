@@ -25,12 +25,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
+using System.Web.Caching;
 
 using DotNetNuke.Collections.Internal;
+using DotNetNuke.Common;
+using DotNetNuke.Common.Utilities;
 
-using WURFL;
-using WURFL.Config;
+using FiftyOne.Foundation.Mobile.Detection;
+using FiftyOne.Foundation.Mobile.Detection.Wurfl;
 
 #endregion
 
@@ -57,7 +62,7 @@ namespace DotNetNuke.Services.ClientCapability
         /// </summary>
         public WURFLClientCapabilityProvider()
         {
-            _wurflDataFile = Common.Globals.ApplicationMapPath + "/App_Data/WURFLDeviceDatabase/wurfl-latest.zip";
+            _wurflDataFile = Common.Globals.ApplicationMapPath + "/App_Data/WURFLDeviceDatabase/wurfl.xml.gz";
             _wurflPatchFile = Common.Globals.ApplicationMapPath + "/App_Data/WURFLDeviceDatabase/web_browsers_patch.xml";
         }
 
@@ -74,25 +79,24 @@ namespace DotNetNuke.Services.ClientCapability
 
         #endregion
 
-        #region static methods
-        static object _managerLock = new object();
-        static IWURFLManager _wurflManager;
-        private static IWURFLManager Manager
+        #region Static Methods
+
+        static object _providerLock = new object();
+        static Provider _wurflProvider;
+        private static Provider WurflProvider
         {
             get
             {
-                lock (_managerLock)
+                if (_wurflProvider != null)
+                    return _wurflProvider;
+
+                lock (_providerLock)
                 {
-                    if (_wurflManager != null) 
-                        return _wurflManager;
-
                     // Initializes the WURFL infrastructure
-                    var configurer = new InMemoryConfigurer()
-                        .MainFile(_wurflDataFile)
-                        .PatchFile(_wurflPatchFile);
-                    _wurflManager = WURFLManagerBuilder.Build(configurer);
+                    string[] wurflFiles = { _wurflDataFile, _wurflPatchFile };
+                    _wurflProvider = new Provider(wurflFiles, null, false);
 
-                    return _wurflManager;
+                    return _wurflProvider;
                 }
             }
         }
@@ -109,12 +113,10 @@ namespace DotNetNuke.Services.ClientCapability
                 lock (_capabiliyValueLock)
                 {
                     var capabilityValues = new Dictionary<string, List<string>>();
-
-                    var devices = Manager.GetAllDevices();
-                    foreach (var device in devices)
-                    {
-                    	var capabilities = device.GetCapabilities();
-						foreach (var capability in capabilities)
+                    
+                    foreach (var device in AllDevices)
+                    {                    	
+                        foreach (var capability in device.Capabilities)
                         {
 							//check for empty capability.Value
 							if (string.IsNullOrEmpty((capability.Value)))
@@ -197,9 +199,8 @@ namespace DotNetNuke.Services.ClientCapability
                 lock (_allCapabilitiesLock)
                 {
                     var capabilities = new List<IClientCapability>();
-
-                    var devices = Manager.GetAllDevices();
-                    foreach (var device in devices)
+                    
+                    foreach (var device in AllDevices)
                     {
                         capabilities.Add(new WURFLClientCapability(device));
                     }
@@ -209,19 +210,79 @@ namespace DotNetNuke.Services.ClientCapability
                 }
             }
         }
+
+        static IQueryable<DeviceInfoClientCapability> _allDevices;
+        private static IQueryable<DeviceInfoClientCapability> AllDevices
+        {
+            get
+            {
+				const string cacheKey = "WURFLClientCapability_AllDevices";
+            	const int cacheTimeout = 1440;
+				var cacheArg = new CacheItemArgs(cacheKey, cacheTimeout, CacheItemPriority.Default);
+				return CBO.GetCachedObject<IQueryable<DeviceInfoClientCapability>>(cacheArg, GetAllDevicesCallBack);
+            }
+        }
+
+		private static IQueryable<DeviceInfoClientCapability> GetAllDevicesCallBack(CacheItemArgs cacheItem)
+		{
+			var devices = new List<DeviceInfoClientCapability>();
+			var allDevicesField = WurflProvider.GetType().GetField("AllDevices", BindingFlags.Instance | BindingFlags.NonPublic);
+			var devicesInProvider = allDevicesField.GetValue(WurflProvider) as IDictionary<int, BaseDeviceInfo>;
+
+			foreach (var device in devicesInProvider.Values)
+			{
+				if (!string.IsNullOrEmpty(device.UserAgent))
+				{
+					devices.Add(new DeviceInfoClientCapability(device as DeviceInfo));
+				}
+			}
+
+			_allDevices = devices.AsQueryable();
+			return _allDevices;
+		}
         #endregion
 
         #region ClientCapabilityProvider Methods
+
+        private static readonly SharedDictionary<string, DeviceInfoClientCapability> _cachedUserAgents = new SharedDictionary<string, DeviceInfoClientCapability>();
 
         /// <summary>
         ///   Returns ClientCapability based on HttpRequest
         /// </summary>
         public override IClientCapability GetClientCapability(string userAgent)
-        {            
-            var device = Manager.GetDeviceForRequest(userAgent);
-            if (device != null)
-                return new WURFLClientCapability(device);
-            return null;
+        {
+            DeviceInfoClientCapability deviceInfoClientCapability = null;
+
+			if (!string.IsNullOrEmpty(userAgent))
+			{
+				bool found = false;
+				using (_cachedUserAgents.GetReadLock())
+				{
+					if (_cachedUserAgents.ContainsKey(userAgent))
+					{
+						deviceInfoClientCapability = _cachedUserAgents[userAgent];
+						found = true;
+					}
+				}
+
+				if (!found)
+				{
+					var deviceInfo = WurflProvider.GetDeviceInfo(userAgent);
+					if (deviceInfo != null)
+					{
+						deviceInfoClientCapability = new DeviceInfoClientCapability(deviceInfo);
+						using (_cachedUserAgents.GetWriteLock())
+						{
+							//put in Dictionary
+							_cachedUserAgents[userAgent] = deviceInfoClientCapability;
+						}
+					}
+				}
+			}
+
+        	var wurflClientCapability =  new WURFLClientCapability(deviceInfoClientCapability);
+            wurflClientCapability.UserAgent = userAgent;
+            return wurflClientCapability;
         }
 
         /// <summary>
@@ -229,10 +290,16 @@ namespace DotNetNuke.Services.ClientCapability
         /// </summary>
         public override IClientCapability GetClientCapabilityById(string clientId)
         {
-            var device = Manager.GetDeviceById(clientId);
-            if (device != null)
-                return new WURFLClientCapability(device);
-            return null;
+			Requires.NotNullOrEmpty("clientId", clientId);
+
+        	var device = AllDevices.FirstOrDefault(c => c.DeviceInfo.DeviceId == clientId);
+            
+			if(device == null)
+			{
+				throw new Exception(string.Format("Can't get client capability for the id '{0}'", clientId));
+			}
+            
+			return new WURFLClientCapability(device);
         }
 
         /// <summary>

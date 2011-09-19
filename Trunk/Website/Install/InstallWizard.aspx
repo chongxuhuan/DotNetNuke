@@ -11,9 +11,9 @@
     <link rel="stylesheet" type="text/css" href="../Portals/_default/default.css?refresh" />
     <link rel="stylesheet" type="text/css" href="Install.css?refresh" />
     <asp:placeholder id="SCRIPTS" runat="server" />
-    <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader"></dnncrm:ClientResourceLoader>
 </head>
 <body>
+    <asp:placeholder runat="server" id="ClientResourceIncludes" />
     <script type="text/javascript">
         var BARS = 20;  // The number of bars to display
         var CLASS = "Progress"; // Style class name when bar is off
@@ -152,6 +152,7 @@
         }
     </script>
     <form id="form1" runat="server">
+        <asp:placeholder id="BodySCRIPTS" runat="server" />
         <div class="dnnForm dnnInstall dnnClear" id="dnnInstall">
             <asp:Wizard ID="wizInstall" runat="server" 
                 ActiveStepIndex="0"
@@ -383,6 +384,9 @@
         <input type="hidden" id="__dnnVariable" runat="server" />
         <asp:Label ID="txtErrorMessage" runat="server" />
     </form>
+
+    <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader"></dnncrm:ClientResourceLoader>
+
     <script type="text/javascript">
 
         //This code is to force a refresh of browser cache

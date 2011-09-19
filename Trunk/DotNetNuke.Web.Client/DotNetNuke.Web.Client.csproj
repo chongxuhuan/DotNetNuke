@@ -26,6 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\DotNetNuke.Web.Client.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\DotNetNuke.Web.Client.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ClientDependency.Core, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -48,6 +50,7 @@
     <Reference Include="System.Web.Abstractions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileOrder.cs" />
     <Compile Include="Controls\ClientResourceInclude.cs" />
     <Compile Include="Controls\ClientResourceLoader.cs" />
     <Compile Include="ClientResourceManager.cs" />
@@ -57,6 +60,8 @@
     <Compile Include="Controls\DnnHtmlInclude.cs" />
     <Compile Include="Controls\DnnJsInclude.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Providers\DnnFormBottomRenderProvider.cs" />
+    <Compile Include="Providers\DnnBodyRenderProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

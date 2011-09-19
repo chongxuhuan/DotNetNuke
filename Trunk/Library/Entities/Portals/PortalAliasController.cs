@@ -382,24 +382,14 @@ namespace DotNetNuke.Entities.Portals
 		/// <returns>Portal alias collection.</returns>
         public PortalAliasCollection GetPortalAliasByPortalID(int PortalID)
         {
-            IDataReader dr = DataProvider.Instance().GetPortalAliasByPortalID(PortalID);
-            try
+            var portalAliasCollection = new PortalAliasCollection();
+
+            foreach (PortalAliasInfo alias in GetPortalAliasLookup().Cast<PortalAliasInfo>().Where(alias => alias.PortalID == PortalID))
             {
-                var objPortalAliasCollection = new PortalAliasCollection();
-                while (dr.Read())
-                {
-                    var objPortalAliasInfo = new PortalAliasInfo();
-                    objPortalAliasInfo.PortalAliasID = Convert.ToInt32(dr["PortalAliasID"]);
-                    objPortalAliasInfo.PortalID = Convert.ToInt32(dr["PortalID"]);
-                    objPortalAliasInfo.HTTPAlias = Convert.ToString(dr["HTTPAlias"]);
-                    objPortalAliasCollection.Add(Convert.ToString(dr["HTTPAlias"]).ToLower(), objPortalAliasInfo);
-                }
-                return objPortalAliasCollection;
+                portalAliasCollection.Add(alias.HTTPAlias, alias);
             }
-            finally
-            {
-                CBO.CloseDataReader(dr, true);
-            }
+
+		    return portalAliasCollection;
         }
 
 		/// <summary>
@@ -408,7 +398,26 @@ namespace DotNetNuke.Entities.Portals
 		/// <returns>Portal alias collection.</returns>
         public PortalAliasCollection GetPortalAliases()
         {
-            return GetPortalAliasByPortalID(-1);
+            IDataReader dr = DataProvider.Instance().GetPortalAliasByPortalID(-1);
+            try
+            {
+                var portalAliasCollection = new PortalAliasCollection();
+                while (dr.Read())
+                {
+                    var objPortalAliasInfo = new PortalAliasInfo
+                                                 {
+                                                     PortalAliasID = Convert.ToInt32(dr["PortalAliasID"]), 
+                                                     PortalID = Convert.ToInt32(dr["PortalID"]), 
+                                                     HTTPAlias = Convert.ToString(dr["HTTPAlias"])
+                                                 };
+                    portalAliasCollection.Add(Convert.ToString(dr["HTTPAlias"]).ToLower(), objPortalAliasInfo);
+                }
+                return portalAliasCollection;
+            }
+            finally
+            {
+                CBO.CloseDataReader(dr, true);
+            }
         }
 
 		/// <summary>

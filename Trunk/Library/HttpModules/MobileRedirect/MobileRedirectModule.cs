@@ -82,9 +82,27 @@ namespace DotNetNuke.HttpModules
                     var app = (HttpApplication)s;
                     if (app != null && app.Request != null && !string.IsNullOrEmpty(app.Request.UserAgent))
                     {
+						//if cookies contains value of source portal, the stop redirect.
+						if (app.Request.Cookies["SourcePortal"] != null)
+						{
+							return;
+						}
+
+						//if request is redirect by redirection module, log the source portal in cookie and stop redirect.
+						if(app.Request.QueryString["sp"] != null)
+						{
+							int sourcePortal;
+							if(int.TryParse(app.Request.QueryString["sp"], out sourcePortal))
+							{
+								app.Response.Cookies.Add(new HttpCookie("SourcePortal", sourcePortal.ToString()));
+								return;
+							}
+						}
+
                         string redirectUrl = _redirectionController.GetRedirectUrl(app.Request.UserAgent, portalSettings.PortalId, portalSettings.ActiveTab.TabID);
                         if (!string.IsNullOrEmpty(redirectUrl) && string.Compare(redirectUrl, portalSettings.ActiveTab.FullUrl, true, CultureInfo.InvariantCulture) != 0)
                         {
+                        	redirectUrl += string.Format("{0}sp={1}", redirectUrl.Contains("?") ? "&" : "?", portalSettings.PortalId);
                             app.Response.Redirect(redirectUrl);
                         }
                     }

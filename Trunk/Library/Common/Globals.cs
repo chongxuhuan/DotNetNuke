@@ -321,7 +321,7 @@ namespace DotNetNuke.Common
         /// User Name regex pattern
         /// </summary>
         /// <value></value>
-        public const string glbUserNameRegEx = @"^[a-zA-Z0-9]{5,}$";
+        public const string glbUserNameRegEx = @"";
 
         /// <summary>
         /// format of a script tag

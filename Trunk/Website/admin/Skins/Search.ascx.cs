@@ -40,6 +40,8 @@ using DotNetNuke.Entities.Icons;
 
 namespace DotNetNuke.UI.Skins.Controls
 {
+    using Web.Client;
+
     public partial class Search : SkinObjectBase
     {
         #region "Private Members"
@@ -519,7 +521,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
 
                 ClientAPI.RegisterClientReference(this.Page, ClientAPI.ClientNamespaceReferences.dnn);
-                ClientResourceManager.RegisterScript(Page, "~/Resources/Search/Search.js");
+                ClientResourceManager.RegisterScript(Page, "~/Resources/Search/Search.js", FileOrder.Js.DefaultPriority, "DnnFormBottomProvider");
             }
             else
             {

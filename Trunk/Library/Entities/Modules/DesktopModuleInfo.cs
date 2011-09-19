@@ -538,7 +538,7 @@ namespace DotNetNuke.Entities.Modules
         private void ClearFeature(DesktopModuleSupportedFeature feature)
         {
 			//And with the 1's complement of Feature to Clear the Feature flag
-            SupportedFeatures = SupportedFeatures & (int) feature;
+            SupportedFeatures = SupportedFeatures & ~((int) feature);
         }
 
         /// -----------------------------------------------------------------------------

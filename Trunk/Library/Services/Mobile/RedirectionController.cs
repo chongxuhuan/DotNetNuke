@@ -57,53 +57,56 @@ namespace DotNetNuke.Services.Mobile
             Requires.NotNull("userAgent", userAgent);
 
             string redirectUrl = string.Empty;
-            IList<IRedirection> allItems = GetRedirectionsByPortal(portalId);
+            IList<IRedirection> redirections = GetRedirectionsByPortal(portalId);
             //check for redirect only when redirect rules are defined
-            if (allItems != null && allItems.Count > 0)
+            if (redirections != null && redirections.Count > 0)
             {
                 var clientCapability = ClientCapabilityProvider.Instance().GetClientCapability(userAgent);
                 var tabController = new TabController();
-                foreach (var redirection in allItems)
+                foreach (var redirection in redirections)
                 {
-                    bool checkFurther = false;
-                    //redirection is based on source tab
-                    if (redirection.SourceTabId != Null.NullInteger)
+                    if (redirection.Enabled)
                     {
-                        //source tab matches current tab
-                        if (currentTabId == redirection.SourceTabId)
+                        bool checkFurther = false;
+                        //redirection is based on source tab
+                        if (redirection.SourceTabId != Null.NullInteger)
                         {
-                            checkFurther = true;
-                        }
-                        //is child tabs to be included as well
-                        else if(redirection.IncludeChildTabs) 
-                        {
-                            //Get all the descendents of the source tab and find out if current tab is in source tab's hierarchy or not.
-                            foreach (var childTab in tabController.GetTabsByPortal(portalId).DescendentsOf(redirection.SourceTabId))
+                            //source tab matches current tab
+                            if (currentTabId == redirection.SourceTabId)
                             {
-                                if (childTab.TabID == currentTabId)
+                                checkFurther = true;
+                            }
+                                //is child tabs to be included as well
+                            else if (redirection.IncludeChildTabs)
+                            {
+                                //Get all the descendents of the source tab and find out if current tab is in source tab's hierarchy or not.
+                                foreach (var childTab in tabController.GetTabsByPortal(portalId).DescendentsOf(redirection.SourceTabId))
                                 {
-                                    checkFurther = true;
-                                    break;
+                                    if (childTab.TabID == currentTabId)
+                                    {
+                                        checkFurther = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    }
-                    //redirection is based on portal
-                    else if (redirection.SourceTabId == Null.NullInteger)
-                    {
-                        checkFurther = true;
-                    }
-
-                    if(checkFurther)
-                    {
-                        //check if client capability matches with this rule
-                        if(DoesCapabilityMatchWithRule(clientCapability,redirection))
-                        {   
-                            //find the redirect url
-                            redirectUrl = GetRedirectUrlFromRule(redirection, portalId, currentTabId);
-                            break;
+                            //redirection is based on portal
+                        else if (redirection.SourceTabId == Null.NullInteger)
+                        {
+                            checkFurther = true;
                         }
-                    }                    
+
+                        if (checkFurther)
+                        {
+                            //check if client capability matches with this rule
+                            if (DoesCapabilityMatchWithRule(clientCapability, redirection))
+                            {
+                                //find the redirect url
+                                redirectUrl = GetRedirectUrlFromRule(redirection, portalId, currentTabId);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 

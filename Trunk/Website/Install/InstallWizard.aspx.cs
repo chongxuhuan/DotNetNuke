@@ -743,7 +743,7 @@ namespace DotNetNuke.Services.Install
 
         private bool InstallHost()
         {
-            bool success = true;
+            bool success = false;
             try
             {
                 //Initialise Host Settings
@@ -763,6 +763,8 @@ namespace DotNetNuke.Services.Install
 
                 //Clear Host Cache
                 DataCache.ClearHostCache(false);
+
+                success = true;
             }
             catch (Exception exc)
             {

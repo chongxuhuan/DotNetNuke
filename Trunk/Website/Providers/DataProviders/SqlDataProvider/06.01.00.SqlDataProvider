@@ -333,7 +333,7 @@ GO
 /* Add PortalGroups Table */
 /**************************/
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}PortalGroup]') AND type in (N'U'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}PortalGroups]') AND type in (N'U'))
 	BEGIN
 		CREATE TABLE {databaseOwner}[{objectQualifier}PortalGroups]
 		(
@@ -743,8 +743,8 @@ ELSE
 	END
 GO
 
-/* Add UpdateUser Procedure */
-/****************************/
+/* Update UpdateUser Procedure */
+/*******************************/
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateUser]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateUser]
@@ -795,6 +795,319 @@ AS
 				WHERE  UserId = @UserID
 					AND PortalId = @PortalID
 		END
+GO
+
+/* Update GetAllUsers Procedure */
+/*******************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetAllUsers]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetAllUsers]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetAllUsers]
+	@PortalID        int,
+	@PageIndex       int,
+	@PageSize        INT,
+	@IncludeDeleted  bit,
+	@SuperUsersOnly  bit	
+AS
+	BEGIN
+		-- Set the page bounds
+		DECLARE 
+			@PageLowerBound INT, 
+			@PageUpperBound INT, 
+			@RowsToReturn int
+
+		exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output
+
+		if @PortalID is null
+			begin
+				with [tmpUsers] as (
+					select U.*, row_number() over (order by U.UserName) AS rowid
+						FROM {databaseOwner}{objectQualifier}vw_Users u
+						WHERE U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+							--less than equal done to cover IsDeleted in (1,0) for IncludeDeleted...else just IsDeleted = 0
+							  AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+				)
+				select * from [tmpUsers]
+					where rowid > @PageLowerBound and rowid < @PageUpperBound
+					order by rowid
+			end 
+		else 
+			begin
+				with [tmpUsers] as (
+					select U.*, row_number() over (order by U.UserName) AS rowid
+						FROM {databaseOwner}{objectQualifier}vw_Users u
+						WHERE U.PortalID = @PortalID AND U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+						  AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+				)
+				select * from [tmpUsers]
+					where rowid > @PageLowerBound and rowid < @PageUpperBound
+					order by rowid
+			end
+
+		set rowcount 0
+ 
+		if @PortalId is null
+			begin
+				SELECT COUNT(*) as TotalRecords
+					FROM   {databaseOwner}{objectQualifier}Users as U
+					WHERE U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+				               AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+						AND NOT EXISTS (
+							select 1 from {databaseOwner}{objectQualifier}UserPortals UP where U.UserId = UP.UserId
+						)
+			end 
+		else 
+			begin
+				SELECT COUNT(*) as TotalRecords
+					FROM   {databaseOwner}{objectQualifier}Users U
+					INNER JOIN {databaseOwner}{objectQualifier}UserPortals UP ON U.UserId = UP.UserId
+						WHERE UP.PortalId = @PortalId
+							AND UP.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+							AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+			end
+	END
+GO
+
+/* Update GetUsersByEmail Procedure */
+/************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUsersByEmail]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByEmail]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByEmail]
+	@PortalID  int,
+	@EmailToMatch   nvarchar(256),
+	@PageIndex      int,
+	@PageSize       INT,
+	@IncludeDeleted bit,
+	@SuperUsersOnly bit		
+AS
+BEGIN
+		-- Set the page bounds
+		DECLARE 
+			@PageLowerBound INT, 
+			@PageUpperBound INT, 
+			@RowsToReturn int, 
+			@TotalRecords int
+
+		exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output
+
+		declare @tblPageIndex table (
+			IndexId int IDENTITY (0, 1) NOT NULL primary key,
+			UserId int
+		 )
+
+		if @PortalId is null and @EmailToMatch IS NULL
+			begin
+				with [UsersByEmail] as (
+					SELECT U.*, ROW_NUMBER() OVER (ORDER BY Email ASC) AS ROWID
+						FROM    {databaseOwner}{objectQualifier}vw_Users U
+						WHERE U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+							--less than equal done to cover IsDeleted in (1,0) for IncludeDeleted...else just IsDeleted = 0
+							AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+				)
+				select *, ROWID - 1 AS IndexID, UserID 
+					from [UsersByEmail]
+					where ROWID > @PageLowerBound AND ROWID < @PageUpperBound
+			end
+		else if @PortalId is null and @EmailToMatch IS NOT NULL 
+			begin
+				with [UsersByEmail] as (
+					SELECT U.*, ROW_NUMBER() OVER (ORDER BY Email ASC) AS ROWID
+						FROM    {databaseOwner}{objectQualifier}vw_Users U
+						WHERE LOWER(U.Email) LIKE LOWER(@EmailToMatch)
+							AND U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+							AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+					)
+					select *, ROWID - 1 AS IndexID, UserID 
+						from [UsersByEmail]
+						where ROWID > @PageLowerBound AND ROWID < @PageUpperBound
+			end
+		else if @EmailToMatch IS NULL 
+			begin
+				with [UsersByEmail] as (
+					SELECT U.*, ROW_NUMBER() OVER (ORDER BY Email ASC) AS ROWID
+						FROM    {databaseOwner}{objectQualifier}vw_Users U
+						WHERE U.PortalId = @PortalID
+							AND U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+							AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+				)
+				select *, ROWID - 1 AS IndexID, UserID 
+					from [UsersByEmail]
+					where ROWID > @PageLowerBound AND ROWID < @PageUpperBound
+		  end
+		else
+			begin
+				with [UsersByEmail] as (
+					SELECT U.*, ROW_NUMBER() OVER (ORDER BY Email ASC) AS ROWID
+						FROM    {databaseOwner}{objectQualifier}vw_Users U
+						WHERE U.PortalId = @PortalID
+							AND LOWER(U.Email) LIKE LOWER(@EmailToMatch)
+							AND U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+							AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+				)
+				select *, ROWID - 1 AS IndexID, UserID 
+					from [UsersByEmail]
+					where ROWID > @PageLowerBound AND ROWID < @PageUpperBound
+			end
+	 
+		if @PortalId is null and @EmailToMatch IS NULL
+			begin
+				SELECT count(*) as TotalRecords
+					FROM    {databaseOwner}{objectQualifier}vw_Users U
+					WHERE U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+						AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+			end 
+		else if @PortalId is null and @EmailToMatch IS NOT NULL 
+			begin
+				SELECT count(*) as TotalRecords
+					FROM    {databaseOwner}{objectQualifier}vw_Users U
+					WHERE LOWER(U.Email) LIKE LOWER(@EmailToMatch)
+						AND U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+						AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+			end 
+		else if @EmailToMatch IS NULL 
+			begin
+				SELECT count(*) as TotalRecords
+					FROM    {databaseOwner}{objectQualifier}vw_Users U
+					WHERE U.PortalId = @PortalID
+						AND U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+						AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+			end 
+		else 
+			begin
+				SELECT count(*) as TotalRecords
+					FROM    {databaseOwner}{objectQualifier}vw_Users U
+					WHERE U.PortalId = @PortalID
+						AND LOWER(U.Email) LIKE LOWER(@EmailToMatch)
+						AND U.IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+						AND U.IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+		end
+	END
+GO
+
+/* Update GetUsersByUserName Procedure */
+/***************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUsersByUserName]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByUserName]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByUserName]
+    @PortalID		int,
+    @UserNameToMatch	nvarchar(256),
+    @PageIndex		int,
+    @PageSize		INT,
+    @IncludeDeleted     bit,
+    @SuperUsersOnly     bit		
+AS
+	BEGIN
+		-- Set the page bounds
+		DECLARE @PageLowerBound INT
+		DECLARE @PageUpperBound INT
+		SET @PageLowerBound = @PageSize * @PageIndex
+		SET @PageUpperBound = @PageSize - 1 + @PageLowerBound
+
+		-- Create a temp table TO store the select results
+		CREATE TABLE #PageIndexForUsers
+		(
+			IndexId int IDENTITY (0, 1) NOT NULL,
+			UserId int
+		)
+
+		-- Insert into our temp table
+		INSERT INTO #PageIndexForUsers (UserId)
+			SELECT UserId FROM	{databaseOwner}{objectQualifier}vw_Users 
+			WHERE  Username LIKE @UserNameToMatch
+				AND (IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+							--less than equal done to cover IsDeleted in (1,0) for IncludeDeleted...else just IsDeleted = 0
+				     OR IsDeleted Is NULL)
+			        AND IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+				AND ( PortalId = @PortalID OR (@PortalID is null ))
+			ORDER BY UserName
+
+		SELECT  *
+		FROM	{databaseOwner}{objectQualifier}vw_Users u, 
+				#PageIndexForUsers p
+		WHERE  u.UserId = p.UserId
+				AND (IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+							--less than equal done to cover IsDeleted in (1,0) for IncludeDeleted...else just IsDeleted = 0
+				     OR IsDeleted Is NULL)
+			        AND IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+				AND ( PortalId = @PortalID OR (@PortalID is null ))
+				AND p.IndexId >= @PageLowerBound AND p.IndexId <= @PageUpperBound
+		ORDER BY u.UserName
+
+		SELECT  TotalRecords = COUNT(*)
+		FROM    #PageIndexForUsers
+	END
+
+GO
+
+/* Update GetUsersByProfileProperty Procedure */
+/**********************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUsersByProfileProperty]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByProfileProperty]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByProfileProperty]
+     @PortalID		int,
+    @PropertyName   nvarchar(256),
+    @PropertyValue  nvarchar(256),
+    @PageIndex      int,
+    @PageSize       INT,
+    @IncludeDeleted bit,
+    @SuperUsersOnly bit	
+AS
+	BEGIN
+		-- Set the page bounds
+		DECLARE @PageLowerBound INT
+		DECLARE @PageUpperBound INT
+		SET @PageLowerBound = @PageSize * @PageIndex
+		SET @PageUpperBound = @PageSize - 1 + @PageLowerBound
+
+		-- Create a temp table TO store the select results
+		CREATE TABLE #PageIndexForUsers
+		(
+			IndexId int IDENTITY (0, 1) NOT NULL,
+			UserId int,
+			DisplayName varchar(512)
+		)
+
+		-- Insert into our temp table
+		INSERT INTO #PageIndexForUsers (UserId,DisplayName)
+			SELECT DISTINCT U.UserId, U.DisplayName 
+			FROM   {databaseOwner}{objectQualifier}ProfilePropertyDefinition P
+				INNER JOIN {databaseOwner}{objectQualifier}UserProfile UP ON P.PropertyDefinitionID = UP.PropertyDefinitionID 
+				INNER JOIN {databaseOwner}{objectQualifier}vw_Users U ON UP.UserID = U.UserID
+			WHERE (PropertyName = @PropertyName) AND (PropertyValue LIKE @PropertyValue OR PropertyText LIKE @PropertyValue )
+				AND (IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+							--less than equal done to cover IsDeleted in (1,0) for IncludeDeleted...else just IsDeleted = 0
+				     OR IsDeleted Is NULL)
+				AND IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+				AND (P.Portalid = @PortalID OR (@PortalID is null ))
+			ORDER BY U.DisplayName
+
+		SELECT  *
+		FROM	{databaseOwner}{objectQualifier}vw_Users u, 
+				#PageIndexForUsers p
+		WHERE  u.UserId = p.UserId
+				AND (IsDeleted <= CASE @IncludeDeleted WHEN 0 THEN 0 ELSE 1 END
+							--less than equal done to cover IsDeleted in (1,0) for IncludeDeleted...else just IsDeleted = 0
+				     OR IsDeleted Is NULL)
+				AND IsSuperUser >= CASE @SuperUsersOnly WHEN 1 THEN 1 ELSE 0 END
+				AND ( PortalId = @PortalID OR (@PortalID is null ))
+				AND p.IndexId >= @PageLowerBound AND p.IndexId <= @PageUpperBound
+			ORDER BY U.DisplayName
+
+		SELECT  TotalRecords = COUNT(*)
+		FROM    #PageIndexForUsers
+	END
+
 GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/

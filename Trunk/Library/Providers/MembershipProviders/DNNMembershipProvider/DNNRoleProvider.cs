@@ -35,6 +35,7 @@ using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership.Data;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Services.Exceptions;
 
 #endregion
 
@@ -80,7 +81,96 @@ namespace DotNetNuke.Security.Membership
             }
         }
 
-		#region "Role Methods"
+        #region Private Methods
+
+        private void AddDNNUserRole(UserRoleInfo userRole)
+        {
+            //Add UserRole to DNN
+            userRole.UserRoleID =
+                Convert.ToInt32(dataProvider.AddUserRole(userRole.PortalID, userRole.UserID, userRole.RoleID, userRole.EffectiveDate, userRole.ExpiryDate, UserController.GetCurrentUserInfo().UserID));
+        }
+
+        private static ArrayList FillUserCollection(int portalId, IDataReader dr)
+        {
+            //Note:  the DataReader returned from this method should contain 2 result sets.  The first set
+            //       contains the TotalRecords, that satisfy the filter, the second contains the page
+            //       of data
+            var arrUsers = new ArrayList();
+            try
+            {
+                while (dr.Read())
+                {
+                    //fill business object
+                    UserInfo user = FillUserInfo(portalId, dr, false);
+                    //add to collection
+                    arrUsers.Add(user);
+                }
+            }
+            catch (Exception exc)
+            {
+                Exceptions.LogException(exc);
+            }
+            finally
+            {
+                //close datareader
+                CBO.CloseDataReader(dr, true);
+            }
+            return arrUsers;
+        }
+
+        private static UserInfo FillUserInfo(int portalId, IDataReader dr, bool closeDataReader)
+        {
+            UserInfo objUserInfo = null;
+            try
+            {
+                //read datareader
+                var bContinue = true;
+                if (closeDataReader)
+                {
+                    bContinue = false;
+                    if (dr.Read())
+                    {
+                        //Ensure the data reader returned is valid
+                        if (string.Equals(dr.GetName(0), "UserID", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            bContinue = true;
+                        }
+                    }
+                }
+                if (bContinue)
+                {
+                    objUserInfo = new UserInfo
+                    {
+                        PortalID = portalId,
+                        IsSuperUser = Null.SetNullBoolean(dr["IsSuperUser"]),
+                        IsDeleted = Null.SetNullBoolean(dr["IsDeleted"]),
+                        UserID = Null.SetNullInteger(dr["UserID"]),
+                        FirstName = Null.SetNullString(dr["FirstName"]),
+                        LastName = Null.SetNullString(dr["LastName"]),
+                        RefreshRoles = Null.SetNullBoolean(dr["RefreshRoles"]),
+                        DisplayName = Null.SetNullString(dr["DisplayName"])
+                    };
+                    objUserInfo.AffiliateID = Null.SetNullInteger(Null.SetNull(dr["AffiliateID"], objUserInfo.AffiliateID));
+                    objUserInfo.Username = Null.SetNullString(dr["Username"]);
+                    UserController.GetUserMembership(objUserInfo);
+                    objUserInfo.Email = Null.SetNullString(dr["Email"]);
+                    objUserInfo.Membership.UpdatePassword = Null.SetNullBoolean(dr["UpdatePassword"]);
+                    if (!objUserInfo.IsSuperUser)
+                    {
+                        objUserInfo.Membership.Approved = Null.SetNullBoolean(dr["Authorised"]);
+                    }
+                }
+            }
+            finally
+            {
+                CBO.CloseDataReader(dr, closeDataReader);
+            }
+            return objUserInfo;
+        }
+
+        #endregion
+
+        #region Role Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -390,23 +480,7 @@ namespace DotNetNuke.Security.Membership
 		
 		#endregion
 		
-		#region "User Role Methods"
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// adds a DNN UserRole
-        /// </summary>
-        /// <param name="userRole">The role to add the user to.</param>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void AddDNNUserRole(UserRoleInfo userRole)
-        {
-			//Add UserRole to DNN
-            userRole.UserRoleID =
-                Convert.ToInt32(dataProvider.AddUserRole(userRole.PortalID, userRole.UserID, userRole.RoleID, userRole.EffectiveDate, userRole.ExpiryDate, UserController.GetCurrentUserInfo().UserID));
-        }
+		#region User Role Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -535,7 +609,7 @@ namespace DotNetNuke.Security.Membership
         /// -----------------------------------------------------------------------------
         public override ArrayList GetUsersByRoleName(int portalId, string roleName)
         {
-            return UserController.FillUserCollection(portalId, dataProvider.GetUsersByRolename(portalId, roleName));
+            return FillUserCollection(portalId, dataProvider.GetUsersByRolename(portalId, roleName));
         }
 
         /// -----------------------------------------------------------------------------

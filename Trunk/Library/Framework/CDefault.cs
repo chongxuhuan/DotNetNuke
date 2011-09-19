@@ -93,13 +93,13 @@ namespace DotNetNuke.Framework
         [Obsolete("Deprecated in DotNetNuke 6.0.  Replaced by RegisterStyleSheet")]
         public void AddStyleSheet(string id, string href, bool isFirst)
         {
-            AddStyleSheetInternal(this, id, href, isFirst);
+            RegisterStyleSheet(this, href, isFirst);
         }
 
         [Obsolete("Deprecated in DotNetNuke 6.0.  Replaced by RegisterStyleSheet")]
         public void AddStyleSheet(string id, string href)
         {
-            AddStyleSheet(id, href, false);
+            RegisterStyleSheet(this, href, false);
         }
 
     }

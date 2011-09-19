@@ -62,6 +62,8 @@ namespace DotNetNuke
 
 namespace DotNetNuke.UI.Containers
 {
+    using Web.Client;
+
     /// -----------------------------------------------------------------------------
     /// Project	 : DotNetNuke
     /// Namespace: DotNetNuke.UI.Containers
@@ -447,8 +449,8 @@ namespace DotNetNuke.UI.Containers
 
         private void ProcessStylesheets(bool includeModuleCss)
         {
-            ClientResourceManager.RegisterStyleSheet(Page, ContainerPath + "container.css", 40);
-            ClientResourceManager.RegisterStyleSheet(Page, ContainerSrc.Replace(".ascx", ".css"), 50);
+            ClientResourceManager.RegisterStyleSheet(Page, ContainerPath + "container.css", FileOrder.Css.ContainerCss);
+            ClientResourceManager.RegisterStyleSheet(Page, ContainerSrc.Replace(".ascx", ".css"), FileOrder.Css.SpecificContainerCss);
 
             //process the base class module properties 
             if (includeModuleCss)
@@ -456,11 +458,11 @@ namespace DotNetNuke.UI.Containers
                 string controlSrc = ModuleConfiguration.ModuleControl.ControlSrc;
                 string folderName = ModuleConfiguration.DesktopModule.FolderName;
 
-                ClientResourceManager.RegisterStyleSheet(Page, Globals.ApplicationPath + "/DesktopModules/" + folderName + "/module.css", 0);
+                ClientResourceManager.RegisterStyleSheet(Page, Globals.ApplicationPath + "/DesktopModules/" + folderName + "/module.css", FileOrder.Css.ModuleCss);
 
                 if (controlSrc.LastIndexOf("/") > 0)
                 {
-                    ClientResourceManager.RegisterStyleSheet(Page, Globals.ApplicationPath + "/" + controlSrc.Substring(0, controlSrc.LastIndexOf("/") + 1) + "module.css", 0);
+                    ClientResourceManager.RegisterStyleSheet(Page, Globals.ApplicationPath + "/" + controlSrc.Substring(0, controlSrc.LastIndexOf("/") + 1) + "module.css", FileOrder.Css.ModuleCss);
                 }
             }
         }

@@ -26,5 +26,12 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
     /// </summary>
     public class DnnJsInclude : JsInclude
     {
+        /// <summary>
+        /// Sets up default settings for the control
+        /// </summary>
+        public DnnJsInclude()
+        {
+            ForceProvider = ClientResourceManager.DefaultJsProvider;
+        }
     }
 }

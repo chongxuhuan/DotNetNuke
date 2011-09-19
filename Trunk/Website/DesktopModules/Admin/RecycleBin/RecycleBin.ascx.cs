@@ -272,7 +272,6 @@ namespace DotNetNuke.Modules.Admin.RecycleBin
 			base.OnLoad(e);
 
 			jQuery.RequestDnnPluginsRegistration();
-            ClientResourceManager.RegisterStyleSheet(Page, Globals.HostPath + "admin.css");
 
 			cmdDeleteModule.Click += OnModuleDeleteClick;
 			cmdDeleteTab.Click += OnTabDeleteClick;

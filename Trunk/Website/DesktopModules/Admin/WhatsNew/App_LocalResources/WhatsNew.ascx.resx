@@ -1496,7 +1496,7 @@ corrected with each release. &lt;/p&gt;
 	&lt;li&gt;RazorHost 01.00.01&lt;/li&gt;
 &lt;/ul&gt;</value>
   </data>
-    <data name="WhatsNew.05.06.03" xml:space="preserve">
+  <data name="WhatsNew.05.06.03" xml:space="preserve">
     <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
     &lt;ul&gt;
         &lt;li&gt;Added license folder to the installation that includes the license agreements of third party components&lt;/li&gt;
@@ -1520,8 +1520,8 @@ corrected with each release. &lt;/p&gt;
         &lt;li&gt;none&lt;/li&gt;
     &lt;/ul&gt;</value>
   </data>
-    <data name="WhatsNew.06.00.00" xml:space="preserve">
-      <value>
+  <data name="WhatsNew.06.00.00" xml:space="preserve">
+    <value>
           &lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
           &lt;ul&gt;
           &lt;li&gt;Updated the UI / UX to a more simplified interface that accelerates productivity
@@ -1562,7 +1562,7 @@ corrected with each release. &lt;/p&gt;
           storage options through an open API &lt;/li&gt;
           &lt;/ul&gt;
       </value>
-      </data>
+  </data>
   <data name="WhatsNew.06.00.01" xml:space="preserve">
     <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
 &lt;ul&gt;
@@ -1603,6 +1603,43 @@ corrected with each release. &lt;/p&gt;
 &lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
 &lt;ul&gt;
 	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.06.00.02" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue in the module editing drop-down caused by GZip compression&lt;/li&gt;
+	&lt;li&gt;Fixed issue where SendMail API was throwing validation error on valid email 
+	address&lt;/li&gt;
+	&lt;li&gt;Fixed errors generated when clicking on the help button in the Module Manager 
+	Popup section&lt;/li&gt;
+	&lt;li&gt;Fixed issue in the Import / Export features&lt;/li&gt;
+	&lt;li&gt;Fixed help text in the Edit Extension Settings Section&lt;/li&gt;
+	&lt;li&gt;Updated to the Q2 2011 release of Telerik RadControls for ASP.NET AJAX&lt;/li&gt;
+	&lt;li&gt;Added new video and audio formats to the list of default allowed extensions&lt;/li&gt;
+	&lt;li&gt;Fixed issue when creating lists with the same name in a site&lt;/li&gt;
+	&lt;li&gt;Added a new log type when a page is created&lt;/li&gt;
+	&lt;li&gt;Updated the Extensions Feed to display the Extension Name instead of the 
+	Unique Package Name&lt;/li&gt;
+	&lt;li&gt;Fixed issue in the FormatEmail function&lt;/li&gt;
+	&lt;li&gt;Fixed issue in the HTML Template Manager&lt;/li&gt;
+	&lt;li&gt;Integrated the latest version of DDR Menu&lt;/li&gt;
+	&lt;li&gt;Changed default regular expression in the user name creation to remove the 
+	5 chars minimum&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;HTML Module&lt;/li&gt;
+	&lt;li&gt;DDR Menu&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
 &lt;ul&gt;

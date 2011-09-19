@@ -18,26 +18,6 @@ namespace DotNetNuke.MSBuild.Tasks
         private string _versionEnd = CsVersionEnd;
         public string[] AssemblyFiles { get; set; }
 
-        //private string _filePath;
-        //public string AssemblyFile
-        //{
-        //    get
-        //    {
-        //        if (_filePath.EndsWith("cs"))
-        //        {
-        //            _versionStart = CsVersionStart;
-        //            _versionEnd = CsVersionEnd;
-        //        }
-        //        else
-        //        {
-        //            _versionStart = VbVersionStart;
-        //            _versionEnd = VbVersionEnd;
-        //        }
-        //        return _filePath;
-        //    }
-        //    set { _filePath = value; }
-        //}
-
         public bool AutoIncrementVersion { get; set; }
         [Output]
         public string DefaultVersion { get; set; }
