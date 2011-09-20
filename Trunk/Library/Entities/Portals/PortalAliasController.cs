@@ -384,7 +384,7 @@ namespace DotNetNuke.Entities.Portals
         {
             var portalAliasCollection = new PortalAliasCollection();
 
-            foreach (PortalAliasInfo alias in GetPortalAliasLookup().Cast<PortalAliasInfo>().Where(alias => alias.PortalID == PortalID))
+            foreach (PortalAliasInfo alias in GetPortalAliasLookup().Values.Cast<PortalAliasInfo>().Where(alias => alias.PortalID == PortalID))
             {
                 portalAliasCollection.Add(alias.HTTPAlias, alias);
             }

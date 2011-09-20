@@ -1,7 +1,7 @@
 #region Copyright
 
 // 
-// DotNetNukeÂ® - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
@@ -24,17 +24,45 @@
 #region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Web.UI.HtmlControls;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("34127f21-2826-4b3b-bb87-78d6c9ef729f")]
-[assembly: AssemblyVersion("6.1.0.824")]
+namespace DotNetNuke.UI.Skins.Controls
+{
+    /// -----------------------------------------------------------------------------
+    /// <summary></summary>
+    /// <remarks></remarks>
+    /// <history>
+    /// 	[cniknet]	10/15/2004	Replaced public members with properties and removed
+    ///                             brackets from property names
+    /// </history>
+    /// -----------------------------------------------------------------------------
+    public partial class Meta : SkinObjectBase
+	{
+		#region "Public Properties"
+
+		public string Name { get; set; }
+
+		public string Content { get; set; }
+
+		#endregion
+
+		#region "Event Handlers"
+
+		protected override void OnPreRender(EventArgs e)
+		{
+			base.OnPreRender(e);
+
+			if(!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Content))
+			{
+				var metaTag = new HtmlMeta();
+				metaTag.Name = Name;
+				metaTag.Content = Content;
+				Page.Header.Controls.Add(metaTag);
+			}
+		}
+
+		#endregion
+	}
+}
