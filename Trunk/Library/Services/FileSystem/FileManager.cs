@@ -37,6 +37,7 @@ using DotNetNuke.Data;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
+using DotNetNuke.Services.FileSystem.Internal;
 
 using ICSharpCode.SharpZipLib.Zip;
 

@@ -41,7 +41,7 @@ namespace DotNetNuke.UI.WebControls
 {
     public class DualListBox : WebControl, IPostBackEventHandler, IPostBackDataHandler
     {
-		#region "Private Members"
+		#region Private Members
 
         private readonly Style _AvailableListBoxStyle = new Style();
         private readonly Style _ButtonStyle = new Style();
@@ -49,13 +49,19 @@ namespace DotNetNuke.UI.WebControls
         private readonly Style _HeaderStyle = new Style();
         private readonly Style _SelectedListBoxStyle = new Style();
         private List<string> _AddValues;
-        private string _DataTextField;
-        private string _DataValueField;
         private List<string> _RemoveValues;
 
 		#endregion
 
-		#region "Public Properties"
+        public DualListBox()
+        {
+            ShowAddButton = true;
+            ShowAddAllButton = true;
+            ShowRemoveButton = true;
+            ShowRemoveAllButton = true;
+        }
+
+		#region Public Properties
 
         public string AddAllImageURL { get; set; }
 
@@ -71,21 +77,9 @@ namespace DotNetNuke.UI.WebControls
 
         public object AvailableDataSource { get; set; }
 
-        public string DataTextField
-        {
-            set
-            {
-                _DataTextField = value;
-            }
-        }
+        public string DataTextField { private get; set; }
 
-        public string DataValueField
-        {
-            set
-            {
-                _DataValueField = value;
-            }
-        }
+        public string DataValueField { private get; set; }
 
         public string LocalResourceFile { get; set; }
 
@@ -102,7 +96,16 @@ namespace DotNetNuke.UI.WebControls
         public string RemoveText { get; set; }
 
         public object SelectedDataSource { get; set; }
-		#region "Style Properties"
+
+        public bool ShowAddButton { get; set; }
+
+        public bool ShowAddAllButton { get; set; }
+
+        public bool ShowRemoveButton { get; set; }
+
+        public bool ShowRemoveAllButton { get; set; }
+
+		#region Style Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -259,7 +262,7 @@ namespace DotNetNuke.UI.WebControls
 
         #endregion
 		
-		#region "Events"
+		#region Events
 
         public event DualListBoxEventHandler AddButtonClick;
         public event EventHandler AddAllButtonClick;
@@ -268,7 +271,7 @@ namespace DotNetNuke.UI.WebControls
 		
 		#endregion
 
-		#region "Private Methods"
+		#region Private Methods
 
         private NameValueCollection GetList(string listType, object dataSource)
         {
@@ -283,8 +286,8 @@ namespace DotNetNuke.UI.WebControls
                 foreach (object item in dataList)
                 {
                     BindingFlags bindings = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
-                    PropertyInfo objTextProperty = item.GetType().GetProperty(_DataTextField, bindings);
-                    PropertyInfo objValueProperty = item.GetType().GetProperty(_DataValueField, bindings);
+                    PropertyInfo objTextProperty = item.GetType().GetProperty(DataTextField, bindings);
+                    PropertyInfo objValueProperty = item.GetType().GetProperty(DataValueField, bindings);
                     string objValue = Convert.ToString(objValueProperty.GetValue(item, null));
                     string objText = Convert.ToString(objTextProperty.GetValue(item, null));
 
@@ -307,47 +310,27 @@ namespace DotNetNuke.UI.WebControls
             switch (buttonType)
             {
                 case "Add":
-                    if (string.IsNullOrEmpty(AddKey))
-                    {
-                        buttonText = AddText;
-                    }
-                    else
-                    {
-                        buttonText = Localization.GetString(AddKey, LocalResourceFile);
-                    }
+                    buttonText = string.IsNullOrEmpty(AddKey) 
+                                    ? AddText 
+                                    : Localization.GetString(AddKey, LocalResourceFile);
                     imageURL = AddImageURL;
                     break;
                 case "AddAll":
-                    if (string.IsNullOrEmpty(AddAllKey))
-                    {
-                        buttonText = AddAllText;
-                    }
-                    else
-                    {
-                        buttonText = Localization.GetString(AddAllKey, LocalResourceFile);
-                    }
+                    buttonText = string.IsNullOrEmpty(AddAllKey) 
+                                    ? AddAllText 
+                                    : Localization.GetString(AddAllKey, LocalResourceFile);
                     imageURL = AddAllImageURL;
                     break;
                 case "Remove":
-                    if (string.IsNullOrEmpty(RemoveKey))
-                    {
-                        buttonText = RemoveText;
-                    }
-                    else
-                    {
-                        buttonText = Localization.GetString(RemoveKey, LocalResourceFile);
-                    }
+                    buttonText = string.IsNullOrEmpty(RemoveKey) 
+                                    ? RemoveText 
+                                    : Localization.GetString(RemoveKey, LocalResourceFile);
                     imageURL = RemoveImageURL;
                     break;
                 case "RemoveAll":
-                    if (string.IsNullOrEmpty(RemoveAllKey))
-                    {
-                        buttonText = RemoveAllText;
-                    }
-                    else
-                    {
-                        buttonText = Localization.GetString(RemoveAllKey, LocalResourceFile);
-                    }
+                    buttonText = string.IsNullOrEmpty(RemoveAllKey) 
+                                    ? RemoveAllText 
+                                    : Localization.GetString(RemoveAllKey, LocalResourceFile);
                     imageURL = RemoveAllImageURL;
                     break;
             }
@@ -386,8 +369,14 @@ namespace DotNetNuke.UI.WebControls
 			//render table
             writer.RenderBeginTag(HtmlTextWriterTag.Table);
 
-            RenderButton("Add", writer);
-            RenderButton("AddAll", writer);
+            if (ShowAddButton)
+            {
+                RenderButton("Add", writer);
+            }
+            if (ShowAddAllButton)
+            {
+                RenderButton("AddAll", writer);
+            }
 
             //Begin Button Row
             writer.RenderBeginTag(HtmlTextWriterTag.Tr);
@@ -403,8 +392,14 @@ namespace DotNetNuke.UI.WebControls
             //Render end of Button Row
             writer.RenderEndTag();
 
-            RenderButton("Remove", writer);
-            RenderButton("RemoveAll", writer);
+            if (ShowRemoveButton)
+            {
+                RenderButton("Remove", writer);
+            }
+            if (ShowRemoveAllButton)
+            {
+                RenderButton("RemoveAll", writer);
+            }
 
             //Render end of table
             writer.RenderEndTag();
@@ -490,7 +485,7 @@ namespace DotNetNuke.UI.WebControls
 		
 		#endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
         protected void OnAddButtonClick(DualListBoxEventArgs e)
         {

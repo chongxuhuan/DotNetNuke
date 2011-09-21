@@ -73,9 +73,9 @@ namespace DotNetNuke.Modules.Html
 
         public abstract IDataReader GetAllHtmlText(int ModuleID);
 
-        public abstract int AddHtmlText(int ModuleId, string Content, int StateID, bool IsPublished, int CreatedByUserID, int History);
+        public abstract int AddHtmlText(int ModuleId, string Content, string Summary, int StateID, bool IsPublished, int CreatedByUserID, int History);
 
-        public abstract void UpdateHtmlText(int ItemID, string Content, int StateID, bool IsPublished, int LastModifiedByUserID);
+		public abstract void UpdateHtmlText(int ItemID, string Content, string Summary, int StateID, bool IsPublished, int LastModifiedByUserID);
 
         public abstract void DeleteHtmlText(int ModuleID, int ItemID);
 

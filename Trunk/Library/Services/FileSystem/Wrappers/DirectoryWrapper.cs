@@ -25,14 +25,10 @@ using System.IO;
 
 using DotNetNuke.ComponentModel;
 
-namespace DotNetNuke.Services.FileSystem
+namespace DotNetNuke.Services.FileSystem.Internal
 {
-    internal class DirectoryWrapper : ComponentBase<IDirectory, DirectoryWrapper>, IDirectory
+    public class DirectoryWrapper : ComponentBase<IDirectory, DirectoryWrapper>, IDirectory
     {
-        internal DirectoryWrapper()
-        {
-        }
-
         public void Delete(string path, bool recursive)
         {
             Directory.Delete(path, recursive);
@@ -56,6 +52,11 @@ namespace DotNetNuke.Services.FileSystem
         public void Move(string sourceDirName, string destDirName)
         {
             Directory.Move(sourceDirName, destDirName);
+        }
+
+        public void CreateDirectory(string path)
+        {
+            Directory.CreateDirectory(path);
         }
     }
 }

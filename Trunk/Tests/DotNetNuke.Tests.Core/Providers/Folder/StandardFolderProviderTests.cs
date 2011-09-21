@@ -27,6 +27,7 @@ using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.FileSystem;
+using DotNetNuke.Services.FileSystem.Internal;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
@@ -626,6 +627,9 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         {
             _fileInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFilePath);
             _fileInfo.Setup(fi => fi.FileName).Returns(Constants.FOLDER_ValidFileName);
+            _fileInfo.Setup(fi => fi.FolderId).Returns(Constants.FOLDER_ValidFolderId);
+            _folderManager.Setup(fm => fm.GetFolder(Constants.FOLDER_ValidFolderId)).Returns(_folderInfo.Object);
+            _folderInfo.Setup(fi => fi.PhysicalPath).Returns(Constants.FOLDER_ValidFolderPath);
 
             _sfp.RenameFile(_fileInfo.Object, Constants.FOLDER_OtherValidFileName);
 

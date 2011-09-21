@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wurfl_patch>
+	<version>
+		<last_updated>September 11, 2010</last_updated>
+	</version>
 	<devices>
 		<!-- Web browsers -->
 		<device user_agent="Mozilla/4.0" fall_back="generic" id="generic_web_browser">
@@ -8,8 +11,7 @@
 				<capability name="model_name" value=""/>
 				<capability name="pointing_method" value="mouse"/>
 				<capability name="is_wireless_device" value="false"/>
-        <capability name="cookie_support" value="true"/>
-      </group>
+			</group>
 			<group id="display">
 				<capability name="resolution_width" value="800"/>
 				<capability name="resolution_height" value="600"/>
@@ -21,11 +23,8 @@
 			<group id="ajax">
 				<capability name="ajax_support_javascript" value="true"/>
 			</group>
-      <group id="xhtml_ui">
-        <capability name="cookie_support" value="true"/>
-      </group>
 		</device>
-    
+
 		<device id="mozilla_ver5" user_agent="Mozilla/5.0" fall_back="generic_web_browser"/>
 
 		<!-- Firefox -->
@@ -60,11 +59,8 @@
 				<capability name="model_name" value="3.5" />
 			</group>
 		</device>
-    <device user_agent="Firefox/4.0" fall_back="firefox" id="firefox_4_0">
-      <group id="product_info">
-        <capability name="model_name" value="4.0" />
-      </group>
-    </device>
+
+
 
 		<!--  Opera -->
 		<device user_agent="Opera" fall_back="generic_web_browser" id="opera">

@@ -32,6 +32,7 @@ using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.FileSystem.Internal;
 
 namespace DotNetNuke.Services.FileSystem
 {

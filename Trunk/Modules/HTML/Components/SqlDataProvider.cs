@@ -140,14 +140,14 @@ namespace DotNetNuke.Modules.Html
             return (SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetAllHtmlText", ModuleID));
         }
 
-        public override int AddHtmlText(int ModuleID, string Content, int StateID, bool IsPublished, int CreatedByUserID, int History)
+		public override int AddHtmlText(int ModuleID, string Content, string Summary, int StateID, bool IsPublished, int CreatedByUserID, int History)
         {
-            return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "AddHtmlText", ModuleID, Content, StateID, IsPublished, CreatedByUserID, History));
+            return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "AddHtmlText", ModuleID, Content, Summary, StateID, IsPublished, CreatedByUserID, History));
         }
 
-        public override void UpdateHtmlText(int ItemID, string Content, int StateID, bool IsPublished, int LastModifiedByUserID)
+		public override void UpdateHtmlText(int ItemID, string Content, string Summary, int StateID, bool IsPublished, int LastModifiedByUserID)
         {
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateHtmlText", ItemID, Content, StateID, IsPublished, LastModifiedByUserID);
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateHtmlText", ItemID, Content, Summary, StateID, IsPublished, LastModifiedByUserID);
         }
 
         public override void DeleteHtmlText(int ModuleID, int ItemID)

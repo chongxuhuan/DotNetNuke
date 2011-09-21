@@ -571,6 +571,7 @@ namespace DotNetNuke.Modules.Html
                 // add content
                 htmlContent.ItemID = DataProvider.Instance().AddHtmlText(htmlContent.ModuleID,
                                                                          htmlContent.Content,
+																		 htmlContent.Summary,
                                                                          htmlContent.StateID,
                                                                          htmlContent.IsPublished,
                                                                          UserController.GetCurrentUserInfo().UserID,
@@ -579,7 +580,7 @@ namespace DotNetNuke.Modules.Html
             else
             {
                 // update content
-                DataProvider.Instance().UpdateHtmlText(htmlContent.ItemID, htmlContent.Content, htmlContent.StateID, htmlContent.IsPublished, UserController.GetCurrentUserInfo().UserID);
+				DataProvider.Instance().UpdateHtmlText(htmlContent.ItemID, htmlContent.Content, htmlContent.Summary, htmlContent.StateID, htmlContent.IsPublished, UserController.GetCurrentUserInfo().UserID);
             }
 
             // add log history

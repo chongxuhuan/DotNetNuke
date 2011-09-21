@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
@@ -30,6 +31,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Instrumentation;
+using DotNetNuke.Services.FileSystem.Internal;
 
 namespace DotNetNuke.Services.FileSystem
 {
@@ -72,10 +74,12 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("file", file);
 
-            if (FileWrapper.Instance.Exists(file.PhysicalPath))
+            var path = GetActualPath(file);
+
+            if (FileWrapper.Instance.Exists(path))
             {
-                FileWrapper.Instance.SetAttributes(file.PhysicalPath, FileAttributes.Normal);
-                FileWrapper.Instance.Delete(file.PhysicalPath);
+                FileWrapper.Instance.SetAttributes(path, FileAttributes.Normal);
+                FileWrapper.Instance.Delete(path);
             }
         }
 
@@ -91,7 +95,7 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("folder", folder);
             Requires.NotNull("fileName", fileName);
 
-            return FileWrapper.Instance.Exists(Path.Combine(folder.PhysicalPath, fileName));
+            return FileWrapper.Instance.Exists(GetActualPath(folder, fileName));
         }
 
         public override bool FolderExists(string folderPath, FolderMappingInfo folderMapping)
@@ -99,7 +103,7 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("folderPath", folderPath);
             Requires.NotNull("folderMapping", folderMapping);
 
-            return DirectoryWrapper.Instance.Exists(PathUtils.Instance.GetPhysicalPath(folderMapping.PortalID, folderPath));
+            return DirectoryWrapper.Instance.Exists(GetActualPath(folderMapping, folderPath));
         }
 
         public override FileAttributes? GetFileAttributes(IFileInfo file)
@@ -110,7 +114,7 @@ namespace DotNetNuke.Services.FileSystem
 
             try
             {
-                fileAttributes = FileWrapper.Instance.GetAttributes(file.PhysicalPath);
+                fileAttributes = FileWrapper.Instance.GetAttributes(GetActualPath(file));
             }
             catch (Exception ex)
             {
@@ -124,7 +128,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("folder", folder);
 
-            var fileNames = DirectoryWrapper.Instance.GetFiles(folder.PhysicalPath);
+            var fileNames = DirectoryWrapper.Instance.GetFiles(GetActualPath(folder));
 
             for (var i = 0; i < fileNames.Length; i++)
             {
@@ -138,7 +142,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("file", file);
 
-            var physicalFile = new System.IO.FileInfo(file.PhysicalPath);
+            var physicalFile = new System.IO.FileInfo(GetActualPath(file));
 
             return physicalFile.Length;
         }
@@ -161,7 +165,7 @@ namespace DotNetNuke.Services.FileSystem
 
             try
             {
-                stream = FileWrapper.Instance.OpenRead(Path.Combine(folder.PhysicalPath, fileName));
+                stream = FileWrapper.Instance.OpenRead(GetActualPath(folder, fileName));
             }
             catch (IOException iex)
             {
@@ -196,7 +200,7 @@ namespace DotNetNuke.Services.FileSystem
 
             try
             {
-                lastModificationTime = FileWrapper.Instance.GetLastWriteTime(file.PhysicalPath);
+                lastModificationTime = FileWrapper.Instance.GetLastWriteTime(GetActualPath(file));
             }
             catch (Exception ex)
             {
@@ -211,8 +215,8 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("folderPath", folderPath);
             Requires.NotNull("folderMapping", folderMapping);
 
-            return DirectoryWrapper.Instance.GetDirectories(PathUtils.Instance.GetPhysicalPath(folderMapping.PortalID, folderPath))
-                .Select(directory => PathUtils.Instance.GetRelativePath(folderMapping.PortalID, directory));
+            return DirectoryWrapper.Instance.GetDirectories(GetActualPath(folderMapping, folderPath))
+                .Select(directory => GetRelativePath(folderMapping, directory));
         }
 
         public override bool IsInSync(IFileInfo file)
@@ -229,7 +233,10 @@ namespace DotNetNuke.Services.FileSystem
 
             if (file.FileName != newFileName)
             {
-                FileWrapper.Instance.Move(file.PhysicalPath, Path.Combine(Path.GetDirectoryName(file.PhysicalPath), newFileName));
+                IFolderInfo folder = FolderManager.Instance.GetFolder(file.FolderId);
+                string oldName = GetActualPath(file);
+                string newName = GetActualPath(folder, newFileName);
+                FileWrapper.Instance.Move(oldName, newName);
             }
         }
 
@@ -240,8 +247,10 @@ namespace DotNetNuke.Services.FileSystem
 
             if (folder.FolderName != newFolderName)
             {
-                var newFolderPath = Path.Combine(folder.PhysicalPath.Substring(0, folder.PhysicalPath.LastIndexOf(folder.FolderName)), newFolderName);
-                DirectoryWrapper.Instance.Move(folder.PhysicalPath, newFolderPath);
+                var currentPath = GetActualPath(folder);
+                var parentPath = currentPath.Substring(0, folder.PhysicalPath.LastIndexOf(folder.FolderName));
+                var newFolderPath = Path.Combine(parentPath, newFolderName); //todo is this ok
+                DirectoryWrapper.Instance.Move(currentPath, newFolderPath);
             }
         }
 
@@ -249,7 +258,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("file", file);
 
-            FileWrapper.Instance.SetAttributes(file.PhysicalPath, fileAttributes);
+            FileWrapper.Instance.SetAttributes(GetActualPath(file), fileAttributes);
         }
 
         public override bool SupportsFileAttributes()
@@ -262,33 +271,7 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("file", file);
             Requires.NotNull("content", content);
 
-            var arrData = new byte[2048];
-
-            if (FileWrapper.Instance.Exists(file.PhysicalPath))
-            {
-                FileWrapper.Instance.Delete(file.PhysicalPath);
-            }
-
-            using (var outStream = FileWrapper.Instance.Create(file.PhysicalPath))
-            {
-                var originalPosition = content.Position;
-                content.Position = 0;
-
-                try
-                {
-                    var intLength = content.Read(arrData, 0, arrData.Length);
-
-                    while (intLength > 0)
-                    {
-                        outStream.Write(arrData, 0, intLength);
-                        intLength = content.Read(arrData, 0, arrData.Length);
-                    }
-                }
-                finally
-                {
-                    content.Position = originalPosition;
-                }
-            }
+            UpdateFile(FolderManager.Instance.GetFolder(file.FolderId), file.FileName, content);
         }
 
         public override void UpdateFile(IFolderInfo folder, string fileName, Stream content)
@@ -298,14 +281,14 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("content", content);
 
             var arrData = new byte[2048];
-            var filePath = Path.Combine(folder.PhysicalPath, fileName);
+            var actualPath = GetActualPath(folder, fileName);
 
-            if (FileWrapper.Instance.Exists(filePath))
+            if (FileWrapper.Instance.Exists(actualPath))
             {
-                FileWrapper.Instance.Delete(filePath);
+                FileWrapper.Instance.Delete(actualPath);
             }
 
-            using (var outStream = FileWrapper.Instance.Create(filePath))
+            using (var outStream = FileWrapper.Instance.Create(actualPath))
             {
                 var originalPosition = content.Position;
                 content.Position = 0;
@@ -343,5 +326,58 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         #endregion
+
+        /// <summary>
+        /// Get the path relative to the root of the FolderMapping
+        /// </summary>
+        /// <param name="folderMapping">Path is relative to this</param>
+        /// <param name="path">The path</param>
+        /// <returns>A relative path</returns>
+        protected virtual string GetRelativePath(FolderMappingInfo folderMapping, string path)
+        {
+            return PathUtils.Instance.GetRelativePath(folderMapping.PortalID, path);
+        }
+
+        /// <summary>
+        /// Get actual path to an IFileInfo
+        /// </summary>
+        /// <param name="file">The file</param>
+        /// <returns>A windows supported path to the file</returns>
+        protected virtual string GetActualPath(IFileInfo file)
+        {
+            return file.PhysicalPath;
+        }
+
+        /// <summary>
+        /// Get actual path to a file in specified folder
+        /// </summary>
+        /// <param name="folder">The folder that contains the file</param>
+        /// <param name="fileName">The file name</param>
+        /// <returns>A windows supported path to the file</returns>
+        protected virtual string GetActualPath(IFolderInfo folder, string fileName)
+        {
+            return Path.Combine(folder.PhysicalPath, fileName);
+        }
+
+        /// <summary>
+        /// Get actual path to a folder in the specified folder mapping
+        /// </summary>
+        /// <param name="folderMapping">The folder mapping</param>
+        /// <param name="folderPath">The folder path</param>
+        /// <returns>A windows supported path to the folder</returns>
+        protected virtual string GetActualPath(FolderMappingInfo folderMapping, string folderPath)
+        {
+            return PathUtils.Instance.GetPhysicalPath(folderMapping.PortalID, folderPath);
+        }
+
+        /// <summary>
+        /// Get actual path to a folder
+        /// </summary>
+        /// <param name="folder">The folder</param>
+        /// <returns>A windows supported path to the folder</returns>
+        protected virtual string GetActualPath(IFolderInfo folder)
+        {
+            return folder.PhysicalPath;
+        }
     }
 }
