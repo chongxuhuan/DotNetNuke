@@ -70,13 +70,13 @@
             /// </summary>
             DefaultPriority = 100,
             /// <summary>
-            /// Module CSS files have a priority of 5
+            /// The default.css file has a priority of 5
             /// </summary>
-            ModuleCss = 5,
+            DefaultCss = 5,
             /// <summary>
-            /// The default.css file has a priority of 10
+            /// Module CSS files have a priority of 10
             /// </summary>
-            DefaultCss = 10,
+            ModuleCss = 10,
             /// <summary>
             /// Skin CSS files have a priority of 15
             /// </summary>

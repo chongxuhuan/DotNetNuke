@@ -41,7 +41,7 @@
   <ItemGroup>
     <Reference Include="ClientDependency.Core, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ClientDependency.1.4.0.0\lib\ClientDependency.Core.dll</HintPath>
+      <HintPath>..\Library\Components\ClientDependency\ClientDependency.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -62,9 +62,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Providers\DnnFormBottomRenderProvider.cs" />
     <Compile Include="Providers\DnnBodyRenderProvider.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
