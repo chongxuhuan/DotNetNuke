@@ -46,6 +46,7 @@ namespace DotNetNuke.Tests.Core.Controllers
     public class PortalGroupControllerTests
     {
         private Mock<DataProvider> _mockData;
+        private UserCopiedCallback userCopied;
 
         #region Test Initialize
 
@@ -111,7 +112,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var portal = new PortalInfo { PortalID = Constants.PORTAL_ValidPortalId };
 
             //Act, Assert
-            controller.AddPortalToGroup(portal, null);
+            controller.AddPortalToGroup(portal, null, userCopied);
         }
 
         [Test]
@@ -126,7 +127,7 @@ namespace DotNetNuke.Tests.Core.Controllers
 
 
             //Act, Assert
-            controller.AddPortalToGroup(null, portalGroup);
+            controller.AddPortalToGroup(null, portalGroup, userCopied);
         }
 
         [Test]
@@ -143,7 +144,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             PortalGroupInfo portalGroup = new PortalGroupInfo { PortalGroupId = -1 };
 
             //Act, Assert
-            controller.AddPortalToGroup(portal, portalGroup);
+            controller.AddPortalToGroup(portal, portalGroup, userCopied);
         }
 
         [Test]
@@ -160,7 +161,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             PortalGroupInfo portalGroup = new PortalGroupInfo { PortalGroupId = Constants.PORTALGROUP_ValidPortalGroupId };
 
             //Act, Assert
-            controller.AddPortalToGroup(portal, portalGroup);
+            controller.AddPortalToGroup(portal, portalGroup, userCopied);
         }
 
         #endregion
@@ -395,7 +396,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var portal = new PortalInfo { PortalID = Constants.PORTAL_ValidPortalId };
 
             //Act, Assert
-            controller.RemovePortalFromGroup(portal, null, false);
+            controller.RemovePortalFromGroup(portal, null, false, userCopied);
         }
 
         [Test]
@@ -410,7 +411,7 @@ namespace DotNetNuke.Tests.Core.Controllers
 
 
             //Act, Assert
-            controller.RemovePortalFromGroup(null, portalGroup, false);
+            controller.RemovePortalFromGroup(null, portalGroup, false, userCopied);
         }
 
         [Test]
@@ -427,7 +428,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             PortalGroupInfo portalGroup = new PortalGroupInfo { PortalGroupId = -1 };
 
             //Act, Assert
-            controller.RemovePortalFromGroup(portal, portalGroup, false);
+            controller.RemovePortalFromGroup(portal, portalGroup, false, userCopied);
         }
 
         [Test]
@@ -444,7 +445,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             PortalGroupInfo portalGroup = new PortalGroupInfo { PortalGroupId = Constants.PORTALGROUP_ValidPortalGroupId };
 
             //Act, Assert
-            controller.RemovePortalFromGroup(portal, portalGroup, false);
+            controller.RemovePortalFromGroup(portal, portalGroup, false, userCopied);
         }
 
         #endregion

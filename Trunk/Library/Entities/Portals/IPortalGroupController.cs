@@ -32,17 +32,17 @@ namespace DotNetNuke.Entities.Portals
 {
     public interface IPortalGroupController
     {
+        int AddPortalGroup(PortalGroupInfo portalGroup);
+
+        void AddPortalToGroup(PortalInfo portal, PortalGroupInfo portalGroup, UserCopiedCallback callback);
+
+        void DeletePortalGroup(PortalGroupInfo portalGroup);
+
         IEnumerable<PortalGroupInfo> GetPortalGroups();
 
         IEnumerable<PortalInfo> GetPortalsByGroup(int portalGroupId);
 
-        void AddPortalToGroup(PortalInfo portal, PortalGroupInfo portalGroup);
-
-        int AddPortalGroup(PortalGroupInfo portalGroup);
-
-        void DeletePortalGroup(PortalGroupInfo portalGroup);
-
-        void RemovePortalFromGroup(PortalInfo portal, PortalGroupInfo portalGroup, bool copyUsers);
+        void RemovePortalFromGroup(PortalInfo portal, PortalGroupInfo portalGroup, bool copyUsers, UserCopiedCallback callback);
 
         void UpdatePortalGroup(PortalGroupInfo portalGroup);
     }

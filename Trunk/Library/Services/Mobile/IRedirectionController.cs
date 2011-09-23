@@ -43,5 +43,11 @@ namespace DotNetNuke.Services.Mobile
 		IRedirection GetRedirectionById(int portalId, int id);
 
 	    string GetRedirectUrl(string userAgent, int portalId, int currentTabId);
+
+        string GetRedirectUrl(string userAgent);
+
+        string GetRedirectUrlForIPhone();
+
+        string GetRedirectUrlForIE();
 	}
 }

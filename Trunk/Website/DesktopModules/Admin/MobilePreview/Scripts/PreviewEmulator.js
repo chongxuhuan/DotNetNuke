@@ -38,23 +38,28 @@
 			});
 
 			viewer.bind("load", function () {
-				if (!$(this).data("loaded")) {
-					var width = this.contentWindow.document.documentElement.scrollWidth;
-					var height = this.contentWindow.document.documentElement.scrollHeight;
+				var frameWin = this.contentWindow;
+				var frameDoc = frameWin.document;
 
-					$(this).width(width).height(height);
+				var body = frameDoc.documentElement != undefined ? frameDoc.documentElement : frameDoc.body;
+				var width = body.scrollWidth;
+				var height = body.scrollHeight;
 
-					$(this).data("loaded", true);
+				$(this).width(width).height(height);
 
-					viewContainer.trigger("resize");
-				}
-
+				viewContainer.trigger("resize");
 			});
 		};
 
 		bindElement();
 
-		this.setPreview = function (width, height) {
+		var updateViewer = function (userAgent) {
+			var url = location.href + "&UserAgent=" + userAgent;
+			viewer.attr("src", url);
+		};
+
+		this.setPreview = function (width, height, userAgent) {
+			updateViewer(userAgent);
 			viewContainer.width(width).height(height);
 			viewContainer.trigger("resize");
 		};
@@ -67,8 +72,6 @@
 
 		hDimension.html("<span class=\"left\"></span><span class=\"center\"></span><span class=\"right\"></span>");
 		vDimension.html("<span class=\"top\"></span><span class=\"middle\"></span><span class=\"bottom\"></span>");
-
-		viewer.attr("src", options.url);
 
 		return this;
 	};

@@ -25,10 +25,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Web;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework;
 using DotNetNuke.Services.Mobile;
@@ -66,6 +71,11 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 		{
 			base.OnLoad(e);
 
+			if (!string.IsNullOrEmpty(Request.QueryString["UserAgent"]))
+			{
+				CreateViewProxy(UrlUtils.DecryptParameter(Request.QueryString["UserAgent"]));
+			}
+
 			this.Page.Title = LocalizeString("PageTitle");
 
             ClientResourceManager.RegisterScript(this.Page, string.Format("{0}Scripts/PreviewEmulator.js", this.ControlPath));
@@ -93,7 +103,7 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 
 			foreach (var previewProfile in profiles)
 			{
-				var value = string.Format("width : \"{0}\", height : \"{1}\"", previewProfile.Width, previewProfile.Height);
+				var value = string.Format("width : \"{0}\", height : \"{1}\", userAgent: \"{2}\"", previewProfile.Width, previewProfile.Height, UrlUtils.EncryptParameter("Mozilla/5.0 (iPad; U; CPU OS 4_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8F190 Safari/6533.18.5"));
 
 				var listItem = new ListItem(previewProfile.Name, value);
 				if(selectedProfile == previewProfile.Id)
@@ -102,6 +112,39 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 				}
 
 				ddlProfileList.Items.Add(listItem);
+			}
+		}
+
+		private void CreateViewProxy(string userAgent)
+		{
+			Response.Clear();
+
+			Response.Write(GetHttpContent(PreviewUrl, userAgent));
+
+			Response.End();
+		}
+
+		private string GetHttpContent(string url, string userAgent)
+		{
+			try
+			{
+				var wreq = (HttpWebRequest)WebRequest.Create(url);
+				wreq.UserAgent = userAgent;
+				wreq.Referer = Request.Url.ToString();
+				wreq.Method = "GET";
+				wreq.Timeout = Host.WebRequestTimeout;
+
+				wreq.ContentType = "application/x-www-form-urlencoded";
+				var responseStream = wreq.GetResponse().GetResponseStream();
+
+				using (var reader = new StreamReader(responseStream))
+				{
+					return reader.ReadToEnd();
+				}
+			}
+			catch (Exception ex)
+			{
+				return "ERROR:" + ex.Message;
 			}
 		}
 

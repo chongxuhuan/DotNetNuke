@@ -34,7 +34,7 @@
 <script type="text/javascript">
 (function ($) {
 	$(document).ready(function () {
-		var emulator = $("#emulator").previewEmulator({ url: "<%=PreviewUrl %>" });
+		var emulator = $("#emulator").previewEmulator();
 		var deviceListId = "#<%=ddlProfileList.ClientID %>";
 		var showDimensionId = "#<%=cbShowDimensions.ClientID %>";
 		var orientationFilter = "input[type=radio][name$=rblOrientation]";
@@ -46,10 +46,10 @@
 			var sizeValue = eval("({" + $(deviceListId).val() + "})");
 			var orientation = $(orientationFilter + ":checked").val();
 			if (orientation == "vertical") {
-				emulator.setPreview(sizeValue.width, sizeValue.height);
+				emulator.setPreview(sizeValue.width, sizeValue.height, sizeValue.userAgent);
 			}
 			else {
-				emulator.setPreview(sizeValue.height, sizeValue.width);
+				emulator.setPreview(sizeValue.height, sizeValue.width, sizeValue.userAgent);
 			}
 		};
 

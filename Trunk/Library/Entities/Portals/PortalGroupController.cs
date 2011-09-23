@@ -77,7 +77,7 @@ namespace DotNetNuke.Entities.Portals
 
         #region IPortalGroupController Members
 
-        public void AddPortalToGroup(PortalInfo portal, PortalGroupInfo portalGroup)
+        public void AddPortalToGroup(PortalInfo portal, PortalGroupInfo portalGroup, UserCopiedCallback callback)
         {
             //Argument Contract
             Requires.NotNull("portal", portal);
@@ -88,10 +88,25 @@ namespace DotNetNuke.Entities.Portals
 
             var masterPortal = _portalController.GetPortal(portalGroup.MasterPortalId);
 
-            foreach (UserInfo user in UserController.GetUsers(portal.PortalID))
+            var users = UserController.GetUsers(portal.PortalID);
+            var userNo = 0;
+            foreach (UserInfo user in users)
             {
+                userNo += 1;
+
                 //move user to master portal
                 UserController.CopyUserToPortal(user, masterPortal, true);
+
+                //Callback to update progress bar
+                var args = new UserCopiedEventArgs
+                                    {
+                                        TotalUsers = users.Count,
+                                        UserNo = userNo,
+                                        UserName = user.Username,
+                                        PortalName = portal.PortalName
+                                    };
+
+                callback(args);
             }
 
             //Remove Profile Definitions
@@ -154,7 +169,7 @@ namespace DotNetNuke.Entities.Portals
                             .ToList();
         }
 
-        public void RemovePortalFromGroup(PortalInfo portal, PortalGroupInfo portalGroup, bool copyUsers)
+        public void RemovePortalFromGroup(PortalInfo portal, PortalGroupInfo portalGroup, bool copyUsers, UserCopiedCallback callback)
         {
             //Argument Contract
             Requires.NotNull("portal", portal);
@@ -172,16 +187,33 @@ namespace DotNetNuke.Entities.Portals
 
             if (copyUsers)
             {
-                foreach (UserInfo masterUser in UserController.GetUsers(portalGroup.MasterPortalId))
+                var users = UserController.GetUsers(portalGroup.MasterPortalId);
+                var userNo = 0;
+                foreach (UserInfo masterUser in users)
                 {
+                    userNo += 1;
+
                     //Copy user to portal
                     UserController.CopyUserToPortal(masterUser, portal, false);
+
+                    //Callback to update progress bar
+                    var args = new UserCopiedEventArgs
+                    {
+                        TotalUsers = users.Count,
+                        UserNo = userNo,
+                        UserName = masterUser.Username,
+                        PortalName = portal.PortalName
+                    };
+
+                    callback(args);
                 }
             }
             else
             {
                 //Copy Administrator to portal
                 UserController.CopyUserToPortal(adminUser, portal, false);
+
+                callback(new UserCopiedEventArgs());
             }
         }
 

@@ -317,7 +317,18 @@ namespace DotNetNuke.Entities.Modules
         {
             get
             {
-                return _modulePermissions ?? (_modulePermissions = new ModulePermissionCollection(ModulePermissionController.GetModulePermissions(ModuleID, TabID)));
+                if (_modulePermissions == null)
+                {
+                    if (ModuleID > 0)
+                    {
+                        _modulePermissions = new ModulePermissionCollection(ModulePermissionController.GetModulePermissions(ModuleID, TabID));
+                    }
+                    else
+                    {
+                        _modulePermissions = new ModulePermissionCollection();
+                    }
+                }
+                return _modulePermissions;
             }
             set
             {

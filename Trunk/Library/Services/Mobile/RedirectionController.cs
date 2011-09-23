@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Caching;
@@ -45,11 +46,51 @@ namespace DotNetNuke.Services.Mobile
 	public class RedirectionController : IRedirectionController
 	{
 		#region "Public Methods"
+        public const String UserAgentIPhone = "Mozilla/5.0 (iPod; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7";
+        public const string UserAgentMSIE9 = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)";
+
+        /// <summary>
+        /// Get Redirection Url based for IPhone.         
+        /// </summary>
+        public string GetRedirectUrlForIPhone()
+        {
+            return GetRedirectUrl(UserAgentIPhone);
+        }
+
+        /// <summary>
+        /// Get Redirection Url based for IE 9.         
+        /// </summary>
+        public string GetRedirectUrlForIE()
+        {
+            return GetRedirectUrl(UserAgentMSIE9);
+        }
+
+        /// <summary>
+        /// Get Redirection Url based on UserAgent.         
+        /// </summary>
+        /// <returns>string - Empty if redirection rules are not defined or no match found</returns>
+        /// <param name="userAgent">User Agent - used for client capability detection.</param>
+        public string GetRedirectUrl(string userAgent)
+        {            
+            var portalSettings = PortalController.GetCurrentPortalSettings();
+            if (portalSettings != null && portalSettings.ActiveTab != null)
+            {
+                string redirectUrl = GetRedirectUrl(userAgent, portalSettings.PortalId, portalSettings.ActiveTab.TabID);
+                if (!string.IsNullOrEmpty(redirectUrl) && string.Compare(redirectUrl, portalSettings.ActiveTab.FullUrl, true, CultureInfo.InvariantCulture) != 0)
+                {
+                    return redirectUrl;
+                }
+            }
+
+            return string.Empty;
+        }
+
+
         /// <summary>
         /// Get Redirection Url based on Http Context and Portal Id.         
         /// </summary>
         /// <returns>string - Empty if redirection rules are not defined or no match found</returns>
-        /// <param name="userAgent">User Agent - used for client capability.</param>
+        /// <param name="userAgent">User Agent - used for client capability detection.</param>
         /// <param name="portalId">Portal Id from which Redirection Rules should be applied.</param>
         /// <param name="currentTabId">Current Tab Id that needs to be evaluated.</param>        
         public string GetRedirectUrl(string userAgent, int portalId, int currentTabId)

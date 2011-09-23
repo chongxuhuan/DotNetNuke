@@ -1,7 +1,7 @@
-#region Copyright
+﻿#region Copyright
 
 // 
-// DotNetNuke� - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
@@ -21,20 +21,14 @@
 
 #endregion
 
-#region Usings
-
-using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-
-#endregion
-
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("2D2B0312-BF11-4342-9D08-F27894F91466")]
-[assembly: AssemblyVersion("6.1.0.861")]
+namespace DotNetNuke.Entities.Portals
+{
+    public class UserCopiedEventArgs
+    {
+        public bool Cancel { get; set; }
+        public string PortalName { get; set; }
+        public float TotalUsers { get; set; }
+        public string UserName { get; set; }
+        public float UserNo { get; set; }
+    }
+}

@@ -304,6 +304,8 @@
     <Compile Include="Entities\Portals\PortalTemplateValidator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\Portals\UserCopiedCallback.cs" />
+    <Compile Include="Entities\Portals\UserCopiedEventArgs.cs" />
     <Compile Include="Entities\Profile\ProfileController.cs" />
     <Compile Include="Entities\Profile\ProfilePropertyDefinition.cs" />
     <Compile Include="Entities\Profile\ProfilePropertyDefinitionCollection.cs" />
