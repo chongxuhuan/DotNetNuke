@@ -73,7 +73,13 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 
 			if (!string.IsNullOrEmpty(Request.QueryString["UserAgent"]))
 			{
-				CreateViewProxy(UrlUtils.DecryptParameter(Request.QueryString["UserAgent"]));
+				var userAgent = UrlUtils.DecryptParameter(Request.QueryString["UserAgent"]);
+				if (Request.QueryString["SendAgent"] != "true")
+				{
+					userAgent = Request.UserAgent;
+				}
+
+				CreateViewProxy(userAgent);
 			}
 
 			this.Page.Title = LocalizeString("PageTitle");
@@ -103,7 +109,7 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 
 			foreach (var previewProfile in profiles)
 			{
-				var value = string.Format("width : \"{0}\", height : \"{1}\", userAgent: \"{2}\"", previewProfile.Width, previewProfile.Height, UrlUtils.EncryptParameter("Mozilla/5.0 (iPad; U; CPU OS 4_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8F190 Safari/6533.18.5"));
+				var value = string.Format("width : \"{0}\", height : \"{1}\", userAgent: \"{2}\"", previewProfile.Width, previewProfile.Height, UrlUtils.EncryptParameter(previewProfile.UserAgent));
 
 				var listItem = new ListItem(previewProfile.Name, value);
 				if(selectedProfile == previewProfile.Id)

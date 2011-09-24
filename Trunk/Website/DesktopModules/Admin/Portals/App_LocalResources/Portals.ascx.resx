@@ -121,7 +121,7 @@
     <value>Title</value>
   </data>
   <data name="Portal Aliases.Header" xml:space="preserve">
-    <value>Portal Aliases</value>
+    <value>Site Aliases</value>
   </data>
   <data name="Users.Header" xml:space="preserve">
     <value>Users</value>
@@ -136,19 +136,19 @@
     <value>Expires</value>
   </data>
   <data name="AddContent.Action" xml:space="preserve">
-    <value>Add New Portal</value>
+    <value>Add New Site</value>
   </data>
   <data name="Edit.Text" xml:space="preserve">
-    <value>Edit this Portal</value>
+    <value>Edit this Site</value>
   </data>
   <data name="ControlTitle_.Text" xml:space="preserve">
-    <value>Portals</value>
+    <value>Site Management</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
-    <value>&lt;h1&gt;About Portals&lt;/h1&gt;&lt;p&gt;The Super User can manage the various parent and child Portals within the site. This module allows you to add a new portal, modify an existing portal, and delete a portal.&lt;/p&gt;</value>
+    <value>&lt;h1&gt;About Site Management&lt;/h1&gt;&lt;p&gt;The Super User can manage the various parent and child Sites within the installation. This module allows you to add a new site, modify an existing site, and delete a site.&lt;/p&gt;</value>
   </data>
   <data name="ExportTemplate.Action" xml:space="preserve">
-    <value>Export Portal Template</value>
+    <value>Export Site Template</value>
   </data>
   <data name="Filter.Text" xml:space="preserve">
     <value>A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z</value>
@@ -157,18 +157,18 @@
     <value>Pages</value>
   </data>
   <data name="PortalDeleted.Text" xml:space="preserve">
-    <value>Portal deleted successfully</value>
+    <value>Site deleted successfully</value>
   </data>
   <data name="Expired.Text" xml:space="preserve">
     <value>Expired</value>
   </data>
   <data name="DeleteExpired.Action" xml:space="preserve">
-    <value>Delete Expired Portals</value>
+    <value>Delete Expired Sites</value>
   </data>
   <data name="PortalId.Header" xml:space="preserve">
-    <value>Portal Id</value>
+    <value>Site Id</value>
   </data>
   <data name="Delete.Text" xml:space="preserve">
-    <value>Delete Portal</value>
+    <value>Delete Site</value>
   </data>
 </root>

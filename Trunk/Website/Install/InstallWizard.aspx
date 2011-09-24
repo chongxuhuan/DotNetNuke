@@ -324,12 +324,12 @@
                     </asp:WizardStep>
                     <asp:WizardStep ID="adminUserStep" runat="server" Title="Portal" AllowReturn="false">
                         <h2><asp:Label ID="adminUserTitleLabel" runat="server" /></h2>
-                        <asp:Label ID="adminUserDetailLabel" runat="Server" />
-                        <hr />
                         <h3><asp:Label ID="lblAdminUser" runat="server" /></h3>
+                        <asp:Label ID="adminUserDetailLabel" runat="Server" />
                         <dnn:WizardUser ID="usrAdmin" runat="server" />
                         <hr />
                         <h3><asp:Label ID="lblPortal" runat="server" /></h3>
+                        <asp:Label ID="portalDetailLabel" runat="Server" />
                         <div class="dnnForm">
                             <div class="dnnFormItem">
                                 <label for="<%=txtPortalTitle.ClientID%>"><%=LocalizeString("PortalTitle")%></label>

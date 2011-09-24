@@ -1027,7 +1027,7 @@ namespace DotNetNuke.Services.Install
                     break;
                 case 9: //Page 9 - User/Portal Configuration
                     adminUserTitleLabel.Text = LocalizeString("AdminUserTitle");
-                    adminUserDetailLabel.Text = LocalizeString("PortalDetail");
+                    adminUserDetailLabel.Text = LocalizeString("AdminUserDetail");
                     usrAdmin.FirstNameLabel = LocalizeString("FirstName");
                     usrAdmin.LastNameLabel = LocalizeString("LastName");
                     usrAdmin.UserNameLabel = LocalizeString("UserName");
@@ -1036,6 +1036,7 @@ namespace DotNetNuke.Services.Install
                     usrAdmin.EmailLabel = LocalizeString("Email");
                     lblAdminUser.Text = LocalizeString("AdminUser");
                     lblPortal.Text = LocalizeString("Portal");
+                    portalDetailLabel.Text = LocalizeString("PortalDetail");
                     lblSMTPSettings.Text = LocalizeString("SMTPSettings");
                     lblSMTPSettingsHelp.Text = LocalizeString("SMTPSettingsHelp");
                    break;
@@ -1695,10 +1696,10 @@ namespace DotNetNuke.Services.Install
                     }
                     break;
                 case 9: //Page 9 - SMTP Settings
-                    if (installTypeRadioButton.SelectedValue == "Full")
-                    {
-                        SMTPSettingsPanel.Visible = true;
-                    }
+                    //if (installTypeRadioButton.SelectedValue == "Full")
+                    //{
+                    //    SMTPSettingsPanel.Visible = true;
+                    //}
                     break;
             }
             

@@ -82,22 +82,17 @@ namespace DotNetNuke.HttpModules
                     var app = (HttpApplication)s;
                     if (app != null && app.Request != null && !string.IsNullOrEmpty(app.Request.UserAgent))
                     {
-						//if cookies contains value of source portal, the stop redirect.
-                        if (app.Request.Cookies["nomobileredirect"] != null)
+						//Redirect should happen only once. If redirect has already happened, then don't redirect any more in the session
+                        if (app.Request.Cookies["nomobileredirectdone"] != null)
 						{
 							return;
 						}
 
-						//if request is redirect by redirection module, log the source portal in cookie and stop redirect.
-                        if (app.Request.QueryString["nomobileredirect"] != null)
-						{
-                            app.Response.Cookies.Add(new HttpCookie("nomobileredirect"));
-                            return;
-						}
-
                         string redirectUrl = _redirectionController.GetRedirectUrl(app.Request.UserAgent);
                         if (!string.IsNullOrEmpty(redirectUrl))
-                        {                        	
+                        {
+                            //we are going to redirect, save that info in cookie so we don't redirect again for the session
+                            app.Response.Cookies.Add(new HttpCookie("nomobileredirectdone"));
                             app.Response.Redirect(redirectUrl);
                         }
                     }

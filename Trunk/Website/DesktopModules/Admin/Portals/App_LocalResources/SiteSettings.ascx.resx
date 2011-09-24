@@ -196,13 +196,13 @@
     <value>Depending on the skin chosen, this image will appear in the top left corner of the page.</value>
   </data>
   <data name="plPortalSkin.Text" xml:space="preserve">
-    <value>Portal Skin:</value>
+    <value>Site Skin:</value>
   </data>
   <data name="plPortalSkin.Help" xml:space="preserve">
     <value>The selected skin will be applied to all pages on the site, unless overridden at the Page level.</value>
   </data>
   <data name="plPortalContainer.Text" xml:space="preserve">
-    <value>Portal Container:</value>
+    <value>Site Container:</value>
   </data>
   <data name="plPortalContainer.Help" xml:space="preserve">
     <value>The selected container will be applied to all modules on the site, unless overridden at the Page or Module level.</value>
@@ -388,7 +388,7 @@
     <value>The Default Language for the site.</value>
   </data>
   <data name="plTimeZone.Text" xml:space="preserve">
-    <value>Portal TimeZone:</value>
+    <value>Site TimeZone:</value>
   </data>
   <data name="plTimeZone.Help" xml:space="preserve">
     <value>The TimeZone for the location of the site.</value>
@@ -397,10 +397,10 @@
     <value>Host Settings</value>
   </data>
   <data name="plPortalAlias.Text" xml:space="preserve">
-    <value>Portal Alias:</value>
+    <value>Site Alias:</value>
   </data>
   <data name="plPortalAlias.Help" xml:space="preserve">
-    <value>The Portal Alias is the url used to reach the portal.</value>
+    <value>The Site Alias is the url used to reach the site.</value>
   </data>
   <data name="plExpiryDate.Text" xml:space="preserve">
     <value>Expiry Date:</value>
@@ -550,7 +550,7 @@
     <value>Enable Skin Widgets:</value>
   </data>
   <data name="PortalAliases.Text" xml:space="preserve">
-    <value>Portal Aliases</value>
+    <value>Site Aliases</value>
   </data>
   <data name="valPortalName.ErrorMessage" xml:space="preserve">
     <value>You must provide a title for your site</value>
@@ -607,7 +607,7 @@
     <value>This setting determines how the site responds to urls which are defined as alias, but are not the default-alias. None - no additional action is taken,  Canonical - the alias url is handled as a Canaonical url, Redirect - redirected to default alias. </value>
   </data>
   <data name="portalAliasModeButtonListLabel.Text" xml:space="preserve">
-    <value>PortalAlias Mapping Mode:</value>
+    <value>SiteAlias Mapping Mode:</value>
   </data>
   <data name="Canonical.Text" xml:space="preserve">
     <value>Canonical</value>

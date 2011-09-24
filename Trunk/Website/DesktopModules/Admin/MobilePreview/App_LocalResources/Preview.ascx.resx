@@ -121,19 +121,19 @@
     <value>Landscape</value>
   </data>
   <data name="lblDimensions.Help" xml:space="preserve">
-    <value>Dimensions Help</value>
+    <value>Show dimensions.</value>
   </data>
   <data name="lblDimensions.Text" xml:space="preserve">
     <value>Dimensions</value>
   </data>
   <data name="lblOrientation.Help" xml:space="preserve">
-    <value>Orientation Help</value>
+    <value>Device's orientation.</value>
   </data>
   <data name="lblOrientation.Text" xml:space="preserve">
     <value>Orientation</value>
   </data>
   <data name="lblProfile.Help" xml:space="preserve">
-    <value>Profile Help</value>
+    <value>Select the profile want to preview.</value>
   </data>
   <data name="lblProfile.Text" xml:space="preserve">
     <value>Profile</value>
@@ -143,5 +143,11 @@
   </data>
   <data name="Vertical.Text" xml:space="preserve">
     <value>Portrait</value>
+  </data>
+  <data name="lblSendAgent.Help" xml:space="preserve">
+    <value>Preview with user agent.</value>
+  </data>
+  <data name="lblSendAgent.Text" xml:space="preserve">
+    <value>Send user agent</value>
   </data>
 </root>

@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.Telerik.Web.Design" type="Library" version="06.00.02">
+    <package name="DotNetNuke.Telerik.Web.Design" type="Library" version="06.01.00">
       <friendlyName>DotNetNuke Telerik Web Design Components</friendlyName>
       <description>Provides Telerik Web Design Components for DotNetNuke.</description>
       <dependencies/>
@@ -12,7 +12,7 @@
       </owner>
       <license>Please refer to the Telerik EULA.pdf in your site's documentation folder.</license>
       <releaseNotes>
-        This package includes the design time components for Telerik RadControls for ASP.Net AJAX  version 2011.2.712.35.
+        This package includes the design time components for Telerik RadControls for ASP.Net AJAX  version 2011.2.915.20.
         Please go to www.telerik.com to view release notes on this particular version.</releaseNotes>
       <components>
         <component type="Assembly">
@@ -20,7 +20,7 @@
             <assembly>
               <path>bin</path>
               <name>Telerik.Web.Design.dll</name>
-              <version>2011.2.712.35</version>
+              <version>2011.2.915.20</version>
             </assembly>
           </assemblies>
         </component>

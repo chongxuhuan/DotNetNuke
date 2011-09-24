@@ -20,6 +20,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			[Name] [nvarchar](50) NOT NULL,
 			[Width] [int] NOT NULL,
 			[Height] [int] NOT NULL,
+			[UserAgent] [nvarchar](260) NOT NULL,
 			[SortOrder] [int] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_SortOrder]  DEFAULT ((0)) NOT NULL,
 			[CreatedByUserID] [int] NOT NULL,
 			[CreatedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}Mobile_PreviewProfiles_CreatedOnDate]  DEFAULT (getdate()) NOT NULL ,
@@ -121,7 +122,7 @@ GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetPreviewProfiles] @PortalId INT
 AS 
-    SELECT  Id, PortalId, Name, Width, Height, SortOrder, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate
+    SELECT  Id, PortalId, Name, Width, Height, UserAgent, SortOrder, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate
     FROM    {databaseOwner}{objectQualifier}Mobile_PreviewProfiles
     WHERE   PortalId = @PortalId
 	ORDER BY SortOrder ASC
@@ -169,6 +170,31 @@ AS
 
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_GetAllRedirections]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetAllRedirections]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_GetAllRedirections]
+AS 
+    SELECT  Id ,
+            PortalId ,
+            Name ,
+            [Type] ,
+            SortOrder ,
+            SourceTabId ,
+			IncludeChildTabs ,
+            TargetType ,
+            TargetValue ,
+			Enabled ,
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}Mobile_Redirections    
+	ORDER BY PortalId ASC, SortOrder ASC
+
+GO
+
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mobile_SavePreviewProfile]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SavePreviewProfile]
 GO
@@ -179,6 +205,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SavePreviewProfile]
     @Name NVARCHAR(50) ,
     @Width INT ,
     @Height INT ,
+	@UserAgent NVARCHAR(260) ,
 	@SortOrder INT ,
     @UserId INT
 AS 
@@ -189,6 +216,7 @@ AS
                       Name ,
                       Width ,
                       Height ,
+					  UserAgent ,
 					  SortOrder ,
                       CreatedByUserID ,
                       CreatedOnDate ,
@@ -200,6 +228,7 @@ AS
                       @Name , -- Name - nvarchar(50)
                       @Width , -- Width - int
                       @Height , -- Height - int
+					  @UserAgent ,
 					  @SortOrder ,
                       @UserId , -- CreatedBy - int
                       GETDATE() , -- CreatedOn - datetime
@@ -216,6 +245,7 @@ AS
             SET     Name = @Name ,
                     Width = @Width ,
                     Height = @Height ,
+					UserAgent = @UserAgent ,
 					SortOrder = @SortOrder ,
                     LastModifiedByUserID = @UserId ,
                     LastModifiedOnDate = GETDATE()

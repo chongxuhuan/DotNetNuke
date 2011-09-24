@@ -65,6 +65,7 @@ namespace DotNetNuke.Services.Mobile
 														profile.Name,
 														profile.Width,
 														profile.Height,
+														profile.UserAgent,
 														profile.SortOrder,
 														UserController.GetCurrentUserInfo().UserID);
 

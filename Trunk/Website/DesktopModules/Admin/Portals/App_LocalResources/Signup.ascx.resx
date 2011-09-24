@@ -121,25 +121,25 @@
     <value>There are two types of portals which can be created using this application:&lt;br&gt;&lt;br&gt;&lt;li&gt;&lt;b&gt;Parent Portals&lt;/b&gt; are sites which have a unique URL ( ie. www.domain.com ) associated to them. This generally involves purchasing a Domain Name from an Internet Registrar, setting the Primary/Secondary DNS entries to point to the Hosting Provider's DNS Server, and having your Hosting Provider map the Domain Name to the IP Address of your account. An example of a valid Parent Portal Name is &lt;b&gt;www.mydomain.com&lt;/b&gt;. You can also use the IP Address of your site without a Domain Name ( ie. &lt;b&gt;65.174.86.217&lt;/b&gt; ). If you need to have multiple Domain Names pointing to the same portal then you can seperate them with commas ( ie. &lt;b&gt;www.domain1.com,www.domain2.com&lt;/b&gt; ). Do not create a Parent Portal until all of the DNS mappings are in place or else you will not be able to access your portal.&lt;br&gt;&lt;br&gt;&lt;li&gt;&lt;b&gt;Child Portals&lt;/b&gt; are subhosts of your Hosting Provider account. Essentially this means a directory is created on the web server which allows the site to be accessed through a URL address which includes a Parent domain name as well as the directory name ( ie. www.domain.com/directory ). A Child Portal can be converted into a Parent Portal at any time by simply modifying the Portal Alias entry.&lt;br&gt;&lt;br&gt;*Please Note: Portals will be created using the default properties defined in the Host Settings module ( HostFee, HostSpace, DemoPeriod ) or in the selected template file. Once the portal is created, these properties can be modified in the Admin tab Site Settings module.&lt;br&gt;&lt;br&gt;</value>
   </data>
   <data name="plType.Text" xml:space="preserve">
-    <value>Portal Type:</value>
+    <value>Site Type:</value>
   </data>
   <data name="plType.Help" xml:space="preserve">
-    <value>There are two types of portals which can be created using this application (see the Module Help available on the Action Menu for more details).</value>
+    <value>There are two types of sites which can be created using this application (see the Module Help available on the Action Menu for more details).</value>
   </data>
   <data name="DemoMessage.Text" xml:space="preserve">
-    <value>Demo Portal Signup allows you to create your very own Portal Website and experiment with its advanced features {0}. At any time during or after the trial period, you can convert your Demo Portal into a Registered Portal by logging in as the Administrator and selecting the Renew/Extend Your Portal Subscription link in the Admin tab. Registered Portals have the added benefit of using their own domain name ( ie. www.yourdomain.com ) as their Web address.&lt;br&gt;&lt;br&gt;&lt;b&gt;*Note:&lt;/b&gt; Your Portal Name must be a simple name for your site and cannot contain spaces or punctuation characters. The URL for your portal will take the form of &lt;b&gt; {1}/portalname&lt;/b&gt;&lt;br&gt;&lt;br&gt;</value>
+    <value>Demo Site Signup allows you to create your very own Website and experiment with its advanced features {0}. At any time during or after the trial period, you can convert your Demo Site into a Registered Site by logging in as the Administrator and selecting the Renew/Extend Your Site Subscription link in the Admin tab. Registered Sites have the added benefit of using their own domain name ( ie. www.yourdomain.com ) as their Web address.&lt;br&gt;&lt;br&gt;&lt;b&gt;*Note:&lt;/b&gt; Your Site Name must be a simple name for your site and cannot contain spaces or punctuation characters. The URL for your site will take the form of &lt;b&gt; {1}/sitename&lt;/b&gt;&lt;br&gt;&lt;br&gt;</value>
   </data>
   <data name="AdminMissing.Text" xml:space="preserve">
     <value>Your admin.template File Is Missing And Must be Uploaded To The Site.&lt;br&gt;</value>
   </data>
   <data name="PortalMissing.Text" xml:space="preserve">
-    <value>Your portal.template File Is Missing And Must be Uploaded To The Site.&lt;br&gt;</value>
+    <value>Your site  template File Is Missing And Must be Uploaded To The Site.&lt;br&gt;</value>
   </data>
   <data name="plPortalName.Text" xml:space="preserve">
-    <value>Portal Name:</value>
+    <value>Site Name:</value>
   </data>
   <data name="plPortalName.Help" xml:space="preserve">
-    <value>Enter a name for the Portal/Site</value>
+    <value>Enter a name for the Site</value>
   </data>
   <data name="valPortalName.ErrorMessage" xml:space="preserve">
     <value>Portal Name Is Required.</value>
@@ -166,7 +166,7 @@
     <value>Template:</value>
   </data>
   <data name="plTemplate.Help" xml:space="preserve">
-    <value>Choose a template for the new Portal.</value>
+    <value>Choose a template for the new Site.</value>
   </data>
   <data name="plFirstName.Text" xml:space="preserve">
     <value>First Name:</value>
@@ -223,43 +223,43 @@
     <value>Email Is Required.</value>
   </data>
   <data name="cmdUpdate.Text" xml:space="preserve">
-    <value>Create Portal</value>
+    <value>Create Site</value>
   </data>
   <data name="Note.Text" xml:space="preserve">
-    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Once your portal is created, you will need to login using the Administrator information specified below.</value>
+    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Once your Site is created, you will need to login using the Administrator information specified below.</value>
   </data>
   <data name="InvalidTemplate.Text" xml:space="preserve">
-    <value>{0} is not a valid Portal Template File.</value>
+    <value>{0} is not a valid Site Template File.</value>
   </data>
   <data name="InvalidName.Text" xml:space="preserve">
-    <value>The Portal Alias Must Not Contain Spaces Or Punctuation.</value>
+    <value>The Site Alias Must Not Contain Spaces Or Punctuation.</value>
   </data>
   <data name="InvalidPassword.Text" xml:space="preserve">
     <value>The Password Values Entered Do Not Match.</value>
   </data>
   <data name="ChildExists.Text" xml:space="preserve">
-    <value>The Child Portal Name You Specified Already Exists. Please Choose A Different Child Portal Name.</value>
+    <value>The Child Site Name You Specified Already Exists. Please Choose A Different Child Site Name.</value>
   </data>
   <data name="CreateError.Text" xml:space="preserve">
-    <value>An Error Was Encountered During The Creation Of Your Portal. This May Have Been Caused By Specifying An Incorrect Password For An Existing User Account. Please Verify Your Details Before You Try Again.</value>
+    <value>An Error Was Encountered During The Creation Of Your Site. This May Have Been Caused By Specifying An Incorrect Password For An Existing User Account. Please Verify Your Details Before You Try Again.</value>
   </data>
   <data name="PortalSetup.Text" xml:space="preserve">
-    <value>Portal Setup</value>
+    <value>Site Setup</value>
   </data>
   <data name="SecuritySettings.Text" xml:space="preserve">
     <value>Security Settings</value>
   </data>
   <data name="plPortalAlias.Text" xml:space="preserve">
-    <value>Portal Alias:</value>
+    <value>Site Alias:</value>
   </data>
   <data name="plPortalAlias.Help" xml:space="preserve">
-    <value>Enter the Alias for this Portal</value>
+    <value>Enter the Alias for this Site</value>
   </data>
   <data name="plHomeDirectory.Text" xml:space="preserve">
     <value>Home Directory:</value>
   </data>
   <data name="plHomeDirectory.Help" xml:space="preserve">
-    <value>Enter the Home Directory for this Portal</value>
+    <value>Enter the Home Directory for this Site</value>
   </data>
   <data name="Customize.Text" xml:space="preserve">
     <value>Customize</value>
@@ -277,19 +277,19 @@
     <value>Auto Generate</value>
   </data>
   <data name="ControlTitle_signup.Text" xml:space="preserve">
-    <value>Add Portal</value>
+    <value>Add Site</value>
   </data>
   <data name="SendMail.Error" xml:space="preserve">
     <value>There was an error sending confirmation emails - {0}.  However, the website was created. &lt;a href='{1}' {2}&gt;Click Here To Access the new site&lt;/a&gt;</value>
   </data>
   <data name="AddPortal.Text" xml:space="preserve">
-    <value>Add New Portal</value>
+    <value>Add New Site</value>
   </data>
   <data name="InvalidHomeFolder.Text" xml:space="preserve">
     <value>The Home Folder you specified is not valid.</value>
   </data>
   <data name="DuplicatePortalAlias.Text" xml:space="preserve">
-    <value>The Portal Alias Name You Specified Already Exists. Please Choose A Different Portal Alias.</value>
+    <value>The Site Alias Name You Specified Already Exists. Please Choose A Different Site Alias.</value>
   </data>
   <data name="UnknownSendMail.Error" xml:space="preserve">
     <value>There was an error sending confirmation emails.  However, the website was created. &lt;a href='{0}' {1}&gt;Click Here To Access the new site&lt;/a&gt;</value>

@@ -5,6 +5,7 @@
 		var vDimension = this.find(".dimension_v");
 		var viewContainer = this.find(".emulator_c");
 		var viewer = this.find("iframe");
+		var sendAgent = true;
 
 		var bindElement = function () {
 			viewContainer = handler.find(".emulator_c");
@@ -54,7 +55,7 @@
 		bindElement();
 
 		var updateViewer = function (userAgent) {
-			var url = location.href + "&UserAgent=" + userAgent;
+			var url = location.href + "&UserAgent=" + userAgent + "&SendAgent=" + sendAgent;
 			viewer.attr("src", url);
 		};
 
@@ -69,6 +70,10 @@
 			hDimension.css("visibility", visible);
 			vDimension.css("visibility", visible);
 		};
+
+		this.previewWithAgent = function (send) {
+			sendAgent = send;
+		}
 
 		hDimension.html("<span class=\"left\"></span><span class=\"center\"></span><span class=\"right\"></span>");
 		vDimension.html("<span class=\"top\"></span><span class=\"middle\"></span><span class=\"bottom\"></span>");

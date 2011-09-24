@@ -2462,6 +2462,21 @@ namespace DotNetNuke.Services.Upgrade
 
         private static void UpgradeToVersion610()
         {
+            var tabController = new TabController();
+            var tab = tabController.GetTabByName("Portals", Null.NullInteger);
+            tab.TabName = "Site Management";
+            tabController.UpdateTab(tab);
+
+            var moduleController = new ModuleController();
+            foreach (var module in moduleController.GetTabModules(tab.TabID).Values)
+            {
+                if (module.ModuleTitle == "Portals")
+                {
+                    module.ModuleTitle = "Site Management";
+                    moduleController.UpdateModule(module);
+                }
+            }
+
         }
 
         #endregion

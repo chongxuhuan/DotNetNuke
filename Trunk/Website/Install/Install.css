@@ -2,7 +2,7 @@
 body{position: relative; width: 900px; margin-right: auto; margin-left: auto; text-align: left;}
 
 .dnnForm{width:900px;}
-.dnnFormItem .installRadioButtons label{width:70%; text-align:left; font-weight:normal; margin-left:5px;  }
+.dnnFormItem .installRadioButtons label{width:90%; text-align:left; font-weight:normal; margin-left:5px;  }
 
 .dnnFormItem .permissionsCheckBoxes label{width:200px; text-align:left; font-weight:normal; margin-left:5px; display:inline-block; }
 .dnnInstall .dnnFormItem input[type="checkbox"]{width:auto; float:none; min-width: 25px;}

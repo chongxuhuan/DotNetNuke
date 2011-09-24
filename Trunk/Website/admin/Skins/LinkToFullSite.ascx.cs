@@ -31,6 +31,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.Services.Mobile;
 using DotNetNuke.UI.Skins;
 
 #endregion
@@ -46,23 +47,7 @@ namespace DotNetNuke.UI.Skins.Controls
     {
         private const string MyFileName = "LinkToFullSite.ascx";
 
-    	private string _localResourcesFile;
-
-    	private int SourcePortal
-    	{
-    		get
-    		{
-    			int sourcePortal;
-    			if(Request.Cookies["SourcePortal"] != null && int.TryParse(Request.Cookies["SourcePortal"].Value, out sourcePortal))
-    			{
-    				return sourcePortal;
-    			}
-    			else
-    			{
-    				return Null.NullInteger;
-    			}
-    		}
-    	}
+    	private string _localResourcesFile;    	
 
     	private string LocalResourcesFile
     	{
@@ -77,21 +62,23 @@ namespace DotNetNuke.UI.Skins.Controls
     		}
     	}
 
-		protected override void OnLoad(EventArgs e)
+        #region "Event Handlers"
+        protected override void OnLoad(EventArgs e)
 		{
-			base.OnLoad(e);
+            base.OnLoad(e);
 
-			if(SourcePortal == Null.NullInteger || new PortalController().GetPortal(SourcePortal) == null)
-			{
-				this.Visible = false;
-			}
-			else
-			{
-				var lnkPortal = FindControl("lnkPortal") as HyperLink;
-				var portalLink = string.Format("{0}?sp=-1", Globals.AddHTTP(new PortalSettings(SourcePortal).DefaultPortalAlias));
-				lnkPortal.NavigateUrl = portalLink;
-				lnkPortal.Text = Localization.GetString("lnkPortal", LocalResourcesFile);
-			}
-		}
+            var redirectionController = new RedirectionController();
+            var redirectUrl = redirectionController.GetFullSiteUrl();
+            if (!string.IsNullOrEmpty(redirectUrl))
+            {                
+                lnkPortal.NavigateUrl = redirectUrl;
+                lnkPortal.Text = Localization.GetString("lnkPortal", LocalResourcesFile);
+            }
+            else
+            {
+                this.Visible = false;
+            }
+        }
+        #endregion
     }
 }

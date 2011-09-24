@@ -17,6 +17,10 @@
 			</asp:RadioButtonList>
 		</div>
 		<div class="dnnFormItem">
+			<dnn:Label ID="lblSendAgent" runat="server" ControlName="cbSendAgent" />
+			<asp:CheckBox ID="cbSendAgent" runat="server" Checked="true" />
+		</div>
+		<div class="dnnFormItem">
 			<dnn:Label ID="lblDimensions" runat="server" ControlName="ddlProfileList" />
 			<asp:CheckBox ID="cbShowDimensions" runat="server" Checked="true" />
 		</div>
@@ -37,6 +41,7 @@
 		var emulator = $("#emulator").previewEmulator();
 		var deviceListId = "#<%=ddlProfileList.ClientID %>";
 		var showDimensionId = "#<%=cbShowDimensions.ClientID %>";
+		var previewWithAgentId = "#<%=cbSendAgent.ClientID %>";
 		var orientationFilter = "input[type=radio][name$=rblOrientation]";
 		$(deviceListId).change(function () {
 			changeView();
@@ -57,8 +62,13 @@
 			changeView();
 		});
 
-		$(showDimensionId).click(function() {
+		$(showDimensionId).click(function () {
 			emulator.showDimension(this.checked);
+		});
+
+		$(previewWithAgentId).click(function () {
+			emulator.previewWithAgent(this.checked);
+			changeView();
 		});
 
 		changeView();

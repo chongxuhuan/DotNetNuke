@@ -85,7 +85,6 @@ namespace DotNetNuke.Services.Mobile
             return string.Empty;
         }
 
-
         /// <summary>
         /// Get Redirection Url based on Http Context and Portal Id.         
         /// </summary>
@@ -154,6 +153,90 @@ namespace DotNetNuke.Services.Mobile
             return redirectUrl;
         }
 
+        /// <summary>
+        /// Get Url for the equivalent full site based on the current page of the mobile site
+        /// </summary>
+        /// <returns>string - Empty if redirection rules are not defined or no match found</returns>
+        public string GetFullSiteUrl()
+        {
+            var portalSettings = PortalController.GetCurrentPortalSettings();
+            if (portalSettings != null && portalSettings.ActiveTab != null)
+            {
+                string fullSiteUrl = GetFullSiteUrl(portalSettings.PortalId, portalSettings.ActiveTab.TabID);
+                if (!string.IsNullOrEmpty(fullSiteUrl) && string.Compare(fullSiteUrl, portalSettings.ActiveTab.FullUrl, true, CultureInfo.InvariantCulture) != 0)
+                {
+                    return fullSiteUrl;
+                }
+            }
+
+            return string.Empty; 
+        }
+
+        /// <summary>
+        /// Get Url for the equivalent full site based on the current page of the mobile site
+        /// </summary>
+        /// <returns>string - Empty if redirection rules are not defined or no match found</returns>        
+        /// <param name="portalId">Portal Id from which Redirection Rules should be applied.</param>
+        /// <param name="currentTabId">Current Tab Id that needs to be evaluated.</param>        
+        public string GetFullSiteUrl(int portalId, int currentTabId)
+        {
+            string fullSiteUrl = string.Empty;
+            IList<IRedirection> redirections = GetAllRedirections();
+            
+            //check for redirect only when redirect rules are defined
+            if (redirections == null || redirections.Count == 0) 
+                return fullSiteUrl;
+
+            bool foundRule = false;
+            foreach (var redirection in redirections)
+            {
+                if (redirection.Enabled)
+                {
+                    if (redirection.TargetType == TargetType.Tab) //page within same site
+                    {                        
+                        int targetTabId = int.Parse(redirection.TargetValue.ToString());
+                        if (targetTabId == currentTabId) //target tab is same as current tab
+                        {
+                            foundRule = true;
+                        }
+                    }
+                    else if (redirection.TargetType == TargetType.Portal) //home page of another portal
+                    {                        
+                        int targetPortalId = int.Parse(redirection.TargetValue.ToString());
+                        if (targetPortalId == portalId) //target portal is same as current portal
+                        {
+                            foundRule = true;
+                        }
+                    }
+
+                    //found the rule, let's find the url now
+                    if(foundRule)
+                    {
+                        ////redirection is based on tab
+                        //Following are being commented as NavigateURL method does not return correct url for a tab in a different portal
+                        //always point to the home page of the other portal
+                        //if (redirection.SourceTabId != Null.NullInteger)
+                        //{
+                        //    fullSiteUrl = Globals.NavigateURL(redirection.SourceTabId);
+                        //}
+                        //else //redirection is based on portal
+                        {
+                            var portalSettings = new PortalSettings(redirection.PortalId);
+                            if (portalSettings.HomeTabId != Null.NullInteger && portalSettings.HomeTabId != currentTabId) //ensure it's not redirecting to itself
+                            {
+                                //the commented line doesn't work because the call to NavigateUrl returns url from the current portal not target portal
+                                //possible issue in FriendlyUrlProvider.GetFriendlyAlias method
+                                //redirectUrl = Globals.NavigateURL(portalSettings.HomeTabId, portalSettings, Null.NullString, null);
+                                fullSiteUrl = Globals.AddHTTP(portalSettings.DefaultPortalAlias);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return fullSiteUrl;
+        }
 
 		/// <summary>
 		/// save a redirection. If redirection.Id equals Null.NullInteger(-1), that means need to add a new redirection;
@@ -231,6 +314,18 @@ namespace DotNetNuke.Services.Mobile
 			ClearCache(portalId);
 		}
 
+        /// <summary>
+        /// get all redirections defined in system.
+        /// </summary>        
+        /// <returns>List of redirection.</returns>
+        public IList<IRedirection> GetAllRedirections()
+        {
+            string cacheKey = string.Format(DataCache.RedirectionsCacheKey, "");
+            var cacheArg = new CacheItemArgs(cacheKey, DataCache.RedirectionsCacheTimeOut, DataCache.RedirectionsCachePriority, "");
+            return CBO.GetCachedObject<IList<IRedirection>>(cacheArg, GetAllRedirectionsCallBack);
+        }
+
+
 		/// <summary>
 		/// get a redirection list for portal.
 		/// </summary>
@@ -300,11 +395,16 @@ namespace DotNetNuke.Services.Mobile
 
 		#region "Private Methods"
 
-		private IList<IRedirection> GetRedirectionsByPortalCallBack(CacheItemArgs cacheItemArgs)
-		{
-			int portalId = (int)cacheItemArgs.ParamList[0];
-			return CBO.FillCollection<Redirection>(DataProvider.Instance().GetRedirections(portalId)).Cast<IRedirection>().ToList();
+		private IList<IRedirection> GetAllRedirectionsCallBack(CacheItemArgs cacheItemArgs)
+		{			
+			return CBO.FillCollection<Redirection>(DataProvider.Instance().GetAllRedirections()).Cast<IRedirection>().ToList();
 		}
+
+        private IList<IRedirection> GetRedirectionsByPortalCallBack(CacheItemArgs cacheItemArgs)
+        {
+            int portalId = (int)cacheItemArgs.ParamList[0];
+            return CBO.FillCollection<Redirection>(DataProvider.Instance().GetRedirections(portalId)).Cast<IRedirection>().ToList();
+        }
 
 		private void ClearCache(int portalId)
 		{

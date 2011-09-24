@@ -3251,10 +3251,15 @@ namespace DotNetNuke.Data
 			return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_GetPreviewProfiles", portalId);
 		}
 
-		public override IDataReader GetRedirections(int portalId)
+		public override IDataReader GetAllRedirections()
 		{
-			return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_GetRedirections", portalId);
+			return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_GetAllRedirections");
 		}
+
+        public override IDataReader GetRedirections(int portalId)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_GetRedirections", portalId);
+        }
 
 		public override IDataReader GetRedirectionRules(int redirectionId)
 		{
@@ -3271,9 +3276,9 @@ namespace DotNetNuke.Data
 			SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SaveRedirectionRule", id, redirectionId, capbility, expression);
 		}
 
-		public override int SavePreviewProfile(int id, int portalId, string name, int width, int height, int sortOrder, int userId)
+		public override int SavePreviewProfile(int id, int portalId, string name, int width, int height, string userAgent, int sortOrder, int userId)
 		{
-			return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SavePreviewProfile", id, portalId, name, width, height, sortOrder, userId));
+			return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "Mobile_SavePreviewProfile", id, portalId, name, width, height, userAgent, sortOrder, userId));
 		}
 
 		#endregion

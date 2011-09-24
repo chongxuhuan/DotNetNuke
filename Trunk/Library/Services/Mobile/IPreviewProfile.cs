@@ -42,6 +42,8 @@ namespace DotNetNuke.Services.Mobile
 
 		int Width { get; set; }
 
+		string UserAgent { get; set; }
+
 		int Height { get; set; }
 
 		int SortOrder { get; set; }

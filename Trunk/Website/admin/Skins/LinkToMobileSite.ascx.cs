@@ -70,8 +70,7 @@ namespace DotNetNuke.UI.Skins.Controls
             var redirectionController = new RedirectionController();
 			var redirectUrl = redirectionController.GetRedirectUrlForIPhone();
             if (!string.IsNullOrEmpty(redirectUrl))
-            {
-                redirectUrl += string.Format("{0}nomobileredirect", redirectUrl.Contains("?") ? "&" : "?");
+            {                
                 lnkPortal.NavigateUrl = redirectUrl;                
                 lnkPortal.Text = Localization.GetString("lnkPortal", LocalResourcesFile);
             }
