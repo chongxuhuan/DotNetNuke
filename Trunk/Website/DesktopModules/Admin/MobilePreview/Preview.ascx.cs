@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
 
@@ -145,13 +146,42 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 
 				using (var reader = new StreamReader(responseStream))
 				{
-					return reader.ReadToEnd();
+					var content = reader.ReadToEnd();
+
+					var requestUri = wreq.Address;
+					var domain = requestUri.AbsoluteUri.Replace(requestUri.AbsolutePath, string.Empty) + "/";
+					var currDirectory = domain;
+					for (var i = 0; i < requestUri.Segments.Length - 1; i++)
+					{
+						currDirectory += requestUri.Segments[i];
+
+					}
+
+					content = MakeAbsoluteUrl(domain, currDirectory, content);
+					return content;
 				}
 			}
 			catch (Exception ex)
 			{
 				return "ERROR:" + ex.Message;
 			}
+		}
+
+		private string MakeAbsoluteUrl(string domain, string currDirectory, string content)
+		{
+			Regex pathReg = new Regex("(src|href)=(['\"]?)([^>\\s]+)(\\1*?)");
+			MatchCollection matches = pathReg.Matches(content);
+			foreach (Match match in matches)
+			{
+				if(match.Value.IndexOf("://") == -1)
+				{
+					var path = match.Groups[3].Value;
+					var prefix = path.StartsWith("/") ? domain : currDirectory;
+					content = content.Replace(match.Value, string.Format("{0}=\"{1}{2}\"", match.Groups[1].Value, prefix, path));
+				}
+			}
+
+			return content;
 		}
 
 		#endregion
