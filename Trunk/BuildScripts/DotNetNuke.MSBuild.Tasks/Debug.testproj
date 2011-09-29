@@ -72,7 +72,7 @@
   </Target>
 </Project>-->
 
-<Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<!--<Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
   <Target Name="Debug">
     <Mail SmtpServer="mail.dotnetnuke.com"
@@ -82,4 +82,24 @@
                     Subject="CE Package Comparison - $(BuildVersion)"
                     Body="This is a test of the mail task."/>
   </Target>
+</Project>-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+         ToolsVersion="4.0">
+
+  <PropertyGroup>
+    <DatabaseName>MyDatabase</DatabaseName>
+    <Server>localhost</Server>
+    <SqlCmd>sqlcmd -v DatabaseName=DotNetNuke -S (local) -i </SqlCmd>
+    <Script>.\Scripts</Script>
+  </PropertyGroup>
+
+  <Target Name ="Debug">
+    <ItemGroup>
+      <ScriptFiles Include="$(ScriptDirectory)\*.sql"/>
+    </ItemGroup>
+
+    <Exec Command="$(SqlCmd) &quot;$(RootFolder)\BuildScripts\DotNetNuke.MSBuild.Tasks\Scripts\ResetDatabase.sql&quot;" ContinueOnError="false"/>
+  </Target>
+
 </Project>

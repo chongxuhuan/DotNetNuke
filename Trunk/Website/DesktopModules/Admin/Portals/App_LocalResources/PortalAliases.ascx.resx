@@ -127,7 +127,7 @@
     <value>HTTP Alias</value>
   </data>
   <data name="InvalidAlias.Text" xml:space="preserve">
-    <value>The Portal Alias is invalid&lt;br/&gt;</value>
+    <value>The Site Alias is invalid&lt;br/&gt;</value>
   </data>
   <data name="saveRule.Text" xml:space="preserve">
     <value>Save</value>
@@ -139,7 +139,7 @@
     <value>Parent</value>
   </data>
   <data name="ChildExists.Text" xml:space="preserve">
-    <value>The Child Portal Name You Specified Already Exists. Please Choose A Different Child Portal Name.&lt;br/&gt;</value>
+    <value>The Child Site Name You Specified Already Exists. Please Choose A Different Child Site Name.&lt;br/&gt;</value>
   </data>
   <data name="createChild.Text" xml:space="preserve">
     <value>Create child folder in website root?</value>

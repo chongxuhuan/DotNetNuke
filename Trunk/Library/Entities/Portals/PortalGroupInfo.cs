@@ -36,13 +36,10 @@ namespace DotNetNuke.Entities.Portals
 {
     public class PortalGroupInfo : BaseEntityInfo, IHydratable
     {
+
         public int PortalGroupId { get; set; }
 
-        [Required()]
-        public string PortalGroupDescription { get; set; }
-
-        [Required()]
-        public string PortalGroupName { get; set; }
+        public string AuthenticationDomain { get; set; }
 
         public int MasterPortalId { get; set; }
 
@@ -63,6 +60,12 @@ namespace DotNetNuke.Entities.Portals
                 return portalName;
             }
         }
+
+        [Required()]
+        public string PortalGroupDescription { get; set; }
+
+        [Required()]
+        public string PortalGroupName { get; set; }
 
         #region IHydratable Members
 
@@ -86,6 +89,7 @@ namespace DotNetNuke.Entities.Portals
             PortalGroupName = Null.SetNullString(dr["PortalGroupName"]);
             PortalGroupDescription = Null.SetNullString(dr["PortalGroupDescription"]);
             MasterPortalId = Null.SetNullInteger(dr["MasterPortalID"]);
+            AuthenticationDomain = Null.SetNullString(dr["AuthenticationDomain"]);
         }
 
         #endregion

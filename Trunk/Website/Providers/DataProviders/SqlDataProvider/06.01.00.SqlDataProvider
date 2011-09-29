@@ -371,6 +371,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			[MasterPortalID] [int] NULL,
 			[PortalGroupName] [nvarchar](100) NULL,
 			[PortalGroupDescription] [nvarchar](2000) NULL,
+			[AuthenticationDomain] [nvarchar](200) NULL,
 			[CreatedByUserID] [int] NULL,
 			[CreatedOnDate] [datetime] NULL,
 			[LastModifiedByUserID] [int] NULL,
@@ -390,7 +391,8 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddPortalGroup]
 	@PortalGroupName			nvarchar(100),
 	@PortalGroupDescription		nvarchar(2000),
-	@MasterPortalID				INT,
+	@MasterPortalID				int,
+	@AuthenticationDomain		nvarchar(200),
 	@CreatedByUserID			int
 AS 
 	BEGIN
@@ -398,7 +400,8 @@ AS
 		( 
 			PortalGroupName  , 
 			PortalGroupDescription  ,
-			MasterPortalID, 
+			MasterPortalID,
+			AuthenticationDomain, 
 			CreatedByUserID , 
 			CreatedOnDate , 
 			LastModifiedByUserID , 
@@ -408,7 +411,8 @@ AS
 		( 
 			@PortalGroupName , 
 			@PortalGroupDescription , 
-			@MasterPortalID, 
+			@MasterPortalID,
+			@AuthenticationDomain, 
 			@CreatedByUserID , 
 			getdate() , 
 			@CreatedByUserID , 
@@ -459,6 +463,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdatePortalGroup]
 	@PortalGroupID				int,
 	@PortalGroupName			nvarchar(100),
 	@PortalGroupDescription		nvarchar(2000),
+	@AuthenticationDomain		nvarchar(200),
 	@LastModifiedByUserID		int
 AS 
 	BEGIN
@@ -466,6 +471,7 @@ AS
 			SET 
 				PortalGroupName = @PortalGroupName,
 				PortalGroupDescription = @PortalGroupDescription,
+				AuthenticationDomain = @AuthenticationDomain,
 				LastModifiedByUserID = @LastModifiedByUserID,
 				LastModifiedOnDate = getdate()
 			WHERE PortalGroupID = @PortalGroupID

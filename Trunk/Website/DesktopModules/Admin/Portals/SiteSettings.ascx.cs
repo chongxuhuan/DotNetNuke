@@ -49,6 +49,7 @@ using DotNetNuke.UI.Skins;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.UI.WebControls;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 using DotNetNuke.Web.UI.WebControls.Extensions;
 
 using Calendar = DotNetNuke.Common.Utilities.Calendar;
@@ -765,6 +766,9 @@ namespace DotNetNuke.Modules.Admin.Portals
                 {
                     writer.WriteLine(txtStyleSheet.Text);
                 }
+
+                //Clear client depndency cache
+                ClientResourceManager.UpdateVersion();
             }
             catch (Exception exc) //Module failed to load
             {
@@ -915,35 +919,44 @@ namespace DotNetNuke.Modules.Admin.Portals
                         }
                     }
 
-                    objPortalController.UpdatePortalInfo(_portalId,
-                                                         txtPortalName.Text,
-                                                         strLogo,
-                                                         txtFooterText.Text,
-                                                         datExpiryDate,
-                                                         optUserRegistration.SelectedIndex,
-                                                         optBanners.SelectedIndex,
-                                                         currencyCombo.SelectedItem.Value,
-                                                         Convert.ToInt32(cboAdministratorId.SelectedItem.Value),
-                                                         dblHostFee,
-                                                         dblHostSpace,
-                                                         intPageQuota,
-                                                         (int) intUserQuota,
-                                                         String.IsNullOrEmpty(processorCombo.SelectedValue) ? "" : processorCombo.SelectedItem.Text,
-                                                         txtUserId.Text,
-                                                         txtPassword.Text,
-                                                         txtDescription.Text,
-                                                         txtKeyWords.Text,
-                                                         strBackground,
-                                                         intSiteLogHistory,
-                                                         intSplashTabId,
-                                                         intHomeTabId,
-                                                         intLoginTabId,
-                                                         intRegisterTabId,
-                                                         intUserTabId,
-                                                         intSearchTabId,
-                                                         objPortal.DefaultLanguage,
-                                                         lblHomeDirectory.Text,
-                                                         SelectedCultureCode);
+                    PortalInfo portal = new PortalInfo
+                                            {
+                                                PortalID = _portalId,
+                                                PortalGroupID = objPortal.PortalGroupID,
+                                                PortalName = txtPortalName.Text,
+                                                LogoFile = strLogo,
+                                                FooterText = txtFooterText.Text,
+                                                ExpiryDate = datExpiryDate,
+                                                UserRegistration = optUserRegistration.SelectedIndex,
+                                                BannerAdvertising = optBanners.SelectedIndex,
+                                                Currency = currencyCombo.SelectedItem.Value,
+                                                AdministratorId = Convert.ToInt32(cboAdministratorId.SelectedItem.Value),
+                                                HostFee = (float) dblHostFee,
+                                                HostSpace = (int) dblHostSpace,
+                                                PageQuota = intPageQuota,
+                                                UserQuota = (int) intUserQuota,
+                                                PaymentProcessor =
+                                                    String.IsNullOrEmpty(processorCombo.SelectedValue)
+                                                        ? ""
+                                                        : processorCombo.SelectedItem.Text,
+                                                ProcessorUserId = txtUserId.Text,
+                                                ProcessorPassword = txtPassword.Text,
+                                                Description = txtDescription.Text,
+                                                KeyWords = txtKeyWords.Text,
+                                                BackgroundFile = strBackground,
+                                                SiteLogHistory = intSiteLogHistory,
+                                                SplashTabId = intSplashTabId,
+                                                HomeTabId = intHomeTabId,
+                                                LoginTabId = intLoginTabId,
+                                                RegisterTabId = intRegisterTabId,
+                                                UserTabId = intUserTabId,
+                                                SearchTabId = intSearchTabId,
+                                                DefaultLanguage = objPortal.DefaultLanguage,
+                                                HomeDirectory = lblHomeDirectory.Text,
+                                                CultureCode = SelectedCultureCode
+                                            };
+                    objPortalController.UpdatePortalInfo(portal);
+                    
                     if (!refreshPage)
                     {
                         refreshPage = (PortalSettings.DefaultAdminSkin == editSkinCombo.SelectedValue) || 

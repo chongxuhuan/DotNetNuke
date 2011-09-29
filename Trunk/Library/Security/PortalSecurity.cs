@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -72,7 +73,7 @@ namespace DotNetNuke.Security
 
         #endregion
 		
-		#region "Private Methods"
+		#region Private Methods
 
         ///-----------------------------------------------------------------------------
         /// <summary>
@@ -247,7 +248,7 @@ namespace DotNetNuke.Security
 		
 		#endregion
 		
-		#region "Public Methods"
+		#region Public Methods
 
         ///-----------------------------------------------------------------------------
         /// <summary>
@@ -295,7 +296,7 @@ namespace DotNetNuke.Security
         public string EncryptString(string message, string passphrase)
         {
             byte[] results;
-            System.Text.UTF8Encoding utf8 = new System.Text.UTF8Encoding();
+            UTF8Encoding utf8 = new UTF8Encoding();
 
             //hash the passphrase using MD5 to create 128bit byte array
             MD5CryptoServiceProvider hashProvider = new MD5CryptoServiceProvider();
@@ -328,7 +329,7 @@ namespace DotNetNuke.Security
         public string DecryptString(string message, string passphrase)
         {
             byte[] results;
-            System.Text.UTF8Encoding utf8 = new System.Text.UTF8Encoding();
+            UTF8Encoding utf8 = new UTF8Encoding();
 
             //hash the passphrase using MD5 to create 128bit byte array
             MD5CryptoServiceProvider hashProvider = new MD5CryptoServiceProvider();
@@ -483,7 +484,7 @@ namespace DotNetNuke.Security
                 }
                 else
                 {
-                    RemoveAngleBrackets = bool.Parse(Config.GetSetting("RemoveAngleBrackets"));
+                    RemoveAngleBrackets = Boolean.Parse(Config.GetSetting("RemoveAngleBrackets"));
                 }
                 if (RemoveAngleBrackets)
                 {
@@ -514,8 +515,36 @@ namespace DotNetNuke.Security
 
         public void SignOut()
         {
+            PortalSettings settings = PortalController.GetCurrentPortalSettings();
+
 			//Log User Off from Cookie Authentication System
-            FormsAuthentication.SignOut();
+            if (PortalController.IsMemberOfPortalGroup(settings.PortalId))
+            {
+                //clear custom domain cookie
+
+                //Create a new Cookie
+                string str = String.Empty;
+                if (HttpContext.Current.Request.Browser["supportsEmptyStringInCookieValue"] == "false")
+                {
+                    str = "NoCookie";
+                }
+
+                var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, str)
+                {
+                    Expires = new DateTime(1999, 1, 1),
+                    Domain = GetCookieDomain(settings.PortalId),
+                    Path = FormsAuthentication.FormsCookiePath,
+                    Secure = FormsAuthentication.RequireSSL
+                    
+                };
+
+                HttpContext.Current.Response.Cookies.Set(authCookie);
+            }
+            else
+            {
+                FormsAuthentication.SignOut();
+            }
+
 			//Remove current userinfo from context items
 			HttpContext.Current.Items.Remove("UserInfo");
 
@@ -537,7 +566,7 @@ namespace DotNetNuke.Security
 		
 		#endregion
 		
-		#region "Public Shared/Static Methods"
+		#region Public Shared/Static Methods
 
         public static void ClearRoles()
         {
@@ -569,6 +598,36 @@ namespace DotNetNuke.Security
             }
         }
 
+        public static string GetCookieDomain(int portalId)
+        {
+            string cookieDomain = String.Empty;
+            if (PortalController.IsMemberOfPortalGroup(portalId))
+            {
+                //set cookie domain for portal group
+                PortalGroupController groupController = new PortalGroupController();
+                PortalGroupInfo group = groupController.GetPortalGroups().Where(
+                    p => p.MasterPortalId == PortalController.GetEffectivePortalId(portalId)).SingleOrDefault();
+                if (@group != null)
+                {
+                    cookieDomain = @group.AuthenticationDomain;
+                }
+
+                if (String.IsNullOrEmpty(cookieDomain))
+                {
+                    cookieDomain = FormsAuthentication.CookieDomain;
+                }
+            }
+            else
+            {
+                //set cookie domain to be consistent with domain specification in web.config
+                cookieDomain = FormsAuthentication.CookieDomain;
+            }
+
+
+            return cookieDomain;
+        }
+
+
         public static bool IsInRole(string role)
         {
             UserInfo objUserInfo = UserController.GetCurrentUserInfo();
@@ -599,7 +658,7 @@ namespace DotNetNuke.Security
                     //permissions strings are encoded with Deny permissions at the beginning and Grant permissions at the end for optimal performance
                     foreach (string role in roles.Split(new[] {';'}))
                     {
-                        if (!string.IsNullOrEmpty(role))
+                        if (!String.IsNullOrEmpty(role))
                         {
 							//Deny permission
                             if (role.StartsWith("!"))
@@ -634,7 +693,7 @@ namespace DotNetNuke.Security
 		
 		#endregion
 		
-		#region "Obsoleted Methods, retained for Binary Compatability"
+		#region Obsoleted Methods, retained for Binary Compatability
 
         [Obsolete("Deprecated in DNN 5.0.  Please use HasModuleAccess(SecurityAccessLevel.Edit, PortalSettings, ModuleInfo, Username)")]
         public static bool HasEditPermissions(int ModuleId)
@@ -680,7 +739,7 @@ namespace DotNetNuke.Security
             return TabPermissionController.CanAdminPage();
         }
 
-        [Obsolete("This function has been replaced by UserController.UserLogin")]
+        [Obsolete("Deprecated in DNN 4.3. This function has been replaced by UserController.UserLogin")]
         public int UserLogin(string Username, string Password, int PortalID, string PortalName, string IP, bool CreatePersistentCookie)
         {
             UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;

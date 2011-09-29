@@ -144,8 +144,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DebugLaunch.txt" />
     <Content Include="Dependencies\DotNetNuke.Log4Net.dll" />
     <Content Include="HTMLPage1.htm" />
+    <Content Include="Scripts\ResetDatabase.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DotNetNuke.Integrity.DatabaseBuilder\DotNetNuke.Integrity.DatabaseBuilder.csproj">
@@ -157,6 +159,7 @@
       <Name>DotNetNuke.Integrity</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -879,7 +879,7 @@ namespace DotNetNuke.Services.Install
 
                     //Log user in to site
                     UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
-                    UserController.UserLogin(-1, usrAdmin.UserName, usrAdmin.Password, "", "", "", ref loginStatus, false);
+                    UserController.UserLogin(PortalId, usrAdmin.UserName, usrAdmin.Password, "", "", "", ref loginStatus, false);
 
                     Config.Touch();
                     Response.Redirect("~/Default.aspx", true);

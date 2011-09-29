@@ -512,6 +512,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             table.Columns.Add("MasterPortalID", typeof(int));
             table.Columns.Add("PortalGroupName", typeof(string));
             table.Columns.Add("PortalGroupDescription", typeof(string));
+            table.Columns.Add("AuthenticationDomain", typeof(string));
             table.Columns.Add("CreatedByUserID", typeof(int));
             table.Columns.Add("CreatedOnDate", typeof(DateTime));
             table.Columns.Add("LastModifiedByUserID", typeof(int));
@@ -551,6 +552,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             {
                 string name = (count == 1) ? Constants.PORTALGROUP_ValidName : GetName(i);
                 string description = (count == 1) ? Constants.PORTALGROUP_ValidDescription : GetDescription(i);
+                const string domain = "mydomain.com";
                 int userId = (startUserId == Null.NullInteger) ? Constants.USER_ValidId + i : startUserId;
 
                 table.Rows.Add(new object[]
@@ -558,7 +560,8 @@ namespace DotNetNuke.Tests.Core.Controllers
                                        i,
                                        -1,
                                        name, 
-                                       description, 
+                                       description,
+                                       domain,
                                        userId
                                    });
             }

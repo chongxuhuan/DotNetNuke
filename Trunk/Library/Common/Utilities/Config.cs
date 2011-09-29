@@ -288,6 +288,25 @@ namespace DotNetNuke.Common.Utilities
             return objectQualifier;
         }
 
+        public static int GetAuthCookieTimeout()
+        {
+            XPathNavigator configNav = Load().CreateNavigator();
+            //Select the location node
+            XPathNavigator locationNav = configNav.SelectSingleNode("configuration/location");
+            XPathNavigator formsNav;
+            //Test for the existence of the location node if it exists then include that in the nodes of the XPath Query
+            if (locationNav == null)
+            {
+                formsNav = configNav.SelectSingleNode("configuration/system.web/authentication/forms");
+            }
+            else
+            {
+                formsNav = configNav.SelectSingleNode("configuration/location/system.web/authentication/forms");
+            }
+            return (formsNav != null) ? XmlUtils.GetAttributeValueAsInteger(formsNav, "timeout", 30) : 30; ;
+            
+        }
+
         /// <summary>
         ///   Get's optional persistent cookie timeout value from web.config
         /// </summary>
@@ -297,36 +316,13 @@ namespace DotNetNuke.Common.Utilities
         /// </remarks>
         public static int GetPersistentCookieTimeout()
         {
-            XPathNavigator configNav = Load().CreateNavigator();
-            //Select the location node
-            XPathNavigator locationNav = configNav.SelectSingleNode("configuration/location");
-            XPathNavigator formsNav;
-			//Test for the existence of the location node if it exists then include that in the nodes of the XPath Query
-            if (locationNav == null)
-            {
-                formsNav = configNav.SelectSingleNode("configuration/system.web/authentication/forms");
-            }
-            else
-            {
-                formsNav = configNav.SelectSingleNode("configuration/location/system.web/authentication/forms");
-            }
             int persistentCookieTimeout = 0;
             if (!String.IsNullOrEmpty(GetSetting("PersistentCookieTimeout")))
             {
                 persistentCookieTimeout = int.Parse(GetSetting("PersistentCookieTimeout"));
             }
-            if (persistentCookieTimeout == 0)
-            {
-                if (formsNav != null)
-                {
-                    persistentCookieTimeout = XmlUtils.GetAttributeValueAsInteger(formsNav, "timeout", 30);
-                }
-                else
-                {
-                    persistentCookieTimeout = 30;
-                }
-            }
-            return persistentCookieTimeout;
+
+            return (persistentCookieTimeout == 0) ? GetAuthCookieTimeout() : persistentCookieTimeout;
         }
 
         public static Provider GetProvider(string type, string name)

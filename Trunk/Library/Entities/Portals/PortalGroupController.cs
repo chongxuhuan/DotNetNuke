@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Security;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -146,6 +147,14 @@ namespace DotNetNuke.Entities.Portals
             Requires.NotNull("portalGroup", portalGroup);
             Requires.PropertyNotNegative("portalGroup", "PortalGroupId", portalGroup.PortalGroupId);
 
+            //Update portal
+            var portal = _portalController.GetPortal(portalGroup.MasterPortalId);
+            if (portal != null)
+            {
+                portal.PortalGroupID = -1;
+                _portalController.UpdatePortalInfo(portal);
+            }
+
             _dataService.DeletePortalGroup(portalGroup);
 
             ClearCache();
@@ -229,6 +238,5 @@ namespace DotNetNuke.Entities.Portals
         }
 
         #endregion
-
     }
 }

@@ -50,6 +50,8 @@ namespace DotNetNuke.Services.Mobile
 
         string GetRedirectUrlForIPhone();
 
+	    string GetRedirectUrlForIPad();
+
         string GetRedirectUrlForIE();
 
 	    string GetFullSiteUrl();

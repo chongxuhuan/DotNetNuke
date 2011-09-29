@@ -27,6 +27,7 @@
 		<div class="dnnFormItem">
 			<label></label>
 			<div id="emulator">
+				<div class="emulator_addr"></div>
 				<div class="dimension_h"></div>
 				<div class="dimension_v"></div>
 				<div class="emulator_c"><iframe id="emulator_viewer" name="emulator_viewer" scrolling="no" frameborder="0" src="about:blank"></iframe></div>

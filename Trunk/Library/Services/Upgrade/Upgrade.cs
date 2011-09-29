@@ -63,6 +63,7 @@ using DotNetNuke.Services.Installer.Packages;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.UI.Internals;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 using FileInfo = DotNetNuke.Services.FileSystem.FileInfo;
 using ModuleInfo = DotNetNuke.Entities.Modules.ModuleInfo;
@@ -2462,6 +2463,18 @@ namespace DotNetNuke.Services.Upgrade
 
         private static void UpgradeToVersion610()
         {
+            AddModuleCategories();
+
+            //update languages module
+            int moduleDefId = GetModuleDefinition("Languages", "Languages");
+            AddModuleControl(moduleDefId, "LocalizePages", "Localize Pages", "DesktopModules/Admin/Languages/LocalizePages.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Edit, 0, Null.NullString, true);
+
+            //add store control
+            moduleDefId = AddModuleDefinition("Extensions", "", "Extensions");
+            AddModuleControl(moduleDefId, "Store", "Store Details", "DesktopModules/Admin/Extensions/Store.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0);
+
+            EnableModalPopUps();
+
             var tabController = new TabController();
             var tab = tabController.GetTabByName("Portals", Null.NullInteger);
             tab.TabName = "Site Management";
@@ -3774,20 +3787,11 @@ namespace DotNetNuke.Services.Upgrade
         {
             try
             {
-                AddModuleCategories();
-
                 //Upgrade to .NET 3.5/4.0
                 TryUpgradeNETFramework();
 
-                //update languages module
-                int moduleDefId = GetModuleDefinition("Languages", "Languages");
-                AddModuleControl(moduleDefId, "LocalizePages", "Localize Pages", "DesktopModules/Admin/Languages/LocalizePages.ascx", "~/images/icon_language_32px.gif", SecurityAccessLevel.Edit, 0, Null.NullString, true);
-
-                //add store control
-                moduleDefId = AddModuleDefinition("Extensions", "", "Extensions");
-                AddModuleControl(moduleDefId, "Store", "Store Details", "DesktopModules/Admin/Extensions/Store.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0);
-
-                EnableModalPopUps();
+                //Update the version of the client resources - so the cache is cleared
+                ClientResourceManager.UpdateVersion();
             }
             catch (Exception ex)
             {

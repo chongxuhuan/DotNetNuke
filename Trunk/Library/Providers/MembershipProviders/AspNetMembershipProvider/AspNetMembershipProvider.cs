@@ -423,7 +423,7 @@ namespace DotNetNuke.Security.Membership
 
         private static UserInfo FillUserInfo(int portalId, IDataReader dr, bool closeDataReader)
         {
-            UserInfo objUserInfo = null;
+            UserInfo user = null;
             try
             {
                 //read datareader
@@ -442,9 +442,9 @@ namespace DotNetNuke.Security.Membership
                 }
                 if (bContinue)
                 {
-                    objUserInfo = new UserInfo
+                    user = new UserInfo
                     {
-                        PortalID = portalId,
+                        PortalID = Null.SetNullInteger(dr["PortalID"]),
                         IsSuperUser = Null.SetNullBoolean(dr["IsSuperUser"]),
                         IsDeleted = Null.SetNullBoolean(dr["IsDeleted"]),
                         UserID = Null.SetNullInteger(dr["UserID"]),
@@ -453,22 +453,27 @@ namespace DotNetNuke.Security.Membership
                         RefreshRoles = Null.SetNullBoolean(dr["RefreshRoles"]),
                         DisplayName = Null.SetNullString(dr["DisplayName"])
                     };
-                    objUserInfo.AffiliateID = Null.SetNullInteger(Null.SetNull(dr["AffiliateID"], objUserInfo.AffiliateID));
-                    objUserInfo.Username = Null.SetNullString(dr["Username"]);
-                    UserController.GetUserMembership(objUserInfo);
-                    objUserInfo.Email = Null.SetNullString(dr["Email"]);
-                    objUserInfo.Membership.UpdatePassword = Null.SetNullBoolean(dr["UpdatePassword"]);
-                    if (!objUserInfo.IsSuperUser)
+                    user.AffiliateID = Null.SetNullInteger(Null.SetNull(dr["AffiliateID"], user.AffiliateID));
+                    user.Username = Null.SetNullString(dr["Username"]);
+                    UserController.GetUserMembership(user);
+                    user.Email = Null.SetNullString(dr["Email"]);
+                    user.Membership.UpdatePassword = Null.SetNullBoolean(dr["UpdatePassword"]);
+                    if (!user.IsSuperUser)
                     {
-                        objUserInfo.Membership.Approved = Null.SetNullBoolean(dr["Authorised"]);
+                        user.Membership.Approved = Null.SetNullBoolean(dr["Authorised"]);
                     }
+                    if (user.PortalID == Null.NullInteger)
+                    {
+                        user.PortalID = portalId;
+                    }
+
                 }
             }
             finally
             {
                 CBO.CloseDataReader(dr, closeDataReader);
             }
-            return objUserInfo;
+            return user;
         }
 
         private static void FillUserMembership(MembershipUser aspNetUser, UserInfo user)
@@ -668,26 +673,32 @@ namespace DotNetNuke.Security.Membership
                 UserInfo objVerifyUser = GetUserByUserName(Null.NullInteger, user.Username);
                 if (objVerifyUser != null)
                 {
-                    if (objVerifyUser.IsSuperUser)
+                    //the username exists so we should now verify the password
+                    if (ValidateUser(user.Username, user.Membership.Password))
                     {
-                        createStatus = UserCreateStatus.UserAlreadyRegistered;
-                    }
-                    else
-                    {
-						//the username exists so we should now verify the password
-                        if (ValidateUser(user.Username, user.Membership.Password))
+                        //check if user exists for the portal specified
+                        objVerifyUser = GetUserByUserName(user.PortalID, user.Username);
+                        if (objVerifyUser != null)
                         {
-                            //check if user exists for the portal specified
-                            objVerifyUser = GetUserByUserName(user.PortalID, user.Username);
-                            createStatus = (objVerifyUser != null)
-                                                ? UserCreateStatus.UserAlreadyRegistered 
-                                                : UserCreateStatus.AddUserToPortal;
+                            if (objVerifyUser.PortalID == user.PortalID)
+                            {
+                                createStatus = UserCreateStatus.UserAlreadyRegistered;
+                            }
+                            else
+                            {
+                                //SuperUser who is not part of portal
+                                createStatus = UserCreateStatus.AddUserToPortal;
+                            }
                         }
                         else
                         {
-							//not the same person - prevent registration
-                            createStatus = UserCreateStatus.UsernameAlreadyExists;
+                            createStatus = UserCreateStatus.AddUserToPortal;
                         }
+                    }
+                    else
+                    {
+                        //not the same person - prevent registration
+                        createStatus = UserCreateStatus.UsernameAlreadyExists;
                     }
                 }
                 else

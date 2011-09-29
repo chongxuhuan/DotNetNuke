@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -22,6 +24,8 @@ namespace DotNetNuke.MSBuild.Tasks
         public string PhysicalPath { get; set; }
         public string WebsiteName { get; set; }
         public string AppPool { get; set; }
+        public string DatabaseName { get; set; }
+        public string DatabaseServer { get; set; }
         bool autoFailed;
         [Output]
         public string Error { get; set; }
@@ -34,7 +38,6 @@ namespace DotNetNuke.MSBuild.Tasks
                 {
                     iisMgr.DeleteVirtualDirectory("localhost", WebsiteName);
                 }
-
                 iisMgr.CreateVirtualDirectory(WebsiteName, PhysicalPath, AppPool);
                 DirectoryManager.SetFolderPermissions("NETWORK SERVICE", new DirectoryInfo(PhysicalPath));
                 autoFailed = false;
@@ -52,7 +55,6 @@ namespace DotNetNuke.MSBuild.Tasks
                 LogFormat("Message", "-----------------------------");
                 LogFormat("Message", "DNN INSTALL LOGGING INFO");
                 LogFormat("Message", "-----------------------------");
-                iisMgr.DeleteVirtualDirectory("localhost", WebsiteName);
                 if (autoFailed)
                 {
                     LogFormat("Error", data);
@@ -68,6 +70,7 @@ namespace DotNetNuke.MSBuild.Tasks
                 return false;
             }
         }
+
         private void LogFormat(string level, string message, params object[] args)
         {
             if (BuildEngine != null)

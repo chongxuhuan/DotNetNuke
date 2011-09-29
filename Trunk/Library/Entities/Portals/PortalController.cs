@@ -2147,6 +2147,14 @@ namespace DotNetNuke.Entities.Portals
             return isChild;
         }
 
+        public static bool IsMemberOfPortalGroup(int portalId)
+        {
+            var portalController = new PortalController();
+            var portal = portalController.GetPortal(portalId);
+
+            return (portal.PortalGroupID > Null.NullInteger);
+        }
+
         /// <summary>
         /// Deletes the portal setting.
         /// </summary>

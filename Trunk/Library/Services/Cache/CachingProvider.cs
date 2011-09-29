@@ -36,6 +36,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 #endregion
 
@@ -131,7 +132,7 @@ namespace DotNetNuke.Services.Cache
 		
 	#endregion
 
-	#region "Private Methods"
+	    #region "Private Methods"
 	
         private void ClearCacheInternal(string prefix, bool clearRuntime)
         {
@@ -151,6 +152,12 @@ namespace DotNetNuke.Services.Cache
                     }
                 }
             }
+            if (prefix == "DNN_")
+            {
+                //Invalidate the client resources
+                ClientResourceManager.UpdateVersion();
+            }
+
         }
 
         private void ClearCacheKeysByPortalInternal(int portalId, bool clearRuntime)
@@ -198,6 +205,8 @@ namespace DotNetNuke.Services.Cache
             ClearFolderCacheInternal(-1, clearRuntime);
             ClearDesktopModuleCacheInternal(-1, clearRuntime);
             ClearCacheKeysByPortalInternal(-1, clearRuntime);
+
+
         }
 
         private void ClearModuleCacheInternal(int tabId, bool clearRuntime)

@@ -25,6 +25,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+
+using DotNetNuke.Common;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals;
@@ -286,6 +288,48 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 		#endregion
 
+		#region "Get FullSite Url Tests"
+
+		[Test]
+        public void RedirectionController_GetFullSiteUrl_With_NoRedirections()
+		{
+			var url = _redirectionController.GetFullSiteUrl(Portal0, HomePageOnPortal0);
+
+			Assert.AreEqual(string.Empty, url);
+		}
+
+		[Test]
+        public void RedirectionController_GetFullSiteUrl_When_Redirect_Between_Different_Portals()
+		{
+			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, -1, EnabledFlag, (int)TargetType.Portal, "1", 1);
+
+			var url = _redirectionController.GetFullSiteUrl(Portal1, HomePageOnPortal1);
+			
+			Assert.AreEqual(Globals.AddHTTP(PortalAlias0), url);
+		}
+
+		[Test]
+		public void RedirectionController_GetFullSiteUrl_When_Redirect_In_Same_Portal()
+		{
+			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, HomePageOnPortal0, EnabledFlag, (int)TargetType.Tab, AnotherPageOnSamePortal, 1);
+
+			var url = _redirectionController.GetFullSiteUrl(Portal1, AnotherPageOnSamePortal);
+
+			//Assert.AreEqual(string.Empty, url);
+		}
+
+		[Test]
+		public void RedirectionController_GetFullSiteUrl_When_Redirect_To_DifferentUrl()
+		{
+			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, HomePageOnPortal0, EnabledFlag, (int)TargetType.Url, ExternalSite, 1);
+
+			var url = _redirectionController.GetFullSiteUrl(Portal1, AnotherPageOnSamePortal);
+
+			Assert.AreEqual(string.Empty, url);
+		}
+
+		#endregion
+
 		#endregion
 
 		#region "Private Methods"
@@ -437,6 +481,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			_dataProvider.Setup(d => d.GetTabs(It.IsAny<int>())).Returns<int>(GetTabsCallBack);
 			_dataProvider.Setup(d => d.GetTabModules(It.IsAny<int>())).Returns<int>(GetTabModulesCallBack);
 			_dataProvider.Setup(d => d.GetPortalSettings(It.IsAny<int>(), It.IsAny<string>())).Returns<int, string>(GetPortalSettingsCallBack);
+			_dataProvider.Setup(d => d.GetAllRedirections()).Returns(GetAllRedirectionsCallBack);
 
 			var portalDataService = MockComponentProvider.CreateNew<DotNetNuke.Entities.Portals.Data.IDataService>();
 			portalDataService.Setup(p => p.GetPortalGroups()).Returns(GetPortalGroupsCallBack);
@@ -585,7 +630,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 			var cols = new string[]
 			           	{
-							"PortalGroupID","MasterPortalID","PortalGroupName","PortalGroupDescription","CreatedByUserID","CreatedOnDate","LastModifiedByUserID","LastModifiedOnDate"
+							"PortalGroupID","MasterPortalID","PortalGroupName","PortalGroupDescription","AuthenticationDomain","CreatedByUserID","CreatedOnDate","LastModifiedByUserID","LastModifiedOnDate"
 			           	};
 
 			foreach (var col in cols)
@@ -593,7 +638,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 				table.Columns.Add(col);
 			}
 
-			table.Rows.Add(1, 0, "Portal Group", "", -1, DateTime.Now, -1, DateTime.Now);
+			table.Rows.Add(1, 0, "Portal Group", "", "", -1, DateTime.Now, -1, DateTime.Now);
 
 			return table.CreateDataReader();
 		}
@@ -621,6 +666,11 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
             }
             
             return clientCapability;
+		}
+
+		private IDataReader GetAllRedirectionsCallBack()
+		{
+			return _dtRedirections.CreateDataReader();
 		}
 
 		private void PrepareData()

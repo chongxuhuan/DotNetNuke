@@ -4,6 +4,7 @@
 		var hDimension = this.find(".dimension_h");
 		var vDimension = this.find(".dimension_v");
 		var viewContainer = this.find(".emulator_c");
+		var viewAddr = this.find(".emulator_addr");
 		var viewer = this.find("iframe");
 		var sendAgent = true;
 
@@ -19,6 +20,7 @@
 
 				hDimension.width(width);
 				vDimension.height(height);
+				viewAddr.width(width);
 
 				var hContentWidth = width - hDimension.find(".left").width() - hDimension.find(".right").width();
 				hDimension.find(".center").width(hContentWidth).html(width + "px");
@@ -47,6 +49,8 @@
 				var height = body.scrollHeight;
 
 				$(this).width(width).height(height);
+
+				viewAddr.html(frameWin.dnnPreviewUrl);
 
 				viewContainer.trigger("resize");
 			});

@@ -616,10 +616,10 @@
     <value>Redirect</value>
   </data>
   <data name="plAutoAddPortalAlias.Help" xml:space="preserve">
-    <value>This setting determines how the site responds to urls which are mapped to the site but are not currently in the list of aliases. Setting is effective in single-portal configuration only. Select this option to automatically map new url.</value>
+    <value>This setting determines how the site responds to urls which are mapped to the site but are not currently in the list of aliases. Setting is effective in single-siteconfiguration only. Select this option to automatically map new url.</value>
   </data>
   <data name="plAutoAddPortalAlias.Text" xml:space="preserve">
-    <value>Auto Add Portal Alias:</value>
+    <value>Auto Add Site Alias:</value>
   </data>
   <data name="defaultAliasDropDownLabel.Help" xml:space="preserve">
     <value>The default alias is used in conjunction with the Mapping Mode.  If the mode is set to Canonical then the default alias is used as the canonical alias for search engines.  If the mode is redirect then the default alias is used as the permanent redirect.</value>

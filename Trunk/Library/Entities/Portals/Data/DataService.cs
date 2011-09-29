@@ -43,6 +43,7 @@ namespace DotNetNuke.Entities.Portals.Data
                                                portalGroup.PortalGroupName,
                                                portalGroup.PortalGroupDescription,
                                                portalGroup.MasterPortalId,
+                                               portalGroup.AuthenticationDomain,
                                                createdByUserId);
         }
 
@@ -62,6 +63,7 @@ namespace DotNetNuke.Entities.Portals.Data
                                             portalGroup.PortalGroupId,
                                             portalGroup.PortalGroupName,
                                             portalGroup.PortalGroupDescription,
+                                            portalGroup.AuthenticationDomain,
                                             lastModifiedByUserId);
         }
     }

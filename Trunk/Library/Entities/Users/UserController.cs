@@ -352,10 +352,7 @@ namespace DotNetNuke.Entities.Users
 
         private static bool IsMemberOfPortalGroup(int portalId)
         {
-            var portalController = new PortalController();
-            var portal = portalController.GetPortal(portalId);
-
-            return (portal.PortalGroupID > Null.NullInteger);
+            return PortalController.IsMemberOfPortalGroup(portalId);
         }
 
         private static void SendDeleteEmailNotifications(UserInfo user, PortalSettings portalSettings)
@@ -385,27 +382,32 @@ namespace DotNetNuke.Entities.Users
 
         private static void SetAuthenticationCookie(UserInfo user, bool createPersistentCookie)
         {
-            FormsAuthentication.SetAuthCookie(user.Username, createPersistentCookie);
-
-            //check if cookie is persistent, and user has supplied custom value for expiration
-            var persistentCookieTimeout = Config.GetPersistentCookieTimeout();
-            if (createPersistentCookie)
+            if (IsMemberOfPortalGroup(user.PortalID) || createPersistentCookie)
             {
-                //manually create authentication cookie    
+                //Create a custom auth cookie
+
                 //first, create the authentication ticket     
-                var authenticationTicket = new FormsAuthenticationTicket(user.Username, true, persistentCookieTimeout);
+                FormsAuthenticationTicket authenticationTicket = createPersistentCookie 
+                                                                     ? new FormsAuthenticationTicket(user.Username, true, Config.GetPersistentCookieTimeout()) 
+                                                                     : new FormsAuthenticationTicket(user.Username, false, Config.GetAuthCookieTimeout());
+
                 //encrypt it     
                 var encryptedAuthTicket = FormsAuthentication.Encrypt(authenticationTicket);
+
+                //Create a new Cookie
                 var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedAuthTicket)
-                {
-                    Expires = authenticationTicket.Expiration,
-                    Domain = FormsAuthentication.CookieDomain,
-                    Path = FormsAuthentication.FormsCookiePath
-                };
-                //set cookie expiration to correspond with ticket expiration.  
-                //set cookie domain to be consistent with domain specification in web.config
-                //set cookie path to be consistent with path specification in web.config
+                                            {
+                                                Expires = authenticationTicket.Expiration,
+                                                Domain = PortalSecurity.GetCookieDomain(user.PortalID),
+                                                Path = FormsAuthentication.FormsCookiePath,
+                                                Secure = FormsAuthentication.RequireSSL
+                                            };
+                
                 HttpContext.Current.Response.Cookies.Set(authCookie);
+            }
+            else
+            {
+                FormsAuthentication.SetAuthCookie(user.Username, false);
             }
         }
 
