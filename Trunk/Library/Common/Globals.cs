@@ -1742,30 +1742,21 @@ namespace DotNetNuke.Common
         /// <returns>obfuscated sensitive data by hustling ASCII characters</returns>
         public static string CloakText(string PersonalInfo)
         {
-            if (PersonalInfo != null)
+            if (PersonalInfo == null)
             {
-                var sb = new StringBuilder();
-                char[] chars = PersonalInfo.ToCharArray();
-                foreach (char chr in chars)
-                {
-                    sb.Append(((int)chr).ToString());
-                }
-                if (sb.Length > 0)
-                {
-                    sb.Remove(sb.Length - 1, 1);
-                }
-                var sbScript = new StringBuilder();
-                sbScript.Append(Environment.NewLine + "<script type=\"text/javascript\">" + Environment.NewLine);
-                sbScript.Append("//<![CDATA[" + Environment.NewLine);
-                sbScript.Append("   document.write(String.fromCharCode(" + sb + "))" + Environment.NewLine);
-                sbScript.Append("//]]>" + Environment.NewLine);
-                sbScript.Append("</script>" + Environment.NewLine);
-                return sbScript.ToString();
+		        return Null.NullString;
             }
-            else
-            {
-                return Null.NullString;
-            }
+
+            const string Script = @"
+                <script type=""text/javascript"">
+                    //<![CDATA[
+                        document.write(String.fromCharCode({0}))
+                    //]]>
+                </script>
+            ";              
+
+            var characterCodes = PersonalInfo.Select(ch => ((int)ch).ToString(CultureInfo.InvariantCulture));
+            return string.Format(Script, string.Join(",", characterCodes.ToArray()));
         }
 
         /// <summary>

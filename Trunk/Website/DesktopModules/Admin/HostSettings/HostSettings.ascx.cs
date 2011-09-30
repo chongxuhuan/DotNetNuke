@@ -210,7 +210,6 @@ namespace DotNetNuke.Modules.Admin.Host
             {
                 cboCompression.Items.FindByValue("0").Selected = true;
             }
-            chkWhitespace.Checked = Entities.Host.Host.WhitespaceFilter;
 
             string filePath = Globals.ApplicationMapPath + "\\Compression.config";
             if (File.Exists(filePath))
@@ -221,7 +220,6 @@ namespace DotNetNuke.Modules.Admin.Host
                 {
                     txtExcludedPaths.Text += nav.Value.ToLower() + Environment.NewLine;
                 }
-                txtWhitespaceFilter.Text = doc.CreateNavigator().SelectSingleNode("compression/whitespace").Value;
             }
         }
 
@@ -642,7 +640,6 @@ namespace DotNetNuke.Modules.Admin.Host
                     XmlUtils.AppendElement(ref xmlCompression, nodeExcludedPaths, "path", strItem.Trim(), false);
                 }
             }
-            XmlUtils.AppendElement(ref xmlCompression, nodeRoot, "whitespace", txtWhitespaceFilter.Text, false, true);
             xmlCompression.AppendChild(nodeRoot);
             XmlDeclaration xmlDeclaration = xmlCompression.CreateXmlDeclaration("1.0", "utf-8", null);
             xmlCompression.InsertBefore(xmlDeclaration, nodeRoot);
@@ -772,7 +769,6 @@ namespace DotNetNuke.Modules.Admin.Host
                         HostController.Instance.Update("PageCaching", cboPageCacheProvider.SelectedItem.Value, false);
                     }
                     HostController.Instance.Update("HttpCompression", cboCompression.SelectedItem.Value, false);
-                    HostController.Instance.Update("WhitespaceFilter", chkWhitespace.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("EnableModuleOnLineHelp", chkEnableHelp.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("EnableFileAutoSync", chkAutoSync.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("HelpURL", txtHelpURL.Text, false);

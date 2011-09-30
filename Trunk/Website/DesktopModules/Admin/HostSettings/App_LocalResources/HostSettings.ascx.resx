@@ -841,7 +841,7 @@
     <value>Check this to enable passing the users current culture allowing for dynamic portal and content localization</value>
   </data>
   <data name="plContentLocalization.Text" xml:space="preserve">
-    <value>Enable Content Localization?</value>
+    <value>Allow Content Localization?</value>
   </data>
   <data name="PageCacheProvider.Help" xml:space="preserve">
     <value>Select the default Page Caching Provider.  The caching provider must be enabled by setting the cache timeout on each page.</value>

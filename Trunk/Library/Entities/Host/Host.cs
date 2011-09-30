@@ -1320,25 +1320,6 @@ namespace DotNetNuke.Entities.Host
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        ///   Gets whether the Whitespace Filter is Enabled
-        /// </summary>
-        /// <remarks>
-        ///   Defaults to False
-        /// </remarks>
-        /// <history>
-        ///   [cnurse]	01/28/2008   Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static bool WhitespaceFilter
-        {
-            get
-            {
-                return HostController.Instance.GetBoolean("WhitespaceFilter", false);
-            }
-        }
-
         /// <summary>
         ///   Gets whether to use the minified or debug version of the jQuery scripts
         /// </summary>
@@ -1549,6 +1530,16 @@ namespace DotNetNuke.Entities.Host
                 return HostController.Instance.GetBoolean("EnableAJAX", true);
             }
         }
+
+        [Obsolete("Deprecated in DotNetNuke 6.1")]
+        public static bool WhitespaceFilter
+        {
+            get
+            {
+                return false;
+            }
+        }
+
 
         #endregion
     }

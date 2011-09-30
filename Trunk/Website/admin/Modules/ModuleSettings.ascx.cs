@@ -125,13 +125,6 @@ namespace DotNetNuke.Modules.Admin.Modules
 
         #region Private Methods
         
-        private void DisableHostAdminFunctions()
-        {
-            chkNewTabs.Enabled = false;
-            chkDefault.Enabled = false;
-            chkAllModules.Enabled = false;
-        }
-
         /// <summary>
         /// BindData loads the settings from the Database
         /// </summary>
@@ -158,6 +151,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                 }
                 rowTab.Visible = cboTab.Items.Count != 1;
                 chkAllTabs.Checked = Module.AllTabs;
+                trnewPages.Visible = chkAllTabs.Checked;
                 cboVisibility.SelectedIndex = (int)Module.Visibility;
                 chkAdminBorder.Checked = Settings["hideadminborder"] != null ? bool.Parse(Settings["hideadminborder"].ToString()) : false;
 
@@ -323,7 +317,7 @@ namespace DotNetNuke.Modules.Admin.Modules
             base.OnInit(e);
 
             jQuery.RequestDnnPluginsRegistration();
-            DisableHostAdminFunctions();
+
             var objModules = new ModuleController();
             ModuleControlInfo objModuleControlInfo;
 
@@ -443,8 +437,9 @@ namespace DotNetNuke.Modules.Admin.Modules
                     //tab administrators can only manage their own tab
                     if (!TabPermissionController.CanAdminPage())
                     {
-                        chkAllModules.Enabled = false;
+                        chkNewTabs.Enabled = false;
                         chkDefault.Enabled = false;
+                        chkAllModules.Enabled = false;
                         cboTab.Enabled = false;
                     }
                     if (_moduleId != -1)
@@ -567,6 +562,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                     if (!TabPermissionController.CanAdminPage())
                     {
                         chkAllTabs.Enabled = false;
+                        chkNewTabs.Enabled = false;
                         chkDefault.Enabled = false;
                         chkAllModules.Enabled = false;
                         cboTab.Enabled = false;

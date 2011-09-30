@@ -91,7 +91,6 @@
     <Compile Include="Compression\Filters\DeflateFilter.cs" />
     <Compile Include="Compression\Filters\GZipFilter.cs" />
     <Compile Include="Compression\Filters\HttpOutputFilter.cs" />
-    <Compile Include="Compression\Filters\WhiteSpaceFilter.cs" />
     <Compile Include="RequestFilter\RequestFilterModule.cs" />
     <Compile Include="RequestFilter\RequestFilterRule.cs" />
     <Compile Include="RequestFilter\Config\Enums.cs" />

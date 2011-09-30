@@ -35,6 +35,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
@@ -1360,6 +1361,11 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 ClientAPI.RegisterClientVariable(Page, "UCPrefixName", DNNTree.UniqueID.Replace(DNNTree.ID, ""), true);
 
                 DisabledButtons = DNNTree.IsDownLevel;
+
+                if(Host.EnableFileAutoSync)
+                {
+                    FolderManager.Instance.Synchronize(FolderPortalID, "", true, true);
+                }
 
                 if (IsHostMenu)
                 {

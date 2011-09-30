@@ -24,8 +24,6 @@ namespace DotNetNuke.MSBuild.Tasks
         public string PhysicalPath { get; set; }
         public string WebsiteName { get; set; }
         public string AppPool { get; set; }
-        public string DatabaseName { get; set; }
-        public string DatabaseServer { get; set; }
         bool autoFailed;
         [Output]
         public string Error { get; set; }

@@ -411,10 +411,6 @@
                         <asp:ListItem resourcekey="GZip" Value="1" />
                     </asp:DropDownList>
                 </div>
-                <div class="dnnFormItem">
-                    <dnn:Label ID="plWhitespace" ControlName="chkWhitespace" runat="server" />
-                    <asp:CheckBox ID="chkWhitespace" runat="server" />
-                </div>
             </fieldset>
             <h2 id="Panel-Compression" class="dnnFormSectionHead">
                 <a href="#" class="">
@@ -422,13 +418,7 @@
             <fieldset>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plExcludedPaths" runat="server" ControlName="txtExcludedPaths" />
-                    <asp:TextBox ID="txtExcludedPaths" runat="server" MaxLength="256" Width="300" TextMode="MultiLine"
-                        Rows="3" />
-                </div>
-                <div class="dnnFormItem">
-                    <dnn:Label ID="plWhitespaceFilter" runat="server" ControlName="txtWhitespaceFilter" />
-                    <asp:TextBox ID="txtWhitespaceFilter" runat="server" MaxLength="256" Width="300"
-                        TextMode="MultiLine" Rows="3" />
+                    <asp:TextBox ID="txtExcludedPaths" runat="server" MaxLength="256" Width="300" TextMode="MultiLine" Rows="3" />
                 </div>
             </fieldset>
             <h2 id="Panel-JQuery" class="dnnFormSectionHead">

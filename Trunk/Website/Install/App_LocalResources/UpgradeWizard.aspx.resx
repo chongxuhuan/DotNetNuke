@@ -118,7 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BestPractices.Text" xml:space="preserve">
-    <value>Israel to provide some Best Practices text - PRD just says mention some best practices.</value>
+    <value>You are about to upgrade your website to a more recent version of the DotNetNuke application. Applying upgrades on a consistent basis is the best way to ensure that you are protecting the integrity of your investment and the security of your users and assets. Before proceeding with the automated upgrade process please ensure that:
+&lt;ul&gt;
+&lt;li&gt;you have made plans to first attempt this process in a staging environment
+&lt;li&gt;you have documented your current installation characteristics including doing research on the compatibility of any third party modules which you may be using
+&lt;li&gt;you have created the necessary backups of your environment so that you will be able to restore your website in the event of an unexpected upgrade failure.
+&lt;/ul&gt;</value>
   </data>
   <data name="ChooseLanguage.Text" xml:space="preserve">
     <value>Choose Language:</value>

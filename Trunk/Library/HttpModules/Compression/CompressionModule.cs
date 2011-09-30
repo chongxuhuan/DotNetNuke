@@ -159,16 +159,9 @@ namespace DotNetNuke.HttpModules.Compression
                 {
                     return;
                 }
-                var compress = true;
                 if (settings.PreferredAlgorithm == Algorithms.None)
                 {
-                    compress = false;
-
-                    //Terminate processing if both compression and whitespace handling are disabled
-                    if (!settings.Whitespace)
-                    {
-                        return;
-                    }
+                    return;
                 }
                 var acceptedTypes = app.Request.Headers["Accept-Encoding"];
                 if (settings.IsExcludedPath(realPath) || acceptedTypes == null)
@@ -186,39 +179,17 @@ namespace DotNetNuke.HttpModules.Compression
                 //compression by CompressionLevel, Path, or MimeType
                 app.Response.Cache.VaryByHeaders["Accept-Encoding"] = true;
                 CompressingFilter filter = null;
-                if (compress)
-                {
-                    //the actual types could be , delimited.  split 'em out.
-                    var types = acceptedTypes.Split(',');
-                    filter = GetFilterForScheme(types, app.Response.Filter, settings);
-                    //Add the headers - we do this now - becuase if Output Caching is enabled we need to
-                    //add the Headers regardless of whether compresion actually occurs in this request.
-                    filter.WriteHeaders();
-                }
-				if (!isOutputCached)
+                var types = acceptedTypes.Split(',');
+                filter = GetFilterForScheme(types, app.Response.Filter, settings);
+                //Add the headers - we do this now - becuase if Output Caching is enabled we need to
+                //add the Headers regardless of whether compresion actually occurs in this request.
+                filter.WriteHeaders();
+                if (!isOutputCached)
 				{
-					if (filter == null)
-					{
-						if (settings.Whitespace)
-						{
-							app.Response.Filter = new WhitespaceFilter(app.Response.Filter, settings.Reg);
-						}
-						else
-						{
-							return;
-						}
-					}
-					else
-					{
-						if (settings.Whitespace)
-						{
-							app.Response.Filter = new WhitespaceFilter(filter, settings.Reg);
-						}
-						else
-						{
-							app.Response.Filter = filter;
-						}
-					}
+				    if (filter != null)
+				    {
+				        app.Response.Filter = filter;
+				    }
 				}
             }
         }

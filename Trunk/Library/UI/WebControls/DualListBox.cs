@@ -105,6 +105,14 @@ namespace DotNetNuke.UI.WebControls
 
         public bool ShowRemoveAllButton { get; set; }
 
+        protected override HtmlTextWriterTag TagKey
+        {
+            get
+            {
+                return HtmlTextWriterTag.Div;
+            }
+        }
+
 		#region Style Properties
 
         /// -----------------------------------------------------------------------------

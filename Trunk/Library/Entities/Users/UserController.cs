@@ -485,12 +485,12 @@ namespace DotNetNuke.Entities.Users
         /// <param name="user">The user to copy</param>
         /// <param name="portal">The destination portal</param>
         /// <param name="deleteUser">A flag that indicates whether to delete the original user</param>
-        public static void CopyUserToPortal(UserInfo user, PortalInfo portal, bool deleteUser)
+        public static void CopyUserToPortal(UserInfo user, PortalInfo portal, bool mergeUser, bool deleteUser)
         {
             //Check if user already exists in target portal
             UserInfo targetUser = GetUserById(portal.PortalID, user.UserID);
 
-            if (targetUser == null)
+            if (targetUser == null || !mergeUser)
             {
                 //Clone User
                 targetUser = new UserInfo
@@ -531,6 +531,9 @@ namespace DotNetNuke.Entities.Users
             }
             else
             {
+                //Set Portal ID to new Portal
+                targetUser.PortalID = portal.PortalID;
+
                 //Update Properties
                 targetUser.DisplayName = (String.IsNullOrEmpty(targetUser.DisplayName))
                                              ? user.DisplayName

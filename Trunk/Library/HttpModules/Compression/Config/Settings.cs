@@ -45,14 +45,11 @@ namespace DotNetNuke.HttpModules.Compression
     {
         private readonly StringCollection _excludedPaths;
         private Algorithms _preferredAlgorithm;
-        private Regex _reg;
-        private bool _whitespace;
 
         private Settings()
         {
             _preferredAlgorithm = Algorithms.None;
             _excludedPaths = new StringCollection();
-            _whitespace = false;
         }
 
         /// <summary>
@@ -78,28 +75,6 @@ namespace DotNetNuke.HttpModules.Compression
         }
 
         /// <summary>
-        /// The regular expression used for Whitespace removal
-        /// </summary>
-        public Regex Reg
-        {
-            get
-            {
-                return _reg;
-            }
-        }
-
-        /// <summary>
-        /// Determines if Whitespace filtering is enabled
-        /// </summary>
-        public bool Whitespace
-        {
-            get
-            {
-                return _whitespace;
-            }
-        }
-
-        /// <summary>
         /// Get the current settings from the xml config file
         /// </summary>
         public static Settings GetSettings()
@@ -112,7 +87,6 @@ namespace DotNetNuke.HttpModules.Compression
                 try
                 {
                     settings._preferredAlgorithm = (Algorithms) Host.HttpCompressionAlgorithm;
-                    settings._whitespace = Host.WhitespaceFilter;
                 }
                 catch (Exception e)
                 {
@@ -124,7 +98,6 @@ namespace DotNetNuke.HttpModules.Compression
                 //Create a FileStream for the Config file
                 var fileReader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 var doc = new XPathDocument(fileReader);
-                settings._reg = new Regex(doc.CreateNavigator().SelectSingleNode("compression/whitespace").Value);
                 foreach (XPathNavigator nav in doc.CreateNavigator().Select("compression/excludedPaths/path"))
                 {
                     settings._excludedPaths.Add(nav.Value.ToLower());

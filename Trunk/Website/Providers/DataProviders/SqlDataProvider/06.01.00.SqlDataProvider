@@ -1145,6 +1145,88 @@ AS
 	END
 
 GO
+
+/* Update AddUser Procedure */
+/****************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddUser]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddUser]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddUser]
+
+	@PortalID		int,
+	@Username		nvarchar(100),
+	@FirstName		nvarchar(50),
+	@LastName		nvarchar(50),
+	@AffiliateId    int,
+	@IsSuperUser    bit,
+	@Email          nvarchar(256),
+	@DisplayName    nvarchar(100),
+	@UpdatePassword	bit,
+	@Authorised		bit,
+	@CreatedByUserID int
+AS
+
+DECLARE @UserID int
+
+SELECT @UserID = UserID
+	FROM {databaseOwner}{objectQualifier}Users
+	WHERE  Username = @Username
+
+IF @UserID is null
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}Users (
+			Username,
+			FirstName, 
+			LastName, 
+			AffiliateId,
+			IsSuperUser,
+			Email,
+			DisplayName,
+			UpdatePassword,
+			CreatedByUserID,
+			CreatedOnDate,
+			LastModifiedByUserID,
+			LastModifiedOnDate
+		  )
+		VALUES (
+			@Username,
+			@FirstName, 
+			@LastName, 
+			@AffiliateId,
+			@IsSuperUser,
+			@Email,
+			@DisplayName,
+			@UpdatePassword,
+			@CreatedByUserID,
+			getdate(),
+			@CreatedByUserID,
+			getdate()
+		)
+
+		SELECT @UserID = SCOPE_IDENTITY()
+	END
+
+	IF not exists ( SELECT 1 FROM {databaseOwner}{objectQualifier}UserPortals WHERE UserID = @UserID AND PortalID = @PortalID )
+		BEGIN
+			INSERT INTO {databaseOwner}{objectQualifier}UserPortals (
+				UserID,
+				PortalID,
+				Authorised,
+				CreatedDate
+			)
+			VALUES (
+				@UserID,
+				@PortalID,
+				@Authorised,
+				getdate()
+			)
+		END
+
+SELECT @UserID
+
+GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

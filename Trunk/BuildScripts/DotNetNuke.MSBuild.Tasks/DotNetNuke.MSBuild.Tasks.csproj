@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="BuildSignatureDatabaseTask.cs" />
     <Compile Include="CodePlexDelete.cs" />
+    <Compile Include="DeleteIISSite.cs" />
     <Compile Include="DotNetNukeDeployWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
