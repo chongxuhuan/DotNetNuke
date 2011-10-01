@@ -1246,7 +1246,10 @@ namespace DotNetNuke.Entities.Portals
                             CopyPageTemplate("Default.page.template", mappedHomeDirectory);
 
                             // process zip resource file if present
-                            ProcessResourceFile(mappedHomeDirectory, templatePath + templateFile);
+                            if (File.Exists(templatePath + templateFile + ".resources"))
+                            {
+                                ProcessResourceFile(mappedHomeDirectory, templatePath + templateFile);
+                            }
                         }
                         catch (Exception Exc)
                         {
@@ -1607,6 +1610,10 @@ namespace DotNetNuke.Entities.Portals
             if ((defaultPortal.UserTabId != Null.NullInteger))
             {
                 targetPortal.UserTabId = tabCont.GetTabByCulture(defaultPortal.UserTabId, portalId, targetLocale).TabID;
+            }
+            if ((defaultPortal.SearchTabId != Null.NullInteger))
+            {
+                targetPortal.SearchTabId = tabCont.GetTabByCulture(defaultPortal.SearchTabId, portalId, targetLocale).TabID;
             }
 
             UpdatePortalInfo(targetPortal);
@@ -2090,7 +2097,7 @@ namespace DotNetNuke.Entities.Portals
 
         public static int GetEffectivePortalId(int portalId)
         {
-            if (portalId > Null.NullInteger)
+            if (portalId > Null.NullInteger && Globals.Status != Globals.UpgradeStatus.Upgrade)
             {
                 var portalController = new PortalController();
                 var portal = portalController.GetPortal(portalId);

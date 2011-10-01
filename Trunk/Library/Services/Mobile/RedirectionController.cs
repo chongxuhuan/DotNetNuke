@@ -46,34 +46,6 @@ namespace DotNetNuke.Services.Mobile
 	public class RedirectionController : IRedirectionController
 	{
 		#region "Public Methods"
-        public const String UserAgentIPhone = "Mozilla/5.0 (iPod; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7";
-        public const String UserAgentIPad = "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10";
-        public const string UserAgentMSIE9 = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)";
-
-        /// <summary>
-        /// Get Redirection Url based for IPhone.         
-        /// </summary>
-        public string GetRedirectUrlForIPhone()
-        {
-            return GetRedirectUrl(UserAgentIPhone);
-        }
-
-        /// <summary>
-        /// Get Redirection Url based for IPad.         
-        /// </summary>
-        public string GetRedirectUrlForIPad()
-        {
-            return GetRedirectUrl(UserAgentIPad);
-        }
-
-        /// <summary>
-        /// Get Redirection Url based for IE 9.         
-        /// </summary>
-        public string GetRedirectUrlForIE()
-        {
-            return GetRedirectUrl(UserAgentMSIE9);
-        }
-
         /// <summary>
         /// Get Redirection Url based on UserAgent.         
         /// </summary>
@@ -233,10 +205,7 @@ namespace DotNetNuke.Services.Mobile
                             var portalSettings = new PortalSettings(redirection.PortalId);
                             if (portalSettings.HomeTabId != Null.NullInteger && portalSettings.HomeTabId != currentTabId) //ensure it's not redirecting to itself
                             {
-                                //the commented line doesn't work because the call to NavigateUrl returns url from the current portal not target portal
-                                //possible issue in FriendlyUrlProvider.GetFriendlyAlias method
-                                //redirectUrl = Globals.NavigateURL(portalSettings.HomeTabId, portalSettings, Null.NullString, null);
-                                fullSiteUrl = Globals.AddHTTP(portalSettings.DefaultPortalAlias);
+                                fullSiteUrl = GetPortalHomePageUrl(portalSettings);
                             }
                         }
                         break;
@@ -245,6 +214,64 @@ namespace DotNetNuke.Services.Mobile
             }
 
             return fullSiteUrl;
+        }
+
+        /// <summary>
+        /// Get Url for the equivalent mobile site based on the current page of the full site
+        /// </summary>
+        /// <returns>string - Empty if redirection rules are not defined or no match found</returns>
+        public string GetMobileSiteUrl()
+        {
+            var portalSettings = PortalController.GetCurrentPortalSettings();
+            if (portalSettings != null && portalSettings.ActiveTab != null)
+            {
+                string fullSiteUrl = GetMobileSiteUrl(portalSettings.PortalId, portalSettings.ActiveTab.TabID);
+                if (!string.IsNullOrEmpty(fullSiteUrl) && string.Compare(fullSiteUrl, portalSettings.ActiveTab.FullUrl, true, CultureInfo.InvariantCulture) != 0)
+                {
+                    return fullSiteUrl;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Get Url for the equivalent mobile site based on the current page of the full site
+        /// </summary>
+        /// <returns>string - Empty if redirection rules are not defined or no match found</returns>        
+        /// <param name="portalId">Portal Id from which Redirection Rules should be applied.</param>
+        /// <param name="currentTabId">Current Tab Id that needs to be evaluated.</param>        
+        public string GetMobileSiteUrl(int portalId, int currentTabId)
+        {
+            string mobileSiteUrl = string.Empty;
+            IList<IRedirection> redirections = GetRedirectionsByPortal(portalId);
+
+            //check for redirect only when redirect rules are defined
+            if (redirections == null || redirections.Count == 0)
+                return mobileSiteUrl;
+
+            //let's try to find if this tab has any specifc rules
+            foreach (var redirection in redirections)
+            {
+                if (redirection.Enabled)
+                {
+                    if (redirection.SourceTabId != Null.NullInteger && currentTabId == redirection.SourceTabId)
+                    {
+                        return GetRedirectUrlFromRule(redirection, portalId, currentTabId);
+                    }
+                }
+            }
+
+            //tab has no specific rule, we can select the first rule            
+            foreach (var redirection in redirections)
+            {
+                if (redirection.Enabled)
+                {
+                    return GetRedirectUrlFromRule(redirection, portalId, currentTabId);
+                }
+            }
+
+            return mobileSiteUrl;
         }
 
 		/// <summary>
@@ -281,6 +308,21 @@ namespace DotNetNuke.Services.Mobile
 
 			ClearCache(redirection.PortalId);
 		}
+
+        /// <summary>
+        /// Deletes all redirection rules that were set for pages that have been soft or hard deleted.
+        /// </summary>
+        /// <param name="portalId"></param>
+        public void PurgeRedirections(int portalId)
+        {
+            var allTabs = TabController.GetPortalTabs(portalId, 0, false, true);
+            var redirects = GetRedirectionsByPortal(portalId);
+
+            foreach (var r in redirects.Where(r => allTabs.Where(t => t.TabID == r.SourceTabId).Count() < 1))
+            {
+                Delete(portalId, r.Id);
+            }
+        }
 
 		/// <summary>
 		/// delete a redirection.
@@ -333,7 +375,6 @@ namespace DotNetNuke.Services.Mobile
             var cacheArg = new CacheItemArgs(cacheKey, DataCache.RedirectionsCacheTimeOut, DataCache.RedirectionsCachePriority, "");
             return CBO.GetCachedObject<IList<IRedirection>>(cacheArg, GetAllRedirectionsCallBack);
         }
-
 
 		/// <summary>
 		/// get a redirection list for portal.
@@ -389,10 +430,7 @@ namespace DotNetNuke.Services.Mobile
                     var portalSettings = new PortalSettings(targetPortalId);                   
                     if (portalSettings.HomeTabId != Null.NullInteger && portalSettings.HomeTabId != currentTabId) //ensure it's not redirecting to itself
                     {
-                        //the commented line doesn't work because the call to NavigateUrl returns url from the current portal not target portal
-                        //possible issue in FriendlyUrlProvider.GetFriendlyAlias method
-                        //redirectUrl = Globals.NavigateURL(portalSettings.HomeTabId, portalSettings, Null.NullString, null);
-                        redirectUrl = Globals.AddHTTP(portalSettings.DefaultPortalAlias);
+                        redirectUrl = GetPortalHomePageUrl(portalSettings);
                     }
                 }
             }
@@ -403,6 +441,14 @@ namespace DotNetNuke.Services.Mobile
 		#endregion
 
 		#region "Private Methods"
+
+        private string GetPortalHomePageUrl(PortalSettings portalSettings)
+        {
+            //the commented line doesn't work because the call to NavigateUrl returns url from the current portal not target portal
+            //possible issue in FriendlyUrlProvider.GetFriendlyAlias method
+            //redirectUrl = Globals.NavigateURL(portalSettings.HomeTabId, portalSettings, Null.NullString, null);
+            return Globals.AddHTTP(portalSettings.DefaultPortalAlias);            
+        }
 
 		private IList<IRedirection> GetAllRedirectionsCallBack(CacheItemArgs cacheItemArgs)
 		{			

@@ -74,6 +74,9 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 	    public const int Portal0 = 0;
         public const int Portal1 = 1;
+        public const int Page1 = 1;
+        public const int Page2 = 2;
+        public const int Page3 = 3;
 		public const string PortalAlias0 = "www.portal0.com";
 		public const string PortalAlias1 = "www.portal1.com";
         public const int AnotherPageOnSamePortal = 56;
@@ -330,7 +333,68 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 		#endregion
 
-		#endregion
+
+        #region "Get MobileSite Url Tests"
+
+        [Test]
+        public void RedirectionController_GetMobileSiteUrl_With_NoRedirections()
+        {
+            var url = _redirectionController.GetMobileSiteUrl(Portal0, HomePageOnPortal0);
+
+            Assert.AreEqual(string.Empty, url);
+        }
+
+        [Test]
+        public void RedirectionController_GetMobileSiteUrl_Returns_Page_Specific_Url_When_Multiple_PageLevel_Redirects_Defined()
+        {
+            string redirectUrlPage1 = "m.yahoo.com";
+            string redirectUrlPage2 = "m.cnn.com";
+
+            //first page goes to one url
+            _dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, Page1, EnabledFlag, (int)TargetType.Url, redirectUrlPage1, 1);
+
+            //second page goes to another url (this is Tablet - it should not matter)
+            _dtRedirections.Rows.Add(2, Portal0, "R2", (int)RedirectionType.Tablet, 2, Page2, EnabledFlag, (int)TargetType.Url, redirectUrlPage2, 1);
+
+            var mobileUrlForPage1 = _redirectionController.GetMobileSiteUrl(Portal0, Page1);
+            var mobileUrlForPage2 = _redirectionController.GetMobileSiteUrl(Portal0, Page2);
+            var mobileUrlForPage3 = _redirectionController.GetMobileSiteUrl(Portal0, Page3);
+
+            //First Page returns link to first url
+            Assert.AreEqual(redirectUrlPage1, mobileUrlForPage1);
+
+            //Second Page returns link to second url
+            Assert.AreEqual(redirectUrlPage2, mobileUrlForPage2);
+            
+            //Third Page returns link to first url - as this is the first found url and third page has no redirect defined
+            Assert.AreEqual(mobileUrlForPage3, redirectUrlPage1);
+        }
+
+        [Test]
+        public void RedirectionController_GetMobileSiteUrl_Works_When_Page_Redirects_To_Another_Portal()
+        {
+            //first page goes to one second portal
+            _dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, -1, EnabledFlag, (int)TargetType.Portal, Portal1, 1);            
+
+            var mobileUrlForPage1 = _redirectionController.GetMobileSiteUrl(Portal0, Page1);
+
+            //First Page returns link to home page of other portal
+            Assert.AreEqual(Globals.AddHTTP(PortalAlias1), mobileUrlForPage1);
+        }
+
+        [Test]
+        public void RedirectionController_GetMobileSiteUrl_When_Redirect_To_DifferentUrl()
+        {
+            _dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, HomePageOnPortal0, EnabledFlag, (int)TargetType.Url, ExternalSite, 1);
+
+            var url = _redirectionController.GetMobileSiteUrl(Portal1, AnotherPageOnSamePortal);
+
+            Assert.AreEqual(string.Empty, url);
+        }
+
+        #endregion
+
+        #endregion
 
 		#region "Private Methods"
 

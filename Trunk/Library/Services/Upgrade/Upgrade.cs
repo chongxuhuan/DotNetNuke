@@ -2760,7 +2760,7 @@ namespace DotNetNuke.Services.Upgrade
                 {
                     if (HttpContext.Current != null)
                     {
-                        HtmlUtils.WriteFeedback(HttpContext.Current.Response, indent, "Creating Portal: " + portalName + "<br>");
+                        HtmlUtils.WriteFeedback(HttpContext.Current.Response, indent, "Creating Site: " + portalName + "<br>");
                     }
                 }
 
@@ -2840,7 +2840,7 @@ namespace DotNetNuke.Services.Upgrade
                                     {
                                         if (HttpContext.Current != null)
                                         {
-                                            HtmlUtils.WriteFeedback(HttpContext.Current.Response, indent, "Creating Portal Alias: " + portalAlias.InnerText + "<br>");
+                                            HtmlUtils.WriteFeedback(HttpContext.Current.Response, indent, "Creating Site Alias: " + portalAlias.InnerText + "<br>");
                                         }
                                     }
                                     portalController.AddPortalAlias(portalId, portalAlias.InnerText);
@@ -3513,11 +3513,11 @@ namespace DotNetNuke.Services.Upgrade
                             int portalId = AddPortal(node, true, 2);
                             if (portalId > -1)
                             {
-                                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "<font color='green'>Successfully Installed Portal " + portalId + ":</font><br>");
+                                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "<font color='green'>Successfully Installed Site " + portalId + ":</font><br>");
                             }
                             else
                             {
-                                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "<font color='red'>Portal failed to install:Error!</font><br>");
+                                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "<font color='red'>Site failed to install:Error!</font><br>");
                             }
                         }
                     }
@@ -4109,15 +4109,17 @@ namespace DotNetNuke.Services.Upgrade
                         url += "&no=" + moduleType.Instances;
                     }
                 }
-                if (!string.IsNullOrEmpty(culture))
-                {
-                    url += "&culture=" + culture;
-                }
                 if (packageType.ToUpper() == DotNetNukeContext.Current.Application.Type.ToUpper())
                 {
+                    var portals = new PortalController().GetPortals();
+                    url += "&no=" + portals.Count;
                     url += "&os=" + Globals.FormatVersion(Globals.OperatingSystemVersion, "00", 2, "");
                     url += "&net=" + Globals.FormatVersion(Globals.NETFrameworkVersion, "00", 2, "");
                     url += "&db=" + Globals.FormatVersion(Globals.DatabaseEngineVersion, "00", 2, "");
+                }
+                if (!string.IsNullOrEmpty(culture))
+                {
+                    url += "&culture=" + culture;
                 }
             }
             return url;

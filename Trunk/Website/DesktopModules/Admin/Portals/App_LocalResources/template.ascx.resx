@@ -127,13 +127,13 @@
     <value>Template File Name:</value>
   </data>
   <data name="plPortals.Text" xml:space="preserve">
-    <value>Portal:</value>
+    <value>Site:</value>
   </data>
   <data name="ExportedMessage.Text" xml:space="preserve">
-    <value>The new portal template has been saved in folder: &lt;b&gt;{0}&lt;/b&gt;</value>
+    <value>The new site template has been saved in folder: &lt;b&gt;{0}&lt;/b&gt;</value>
   </data>
   <data name="plPortals.Help" xml:space="preserve">
-    <value>Select The Portal To Export</value>
+    <value>Select The SiteTo Export</value>
   </data>
   <data name="plTemplateName.Help" xml:space="preserve">
     <value>Provide a name for the Template File to be created</value>
@@ -157,12 +157,12 @@
     <value>Export Template</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
-    <value>&lt;h1&gt;About Templates&lt;/h1&gt;&lt;p&gt;Allows you to export a portal template to be used to build new portals.&lt;/p&gt;</value>
+    <value>&lt;h1&gt;About Templates&lt;/h1&gt;&lt;p&gt;Allows you to export a site template to be used to build new sites.&lt;/p&gt;</value>
   </data>
   <data name="cmdCancel.Text" xml:space="preserve">
     <value>Return</value>
   </data>
   <data name="PortalSetup.Text" xml:space="preserve">
-    <value>Portal Setup</value>
+    <value>Site Setup</value>
   </data>
 </root>

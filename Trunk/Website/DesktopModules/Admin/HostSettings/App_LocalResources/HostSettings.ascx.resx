@@ -859,7 +859,7 @@
     <value>Check this box to allow site administrators to enable content localization for their site.</value>
   </data>
   <data name="plEnableContentLocalization.Text" xml:space="preserve">
-    <value>Enable Content Localization?</value>
+    <value>Allow Content Localization?</value>
   </data>
   <data name="SkinPreview.Text" xml:space="preserve">
     <value>Preview Host Skin and Container</value>

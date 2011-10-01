@@ -34,6 +34,8 @@ namespace DotNetNuke.Services.Mobile
 	{
 		void Save(IRedirection redirection);
 
+	    void PurgeRedirections(int portalId);
+
 		void Delete(int portalId, int id);
 
 		void DeleteRule(int portalId, int redirectionId, int ruleId);
@@ -48,14 +50,12 @@ namespace DotNetNuke.Services.Mobile
 
         string GetRedirectUrl(string userAgent);
 
-        string GetRedirectUrlForIPhone();
-
-	    string GetRedirectUrlForIPad();
-
-        string GetRedirectUrlForIE();
-
 	    string GetFullSiteUrl();
 
 	    string GetFullSiteUrl(int portalId, int currentTabId);
+
+        string GetMobileSiteUrl();
+
+        string GetMobileSiteUrl(int portalId, int currentTabId);
 	}
 }

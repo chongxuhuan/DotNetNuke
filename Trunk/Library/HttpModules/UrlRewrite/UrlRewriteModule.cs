@@ -454,9 +454,10 @@ namespace DotNetNuke.HttpModules
 			
             //'Carry out first time initialization tasks
             Initialize.Init(app);
-            if (request.Url.LocalPath.EndsWith("install.aspx", StringComparison.InvariantCultureIgnoreCase) || 
-                request.Url.LocalPath.EndsWith("installwizard.aspx", StringComparison.InvariantCultureIgnoreCase) ||
-                request.Url.LocalPath.EndsWith("captcha.aspx", StringComparison.InvariantCultureIgnoreCase))
+            if (request.Url.LocalPath.ToLower().EndsWith("install.aspx") 
+                || request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("captcha.aspx"))
             {
                 return;
             }

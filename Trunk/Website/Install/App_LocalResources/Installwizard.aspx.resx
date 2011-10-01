@@ -124,7 +124,7 @@
     <value>&lt;b&gt;&lt;font color='red'&gt;Administrator User Error:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
   <data name="Auto.Text" xml:space="preserve">
-    <value>&lt;b&gt;Auto&lt;/b&gt; -the “Auto” installation method installs DotNetNuke using the default options including the preconfigured SQL Express Database. Websites created using this method use a default login credentials for the Administrator account which should be updated for security purposes. &lt;br/&gt;
+    <value>&lt;b&gt;Auto&lt;/b&gt; - the “Auto” installation method installs DotNetNuke using the default options including the preconfigured SQL Express Database. Websites created using this method use a default login credentials for the Administrator account which should be updated for security purposes. &lt;br/&gt;
 &lt;b&gt;Prerequisites:&lt;/b&gt; SQL Express installed..</value>
   </data>
   <data name="ChooseDatabase.Text" xml:space="preserve">

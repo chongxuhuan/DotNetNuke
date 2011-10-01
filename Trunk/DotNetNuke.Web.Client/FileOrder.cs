@@ -17,9 +17,9 @@
             /// <summary>
             /// jQuery (CDN or local file) has the priority of 5
             /// </summary>
-// ReSharper disable InconsistentNaming
+            // ReSharper disable InconsistentNaming
             jQuery = 5,
-// ReSharper restore InconsistentNaming
+            // ReSharper restore InconsistentNaming
             /// <summary>
             /// jQuery UI (CDN or local file) has the priority of 10
             /// </summary>
@@ -27,37 +27,33 @@
             jQueryUI = 10,
 // ReSharper restore InconsistentNaming
             /// <summary>
-            /// /js/dnn.js has the priority of 15
+            /// /js/dnn.xml.js has the priority of 15
             /// </summary>
-            DnnJs = 15,
+            DnnXml = 15,
             /// <summary>
-            /// /js/dnn.xml.js has the priority of 20
+            /// /js/dnn.xml.jsparser.js has the priority of 20
             /// </summary>
-            DnnXml = 20,
+            DnnXmlJsParser = 20,
             /// <summary>
-            /// /js/dnn.xml.jsparser.js has the priority of 25
+            /// /js/dnn.xmlhttp.js has the priority of 25
             /// </summary>
-            DnnXmlJsParser = 25,
+            DnnXmlHttp = 25,
             /// <summary>
-            /// /js/dnn.xmlhttp.js has the priority of 30
+            /// /js/dnn.xmlhttp.jsxmlhttprequest.js has the pririty of 30
             /// </summary>
-            DnnXmlHttp = 30,
+            DnnXmlHttpJsXmlHttpRequest = 30,
             /// <summary>
-            /// /js/dnn.xmlhttp.jsxmlhttprequest.js has the pririty of 35
+            /// /js/dnn.dom.positioning.js has the priority of 35
             /// </summary>
-            DnnXmlHttpJsXmlHttpRequest = 35,
+            DnnDomPositioning = 35,
             /// <summary>
-            /// /js/dnn.dom.positioning.js has the priority of 40
+            /// /js/dnn.controls.js has the priority of 40
             /// </summary>
-            DnnDomPositioning = 40,
+            DnnControls = 40,
             /// <summary>
-            /// /js/dnn.controls.js has the priority of 45
+            /// /js/dnn.controls.labeledit.js has the priority of 45
             /// </summary>
-            DnnControls = 45,
-            /// <summary>
-            /// /js/dnn.controls.labeledit.js has the priority of 50
-            /// </summary>
-            DnnControlsLabelEdit = 50,
+            DnnControlsLabelEdit = 45,
         }
 
         /// <summary>

@@ -68,7 +68,7 @@ namespace DotNetNuke.UI.Skins.Controls
 			base.OnLoad(e);
 
             var redirectionController = new RedirectionController();
-			var redirectUrl = redirectionController.GetRedirectUrlForIPhone();
+            var redirectUrl = redirectionController.GetMobileSiteUrl();
             if (!string.IsNullOrEmpty(redirectUrl))
             {                
                 lnkPortal.NavigateUrl = redirectUrl;                

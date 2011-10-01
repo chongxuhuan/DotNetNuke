@@ -74,12 +74,20 @@ namespace DotNetNuke.HttpModules
 
         public void OnBeginRequest(object s, EventArgs e)
         {
+            var app = (HttpApplication)s;
+            
+            //First check if we are upgrading/installing
+            if (app.Request.Url.LocalPath.ToLower().EndsWith("install.aspx")
+                    || app.Request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
+                    || app.Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
+            {
+                return;
+            } 
             if (_redirectionController != null)
             {
                 var portalSettings = PortalController.GetCurrentPortalSettings();
                 if (portalSettings != null && portalSettings.ActiveTab != null)
                 {
-                    var app = (HttpApplication)s;
                     if (app != null && app.Request != null && !string.IsNullOrEmpty(app.Request.UserAgent))
                     {
 						//Redirect should happen only once. If redirect has already happened, then don't redirect any more in the session

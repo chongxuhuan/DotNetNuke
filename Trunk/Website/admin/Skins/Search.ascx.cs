@@ -44,7 +44,7 @@ namespace DotNetNuke.UI.Skins.Controls
 
     public partial class Search : SkinObjectBase
     {
-        #region "Private Members"
+        #region Private Members
 
         private const string MyFileName = "Search.ascx";
         private bool _showSite = true;
@@ -60,7 +60,7 @@ namespace DotNetNuke.UI.Skins.Controls
 
         #endregion
 
-        #region "Public Members"
+        #region Public Members
 
         /// <summary>
         /// Gets or sets the CSS class for the option buttons and search button
@@ -311,7 +311,7 @@ namespace DotNetNuke.UI.Skins.Controls
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         private int GetSearchTabId()
         {
@@ -412,7 +412,7 @@ namespace DotNetNuke.UI.Skins.Controls
 
         #endregion
 
-        #region "Event Handlers"
+        #region Event Handlers
 
 
         /// <summary>

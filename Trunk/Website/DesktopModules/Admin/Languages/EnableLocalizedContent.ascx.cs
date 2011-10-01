@@ -65,7 +65,7 @@ namespace DotNetNuke.Modules.Admin.Languages
         private string _PortalDefault = "";
         private int timeout = 3600;
 
-        #region "Protected Properties"
+        #region Protected Properties
 
         protected string PortalDefault
         {
@@ -77,7 +77,7 @@ namespace DotNetNuke.Modules.Admin.Languages
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         protected bool IsDefaultLanguage(string code)
         {
@@ -154,7 +154,7 @@ namespace DotNetNuke.Modules.Admin.Languages
 
         #endregion
 
-        #region "Event Handlers"
+        #region Event Handlers
 
         protected override void OnInit(EventArgs e)
         {

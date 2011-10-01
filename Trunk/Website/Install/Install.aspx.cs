@@ -132,7 +132,7 @@ namespace DotNetNuke.Services.Install
                     Upgrade.Upgrade.InstallDNN(strProviderPath);
 
                     Response.Write("<h2>Installation Complete</h2>");
-                    Response.Write("<br><br><h2><a href='../Default.aspx'>Click Here To Access Your Portal</a></h2><br><br>");
+                    Response.Write("<br><br><h2><a href='../Default.aspx'>Click Here To Access Your Site</a></h2><br><br>");
                     Response.Flush();
 
                     //log APPLICATION_START event
@@ -155,16 +155,6 @@ namespace DotNetNuke.Services.Install
 
         private void UpgradeApplication()
         {
-            if (!Request.IsAuthenticated)
-            {
-                return;
-            }
-            UserInfo hostUser = UserController.GetCachedUser(-1, User.Identity.Name);
-            if(!hostUser.IsSuperUser)
-            {
-                return;
-            }
-
             //Start Timer
             Upgrade.Upgrade.StartTimer();
 
@@ -237,7 +227,7 @@ namespace DotNetNuke.Services.Install
                         Upgrade.Upgrade.InstallPackages("Package", true);
 
                         Response.Write("<h2>Upgrade Complete</h2>");
-                        Response.Write("<br><br><h2><a href='../Default.aspx'>Click Here To Access Your Portal</a></h2><br><br>");
+                        Response.Write("<br><br><h2><a href='../Default.aspx'>Click Here To Access Your Site</a></h2><br><br>");
                     }
                     else
                     {
@@ -266,7 +256,7 @@ namespace DotNetNuke.Services.Install
 
             //Write out Header
             HtmlUtils.WriteHeader(Response, "addPortal");
-            Response.Write("<h2>Add Portal Status Report</h2>");
+            Response.Write("<h2>Add Site Status Report</h2>");
             Response.Flush();
 
             //install new portal(s)
@@ -300,7 +290,7 @@ namespace DotNetNuke.Services.Install
 					DnnLog.Error(ex);
 				}
                 Response.Write("<h2>Installation Complete</h2>");
-                Response.Write("<br><br><h2><a href='../Default.aspx'>Click Here To Access Your Portal</a></h2><br><br>");
+                Response.Write("<br><br><h2><a href='../Default.aspx'>Click Here To Access Your Site</a></h2><br><br>");
                 Response.Flush();
             }
 
@@ -329,7 +319,7 @@ namespace DotNetNuke.Services.Install
             Upgrade.Upgrade.InstallPackages("Package", true);
 
             Response.Write("<h2>Installation Complete</h2>");
-            Response.Write("<br><br><h2><a href='../Default.aspx'>Click Here To Access Your Portal</a></h2><br><br>");
+            Response.Write("<br><br><h2><a href='../Default.aspx'>Click Here To Access Your Site</a></h2><br><br>");
             Response.Flush();
 
             //Write out Footer

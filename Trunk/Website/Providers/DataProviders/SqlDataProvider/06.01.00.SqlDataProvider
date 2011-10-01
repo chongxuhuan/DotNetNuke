@@ -269,7 +269,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mobile_SaveRedirection]
     @SourceTabId INT ,
 	@IncludeChildTabs BIT ,
     @TargetType INT ,
-    @TargetValue NVARCHAR(50) ,
+    @TargetValue NVARCHAR(260) ,
 	@Enabled BIT,
     @UserId INT
 AS 
@@ -1226,6 +1226,223 @@ IF @UserID is null
 
 SELECT @UserID
 
+GO
+
+/* DNNPRO-14326 - SI: Search results page does not work for languages */
+/**********************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EnsureLocalizationExists]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}EnsureLocalizationExists]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}EnsureLocalizationExists]
+	@PortalId       int,
+	@CultureCode	nvarchar(10)
+AS
+	IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}PortalLocalization WHERE CultureCode=@CultureCode AND Portalid=@PortalId)
+		BEGIN
+			DECLARE @PortalName nvarchar(128)
+			DECLARE @LogoFile nvarchar(50)
+			DECLARE @FooterText nvarchar(100)
+			DECLARE @Description nvarchar(500)
+			DECLARE @KeyWords nvarchar(500)
+			DECLARE @BackgroundFile nvarchar(50)
+			DECLARE @HomeTabId int
+			DECLARE @LoginTabId int
+			DECLARE @UserTabId int
+			DECLARE @AdminTabId int
+			DECLARE @RegisterTabId int
+			DECLARE @SearchTabId int
+	
+			DECLARE @defaultlanguage nvarchar(10)
+			
+			SELECT @defaultlanguage= DefaultLanguage FROM {databaseOwner}{objectQualifier}Portals WHERE Portalid=@PortalId
+
+			IF EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}PortalLocalization WHERE CultureCode=@defaultlanguage AND Portalid=@PortalId)
+					AND EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}Languages l INNER JOIN {databaseOwner}{objectQualifier}PortalLanguages pl ON l.LanguageID = pl.LanguageID WHERE pl.PortalID = @PortalID AND l.CultureCode = @CultureCode )
+				BEGIN
+					--clone the default language
+					SELECT 
+						@PortalName = PortalName,
+						@LogoFile = LogoFile,
+						@FooterText = FooterText,
+						@Description = Description,
+						@KeyWords = KeyWords,
+						@BackgroundFile = BackgroundFile,
+						@HomeTabId = HomeTabId,
+						@LoginTabId = LoginTabId,
+						@UserTabId = UserTabId,
+						@AdminTabId = AdminTabId,
+						@SearchTabId = SearchTabId,
+						@RegisterTabId = RegisterTabId 
+					FROM {databaseOwner}{objectQualifier}PortalLocalization WHERE CultureCode=@defaultlanguage AND Portalid=@PortalId
+						
+					INSERT INTO {databaseOwner}{objectQualifier}PortalLocalization (
+						PortalId,
+						CultureCode,
+						PortalName,
+						LogoFile,
+						FooterText,
+						Description,
+						KeyWords,
+						BackgroundFile, 
+						HomeTabId,
+						LoginTabId,
+						UserTabId,
+						AdminTabId,
+						RegisterTabId,
+						SearchTabId,
+						CreatedByUserID,
+						CreatedOnDate,
+						LastModifiedByUserID,
+						LastModifiedOnDate
+						) 
+						VALUES	(
+							@PortalId,
+							@CultureCode,
+							@PortalName,
+							@LogoFile,
+							@FooterText,
+							@Description,
+							@KeyWords,
+							@BackgroundFile,
+							@HomeTabId,
+							@LoginTabId,
+							@UserTabId,
+							@AdminTabId,
+							@RegisterTabId,
+							@SearchTabId,
+							-1,
+							getdate(),
+							-1,
+							getdate()
+						)
+				END
+			ELSE
+				BEGIN
+					IF EXISTS (select * from {databaseOwner}{objectQualifier}PortalLocalization where CultureCode='en-us' and Portalid=@PortalId)
+						BEGIN
+							--if defaultlanguage is missing clone en-us if available
+							SELECT 
+								@PortalName = PortalName,
+								@LogoFile = LogoFile,
+								@FooterText = FooterText,
+								@Description = Description,
+								@KeyWords = KeyWords,
+								@BackgroundFile = BackgroundFile,
+								@HomeTabId = HomeTabId,
+								@LoginTabId=LoginTabId,
+								@UserTabId=UserTabId,
+								@AdminTabId=AdminTabId,
+								@SearchTabId=SearchTabId,
+								@RegisterTabId=RegisterTabId 
+							FROM {databaseOwner}{objectQualifier}PortalLocalization where CultureCode='en-us' and Portalid=@PortalId
+							
+							INSERT INTO {databaseOwner}{objectQualifier}PortalLocalization (
+								PortalId,
+								CultureCode,
+								PortalName,
+								LogoFile,
+								FooterText,
+								Description,
+								KeyWords,
+								BackgroundFile, 
+								HomeTabId,
+								LoginTabId,
+								UserTabId,
+								AdminTabId,
+								RegisterTabId,
+								SearchTabId,
+								CreatedByUserID,
+								CreatedOnDate,
+								LastModifiedByUserID,
+								LastModifiedOnDate
+							) 
+							VALUES	(
+								@PortalId,
+								@CultureCode,
+								@PortalName,
+								@LogoFile,
+								@FooterText,
+								@Description,
+								@KeyWords,
+								@BackgroundFile,
+								@HomeTabId,
+								@LoginTabId,
+								@UserTabId,
+								@AdminTabId,
+								@RegisterTabId,
+								@SearchTabId,
+								-1,
+								getdate(),
+								-1,
+								getdate()
+							)
+						END
+					ELSE
+						BEGIN
+							IF EXISTS (select top 1 * from {databaseOwner}{objectQualifier}PortalLocalization where  Portalid=@PortalId)
+								BEGIN
+									--cannot select by particular culturecode as defaultlanguage has been deleted (possible in early versions of DotNetNuke)
+									SELECT TOP 1 
+										@PortalName = PortalName,
+										@LogoFile = LogoFile,
+										@FooterText = FooterText,
+										@Description = Description,
+										@KeyWords = KeyWords,
+										@BackgroundFile = BackgroundFile,
+										@HomeTabId = HomeTabId,
+										@LoginTabId=LoginTabId,
+										@UserTabId=UserTabId,
+										@AdminTabId=AdminTabId,
+										@SearchTabId=SearchTabId,
+										@RegisterTabId=RegisterTabId 
+									FROM {databaseOwner}{objectQualifier}PortalLocalization where portalid=@PortalId
+									
+									INSERT INTO {databaseOwner}{objectQualifier}PortalLocalization (
+										PortalId,
+										CultureCode,
+										PortalName,
+										LogoFile,
+										FooterText,
+										Description,
+										KeyWords,
+										BackgroundFile, 
+										HomeTabId,
+										LoginTabId,
+										UserTabId,
+										AdminTabId,
+										RegisterTabId,
+										SearchTabId,
+										CreatedByUserID,
+										CreatedOnDate,
+										LastModifiedByUserID,
+										LastModifiedOnDate
+									) 
+									VALUES	(
+										@PortalId,
+										@CultureCode,
+										@PortalName,
+										@LogoFile,
+										@FooterText,
+										@Description,
+										@KeyWords,
+										@BackgroundFile,
+										@HomeTabId,
+										@LoginTabId,
+										@UserTabId,
+										@AdminTabId,
+										@RegisterTabId,
+										@SearchTabId,
+										-1,
+										getdate(),
+										-1,
+										getdate()
+									)
+								END
+						END	
+				END
+		END
 GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/

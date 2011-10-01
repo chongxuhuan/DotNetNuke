@@ -342,20 +342,17 @@ namespace DotNetNuke.Services.Install
             switch (e.CurrentStepIndex)
             {
                 case 0:
-                    var objPortalSecurity = new PortalSecurity();
-                    objPortalSecurity.SignOut();
-                   
-                    //Login user
+                    //validate user
 				    var loginStatus = UserLoginStatus.LOGIN_FAILURE;
-                    var hostUser = UserController.ValidateUser(-1, userNameTextBox.Text, passwordTextBox.Text, "DNN", "", PortalSettings.PortalName, AuthenticationLoginBase.GetIPAddress(), ref loginStatus);
+                    var hostUser = UserController.ValidateUser(-1, userNameTextBox.Text, passwordTextBox.Text, "DNN", "", "", AuthenticationLoginBase.GetIPAddress(), ref loginStatus);
 
                     if (loginStatus != UserLoginStatus.LOGIN_FAILURE && hostUser.IsSuperUser)
                     {
-                        //Complete Login
-                        PortalSettings settings = PortalController.GetCurrentPortalSettings();
-                        UserController.UserLogin(-1, hostUser, settings.PortalName, AuthenticationLoginBase.GetIPAddress(), false);
-
                         Response.Redirect("~/Install/Install.aspx?mode=upgrade");
+                    }
+                    else
+                    {
+                        Response.Redirect("~/Install/UpgradeWizard.aspx");
                     }
                     break;
             }

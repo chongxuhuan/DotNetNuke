@@ -466,7 +466,7 @@
     <value>Site Settings</value>
   </data>
   <data name="ControlTitle_edit.Text" xml:space="preserve">
-    <value>Edit Portals</value>
+    <value>Edit Site Settings</value>
   </data>
   <data name="SkinUpload.Text" xml:space="preserve">
     <value>Upload Skin/Container</value>
@@ -640,7 +640,7 @@
     <value>Preview Edit Skin and Container</value>
   </data>
   <data name="SkinPreview.Text" xml:space="preserve">
-    <value>Preview Portal Skin and Container</value>
+    <value>Preview Site Skin and Container</value>
   </data>
   <data name="ExpandAll.Text" xml:space="preserve">
     <value>Expand All</value>
