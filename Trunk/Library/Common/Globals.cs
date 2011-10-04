@@ -3091,6 +3091,7 @@ namespace DotNetNuke.Common
             }
 
             var controller = new TabController();
+
             TabInfo objTab = null;
 
             if (settings != null)
@@ -3138,13 +3139,13 @@ namespace DotNetNuke.Common
 
             if (Host.UseFriendlyUrls)
             {
-                if (objTab != null)
+                if (settings == null)
                 {
-                    strURL = FriendlyUrl(objTab, strURL, settings);
+                    strURL = FriendlyUrl(objTab, strURL);
                 }
                 else
                 {
-                    strURL = FriendlyUrl(null, strURL, settings);
+                    strURL = FriendlyUrl(objTab, strURL, settings);
                 }
             }
             else

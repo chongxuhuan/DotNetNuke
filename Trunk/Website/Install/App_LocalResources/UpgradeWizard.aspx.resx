@@ -134,7 +134,7 @@
   <data name="IntroDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;Welcome to the DotNetNuke Upgrade Page.&lt;/p&gt;
 
-&lt;p&gt;The first step is to choose the language you wish to use for the Installation.&lt;/p&gt;
+&lt;p&gt;The first step is to choose the language you wish to use for the Upgrade.&lt;/p&gt;
 
 </value>
   </data>
@@ -148,7 +148,7 @@
     <value>DotNetNuke Upgrade</value>
   </data>
   <data name="Username.Text" xml:space="preserve">
-    <value>Username:</value>
+    <value>Host (SuperUser) Username:</value>
   </data>
   <data name="Version.Text" xml:space="preserve">
     <value>DotNetNuke Upgrade - Version {0}</value>
