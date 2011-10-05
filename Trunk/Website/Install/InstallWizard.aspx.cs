@@ -980,6 +980,10 @@ namespace DotNetNuke.Services.Install
                 case 0: //Page 0 - Welcome
                     introTitleLabel.Text = string.Format(LocalizeString("IntroTitle"), Globals.FormatVersion(ApplicationVersion));
                     introDetailLabel.Text = LocalizeString("IntroDetail");
+                
+                    installTypeRadioButton.Items[0].Text = LocalizeString("Typical");
+                    installTypeRadioButton.Items[1].Text = LocalizeString("Full");
+                    installTypeRadioButton.Items[2].Text = LocalizeString("Auto");
 
                        break;
 				case 1: //Page 1 - File Permissions

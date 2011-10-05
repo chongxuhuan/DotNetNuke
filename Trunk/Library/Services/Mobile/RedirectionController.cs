@@ -419,7 +419,12 @@ namespace DotNetNuke.Services.Mobile
                 int targetTabId = int.Parse(redirection.TargetValue.ToString());
                 if (targetTabId != currentTabId) //ensure it's not redirecting to itself
                 {
-                    redirectUrl = Globals.NavigateURL(targetTabId);
+                    var tabController = new TabController();
+                    var tab = tabController.GetTab(targetTabId, portalId, false);
+                    if (tab != null && !tab.IsDeleted)
+                    {
+                        redirectUrl = Globals.NavigateURL(targetTabId);
+                    }
                 }
             }
             else if (redirection.TargetType == TargetType.Portal) //home page of another portal

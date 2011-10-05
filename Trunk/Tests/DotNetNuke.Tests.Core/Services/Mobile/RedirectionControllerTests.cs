@@ -80,6 +80,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		public const string PortalAlias0 = "www.portal0.com";
 		public const string PortalAlias1 = "www.portal1.com";
         public const int AnotherPageOnSamePortal = 56;
+        public const int DeletedPageOnSamePortal = 59;
         public const int HomePageOnPortal0 = 55;
         public const int HomePageOnPortal1 = 57;
         public const int MobileLandingPage = 91;
@@ -208,6 +209,14 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
         {
             PreparePortalToAnotherPageOnSamePortal();
 			Assert.AreEqual(string.Empty, _redirectionController.GetRedirectUrl(iphoneUserAgent, Portal0, AnotherPageOnSamePortal));
+        }
+
+        [Test]
+        public void RedirectionController_GetRedirectionUrl_Returns_EmptyString_When_TargetPage_IsDeleted()
+        {
+            //prepare rule to a deleted tab on the same portal
+            _dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, AnotherPageOnSamePortal, EnabledFlag, (int)TargetType.Tab, DeletedPageOnSamePortal, 1);
+            Assert.AreEqual(string.Empty, _redirectionController.GetRedirectUrl(iphoneUserAgent, Portal0, AnotherPageOnSamePortal));
         }
 
         [Test]
@@ -638,10 +647,20 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 				table.Columns.Add(col);
 			}
 
-			int tabId = portalId == Portal1 ? tabId = HomePageOnPortal1 : HomePageOnPortal0;
-
-			table.Rows.Add(tabId, Guid.NewGuid(), Guid.NewGuid(), null, Guid.NewGuid(), "3", "0", "Getting Started", true, null, "0", null, null, false, "", "", "", false, "[G]Skins/DarkKnight/Home-Mega-Menu.ascx", "[G]Containers/DarkKnight/SubTitle_Grey.ascx", "//GettingStarted", null, null, "", false, null, null, false, false, "0.5", "89", "Getting Started", "1", "-1", null, false, null, "-1", DateTime.Now, "-1", DateTime.Now);
-
+            if(portalId == Portal1)
+            {
+                table.Rows.Add(HomePageOnPortal1, Guid.NewGuid(), Guid.NewGuid(), null, Guid.NewGuid(), "3", "0", "HomePageOnPortal1", true, null, "0", null, null, false, "", "", "", false, "[G]Skins/DarkKnight/Home-Mega-Menu.ascx", "[G]Containers/DarkKnight/SubTitle_Grey.ascx", "//HomePageOnPortal1", null, null, "", false, null, null, false, false, "0.5", "89", "HomePageOnPortal1", "1", "-1", null, false, null, "-1", DateTime.Now, "-1", DateTime.Now);    
+            }
+            else if (portalId == Portal0)
+            {
+                table.Rows.Add(HomePageOnPortal0, Guid.NewGuid(), Guid.NewGuid(), null, Guid.NewGuid(), "3", "0", "HomePageOnPortal0", true, null, "0", null, null, false, "", "", "", false, "[G]Skins/DarkKnight/Home-Mega-Menu.ascx", "[G]Containers/DarkKnight/SubTitle_Grey.ascx", "//HomePageOnPortal0", null, null, "", false, null, null, false, false, "0.5", "89", "HomePageOnPortal0", "1", "-1", null, false, null, "-1", DateTime.Now, "-1", DateTime.Now);
+                table.Rows.Add(AnotherPageOnSamePortal, Guid.NewGuid(), Guid.NewGuid(), null, Guid.NewGuid(), "4", "0", "AnotherPageOnSamePortal", true, null, "0", null, null, false, "", "", "", false, "[G]Skins/DarkKnight/Home-Mega-Menu.ascx", "[G]Containers/DarkKnight/SubTitle_Grey.ascx", "//AnotherPageOnSamePortal", null, null, "", false, null, null, false, false, "0.5", "89", "HomePageOnPortal0", "1", "-1", null, false, null, "-1", DateTime.Now, "-1", DateTime.Now);
+                table.Rows.Add(MobileLandingPage, Guid.NewGuid(), Guid.NewGuid(), null, Guid.NewGuid(), "5", "0", "MobileLandingPage", true, null, "0", null, null, false, "", "", "", false, "[G]Skins/DarkKnight/Home-Mega-Menu.ascx", "[G]Containers/DarkKnight/SubTitle_Grey.ascx", "//MobileLandingPage", null, null, "", false, null, null, false, false, "0.5", "89", "HomePageOnPortal0", "1", "-1", null, false, null, "-1", DateTime.Now, "-1", DateTime.Now);
+                table.Rows.Add(TabletLandingPage, Guid.NewGuid(), Guid.NewGuid(), null, Guid.NewGuid(), "6", "0", "TabletLandingPage", true, null, "0", null, null, false, "", "", "", false, "[G]Skins/DarkKnight/Home-Mega-Menu.ascx", "[G]Containers/DarkKnight/SubTitle_Grey.ascx", "//TabletLandingPage", null, null, "", false, null, null, false, false, "0.5", "89", "HomePageOnPortal0", "1", "-1", null, false, null, "-1", DateTime.Now, "-1", DateTime.Now);
+                table.Rows.Add(AllMobileLandingPage, Guid.NewGuid(), Guid.NewGuid(), null, Guid.NewGuid(), "7", "0", "AllMobileLandingPage", true, null, "0", null, null, false, "", "", "", false, "[G]Skins/DarkKnight/Home-Mega-Menu.ascx", "[G]Containers/DarkKnight/SubTitle_Grey.ascx", "//AllMobileLandingPage", null, null, "", false, null, null, false, false, "0.5", "89", "HomePageOnPortal0", "1", "-1", null, false, null, "-1", DateTime.Now, "-1", DateTime.Now);    
+                table.Rows.Add(DeletedPageOnSamePortal, Guid.NewGuid(), Guid.NewGuid(), null, Guid.NewGuid(), "8", "0", "A Deleted Page", true, null, "0", null, null, false, "", "", "", true, "[G]Skins/DarkKnight/Home-Mega-Menu.ascx", "[G]Containers/DarkKnight/SubTitle_Grey.ascx", "//DeletedPage", null, null, "", false, null, null, false, false, "0.5", "90", "Deleted Page", "1", "-1", null, false, null, "-1", DateTime.Now, "-1", DateTime.Now);
+            }			
+            
 			return table.CreateDataReader();
 		}
 
@@ -740,13 +759,13 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		private void PrepareData()
 		{
 			//id, portalId, name, type, sortOrder, sourceTabId, includeChildTabs, targetType, targetValue, enabled
-			_dtRedirections.Rows.Add(1, Portal0, "R4", (int)RedirectionType.Other, 4, -1, DisabledFlag, (int)TargetType.Portal, "1", 1);
-			_dtRedirections.Rows.Add(2, Portal0, "R2", (int)RedirectionType.Tablet, 2, -1, DisabledFlag, (int)TargetType.Portal, "1", 1);
-			_dtRedirections.Rows.Add(3, Portal0, "R3", (int)RedirectionType.AllMobile, 3, -1, DisabledFlag, (int)TargetType.Portal, "1", 1);
-			_dtRedirections.Rows.Add(4, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, -1, DisabledFlag, (int)TargetType.Portal, "1", 1);
-			_dtRedirections.Rows.Add(5, Portal0, "R5", (int)RedirectionType.MobilePhone, 5, HomePageOnPortal0, EnabledFlag, (int)TargetType.Portal, "1", 1);
-			_dtRedirections.Rows.Add(6, Portal0, "R6", (int)RedirectionType.MobilePhone, 6, -1, DisabledFlag, (int)TargetType.Tab, HomePageOnPortal0, 1);
-			_dtRedirections.Rows.Add(7, Portal0, "R7", (int)RedirectionType.MobilePhone, 7, -1, DisabledFlag, (int)TargetType.Url, ExternalSite, 1);
+            _dtRedirections.Rows.Add(1, Portal0, "R4", (int)RedirectionType.Other, 4, -1, DisabledFlag, (int)TargetType.Portal, "1", EnabledFlag);
+            _dtRedirections.Rows.Add(2, Portal0, "R2", (int)RedirectionType.Tablet, 2, -1, DisabledFlag, (int)TargetType.Portal, "1", EnabledFlag);
+            _dtRedirections.Rows.Add(3, Portal0, "R3", (int)RedirectionType.AllMobile, 3, -1, DisabledFlag, (int)TargetType.Portal, "1", EnabledFlag);
+            _dtRedirections.Rows.Add(4, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, -1, DisabledFlag, (int)TargetType.Portal, "1", EnabledFlag);
+            _dtRedirections.Rows.Add(5, Portal0, "R5", (int)RedirectionType.MobilePhone, 5, HomePageOnPortal0, EnabledFlag, (int)TargetType.Portal, "1", EnabledFlag);
+            _dtRedirections.Rows.Add(6, Portal0, "R6", (int)RedirectionType.MobilePhone, 6, -1, DisabledFlag, (int)TargetType.Tab, HomePageOnPortal0, EnabledFlag);
+            _dtRedirections.Rows.Add(7, Portal0, "R7", (int)RedirectionType.MobilePhone, 7, -1, DisabledFlag, (int)TargetType.Url, ExternalSite, EnabledFlag);
 
 			//id, redirectionId, capability, expression
 			_dtRules.Rows.Add(1, 1, "mobile_browser", "Safari");
@@ -759,7 +778,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
         private void PrepareOperaBrowserOnSymbianOSRedirectionRule()
         {
-			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.Other, 1, -1, DisabledFlag, (int)TargetType.Tab, AnotherPageOnSamePortal, 1);
+            _dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.Other, 1, -1, DisabledFlag, (int)TargetType.Tab, AnotherPageOnSamePortal, EnabledFlag);
 
             //id, redirectionId, capability, expression
             _dtRules.Rows.Add(1, 1, "mobile_browser", "Opera Mini");
@@ -768,7 +787,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
         private void PrepareOperaBrowserOnIPhoneOSRedirectionRule()
         {
-			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.Other, 1, -1, DisabledFlag, (int)TargetType.Tab, AnotherPageOnSamePortal, 1);
+            _dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.Other, 1, -1, DisabledFlag, (int)TargetType.Tab, AnotherPageOnSamePortal, EnabledFlag);
 
             //id, redirectionId, capability, expression
             _dtRules.Rows.Add(1, 1, "mobile_browser", "Opera Mini");
@@ -777,7 +796,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
         private void PreparePortalToAnotherPageOnSamePortal()
         {
-			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, -1, DisabledFlag, (int)TargetType.Tab, AnotherPageOnSamePortal, 1);
+            _dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, -1, DisabledFlag, (int)TargetType.Tab, AnotherPageOnSamePortal, EnabledFlag);
         }
 
         private void PrepareSamePortalToSamePortalRedirectionRule()
@@ -797,20 +816,20 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
         private void PrepareMobileAndTabletRedirectionRuleWithMobileFirst()
         {
-			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, -1, DisabledFlag, (int)TargetType.Tab, MobileLandingPage, 1);
-			_dtRedirections.Rows.Add(2, Portal0, "R2", (int)RedirectionType.Tablet, 2, -1, DisabledFlag, (int)TargetType.Tab, TabletLandingPage, 1);
+            _dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, 1, -1, DisabledFlag, (int)TargetType.Tab, MobileLandingPage, EnabledFlag);
+            _dtRedirections.Rows.Add(2, Portal0, "R2", (int)RedirectionType.Tablet, 2, -1, DisabledFlag, (int)TargetType.Tab, TabletLandingPage, EnabledFlag);
         }
 
         private void PrepareMobileAndTabletRedirectionRuleWithAndTabletRedirectionRuleTabletFirst()
         {
-			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.Tablet, 1, -1, DisabledFlag, (int)TargetType.Tab, TabletLandingPage, 1);
-			_dtRedirections.Rows.Add(2, Portal0, "R2", (int)RedirectionType.MobilePhone, 2, -1, DisabledFlag, (int)TargetType.Tab, MobileLandingPage, 1);
+            _dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.Tablet, 1, -1, DisabledFlag, (int)TargetType.Tab, TabletLandingPage, EnabledFlag);
+            _dtRedirections.Rows.Add(2, Portal0, "R2", (int)RedirectionType.MobilePhone, 2, -1, DisabledFlag, (int)TargetType.Tab, MobileLandingPage, EnabledFlag);
             
         }
 
         private void PrepareAllMobileRedirectionRule()
         {
-			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.AllMobile, 1, -1, DisabledFlag, (int)TargetType.Tab, AllMobileLandingPage, 1);            
+			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.AllMobile, 1, -1, DisabledFlag, (int)TargetType.Tab, AllMobileLandingPage, EnabledFlag);            
         }
 
         private void PrepareSingleDisabledRedirectionRule()
