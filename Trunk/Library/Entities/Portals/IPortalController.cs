@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 
 using DotNetNuke.Entities.Users;
@@ -108,9 +109,11 @@ namespace DotNetNuke.Entities.Portals
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
-        PortalInfo GetPortal(int PortalId);
+        PortalInfo GetPortal(int portalId);
 
-        PortalInfo GetPortal(int PortalId, string CultureCode);
+        PortalInfo GetPortal(int portalId, string cultureCode);
+
+        List<PortalInfo> GetPortalList(string cultureCode);
 
         /// -----------------------------------------------------------------------------
         /// <summary>

@@ -27,6 +27,7 @@ using System;
 using System.Data;
 
 using DotNetNuke.Data;
+using DotNetNuke.Services.Localization;
 
 #endregion
 
@@ -97,13 +98,10 @@ namespace DotNetNuke.Modules.Dashboard.Data
 
         public static IDataReader GetPortals()
         {
-            return provider.GetPortals();
+            string cultureCode = Localization.SystemLocale;
+            return provider.GetPortals(cultureCode);
         }
 
-        //public static IDataReader GetPortals(string CultureCode)
-        //{
-        //    return provider.GetPortals(CultureCode);
-        //}
         public static IDataReader GetServerErrors()
         {
             return provider.ExecuteReader(GetFullyQualifiedName("GetServerErrors"));

@@ -1444,6 +1444,21 @@ AS
 				END
 		END
 GO
+
+/* Update GetPortals Procedure */
+/*******************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetPortals]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortals]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortals]
+	@CultureCode	nvarchar(50)
+AS
+	SELECT * FROM {databaseOwner}{objectQualifier}vw_Portals
+	WHERE CultureCode = @CultureCode
+	ORDER BY PortalName
+GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

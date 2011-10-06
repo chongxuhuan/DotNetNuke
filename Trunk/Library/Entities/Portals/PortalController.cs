@@ -250,44 +250,10 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
-        private static object GetPortalCallback(CacheItemArgs cacheItemArgs)
+        private static PortalInfo GetPortalInternal(int portalID, string cultureCode)
         {
-            int portalID = (int)cacheItemArgs.ParamList[0];
-            string cultureCode = (string)cacheItemArgs.ParamList[1];
-            object objPortal = null;
-            if (Localization.ActiveLanguagesByPortalID(portalID) == 1)
-            {
-                //only 1 language active, no need for fallback check
-                return CBO.FillObject<PortalInfo>(DataProvider.Instance().GetPortal(portalID, cultureCode));
-            }
-            else
-            {
-                IDataReader dr = default(IDataReader);
-                dr = DataProvider.Instance().GetPortal(portalID, cultureCode);
-                objPortal = CBO.FillObject<PortalInfo>(dr);
-                if (objPortal == null)
-                {
-                    //Get Fallback language
-                    string fallbackLanguage = string.Empty;
-                    Locale userLocale = LocaleController.Instance.GetLocale(cultureCode);
-                    if (userLocale != null && !string.IsNullOrEmpty(userLocale.Fallback))
-                    {
-                        fallbackLanguage = userLocale.Fallback;
-                    }
-                    dr = DataProvider.Instance().GetPortal(portalID, fallbackLanguage);
-                    objPortal = CBO.FillObject<PortalInfo>(dr);
-                    if (objPortal == null)
-                    {
-                        objPortal = CBO.FillObject<PortalInfo>(DataProvider.Instance().GetPortal(portalID, GetActivePortalLanguage(portalID)));
-                    }
-                    //if we cannot find any fallback, it mean's it's a non portal default langauge
-                    DataProvider.Instance().EnsureLocalizationExists(portalID, GetActivePortalLanguage(portalID));
-                    objPortal = CBO.FillObject<PortalInfo>(DataProvider.Instance().GetPortal(portalID, GetActivePortalLanguage(portalID)));
-                    dr.Close();
-                    dr.Dispose();
-                }
-            }
-            return objPortal;
+            var controller = new PortalController();
+            return controller.GetPortalList(cultureCode).Where(p => p.PortalID == portalID).SingleOrDefault();
         }
 
         private static object GetPortalDefaultLanguageCallBack(CacheItemArgs cacheItemArgs)
@@ -1069,7 +1035,7 @@ namespace DotNetNuke.Entities.Portals
                                                       CultureCode);
             EventLogController objEventLog = new EventLogController();
             objEventLog.AddLog("PortalId", PortalId.ToString(), GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.PORTALINFO_UPDATED);
-            DataCache.ClearPortalCache(PortalId, true);
+            DataCache.ClearHostCache(true);
         }
 
         #endregion
@@ -1451,8 +1417,30 @@ namespace DotNetNuke.Entities.Portals
 
         public PortalInfo GetPortal(int portalId, string cultureCode)
         {
-            string cacheKey = string.Format(DataCache.PortalCacheKey, portalId, cultureCode);
-            return CBO.GetCachedObject<PortalInfo>(new CacheItemArgs(cacheKey, DataCache.PortalCacheTimeOut, DataCache.PortalCachePriority, portalId, cultureCode), GetPortalCallback);
+            if (Localization.ActiveLanguagesByPortalID(portalId) == 1)
+            {
+                //only 1 language active, no need for fallback check
+                return GetPortalInternal(portalId, cultureCode);
+            }
+            PortalInfo portal = GetPortalInternal(portalId, cultureCode);
+            if (portal == null)
+            {
+                //Get Fallback language
+                string fallbackLanguage = string.Empty;
+                Locale userLocale = LocaleController.Instance.GetLocale(cultureCode);
+                if (userLocale != null && !string.IsNullOrEmpty(userLocale.Fallback))
+                {
+                    fallbackLanguage = userLocale.Fallback;
+                }
+                portal = GetPortalInternal(portalId, fallbackLanguage);
+                //if we cannot find any fallback, it mean's it's a non portal default langauge
+                if (portal == null)
+                {
+                    DataProvider.Instance().EnsureLocalizationExists(portalId, GetActivePortalLanguage(portalId));
+                    portal = GetPortalInternal(portalId, GetActivePortalLanguage(portalId));
+                }
+            }
+            return portal;
         }
 
         /// -----------------------------------------------------------------------------
@@ -1467,10 +1455,30 @@ namespace DotNetNuke.Entities.Portals
         /// -----------------------------------------------------------------------------
         public ArrayList GetPortals()
         {
-            return CBO.FillCollection(DataProvider.Instance().GetPortals(), typeof(PortalInfo));
+            string cultureCode = Localization.SystemLocale;
+            string cacheKey = String.Format(DataCache.PortalCacheKey, Null.NullInteger, cultureCode);
+            var portals = CBO.GetCachedObject<List<PortalInfo>>(new CacheItemArgs(cacheKey, DataCache.PortalCacheTimeOut, DataCache.PortalCachePriority, cultureCode), 
+                                                    GetPortalsCallBack);
+            return new ArrayList(portals);
         }
 
-		/// <summary>
+        public List<PortalInfo> GetPortalList(string cultureCode)
+        {
+            string cacheKey = String.Format(DataCache.PortalCacheKey, Null.NullInteger, cultureCode);
+            return CBO.GetCachedObject<List<PortalInfo>>(new CacheItemArgs(cacheKey, DataCache.PortalCacheTimeOut, DataCache.PortalCachePriority, cultureCode),
+                                                    GetPortalsCallBack);
+        }
+
+        private object GetPortalsCallBack(CacheItemArgs cacheItemArgs)
+	    {
+            string cultureCode = (string)cacheItemArgs.ParamList[0];
+            string cacheKey = String.Format(DataCache.PortalCacheKey, Null.NullInteger, cultureCode);
+            List<PortalInfo> portals = CBO.FillCollection<PortalInfo>(DataProvider.Instance().GetPortals(cultureCode));
+	        DataCache.SetCache(cacheKey, portals);
+	        return portals;
+	    }
+
+	    /// <summary>
 		/// Gets the portal.
 		/// </summary>
 		/// <param name="uniqueId">The unique id.</param>
@@ -1584,7 +1592,7 @@ namespace DotNetNuke.Entities.Portals
         {
             TabController tabCont = new TabController();
 
-            DataCache.ClearPortalCache(portalId, true);
+            DataCache.ClearHostCache(true);
             DataProvider.Instance().EnsureLocalizationExists(portalId, cultureCode);
 
             PortalInfo defaultPortal = GetPortal(portalId, GetPortalDefaultLanguage(portalId));
@@ -1911,7 +1919,7 @@ namespace DotNetNuke.Entities.Portals
             DataProvider.Instance().EnsureLocalizationExists(portal.PortalID, portal.DefaultLanguage);
             
             //clear portal cache
-            DataCache.ClearPortalCache(portal.PortalID, false);
+            DataCache.ClearHostCache(true);
         }
 
         #endregion
@@ -2183,7 +2191,7 @@ namespace DotNetNuke.Entities.Portals
             DataProvider.Instance().DeletePortalSetting(portalID, settingName, CultureCode.ToLower());
             EventLogController objEventLog = new EventLogController();
             objEventLog.AddLog("SettingName", settingName, GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.PORTAL_SETTING_DELETED);
-            DataCache.ClearPortalCache(portalID, false);
+            DataCache.ClearHostCache(true);
         }
 
         /// <summary>
@@ -2195,7 +2203,7 @@ namespace DotNetNuke.Entities.Portals
             DataProvider.Instance().DeletePortalSettings(portalID);
             EventLogController objEventLog = new EventLogController();
             objEventLog.AddLog("PortalID", portalID.ToString(), GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.PORTAL_SETTING_DELETED);
-            DataCache.ClearPortalCache(portalID, false);
+            DataCache.ClearHostCache(true);
         }
 
         /// <summary>
@@ -2348,7 +2356,7 @@ namespace DotNetNuke.Entities.Portals
             objEventLog.AddLog(settingName, settingValue, GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.PORTAL_SETTING_UPDATED);
             if (clearCache)
             {
-                DataCache.ClearPortalCache(portalID, false);
+                DataCache.ClearHostCache(true);
             }
         }
 

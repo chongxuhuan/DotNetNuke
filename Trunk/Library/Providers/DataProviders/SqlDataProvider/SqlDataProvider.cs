@@ -984,13 +984,9 @@ namespace DotNetNuke.Data
             return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPortalCount"));
         }
 
-        //public override IDataReader GetPortals(string CultureCode)
-        //{
-        //    return (IDataReader)SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPortals", CultureCode);
-        //}
-        public override IDataReader GetPortals()
+        public override IDataReader GetPortals(string CultureCode)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPortals");
+            return (IDataReader)SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPortals", CultureCode);
         }
 
         public override IDataReader GetPortalsByName(string nameToMatch, int pageIndex, int pageSize)
