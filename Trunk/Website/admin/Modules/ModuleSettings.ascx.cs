@@ -158,12 +158,12 @@ namespace DotNetNuke.Modules.Admin.Modules
                 var objModuleDef = ModuleDefinitionController.GetModuleDefinitionByID(Module.ModuleDefID);
                 if (objModuleDef.DefaultCacheTime == Null.NullInteger)
                 {
-                    lblCacheDurationWarning.Visible = true;
+                    cacheWarningRow.Visible = true;
                     txtCacheDuration.Text = Module.CacheTime.ToString();
                 }
                 else
                 {
-                    lblCacheDurationWarning.Visible = false;
+                    cacheWarningRow.Visible = false;
                     txtCacheDuration.Text = Module.CacheTime.ToString();
                 }
                 BindModuleCacheProviderList();

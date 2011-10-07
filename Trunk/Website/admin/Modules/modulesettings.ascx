@@ -217,10 +217,10 @@
                     <asp:Label ID="lblCacheInherited" runat="server" resourceKey="CacheInherited" CssClass="dnnFormError" />
                 </div>
                 <div class="dnnFormItem" id="divCacheDuration" runat="server" visible="false">
-                     <div class="dnnFormMessage dnnFormWarning">
-                        <asp:Label ID="lblCacheDurationWarning" runat="server" ResourceKey="CacheDurationWarning" />                
-                    </div>
-                       <dnn:label id="lblCacheDuration" runat="server" controlname="txtCacheDuration" resourcekey="CacheDuration" />
+                    <asp:Panel ID="cacheWarningRow" runat="server" Class="dnnFormMessage dnnFormWarning">
+                        <asp:Label ID="lblCacheDurationWarning" runat="server" ResourceKey="CacheDurationWarning"/>                
+                    </asp:Panel>
+                    <dnn:label id="lblCacheDuration" runat="server" controlname="txtCacheDuration" resourcekey="CacheDuration" />
                     <asp:TextBox ID="txtCacheDuration" runat="server" class="msCacheDuration"/>
                     <asp:CompareValidator ID="valCacheTime" ControlToValidate="txtCacheDuration" Operator="DataTypeCheck"
                         Type="Integer" runat="server" Display="Dynamic" resourcekey="valCacheTime.ErrorMessage"

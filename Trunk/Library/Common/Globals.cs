@@ -2773,7 +2773,7 @@ namespace DotNetNuke.Common
             {
                 if (URL.ToLower().StartsWith("mailto:") == false && URL.IndexOf("://") == -1 && URL.StartsWith("~") == false && URL.StartsWith("\\\\") == false && URL.StartsWith("/") == false)
                 {
-                    if (Regex.IsMatch(URL, "^\\d+$"))
+                    if (Regex.IsMatch(URL, @"^\d+$"))
                     {
                         return TabType.Tab;
                     }

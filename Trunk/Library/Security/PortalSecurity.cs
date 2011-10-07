@@ -540,10 +540,7 @@ namespace DotNetNuke.Security
 
                 HttpContext.Current.Response.Cookies.Set(authCookie);
             }
-            else
-            {
-                FormsAuthentication.SignOut();
-            }
+            FormsAuthentication.SignOut();
 
 			//Remove current userinfo from context items
 			HttpContext.Current.Items.Remove("UserInfo");

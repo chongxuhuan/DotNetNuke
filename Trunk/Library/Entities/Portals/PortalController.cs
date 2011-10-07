@@ -253,7 +253,12 @@ namespace DotNetNuke.Entities.Portals
         private static PortalInfo GetPortalInternal(int portalID, string cultureCode)
         {
             var controller = new PortalController();
-            return controller.GetPortalList(cultureCode).Where(p => p.PortalID == portalID).SingleOrDefault();
+            var portal = controller.GetPortalList(cultureCode).Where(p => p.PortalID == portalID).SingleOrDefault();
+            if (portal == null)
+            {
+                portal = CBO.FillObject<PortalInfo>(DataProvider.Instance().GetPortal(portalID, cultureCode));
+            }
+            return portal;
         }
 
         private static object GetPortalDefaultLanguageCallBack(CacheItemArgs cacheItemArgs)

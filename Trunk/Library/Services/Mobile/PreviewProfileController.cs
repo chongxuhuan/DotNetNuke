@@ -170,25 +170,29 @@ namespace DotNetNuke.Services.Mobile
 			{
 				try
 				{
-					var dataPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, Config.GetSetting("DefaultDevicesDatabase"));
+				    var defaultDeviceDBPath = Config.GetSetting("DefaultDevicesDatabase");
+                    if (!string.IsNullOrEmpty(defaultDeviceDBPath))
+                    {
+                        var dataPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, defaultDeviceDBPath);
 
-					if (!string.IsNullOrEmpty(dataPath) && File.Exists(dataPath))
-					{
-						var serializer = new XmlSerializer(typeof(List<PreviewProfile>));
-						profiles = (List<PreviewProfile>)serializer.Deserialize(File.OpenRead(dataPath));
+                        if (!string.IsNullOrEmpty(dataPath) && File.Exists(dataPath))
+                        {
+                            var serializer = new XmlSerializer(typeof (List<PreviewProfile>));
+                            profiles = (List<PreviewProfile>) serializer.Deserialize(File.OpenRead(dataPath));
 
-						if (profiles != null)
-						{
-							profiles.ForEach(p =>
-												{
-													p.PortalId = portalId;
+                            if (profiles != null)
+                            {
+                                profiles.ForEach(p =>
+                                                     {
+                                                         p.PortalId = portalId;
 
-													Save(p);
-												});
-						}
-					}
+                                                         Save(p);
+                                                     });
+                            }
+                        }
+                    }
 
-					PortalController.UpdatePortalSetting(portalId, "DefPreviewProfiles_Created", "true");
+				    PortalController.UpdatePortalSetting(portalId, "DefPreviewProfiles_Created", "true");
 				}
 				catch (Exception ex)
 				{

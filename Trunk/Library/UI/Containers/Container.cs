@@ -321,11 +321,19 @@ namespace DotNetNuke.UI.Containers
 			string viewRoles = ModuleConfiguration.InheritViewPermissions
                                    ? TabPermissionController.GetTabPermissions(ModuleConfiguration.TabID, ModuleConfiguration.PortalID).ToString("VIEW")
                                    : ModuleConfiguration.ModulePermissions.ToString("VIEW");
+
+            string pageEditRoles = TabPermissionController.GetTabPermissions(ModuleConfiguration.TabID, ModuleConfiguration.PortalID).ToString("EDIT");
+            string moduleEditRoles = ModuleConfiguration.ModulePermissions.ToString("EDIT");
+
             viewRoles = viewRoles.Replace(";", string.Empty).Trim().ToLowerInvariant();
+            pageEditRoles = pageEditRoles.Replace(";", string.Empty).Trim().ToLowerInvariant();
+            moduleEditRoles = moduleEditRoles.Replace(";", string.Empty).Trim().ToLowerInvariant();
 
             var showMessage = false;
             var adminMessage = Null.NullString;
-            if (viewRoles == PortalSettings.AdministratorRoleName.ToLowerInvariant())
+            if (viewRoles == PortalSettings.AdministratorRoleName.ToLowerInvariant()
+                            && moduleEditRoles == PortalSettings.AdministratorRoleName.ToLowerInvariant() 
+                            && pageEditRoles == PortalSettings.AdministratorRoleName.ToLowerInvariant())
             {
                 adminMessage = Localization.GetString("ModuleVisibleAdministrator.Text");
                 showMessage = !ModuleConfiguration.HideAdminBorder && !Globals.IsAdminControl();

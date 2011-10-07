@@ -32,6 +32,7 @@ using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Lists;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Data;
 using DotNetNuke.Entities.Controllers;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
@@ -289,6 +290,9 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         private void BindPortal(int portalId, string activeLanguage)
         {
+            //Ensure localization
+            DataProvider.Instance().EnsureLocalizationExists(portalId, activeLanguage);
+
             var portalController = new PortalController();
             var portal = portalController.GetPortal(portalId, activeLanguage);
 
