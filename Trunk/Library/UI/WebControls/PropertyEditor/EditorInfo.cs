@@ -49,7 +49,10 @@ namespace DotNetNuke.UI.WebControls
     /// -----------------------------------------------------------------------------
     public class EditorInfo
     {
-        private bool _Visible = true;
+        public EditorInfo()
+        {
+            Visible = true;
+        }
 
         public object[] Attributes { get; set; }
 
@@ -71,21 +74,13 @@ namespace DotNetNuke.UI.WebControls
 
         public string Type { get; set; }
 
+        public UserInfo User { get; set; }
+
         public object Value { get; set; }
 
         public string ValidationExpression { get; set; }
 
-        public bool Visible
-        {
-            get
-            {
-                return _Visible;
-            }
-            set
-            {
-                _Visible = value;
-            }
-        }
+        public bool Visible { get; set; }
 
         public UserVisibilityMode Visibility { get; set; }
 

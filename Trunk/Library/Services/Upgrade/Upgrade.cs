@@ -2490,6 +2490,21 @@ namespace DotNetNuke.Services.Upgrade
                 }
             }
 
+            //Add List module to Admin page of every portal                      
+            ModuleDefinitionInfo mDef = ModuleDefinitionController.GetModuleDefinitionByFriendlyName("Lists");
+            if (mDef != null)
+            {
+                AddAdminPages("Lists",
+                                "Manage common lists",
+                                "~/Icons/Sigma/Lists_16X16_Standard.png",
+                                "~/Icons/Sigma/Lists_32X32_Standard.png",
+                                true,
+                                mDef.ModuleDefID,
+                                "Lists",
+                                "~/Icons/Sigma/Lists_16X16_Standard.png",
+                                true);
+            }
+
         }
 
         #endregion

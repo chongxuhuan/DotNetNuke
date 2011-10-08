@@ -24,6 +24,9 @@
 			<dnn:Label ID="lblDimensions" runat="server" ControlName="ddlProfileList" />
 			<asp:CheckBox ID="cbShowDimensions" runat="server" Checked="true" />
 		</div>
+        <div class="dnnFormMessage dnnFormInfo">
+            <dnn:Label ID="lblPreviewInfo" runat="server" />
+        </div>
 		<div class="dnnFormItem">
 			<label></label>
 			<div id="emulator">

@@ -34,12 +34,15 @@ using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Icons;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.UI.WebControls.Design;
 
 #endregion
 
+// ReSharper disable CheckNamespace
 namespace DotNetNuke.UI.WebControls
+// ReSharper restore CheckNamespace
 {
     /// -----------------------------------------------------------------------------
     /// <summary>
@@ -55,13 +58,13 @@ namespace DotNetNuke.UI.WebControls
     [ToolboxData("<{0}:PropertyEditorControl runat=server></{0}:PropertyEditorControl>"), Designer(typeof (PropertyEditorControlDesigner)), PersistChildren(true)]
     public class PropertyEditorControl : WebControl, INamingContainer
     {
-		#region "Private Members"
+		#region Private Members
 
         private bool _itemChanged;
         private Hashtable _sections;
         #endregion
 		
-		#region "Constructors"
+		#region Constructors
 
         public PropertyEditorControl()
         {
@@ -82,7 +85,7 @@ namespace DotNetNuke.UI.WebControls
 		
 		#endregion
 
-		#region "Protected Members"
+		#region Protected Members
 
         protected override HtmlTextWriterTag TagKey
         {
@@ -108,7 +111,7 @@ namespace DotNetNuke.UI.WebControls
 		
 		#endregion
 
-		#region "Public Properties"
+		#region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -292,6 +295,8 @@ namespace DotNetNuke.UI.WebControls
         [Category("Appearance")]
         public PropertySortType SortMode { get; set; }
 
+        public UserInfo User { get; set; }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets a collection of fields to display if AutoGenerate is false. Or the
@@ -422,7 +427,7 @@ namespace DotNetNuke.UI.WebControls
 
 		#endregion
 
-		#region "Events"
+		#region Events
 
         public event PropertyChangedEventHandler ItemAdded;
         public event EditorCreatedEventHandler ItemCreated;
@@ -430,7 +435,7 @@ namespace DotNetNuke.UI.WebControls
 
 		#endregion
 
-		#region "Private Methods"
+		#region Private Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -489,6 +494,7 @@ namespace DotNetNuke.UI.WebControls
             editor.RequiredUrl = RequiredUrl;
             editor.ShowRequired = ShowRequired;
             editor.ShowVisibility = ShowVisibility;
+            editor.User = User;
             editor.Width = Width;
             editor.ItemAdded += CollectionItemAdded;
             editor.ItemChanged += ListItemChanged;
@@ -501,7 +507,7 @@ namespace DotNetNuke.UI.WebControls
 
 		#endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -703,7 +709,7 @@ namespace DotNetNuke.UI.WebControls
         /// -----------------------------------------------------------------------------
         protected virtual void CreateEditor()
         {
-            Table table = null;
+            Table table;
             string[] arrGroups = null;
 
             Controls.Clear();
@@ -979,7 +985,7 @@ namespace DotNetNuke.UI.WebControls
 		
 		#endregion
 
-		#region "Public Methods"
+		#region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -1012,7 +1018,7 @@ namespace DotNetNuke.UI.WebControls
 
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
         /// -----------------------------------------------------------------------------
         /// <summary>

@@ -162,4 +162,7 @@
   <data name="SyncWarning.Text" xml:space="preserve">
     <value>After updating the folder type, a synchronization will be performed on the folders using this type. This may take some time, depending on the number of folders that match the criteria.</value>
   </data>
+  <data name="ControlTitle_editfoldermapping.Text" xml:space="preserve">
+    <value>Edit Folder Mapping</value>
+  </data>
 </root>

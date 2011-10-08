@@ -32,6 +32,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Localization;
 
 #endregion
@@ -69,7 +70,7 @@ namespace DotNetNuke.UI.WebControls
 	[ToolboxData("<{0}:FieldEditorControl runat=server></{0}:FieldEditorControl>")]
 	public class FieldEditorControl : WebControl, INamingContainer
 	{
-		#region "Private Members"
+		#region Private Members
 
 		private readonly List<IValidator> Validators = new List<IValidator>();
 		private IEditorInfoAdapter _EditorInfoAdapter;
@@ -79,7 +80,7 @@ namespace DotNetNuke.UI.WebControls
 		
 		#endregion
 		
-		#region "Constructors"
+		#region Constructors
 
 		public FieldEditorControl()
 		{
@@ -98,7 +99,7 @@ namespace DotNetNuke.UI.WebControls
 
 		#endregion
 
-		#region "Protected Properties"
+		#region Protected Properties
 
 		protected override HtmlTextWriterTag TagKey
 		{
@@ -110,7 +111,7 @@ namespace DotNetNuke.UI.WebControls
 
 		#endregion
 
-		#region "Public Properties"
+		#region Public Properties
 
 		/// -----------------------------------------------------------------------------
 		/// <summary>
@@ -313,6 +314,8 @@ namespace DotNetNuke.UI.WebControls
 		/// -----------------------------------------------------------------------------
 		public bool ShowVisibility { get; set; }
 
+        public UserInfo User { get; set; }
+
 		public string ValidationExpression { get; set; }
 
 		#region "Style Properties"
@@ -405,7 +408,7 @@ namespace DotNetNuke.UI.WebControls
 
 		#endregion
 
-		#region "Events"
+		#region Events
 
 		public event PropertyChangedEventHandler ItemAdded;
 		public event PropertyChangedEventHandler ItemChanged;
@@ -489,6 +492,7 @@ namespace DotNetNuke.UI.WebControls
 			EditControl propEditor = EditControlFactory.CreateEditControl(editInfo);
 			propEditor.ControlStyle.CopyFrom(EditControlStyle);
 			propEditor.LocalResourceFile = LocalResourceFile;
+		    propEditor.User = User;
 			if (editInfo.ControlStyle != null)
 			{
 				propEditor.ControlStyle.CopyFrom(editInfo.ControlStyle);
@@ -765,7 +769,7 @@ namespace DotNetNuke.UI.WebControls
 
 		#endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
 		/// -----------------------------------------------------------------------------
 		/// <summary>
@@ -781,7 +785,9 @@ namespace DotNetNuke.UI.WebControls
 
 			if (editInfo != null)
 			{
-				if (editInfo.EditMode == PropertyEditorMode.Edit)
+                editInfo.User = User;
+
+                if (editInfo.EditMode == PropertyEditorMode.Edit)
 				{
 					editInfo.EditMode = EditMode;
 				}
@@ -938,7 +944,7 @@ namespace DotNetNuke.UI.WebControls
 
 		#endregion
 
-		#region "Public Methods"
+		#region Public Methods
 
 		/// -----------------------------------------------------------------------------
 		/// <summary>
@@ -1000,7 +1006,7 @@ namespace DotNetNuke.UI.WebControls
 		
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
 		/// -----------------------------------------------------------------------------
 		/// <summary>

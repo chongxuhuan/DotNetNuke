@@ -28,6 +28,7 @@ using System.Collections.Specialized;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Security;
 
 #endregion
@@ -189,8 +190,10 @@ namespace DotNetNuke.UI.WebControls
         /// </history>
         /// -----------------------------------------------------------------------------
         protected abstract string StringValue { get; set; }
-		
-		#endregion
+
+        public UserInfo User { get; set; }
+
+        #endregion
 
         #region IPostBackDataHandler Members
 

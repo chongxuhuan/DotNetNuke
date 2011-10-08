@@ -324,6 +324,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
             cboDefinitions.SelectedIndexChanged += cboDefinitions_SelectedIndexChanged;
 
+
             lblHelp.Text = Localization.GetString(IsSuperTab ? "HostHelp" : "AdminHelp", LocalResourceFile);
             foreach (DataGridColumn column in grdControls.Columns)
             {
@@ -343,13 +344,13 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             base.OnLoad(e);
 
+            ctlPortals.LocalResourceFile = LocalResourceFile;
             if (!IsWizard)
             {
                 ctlPortals.AddButtonClick += ctlPortals_AddButtonClick;
                 ctlPortals.AddAllButtonClick += ctlPortals_AddAllButtonClick;
                 ctlPortals.RemoveAllButtonClick += ctlPortals_RemoveAllButtonClick;
                 ctlPortals.RemoveButtonClick += ctlPortals_RemoveButtonClick;
-                ctlPortals.LocalResourceFile = LocalResourceFile;
             }
 
             ClientAPI.AddButtonConfirm(cmdDeleteDefinition, Localization.GetString("DeleteItem"));
@@ -358,6 +359,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
+            ctlPortals.LocalResourceFile = LocalResourceFile;
             lblHelp.Visible = !IsWizard;
             pnlDefinitions.Visible = (!IsWizard) && IsSuperTab;
             cmdUpdate.Visible = (!IsWizard) && (!IsSuperTab && pnlPermissions.Visible);

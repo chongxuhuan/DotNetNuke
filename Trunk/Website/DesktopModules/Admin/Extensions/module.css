@@ -22,7 +22,7 @@
 /* ===========   More Extensions Module Styling   =========== */
 .dnnProduct{padding:10px 0;margin-bottom:20px;border-bottom:1px #ccc solid;}
 .dnnCatalogTags{width: 30%;float:left;}
-	.dnnCatalogSearch input{width:60%;}
+	.dnnCatalogSearch input{width:55%;}
 	.dnnCatalogSearch .dnnClear{margin-left:32.5%;}
 		.dnnCatalogSearch .dnnClear a.dnnPrimaryAction{padding:6px 12px;line-height:1.2;}
 .dnnCatalogListing{width:68%;float:right;}

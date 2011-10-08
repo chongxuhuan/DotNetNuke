@@ -30,6 +30,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -2311,9 +2312,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
             try
             {
                 FolderManager.Instance.Synchronize(FolderPortalID, relPath, isRecursive, true);
-
-                //reload page to make treeview update.
-                Response.Redirect(Globals.NavigateURL(), true);
             }
             catch (Exception ex)
             {
@@ -2325,9 +2323,12 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
                 strErrorMessage = MaskString(strErrorMessage);
                 ShowErrorMessage(strErrorMessage);
+
+                BindFolderTree();
             }
 
-            BindFolderTree();
+            //reload page to make treeview update.
+            Response.Redirect(Globals.NavigateURL(), true);
         }
 
         /// -----------------------------------------------------------------------------

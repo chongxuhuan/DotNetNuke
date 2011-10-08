@@ -194,6 +194,8 @@ namespace DotNetNuke.Modules.Admin.Users
                 if (!profProperty.Deleted) 
                     properties.Add(profProperty);
             }
+
+            ProfileProperties.User = User;
             ProfileProperties.ShowVisibility = ShowVisibility;
             ProfileProperties.DataSource = properties;
             ProfileProperties.DataBind();

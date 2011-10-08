@@ -36,13 +36,13 @@ namespace DotNetNuke.Web.UI.WebControls
 {
     public class DnnFileEditControl : IntegerEditControl
     {
-        #region "Private Fields"
+        #region Private Fields
 
         private DnnFilePicker _fileControl;
 
         #endregion
 
-        #region "Public Properties"
+        #region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -66,7 +66,7 @@ namespace DotNetNuke.Web.UI.WebControls
 
         #endregion
 
-        #region "Protected Methods"
+        #region Protected Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -82,13 +82,16 @@ namespace DotNetNuke.Web.UI.WebControls
             Controls.Clear();
 
             //Create Table
-            _fileControl = new DnnFilePicker();
-            _fileControl.ID = string.Format("{0}FileControl", ID);
-            _fileControl.FileFilter = FileFilter;
-            _fileControl.FilePath = FilePath;
-            _fileControl.Permissions = "ADD";
-            _fileControl.UsePersonalFolder = true;
-            _fileControl.ShowFolders = false;
+            _fileControl = new DnnFilePicker
+                               {
+                                   ID = string.Format("{0}FileControl", ID),
+                                   FileFilter = FileFilter,
+                                   FilePath = FilePath,
+                                   Permissions = "ADD",
+                                   UsePersonalFolder = true,
+                                   ShowFolders = false,
+                                   User = User
+                               };
 
             //Add table to Control
             Controls.Add(_fileControl);
@@ -138,7 +141,7 @@ namespace DotNetNuke.Web.UI.WebControls
 
         #endregion
 
-        #region "Public Methods"
+        #region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>

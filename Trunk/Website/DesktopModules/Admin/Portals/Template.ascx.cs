@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -222,11 +223,27 @@ namespace DotNetNuke.Modules.Admin.Portals
             writer.WriteEndElement();
         }
 
+        private void SerializeTabs(XmlWriter writer, PortalInfo portal, Hashtable tabs, TabCollection tabCollection)
+        {
+            foreach (TabInfo tab in tabCollection.Values)
+            {
+                //if not deleted
+                if (!tab.IsDeleted)
+                {
+                    //Serialize the Tab
+                    XmlNode tabNode = TabController.SerializeTab(new XmlDocument(), tabs, tab, portal, chkContent.Checked);
+
+                    tabNode.WriteTo(writer);
+                }
+            }
+            
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Serializes all portal Tabs
         /// </summary>
-        /// <param name="objportal">Portal to serialize</param>
+        /// <param name="portal">Portal to serialize</param>
         /// <remarks>
         /// Only portal tabs will be exported to the template, Admin tabs are not exported.
         /// On each tab, all modules will also be exported.
@@ -235,28 +252,33 @@ namespace DotNetNuke.Modules.Admin.Portals
         /// 	[VMasanas]	23/09/2004	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        private void SerializeTabs(XmlWriter writer, PortalInfo objportal)
+        private void SerializeTabs(XmlWriter writer, PortalInfo portal)
         {
-            XmlNode nodeTab = null;
-            var objtabs = new TabController();
+            XmlNode tabNode = null;
+            var tabController = new TabController();
 
             //supporting object to build the tab hierarchy
-            var hTabs = new Hashtable();
+            var tabs = new Hashtable();
 
             writer.WriteStartElement("tabs");
 
-            foreach (TabInfo objtab in objtabs.GetTabsByPortal(objportal.PortalID).Values)
+            var locales = LocaleController.Instance.GetLocales(portal.PortalID).Values;
+            if (locales.Count > 1)
             {
-				//if not deleted
-                if (!objtab.IsDeleted)
-                {
-					//Serialize the Tab
-                    var xmlTab = new XmlDocument();
-                    nodeTab = TabController.SerializeTab(xmlTab, hTabs, objtab, objportal, chkContent.Checked);
+                //Process Default Language first
+                SerializeTabs(writer, portal, tabs, tabController.GetTabsByPortal(portal.PortalID).WithCulture(portal.DefaultLanguage, true));
 
-                    nodeTab.WriteTo(writer);
+                //Process other locales
+                foreach (Locale locale in locales.Where(l => l.Code != portal.DefaultLanguage))
+                {
+                    SerializeTabs(writer, portal, tabs, tabController.GetTabsByPortal(portal.PortalID).WithCulture(locale.Code, false));
                 }
             }
+            else
+            {
+                SerializeTabs(writer, portal, tabs, tabController.GetTabsByPortal(portal.PortalID));
+            }
+
             writer.WriteEndElement();
         }
 

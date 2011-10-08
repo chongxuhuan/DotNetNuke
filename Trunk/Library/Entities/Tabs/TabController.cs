@@ -1796,125 +1796,151 @@ namespace DotNetNuke.Entities.Tabs
         /// <summary>
         /// Deserializes the tab.
         /// </summary>
-        /// <param name="nodeTab">The node tab.</param>
-        /// <param name="objTab">The obj tab.</param>
+        /// <param name="tabNode">The node tab.</param>
+        /// <param name="tab">The obj tab.</param>
         /// <param name="PortalId">The portal id.</param>
         /// <param name="mergeTabs">The merge tabs.</param>
         /// <returns></returns>
-        public static TabInfo DeserializeTab(XmlNode nodeTab, TabInfo objTab, int PortalId, PortalTemplateModuleAction mergeTabs)
+        public static TabInfo DeserializeTab(XmlNode tabNode, TabInfo tab, int PortalId, PortalTemplateModuleAction mergeTabs)
         {
-            return DeserializeTab(nodeTab, objTab, new Hashtable(), PortalId, false, mergeTabs, new Hashtable());
+            return DeserializeTab(tabNode, tab, new Hashtable(), PortalId, false, mergeTabs, new Hashtable());
         }
 
         /// <summary>
         /// Deserializes the tab.
         /// </summary>
-        /// <param name="nodeTab">The node tab.</param>
-        /// <param name="objTab">The obj tab.</param>
-        /// <param name="hTabs">The h tabs.</param>
-        /// <param name="PortalId">The portal id.</param>
-        /// <param name="IsAdminTemplate">if set to <c>true</c> [is admin template].</param>
+        /// <param name="tabNode">The node tab.</param>
+        /// <param name="tab">The obj tab.</param>
+        /// <param name="tabs">The h tabs.</param>
+        /// <param name="portalId">The portal id.</param>
+        /// <param name="isAdminTemplate">if set to <c>true</c> [is admin template].</param>
         /// <param name="mergeTabs">The merge tabs.</param>
-        /// <param name="hModules">The h modules.</param>
+        /// <param name="modules">The h modules.</param>
         /// <returns></returns>
-        public static TabInfo DeserializeTab(XmlNode nodeTab, TabInfo objTab, Hashtable hTabs, int PortalId, bool IsAdminTemplate, PortalTemplateModuleAction mergeTabs, Hashtable hModules)
+        public static TabInfo DeserializeTab(XmlNode tabNode, TabInfo tab, Hashtable tabs, int portalId, bool isAdminTemplate, PortalTemplateModuleAction mergeTabs, Hashtable modules)
         {
-            TabController objTabs = new TabController();
-            string tabName = XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "name");
+            TabController tabController = new TabController();
+            string tabName = XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "name");
             if (!String.IsNullOrEmpty(tabName))
             {
-                if (objTab == null)
+                if (tab == null)
                 {
-                    objTab = new TabInfo();
-                    objTab.TabID = Null.NullInteger;
-                    objTab.ParentId = Null.NullInteger;
-                    objTab.TabName = tabName;
+                    tab = new TabInfo();
+                    tab.TabID = Null.NullInteger;
+                    tab.ParentId = Null.NullInteger;
+                    tab.TabName = tabName;
                 }
-                objTab.PortalID = PortalId;
-                objTab.Title = XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "title");
-                objTab.Description = XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "description");
-                objTab.KeyWords = XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "keywords");
-                objTab.IsVisible = XmlUtils.GetNodeValueBoolean(nodeTab, "visible", true);
-                objTab.DisableLink = XmlUtils.GetNodeValueBoolean(nodeTab, "disabled");
-                objTab.IconFile = Globals.ImportFile(PortalId, XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "iconfile"));
-                objTab.IconFileLarge = Globals.ImportFile(PortalId, XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "iconfilelarge"));
-                objTab.Url = XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "url");
-                objTab.StartDate = XmlUtils.GetNodeValueDate(nodeTab, "startdate", Null.NullDate);
-                objTab.EndDate = XmlUtils.GetNodeValueDate(nodeTab, "enddate", Null.NullDate);
-                objTab.RefreshInterval = XmlUtils.GetNodeValueInt(nodeTab, "refreshinterval", Null.NullInteger);
-                objTab.PageHeadText = XmlUtils.GetNodeValue(nodeTab, "pageheadtext", Null.NullString);
-                objTab.IsSecure = XmlUtils.GetNodeValueBoolean(nodeTab, "issecure", false);
-                objTab.SiteMapPriority = XmlUtils.GetNodeValueSingle(nodeTab, "sitemappriority", (float)0.5);
+                tab.PortalID = portalId;
+                tab.Title = XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "title");
+                tab.Description = XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "description");
+                tab.KeyWords = XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "keywords");
+                tab.IsVisible = XmlUtils.GetNodeValueBoolean(tabNode, "visible", true);
+                tab.DisableLink = XmlUtils.GetNodeValueBoolean(tabNode, "disabled");
+                tab.IconFile = Globals.ImportFile(portalId, XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "iconfile"));
+                tab.IconFileLarge = Globals.ImportFile(portalId, XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "iconfilelarge"));
+                tab.Url = XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "url");
+                tab.StartDate = XmlUtils.GetNodeValueDate(tabNode, "startdate", Null.NullDate);
+                tab.EndDate = XmlUtils.GetNodeValueDate(tabNode, "enddate", Null.NullDate);
+                tab.RefreshInterval = XmlUtils.GetNodeValueInt(tabNode, "refreshinterval", Null.NullInteger);
+                tab.PageHeadText = XmlUtils.GetNodeValue(tabNode, "pageheadtext", Null.NullString);
+                tab.IsSecure = XmlUtils.GetNodeValueBoolean(tabNode, "issecure", false);
+                tab.SiteMapPriority = XmlUtils.GetNodeValueSingle(tabNode, "sitemappriority", (float)0.5);
+                tab.CultureCode = XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "cultureCode");
                 //objTab.UniqueId = New Guid(XmlUtils.GetNodeValue(nodeTab, "guid", Guid.NewGuid.ToString()));
                 //objTab.VersionGuid = New Guid(XmlUtils.GetNodeValue(nodeTab, "versionGuid", Guid.NewGuid.ToString()));
-                objTab.TabPermissions.Clear();
-                DeserializeTabPermissions(nodeTab.SelectNodes("tabpermissions/permission"), objTab, IsAdminTemplate);
+                tab.TabPermissions.Clear();
+                DeserializeTabPermissions(tabNode.SelectNodes("tabpermissions/permission"), tab, isAdminTemplate);
 
-                DeserializeTabSettings(nodeTab.SelectNodes("tabsettings/tabsetting"), objTab);
+                DeserializeTabSettings(tabNode.SelectNodes("tabsettings/tabsetting"), tab);
 
                 //set tab skin and container
-                if (!String.IsNullOrEmpty(XmlUtils.GetNodeValue(nodeTab, "skinsrc", "")))
+                if (!String.IsNullOrEmpty(XmlUtils.GetNodeValue(tabNode, "skinsrc", "")))
                 {
-                    objTab.SkinSrc = XmlUtils.GetNodeValue(nodeTab, "skinsrc", "");
+                    tab.SkinSrc = XmlUtils.GetNodeValue(tabNode, "skinsrc", "");
                 }
-                if (!String.IsNullOrEmpty(XmlUtils.GetNodeValue(nodeTab, "containersrc", "")))
+                if (!String.IsNullOrEmpty(XmlUtils.GetNodeValue(tabNode, "containersrc", "")))
                 {
-                    objTab.ContainerSrc = XmlUtils.GetNodeValue(nodeTab, "containersrc", "");
+                    tab.ContainerSrc = XmlUtils.GetNodeValue(tabNode, "containersrc", "");
                 }
-                tabName = objTab.TabName;
-                if (!String.IsNullOrEmpty(XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "parent")))
+
+                tabName = tab.TabName;
+                if (!String.IsNullOrEmpty(XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "parent")))
                 {
-                    if (hTabs[XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "parent")] != null)
+                    if (tabs[XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "parent")] != null)
                     {
                         //parent node specifies the path (tab1/tab2/tab3), use saved tabid
-                        objTab.ParentId = Convert.ToInt32(hTabs[XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "parent")]);
-                        tabName = XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "parent") + "/" + objTab.TabName;
+                        tab.ParentId = Convert.ToInt32(tabs[XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "parent")]);
+                        tabName = XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "parent") + "/" + tab.TabName;
                     }
                     else
                     {
                         //Parent node doesn't spcecify the path, search by name.
                         //Possible incoherence if tabname not unique
-                        TabInfo objParent = objTabs.GetTabByName(XmlUtils.GetNodeValue(nodeTab.CreateNavigator(), "parent"), PortalId);
+                        TabInfo objParent = tabController.GetTabByName(XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "parent"), portalId);
                         if (objParent != null)
                         {
-                            objTab.ParentId = objParent.TabID;
-                            tabName = objParent.TabName + "/" + objTab.TabName;
+                            tab.ParentId = objParent.TabID;
+                            tabName = objParent.TabName + "/" + tab.TabName;
                         }
                         else
                         {
                             //parent tab not found!
-                            objTab.ParentId = Null.NullInteger;
-                            tabName = objTab.TabName;
+                            tab.ParentId = Null.NullInteger;
+                            tabName = tab.TabName;
+                        }
+                    }
+                }
+
+                if (!String.IsNullOrEmpty(XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "defaultLanguageTab")))
+                {
+                    if (tabs[XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "defaultLanguageTab")] != null)
+                    {
+                        //parent node specifies the path (tab1/tab2/tab3), use saved tabid
+                        int defaultLanguageTabId = Convert.ToInt32(tabs[XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "defaultLanguageTab")]);
+                        TabInfo defaultLanguageTab = tabController.GetTab(defaultLanguageTabId, portalId, false);
+                        if (defaultLanguageTab != null)
+                        {
+                            tab.DefaultLanguageGuid = defaultLanguageTab.UniqueId;
+                        }
+                    }
+                    else
+                    {
+                        //Parent node doesn't spcecify the path, search by name.
+                        //Possible incoherence if tabname not unique
+                        TabInfo defaultLanguageTab = tabController.GetTabByName(XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "defaultLanguageTab"), portalId);
+                        if (defaultLanguageTab != null)
+                        {
+                            tab.DefaultLanguageGuid = defaultLanguageTab.UniqueId;
                         }
                     }
                 }
 
                 //create/update tab
-                if (objTab.TabID == Null.NullInteger)
+                if (tab.TabID == Null.NullInteger)
                 {
-                    objTab.TabID = objTabs.AddTab(objTab);
+                    tab.TabID = tabController.AddTab(tab);
                 }
                 else
                 {
-                    objTabs.UpdateTab(objTab);
+                    tabController.UpdateTab(tab);
                 }
 
                 //extra check for duplicate tabs in same level
-                if (hTabs[tabName] == null)
+                if (tabs[tabName] == null)
                 {
-                    hTabs.Add(tabName, objTab.TabID);
+                    tabs.Add(tabName, tab.TabID);
                 }
             }
 
             //Parse Panes
-            if (nodeTab.SelectSingleNode("panes") != null)
+            if (tabNode.SelectSingleNode("panes") != null)
             {
-                DeserializePanes(nodeTab.SelectSingleNode("panes"), PortalId, objTab.TabID, mergeTabs, hModules);
+                DeserializePanes(tabNode.SelectSingleNode("panes"), portalId, tab.TabID, mergeTabs, modules);
             }
 
             //Finally add "tabid" to node
-            nodeTab.AppendChild(XmlUtils.CreateElement(nodeTab.OwnerDocument, "tabid", objTab.TabID.ToString()));
-            return objTab;
+            tabNode.AppendChild(XmlUtils.CreateElement(tabNode.OwnerDocument, "tabid", tab.TabID.ToString()));
+            return tab;
         }
 
         /// <summary>
@@ -2160,49 +2186,48 @@ namespace DotNetNuke.Entities.Tabs
         /// <summary>
         /// SerializeTab
         /// </summary>
-        /// <param name="xmlTab">The Xml Document to use for the Tab</param>
+        /// <param name="tabXml">The Xml Document to use for the Tab</param>
         /// <param name="objTab">The TabInfo object to serialize</param>
         /// <param name="includeContent">A flag used to determine if the Module content is included</param>
-        public static XmlNode SerializeTab(XmlDocument xmlTab, TabInfo objTab, bool includeContent)
+        public static XmlNode SerializeTab(XmlDocument tabXml, TabInfo objTab, bool includeContent)
         {
-            return SerializeTab(xmlTab, null, objTab, null, includeContent);
+            return SerializeTab(tabXml, null, objTab, null, includeContent);
         }
 
         /// <summary>
         /// SerializeTab
         /// </summary>
-        /// <param name="xmlTab">The Xml Document to use for the Tab</param>
-        /// <param name="hTabs">A Hashtable used to store the names of the tabs</param>
-        /// <param name="objTab">The TabInfo object to serialize</param>
-        /// <param name="objPortal">The Portal object to which the tab belongs</param>
+        /// <param name="tabXml">The Xml Document to use for the Tab</param>
+        /// <param name="tabs">A Hashtable used to store the names of the tabs</param>
+        /// <param name="tab">The TabInfo object to serialize</param>
+        /// <param name="portal">The Portal object to which the tab belongs</param>
         /// <param name="includeContent">A flag used to determine if the Module content is included</param>
-        public static XmlNode SerializeTab(XmlDocument xmlTab, Hashtable hTabs, TabInfo objTab, PortalInfo objPortal, bool includeContent)
+        public static XmlNode SerializeTab(XmlDocument tabXml, Hashtable tabs, TabInfo tab, PortalInfo portal, bool includeContent)
         {
-            XmlNode nodeTab;
+            XmlNode tabNode;
             XmlNode urlNode;
             XmlNode newnode;
-            CBO.SerializeObject(objTab, xmlTab);
+            CBO.SerializeObject(tab, tabXml);
 
-            nodeTab = xmlTab.SelectSingleNode("tab");
-            nodeTab.Attributes.Remove(nodeTab.Attributes["xmlns:xsd"]);
-            nodeTab.Attributes.Remove(nodeTab.Attributes["xmlns:xsi"]);
+            tabNode = tabXml.SelectSingleNode("tab");
+            tabNode.Attributes.Remove(tabNode.Attributes["xmlns:xsd"]);
+            tabNode.Attributes.Remove(tabNode.Attributes["xmlns:xsi"]);
 
             //remove unwanted elements
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("tabid"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("moduleID"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("taborder"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("portalid"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("parentid"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("isdeleted"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("tabpath"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("haschildren"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("skindoctype"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("uniqueid"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("versionguid"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("cultureCode"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("defaultLanguageGuid"));
-            nodeTab.RemoveChild(nodeTab.SelectSingleNode("localizedVersionGuid"));
-            foreach (XmlNode nodePermission in nodeTab.SelectNodes("tabpermissions/permission"))
+            tabNode.RemoveChild(tabNode.SelectSingleNode("tabid"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("moduleID"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("taborder"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("portalid"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("parentid"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("isdeleted"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("tabpath"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("haschildren"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("skindoctype"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("uniqueid"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("versionguid"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("defaultLanguageGuid"));
+            tabNode.RemoveChild(tabNode.SelectSingleNode("localizedVersionGuid"));
+            foreach (XmlNode nodePermission in tabNode.SelectNodes("tabpermissions/permission"))
             {
                 nodePermission.RemoveChild(nodePermission.SelectSingleNode("tabpermissionid"));
                 nodePermission.RemoveChild(nodePermission.SelectSingleNode("permissionid"));
@@ -2214,107 +2239,116 @@ namespace DotNetNuke.Entities.Tabs
             }
 
             //Manage Url
-            urlNode = xmlTab.SelectSingleNode("tab/url");
-            switch (objTab.TabType)
+            urlNode = tabXml.SelectSingleNode("tab/url");
+            switch (tab.TabType)
             {
                 case TabType.Normal:
-                    urlNode.Attributes.Append(XmlUtils.CreateAttribute(xmlTab, "type", "Normal"));
+                    urlNode.Attributes.Append(XmlUtils.CreateAttribute(tabXml, "type", "Normal"));
                     break;
                 case TabType.Tab:
-                    urlNode.Attributes.Append(XmlUtils.CreateAttribute(xmlTab, "type", "Tab"));
+                    urlNode.Attributes.Append(XmlUtils.CreateAttribute(tabXml, "type", "Tab"));
                     //Get the tab being linked to
-                    TabInfo tab = new TabController().GetTab(Int32.Parse(objTab.Url), objTab.PortalID, false);
-                    urlNode.InnerXml = tab.TabPath;
+                    TabInfo tempTab = new TabController().GetTab(Int32.Parse(tab.Url), tab.PortalID, false);
+                    urlNode.InnerXml = tempTab.TabPath;
                     break;
                 case TabType.File:
-                    urlNode.Attributes.Append(XmlUtils.CreateAttribute(xmlTab, "type", "File"));
-                    var file = FileManager.Instance.GetFile(Int32.Parse(objTab.Url.Substring(7)));
+                    urlNode.Attributes.Append(XmlUtils.CreateAttribute(tabXml, "type", "File"));
+                    var file = FileManager.Instance.GetFile(Int32.Parse(tab.Url.Substring(7)));
                     urlNode.InnerXml = file.RelativePath;
                     break;
                 case TabType.Url:
-                    urlNode.Attributes.Append(XmlUtils.CreateAttribute(xmlTab, "type", "Url"));
+                    urlNode.Attributes.Append(XmlUtils.CreateAttribute(tabXml, "type", "Url"));
                     break;
             }
 
             //serialize TabSettings
-            XmlUtils.SerializeHashtable(objTab.TabSettings, xmlTab, nodeTab, "tabsetting", "settingname", "settingvalue");
-            if (objPortal != null)
+            XmlUtils.SerializeHashtable(tab.TabSettings, tabXml, tabNode, "tabsetting", "settingname", "settingvalue");
+            if (portal != null)
             {
-                if (objTab.TabID == objPortal.SplashTabId)
+                if (tab.TabID == portal.SplashTabId)
                 {
-                    newnode = xmlTab.CreateElement("tabtype");
+                    newnode = tabXml.CreateElement("tabtype");
                     newnode.InnerXml = "splashtab";
-                    nodeTab.AppendChild(newnode);
+                    tabNode.AppendChild(newnode);
                 }
-                else if (objTab.TabID == objPortal.HomeTabId)
+                else if (tab.TabID == portal.HomeTabId)
                 {
-                    newnode = xmlTab.CreateElement("tabtype");
+                    newnode = tabXml.CreateElement("tabtype");
                     newnode.InnerXml = "hometab";
-                    nodeTab.AppendChild(newnode);
+                    tabNode.AppendChild(newnode);
                 }
-                else if (objTab.TabID == objPortal.UserTabId)
+                else if (tab.TabID == portal.UserTabId)
                 {
-                    newnode = xmlTab.CreateElement("tabtype");
+                    newnode = tabXml.CreateElement("tabtype");
                     newnode.InnerXml = "usertab";
-                    nodeTab.AppendChild(newnode);
+                    tabNode.AppendChild(newnode);
                 }
-                else if (objTab.TabID == objPortal.LoginTabId)
+                else if (tab.TabID == portal.LoginTabId)
                 {
-                    newnode = xmlTab.CreateElement("tabtype");
+                    newnode = tabXml.CreateElement("tabtype");
                     newnode.InnerXml = "logintab";
-                    nodeTab.AppendChild(newnode);
+                    tabNode.AppendChild(newnode);
                 }
             }
-            if (hTabs != null)
+            if (tabs != null)
             {
                 //Manage Parent Tab
-                if (!Null.IsNull(objTab.ParentId))
+                if (!Null.IsNull(tab.ParentId))
                 {
-                    newnode = xmlTab.CreateElement("parent");
-                    newnode.InnerXml = HttpContext.Current.Server.HtmlEncode(hTabs[objTab.ParentId].ToString());
-                    nodeTab.AppendChild(newnode);
+                    newnode = tabXml.CreateElement("parent");
+                    newnode.InnerXml = HttpContext.Current.Server.HtmlEncode(tabs[tab.ParentId].ToString());
+                    tabNode.AppendChild(newnode);
 
                     //save tab as: ParentTabName/CurrentTabName
-                    hTabs.Add(objTab.TabID, hTabs[objTab.ParentId] + "/" + objTab.TabName);
+                    tabs.Add(tab.TabID, tabs[tab.ParentId] + "/" + tab.TabName);
                 }
                 else
                 {
                     //save tab as: CurrentTabName
-                    hTabs.Add(objTab.TabID, objTab.TabName);
+                    tabs.Add(tab.TabID, tab.TabName);
                 }
             }
-            XmlNode nodePanes;
-            XmlNode nodePane;
-            XmlNode nodeName;
-            XmlNode nodeModules;
-            XmlNode nodeModule;
-            XmlDocument xmlModule;
-            ModuleInfo objmodule;
-            ModuleController objmodules = new ModuleController();
+
+            //Manage Content Localization
+            if (tab.DefaultLanguageTab != null)
+            {
+                newnode = tabXml.CreateElement("defaultLanguageTab");
+                newnode.InnerXml = HttpContext.Current.Server.HtmlEncode(tabs[tab.DefaultLanguageTab.TabID].ToString());
+                tabNode.AppendChild(newnode);
+            }
+
+            XmlNode panesNode;
+            XmlNode paneNode;
+            XmlNode nameNode;
+            XmlNode modulesNode;
+            XmlNode moduleNode;
+            XmlDocument moduleXml;
+            ModuleInfo module;
+            ModuleController moduleController = new ModuleController();
 
             //Serialize modules
-            nodePanes = nodeTab.AppendChild(xmlTab.CreateElement("panes"));
-            foreach (KeyValuePair<int, ModuleInfo> kvp in objmodules.GetTabModules(objTab.TabID))
+            panesNode = tabNode.AppendChild(tabXml.CreateElement("panes"));
+            foreach (KeyValuePair<int, ModuleInfo> kvp in moduleController.GetTabModules(tab.TabID))
             {
-                objmodule = kvp.Value;
-                if (!objmodule.IsDeleted)
+                module = kvp.Value;
+                if (!module.IsDeleted)
                 {
-                    xmlModule = new XmlDocument();
-                    nodeModule = ModuleController.SerializeModule(xmlModule, objmodule, includeContent);
-                    if (nodePanes.SelectSingleNode("descendant::pane[name='" + objmodule.PaneName + "']") == null)
+                    moduleXml = new XmlDocument();
+                    moduleNode = ModuleController.SerializeModule(moduleXml, module, includeContent);
+                    if (panesNode.SelectSingleNode("descendant::pane[name='" + module.PaneName + "']") == null)
                     {
                         //new pane found
-                        nodePane = xmlModule.CreateElement("pane");
-                        nodeName = nodePane.AppendChild(xmlModule.CreateElement("name"));
-                        nodeName.InnerText = objmodule.PaneName;
-                        nodePane.AppendChild(xmlModule.CreateElement("modules"));
-                        nodePanes.AppendChild(xmlTab.ImportNode(nodePane, true));
+                        paneNode = moduleXml.CreateElement("pane");
+                        nameNode = paneNode.AppendChild(moduleXml.CreateElement("name"));
+                        nameNode.InnerText = module.PaneName;
+                        paneNode.AppendChild(moduleXml.CreateElement("modules"));
+                        panesNode.AppendChild(tabXml.ImportNode(paneNode, true));
                     }
-                    nodeModules = nodePanes.SelectSingleNode("descendant::pane[name='" + objmodule.PaneName + "']/modules");
-                    nodeModules.AppendChild(xmlTab.ImportNode(nodeModule, true));
+                    modulesNode = panesNode.SelectSingleNode("descendant::pane[name='" + module.PaneName + "']/modules");
+                    modulesNode.AppendChild(tabXml.ImportNode(moduleNode, true));
                 }
             }
-            return nodeTab;
+            return tabNode;
         }
 
         [Obsolete("Deprecated in DotNetNuke 5.5.Replaced by ModuleController.CopyModules")]
@@ -2337,9 +2371,9 @@ namespace DotNetNuke.Entities.Tabs
         }
 
         [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")]
-        public static TabInfo DeserializeTab(XmlNode nodeTab, TabInfo objTab, int PortalId)
+        public static TabInfo DeserializeTab(XmlNode tabNode, TabInfo tab, int PortalId)
         {
-            return DeserializeTab(nodeTab, objTab, new Hashtable(), PortalId, false, PortalTemplateModuleAction.Ignore, new Hashtable());
+            return DeserializeTab(tabNode, tab, new Hashtable(), PortalId, false, PortalTemplateModuleAction.Ignore, new Hashtable());
         }
 
         [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal hTabs As Hashtable, ByVal PortalId As Integer, ByVal IsAdminTemplate As Boolean, ByVal mergeTabs As PortalTemplateModuleAction, ByVal hModules As Hashtable)")]

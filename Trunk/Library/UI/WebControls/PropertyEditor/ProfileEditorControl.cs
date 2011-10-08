@@ -27,10 +27,13 @@ using System;
 using System.Web.UI;
 
 using DotNetNuke.Common.Lists;
+using DotNetNuke.Entities.Users;
 
 #endregion
 
+// ReSharper disable CheckNamespace
 namespace DotNetNuke.UI.WebControls
+// ReSharper restore CheckNamespace
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
@@ -50,7 +53,7 @@ namespace DotNetNuke.UI.WebControls
     [ToolboxData("<{0}:ProfileEditorControl runat=server></{0}:ProfileEditorControl>")]
     public class ProfileEditorControl : CollectionEditorControl
     {
-		#region "Protected Methods"
+		#region Protected Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>

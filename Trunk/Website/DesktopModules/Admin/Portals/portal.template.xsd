@@ -183,6 +183,8 @@
                     <xs:element name="skinsrc" type="xs:string" minOccurs="0" maxOccurs="1" />
                     <xs:element name="containersrc" type="xs:string" minOccurs="0" maxOccurs="1" />
                     <xs:element name="sitemappriority" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="cultureCode" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="defaultLanguageTab" type="xs:string" minOccurs="0" maxOccurs="1" />
                     <xs:element name="url" minOccurs="0" maxOccurs="1">
                       <xs:complexType>
                         <xs:simpleContent>
