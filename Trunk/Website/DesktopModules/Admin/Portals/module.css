@@ -27,4 +27,6 @@
 .dnnPortalSignup h2.dnnFormSectionHead a:hover{background:#f1f1f1;}
 .dnnPortalSignup h2.dnnFormSectionHead a.dnnSectionExpanded{background:inherit;}
 .dnnPortalSignup h2.dnnFormSectionHead a.dnnSectionExpanded:hover{background:#f1f1f1;}
+.dnnPortalSignup .dnnFormRadioButtons input[type=radio]{ float: none;clear: none;}
+.dnnPortalSignup .dnnFormRadioButtons label{ float: none;display: inline;}
 /* ===========   End Admin Settings Module Styling   =========== */

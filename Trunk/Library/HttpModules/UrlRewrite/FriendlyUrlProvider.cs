@@ -177,7 +177,7 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
                     {
                         if (queryStringDic.ContainsKey("ctl") && !queryStringDic.ContainsKey("language"))
                         {
-                            switch (queryStringDic["ctl"])
+                            switch (queryStringDic["ctl"].ToLowerInvariant())
                             {
                                 case "terms":
                                     friendlyPath = GetFriendlyAlias("~/terms.aspx", portalAlias, isPagePath);
@@ -464,7 +464,7 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
 
         private Dictionary<string, string> GetQueryStringDictionary(string path)
         {
-            string[] parts = path.ToLowerInvariant().Split('?');
+            string[] parts = path.Split('?');
             var results = new Dictionary<string, string>();
 
 
@@ -475,7 +475,7 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
                     string[] keyvalue = part.Split('=');
                     if ((keyvalue.Length == 2))
                     {
-                        results[keyvalue[0]] = keyvalue[1];
+                        results[keyvalue[0].ToLowerInvariant()] = keyvalue[1];
                     }
                 }
             }

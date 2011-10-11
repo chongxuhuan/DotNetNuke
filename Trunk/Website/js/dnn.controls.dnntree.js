@@ -97,7 +97,8 @@ sNodeCss+=' '+(tNode.cssHover.length>0?tNode.cssHover:this.cssHover);if(tNode.se
 sNodeCss+=' '+(tNode.cssSel.length>0?tNode.cssSel:this.cssSel);oText.className=sNodeCss;},update:function(force)
 {if(force)
 {if(this.selTreeNode)
-dnn.setVar(this.ns+':selected',this.selTreeNode.id);dnn.setVar(this.ns+'_json',this.rootNode.getJSON());}
+dnn.setVar(this.ns + ':selected', this.selTreeNode.id); dnn.setVar(this.ns + '_json', dnn.decodeHTML(this.rootNode.getJSON()));
+}
 return true;},_onsubmit:function()
 {this.update(true);},callBackStatus:function(result,ctx,req)
 {var tNode=ctx;var tree=tNode.tree;tree.invoke_compatHandler('callBackStatus',result,ctx,req);},callBackSuccess:function(result,ctx,req)

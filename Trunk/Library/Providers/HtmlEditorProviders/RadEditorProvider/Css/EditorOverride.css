@@ -7,5 +7,5 @@ div.RadWindow table.rwTitlebarControls ul.rwControlButtons li
 .RadEditor .InsertCustomLink, .RadEditor .FormatBlock {width:110px !important;}
 .reTool .InsertOptions
 {
-    background-image: url(images/attachment.png);
+    background-image: url(../images/attachment.png);
 }

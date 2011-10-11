@@ -39,6 +39,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Modules.HTMLEditorProvider;
 using DotNetNuke.Security;
@@ -930,29 +931,33 @@ namespace DotNetNuke.Providers.RadEditorProvider
             PortalPath = PortalPath.Replace(PortalSettings.HomeDirectory, "").Replace("//", "/");
             string strSaveTemplateDialogPath = _panel.Page.ResolveUrl(moduleFolderPath + "Dialogs/SaveTemplate.aspx?Path=" + PortalPath + "&TabId=" + PortalSettings.ActiveTab.TabID);
 
-            string strRegisterClientScriptPath = _panel.Page.ResolveUrl(moduleFolderPath + "js/ClientScripts.js");
+			AJAX.AddScriptManager(_panel.Page);
+        	var scriptManager = AJAX.GetScriptManager(_panel.Page);
 
-            _panel.Controls.Add(new LiteralControl("<script type=\"text/javascript\" src=\"" + strRegisterClientScriptPath + "\"></script>"));
+            string strRegisterClientScriptPath = _panel.Page.ResolveUrl(moduleFolderPath + "js/ClientScripts.js");
+			scriptManager.Scripts.Add(new ScriptReference(strRegisterClientScriptPath));
 
             string strRegisterDialogScriptPath = _panel.Page.ResolveUrl(moduleFolderPath + "js/RegisterDialogs.js");
-
-            _panel.Controls.Add(new LiteralControl("<script type=\"text/javascript\" src=\"" + strRegisterDialogScriptPath + "\"></script>"));
+			scriptManager.Scripts.Add(new ScriptReference(strRegisterDialogScriptPath));
 
             if (! string.IsNullOrEmpty(_scripttoload))
             {
-                _panel.Controls.Add(new LiteralControl("<script type=\"text/javascript\" src=\"" + _panel.Page.ResolveUrl(_scripttoload) + "\"></script>"));
+				scriptManager.Scripts.Add(new ScriptReference(_panel.Page.ResolveUrl(_scripttoload)));
             }
 
             //add save template dialog var
-            _panel.Controls.Add(new LiteralControl("<script type=\"text/javascript\">var __textEditorSaveTemplateDialog = \"" + strSaveTemplateDialogPath + "\";</script>"));
+        	var saveTemplateDialogJs = 
+				"<script type=\"text/javascript\">var __textEditorSaveTemplateDialog = \"" + strSaveTemplateDialogPath + "\";</script>";
+			_panel.Page.ClientScript.RegisterClientScriptBlock(GetType(), "SaveTemplateDialog", saveTemplateDialogJs);
 
             if (_DMXIntegration)
             {
                 string strDMXDialogPath = _panel.Page.ResolveUrl("~/DesktopModules/DMXBrowser.ContentProvider/DMXBrowser.aspx?Path=" + _DMXPath + "&TabId=" + PortalSettings.ActiveTab.TabID);
 
-                //add dmx browser dialog var
-                _panel.Controls.Add(new LiteralControl("<script type=\"text/javascript\">var __textEditorDMXManagerDialog = \"" + strDMXDialogPath + "\";</script>"));
-
+				//add dmx browser dialog var
+				var dmxManagerDialogJs = "<script type=\"text/javascript\">var __textEditorDMXManagerDialog = \"" + strDMXDialogPath + "\";</script>";
+				_panel.Page.ClientScript.RegisterClientScriptBlock(GetType(), "DMXManagerDialog", dmxManagerDialogJs);
+                
                 //add css classes for save template tool
                 _panel.Controls.Add(
                     new LiteralControl("<style type=\"text/css\">.reTool .DMXManager { background-image: url('" + _panel.Page.ResolveUrl(moduleFolderPath + "images/DMXManager.gif") + "'); }</style>"));
