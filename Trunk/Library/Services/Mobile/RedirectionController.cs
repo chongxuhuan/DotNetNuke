@@ -370,9 +370,8 @@ namespace DotNetNuke.Services.Mobile
         /// </summary>        
         /// <returns>List of redirection.</returns>
         public IList<IRedirection> GetAllRedirections()
-        {
-            string cacheKey = string.Format(DataCache.RedirectionsCacheKey, "");
-            var cacheArg = new CacheItemArgs(cacheKey, DataCache.RedirectionsCacheTimeOut, DataCache.RedirectionsCachePriority, "");
+        {            
+            var cacheArg = new CacheItemArgs(AllRedirectionsCacheKey, DataCache.RedirectionsCacheTimeOut, DataCache.RedirectionsCachePriority, "");
             return CBO.GetCachedObject<IList<IRedirection>>(cacheArg, GetAllRedirectionsCallBack);
         }
 
@@ -469,7 +468,8 @@ namespace DotNetNuke.Services.Mobile
 		private void ClearCache(int portalId)
 		{
 			DataCache.RemoveCache(string.Format(DataCache.RedirectionsCacheKey, portalId));
-		}
+            DataCache.RemoveCache(AllRedirectionsCacheKey);
+		}        
 
 		private void AddLog(string logContent)
 		{
@@ -516,5 +516,15 @@ namespace DotNetNuke.Services.Mobile
         }
 
 		#endregion
-	}
+	
+        #region Private Properties
+	    private string AllRedirectionsCacheKey
+	    {
+            get
+            {
+                return string.Format(DataCache.RedirectionsCacheKey, "All");
+            }
+	    }
+        #endregion
+    }
 }

@@ -181,6 +181,24 @@ namespace DotNetNuke.Entities.Tabs
             }
         }
 
+		[XmlIgnore]
+    	public string IconFileRaw
+    	{
+    		get
+    		{
+    			return _iconFileRaw;
+    		}
+    	}
+
+		[XmlIgnore]
+		public string IconFileLargeRaw
+		{
+			get
+			{
+				return _iconFileLargeRaw;
+			}
+		}
+
         private void IconFileGetter(ref string iconFile, string iconRaw)
         {
             if ((!String.IsNullOrEmpty(iconRaw) && iconRaw.StartsWith("~")) || PortalID == Null.NullInteger)
@@ -189,15 +207,25 @@ namespace DotNetNuke.Entities.Tabs
             }
             else if (iconFile == null && !String.IsNullOrEmpty(iconRaw) && PortalID != Null.NullInteger)
             {
-                IFileInfo fileInfo = FileManager.Instance.GetFile(PortalID, iconRaw);
-                if (fileInfo != null)
-                {
-                    iconFile = FileManager.Instance.GetUrl(fileInfo);
-                }
-                else
-                {
-                    iconFile = iconRaw;
-                }
+            	IFileInfo fileInfo;
+				if (iconRaw.StartsWith("FileID=", StringComparison.InvariantCultureIgnoreCase))
+				{
+					var fileId = Convert.ToInt32(iconRaw.Substring(7));
+					fileInfo = FileManager.Instance.GetFile(fileId);
+				}
+				else
+				{
+					fileInfo = FileManager.Instance.GetFile(PortalID, iconRaw);
+				}
+
+				if (fileInfo != null)
+				{
+					iconFile = FileManager.Instance.GetUrl(fileInfo);
+				}
+				else
+				{
+					iconFile = iconRaw;
+				}
             }
         }
 

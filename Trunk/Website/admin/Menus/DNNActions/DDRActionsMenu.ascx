@@ -35,5 +35,7 @@
 		{
 			confirmScript.Visible = false;
 		}
+		
+		jQuery.RegisterDnnJQueryPlugins(Page);
 	}
 </script>

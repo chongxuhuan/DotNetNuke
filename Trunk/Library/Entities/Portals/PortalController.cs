@@ -2420,9 +2420,11 @@ namespace DotNetNuke.Entities.Portals
             // get Language
             string Language = Localization.SystemLocale;
             string tmpLanguage = GetPortalDefaultLanguage(portalID);
+        	var isDefaultLanguage = false;
             if (!String.IsNullOrEmpty(tmpLanguage))
             {
                 Language = tmpLanguage;
+            	isDefaultLanguage = true;
             }
             //handles case where portalcontroller methods invoked before a language is installed
             if (portalID > Null.NullInteger && Globals.Status == Globals.UpgradeStatus.None && Localization.ActiveLanguagesByPortalID(portalID) == 1)
@@ -2434,6 +2436,7 @@ namespace DotNetNuke.Entities.Portals
                 if ((HttpContext.Current.Request.QueryString["language"] != null))
                 {
                     Language = HttpContext.Current.Request.QueryString["language"];
+					isDefaultLanguage = false;
                 }
                 else
                 {
@@ -2441,6 +2444,7 @@ namespace DotNetNuke.Entities.Portals
                     if (_PortalSettings != null && _PortalSettings.ActiveTab != null && !String.IsNullOrEmpty(_PortalSettings.ActiveTab.CultureCode))
                     {
                         Language = _PortalSettings.ActiveTab.CultureCode;
+						isDefaultLanguage = false;
                     }
                     else
                     {
@@ -2449,10 +2453,11 @@ namespace DotNetNuke.Entities.Portals
                         if (HttpContext.Current.Request["language"] != null)
                         {
                             Language = HttpContext.Current.Request["language"];
+							isDefaultLanguage = false;
                         }
 
                         //if no cookie - try detecting browser
-                        if (String.IsNullOrEmpty(Language))
+						if (String.IsNullOrEmpty(Language) || isDefaultLanguage)
                         {
                             CultureInfo Culture = Localization.GetBrowserCulture(portalID);
 

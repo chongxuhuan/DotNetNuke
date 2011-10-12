@@ -49,6 +49,18 @@ namespace DotNetNuke.Admin.Modules
 
 		private bool _ShowLanguageColumn = true;
 
+        #region Contructors
+
+        public ModuleLocalization()
+        {
+            ModuleId = Null.NullInteger;
+            TabId = Null.NullInteger;
+        }
+
+        #endregion
+
+        public event EventHandler<EventArgs> ModuleLocalizationChanged;
+
 		protected List<ModuleInfo> Modules
 		{
 			get
@@ -61,7 +73,7 @@ namespace DotNetNuke.Admin.Modules
 			}
 		}
 
-		#region "Public Properties"
+		#region Public Properties
 
 		public string LocalResourceFile
 		{
@@ -133,7 +145,7 @@ namespace DotNetNuke.Admin.Modules
 
 		#endregion
 
-		#region "Private Methods"
+		#region Private Methods
 
 		private List<ModuleInfo> LoadTabModules()
 		{
@@ -185,7 +197,7 @@ namespace DotNetNuke.Admin.Modules
 
 		#endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
 		protected bool ShowHeaderCheckBox()
 		{
@@ -207,7 +219,7 @@ namespace DotNetNuke.Admin.Modules
 
 		#endregion
 
-		#region "Public Methods"
+		#region Public Methods
 
 		public override void DataBind()
 		{
@@ -276,16 +288,16 @@ namespace DotNetNuke.Admin.Modules
 
 			moduleCtrl.ClearCache(TabId);
 
-			//Rebind localized Modules
+            //Raise Changed event
+            OnModuleLocalizationChanged(EventArgs.Empty);
+            
+            //Rebind localized Modules
 			DataBind();
-
-			//Raise Changed event
-			OnModuleLocalizationChanged(EventArgs.Empty);
 		}
 
 		#endregion
 
-		#region "EventHandlers"
+		#region EventHandlers
 
 		protected override void OnInit(EventArgs e)
 		{
@@ -293,7 +305,7 @@ namespace DotNetNuke.Admin.Modules
 
 			delocalizeModuleButton.Click += delocalizeModuleButton_Click;
 			localizeModuleButton.Click += localizeModuleButton_Click;
-			localizedModulesGrid.ItemDataBound += localizedModulesGrid_ItemDataBound;
+			//localizedModulesGrid.ItemDataBound += localizedModulesGrid_ItemDataBound;
 			localizedModulesGrid.PreRender += localizedModulesGrid_PreRender;
 			markModuleTranslatedButton.Click += markModuleTranslatedButton_Click;
 			markModuleUnTranslatedButton.Click += markModuleUnTranslatedButton_Click;
@@ -316,22 +328,22 @@ namespace DotNetNuke.Admin.Modules
 			LocalizeSelectedItems(true);
 		}
 
-		protected void localizedModulesGrid_ItemDataBound(object sender, GridItemEventArgs e)
-		{
-			var gridItem = e.Item as GridDataItem;
-			if (gridItem != null)
-			{
-				var localizedModule = gridItem.DataItem as ModuleInfo;
-				if (localizedModule != null)
-				{
-					var selectCheckBox = gridItem.FindControl("rowCheckBox") as CheckBox;
-					if (selectCheckBox != null)
-					{
-						selectCheckBox.Visible = !localizedModule.IsDefaultLanguage;
-					}
-				}
-			}
-		}
+        //protected void localizedModulesGrid_ItemDataBound(object sender, GridItemEventArgs e)
+        //{
+        //    var gridItem = e.Item as GridDataItem;
+        //    if (gridItem != null)
+        //    {
+        //        var localizedModule = gridItem.DataItem as ModuleInfo;
+        //        if (localizedModule != null)
+        //        {
+        //            var selectCheckBox = gridItem.FindControl("rowCheckBox") as CheckBox;
+        //            if (selectCheckBox != null)
+        //            {
+        //                selectCheckBox.Visible = !localizedModule.IsDefaultLanguage;
+        //            }
+        //        }
+        //    }
+        //}
 
 		protected void localizedModulesGrid_PreRender(object sender, EventArgs e)
 		{
@@ -361,31 +373,20 @@ namespace DotNetNuke.Admin.Modules
 			MarkTranslatedSelectedItems(false);
 		}
 
-		protected void ToggleRowSelection(object sender, EventArgs e)
-		{
-			((GridItem)((CheckBox)sender).Parent.Parent).Selected = ((CheckBox)sender).Checked;
-		}
+        //protected void ToggleRowSelection(object sender, EventArgs e)
+        //{
+        //    ((GridItem)((CheckBox)sender).Parent.Parent).Selected = ((CheckBox)sender).Checked;
+        //}
 
-		protected void ToggleSelectedState(object sender, EventArgs e)
-		{
-			foreach (GridDataItem dataItem in localizedModulesGrid.MasterTableView.Items)
-			{
-				ToggleCheckBox(dataItem, ((CheckBox)sender).Checked);
-			}
-		}
-
-		#endregion
-
-		public event EventHandler<EventArgs> ModuleLocalizationChanged;
-
-		#region "Contructors"
-
-		public ModuleLocalization()
-		{
-			ModuleId = Null.NullInteger;
-			TabId = Null.NullInteger;
-		}
+        //protected void ToggleSelectedState(object sender, EventArgs e)
+        //{
+        //    foreach (GridDataItem dataItem in localizedModulesGrid.MasterTableView.Items)
+        //    {
+        //        ToggleCheckBox(dataItem, ((CheckBox)sender).Checked);
+        //    }
+        //}
 
 		#endregion
+
 	}
 }

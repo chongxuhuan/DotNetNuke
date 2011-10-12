@@ -301,9 +301,9 @@
   </data>
   <data name="IntroDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;Welcome to the DotNetNuke Installation Wizard. This Wizard will guide you through the installation of the DotNetNuke application and allow you to create a custom website.&lt;/p&gt;
-&lt;p&gt;If this is your first time installing DotNetNuke, you may wish to review the Installation Guide and undertake the prerequisites for this Wizard.&lt;/p&gt;
+&lt;p&gt;If this is your first time installing DotNetNuke, you may wish to review the Installation Video Guide and undertake the prerequisites for this Wizard.&lt;/p&gt;
 &lt;ul&gt;
-    &lt;li style="list-style:none;"&gt;&lt;a class="dnnPrimaryAction" href="http://www.dotnetnuke.com"&gt;Download Installation Guide&lt;/a&gt;&lt;/li&gt;
+    &lt;li style="list-style:none;"&gt;&lt;a class="dnnPrimaryAction" href="http://www.dotnetnuke.com/Resources/Training/Training-Videos/Installation.aspx" target="new"&gt;View Installation Video&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;To begin, please select the language you want to use for the Wizard and choose  the installation method to use for the Installation.&lt;/p&gt;
 

@@ -102,7 +102,7 @@ namespace DotNetNuke.Entities.Portals
         /// <summary>
         ///   Gets information of a portal
         /// </summary>
-        /// <param name = "PortalId">Id of the portal</param>
+        /// <param name = "portalId">Id of the portal</param>
         /// <returns>PortalInfo object with portal definition</returns>
         /// <remarks>
         /// </remarks>

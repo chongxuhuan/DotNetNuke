@@ -1,7 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="false" Explicit="True" CodeFile="TabLocalization.ascx.cs" Inherits="DotNetNuke.Modules.Admin.Tabs.TabLocalization" %>
 <%@ Register TagPrefix="dnnweb" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
 <div class="dnnForm dnnTabLocalization dnnClear">
-    <dnnweb:DnnGrid ID="localizedTabsGrid" runat="server" AutoGenerateColumns="false" AllowMultiRowSelection="true" Width="100%" CssClass="dnnTabLocalizationGrid">
+    <dnnweb:DnnGrid ID="localizedTabsGrid" runat="server" AutoGenerateColumns="false" AllowMultiRowSelection="true" Width="100%" 
+        CssClass="dnnTabLocalizationGrid">
         <ClientSettings >
             <Selecting AllowRowSelect="true" />
         </ClientSettings>

@@ -42,24 +42,26 @@ namespace DotNetNuke.Modules.Admin.Tabs
 {
     public partial class TabLocalization : PortalModuleBase
     {
-        private bool _IsSelf = Null.NullBoolean;
-        private bool _ShowEditColumn = true;
-        private bool _ShowFooter = true;
-        private bool _ShowLanguageColumn = true;
-        private bool _ShowViewColumn = true;
-
         private TabInfo _Tab;
 
-        #region "Contructors"
+        #region Contructors
 
         public TabLocalization()
         {
+            ShowViewColumn = true;
+            ShowLanguageColumn = true;
+            ShowFooter = true;
+            ShowEditColumn = true;
+            IsSelf = Null.NullBoolean;
             ToLocalizeTabId = Null.NullInteger;
         }
 
         #endregion
 
-        #region "Protected Properties"
+        public event EventHandler<EventArgs> TabLocalizationChanged;
+
+
+        #region Protected Properties
 
         protected TabInfo Tab
         {
@@ -75,67 +77,17 @@ namespace DotNetNuke.Modules.Admin.Tabs
 
         #endregion
 
-        #region "Public Properties"
+        #region Public Properties
 
-        public bool IsSelf
-        {
-            get
-            {
-                return _IsSelf;
-            }
-            set
-            {
-                _IsSelf = value;
-            }
-        }
+        public bool IsSelf { get; set; }
 
-        public bool ShowEditColumn
-        {
-            get
-            {
-                return _ShowEditColumn;
-            }
-            set
-            {
-                _ShowEditColumn = value;
-            }
-        }
+        public bool ShowEditColumn { get; set; }
 
-        public bool ShowFooter
-        {
-            get
-            {
-                return _ShowFooter;
-            }
-            set
-            {
-                _ShowFooter = value;
-            }
-        }
+        public bool ShowFooter { get; set; }
 
-        public bool ShowLanguageColumn
-        {
-            get
-            {
-                return _ShowLanguageColumn;
-            }
-            set
-            {
-                _ShowLanguageColumn = value;
-            }
-        }
+        public bool ShowLanguageColumn { get; set; }
 
-        public bool ShowViewColumn
-        {
-            get
-            {
-                return _ShowViewColumn;
-            }
-            set
-            {
-                _ShowViewColumn = value;
-            }
-        }
+        public bool ShowViewColumn { get; set; }
 
         public int ToLocalizeTabId
         {
@@ -151,7 +103,7 @@ namespace DotNetNuke.Modules.Admin.Tabs
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         private List<ModuleInfo> GetChildModules(int tabId, string cultureCode)
         {
@@ -182,7 +134,7 @@ namespace DotNetNuke.Modules.Admin.Tabs
 
         #endregion
 
-        #region "Protected Methods"
+        #region Protected Methods
 
         protected bool CanEdit(int editTabId, string cultureCode)
         {
@@ -237,9 +189,16 @@ namespace DotNetNuke.Modules.Admin.Tabs
             return string.Format("{0:#0%}", translatedStatus);
         }
 
+        protected void OnTabLocalizationChanged(EventArgs e)
+        {
+            if (TabLocalizationChanged != null)
+            {
+                TabLocalizationChanged(this, e);
+            }
+        }
         #endregion
 
-        #region "Public Methods"
+        #region Public Methods
 
         public override void DataBind()
         {
@@ -272,23 +231,27 @@ namespace DotNetNuke.Modules.Admin.Tabs
                 }
             }
 
+            //Raise Changed event
+            OnTabLocalizationChanged(EventArgs.Empty);
+
+            //Rebind localized Tabs
             DataBind();
         }
 
         #endregion
 
-        #region "EventHandlers"
+        #region EventHandlers
 
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            localizedTabsGrid.PreRender += localizedModulesGrid_PreRender;
+            localizedTabsGrid.PreRender += localizedTabsGrid_PreRender;
             markTabTranslatedButton.Click += markTabTranslatedButton_Click;
             markTabUnTranslatedButton.Click += markTabUnTranslatedButton_Click;
         }
 
-        protected void localizedModulesGrid_PreRender(object sender, EventArgs e)
+        protected void localizedTabsGrid_PreRender(object sender, EventArgs e)
         {
             foreach (GridColumn column in localizedTabsGrid.Columns)
             {

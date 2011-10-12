@@ -404,18 +404,18 @@
                         <asp:ListItem resourcekey="ServerAndPrivate" Value="5" />
                     </asp:DropDownList>
                 </div>
-                <div class="dnnFormItem">
+            </fieldset>
+            <h2 id="Panel-Compression" class="dnnFormSectionHead">
+                <a href="#" class="">
+                    <%=LocalizeString("Compression")%></a></h2>
+            <fieldset>
+				<div class="dnnFormItem">
                     <dnn:Label ID="plCompression" ControlName="cboCompression" runat="server" />
                     <asp:DropDownList ID="cboCompression" runat="server">
                         <asp:ListItem resourcekey="NoCompression" Value="0" />
                         <asp:ListItem resourcekey="GZip" Value="1" />
                     </asp:DropDownList>
                 </div>
-            </fieldset>
-            <h2 id="Panel-Compression" class="dnnFormSectionHead">
-                <a href="#" class="">
-                    <%=LocalizeString("Compression")%></a></h2>
-            <fieldset>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plExcludedPaths" runat="server" ControlName="txtExcludedPaths" />
                     <asp:TextBox ID="txtExcludedPaths" runat="server" MaxLength="256" Width="300" TextMode="MultiLine" Rows="3" />

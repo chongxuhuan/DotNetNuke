@@ -2,18 +2,15 @@
 <%@ Register TagPrefix="dnnweb" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <div class="dnnForm dnnModuleLocalization dnnClear">
-	<dnnweb:DnnGrid ID="localizedModulesGrid" runat="server" AutoGenerateColumns="false" AllowRowSelect="false" AllowMultiRowSelection="true" CssClass="dnnModuleLocalizationGrid">
-		<MasterTableView DataKeyNames="ModuleId, TabId">
+	<dnnweb:DnnGrid ID="localizedModulesGrid" runat="server" AutoGenerateColumns="false" AllowMultiRowSelection="true" 
+            CssClass="dnnModuleLocalizationGrid">
+        <ClientSettings >
+            <Selecting AllowRowSelect="true" />
+        </ClientSettings>
+        <MasterTableView DataKeyNames="ModuleId, TabId">
 			<Columns>
-				<dnnweb:DnnGridTemplateColumn UniqueName="CheckBoxTemplateColumn" HeaderStyle-Width="50px">
-					<HeaderTemplate>
-						<asp:CheckBox ID="headerCheckBox" runat="server" OnCheckedChanged="ToggleSelectedState" Visible = '<%# ShowHeaderCheckBox() %>' AutoPostBack="True" />
-					</HeaderTemplate>
-					<ItemTemplate>
-						<asp:CheckBox ID="rowCheckBox" runat="server" OnCheckedChanged="ToggleRowSelection" AutoPostBack="True" />
-					</ItemTemplate>
-				</dnnweb:DnnGridTemplateColumn> 
-				<dnnweb:DnnGridTemplateColumn UniqueName="Language" HeaderText="Language" ItemStyle-VerticalAlign="Middle" ItemStyle-Width="200px">
+                <dnnweb:DnnGridClientSelectColumn HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" ItemStyle-Width="40px" />
+ 				<dnnweb:DnnGridTemplateColumn UniqueName="Language" HeaderText="Language" ItemStyle-VerticalAlign="Middle" ItemStyle-Width="200px">
 					<ItemTemplate>
 						<%# Convert.ToBoolean(Eval("IsDefaultLanguage")) ? "" : "&nbsp;&nbsp;&nbsp;&nbsp;"%>
 						<dnnweb:DnnLanguageLabel ID="moduleLanguageLabel" runat="server" Language='<%# Eval("CultureCode") %>'  />
@@ -46,11 +43,11 @@
 		</MasterTableView>
 	</dnnweb:DnnGrid>
 	<asp:PlaceHolder ID="footerPlaceHolder" runat="server">
-	<ul class="dnnActions dnnClear">
-		<li><asp:LinkButton ID="localizeModuleButton" resourcekey="unbindModule" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
-		<li><asp:LinkButton ID="delocalizeModuleButton" resourcekey="bindModule" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
-		<li><asp:LinkButton ID="markModuleTranslatedButton" resourcekey="markModuleTranslated" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" />
-		<li><asp:LinkButton ID="markModuleUnTranslatedButton" resourcekey="markModuleUnTranslated" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
-	</li>    
+	    <ul class="dnnActions dnnClear">
+		    <li><asp:LinkButton ID="localizeModuleButton" resourcekey="unbindModule" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
+		    <li><asp:LinkButton ID="delocalizeModuleButton" resourcekey="bindModule" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
+		    <ul><asp:LinkButton ID="markModuleTranslatedButton" resourcekey="markModuleTranslated" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" />
+		    <li><asp:LinkButton ID="markModuleUnTranslatedButton" resourcekey="markModuleUnTranslated" runat="server" CssClass="dnnSecondaryAction" CausesValidation="False" /></li>
+	    </ul>    
 	</asp:PlaceHolder>
 </div>

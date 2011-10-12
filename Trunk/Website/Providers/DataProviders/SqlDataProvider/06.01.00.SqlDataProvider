@@ -1208,7 +1208,7 @@ IF @UserID is null
 		SELECT @UserID = SCOPE_IDENTITY()
 	END
 
-	IF not exists ( SELECT 1 FROM {databaseOwner}{objectQualifier}UserPortals WHERE UserID = @UserID AND PortalID = @PortalID )
+	IF not exists ( SELECT 1 FROM {databaseOwner}{objectQualifier}UserPortals WHERE UserID = @UserID AND PortalID = @PortalID ) AND @PortalID > -1
 		BEGIN
 			INSERT INTO {databaseOwner}{objectQualifier}UserPortals (
 				UserID,
@@ -1459,6 +1459,64 @@ AS
 	WHERE CultureCode = @CultureCode
 	ORDER BY PortalName
 GO
+
+/* Update Tabs View to return original icon file */
+/*****************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}vw_Tabs]') AND OBJECTPROPERTY(id, N'IsVIEW') = 1)
+  DROP VIEW {databaseOwner}{objectQualifier}vw_Tabs
+GO
+    
+CREATE VIEW {databaseOwner}{objectQualifier}vw_Tabs
+AS
+    SELECT     
+        T.TabID,
+        T.UniqueId, 
+        T.VersionGuid, 
+        T.DefaultLanguageGuid, 
+        T.LocalizedVersionGuid, 
+        T.TabOrder, 
+        T.PortalID, 
+        T.TabName, 
+        T.IsVisible, 
+        T.ParentId, 
+        T.[Level], 
+        T.IconFile, 
+        T.IconFileLarge, 
+        T.DisableLink, 
+        T.Title, 
+        T.Description, 
+        T.KeyWords, 
+        T.IsDeleted, 
+        T.SkinSrc, 
+        T.ContainerSrc, 
+        T.TabPath, 
+        T.StartDate, 
+        T.EndDate, 
+        T.Url, 
+        CASE WHEN EXISTS (SELECT  1 FROM {databaseOwner}{objectQualifier}Tabs T2 WHERE T2.ParentId = T.TabId) THEN 'true' ELSE 'false' END AS HasChildren, 
+        T.RefreshInterval, 
+        T.PageHeadText, 
+        T.IsSecure, 
+        T.PermanentRedirect, 
+        T.SiteMapPriority,
+        CI.ContentItemID,
+        CI.Content,
+        CI.ContentTypeID, 
+        CI.ModuleID, 
+        CI.ContentKey,
+        CI.Indexed,
+        T.CultureCode,
+        T.CreatedByUserID, 
+        T.CreatedOnDate, 
+        T.LastModifiedByUserID, 
+        T.LastModifiedOnDate
+    FROM {databaseOwner}{objectQualifier}Tabs AS T
+        LEFT OUTER JOIN  {databaseOwner}{objectQualifier}ContentItems AS CI ON T.ContentItemID = CI.ContentItemID
+
+GO
+
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
