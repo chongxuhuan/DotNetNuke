@@ -153,20 +153,15 @@ namespace DotNetNuke.Web.UI
 
                 if ((!string.IsNullOrEmpty(systemWebControlSkin)))
                 {
-                    string cssLink = "<link href=\"{0}\" rel=\"stylesheet\" type=\"text/css\" />";
-                    string cssVirtual = Path.Combine(skinVirtualFolder, "WebControlSkin");
-                    cssVirtual = Path.Combine(cssVirtual, skinName);
-                    cssVirtual = Path.Combine(cssVirtual, webControlSkinSubFolderName);
-                    cssVirtual = Path.Combine(cssVirtual, string.Format("{0}.{1}.css", controlName, skinName));
-                    cssLink = string.Format(cssLink, cssVirtual.Replace('\\', '/').Replace("//", "/"));
-
-					if (HttpContext.Current != null && HttpContext.Current.Handler is Page)
+                    string filePath = Path.Combine(skinVirtualFolder, "WebControlSkin");
+                    filePath = Path.Combine(filePath, skinName);
+                    filePath = Path.Combine(filePath, webControlSkinSubFolderName);
+                    filePath = Path.Combine(filePath, string.Format("{0}.{1}.css", controlName, skinName));
+                    filePath = filePath.Replace('\\', '/').Replace("//", "/").TrimEnd('/');
+                    
+                    if (HttpContext.Current != null && HttpContext.Current.Handler is Page)
                     {
-                        if ((!HttpContext.Current.Items.Contains(cssVirtual)))
-                        {
-							(HttpContext.Current.Handler as Page).Header.Controls.Add(new LiteralControl(cssLink));
-                            HttpContext.Current.Items.Add(cssVirtual, "");
-                        }
+                        ClientResourceManager.RegisterStyleSheet(HttpContext.Current.Handler as Page, filePath);
                     }
 
                     if (((skinProperty != null) && (enableEmbeddedSkinsProperty != null)))

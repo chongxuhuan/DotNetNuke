@@ -360,7 +360,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             base.OnPreRender(e);
             ctlPortals.LocalResourceFile = LocalResourceFile;
-            lblHelp.Visible = !IsWizard;
+            helpPanel.Visible = !IsWizard;
             pnlDefinitions.Visible = (!IsWizard) && IsSuperTab;
             cmdUpdate.Visible = (!IsWizard) && (!IsSuperTab && pnlPermissions.Visible);
 			PremiumModules.Visible = !IsWizard && !DesktopModule.IsAdmin;

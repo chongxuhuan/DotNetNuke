@@ -986,7 +986,16 @@ namespace DotNetNuke.Data
 
         public override IDataReader GetPortals(string CultureCode)
         {
-            return (IDataReader)SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPortals", CultureCode);
+            IDataReader reader;
+            if (Globals.Status == Globals.UpgradeStatus.Upgrade && Globals.DataBaseVersion < new Version(6,1,0))
+            {
+                reader = (IDataReader)SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPortals");
+            }
+            else
+            {
+                reader = (IDataReader)SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPortals", CultureCode);
+            }
+            return reader;
         }
 
         public override IDataReader GetPortalsByName(string nameToMatch, int pageIndex, int pageSize)

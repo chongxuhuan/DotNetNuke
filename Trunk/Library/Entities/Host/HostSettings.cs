@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Collections;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Controllers;
@@ -40,6 +41,30 @@ namespace DotNetNuke.Entities.Host
             string setting = Null.NullString;
             HostController.Instance.GetSettingsDictionary().TryGetValue(key, out setting);
             return setting;
+        }
+
+        [Obsolete("Replaced in DNN 5.0 by Host.GetHostSettingsDictionary")]
+    	public static Hashtable GetHostSettings()
+	    {
+            var h = new Hashtable();
+            foreach (var kvp in Host.GetHostSettingsDictionary())
+            {
+                h.Add(kvp.Key, kvp.Value);
+            }
+
+            return h;
+    	}
+
+        [Obsolete("Replaced in DNN 5.0 by Host.GetSecureHostSettingsDictionary")]
+        public static Hashtable GetSecureHostSettings()
+        {
+            var h = new Hashtable();
+            foreach (var kvp in Host.GetSecureHostSettingsDictionary())
+            {
+                h.Add(kvp.Key, kvp.Value);
+            }
+
+            return h;
         }
     }
 }

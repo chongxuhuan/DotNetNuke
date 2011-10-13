@@ -5,7 +5,9 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <h2 class="dnnFormSectionHead" id="moduleSettingsHead" runat='server'><a href="" class="dnnLabelExpanded"><%=LocalizeString("ModuleSettings")%></a></h2>
 <fieldset>
-    <asp:Label ID="lblHelp" runat="server" CssClass="dnnFormMessage dnnFormInfo" />
+    <asp:Panel ID="helpPanel" runat="server" CssClass="dnnFormMessage dnnFormInfo">
+        <asp:Label ID="lblHelp" runat="server" />
+    </asp:Panel>
     <dnn:DnnFormEditor id="desktopModuleForm" runat="Server" FormMode="Short">
         <Items>
             <dnn:DnnFormLiteralItem ID="moduleName" runat="server" DataField = "ModuleName" />

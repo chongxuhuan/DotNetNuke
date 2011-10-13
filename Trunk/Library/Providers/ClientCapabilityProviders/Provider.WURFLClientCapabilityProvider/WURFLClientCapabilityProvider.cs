@@ -244,7 +244,8 @@ namespace DotNetNuke.Services.ClientCapability
 
         #region ClientCapabilityProvider Methods
 
-        private static readonly SharedDictionary<string, DeviceInfoClientCapability> _cachedUserAgents = new SharedDictionary<string, DeviceInfoClientCapability>();
+    	private const string UserAgentsCacheKey = "WurflUserAgents"; //user agents cache key
+    	private const int UserAgentsCacheTimeout = 60; //user agents cache expire time.(minutes)
 
         /// <summary>
         ///   Returns ClientCapability based on HttpRequest
@@ -256,13 +257,13 @@ namespace DotNetNuke.Services.ClientCapability
 			if (!string.IsNullOrEmpty(userAgent))
 			{
 				bool found = false;
-				using (_cachedUserAgents.GetReadLock())
+
+				//try to get content from cache
+				var cachedUserAgents = DataCache.GetCache<IDictionary<string, DeviceInfoClientCapability>>(UserAgentsCacheKey);
+				if (cachedUserAgents != null && cachedUserAgents.ContainsKey(userAgent))
 				{
-					if (_cachedUserAgents.ContainsKey(userAgent))
-					{
-						deviceInfoClientCapability = _cachedUserAgents[userAgent];
-						found = true;
-					}
+					deviceInfoClientCapability = cachedUserAgents[userAgent];
+					found = true;
 				}
 
 				if (!found)
@@ -271,11 +272,14 @@ namespace DotNetNuke.Services.ClientCapability
 					if (deviceInfo != null)
 					{
 						deviceInfoClientCapability = new DeviceInfoClientCapability(deviceInfo);
-						using (_cachedUserAgents.GetWriteLock())
+
+						//update cache content
+						if(cachedUserAgents == null)
 						{
-							//put in Dictionary
-							_cachedUserAgents[userAgent] = deviceInfoClientCapability;
+							cachedUserAgents = new Dictionary<string, DeviceInfoClientCapability>();
 						}
+						cachedUserAgents[userAgent] = deviceInfoClientCapability;
+						DataCache.SetCache(UserAgentsCacheKey, cachedUserAgents, TimeSpan.FromMinutes(UserAgentsCacheTimeout));
 					}
 				}
 			}

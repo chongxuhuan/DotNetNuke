@@ -4,14 +4,14 @@
 <div class="dnnForm dnnVendors dnnClear" id="dnnVendors">
 	<div class="dnnFormItem">
 		<asp:TextBox id="txtSearch" Runat="server" />
-		<asp:DropDownList id="ddlSearchType" Runat="server">
+		<asp:DropDownList id="ddlSearchType" Runat="server" CssClass="dnnVendorsSearchFilter">
 			<asp:ListItem Value="name" resourcekey="Name.Header" />
 			<asp:ListItem Value="email" resourcekey="Email.Header" />
 		</asp:DropDownList>
-		<asp:LinkButton ID="btnSearch" Runat="server" resourcekey="Search" />
+		<asp:LinkButton ID="btnSearch" Runat="server" resourcekey="Search" CssClass="dnnPrimaryAction" />
 		<div class="vPageSize dnnRight">
 			<asp:Label ID="Label5" Runat="server" resourcekey="RecordsPage" />
-			<asp:DropDownList id="ddlRecordsPerPage" Runat="server" AutoPostBack="True">
+			<asp:DropDownList id="ddlRecordsPerPage" Runat="server" AutoPostBack="True"  CssClass="dnnVendorsPagesFilter">
 				<asp:ListItem Value="10">10</asp:ListItem>
 				<asp:ListItem Value="25">25</asp:ListItem>
 				<asp:ListItem Value="50">50</asp:ListItem>

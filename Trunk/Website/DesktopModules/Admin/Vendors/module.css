@@ -9,3 +9,7 @@
 		.ucLinkTypeRadioButtons{display:block;overflow:hidden}
 		#dnnVendors .vLetterSearch li{list-style-type:none; display:inline; padding-left: 1em;}
 .vLetterSearch{padding-top:10px;padding-bottom:10px;text-align: center;}
+
+#dnnVendors select.dnnVendorsSearchFilter{padding:5px;margin:0 8px;width:20%;}
+#dnnVendors select.dnnVendorsPagesFilter{padding:5px;margin:0 8px;}
+

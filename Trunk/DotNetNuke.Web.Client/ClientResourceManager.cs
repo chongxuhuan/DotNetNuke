@@ -44,6 +44,9 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
 
         private static bool FileExists(Page page, string filePath)
         {
+            // remove query string for the file exists check, won't impact the absoluteness, so just do it either way.
+            filePath = RemoveQueryString(filePath);
+
             return IsAbsoluteUrl(filePath) || File.Exists(page.Server.MapPath(filePath));
         }
 
@@ -155,8 +158,21 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
         /// <param name="provider">The provider name to be used to render the css file on the page.</param>
         public static void RegisterStyleSheet(Page page, string filePath, int priority, string provider)
         {
-            // to do: put some defensive logic around this to prevent excessive file system hits.
-            if (FileExists(page, filePath))
+            var fileExists = false;
+
+            // Some "legacy URLs" could be using their own query string versioning scheme (and we've forced them to use the new API through re-routing PageBase.RegisterStyleSheet
+            // Ensure that physical CSS files with query strings have their query strings removed
+            if (filePath.Contains(".css?"))
+            {
+                var filePathSansQueryString = RemoveQueryString(filePath);
+                if (File.Exists(page.Server.MapPath(filePathSansQueryString)))
+                {
+                    fileExists = true;
+                    filePath = filePathSansQueryString;
+                }
+            }
+
+            if (fileExists || FileExists(page, filePath))
             {
                 var include = new DnnCssInclude {ForceProvider = provider, Priority = priority, FilePath = filePath};
                 var loader = page.FindControl("ClientResourceIncludes");
@@ -166,6 +182,12 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
                     loader.Controls.Add(include);
                 }
             }
+        }
+
+        private static string RemoveQueryString(string filePath)
+        {
+            var queryStringPosition = filePath.IndexOf("?");
+            return queryStringPosition != -1 ? filePath.Substring(0, queryStringPosition) : filePath;
         }
 
         /// <summary>

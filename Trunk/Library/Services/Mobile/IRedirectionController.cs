@@ -34,7 +34,7 @@ namespace DotNetNuke.Services.Mobile
 	{
 		void Save(IRedirection redirection);
 
-	    void PurgeRedirections(int portalId);
+	    void PurgeInvalidRedirections(int portalId);
 
 		void Delete(int portalId, int id);
 
