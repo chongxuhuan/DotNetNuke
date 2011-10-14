@@ -12,7 +12,7 @@
       </owner>
       <license>Please refer to the Telerik EULA.pdf in your site's documentation folder.</license>
       <releaseNotes>
-        This package includes the design time components for Telerik RadControls for ASP.Net AJAX  version 2011.2.915.20.
+        This package includes the design time components for Telerik RadControls for ASP.Net AJAX  version 2011.2.915.35.
         Please go to www.telerik.com to view release notes on this particular version.</releaseNotes>
       <components>
         <component type="Assembly">
@@ -20,7 +20,7 @@
             <assembly>
               <path>bin</path>
               <name>Telerik.Web.Design.dll</name>
-              <version>2011.2.915.20</version>
+              <version>2011.2.915.35</version>
             </assembly>
           </assemblies>
         </component>

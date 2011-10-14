@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -377,5 +377,77 @@
   </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>
+  </data>
+  <data name="ContextMenuAddAppointment" xml:space="preserve">
+    <value>New Appointment</value>
+  </data>
+  <data name="ContextMenuAddRecurringAppointment" xml:space="preserve">
+    <value>New Recurring Appointment</value>
+  </data>
+  <data name="ContextMenuDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ContextMenuEdit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ContextMenuGoToToday" xml:space="preserve">
+    <value>Go to today</value>
+  </data>
+  <data name="Reminder" xml:space="preserve">
+    <value>Reminder</value>
+  </data>
+  <data name="Reminders" xml:space="preserve">
+    <value>Reminders</value>
+  </data>
+  <data name="ReminderDueIn" xml:space="preserve">
+    <value>due in</value>
+  </data>
+  <data name="ReminderOverdue" xml:space="preserve">
+    <value>overdue</value>
+  </data>
+  <data name="ReminderMinute" xml:space="preserve">
+    <value>minute</value>
+  </data>
+  <data name="ReminderMinutes" xml:space="preserve">
+    <value>minutes</value>
+  </data>
+  <data name="ReminderHour" xml:space="preserve">
+    <value>hour</value>
+  </data>
+  <data name="ReminderHours" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="ReminderDay" xml:space="preserve">
+    <value>day</value>
+  </data>
+  <data name="ReminderDays" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="ReminderWeek" xml:space="preserve">
+    <value>week</value>
+  </data>
+  <data name="ReminderWeeks" xml:space="preserve">
+    <value>weeks</value>
+  </data>
+  <data name="ReminderNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ReminderSnooze" xml:space="preserve">
+    <value>Snooze</value>
+  </data>
+  <data name="ReminderDismiss" xml:space="preserve">
+    <value>Dismiss</value>
+  </data>
+  <data name="ReminderDismissAll" xml:space="preserve">
+    <value>Dismiss All</value>
+  </data>
+  <data name="ReminderOpenItem" xml:space="preserve">
+    <value>Open Item</value>
+  </data>
+  <data name="ReminderSnoozeHint" xml:space="preserve">
+    <value>Click Snooze to be reminded again in:</value>
+  </data>
+  <data name="ReminderBeforeStart" xml:space="preserve">
+    <value>before start</value>
   </data>
 </root>

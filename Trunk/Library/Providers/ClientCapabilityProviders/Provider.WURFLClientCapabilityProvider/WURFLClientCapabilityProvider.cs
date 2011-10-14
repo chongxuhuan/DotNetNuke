@@ -259,12 +259,18 @@ namespace DotNetNuke.Services.ClientCapability
 				bool found = false;
 
 				//try to get content from cache
-				var cachedUserAgents = DataCache.GetCache<IDictionary<string, DeviceInfoClientCapability>>(UserAgentsCacheKey);
-				if (cachedUserAgents != null && cachedUserAgents.ContainsKey(userAgent))
-				{
-					deviceInfoClientCapability = cachedUserAgents[userAgent];
-					found = true;
-				}
+                var cachedUserAgents = DataCache.GetCache<SharedDictionary<string, DeviceInfoClientCapability>>(UserAgentsCacheKey);
+				if (cachedUserAgents != null)
+                {
+                    using (cachedUserAgents.GetReadLock())
+                    {
+                        if (cachedUserAgents.ContainsKey(userAgent))
+                        {
+                            deviceInfoClientCapability = cachedUserAgents[userAgent];
+                            found = true;
+                        }                        
+                    }
+                }
 
 				if (!found)
 				{
@@ -276,10 +282,13 @@ namespace DotNetNuke.Services.ClientCapability
 						//update cache content
 						if(cachedUserAgents == null)
 						{
-							cachedUserAgents = new Dictionary<string, DeviceInfoClientCapability>();
+                            cachedUserAgents = new SharedDictionary<string, DeviceInfoClientCapability>();
 						}
-						cachedUserAgents[userAgent] = deviceInfoClientCapability;
-						DataCache.SetCache(UserAgentsCacheKey, cachedUserAgents, TimeSpan.FromMinutes(UserAgentsCacheTimeout));
+                        using (cachedUserAgents.GetWriteLock())
+                        {
+                            cachedUserAgents[userAgent] = deviceInfoClientCapability;
+                        }
+					    DataCache.SetCache(UserAgentsCacheKey, cachedUserAgents, TimeSpan.FromMinutes(UserAgentsCacheTimeout));
 					}
 				}
 			}

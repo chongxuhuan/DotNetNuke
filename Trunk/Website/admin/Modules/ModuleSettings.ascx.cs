@@ -393,9 +393,6 @@ namespace DotNetNuke.Modules.Admin.Modules
             cmdUpdate.Click += OnUpdateClick;
             dgOnTabs.NeedDataSource += OnPagesGridNeedDataSource;
 
-            startDatePicker.MinDate = DateTime.Now;
-            endDatePicker.MinDate = DateTime.Now;
-
             try
             {
                 cancelHyperLink.NavigateUrl = Globals.NavigateURL();

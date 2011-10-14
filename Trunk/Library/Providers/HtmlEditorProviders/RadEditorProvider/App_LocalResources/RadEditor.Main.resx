@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -284,7 +284,7 @@ Would you like to clean it?</value>
     <value>Show toolbar</value>
   </data>
   <data name="SpellCheckComplete" xml:space="preserve">
-    <value>Spellchecking complete!</value>
+    <value>The Spell Check is complete!</value>
   </data>
   <data name="SpellCheckEnd" xml:space="preserve">
     <value>Finish spellchecking</value>
@@ -333,5 +333,14 @@ Would you like to clean it?</value>
   </data>
   <data name="ClearClass" xml:space="preserve">
     <value>Clear Class</value>
+  </data>
+  <data name="ExceededHtmlLength" xml:space="preserve">
+    <value>The added HTML code exceeded the character limit</value>
+  </data>
+  <data name="ExceededTextLength" xml:space="preserve">
+    <value>The added text exceeded the character limit</value>
+  </data>
+  <data name="ReduceTheConentLength" xml:space="preserve">
+    <value>Please, reduce the content of the field</value>
   </data>
 </root>

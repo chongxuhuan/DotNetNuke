@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Net;
 using System.Web;
 
 using DotNetNuke.Common.Utilities;
@@ -74,7 +75,7 @@ namespace DotNetNuke.Common
 
             if (String.IsNullOrEmpty(Config.GetSetting("ServerName")))
             {
-                Globals.ServerName = Server.MachineName;
+                Globals.ServerName = Dns.GetHostName();
             }
             else
             {
