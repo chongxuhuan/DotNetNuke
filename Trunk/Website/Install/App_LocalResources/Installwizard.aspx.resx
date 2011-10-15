@@ -125,7 +125,7 @@
   </data>
   <data name="Auto.Text" xml:space="preserve">
     <value>&lt;b&gt;Auto&lt;/b&gt; - the “Auto” installation method installs DotNetNuke using the default options including the preconfigured SQL Express Database. Websites created using this method use a default login credentials for the Administrator account which should be updated for security purposes. &lt;br/&gt;
-&lt;b&gt;Prerequisites:&lt;/b&gt; SQL Express installed..</value>
+&lt;b&gt;Prerequisites:&lt;/b&gt; SQL Express installed.</value>
   </data>
   <data name="ChooseDatabase.Text" xml:space="preserve">
     <value>Select Database:</value>
@@ -316,9 +316,9 @@
     <value>File Permissions</value>
   </data>
   <data name="PermissionsDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;DotNetNuke has extensive file upload and document management capabilities. These features require custom security settings so that the application is able to create and manage files in your website.&lt;/p&gt;
+    <value>&lt;p&gt;DotNetNuke has extensive file upload and document management capabilities. These features require custom security settings that allow DotNetNuke to create  and manage folders and files for your website.&lt;/p&gt;
 &lt;p&gt;This page checks the current file permissions on your computer to ensure that these features will work correctly. If your system is not configured properly, you will be provided with guidance  on how to rectify the problem.&lt;/p&gt;
-&lt;p&gt; &lt;b&gt;Note: &lt;/b&gt; - The Wizard checks the permissions in the root folder of your website. In most cases this is sufficient, as child folders usually inherit their file and folder permissions from their parent. If the child folders on your system do not inherit their permissions from the root folder, you should manually configure them before proceeding any further with the installation.&lt;/p&gt;</value>
+&lt;p&gt; &lt;b&gt;Note: &lt;/b&gt;The Wizard checks the permissions in the root folder of your website. In most cases this is sufficient, as child folders usually inherit their file and folder permissions from their parent. If the child folders on your system do not inherit their permissions from the root folder, you should manually configure them before proceeding any further with the installation.&lt;/p&gt;</value>
   </data>
   <data name="PermissionsTitle.Text" xml:space="preserve">
     <value>Checking File Permissions</value>
@@ -327,7 +327,7 @@
     <value>Database Configuration</value>
   </data>
   <data name="DatabaseConfigDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;DotNetNuke is a content management system that stores information about your website in a database. This page allows you to configure the settings used by DotNetNuke to connect to a database. If you are installing DotNetNuke in a “Hosting Account” your hosting provider should have provided you with this information previously. If you are installing DotNetNuke on your local system, it is recommended that you utilize the default options.&lt;/p&gt;</value>
+    <value>&lt;p&gt;DotNetNuke is a content management system that stores information about your website in a database. This page allows you to configure the settings used by DotNetNuke to connect to a database. If you are installing DotNetNuke in a “Hosting Account” your hosting provider should have provided you with this information previously. If you are installing DotNetNuke on your local computer, it is recommended that you use the default options.&lt;/p&gt;</value>
   </data>
   <data name="DatabaseConfigTitle.Text" xml:space="preserve">
     <value>Configure Database Connection</value>
@@ -339,7 +339,7 @@
     <value>&lt;p&gt;Your database is now being built. Once the process is complete, the “Next” button will be enabled.&lt;/p&gt;</value>
   </data>
   <data name="DatabaseInstallTitle.Text" xml:space="preserve">
-    <value>Database Installation Scripts</value>
+    <value>Building Your Database</value>
   </data>
   <data name="Page4.Title" xml:space="preserve">
     <value>Host User</value>
@@ -354,7 +354,7 @@
     <value>Install Modules</value>
   </data>
   <data name="ModulesDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;DotNetNuke is very powerful and extensible, and one way of extending the functionality is through Modules. There are many different types of Modules, each managing a different type of site content or site administrative tasks. Here you can see any Modules which are installed by default and select the optional Modules you wish to install for use in your website. Remember, you can choose to install any of the Modules listed here at a later stage once installation is completed.&lt;/p&gt;</value>
+    <value>&lt;p&gt;DotNetNuke is very powerful and extensible, and one way of extending the functionality is through Modules. There are many different types of Modules, each managing a different type of site content or site administrative task. Here you can see any Modules which are installed by default and select the optional Modules you wish to install for use in your website. Remember, you can choose to install any of the Modules listed here at a later stage once installation is completed.&lt;/p&gt;</value>
   </data>
   <data name="ModulesTitle.Text" xml:space="preserve">
     <value>Install Optional Modules</value>
@@ -381,7 +381,7 @@
     <value>Install Languages</value>
   </data>
   <data name="LanguagesDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;DotNetNuke is fully localizable.  On this page you can choose the languages you wish to install.&lt;/p&gt;
+    <value>&lt;p&gt;DotNetNuke can be used in many languages and comes complete with Language Packs for all major cultures. Language Packs allow users to view certain information in their preferred Language. This information includes DotNetNuke field names and help information, messages such as welcome emails or password reminders, or data like the current date and time. Here you can see any additional Language Packs you have created. Select the optional Languages you wish to install for use in your website.&lt;/p&gt;
 </value>
   </data>
   <data name="LanguagesTitle.Text" xml:space="preserve">
@@ -422,7 +422,7 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>&lt;b&gt;&lt;font color='green'&gt;Your site passed the permissions check.&lt;/font?&lt;/b&gt;</value>
   </data>
   <data name="Portal.Text" xml:space="preserve">
-    <value>Website Properties</value>
+    <value>Website Information</value>
   </data>
   <data name="PortalTemplate.Text" xml:space="preserve">
     <value>Template:</value>
@@ -468,8 +468,8 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>DotNetNuke Installation Wizard</value>
   </data>
   <data name="Typical.Text" xml:space="preserve">
-    <value>&lt;b&gt;Typical&lt;/b&gt;  - the “Typical” installation method creates the most common configuration for your website. This option will assist you to set your file permissions, configure the database for the website and create either a blank website or a website with helpful information on getting started and some sample content. This option installs a rich text editor for managing the content and files on your website, plus a range of additional content management modules can be enabled after the Wizard is completed.&lt;br/&gt;
-&lt;b&gt;Prerequisites:&lt;/b&gt; An SQL Server Database. Note: If you are using SQL Azure or an Oracle database, review the Installation Guide for set-up assistance..</value>
+    <value>&lt;b&gt;Typical&lt;/b&gt;  - the “Typical” installation method creates the most common configuration for your website. This option will assist you to set your file permissions, configure the database for the website and create either a blank website or a website with helpful information on getting started and some sample content. This option installs a rich text editor for managing the content and files on your website, plus a range of additional content management modules that can be enabled after the Wizard is completed.&lt;br/&gt;
+&lt;b&gt;Prerequisites:&lt;/b&gt; An SQL Server Database. Note: If you are using SQL Azure or an Oracle database, review the Installation Guide for set-up assistance.</value>
   </data>
   <data name="Upgrade.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke version {0} is already Installed. Click the Next button to upgrade to the new version.&lt;/p&gt;</value>
@@ -496,7 +496,7 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>Authentication Systems</value>
   </data>
   <data name="AuthSystemsDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;DotNetNuke supports multiple Authentication Systems which is the method by which a user logs into the website. DotNetNuke comes with a default authentication system which can be used separately or in tandem with other systems. Please select the optional Authentication Systems you wish to install for use on your website. Remember, you can install any of the Authentication Systems listed here at a later time.&lt;/p&gt;</value>
+    <value>&lt;p&gt;DotNetNuke supports multiple Authentication Systems which is the method by which a user logs into the website. DotNetNuke comes with a default Authentication System which can be used separately or in tandem with other systems. Please select the optional Authentication Systems you wish to install for use on your website. Remember, you can install any of the Authentication Systems listed here at a later time.&lt;/p&gt;</value>
   </data>
   <data name="AuthSystemsTitle.Text" xml:space="preserve">
     <value>Installing Optional Authentication Systems</value>

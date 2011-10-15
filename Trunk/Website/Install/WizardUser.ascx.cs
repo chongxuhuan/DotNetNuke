@@ -213,21 +213,54 @@ namespace DotNetNuke.Services.Install
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Page_PreRender runs just before the page is rendered
+		/// OnLoad runs just before the page is rendered
         /// </summary>
         /// <remarks>
         /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/15/2007	Created
-        /// </history>
         /// -----------------------------------------------------------------------------
-        protected override void OnPreRender(EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
-            base.OnPreRender(e);
+			base.OnLoad(e);
 
-            //Make sure that the password is not cleared on pastback
-			txtConfirm.Attributes["value"] = txtConfirm.Text;
-            txtPassword.Attributes["value"] = txtPassword.Text;
+			if(IsPostBack)
+			{
+				if(!string.IsNullOrEmpty(txtPassword.Text))
+				{
+					ViewState["Password"] = txtPassword.Text;
+				}
+				else if(ViewState["Password"] != null)
+				{
+					txtPassword.Text = ViewState["Password"].ToString();
+				}
+
+				if (!string.IsNullOrEmpty(txtConfirm.Text))
+				{
+					ViewState["Confirm"] = txtConfirm.Text;
+				}
+				else if (ViewState["Confirm"] != null)
+				{
+					txtConfirm.Text = ViewState["Confirm"].ToString();
+				}
+			}
         }
+
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// OnLoad runs just before the page is rendered
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <history>
+		/// 	[cnurse]	02/15/2007	Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		protected override void OnPreRender(EventArgs e)
+		{
+			base.OnPreRender(e);
+
+			//Make sure that the password is not cleared on pastback
+			txtConfirm.Attributes["value"] = txtConfirm.Text;
+			txtPassword.Attributes["value"] = txtPassword.Text;
+		}
     }
 }

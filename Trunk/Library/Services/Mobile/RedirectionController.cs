@@ -90,7 +90,14 @@ namespace DotNetNuke.Services.Mobile
 
 			string redirectUrl = string.Empty;
 
-			//try to get content from cache
+			IList<IRedirection> redirections = GetRedirectionsByPortal(portalId);
+			//check for redirect only when redirect rules are defined
+			if (redirections == null || redirections.Count == 0)
+			{
+                return redirectUrl;
+			}
+
+            //try to get content from cache
         	var cacheKey = string.Format(RedirectionUrlCacheKey, userAgent, portalId, currentTabId);
             redirectUrl = GetUrlFromCache(cacheKey);
             if (!string.IsNullOrEmpty(redirectUrl)) 
@@ -98,54 +105,49 @@ namespace DotNetNuke.Services.Mobile
                 return redirectUrl;
             }
 			
-			IList<IRedirection> redirections = GetRedirectionsByPortal(portalId);
-			//check for redirect only when redirect rules are defined
-			if (redirections != null && redirections.Count > 0)
+			var clientCapability = ClientCapabilityProvider.Instance().GetClientCapability(userAgent);
+			var tabController = new TabController();
+			foreach (var redirection in redirections)
 			{
-				var clientCapability = ClientCapabilityProvider.Instance().GetClientCapability(userAgent);
-				var tabController = new TabController();
-				foreach (var redirection in redirections)
+				if (redirection.Enabled)
 				{
-					if (redirection.Enabled)
+					bool checkFurther = false;
+					//redirection is based on source tab
+					if (redirection.SourceTabId != Null.NullInteger)
 					{
-						bool checkFurther = false;
-						//redirection is based on source tab
-						if (redirection.SourceTabId != Null.NullInteger)
-						{
-							//source tab matches current tab
-							if (currentTabId == redirection.SourceTabId)
-							{
-								checkFurther = true;
-							}
-								//is child tabs to be included as well
-							else if (redirection.IncludeChildTabs)
-							{
-								//Get all the descendents of the source tab and find out if current tab is in source tab's hierarchy or not.
-								foreach (var childTab in tabController.GetTabsByPortal(portalId).DescendentsOf(redirection.SourceTabId))
-								{
-									if (childTab.TabID == currentTabId)
-									{
-										checkFurther = true;
-										break;
-									}
-								}
-							}
-						}
-							//redirection is based on portal
-						else if (redirection.SourceTabId == Null.NullInteger)
+						//source tab matches current tab
+						if (currentTabId == redirection.SourceTabId)
 						{
 							checkFurther = true;
 						}
-
-						if (checkFurther)
+							//is child tabs to be included as well
+						else if (redirection.IncludeChildTabs)
 						{
-							//check if client capability matches with this rule
-							if (DoesCapabilityMatchWithRule(clientCapability, redirection))
+							//Get all the descendents of the source tab and find out if current tab is in source tab's hierarchy or not.
+							foreach (var childTab in tabController.GetTabsByPortal(portalId).DescendentsOf(redirection.SourceTabId))
 							{
-								//find the redirect url
-								redirectUrl = GetRedirectUrlFromRule(redirection, portalId, currentTabId);
-								break;
+								if (childTab.TabID == currentTabId)
+								{
+									checkFurther = true;
+									break;
+								}
 							}
+						}
+					}
+						//redirection is based on portal
+					else if (redirection.SourceTabId == Null.NullInteger)
+					{
+						checkFurther = true;
+					}
+
+					if (checkFurther)
+					{
+						//check if client capability matches with this rule
+						if (DoesCapabilityMatchWithRule(clientCapability, redirection))
+						{
+							//find the redirect url
+							redirectUrl = GetRedirectUrlFromRule(redirection, portalId, currentTabId);
+							break;
 						}
 					}
 				}
@@ -186,18 +188,20 @@ namespace DotNetNuke.Services.Mobile
         {
             string fullSiteUrl = string.Empty;
 
+            IList<IRedirection> redirections = GetAllRedirections();
+            //check for redirect only when redirect rules are defined
+            if (redirections == null || redirections.Count == 0)
+            {
+                return fullSiteUrl;
+            }
+
 			//try to get content from cache
 			var cacheKey = string.Format(FullSiteUrlCacheKey, portalId, currentTabId);
             fullSiteUrl = GetUrlFromCache(cacheKey);
             if (!string.IsNullOrEmpty(fullSiteUrl))
             {
                 return fullSiteUrl;
-            }
-
-			IList<IRedirection> redirections = GetAllRedirections();
-
-			//check for redirect only when redirect rules are defined
-			if (redirections == null || redirections.Count == 0) return fullSiteUrl;
+            }			
 
 			bool foundRule = false;
 			foreach (var redirection in redirections)
@@ -278,6 +282,12 @@ namespace DotNetNuke.Services.Mobile
         public string GetMobileSiteUrl(int portalId, int currentTabId)
         {
             string mobileSiteUrl = string.Empty;
+            IList<IRedirection> redirections = GetRedirectionsByPortal(portalId);
+            //check for redirect only when redirect rules are defined
+            if (redirections == null || redirections.Count == 0)
+            {
+                return mobileSiteUrl;
+            }
 
 			//try to get content from cache
 			var cacheKey = string.Format(MobileSiteUrlCacheKey, portalId, currentTabId);
@@ -287,32 +297,26 @@ namespace DotNetNuke.Services.Mobile
                 return mobileSiteUrl;
             }
 
-			IList<IRedirection> redirections = GetRedirectionsByPortal(portalId);
-
-			//check for redirect only when redirect rules are defined
-			if (redirections != null && redirections.Count > 0)
+			//let's try to find if this tab has any specifc rules
+			foreach (var redirection in redirections)
 			{
-				//let's try to find if this tab has any specifc rules
-				foreach (var redirection in redirections)
+				if (redirection.Enabled)
 				{
-					if (redirection.Enabled)
+					if (redirection.SourceTabId != Null.NullInteger && currentTabId == redirection.SourceTabId)
 					{
-						if (redirection.SourceTabId != Null.NullInteger && currentTabId == redirection.SourceTabId)
-						{
-							mobileSiteUrl = GetRedirectUrlFromRule(redirection, portalId, currentTabId);
-							break;
-						}
+						mobileSiteUrl = GetRedirectUrlFromRule(redirection, portalId, currentTabId);
+						break;
 					}
 				}
+			}
 
-				//tab has no specific rule, we can select the first rule
-				if (string.IsNullOrEmpty(mobileSiteUrl))
+			//tab has no specific rule, we can select the first rule
+			if (string.IsNullOrEmpty(mobileSiteUrl))
+			{
+				var firstRedirection = redirections.FirstOrDefault(r => r.Enabled);
+				if (firstRedirection != null)
 				{
-					var firstRedirection = redirections.FirstOrDefault(r => r.Enabled);
-					if (firstRedirection != null)
-					{
-						mobileSiteUrl = GetRedirectUrlFromRule(firstRedirection, portalId, currentTabId);
-					}
+					mobileSiteUrl = GetRedirectUrlFromRule(firstRedirection, portalId, currentTabId);
 				}
 			}
 
@@ -540,7 +544,7 @@ namespace DotNetNuke.Services.Mobile
 
         private void SetUrlInCache(string cacheKey, string url)
         {
-            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(cacheKey))
+            if (string.IsNullOrEmpty(cacheKey))
             {
                 return;
             }

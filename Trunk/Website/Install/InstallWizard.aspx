@@ -185,13 +185,13 @@
                         <asp:Label ID="introDetailLabel" runat="Server" />
                         <hr />
                         <div id="languagePanel" runat="server" class="dnnForm">
+							<div class="dnnFormItem">
+                                <label for="<%=cboLanguages.ClientID%>"><%=LocalizeString("ChooseLanguage")%></label>
+                                <asp:DropDownList ID="cboLanguages" AutoPostBack="true" runat="Server" DataTextField="Text" DataValueField="Code" />
+                            </div>
                             <div class="dnnFormItem">
                                 <label for="<%=installTypeRadioButton.ClientID%>"><%=LocalizeString("ChooseInstall")%></label>
                                 <asp:RadioButtonList ID="installTypeRadioButton" runat="Server" RepeatDirection="Vertical" CssClass="installRadioButtons" />
-                            </div>
-                            <div class="dnnFormItem">
-                                <label for="<%=cboLanguages.ClientID%>"><%=LocalizeString("ChooseLanguage")%></label>
-                                <asp:DropDownList ID="cboLanguages" AutoPostBack="true" runat="Server" DataTextField="Text" DataValueField="Code" />
                             </div>
                         </div>
                         <asp:Label ID="databaseWarningLabel" runat="server" CssClass="NormalRed" ResourceKey="DatabaseWarning" />
@@ -268,6 +268,57 @@
                         <textarea id="txtFeedback" class="FeedBack" cols="80" rows="15"></textarea>
                         <asp:Label ID="installErrorLabel" runat="server" />
                     </asp:WizardStep>
+					<asp:WizardStep ID="adminUserStep" runat="server" Title="Portal" AllowReturn="false">
+                        <h2><asp:Label ID="adminUserTitleLabel" runat="server" /></h2>
+                        <h3><asp:Label ID="lblAdminUser" runat="server" /></h3>
+                        <asp:Label ID="adminUserDetailLabel" runat="Server" />
+                        <dnn:WizardUser ID="usrAdmin" runat="server" />
+                        <hr />
+                        <h3><asp:Label ID="lblPortal" runat="server" /></h3>
+                        <asp:Label ID="portalDetailLabel" runat="Server" />
+                        <div class="dnnForm">
+                            <div class="dnnFormItem">
+                                <label for="<%=txtPortalTitle.ClientID%>"><%=LocalizeString("PortalTitle")%></label>
+                                <asp:TextBox ID="txtPortalTitle" runat="server" MaxLength="128" />
+                            </div>
+                            <div class="dnnFormItem">
+                                <label for="<%=cboPortalTemplate.ClientID%>"><%=LocalizeString("PortalTemplate")%></label>
+                                <asp:DropDownList ID="cboPortalTemplate" runat="server" />
+                            </div>
+                        </div>
+                        <asp:Panel ID="SMTPSettingsPanel" runat="server" Visible="false">
+                            <hr />
+                            <h3><asp:Label ID="lblSMTPSettings" runat="server" /></h3>
+                            <asp:Label ID="lblSMTPSettingsHelp" runat="Server" />
+                            <div class="dnnForm">
+                                <div class="dnnFormItem">
+									    <label for="<%=txtSMTPServer.ClientID%>"><%=LocalizeString("SMTPServer")%></label>
+                                    <asp:TextBox ID="txtSMTPServer" runat="server" MaxLength="256" />
+                                </div>
+                                <div class="dnnFormItem">
+									<label for="<%=optSMTPAuthentication.ClientID%>"><%=LocalizeString("SMTPAuthentication")%></label>
+                                    <asp:RadioButtonList ID="optSMTPAuthentication" runat="server" RepeatDirection="Horizontal">
+                                        <asp:ListItem Value="0" resourcekey="SMTPAnonymous" Selected="True" />
+                                        <asp:ListItem Value="1" resourcekey="SMTPBasic" />
+                                        <asp:ListItem Value="2" resourcekey="SMTPNTLM" />
+                                    </asp:RadioButtonList>
+                                </div>
+                                <div class="dnnFormItem">
+									<label for="<%=chkSMTPEnableSSL.ClientID%>"><%=LocalizeString("SMTPEnableSSL")%></label>
+                                    <asp:Checkbox ID="chkSMTPEnableSSL" runat="server" />
+                                </div>
+                                <div id="SMTPUserNameRow" class="dnnFormItem">
+									<label for="<%=txtSMTPUsername.ClientID%>"><%=LocalizeString("SMTPUsername")%></label>
+                                    <asp:TextBox ID="txtSMTPUsername" runat="server" MaxLength="256" />
+                                </div>
+                                <div id="SMTPPasswordRow" class="dnnFormItem">
+									<label for="<%=txtSMTPPassword.ClientID%>"><%=LocalizeString("SMTPPassword")%></label>
+                                    <asp:TextBox ID="txtSMTPPassword" runat="server" MaxLength="256" TextMode="Password" />
+                                </div>
+                            </div>
+                        </asp:Panel>
+                        <asp:Label ID="adminUserErrorLabel" runat="server" />
+                    </asp:WizardStep>
                     <asp:WizardStep ID="modulesStep" runat="server" Title="Modules" AllowReturn="false">
                         <h2><asp:Label ID="modulesTitleLabel" runat="server" /></h2>
                         <asp:Label ID="modulesDetailLabel" runat="Server" />
@@ -321,57 +372,6 @@
                         <asp:Label ID="lblNoProviders" runat="server" />
                         <hr />
                         <asp:Label ID="providersErrorLabel" runat="server" />
-                    </asp:WizardStep>
-                    <asp:WizardStep ID="adminUserStep" runat="server" Title="Portal" AllowReturn="false">
-                        <h2><asp:Label ID="adminUserTitleLabel" runat="server" /></h2>
-                        <h3><asp:Label ID="lblAdminUser" runat="server" /></h3>
-                        <asp:Label ID="adminUserDetailLabel" runat="Server" />
-                        <dnn:WizardUser ID="usrAdmin" runat="server" />
-                        <hr />
-                        <h3><asp:Label ID="lblPortal" runat="server" /></h3>
-                        <asp:Label ID="portalDetailLabel" runat="Server" />
-                        <div class="dnnForm">
-                            <div class="dnnFormItem">
-                                <label for="<%=txtPortalTitle.ClientID%>"><%=LocalizeString("PortalTitle")%></label>
-                                <asp:TextBox ID="txtPortalTitle" runat="server" MaxLength="128" />
-                            </div>
-                            <div class="dnnFormItem">
-                                <label for="<%=cboPortalTemplate.ClientID%>"><%=LocalizeString("PortalTemplate")%></label>
-                                <asp:DropDownList ID="cboPortalTemplate" runat="server" />
-                            </div>
-                        </div>
-                        <asp:Panel ID="SMTPSettingsPanel" runat="server" Visible="false">
-                            <hr />
-                            <h3><asp:Label ID="lblSMTPSettings" runat="server" /></h3>
-                            <asp:Label ID="lblSMTPSettingsHelp" runat="Server" />
-                            <div class="dnnForm">
-                                <div class="dnnFormItem">
-									    <label for="<%=txtSMTPServer.ClientID%>"><%=LocalizeString("SMTPServer")%></label>
-                                    <asp:TextBox ID="txtSMTPServer" runat="server" MaxLength="256" />
-                                </div>
-                                <div class="dnnFormItem">
-									<label for="<%=optSMTPAuthentication.ClientID%>"><%=LocalizeString("SMTPAuthentication")%></label>
-                                    <asp:RadioButtonList ID="optSMTPAuthentication" runat="server" RepeatDirection="Horizontal">
-                                        <asp:ListItem Value="0" resourcekey="SMTPAnonymous" Selected="True" />
-                                        <asp:ListItem Value="1" resourcekey="SMTPBasic" />
-                                        <asp:ListItem Value="2" resourcekey="SMTPNTLM" />
-                                    </asp:RadioButtonList>
-                                </div>
-                                <div class="dnnFormItem">
-									<label for="<%=chkSMTPEnableSSL.ClientID%>"><%=LocalizeString("SMTPEnableSSL")%></label>
-                                    <asp:Checkbox ID="chkSMTPEnableSSL" runat="server" />
-                                </div>
-                                <div id="SMTPUserNameRow" class="dnnFormItem">
-									<label for="<%=txtSMTPUsername.ClientID%>"><%=LocalizeString("SMTPUsername")%></label>
-                                    <asp:TextBox ID="txtSMTPUsername" runat="server" MaxLength="256" />
-                                </div>
-                                <div id="SMTPPasswordRow" class="dnnFormItem">
-									<label for="<%=txtSMTPPassword.ClientID%>"><%=LocalizeString("SMTPPassword")%></label>
-                                    <asp:TextBox ID="txtSMTPPassword" runat="server" MaxLength="256" TextMode="Password" />
-                                </div>
-                            </div>
-                        </asp:Panel>
-                        <asp:Label ID="adminUserErrorLabel" runat="server" />
                     </asp:WizardStep>
                     <asp:WizardStep ID="Complete" runat="server" StepType="Finish" Title="Installation Complete">
                         <h2><asp:Label ID="lblCompleteTitle" runat="server" /></h2>

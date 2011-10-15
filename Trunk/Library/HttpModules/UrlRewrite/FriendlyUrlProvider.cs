@@ -313,7 +313,7 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
                         //Manage the special case of child portals 
                         //http://www.domain.com/child/default.aspx
                         string tempurl = HttpContext.Current.Request.Url.Host + Globals.ResolveUrl(friendlyPath);
-                        if (tempurl.Contains(portalAlias))
+                        if( ! tempurl.Contains(portalAlias) )
                         {
                             matchString = httpAlias;
                         }

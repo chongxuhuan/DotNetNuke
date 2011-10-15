@@ -80,9 +80,30 @@ namespace DotNetNuke.Services.Install
 
         #endregion
 
-        #region Protected Members
+		#region Private Properties
 
-        protected Version ApplicationVersion
+    	private bool PortalBinded
+    	{
+    		get
+    		{
+    			if(ViewState["PortalBinded"] == null)
+    			{
+    				return false;
+    			}
+
+    			return Convert.ToBoolean(ViewState["PortalBinded"]);
+    		}
+    		set
+			{
+				ViewState["PortalBinded"] = value;
+			}
+    	}
+
+		#endregion
+
+		#region Protected Members
+
+		protected Version ApplicationVersion
         {
             get
             {
@@ -483,6 +504,11 @@ namespace DotNetNuke.Services.Install
         /// -----------------------------------------------------------------------------
         private void BindPortal()
         {
+			if(PortalBinded)
+			{
+				return;
+			}
+
             XmlNode node = InstallTemplate.SelectSingleNode("//dotnetnuke/portals/portal");
             if (node != null)
             {
@@ -527,6 +553,8 @@ namespace DotNetNuke.Services.Install
                 }
             }
             adminUserErrorLabel.Text = Null.NullString;
+
+        	PortalBinded = true;
         }
 
         /// -----------------------------------------------------------------------------
@@ -1003,47 +1031,47 @@ namespace DotNetNuke.Services.Install
                     databaseInstallTitleLabel.Text = LocalizeString("DatabaseInstallTitle");
                     databaseInstallDetailLabel.Text = LocalizeString("DatabaseInstallDetail");
                     break;
-                case 4: //Page 4 - Modules
+				case 4: //Page 4 - User/Portal Configuration
+					adminUserTitleLabel.Text = LocalizeString("AdminUserTitle");
+					adminUserDetailLabel.Text = LocalizeString("AdminUserDetail");
+					usrAdmin.FirstNameLabel = LocalizeString("FirstName");
+					usrAdmin.LastNameLabel = LocalizeString("LastName");
+					usrAdmin.UserNameLabel = LocalizeString("UserName");
+					usrAdmin.PasswordLabel = LocalizeString("Password");
+					usrAdmin.ConfirmLabel = LocalizeString("Confirm");
+					usrAdmin.EmailLabel = LocalizeString("Email");
+					lblAdminUser.Text = LocalizeString("AdminUser");
+					lblPortal.Text = LocalizeString("Portal");
+					portalDetailLabel.Text = LocalizeString("PortalDetail");
+					lblSMTPSettings.Text = LocalizeString("SMTPSettings");
+					lblSMTPSettingsHelp.Text = LocalizeString("SMTPSettingsHelp");
+					break;
+                case 5: //Page 5 - Modules
                     modulesTitleLabel.Text = LocalizeString("ModulesTitle");
                     modulesDetailLabel.Text = LocalizeString("ModulesDetail");
                     lblModules.Text = LocalizeString("Modules");
                     break;
-                case 5: //Page 5 - Skins/Conatiners
+                case 6: //Page 6 - Skins/Conatiners
                     skinsTitleLabel.Text = LocalizeString("SkinsTitle");
                     skinsDetailLabel.Text = LocalizeString("SkinsDetail");
                     lblSkins.Text = LocalizeString("Skins");
                     lblContainers.Text = LocalizeString("Containers");
                     break;
-                case 6: //Page 6 - Languages
+                case 7: //Page 7 - Languages
                     languagesTitleLabel.Text = LocalizeString("LanguagesTitle");
                     languagesDetailLabel.Text = LocalizeString("LanguagesDetail");
                     lblLanguages.Text = LocalizeString("Languages");
                     break;
-                case 7: //Page 7 - Auth Systems
+                case 8: //Page 8 - Auth Systems
                     authSystemsTitleLabel.Text = LocalizeString("AuthSystemsTitle");
                     authSystemDetailLabel.Text = LocalizeString("AuthSystemsDetail");
                     lblAuthSystems.Text = LocalizeString("AuthSystems");
                     break;
-                case 8: //Page 8 - Providers
+                case 9: //Page 9 - Providers
                     providersTitleLabel.Text = LocalizeString("ProvidersTitle");
                     providersDetailLabel.Text = LocalizeString("ProvidersDetail");
                     lblProviders.Text = LocalizeString("Providers");
                     break;
-                case 9: //Page 9 - User/Portal Configuration
-                    adminUserTitleLabel.Text = LocalizeString("AdminUserTitle");
-                    adminUserDetailLabel.Text = LocalizeString("AdminUserDetail");
-                    usrAdmin.FirstNameLabel = LocalizeString("FirstName");
-                    usrAdmin.LastNameLabel = LocalizeString("LastName");
-                    usrAdmin.UserNameLabel = LocalizeString("UserName");
-                    usrAdmin.PasswordLabel = LocalizeString("Password");
-                    usrAdmin.ConfirmLabel = LocalizeString("Confirm");
-                    usrAdmin.EmailLabel = LocalizeString("Email");
-                    lblAdminUser.Text = LocalizeString("AdminUser");
-                    lblPortal.Text = LocalizeString("Portal");
-                    portalDetailLabel.Text = LocalizeString("PortalDetail");
-                    lblSMTPSettings.Text = LocalizeString("SMTPSettings");
-                    lblSMTPSettingsHelp.Text = LocalizeString("SMTPSettingsHelp");
-                   break;
             }
         }
 
@@ -1108,32 +1136,28 @@ namespace DotNetNuke.Services.Install
                     EnableButton(nextButton, false);
                     ShowButton(prevButton, false);
                     break;
-                case 4: //Page 4 - Modules
+				case 4: //Page 4 - User/Portal Configuration
+					BindPortal();
+					ShowButton(prevButton, false);
+					break;
+                case 5: //Page 5 - Modules
                     BindModules();
                     ShowButton(prevButton, false);
                     break;
-                case 5: //Page 5 - Skins/Conatiners
+                case 6: //Page 6 - Skins/Conatiners
                     BindSkins();
                     ShowButton(prevButton, false);
                     break;
-                case 6: //Page 6 - Languages
+                case 7: //Page 7 - Languages
                     BindLanguages();
                     ShowButton(prevButton, false);
                     break;
-                case 7: //Page 7 - Auth Systems
+                case 8: //Page 8 - Auth Systems
                     BindAuthSystems();
                     ShowButton(prevButton, false);
                     break;
-                case 8: //Page 8 - Providers
+                case 9: //Page 9 - Providers
                     BindProviders();
-                    ShowButton(prevButton, false);
-                    break;
-                case 9: //Page 9 - User/Portal Configuration
-                //    BindSuperUser();
-                //    ShowButton(prevButton, false);
-                //    break;
-                //case 10: //Page 10 - Portal
-                    BindPortal();
                     ShowButton(prevButton, false);
                     break;
             }
@@ -1644,67 +1668,73 @@ namespace DotNetNuke.Services.Install
 				case 2: //Page 2 - Bind database connection form
 					BindConnectionString();
             		break;
-                case 4: //Page 4 - Modules
+				case 4: //Page 4 - Create Website 
+					//if (installTypeRadioButton.SelectedValue == "Full")
+					//{
+					//    SMTPSettingsPanel.Visible = true;
+					//}
+					break;
+                case 5: //Page 5 - Modules
                     if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindModules();
                         if (InstallModules())
                         {
                             //Skip Modules Page
-                            wizInstall.ActiveStepIndex = 5;
+                            wizInstall.ActiveStepIndex = 6;
                         }
                     }
                     break;
-                case 5: //Page 5 - Skins/Conatiners
+                case 6: //Page 6 - Skins/Conatiners
                     if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindSkins();
                         if (InstallSkins())
                         {
                             //Skip Skins Page
-                            wizInstall.ActiveStepIndex = 6;
+                            wizInstall.ActiveStepIndex = 7;
                         }
                     }
                     break;
-                case 6: //Page 6 - Languages
+                case 7: //Page 7 - Languages
                     if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindLanguages();
                         if (InstallLanguages())
                         {
                             //Skip Languages Page
-                            wizInstall.ActiveStepIndex = 7;
+                            wizInstall.ActiveStepIndex = 8;
                         }
                     }
                     break;
-                case 7: //Page 7 - Auth Systems
+                case 8: //Page 8 - Auth Systems
                     if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindAuthSystems();
                         if (InstallAuthSystems())
                         {
                             //Skip Auth Systems Page
-                            wizInstall.ActiveStepIndex = 8;
+                            wizInstall.ActiveStepIndex = 9;
                         }
                     }
                     break;
-                case 8: //Page 8 - Providers
+                case 9: //Page 9 - Providers
                     if (installTypeRadioButton.SelectedValue == "Typical")
                     {
                         BindProviders();
                         if (InstallProviders())
                         {
                             //Skip Providers Page
-                            wizInstall.ActiveStepIndex = 9;
+                            wizInstall.ActiveStepIndex = 10;
                         }
                     }
                     break;
-                case 9: //Page 9 - SMTP Settings
-                    //if (installTypeRadioButton.SelectedValue == "Full")
-                    //{
-                    //    SMTPSettingsPanel.Visible = true;
-                    //}
-                    break;
+				case 10: //Page 10 - Complete
+					if(!InstallPortal())
+					{
+						wizInstall.ActiveStepIndex = 4;
+					}
+					break;
             }
             
             SetupPage();
@@ -1772,37 +1802,42 @@ namespace DotNetNuke.Services.Install
                 case 3: //Page 3 - Database Installation
                     e.Cancel = !TestDataBaseInstalled();
                     break;
-                case 4: //Page 4 - Modules
+				case 4: //Page 4 - Admin/Host User
+					//Check if SMTP needs to be tested
+					if (!String.IsNullOrEmpty(txtSMTPServer.Text))
+					{
+						if (!TestSMTPSettings())
+						{
+							e.Cancel = true;
+							return;
+						}
+					}
+					if (!InstallHost())
+					{
+						e.Cancel = true;
+						return;
+					}
+					break;
+                case 5: //Page 5 - Modules
                     e.Cancel = !InstallModules();
                     break;
-                case 5: //Page 5 - Skins/Containers
+                case 6: //Page 6 - Skins/Containers
                     e.Cancel = !InstallSkins();
                     break;
-                case 6: //Page 6 - Languages
+                case 7: //Page 7 - Languages
                     e.Cancel = !InstallLanguages();
                     break;
-                case 7: //Page 7 - Auth Systems
+                case 8: //Page 8 - Auth Systems
                     e.Cancel = !InstallAuthSystems();
                     break;
-                case 8: //Page 8 - Providers
-                    e.Cancel = !InstallProviders();
-                    break;
-                case 9: //Page 9 - Admin/Host User
-                    //Check if SMTP needs to be tested
-                    if (!String.IsNullOrEmpty(txtSMTPServer.Text))
-                    {
-                        if (!TestSMTPSettings())
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
-                    }
-                    if (!InstallHost())
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-                    e.Cancel = !InstallPortal();
+                case 9: //Page 9 - Providers
+					if (!InstallProviders())
+					{
+						e.Cancel = true;
+						return;
+					}
+
+            		wizInstall.ActiveStepIndex = 10;
                     break;
             }
         }
