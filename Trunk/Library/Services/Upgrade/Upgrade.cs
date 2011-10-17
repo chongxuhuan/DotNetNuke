@@ -2505,6 +2505,14 @@ namespace DotNetNuke.Services.Upgrade
                                 true);
             }
 
+			//update DotNetNuke.Portals' friend name to 'Sites'.
+        	var portalPackage = PackageController.GetPackageByName("DotNetNuke.Portals");
+			if(portalPackage != null)
+			{
+				portalPackage.FriendlyName = "Sites";
+				PackageController.SavePackage(portalPackage);
+			}
+
         }
 
         #endregion
