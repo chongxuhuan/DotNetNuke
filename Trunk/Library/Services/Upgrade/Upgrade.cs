@@ -2513,6 +2513,9 @@ namespace DotNetNuke.Services.Upgrade
 				PackageController.SavePackage(portalPackage);
 			}
 
+            //add ClientDependency config to website web.config
+            ClientResourceManager.AddConfiguration();
+
         }
 
         #endregion

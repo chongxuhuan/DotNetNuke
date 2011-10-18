@@ -517,6 +517,9 @@ namespace DotNetNuke.Security
         {
             PortalSettings settings = PortalController.GetCurrentPortalSettings();
 
+			//Forms Authentication's Logout
+			FormsAuthentication.SignOut();
+
 			//Log User Off from Cookie Authentication System
             if (PortalController.IsMemberOfPortalGroup(settings.PortalId))
             {
@@ -540,7 +543,6 @@ namespace DotNetNuke.Security
 
                 HttpContext.Current.Response.Cookies.Set(authCookie);
             }
-            FormsAuthentication.SignOut();
 
 			//Remove current userinfo from context items
 			HttpContext.Current.Items.Remove("UserInfo");

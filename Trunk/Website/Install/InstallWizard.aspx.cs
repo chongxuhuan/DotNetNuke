@@ -49,6 +49,7 @@ using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 using DataCache = DotNetNuke.Common.Utilities.DataCache;
 using Globals = DotNetNuke.Common.Globals;
@@ -1404,6 +1405,12 @@ namespace DotNetNuke.Services.Install
 
         #region Event Handlers
 
+        protected override void OnPreInit(EventArgs e)
+        {
+            base.OnPreInit(e);
+            Thread.Sleep(100);            
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Page_Init runs when the Page is initialised
@@ -1763,6 +1770,11 @@ namespace DotNetNuke.Services.Install
                 case 1: //Page 1 - File Permissions
                     BindPermissions(true);
                     e.Cancel = !PermissionsValid;
+                    //Adding ClientDependency Resources config to web.config
+                    if (PermissionsValid)
+                    {
+                        ClientResourceManager.AddConfiguration();
+                    }
                     break;
                 case 2: //Page 2 - Database Configuration
                     bool canConnect = TestDatabaseConnection();

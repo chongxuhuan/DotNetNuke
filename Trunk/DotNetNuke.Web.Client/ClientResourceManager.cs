@@ -24,6 +24,7 @@ using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Xml;
 using System.Xml.XPath;
+using DotNetNuke;
 
 using ClientDependency.Core.Config;
 
@@ -188,6 +189,113 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
         {
             var queryStringPosition = filePath.IndexOf("?");
             return queryStringPosition != -1 ? filePath.Substring(0, queryStringPosition) : filePath;
+        }
+
+        /// <summary>
+        /// Adds the neccessary configuration to website root web.config to use the Client Depenedecny componenet.
+        /// </summary>
+        public static void AddConfiguration()
+        {
+            var configPath = HostingEnvironment.MapPath("~/web.config");
+            if (!String.IsNullOrEmpty(configPath))
+            {
+                var xmlDoc = new XmlDocument();
+                xmlDoc.Load(configPath);
+                XmlDocumentFragment xmlFrag;
+
+                // Config Sections
+                var sectionsConfig = xmlDoc.DocumentElement.SelectSingleNode("configSections");
+                if(sectionsConfig != null)
+                {
+                    var clientDependencySectionConfig = sectionsConfig.SelectSingleNode("section[@name='clientDependency']");
+                    if (clientDependencySectionConfig == null)
+                    {
+                        xmlFrag = xmlDoc.CreateDocumentFragment();
+                        xmlFrag.InnerXml = "<section name=\"clientDependency\" type=\"ClientDependency.Core.Config.ClientDependencySection, ClientDependency.Core\" requirePermission=\"false\" />";
+                        xmlDoc.DocumentElement.SelectSingleNode("configSections").AppendChild(xmlFrag);
+                    }
+                }
+
+                // Module Config
+                var systemWebServerModulesConfig = xmlDoc.DocumentElement.SelectSingleNode("system.webServer/modules");
+                if (systemWebServerModulesConfig != null)
+                {
+                    var moduleConfig = systemWebServerModulesConfig.SelectSingleNode("add[@name=\"ClientDependencyModule\"]");
+                    if (moduleConfig == null)
+                    {
+                        xmlFrag = xmlDoc.CreateDocumentFragment();
+                        xmlFrag.InnerXml = "<add name=\"ClientDependencyModule\" type=\"ClientDependency.Core.Module.ClientDependencyModule, ClientDependency.Core\" />";
+                        xmlDoc.DocumentElement.SelectSingleNode("system.webServer/modules").AppendChild(xmlFrag);
+                    }
+                }
+                // Handler Config
+                var systemWebServerHandlersConfig = xmlDoc.DocumentElement.SelectSingleNode("system.webServer/handlers");
+                if (systemWebServerHandlersConfig != null)
+                {
+                    var handlerConfig = systemWebServerHandlersConfig.SelectSingleNode("add[@name=\"ClientDependencyHandler\"]");
+                    if (handlerConfig == null)
+                    {
+                        xmlFrag = xmlDoc.CreateDocumentFragment();
+                        xmlFrag.InnerXml = "<add name=\"ClientDependencyHandler\" verb=\"*\" path=\"DependencyHandler.axd\" type=\"ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core\" preCondition=\"integratedMode\" />";
+                        xmlDoc.DocumentElement.SelectSingleNode("system.webServer/handlers").AppendChild(xmlFrag);
+                    }
+                }
+
+                // HttpModules Config
+                var systemWebServerHttpModulesConfig = xmlDoc.DocumentElement.SelectSingleNode("system.web/httpModules");
+                if (systemWebServerHttpModulesConfig != null)
+                {
+                    var httpModuleConfig = systemWebServerHttpModulesConfig.SelectSingleNode("add[@name=\"ClientDependencyModule\"]");
+                    if (httpModuleConfig == null)
+                    {
+                        xmlFrag = xmlDoc.CreateDocumentFragment();
+                        xmlFrag.InnerXml = "<add name=\"ClientDependencyModule\" type=\"ClientDependency.Core.Module.ClientDependencyModule, ClientDependency.Core\" />";
+                        xmlDoc.DocumentElement.SelectSingleNode("system.web/httpModules").AppendChild(xmlFrag);
+                    }
+                }
+                // HttpHandler Config
+                var systemWebServerHttpHandlersConfig = xmlDoc.DocumentElement.SelectSingleNode("system.web/httpHandlers");
+                if (systemWebServerHttpHandlersConfig != null)
+                {
+                    var httpHandlerConfig = systemWebServerHttpHandlersConfig.SelectSingleNode("add[@type=\"ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core\"]");
+                    if (httpHandlerConfig == null)
+                    {
+                        xmlFrag = xmlDoc.CreateDocumentFragment();
+                        xmlFrag.InnerXml = "<add verb=\"*\" path=\"DependencyHandler.axd\" type=\"ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core\" />";
+                        xmlDoc.DocumentElement.SelectSingleNode("system.web/httpHandlers").AppendChild(xmlFrag);
+                    }
+                }
+
+                // ClientDependency Config
+                var clientDependencyConfig = xmlDoc.DocumentElement.SelectSingleNode("clientDependency");
+                if (clientDependencyConfig == null)
+                {
+                    xmlFrag = xmlDoc.CreateDocumentFragment();
+                    xmlFrag.InnerXml = @"<clientDependency version=""64"" fileDependencyExtensions="".js,.css"">
+                                            <fileRegistration defaultProvider=""LoaderControlProvider"">
+                                              <providers>
+                                                <add name=""DnnBodyProvider"" type=""DotNetNuke.Web.Client.Providers.DnnBodyProvider, DotNetNuke.Web.Client"" enableCompositeFiles=""true"" />
+                                                <add name=""DnnFormBottomProvider"" type=""DotNetNuke.Web.Client.Providers.DnnFormBottomProvider, DotNetNuke.Web.Client"" enableCompositeFiles=""true"" />
+                                                <add name=""PageHeaderProvider"" type=""ClientDependency.Core.FileRegistration.Providers.PageHeaderProvider, ClientDependency.Core"" enableCompositeFiles=""true"" />
+                                                <add name=""LazyLoadProvider"" type=""ClientDependency.Core.FileRegistration.Providers.LazyLoadProvider, ClientDependency.Core"" enableCompositeFiles=""true"" />
+                                                <add name=""LoaderControlProvider"" type=""ClientDependency.Core.FileRegistration.Providers.LoaderControlProvider, ClientDependency.Core"" enableCompositeFiles=""true"" />
+                                              </providers>
+                                            </fileRegistration>
+                                            <compositeFiles defaultFileProcessingProvider=""CompositeFileProcessor"" compositeFileHandlerPath=""~/DependencyHandler.axd"">
+                                              <fileProcessingProviders>
+                                                <add name=""CompositeFileProcessor"" type=""ClientDependency.Core.CompositeFiles.Providers.CompositeFileProcessingProvider, ClientDependency.Core"" enableCssMinify=""false"" enableJsMinify=""true"" persistFiles=""true"" compositeFilePath=""~/App_Data/ClientDependency"" bundleDomains="""" urlType=""MappedId"" />
+                                              </fileProcessingProviders>
+                                              <fileMapProviders>
+                                                <add name=""XmlFileMap"" type=""ClientDependency.Core.CompositeFiles.Providers.XmlFileMapper"" mapPath=""~/App_Data/TestDependency"" />
+                                              </fileMapProviders>	
+                                            </compositeFiles>
+                                          </clientDependency>";
+                    xmlDoc.AppendChild(xmlFrag);
+                }
+
+                // Save Config
+                xmlDoc.Save(configPath);                
+            }
         }
 
         /// <summary>
