@@ -606,9 +606,9 @@ namespace DotNetNuke.Security
                 PortalGroupController groupController = new PortalGroupController();
                 PortalGroupInfo group = groupController.GetPortalGroups().Where(
                     p => p.MasterPortalId == PortalController.GetEffectivePortalId(portalId)).SingleOrDefault();
-                if (@group != null)
+				if (@group != null && !string.IsNullOrEmpty(@group.AuthenticationDomain))
                 {
-                    cookieDomain = @group.AuthenticationDomain;
+                    cookieDomain = string.Format(".{0}", @group.AuthenticationDomain);
                 }
 
                 if (String.IsNullOrEmpty(cookieDomain))

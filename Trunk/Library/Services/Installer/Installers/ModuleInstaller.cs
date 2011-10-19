@@ -187,6 +187,8 @@ namespace DotNetNuke.Services.Installer.Installers
                 if (_installedDesktopModule != null)
                 {
                     _desktopModule.DesktopModuleID = _installedDesktopModule.DesktopModuleID;
+					//save the module's category
+                	_desktopModule.Category = _installedDesktopModule.Category;
                 }
 				
                 //Clear ModuleControls and Module Definitions caches in case script has modifed the contents

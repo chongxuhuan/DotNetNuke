@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Data;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Content.Common;
 using DotNetNuke.Entities.Modules;
 
 #endregion

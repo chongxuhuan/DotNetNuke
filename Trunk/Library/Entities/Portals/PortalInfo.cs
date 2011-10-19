@@ -32,8 +32,8 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Roles;
-using DotNetNuke.Services.FileSystem;
 
 #endregion
 
@@ -746,7 +746,22 @@ namespace DotNetNuke.Entities.Portals
         public void Fill(IDataReader dr)
         {
             PortalID = Null.SetNullInteger(dr["PortalID"]);
-            PortalGroupID = Null.SetNullInteger(dr["PortalGroupID"]);
+
+            try
+            {
+                PortalGroupID = Null.SetNullInteger(dr["PortalGroupID"]);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                if(Globals.Status == Globals.UpgradeStatus.None)
+                {
+                    //this should not happen outside of an upgrade situation
+                    throw;
+                }
+
+                //else swallow the error
+            }
+            
             PortalName = Null.SetNullString(dr["PortalName"]);
             LogoFile = Null.SetNullString(dr["LogoFile"]);
             FooterText = Null.SetNullString(dr["FooterText"]);

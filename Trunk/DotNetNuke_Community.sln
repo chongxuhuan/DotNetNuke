@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
+﻿Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C6E370A5-ECF3-4AAD-AF79-3D392D963861}"
 	ProjectSection(FolderStartupServices) = postProject
@@ -147,60 +146,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Community", "Community", "{
 		Community\Templates\Default Website.template.resources = Community\Templates\Default Website.template.resources
 	EndProjectSection
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "http://localhost/DotNetNuke_Community", "{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}"
-	ProjectSection(WebsiteProperties) = preProject
-		SccProjectName = "SAK"
-		SccAuxPath = "SAK"
-		SccLocalPath = "SAK"
-		SccProvider = "SAK"
-		UseIISExpress = "false"
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv3.5"
-		Debug.AspNetCompiler.VirtualPath = "/DotNetNuke_Community"
-		Debug.AspNetCompiler.PhysicalPath = "Website\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\DotNetNuke_Community\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/DotNetNuke_Community"
-		Release.AspNetCompiler.PhysicalPath = "Website\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\DotNetNuke_Community\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		SlnRelativePath = "website\"
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{D206D80A-DE26-4441-A8CD-0C70D2EB0C38} = {D206D80A-DE26-4441-A8CD-0C70D2EB0C38}
-		{D391550C-7107-49B2-A6AC-8627C8B06ADC} = {D391550C-7107-49B2-A6AC-8627C8B06ADC}
-		{1CA23A12-DA34-49B4-833A-76F3CA8D554C} = {1CA23A12-DA34-49B4-833A-76F3CA8D554C}
-		{6F0A5B23-E09F-431A-879A-993CB77E23D8} = {6F0A5B23-E09F-431A-879A-993CB77E23D8}
-		{86AF9531-D270-4C18-A8B9-C67A8782AF69} = {86AF9531-D270-4C18-A8B9-C67A8782AF69}
-		{F54DCA33-F35C-4F57-893E-FF4AE823E598} = {F54DCA33-F35C-4F57-893E-FF4AE823E598}
-		{AF064E35-1BEF-4337-A462-C708F441AD1B} = {AF064E35-1BEF-4337-A462-C708F441AD1B}
-		{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1} = {DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}
-		{77CC3D39-8526-4554-832A-8537BD1441CB} = {77CC3D39-8526-4554-832A-8537BD1441CB}
-		{CADB2B3B-46DD-417D-BBF9-E935D25C4A92} = {CADB2B3B-46DD-417D-BBF9-E935D25C4A92}
-		{6F610B3E-218D-4209-8028-E8978A76CFB9} = {6F610B3E-218D-4209-8028-E8978A76CFB9}
-		{1A19AB44-33A4-4222-A420-7B213E91C647} = {1A19AB44-33A4-4222-A420-7B213E91C647}
-		{6A2C6160-2905-407B-9575-16210528F4C8} = {6A2C6160-2905-407B-9575-16210528F4C8}
-		{78BC5861-5023-4370-A30A-EC7629E93ED1} = {78BC5861-5023-4370-A30A-EC7629E93ED1}
-		{982CB668-91F8-43BB-AC80-D4E178E6D2B4} = {982CB668-91F8-43BB-AC80-D4E178E6D2B4}
-		{1012996F-79CF-4175-81D7-B3B131A81489} = {1012996F-79CF-4175-81D7-B3B131A81489}
-		{DE2B348A-1DAD-4630-9F55-788F8CCBAD02} = {DE2B348A-1DAD-4630-9F55-788F8CCBAD02}
-		{4F30AA90-BE74-4354-B3E1-DE0004F5E395} = {4F30AA90-BE74-4354-B3E1-DE0004F5E395}
-		{8DA31B98-5E8E-4243-8967-D4CF7DC622CB} = {8DA31B98-5E8E-4243-8967-D4CF7DC622CB}
-		{9108D6A3-B570-4778-87C6-7B9424A7EA67} = {9108D6A3-B570-4778-87C6-7B9424A7EA67}
-		{89093FD0-076F-48CD-9232-B665226CDBF0} = {89093FD0-076F-48CD-9232-B665226CDBF0}
-		{F8623BD1-92F0-40D8-A32C-364D26B228FE} = {F8623BD1-92F0-40D8-A32C-364D26B228FE}
-		{A45415E3-625B-4C90-9345-8E8C7DD9D28D} = {A45415E3-625B-4C90-9345-8E8C7DD9D28D}
-		{537B45EB-2EC3-4849-BC6B-D761F43674A5} = {537B45EB-2EC3-4849-BC6B-D761F43674A5}
-		{B15A45FA-02F8-4F09-A04B-13B7920CABCE} = {B15A45FA-02F8-4F09-A04B-13B7920CABCE}
-		{A566C3FB-176F-4EF7-A2EB-CB22F2741082} = {A566C3FB-176F-4EF7-A2EB-CB22F2741082}
-		{FD8FCDFF-64FC-4EAE-BECC-A9546E1DCB44} = {FD8FCDFF-64FC-4EAE-BECC-A9546E1DCB44}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Externally.Sourced", "Externally Sourced\Externally.Sourced.csproj", "{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.RadEditorProvider", "Library\Providers\HtmlEditorProviders\RadEditorProvider\DotNetNuke.RadEditorProvider.csproj", "{2671B9D5-A788-4DE3-93D6-20D6895A2979}"
@@ -229,11 +174,33 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.MobileMana
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.Professional", "Tests\DotNetNuke.Tests.Professional\DotNetNuke.Tests.Professional.csproj", "{F92FAF1D-D195-4746-B355-820C3610A41C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.BuildVerification", "Tests\DotNetNuke.Tests.BuildVerification\DotNetNuke.Tests.BuildVerification.csproj", "{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Website", "Website", "{61680D04-E32C-47E7-A8DD-2A9324C9C70E}"
+	ProjectSection(WebsiteProperties) = preProject
+		SccProjectName = "SAK"
+		SccAuxPath = "SAK"
+		SccLocalPath = "SAK"
+		SccProvider = "SAK"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv3.5"
+		Debug.AspNetCompiler.VirtualPath = "/Website"
+		Debug.AspNetCompiler.PhysicalPath = "Website\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\Website\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/Website"
+		Release.AspNetCompiler.PhysicalPath = "Website\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\Website\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "2807"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 77
+		SccNumberOfProjects = 78
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.dotnetnuke.com:8088/tfs/dotnetnuke
 		SccLocalPath0 = .
@@ -510,31 +477,35 @@ Global
 		SccProjectTopLevelParentUniqueName70 = DotNetNuke_Community_UnitTests.sln
 		SccProjectName70 = Tests/DotNetNuke.Tests.Professional
 		SccLocalPath70 = Tests\\DotNetNuke.Tests.Professional
-		SccWebProject71 = true
-		SccProjectUniqueName71 = http://localhost/DotNetNuke_Community
-		SccProjectName71 = Website
-		SccLocalPath71 = http://localhost/DotNetNuke_Community/
-		SccProjectEnlistmentChoice71 = 2
-		SccProjectUniqueName72 = Professional\\Providers\\FolderProviders\\FolderProviders\\DotNetNuke.Professional.FolderProviders.csproj
+		SccProjectUniqueName71 = Professional\\Providers\\FolderProviders\\FolderProviders\\DotNetNuke.Professional.FolderProviders.csproj
+		SccProjectTopLevelParentUniqueName71 = DotNetNuke_Community_UnitTests.sln
+		SccProjectName71 = Professional/Providers/FolderProviders/FolderProviders
+		SccLocalPath71 = Professional\\Providers\\FolderProviders\\FolderProviders
+		SccProjectUniqueName72 = Modules\\SearchInput\\DotNetNuke.Professional.SearchCrawler.Input.csproj
 		SccProjectTopLevelParentUniqueName72 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName72 = Professional/Providers/FolderProviders/FolderProviders
-		SccLocalPath72 = Professional\\Providers\\FolderProviders\\FolderProviders
-		SccProjectUniqueName73 = Modules\\SearchInput\\DotNetNuke.Professional.SearchCrawler.Input.csproj
+		SccProjectName72 = Modules/SearchInput
+		SccLocalPath72 = Modules\\SearchInput
+		SccProjectUniqueName73 = Modules\\SearchResults\\DotNetNuke.Professional.SearchCrawler.Results.csproj
 		SccProjectTopLevelParentUniqueName73 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName73 = Modules/SearchInput
-		SccLocalPath73 = Modules\\SearchInput
-		SccProjectUniqueName74 = Modules\\SearchResults\\DotNetNuke.Professional.SearchCrawler.Results.csproj
+		SccProjectName73 = Modules/SearchResults
+		SccLocalPath73 = Modules\\SearchResults
+		SccProjectUniqueName74 = Modules\\SearchSpider\\DotNetNuke.Professional.SearchCrawler.csproj
 		SccProjectTopLevelParentUniqueName74 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName74 = Modules/SearchResults
-		SccLocalPath74 = Modules\\SearchResults
-		SccProjectUniqueName75 = Modules\\SearchSpider\\DotNetNuke.Professional.SearchCrawler.csproj
+		SccProjectName74 = Modules/SearchSpider
+		SccLocalPath74 = Modules\\SearchSpider
+		SccProjectUniqueName75 = Tests\\DotNetNuke.Tests.BuildVerification\\DotNetNuke.Tests.BuildVerification.csproj
 		SccProjectTopLevelParentUniqueName75 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName75 = Modules/SearchSpider
-		SccLocalPath75 = Modules\\SearchSpider
-		SccProjectUniqueName76 = Tests\\DotNetNuke.Tests.BuildVerification\\DotNetNuke.Tests.BuildVerification.csproj
+		SccProjectName75 = Tests/DotNetNuke.Tests.BuildVerification
+		SccLocalPath75 = Tests\\DotNetNuke.Tests.BuildVerification
+		SccProjectUniqueName76 = Tests\\DotNetNuke.Tests.Steps\\DotNetNuke.Tests.Steps.csproj
 		SccProjectTopLevelParentUniqueName76 = DotNetNuke_Community_UnitTests.sln
-		SccProjectName76 = Tests/DotNetNuke.Tests.BuildVerification
-		SccLocalPath76 = Tests\\DotNetNuke.Tests.BuildVerification
+		SccProjectName76 = Tests/DotNetNuke.Tests.Steps
+		SccLocalPath76 = Tests\\DotNetNuke.Tests.Steps
+		SccWebProject77 = true
+		SccProjectUniqueName77 = Website
+		SccProjectName77 = Website
+		SccLocalPath77 = Website
+		SccProjectEnlistmentChoice77 = 2
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -1185,15 +1156,6 @@ Global
 		{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}.Release|x86.ActiveCfg = Release|Any CPU
-		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Debug|.NET.ActiveCfg = Debug|Any CPU
-		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Release|.NET.ActiveCfg = Debug|Any CPU
-		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Release|Any CPU.Build.0 = Debug|Any CPU
-		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{B3AA3E14-0471-4AFE-9844-D8B2A1259C67}.Release|x86.ActiveCfg = Debug|Any CPU
 		{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}.Debug|.NET.ActiveCfg = Debug|Any CPU
 		{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -1458,18 +1420,18 @@ Global
 		{8FD0CA46-77F4-4EE1-A8D6-DC1107EE431C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{8FD0CA46-77F4-4EE1-A8D6-DC1107EE431C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{8FD0CA46-77F4-4EE1-A8D6-DC1107EE431C}.Release|x86.ActiveCfg = Release|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Debug|.NET.ActiveCfg = Debug|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Release|.NET.ActiveCfg = Release|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18}.Release|x86.ActiveCfg = Release|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Release|.NET.ActiveCfg = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Release|Mixed Platforms.Build.0 = Debug|Any CPU
+		{61680D04-E32C-47E7-A8DD-2A9324C9C70E}.Release|x86.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1531,7 +1493,6 @@ Global
 		{649E7B07-2170-4471-97C5-0941FBA12159} = {C82EAC40-C9BA-49B7-9D65-BB562F704A8C}
 		{74DA8EF2-B375-4F12-B460-9ECC525BB5F9} = {29DD979B-9EA7-49D0-90B9-4410600745B5}
 		{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40} = {29DD979B-9EA7-49D0-90B9-4410600745B5}
-		{B7BDB0D2-1E15-4C3D-B53D-5546D471EB18} = {29DD979B-9EA7-49D0-90B9-4410600745B5}
 		{77CC3D39-8526-4554-832A-8537BD1441CB} = {6E53B51E-6753-4EB6-BCD0-941CDCEF4672}
 	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution

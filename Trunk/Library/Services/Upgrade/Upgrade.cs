@@ -2513,9 +2513,8 @@ namespace DotNetNuke.Services.Upgrade
 				PackageController.SavePackage(portalPackage);
 			}
 
-            //add ClientDependency config to website web.config
-            ClientResourceManager.AddConfiguration();
-
+			//add mobile preview control
+			AddModuleControl(Null.NullInteger, "MobilePreview", "Mobile Preview", "DesktopModules/Admin/MobilePreview/Preview.ascx", string.Empty, SecurityAccessLevel.Admin, Null.NullInteger);
         }
 
         #endregion

@@ -23,18 +23,37 @@
 
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities.Content.Common;
 using DotNetNuke.Entities.Content.Taxonomy;
 
 #endregion
 
 namespace DotNetNuke.Entities.Content
+{
+    [Obsolete("Moving ContentExtensions to the DotNetNuke.Entities.Content namespace was an error. Please use DotNetNuke.Entities.Content.Common.ContentExtensions")]
+    public static class ContentExtensions
+    {
+        //only forwarding public methods that existed as of 6.1.0
+        //calls to internal methods will be fixed in the source
+        public static string ToDelimittedString(this List<Term> terms, string delimiter)
+        {
+            return Common.ContentExtensions.ToDelimittedString(terms, delimiter);
+        }
+
+        public static string ToDelimittedString(this List<Term> terms, string format, string delimiter)
+        {
+            return Common.ContentExtensions.ToDelimittedString(terms, format, delimiter);
+        }
+    }
+}
+
+namespace DotNetNuke.Entities.Content.Common
 {
 	/// <summary>
 	/// Extension methods for Term, Vocabulary, ContentItem.

@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
 
-using DotNetNuke.Entities.Content;
 using DotNetNuke.Entities.Content.Common;
 using DotNetNuke.Entities.Content.Taxonomy;
 

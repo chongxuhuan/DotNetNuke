@@ -271,26 +271,24 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
                 if (clientDependencyConfig == null)
                 {
                     xmlFrag = xmlDoc.CreateDocumentFragment();
-                    xmlFrag.InnerXml = @"<clientDependency version=""64"" fileDependencyExtensions="".js,.css"">
+                    xmlFrag.InnerXml = @"<clientDependency version=""0"" fileDependencyExtensions="".js,.css"">
                                             <fileRegistration defaultProvider=""LoaderControlProvider"">
                                               <providers>
                                                 <add name=""DnnBodyProvider"" type=""DotNetNuke.Web.Client.Providers.DnnBodyProvider, DotNetNuke.Web.Client"" enableCompositeFiles=""true"" />
                                                 <add name=""DnnFormBottomProvider"" type=""DotNetNuke.Web.Client.Providers.DnnFormBottomProvider, DotNetNuke.Web.Client"" enableCompositeFiles=""true"" />
-                                                <add name=""PageHeaderProvider"" type=""ClientDependency.Core.FileRegistration.Providers.PageHeaderProvider, ClientDependency.Core"" enableCompositeFiles=""true"" />
-                                                <add name=""LazyLoadProvider"" type=""ClientDependency.Core.FileRegistration.Providers.LazyLoadProvider, ClientDependency.Core"" enableCompositeFiles=""true"" />
-                                                <add name=""LoaderControlProvider"" type=""ClientDependency.Core.FileRegistration.Providers.LoaderControlProvider, ClientDependency.Core"" enableCompositeFiles=""true"" />
+                                                <add name=""PageHeaderProvider"" type=""ClientDependency.Core.FileRegistration.Providers.PageHeaderProvider, ClientDependency.Core"" enableCompositeFiles=""true""/>
+                                                <add name=""LazyLoadProvider"" type=""ClientDependency.Core.FileRegistration.Providers.LazyLoadProvider, ClientDependency.Core"" enableCompositeFiles=""true""/>
+                                                <add name=""LoaderControlProvider"" type=""ClientDependency.Core.FileRegistration.Providers.LoaderControlProvider, ClientDependency.Core"" enableCompositeFiles=""true""/>
                                               </providers>
                                             </fileRegistration>
                                             <compositeFiles defaultFileProcessingProvider=""CompositeFileProcessor"" compositeFileHandlerPath=""~/DependencyHandler.axd"">
                                               <fileProcessingProviders>
                                                 <add name=""CompositeFileProcessor"" type=""ClientDependency.Core.CompositeFiles.Providers.CompositeFileProcessingProvider, ClientDependency.Core"" enableCssMinify=""false"" enableJsMinify=""true"" persistFiles=""true"" compositeFilePath=""~/App_Data/ClientDependency"" bundleDomains="""" urlType=""MappedId"" />
                                               </fileProcessingProviders>
-                                              <fileMapProviders>
-                                                <add name=""XmlFileMap"" type=""ClientDependency.Core.CompositeFiles.Providers.XmlFileMapper"" mapPath=""~/App_Data/TestDependency"" />
-                                              </fileMapProviders>	
                                             </compositeFiles>
                                           </clientDependency>";
-                    xmlDoc.AppendChild(xmlFrag);
+
+                    xmlDoc.DocumentElement.AppendChild(xmlFrag);
                 }
 
                 // Save Config
