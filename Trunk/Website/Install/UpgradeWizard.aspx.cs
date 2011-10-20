@@ -74,7 +74,6 @@ namespace DotNetNuke.Services.Install
 
         protected new string LocalResourceFile = "~/Install/App_LocalResources/UpgradeWizard.aspx.resx";
         private Version _dataBaseVersion;
-        private XmlDocument _installTemplate;
         private const string LocalesFile = "/Install/App_LocalResources/Locales.xml";
 
         #endregion

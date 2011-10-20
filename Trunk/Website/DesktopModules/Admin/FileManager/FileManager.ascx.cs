@@ -31,6 +31,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -441,7 +442,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
         private DNNTreeNode AddNode(string strName, string strKey, int imageIndex, DNNTreeNodeCollection objNodes)
         {
             DNNTreeNode objNode;
-            objNode = new DNNTreeNode(strName);
+            objNode = new DNNTreeNode(HttpUtility.HtmlEncode(strName));
             objNode.Key = strKey;
             objNode.ToolTip = strName;
             objNode.ImageIndex = imageIndex;

@@ -374,7 +374,14 @@ namespace DotNetNuke.Services.Mobile
             foreach (var r in redirects.Where(r => r.SourceTabId != Null.NullInteger && allTabs.Where(t => t.Key == r.SourceTabId).Count() < 1))
             {
                 Delete(portalId, r.Id);
-            }            
+            }
+            
+            //remove rules for deleted target tabs
+            redirects = GetRedirectionsByPortal(portalId); //fresh get of rules in case some were deleted above                       
+            foreach (var r in redirects.Where(r => r.TargetType == TargetType.Tab && allTabs.Where(t => t.Key == int.Parse(r.TargetValue.ToString())).Count() < 1))
+            {
+                Delete(portalId, r.Id);
+            }
 
             //remove rules for deleted target portals
             redirects = GetRedirectionsByPortal(portalId); //fresh get of rules in case some were deleted above                       

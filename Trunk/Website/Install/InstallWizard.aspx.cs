@@ -446,7 +446,7 @@ namespace DotNetNuke.Services.Install
             var verifier = new FileSystemPermissionVerifier(Server.MapPath("~"));
 
             //FolderCreate
-            if (test)
+			if (test && PermissionsValid)
             {
                 permissionItem.Selected = verifier.VerifyFolderCreate();
                 PermissionsValid = PermissionsValid && permissionItem.Selected;
@@ -457,7 +457,7 @@ namespace DotNetNuke.Services.Install
 
             //FileCreate
             permissionItem = new ListItem();
-            if (test)
+			if (test && PermissionsValid)
             {
                 permissionItem.Selected = verifier.VerifyFileCreate();
                 PermissionsValid = PermissionsValid && permissionItem.Selected;
@@ -468,7 +468,7 @@ namespace DotNetNuke.Services.Install
 
             //FileDelete
             permissionItem = new ListItem();
-            if (test)
+			if (test && PermissionsValid)
             {
                 permissionItem.Selected = verifier.VerifyFileDelete();
                 PermissionsValid = PermissionsValid && permissionItem.Selected;
@@ -479,7 +479,7 @@ namespace DotNetNuke.Services.Install
 
             //FolderDelete
             permissionItem = new ListItem();
-            if (test)
+			if (test && PermissionsValid)
             {
                 permissionItem.Selected = verifier.VerifyFolderDelete();
                 PermissionsValid = PermissionsValid && permissionItem.Selected;
@@ -1404,12 +1404,6 @@ namespace DotNetNuke.Services.Install
         #endregion
 
         #region Event Handlers
-
-        protected override void OnPreInit(EventArgs e)
-        {
-            base.OnPreInit(e);
-            Thread.Sleep(100);            
-        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>

@@ -230,7 +230,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
         {
             string fileCheck = downloadURL;
             string postData = "";
-            Stream oStream;
             Dictionary<string, string> settings = PortalController.GetPortalSettingsDictionary(ModuleContext.PortalId);
             PortalSecurity ps = new PortalSecurity();
             string username = ps.DecryptString(settings["Store_Username"], Config.GetDecryptionkey());

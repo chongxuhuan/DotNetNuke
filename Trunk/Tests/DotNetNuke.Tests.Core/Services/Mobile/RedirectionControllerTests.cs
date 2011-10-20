@@ -34,6 +34,7 @@ using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.ClientCapability;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Mobile;
 using DotNetNuke.Tests.Utilities.Mocks;
@@ -74,13 +75,18 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 	    public const int Portal0 = 0;
         public const int Portal1 = 1;
+        public const int Portal2 = 2;
         public const int Page1 = 1;
         public const int Page2 = 2;
         public const int Page3 = 3;
+	    public const int SortOrder1 = 1;
+        public const int SortOrder2 = 1;
+        public const int SortOrder3 = 1;
 		public const string PortalAlias0 = "www.portal0.com";
 		public const string PortalAlias1 = "www.portal1.com";
         public const int AnotherPageOnSamePortal = 56;
         public const int DeletedPageOnSamePortal = 59;
+        public const int DeletedPageOnSamePortal2 = 94;
         public const int HomePageOnPortal0 = 55;
         public const int HomePageOnPortal1 = 57;
         public const int MobileLandingPage = 91;
@@ -88,6 +94,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
         public const int AllMobileLandingPage = 93;
 	    public const bool EnabledFlag = true;
         public const bool DisabledFlag = false;
+        public const bool IncludeChildTabsFlag = true;
 	    public const string ExternalSite = "http://www.dotnetnuke.com";
 
 
@@ -172,6 +179,38 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 			Assert.AreEqual(6, list.Count);
 		}
+
+        [Test]
+        public void RedirectionController_PurgeInvalidRedirections_DoNotPurgeRuleForNonDeletetedSource()
+        {
+            _dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.MobilePhone, SortOrder1, HomePageOnPortal0, IncludeChildTabsFlag, (int)TargetType.Tab, AnotherPageOnSamePortal, EnabledFlag);
+            _redirectionController.PurgeInvalidRedirections(0);
+            Assert.AreEqual(1, _redirectionController.GetRedirectionsByPortal(0).Count);
+        }
+
+        [Test]
+        public void RedirectionController_PurgeInvalidRedirections_DoPurgeRuleForDeletetedSource()
+        {
+            _dtRedirections.Rows.Add(new object[] { 1, Portal0, "R1", (int)RedirectionType.MobilePhone, SortOrder1, DeletedPageOnSamePortal2, IncludeChildTabsFlag, (int)TargetType.Tab, AnotherPageOnSamePortal, EnabledFlag });
+            _redirectionController.PurgeInvalidRedirections(0);
+            Assert.AreEqual(0, _redirectionController.GetRedirectionsByPortal(0).Count);
+        }
+
+        [Test]
+        public void RedirectionController_PurgeInvalidRedirections_DoPurgeRuleForDeletetedTargetPortal()
+        {
+            _dtRedirections.Rows.Add(new object[] { 1, Portal0, "R1", (int)RedirectionType.MobilePhone, SortOrder1, HomePageOnPortal0, IncludeChildTabsFlag, (int)TargetType.Portal, Portal2, EnabledFlag });
+            _redirectionController.PurgeInvalidRedirections(0);
+            Assert.AreEqual(0, _redirectionController.GetRedirectionsByPortal(0).Count);
+        }
+
+        [Test]
+        public void RedirectionController_PurgeInvalidRedirections_DoPurgeRuleForDeletetedTargetTab()
+        {
+            _dtRedirections.Rows.Add(new object[] { 1, Portal0, "R1", (int)RedirectionType.MobilePhone, SortOrder1, HomePageOnPortal0, IncludeChildTabsFlag, (int)TargetType.Tab, DeletedPageOnSamePortal2, EnabledFlag });
+            _redirectionController.PurgeInvalidRedirections(0);
+            Assert.AreEqual(0, _redirectionController.GetRedirectionsByPortal(0).Count);
+        }
 
 		#endregion
 
@@ -341,7 +380,6 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		}
 
 		#endregion
-
 
         #region "Get MobileSite Url Tests"
 
@@ -550,6 +588,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 				}
 			});
 
+            _dataProvider.Setup(d => d.GetPortals(It.IsAny<string>())).Returns<string>(GetPortalsCallBack);
 			_dataProvider.Setup(d => d.GetPortal(It.IsAny<int>(), It.IsAny<string>())).Returns<int, string>(GetPortalCallBack);
 			_dataProvider.Setup(d => d.GetTabs(It.IsAny<int>())).Returns<int>(GetTabsCallBack);
 			_dataProvider.Setup(d => d.GetTabModules(It.IsAny<int>())).Returns<int>(GetTabModulesCallBack);
@@ -604,6 +643,11 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 			return dtCheck.CreateDataReader();
 		}
+
+        private IDataReader GetPortalsCallBack(string culture)
+        {
+            return this.GetPortalCallBack(Portal0, Localization.SystemLocale);
+        }
 
 		private IDataReader GetPortalCallBack(int portalId, string culture)
 		{

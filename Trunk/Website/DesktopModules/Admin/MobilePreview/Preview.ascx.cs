@@ -186,7 +186,7 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 					return content;
 				}
 			}
-			catch (SecurityException ex)
+			catch (SecurityException)
 			{
 				return string.Format("<span style=\"color: red;\">{0}</span>", "You must change your website's trust level to full trust if you want to preview an SSL path.");
 			}

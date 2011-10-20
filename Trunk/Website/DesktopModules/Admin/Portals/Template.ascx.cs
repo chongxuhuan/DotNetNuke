@@ -254,7 +254,6 @@ namespace DotNetNuke.Modules.Admin.Portals
         /// -----------------------------------------------------------------------------
         private void SerializeTabs(XmlWriter writer, PortalInfo portal)
         {
-            XmlNode tabNode = null;
             var tabController = new TabController();
 
             //supporting object to build the tab hierarchy

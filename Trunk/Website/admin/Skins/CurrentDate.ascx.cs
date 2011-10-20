@@ -64,15 +64,8 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 lblDate.CssClass = CssClass;
             }
-            var objUserTime = new UserTime();
-            if (!String.IsNullOrEmpty(DateFormat))
-            {
-                lblDate.Text = objUserTime.CurrentUserTime.ToString(DateFormat);
-            }
-            else
-            {
-                lblDate.Text = objUserTime.CurrentUserTime.ToLongDateString();
-            }
+            var user = UserController.GetCurrentUserInfo();
+            lblDate.Text = !String.IsNullOrEmpty(DateFormat) ? user.LocalTime().ToString(DateFormat) : user.LocalTime().ToLongDateString();
         }
     }
 }
