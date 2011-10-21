@@ -2,18 +2,16 @@
 <%@ Import Namespace="DotNetNuke.UI.Utilities" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="WizardUser" Src="~/Install/WizardUser.ascx" %>
-<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
-<%@ Register TagPrefix="dnncrm" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
     <link rel="stylesheet" type="text/css" href="../Portals/_default/default.css?refresh" />
-    <link rel="stylesheet" type="text/css" href="Install.css?refresh" />
-    <asp:placeholder id="SCRIPTS" runat="server" />
+    <link rel="stylesheet" type="text/css" href="Install.css?refresh" />    
+    <script type="text/javascript" src="../Resources/Shared/scripts/jquery/jquery.min.js"></script>
+    <asp:placeholder id="SCRIPTS" runat="server"></asp:placeholder>
 </head>
-<body>
-    <asp:placeholder runat="server" id="ClientResourceIncludes" />
+<body>      
     <script type="text/javascript">
         var BARS = 20;  // The number of bars to display
         var CLASS = "Progress"; // Style class name when bar is off
@@ -152,7 +150,15 @@
         }
     </script>
     <form id="form1" runat="server">
-        <asp:placeholder id="BodySCRIPTS" runat="server" />
+        <asp:placeholder id="BodySCRIPTS" runat="server">
+            <script type="text/javascript" src="../js/dnn.js"></script>
+            <script type="text/javascript" src="../js/dnn.xml.js"></script>
+            <script type="text/javascript" src="../js/dnn.xml.jsparser.js"></script>
+            <script type="text/javascript" src="../js/dnn.xmlhttp.js"></script>
+            <script type="text/javascript" src="../js/dnn.xmlhttp.jsxmlhttprequest.js"></script>
+            <script type="text/javascript" src="../js/dnncore.js"></script>    
+        </asp:placeholder>
+        
         <div class="dnnForm dnnInstall dnnClear" id="dnnInstall">
             <asp:Wizard ID="wizInstall" runat="server" 
                 ActiveStepIndex="0"
@@ -383,10 +389,7 @@
         <input id="ScrollTop" runat="server" name="ScrollTop" type="hidden" />
         <input type="hidden" id="__dnnVariable" runat="server" />
         <asp:Label ID="txtErrorMessage" runat="server" />
-    </form>
-
-    <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader"></dnncrm:ClientResourceLoader>
-
+    </form>   
     <script type="text/javascript">
 
         //This code is to force a refresh of browser cache

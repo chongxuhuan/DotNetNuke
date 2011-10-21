@@ -118,14 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AdminUser.Text" xml:space="preserve">
-    <value>Website Administrator</value>
+    <value>Superuser Account</value>
   </data>
   <data name="AdminUserError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Administrator User Error:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
   <data name="Auto.Text" xml:space="preserve">
-    <value>&lt;b&gt;Auto&lt;/b&gt; - the “Auto” installation method installs DotNetNuke using the default options including the preconfigured SQL Express Database. Websites created using this method use a default login credentials for the Administrator account which should be updated for security purposes. &lt;br/&gt;
-&lt;b&gt;Prerequisites:&lt;/b&gt; SQL Express installed.</value>
+    <value>&lt;b&gt;Auto&lt;/b&gt; - the “Auto” installation method will install DotNetNuke using the default options including the preconfigured SQL Express Database.</value>
   </data>
   <data name="ChooseDatabase.Text" xml:space="preserve">
     <value>Select Database:</value>
@@ -200,8 +199,7 @@
     <value>Delete Folder</value>
   </data>
   <data name="Full.Text" xml:space="preserve">
-    <value>&lt;b&gt;Custom&lt;/b&gt; - the “Custom” installation method includes more options than the Typical method and is recommended for advanced users. It allows you to choose which content management modules you want to install and allows you to select the design skin for the website. Advanced options allow you to enable additional authentication (login) systems, languages and providers. &lt;br/&gt;
-&lt;b&gt;Prerequisites:&lt;/b&gt; An SQL Database. Note: If you are using SQL Azure or an Oracle database, review the Installation Guide for set-up assistance. If you would like to include additional skins, containers, languages, authentication systems or templates in your custom installation, add these files before starting the Wizard.</value>
+    <value>&lt;b&gt;Custom&lt;/b&gt; - the “Custom” installation method gives advanced users the ability to create a completely customized configuration for their DoteNetNuke website.</value>
   </data>
   <data name="HomePage.Text" xml:space="preserve">
     <value>Home Page</value>
@@ -300,12 +298,12 @@
     <value>Welcome</value>
   </data>
   <data name="IntroDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;Welcome to the DotNetNuke Installation Wizard. This Wizard will guide you through the installation of the DotNetNuke application and allow you to create a custom website.&lt;/p&gt;
+    <value>&lt;p&gt;Welcome to the DotNetNuke Installation Wizard. This wizard will guide you through the installation of the DotNetNuke application and allow you to create a custom website. You may navigate through the Wizard using the Next and Previous buttons.&lt;/p&gt;
 &lt;p&gt;If this is your first time installing DotNetNuke, you may wish to review the Installation Video Guide and undertake the prerequisites for this Wizard.&lt;/p&gt;
 &lt;ul&gt;
     &lt;li style="list-style:none;"&gt;&lt;a class="dnnPrimaryAction" href="http://www.dotnetnuke.com/Resources/Training/Training-Videos/Installation.aspx" target="new"&gt;View Installation Video&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;To begin, please select the language you want to use for the Wizard and choose  the installation method to use for the Installation.&lt;/p&gt;
+&lt;p&gt;The first step is to select the installation method to use and to choose the language you wish to use for the installation.&lt;/p&gt;nn
 
 </value>
   </data>
@@ -468,8 +466,7 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>DotNetNuke Installation Wizard</value>
   </data>
   <data name="Typical.Text" xml:space="preserve">
-    <value>&lt;b&gt;Typical&lt;/b&gt;  - the “Typical” installation method creates the most common configuration for your website. This option will assist you to set your file permissions, configure the database for the website and create either a blank website or a website with helpful information on getting started and some sample content. This option installs a rich text editor for managing the content and files on your website, plus a range of additional content management modules that can be enabled after the Wizard is completed.&lt;br/&gt;
-&lt;b&gt;Prerequisites:&lt;/b&gt; An SQL Server Database. Note: If you are using SQL Azure or an Oracle database, review the Installation Guide for set-up assistance.</value>
+    <value>&lt;b&gt;Typical&lt;/b&gt;  - the “Typical” installation method creates the most common configuration for you to start creating your website.</value>
   </data>
   <data name="Upgrade.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke version {0} is already Installed. Click the Next button to upgrade to the new version.&lt;/p&gt;</value>
@@ -608,6 +605,6 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>Configuring your Administrator Account and Website Information</value>
   </data>
   <data name="AdminUserDetail.Text" xml:space="preserve">
-    <value>Please enter the information for the “Administrator” account. This account will have access to build and manage all websites created within this installation. We recommend using a strong password, for example: at least 6 characters long and including a mix of letters, numbers and symbols. You can change this password in the future through the Administration section of your website.</value>
+    <value>Please enter the information for the “Administrator” account. This account will have access to build and manage all websites created within this installation. We recommend using a strong password, for example: at least 7 characters long and including a mix of letters, numbers and symbols. You can change this password in the future through the Administration section of your website.</value>
   </data>
 </root>

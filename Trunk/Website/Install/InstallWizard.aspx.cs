@@ -510,20 +510,20 @@ namespace DotNetNuke.Services.Install
 				return;
 			}
 
-            XmlNode node = InstallTemplate.SelectSingleNode("//dotnetnuke/portals/portal");
-            if (node != null)
+            XmlNode portalNode = InstallTemplate.SelectSingleNode("//dotnetnuke/portals/portal");
+            XmlNode superUserNode = InstallTemplate.SelectSingleNode("//dotnetnuke/superuser");
+            if (portalNode != null)
             {
-                XmlNode adminNode = node.SelectSingleNode("administrator");
-                if (adminNode != null)
+                if (superUserNode != null)
                 {
-                    usrAdmin.FirstName = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "firstname");
-                    usrAdmin.LastName = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "lastname");
-                    usrAdmin.UserName = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "username");
-                    usrAdmin.Email = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "email");
+                    usrAdmin.FirstName = XmlUtils.GetNodeValue(superUserNode.CreateNavigator(), "firstname");
+                    usrAdmin.LastName = XmlUtils.GetNodeValue(superUserNode.CreateNavigator(), "lastname");
+                    usrAdmin.UserName = XmlUtils.GetNodeValue(superUserNode.CreateNavigator(), "username");
+                    usrAdmin.Email = XmlUtils.GetNodeValue(superUserNode.CreateNavigator(), "email");
                 }
-                txtPortalTitle.Text = XmlUtils.GetNodeValue(node.CreateNavigator(), "portalname");
+                txtPortalTitle.Text = XmlUtils.GetNodeValue(portalNode.CreateNavigator(), "portalname");
 
-                string strTemplate = XmlUtils.GetNodeValue(node.CreateNavigator(), "templatefile");
+                string strTemplate = XmlUtils.GetNodeValue(portalNode.CreateNavigator(), "templatefile");
                 string strFolder = Globals.HostMapPath;
                 if (Directory.Exists(strFolder))
                 {
