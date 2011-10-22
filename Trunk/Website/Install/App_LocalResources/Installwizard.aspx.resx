@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AdminUser.Text" xml:space="preserve">
-    <value>Superuser Account</value>
+    <value>SuperUser Account</value>
   </data>
   <data name="AdminUserError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Administrator User Error:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
@@ -303,8 +303,7 @@
 &lt;ul&gt;
     &lt;li style="list-style:none;"&gt;&lt;a class="dnnPrimaryAction" href="http://www.dotnetnuke.com/Resources/Training/Training-Videos/Installation.aspx" target="new"&gt;View Installation Video&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;The first step is to select the installation method to use and to choose the language you wish to use for the installation.&lt;/p&gt;nn
-
+&lt;p&gt;The first step is to select the installation method to use and to choose the language you wish to use for the installation.&lt;/p&gt;
 </value>
   </data>
   <data name="IntroTitle.Text" xml:space="preserve">
@@ -602,9 +601,9 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>Installation Complete</value>
   </data>
   <data name="AdminUserTitle.Text" xml:space="preserve">
-    <value>Configuring your Administrator Account and Website Information</value>
+    <value>Configuring your SuperUser Account and Website Information</value>
   </data>
   <data name="AdminUserDetail.Text" xml:space="preserve">
-    <value>Please enter the information for the “Administrator” account. This account will have access to build and manage all websites created within this installation. We recommend using a strong password, for example: at least 7 characters long and including a mix of letters, numbers and symbols. You can change this password in the future through the Administration section of your website.</value>
+    <value>Please enter the information for the “SuperUser” account. This account will have access to build and manage all websites created within this installation. We recommend using a strong password, for example: at least 7 characters long and including a mix of letters, numbers and symbols. You can change this password in the future through the Host section of your website.</value>
   </data>
 </root>

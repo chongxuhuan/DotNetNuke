@@ -91,7 +91,7 @@ namespace DotNetNuke.HttpModules
                     if (app != null && app.Request != null && !string.IsNullOrEmpty(app.Request.UserAgent))
                     {
 						//Redirect should happen only once. If redirect has already happened, then don't redirect any more in the session
-                        if (app.Request.Cookies["nomobileredirectdone"] != null)
+                        if (app.Request.Cookies["mobileredirectdone"] != null)
 						{
 							return;
 						}
@@ -100,7 +100,7 @@ namespace DotNetNuke.HttpModules
                         if (!string.IsNullOrEmpty(redirectUrl))
                         {
                             //we are going to redirect, save that info in cookie so we don't redirect again for the session
-                            app.Response.Cookies.Add(new HttpCookie("nomobileredirectdone"));
+                            app.Response.Cookies.Add(new HttpCookie("mobileredirectdone"));
                             app.Response.Redirect(redirectUrl);
                         }
                     }

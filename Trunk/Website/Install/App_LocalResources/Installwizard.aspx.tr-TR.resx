@@ -65,8 +65,9 @@
     <value>&lt;b&gt;&lt;font color='red'&gt;Yönetici Kullanıcısı Hatası:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
   <data name="Auto.Text" xml:space="preserve">
-    <value>&lt;b&gt;Otomatik&lt;/b&gt; - "Otomatik" kurulum yöntemi Sihirbazdaki tüm adımları 
-Otomatik-Kurulum prosedürüne göre tamamlar.</value>
+    <value>&lt;b&gt;Otomatik&lt;/b&gt; "Otomatik" kurulum yöntemi Sihirbazdaki tüm adımları 
+Otomatik-Kurulum prosedürüne göre tamamlar. Bu yöntemde veritabanı için ön tanımlı bir SQL Express veritabanı kullanılır. Bu yöntem ile hazırlanan websitelerinde oturum açma için varsayılan yönetici hesabı bilgileri kullanılır ve güvenlik nedeniyle bilgilerin güncellenmesi önerilir.&lt;br /&gt;
+&lt;b&gt;Gereksinimler&lt;/b&gt; SQL Express sürümü önceden kurulu olmalı.</value>
   </data>
   <data name="ChooseDatabase.Text" xml:space="preserve">
     <value>Veritabanı Seçin:</value>
@@ -84,7 +85,7 @@ Otomatik-Kurulum prosedürüne göre tamamlar.</value>
     <value>Veritabanı Kurulumu Tamamlandı</value>
   </data>
   <data name="CompleteDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;Tebrik ederiz, DotNetNuke yazılımının kurulumunu başarıyla tamamladınız.&lt;/p&gt;</value>
+    <value>&lt;p&gt;Tebrik ederiz, DotNetNuke yazılımının kurulumunu başarıyla tamamladınız.&lt;/p&gt;&lt;p&gt;DotNetNuke yazılımı ile ilgili detaylı bilgi almak ve sorunlarınızı iletmek için http://www.trdnn.com adresini ziyaret edebilirsiniz.</value>
   </data>
   <data name="CompleteTitle.Text" xml:space="preserve">
     <value>Tebrik Ederiz</value>
@@ -111,7 +112,7 @@ Otomatik-Kurulum prosedürüne göre tamamlar.</value>
     <value>Dosya adı:</value>
   </data>
   <data name="DatabaseFileHelp.Text" xml:space="preserve">
-    <value>Veritabanı dosyasının (App_Data klasöründe bulunur) adını yazın</value>
+    <value>App_Data klasöründe yer alan veritabanı dosyasının adını yazın.</value>
   </data>
   <data name="DatabaseHelp.Text" xml:space="preserve">
     <value>Veritabanı Adını Yazın</value>
@@ -141,9 +142,10 @@ Otomatik-Kurulum prosedürüne göre tamamlar.</value>
     <value>Klasör Sil</value>
   </data>
   <data name="Full.Text" xml:space="preserve">
-    <value>&lt;b&gt;Özel&lt;/b&gt; - &amp;quot;Özel&amp;quot; kurulum yöntemi DotNetNuke kurulum işlemini istekleriniz 
+    <value>&lt;b&gt;Özel&lt;/b&gt; &amp;quot;Özel&amp;quot; kurulum yöntemi DotNetNuke kurulum işlemini istekleriniz 
 doğrultusunda tamamen kişiselleştirmenizi sağlar. Ekstra bileşenleri kontrol 
-etmek ve yüklenecek bileşenleri seçmek için bu yöntemi kullanabilirsiniz.</value>
+etmek ve yüklenecek bileşenleri seçmek için bu yöntemi kullanabilirsiniz. Gelişmiş seçenekler ek kimlik doğrulama sistemleri, dil paketleri ve bileşenleri kullanmanızı sağlar.&lt;br /&gt;
+&lt;b&gt;Gereksinimler&lt;/b&gt; Bir SQL veritabanı. Not: SQL Azure ya da bir Oracle veritabanı kullanmak istiyorsanız, kurulum rehberine mutlaka göz atmalısınız. Kurulum aşamasında görmek istediğiniz ekstra sayfa ve modül temalarını, dil paketlerini, modülleri ve şablonları sihirbazı başlatmadan önce paket içeriğine dahil etmelisiniz.</value>
   </data>
   <data name="HomePage.Text" xml:space="preserve">
     <value>Anasayfa</value>
@@ -347,7 +349,8 @@ kullanılıyorsa Veri Kaynağını (SID) yazın)</value>
   </data>
   <data name="Typical.Text" xml:space="preserve">
     <value>&lt;b&gt;Genel&lt;/b&gt;  - &amp;quot;Genel&amp;quot; kurulum yöntemi, sihirbazdaki bazı seçimleri sizin için 
-yapar veya uygular.</value>
+yapar veya uygular. Bu yöntem dosya izinlerini ayarlamanıza  yardımcı olur, veritabanı yapılandırma sırasında kolaylık sağlar ve websitesiniz bir şablon ile oluşturmanızı hızlandırır. Bu yöntem içeriği düzenleyebilmeniz için Zengin İçerik Düzenleme aracını yükler. Kurulum tamamlandıktan sonra içerik yönetimi için ihtiyacınız olan diğer modülleri etkinleştirebilirsiniz.&lt;br /&gt;
+&lt;b&gt;Gereksinimler:&lt;/b&gt; Bir SQL Server veritabanı. Not: Eğer SQL Azure ya da Oracle veritabanı kullanıyorsanız devam etmeden önce kurulum rehberini incelemeniz önerilir.</value>
   </data>
   <data name="Upgrade.Text" xml:space="preserve">
     <value>&lt;p&gt;Sistem üzerinde DotNetNuke  {0} sürümü bulundu. İleri butonuna tıklayarak yeni 
@@ -389,7 +392,13 @@ sürüme yükseltme işlemini başlatabilirsiniz.&lt;/p&gt;</value>
   </data>
   <data name="IntroDetail.Text">
     <value>&lt;p&gt;DotNetNuke Kurulum Sihirbazı'na hoşgeldiniz. Bu sihirbaz DotNetNuke 
-Uygulamasının kurulumundaki aşamalarda size yardımcı olacaktır.&lt;/p&gt;
+uygulamasının kurulumundaki aşamalarda size yardımcı olacaktır.&lt;/p&gt;
+&lt;p&gt;DotNetNuke'ü ilk kez kurmak istiyorsanız http://www.trdnn.com adresinde yer alan kurulum rehberlerine göz atabilirsiniz.&lt;/p&gt;
+&lt;p&gt;Türkiye'deki hosting sunucularında kullanılan bölgesel ayarlarla uyumlu olmaması gibi sorunlarla karşılaşmamak adına öncelikle seçtiğiniz servis sağlayıcının DotNetNuke ile uyumlu çalışacağından emin olun.&lt;/p&gt;
+&lt;ul&gt;
+    &lt;li style="list-style:none;"&gt;&lt;a class="dnnPrimaryAction" href="http://www.dotnetnuke.com"&gt;DotNetNuke Kurulum Rehberi (İngilizce)&lt;/a&gt;&lt;/li&gt;
+&lt;li style="list-style:none;"&gt;&lt;a class="dnnPrimaryAction" href="http://www.trdnn.com"&gt;DotNetNuke Kurulum Rehberi (Türkçe)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;Sihirbazdaki adımlar arasında İleri ve Geri butonlarını kullanarak geçiş 
 yapabilirsiniz. Bazı sayfalarda "Test ...". butonunu göreceksiniz. Bu buton devam 
 etmeden önce mevcut yapılandırmayı test etmenizi sağlar. Böylece 
@@ -401,7 +410,7 @@ yapmaktır.&lt;/p&gt;</value>
     <value>DotNetNuke Kurulum Sihirbazı - Sürüm {0}</value>
   </data>
   <data name="LanguagesDetail.Text">
-    <value>&lt;p&gt;DotNetNuke tamamen lokalize edilebilir bir yapıya sahiptir. Bu sayfada 
+    <value>&lt;p&gt;DotNetNuke tamamen yerelleştirilebilir bir yapıya sahiptir. Bu sayfada 
 eklemek istediğiniz Dil Paketlerini seçebilirsiniz.&lt;/p&gt;
 &lt;p&gt;Bir Dil Paketini kurmak, paketi otomatik olarak aktifleştirmez; ancak kurulum 
 tamamlandıktan sonra dil seçimini Host &gt; Languages sayfasından 
@@ -490,7 +499,7 @@ sağlayabilirsiniz. Kurulan modüller Sayfa Editörlerinin kullanımına sunulur
     <value>Bileşenler (Providers)</value>
   </data>
   <data name="ProvidersDetail.Text">
-    <value>&lt;p&gt;DotNetNuke bileşenler için provider modelini kullanır. Bu sayfada yüklemek istediğiniz bileşenleri seçebilirsiniz.&lt;/p&gt;
+    <value>&lt;p&gt;DotNetNuke yazılımını ihtiyaçlarınız doğrultusunda genişletmenin yollarından biri bileşenlerden yararlanmaktır. Bu sayfada yüklemek istediğiniz bileşenleri seçebilirsiniz. Dilerseniz bu sayfada yer alan bileşenleri kurulum tamamlandıktan sonra da gerektiğinde yükleyebilirsiniz. İleri düğmesine tıkladığınız andan itibaren kurulum sonuçlanacak ve sitenize erişebileceksiniz.&lt;/p&gt;
 </value>
   </data>
   <data name="ProvidersTitle.Text">
@@ -552,5 +561,23 @@ sağlayabilirsiniz. Kurulan modüller Sayfa Editörlerinin kullanımına sunulur
   </data>
   <data name="HostWarning.Text">
     <value>&lt;b&gt;&lt;font color='red'&gt;Host Kullanıcı adınızdaki bazı karakterler geçersiz (yalnızca A-Z, 0-9, - ve. kullanabilirsiniz).  Host kullanıcısı için yeni bir ad belirtmelisiniz.&lt;/font&gt;&lt;/b&gt;</value>
+  </data>
+  <data name="AdminUserDetail.Text">
+    <value>Lütfen "Yönetici" hesabına ilişkin bilgileri yazın. Yönetici hesabı bu kurulumda yer alacak tüm websitelerini yönetmek için kullanacağınız ana hesap olacaktır. Yönetici hesabınızın şifresini belirlerken tahmin edilmesi son derece güç bir kombinasyon kullanmanızı öneriyoruz. Burada belirteceğiniz şifreyi daha sonra sitenizdeki Yönetim bölümünden değiştirebileceksiniz.</value>
+  </data>
+  <data name="AdminUserTitle.Text">
+    <value>Yönetici Hesabı ve Website Bilgisi Yapılandırması</value>
+  </data>
+  <data name="DatabaseWarning.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Otomatik kurulum seçeneği DotNetNuke uygulaması SQL Server veritabanına bağlantı yapamadığı için devredışı bırakılmıştır. Sihirbazın sonraki aşamalarında veritabanı bağlantısı için kullanmak istediğiniz ayarları seçebilirsiniz.&lt;/font&gt;&lt;/b&gt;</value>
+  </data>
+  <data name="DbNameError.Text">
+    <value>&lt;b&gt;&lt;font color='red'&gt;Veri tabanı adını yazmalısınız.&lt;/font&gt;&lt;/b&gt;</value>
+  </data>
+  <data name="InstallFailed.Text">
+    <value>Veritabanı Scriptlerinin Kurulumu Başarısız</value>
+  </data>
+  <data name="Page11.Title">
+    <value>Kurulum Tamamlandı</value>
   </data>
 </root>

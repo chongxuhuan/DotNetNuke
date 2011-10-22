@@ -124,13 +124,13 @@
     <value>&lt;b&gt;&lt;font color='red'&gt;Error en l'administrador del portal:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
   <data name="Auto.Text" xml:space="preserve">
-    <value>&lt;b&gt;Automàtic&lt;/b&gt; - El mètode d'instal·lació "Automàtic" evita l'assistent completament i utilitza el procediment antic d'auto-instal·lació.</value>
+    <value>&lt;b&gt;Automàtic&lt;/b&gt; - El mètode d'instal·lació "Automàtic" utilitza les opcions per defecte incloent la base de dades SQL Express preconfigurada</value>
   </data>
   <data name="ChooseDatabase.Text" xml:space="preserve">
     <value>Escolliu la base de dades:</value>
   </data>
   <data name="ChooseDbError.Text" xml:space="preserve">
-    <value>Cal que esculliu el tipus de base de dades</value>
+    <value>Cal que escolliu el tipus de base de dades</value>
   </data>
   <data name="ChooseInstall.Text" xml:space="preserve">
     <value>&lt;h3&gt;Escolliu el mètode d'instal·lació:&lt;/h3&gt;</value>
@@ -196,7 +196,7 @@
     <value>Esborrat de carpeta</value>
   </data>
   <data name="Full.Text" xml:space="preserve">
-    <value>&lt;b&gt;Personalitzat&lt;/b&gt; - El métode d'instal·lació "Personalitzat" us permet configurar completament la vostra instal·lació de DotNetNuke. Seleccioneu aquesta opció si voleu controlar quins components opcionals s'instal·laran.</value>
+    <value>&lt;b&gt;Personalitzat&lt;/b&gt; - El métode d'instal·lació "Personalitzat" us permet configurar completament la vostra instal·lació de DotNetNuke. </value>
   </data>
   <data name="HomePage.Text" xml:space="preserve">
     <value>Pàgina d'inici</value>
@@ -283,8 +283,12 @@
     <value>Benvinguda</value>
   </data>
   <data name="IntroDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;Benvingut a l'assistent d'instal·lació de DotNetNuke. Aquest assistent us guiarà al llarg de tota la instal·lació de l'aplicació DotNetNuke.&lt;/p&gt;
-&lt;p&gt;Podeu navegar en l'assistent utilitzant els botons "Anterior" i "Següent". En algunes pàgines veureu un tercer botó "Prova...". Aquest botó us permetrà provar la configuració abans de continuar, per veure els efectes dels canvis.&lt;/p&gt;
+    <value>&lt;p&gt;Benvingut a l'assistent d'instal·lació de DotNetNuke. Aquest assistent us guiarà al llarg de tota la instal·lació de l'aplicació DotNetNuke i us permet crear el vostre web personalitzat. Podeu navegar en l'assistent utilitzant els botons "Anterior" i "Següent". 
+&lt;p&gt;Si és la primera vegada que instal·leu el DotNetNuke, és recomanable que mireu el vídeo amb la Guia d'instal·lació i preneu nota dels prerequisits d'aquest assistent.
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li style="list-style:none;"&gt;&lt;a class="dnnPrimaryAction" href="http://www.dotnetnuke.com/Resources/Training/Training-Videos/Installation.aspx" target="new"&gt;Mostra el vídeo d'instal·lació&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;El primer pas és seleccionar el mètode d'instal·lació que voleu utilitzar i l'idioma que voleu veure durant el procés.&lt;/p&gt;</value>
   </data>
   <data name="IntroTitle.Text" xml:space="preserve">
@@ -441,7 +445,7 @@ Amb l'Explorador de Windows obriu la carpeta arrel de la web (per defecte C:\Dot
     <value>Assistent d'instal·lació de DotNetNuke</value>
   </data>
   <data name="Typical.Text" xml:space="preserve">
-    <value>&lt;b&gt;Típic&lt;/b&gt; - El mètode d'instal·lació "Típic" utilitza les opcions més freqüents.</value>
+    <value>&lt;b&gt;Típic&lt;/b&gt; - El mètode d'instal·lació "Típic" crea una instal·lació amb les opcions més freqüents.</value>
   </data>
   <data name="Upgrade.Text" xml:space="preserve">
     <value>&lt;p&gt;La versió de DotNetNuke {0} ja està instal·lada. Cliqueu el botó Següent per actualitzar a la nova versió.&lt;/p&gt;</value>
@@ -597,5 +601,11 @@ Amb l'Explorador de Windows obriu la carpeta arrel de la web (per defecte C:\Dot
   </data>
   <data name="Page11.Title">
     <value>Instal·lació finalitzada</value>
+  </data>
+  <data name="AdminUserDetail.Text">
+    <value>Entreu la informació per l'usuari administrador del sistema. Aquest usuari podrà crear i gestionar tots els web creats en aquesta instal·lació. És recomanable que utilitzeu una contrasenya segura, per exemple: almenys 7 caràcters amb una combinació de lletres, números i símbols. Podreu canviar la contrasenya més endavant a la secció d'administració del web.</value>
+  </data>
+  <data name="AdminUserTitle.Text">
+    <value>Configuració de l'usuari Administrador i informació del web</value>
   </data>
 </root>

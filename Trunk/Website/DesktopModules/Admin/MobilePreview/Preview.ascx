@@ -7,18 +7,18 @@
 	<fieldset>
 		<div class="dnnFormItem">
 			<dnn:Label ID="lblProfile" runat="server" ControlName="ddlProfileList" />
-			<asp:DropDownList ID="ddlProfileList" runat="server" Width="300" />
+			<asp:DropDownList ID="ddlProfileList" runat="server" Width="300" AutoPostBack="true" />
 		</div>
 		<div class="dnnFormItem">
 			<dnn:Label ID="lblOrientation" runat="server" ControlName="rblOrientation" />
-			<asp:RadioButtonList ID="rblOrientation" runat="server" RepeatColumns="2" RepeatDirection="Horizontal">
+			<asp:RadioButtonList ID="rblOrientation" runat="server" RepeatColumns="2" RepeatDirection="Horizontal" AutoPostBack="true">
 				<asp:ListItem Value="vertical" resourcekey="Vertical" Selected="true"></asp:ListItem>
 				<asp:ListItem Value="horizontal" resourcekey="Horizontal"></asp:ListItem>			
 			</asp:RadioButtonList>
 		</div>
 		<div class="dnnFormItem">
 			<dnn:Label ID="lblSendAgent" runat="server" ControlName="cbSendAgent" />
-			<asp:CheckBox ID="cbSendAgent" runat="server" Checked="true" />
+			<asp:CheckBox ID="cbSendAgent" runat="server" Checked="true" AutoPostBack="true"/>
 		</div>
 		<div class="dnnFormItem">
 			<dnn:Label ID="lblDimensions" runat="server" ControlName="ddlProfileList" />
@@ -29,7 +29,7 @@
         </div>
 		<div class="dnnFormItem">
 			<label></label>
-			<div id="emulator">
+			<div id="emulator">               
 				<div class="emulator_addr"></div>
 				<div class="dimension_h"></div>
 				<div class="dimension_v"></div>
@@ -47,7 +47,7 @@
 		var showDimensionId = "#<%=cbShowDimensions.ClientID %>";
 		var previewWithAgentId = "#<%=cbSendAgent.ClientID %>";
 		var orientationFilter = "input[type=radio][name$=rblOrientation]";
-		$(deviceListId).change(function () {
+		$(deviceListId).change(function () {		    
 			changeView();
 		});
 
@@ -55,10 +55,20 @@
 			var sizeValue = eval("({" + $(deviceListId).val() + "})");
 			var orientation = $(orientationFilter + ":checked").val();
 			if (orientation == "vertical") {
-				emulator.setPreview(sizeValue.width, sizeValue.height, sizeValue.userAgent);
+			    if (!($(previewWithAgentId)[0].checked)) {
+			        emulator.setPreview(sizeValue.width, sizeValue.height);
+			    } 
+			    else {
+			        emulator.setPreview(sizeValue.width, sizeValue.height, sizeValue.userAgent);
+			    }
 			}
 			else {
-				emulator.setPreview(sizeValue.height, sizeValue.width, sizeValue.userAgent);
+			    if (!($(previewWithAgentId)[0].checked)) {
+			        emulator.setPreview(sizeValue.height, sizeValue.width);
+			    } 
+			    else {
+			        emulator.setPreview(sizeValue.height, sizeValue.width, sizeValue.userAgent);
+			    }
 			}
 		};
 
