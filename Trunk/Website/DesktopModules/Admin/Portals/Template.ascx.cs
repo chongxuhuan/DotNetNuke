@@ -439,6 +439,11 @@ namespace DotNetNuke.Modules.Admin.Portals
                 {
                     writer.WriteElementString("portalaliasmapping", setting);
                 }
+                settingsDictionary.TryGetValue("ContentLocalizationEnabled", out setting);
+                if (!String.IsNullOrEmpty(setting))
+                {
+                    writer.WriteElementString("contentlocalizationenabled", setting);
+                }
                 settingsDictionary.TryGetValue("TimeZone", out setting);
                 if (!string.IsNullOrEmpty(setting))
                 {

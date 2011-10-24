@@ -599,6 +599,11 @@ namespace DotNetNuke.Entities.Portals
             {
                 UpdatePortalSetting(PortalId, "TimeZone", XmlUtils.GetNodeValue(nodeSettings, "timezone", Localization.SystemTimeZone));
             }
+
+            if (!string.IsNullOrEmpty(XmlUtils.GetNodeValue(nodeSettings, "contentlocalizationenabled")))
+            {
+                UpdatePortalSetting(PortalId, "ContentLocalizationEnabled", XmlUtils.GetNodeValue(nodeSettings, "contentlocalizationenabled"));
+            }
         }
 
         private static void ParseProfileDefinitions(XmlNode nodeProfileDefinitions, int PortalId)
