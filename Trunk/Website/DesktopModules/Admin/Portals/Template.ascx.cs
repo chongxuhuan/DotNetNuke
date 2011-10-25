@@ -262,7 +262,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             writer.WriteStartElement("tabs");
 
             var locales = LocaleController.Instance.GetLocales(portal.PortalID).Values;
-            if (locales.Count > 1)
+            if (locales.Count > 1 && PortalSettings.ContentLocalizationEnabled)
             {
                 //Process Default Language first
                 SerializeTabs(writer, portal, tabs, tabController.GetTabsByPortal(portal.PortalID).WithCulture(portal.DefaultLanguage, true));

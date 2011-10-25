@@ -53,18 +53,26 @@ namespace DotNetNuke.Services.ClientCapability
 
 				var encoding = new UTF8Encoding();
 				FaceBookData faceBookData = encoding.GetString(base64JsonArray).FromJson<FaceBookData>();
-				facebookRequest.Algorithm = faceBookData.algorithm;
-
-				if (faceBookData.algorithm == "HMAC-SHA256")
-				{
-					long profId;
-					if (!Int64.TryParse(faceBookData.profile_id, out profId)) profId = 0L;
-
-					facebookRequest.AccessToken = faceBookData.oauth_token;
+				
+                if (faceBookData.algorithm == "HMAC-SHA256")
+                {
+                    facebookRequest.IsValid = true;
+                    facebookRequest.Algorithm = faceBookData.algorithm;
+                    facebookRequest.ProfileId = faceBookData.profile_id;
+                    facebookRequest.AppData = faceBookData.app_data;
+					facebookRequest.OauthToken = !string.IsNullOrEmpty(faceBookData.oauth_token) ? faceBookData.oauth_token : "";
 					facebookRequest.Expires = ConvertToTimestamp(faceBookData.expires);
-					facebookRequest.UserID = (long) Int64.Parse(faceBookData.user_id);
-					facebookRequest.ProfileId = profId;
-					if (facebookRequest.UserID > 0 && facebookRequest.Expires > System.DateTime.Now) facebookRequest.IsValid = true;
+                    facebookRequest.IssuedAt = ConvertToTimestamp(faceBookData.issued_at);
+                    facebookRequest.UserID = !string.IsNullOrEmpty(faceBookData.user_id) ? faceBookData.user_id : "";
+
+                    facebookRequest.PageId = faceBookData.page.id;
+                    facebookRequest.PageLiked = faceBookData.page.liked;
+                    facebookRequest.PageUserAdmin = faceBookData.page.admin;
+
+                    facebookRequest.UserLocale = faceBookData.user.locale;
+                    facebookRequest.UserCountry = faceBookData.user.country;
+                    facebookRequest.UserMinAge = faceBookData.user.age.min;
+                    facebookRequest.UserMaxAge = faceBookData.user.age.max;
 				}
 
 				return facebookRequest;
@@ -136,12 +144,36 @@ namespace DotNetNuke.Services.ClientCapability
         }
     }
 
+    struct Page
+    {
+        public string id { get; set; }
+        public bool liked { get; set; }
+        public bool admin { get; set; }
+    }
+
+    struct Age
+    {
+        public long min { get; set; }
+        public long max { get; set; }
+    }
+
+    struct User
+    {
+        public string locale { get; set; }
+        public string country { get; set; }
+        public Age age { get; set; }
+    }
+
     struct FaceBookData
     {
+        public User user { get; set; }
         public string algorithm { get; set; }
+        public long issued_at { get; set; }
+        public string user_id { get; set; }
         public string oauth_token { get; set; }
         public long expires { get; set; }
-        public string user_id { get; set; }
-        public string profile_id { get; set; }
+        public string app_data { get; set; }
+        public Page page { get; set; }
+        public long profile_id { get; set; }        
     }
 }

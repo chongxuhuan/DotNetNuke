@@ -199,7 +199,7 @@
     <value>Delete Folder</value>
   </data>
   <data name="Full.Text" xml:space="preserve">
-    <value>&lt;b&gt;Custom&lt;/b&gt; - the “Custom” installation method gives advanced users the ability to create a completely customized configuration for their DoteNetNuke website.</value>
+    <value>&lt;b&gt;Custom&lt;/b&gt; - the “Custom” installation method gives advanced users the ability to create a completely customized configuration for their DotNetNuke website.</value>
   </data>
   <data name="HomePage.Text" xml:space="preserve">
     <value>Home Page</value>
@@ -507,7 +507,7 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>Providers</value>
   </data>
   <data name="ProvidersDetail.Text" xml:space="preserve">
-    <value>&lt;p&gt;Another way of extending the functionality of the DotNetNuke application is through Providers, which is functionality from another product which is ‘wrapped’ for use in DotNetNuke. Please select the optional Providers you wish to install for use on your website. Remember, you can choose to install any of the Provider listed here at a later stage once installation is completed.  Once you click the Next button the wizard will build and display your new website.&lt;/p&gt;
+    <value>&lt;p&gt;Another way of extending the functionality of the DotNetNuke application is through Providers, which is functionality from another product which is ‘wrapped’ for use in DotNetNuke. Please select the optional Providers you wish to install for use on your website. Remember, you can choose to install any of the Provider listed here at a later stage once installation is completed.&lt;/p&gt;
 </value>
   </data>
   <data name="ProvidersTitle.Text" xml:space="preserve">

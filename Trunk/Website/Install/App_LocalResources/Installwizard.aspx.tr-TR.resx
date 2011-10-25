@@ -1,5 +1,64 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -371,33 +430,32 @@ sürüme yükseltme işlemini başlatabilirsiniz.&lt;/p&gt;</value>
   <data name="WhatsNext.Text" xml:space="preserve">
     <value>Sırada Ne Var</value>
   </data>
-  <data name="DatabaseConfigDetail.Text">
+  <data name="DatabaseConfigDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;Bu sayfada DotNetNuke tarafından kullanılan veritabanı ayarlarını yapılandırabilirsiniz.   Eğer DotNetNuke yazılımını bir "Hosting Hesabı'na" kurmak istiyorsanız Hosting Sağlayıcınız gerekli bilgileri sağlamış olmalıdır.&lt;/p&gt;
 &lt;p&gt;SQL Server 2005 için iki seçenek mevcuttur. SQL Server 2005 Veritabanı Dosyalarının (Database Files) kullanımını destekler. Çoğunlukla Veritabanı (Database) seçeneğini seçmeniz önerilir, ancak SQL Server 2005 Express sürümünü kullanıyorsanız Dosya seçeneğini seçmelisiniz.&lt;/p&gt;</value>
   </data>
-  <data name="DatabaseConfigTitle.Text">
+  <data name="DatabaseConfigTitle.Text" xml:space="preserve">
     <value>Veritabanı Bağlantısını Yapılandır</value>
   </data>
-  <data name="DatabaseInstallDetail.Text">
+  <data name="DatabaseInstallDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;Bu sayfa yüklendiğinde veritabanı scriptlerinin kurulumunun başlamış olması gerekir.  İleri butonu scriptlerin kurulumu tamamlanıncaya kadar devredışı olacaktır.&lt;/p&gt;  </value>
   </data>
-  <data name="DatabaseInstallTitle.Text">
+  <data name="DatabaseInstallTitle.Text" xml:space="preserve">
     <value>Veritabanı Kurulum Scriptlerini Çalıştır</value>
   </data>
-  <data name="HostUserDetail.Text">
+  <data name="HostUserDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;Bu sayfada Host veya SuperUser Kullanıcı Hesapları için hesap bilgilerini belirtmelisiniz.  Host kullanıcısı sitede oluşturulan tüm portallara erişebilecektir, ve kullanıcı adı ve şifre belirlenirken zararlı kullanıcılar tarafından ele geçirilmesi/tahmin edilmesi (hack edilmesi) zor bir kombinasyon seçilmelidir.&lt;/p&gt; </value>
   </data>
-  <data name="HostUserTitle.Text">
+  <data name="HostUserTitle.Text" xml:space="preserve">
     <value>Host Kullanıcısı Tanımla</value>
   </data>
-  <data name="IntroDetail.Text">
+  <data name="IntroDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke Kurulum Sihirbazı'na hoşgeldiniz. Bu sihirbaz DotNetNuke 
 uygulamasının kurulumundaki aşamalarda size yardımcı olacaktır.&lt;/p&gt;
-&lt;p&gt;DotNetNuke'ü ilk kez kurmak istiyorsanız http://www.trdnn.com adresinde yer alan kurulum rehberlerine göz atabilirsiniz.&lt;/p&gt;
+
 &lt;p&gt;Türkiye'deki hosting sunucularında kullanılan bölgesel ayarlarla uyumlu olmaması gibi sorunlarla karşılaşmamak adına öncelikle seçtiğiniz servis sağlayıcının DotNetNuke ile uyumlu çalışacağından emin olun.&lt;/p&gt;
 &lt;ul&gt;
     &lt;li style="list-style:none;"&gt;&lt;a class="dnnPrimaryAction" href="http://www.dotnetnuke.com"&gt;DotNetNuke Kurulum Rehberi (İngilizce)&lt;/a&gt;&lt;/li&gt;
-&lt;li style="list-style:none;"&gt;&lt;a class="dnnPrimaryAction" href="http://www.trdnn.com"&gt;DotNetNuke Kurulum Rehberi (Türkçe)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Sihirbazdaki adımlar arasında İleri ve Geri butonlarını kullanarak geçiş 
 yapabilirsiniz. Bazı sayfalarda "Test ...". butonunu göreceksiniz. Bu buton devam 
@@ -406,178 +464,178 @@ yapılandırmalarınızın doğru olup-olmadığını anlayabilirsiniz.&lt;/p&gt
 &lt;p&gt;Kurulumdaki ilk aşama kurulumda kullanılacak yöntem ile dil seçimini 
 yapmaktır.&lt;/p&gt;</value>
   </data>
-  <data name="IntroTitle.Text">
+  <data name="IntroTitle.Text" xml:space="preserve">
     <value>DotNetNuke Kurulum Sihirbazı - Sürüm {0}</value>
   </data>
-  <data name="LanguagesDetail.Text">
+  <data name="LanguagesDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke tamamen yerelleştirilebilir bir yapıya sahiptir. Bu sayfada 
 eklemek istediğiniz Dil Paketlerini seçebilirsiniz.&lt;/p&gt;
 &lt;p&gt;Bir Dil Paketini kurmak, paketi otomatik olarak aktifleştirmez; ancak kurulum 
 tamamlandıktan sonra dil seçimini Host &gt; Languages sayfasından 
 gerçekleştirebilirsiniz.&lt;/p&gt;</value>
   </data>
-  <data name="LanguagesTitle.Text">
+  <data name="LanguagesTitle.Text" xml:space="preserve">
     <value>Dil Paketi Yükle</value>
   </data>
-  <data name="ModulesDetail.Text">
+  <data name="ModulesDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke güçlü bir yapıya sahiptir. Bu yapının oluşmasına kurulabilir modül 
 paketleri önemli bir katkı sağlamaktadır.&lt;/p&gt;
 &lt;p&gt;Bu sayfada, opsiyonel Modül paketlerini seçerek bu paketlerin kurulmasını 
 sağlayabilirsiniz. Kurulan modüller Sayfa Editörlerinin kullanımına sunulur.&lt;/p&gt;</value>
   </data>
-  <data name="ModulesTitle.Text">
+  <data name="ModulesTitle.Text" xml:space="preserve">
     <value>Opsiyonel Modülleri Yükle</value>
   </data>
-  <data name="NoPackages.Text">
+  <data name="NoPackages.Text" xml:space="preserve">
     <value>Yüklenecek herhangi bir kimlik doğrulama sistemi bulunmuyor.</value>
   </data>
-  <data name="Page9.Title">
+  <data name="Page9.Title" xml:space="preserve">
     <value>Portal Kur</value>
   </data>
-  <data name="PermissionsDetail.Text">
+  <data name="PermissionsDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke içerik, modüller ve temalar için zengin bir karşıya yükleme (upload) kapasitesine sahiptir. Bu seçenekler, websitenizde  dosyaları oluşturmak ve silmek için özel güvenlik ayarlarının sistem üzerinde yapılandırılmasını gerektirebilir.&lt;/p&gt;
 &lt;p&gt;Bu sayfa, mevcut dosya izinlerini test ederek DotNetNuke'nin fonksiyonlarının tam olarak çalışacağından emin olmanıza yardımcı olacaktır.&lt;/p&gt;</value>
   </data>
-  <data name="PermissionsTitle.Text">
+  <data name="PermissionsTitle.Text" xml:space="preserve">
     <value>Dosya İzinleri Kontrol Ediliyor</value>
   </data>
-  <data name="PortalDetail.Text">
+  <data name="PortalDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;Bu sayfada Host (veya ilk) Portal'ı (websitesini) yapılandırabilirsiniz. &lt;/p&gt;
 &lt;p&gt;Bir yönetici hesabı tanımlamanız gerekecektir.  Bu kullanıcı portaldaki tüm fonksiyonlara erişebilecektir, bu nedenle Host kullanıcısında olduğu gibi kullanıcı adı ve şifre belirlenirken zararlı kullanıcılar tarafından ele geçirilmesi/tahmin edilmesi (hack edilmesi) zor bir kombinasyon seçilmelidir.&lt;/p&gt;</value>
   </data>
-  <data name="SkinsDetail.Text">
+  <data name="SkinsDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke zengin bir tema kapasitesine sahiptir.  Bu sayfada isteğe bağlı olarak yüklemek istediğiniz temaları ve modül kaplarını seçebilirsiniz.&lt;/p&gt;
 &lt;p&gt;Bir temayı ya da modül kabını yüklemeniz halinde paket hemen etkinleştirilmez, tema/modül kabı seçenekleri arasında yer alır ve daha sonra tema/modül kabı seçimini yapabilirsiniz.&lt;/p&gt;</value>
   </data>
-  <data name="SkinsTitle.Text">
+  <data name="SkinsTitle.Text" xml:space="preserve">
     <value>İsteğe Bağlı Tema ve Modül Kaplarını Yükle</value>
   </data>
-  <data name="AuthSystems.Text">
+  <data name="AuthSystems.Text" xml:space="preserve">
     <value>Kimlik Doğrulama Sistemleri</value>
   </data>
-  <data name="AuthSystemsDetail.Text">
+  <data name="AuthSystemsDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke farklı kimlik doğrulama sistemlerini desteklemektedir.  Bu sayfada yüklemek istediğiniz kimlik doğrulama sistemlerini seçebilirsiniz.&lt;/p&gt;
 &lt;p&gt;Yüklediğiniz kimlik doğrulama sistemleri, elle etkinleştirildikten sonra kullanıma açılacaktır.&lt;/p&gt;</value>
   </data>
-  <data name="AuthSystemsTitle.Text">
+  <data name="AuthSystemsTitle.Text" xml:space="preserve">
     <value>Kimlik Doğrulama Sistemleri Ekle</value>
   </data>
-  <data name="EmailErrorMessage.Text">
+  <data name="EmailErrorMessage.Text" xml:space="preserve">
     <value>Test iletisi gönderilirken bir hata oluştu. Hata kodu:&lt;br /&gt;{0}</value>
   </data>
-  <data name="EmailSentMessage.Text">
+  <data name="EmailSentMessage.Text" xml:space="preserve">
     <value>Mesajınız İletildi</value>
   </data>
-  <data name="EmailTestMessageSubject.Text">
+  <data name="EmailTestMessageSubject.Text" xml:space="preserve">
     <value>SMTP Yapılandırması Test Mesajı</value>
   </data>
-  <data name="EnableUpdate.Text">
+  <data name="EnableUpdate.Text" xml:space="preserve">
     <value>Güncelleme paketleri hazır olduğunda görsel bir simge ile uyarılmak ister misiniz?</value>
   </data>
-  <data name="InstallAuthSystemError.Text">
+  <data name="InstallAuthSystemError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Kimlik doğrulama sistemi yükleme işleminde bir hata oluştu(s):&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
-  <data name="InstallContainerError.Text">
+  <data name="InstallContainerError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Modül kabı yükleme işleminde bir hata oluştu:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
-  <data name="InstallLanguageError.Text">
+  <data name="InstallLanguageError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Dil paketi yükleme işleminde bir hata oluştu(s):&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="InstallProviderError.Text">
+  <data name="InstallProviderError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Bileşen (Provider) yükleme işleminde bir hata oluştu:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="InstallSkinError.Text">
+  <data name="InstallSkinError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Tema yükleme işleminde bir hata oluştu:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
-  <data name="No.Text">
+  <data name="No.Text" xml:space="preserve">
     <value>Hayır</value>
   </data>
-  <data name="Page10.Title">
+  <data name="Page10.Title" xml:space="preserve">
     <value>Portal Kur</value>
   </data>
-  <data name="Providers.Text">
+  <data name="Providers.Text" xml:space="preserve">
     <value>Bileşenler (Providers)</value>
   </data>
-  <data name="ProvidersDetail.Text">
+  <data name="ProvidersDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke yazılımını ihtiyaçlarınız doğrultusunda genişletmenin yollarından biri bileşenlerden yararlanmaktır. Bu sayfada yüklemek istediğiniz bileşenleri seçebilirsiniz. Dilerseniz bu sayfada yer alan bileşenleri kurulum tamamlandıktan sonra da gerektiğinde yükleyebilirsiniz. İleri düğmesine tıkladığınız andan itibaren kurulum sonuçlanacak ve sitenize erişebileceksiniz.&lt;/p&gt;
 </value>
   </data>
-  <data name="ProvidersTitle.Text">
+  <data name="ProvidersTitle.Text" xml:space="preserve">
     <value>Bileşen Kur</value>
   </data>
-  <data name="SMTPAnonymous.Text">
+  <data name="SMTPAnonymous.Text" xml:space="preserve">
     <value>Anonim</value>
   </data>
-  <data name="SMTPAuthentication.Text">
+  <data name="SMTPAuthentication.Text" xml:space="preserve">
     <value>Kimlik Doğrulama:</value>
   </data>
-  <data name="SMTPBasic.Text">
+  <data name="SMTPBasic.Text" xml:space="preserve">
     <value>Basit</value>
   </data>
-  <data name="SMTPEnableSSL.Text">
+  <data name="SMTPEnableSSL.Text" xml:space="preserve">
     <value>SSL Etkin:</value>
   </data>
-  <data name="SMTPError.Text">
+  <data name="SMTPError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;SMTP Hatası:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="SMTPNTLM.Text">
+  <data name="SMTPNTLM.Text" xml:space="preserve">
     <value>NTLM</value>
   </data>
-  <data name="SMTPPassword.Text">
+  <data name="SMTPPassword.Text" xml:space="preserve">
     <value>Şifre:</value>
   </data>
-  <data name="SMTPServer.Text">
+  <data name="SMTPServer.Text" xml:space="preserve">
     <value>Sunucu:</value>
   </data>
-  <data name="SMTPSettings.Text">
+  <data name="SMTPSettings.Text" xml:space="preserve">
     <value>SMTP Sunucu Ayarları</value>
   </data>
-  <data name="SMTPSettingsHelp.Text">
+  <data name="SMTPSettingsHelp.Text" xml:space="preserve">
     <value>Eposta Sunucusu ayarlarını bu bölümden yapabilir ve test edebilirsiniz.</value>
   </data>
-  <data name="SMTPSuccess.Text">
+  <data name="SMTPSuccess.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='green'&gt;SMTP Başarılı:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="SMTPUsername.Text">
+  <data name="SMTPUsername.Text" xml:space="preserve">
     <value>Kullanıcı adı:</value>
   </data>
-  <data name="SpecifyHostEmailMessage.Text">
+  <data name="SpecifyHostEmailMessage.Text" xml:space="preserve">
     <value>Host Eposta Adresini Belirtmelisiniz</value>
   </data>
-  <data name="TestSMTP.Text">
+  <data name="TestSMTP.Text" xml:space="preserve">
     <value>SMTP Ayarlarını Test Et</value>
   </data>
-  <data name="UpdateDetail.Text">
+  <data name="UpdateDetail.Text" xml:space="preserve">
     <value>Bu yazılım, rutin olarak yeni sürüm kontrolleri yapmaktadır. Yeni sürümlerde güvenlik düzeltmeleri, kritik güncellemeler ve yamalar yer alır (Kişisel bilgileriniz isteğiniz dışında saklanmaz)</value>
   </data>
-  <data name="UpdateEmail.Text">
+  <data name="UpdateEmail.Text" xml:space="preserve">
     <value>Güncelleme paketi duyurulduğunda size eposta mesajı gönderilmesini ister misiniz?</value>
   </data>
-  <data name="UpdateTitle.Text">
+  <data name="UpdateTitle.Text" xml:space="preserve">
     <value>Güncelleme Servisi - Sitenize yeni özellikler kazandırmanızı ve eski sürümlerdeki hataların giderilmesini sağlar.</value>
   </data>
-  <data name="Yes.Text">
+  <data name="Yes.Text" xml:space="preserve">
     <value>Evet</value>
   </data>
-  <data name="HostWarning.Text">
+  <data name="HostWarning.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Host Kullanıcı adınızdaki bazı karakterler geçersiz (yalnızca A-Z, 0-9, - ve. kullanabilirsiniz).  Host kullanıcısı için yeni bir ad belirtmelisiniz.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
-  <data name="AdminUserDetail.Text">
+  <data name="AdminUserDetail.Text" xml:space="preserve">
     <value>Lütfen "Yönetici" hesabına ilişkin bilgileri yazın. Yönetici hesabı bu kurulumda yer alacak tüm websitelerini yönetmek için kullanacağınız ana hesap olacaktır. Yönetici hesabınızın şifresini belirlerken tahmin edilmesi son derece güç bir kombinasyon kullanmanızı öneriyoruz. Burada belirteceğiniz şifreyi daha sonra sitenizdeki Yönetim bölümünden değiştirebileceksiniz.</value>
   </data>
-  <data name="AdminUserTitle.Text">
+  <data name="AdminUserTitle.Text" xml:space="preserve">
     <value>Yönetici Hesabı ve Website Bilgisi Yapılandırması</value>
   </data>
-  <data name="DatabaseWarning.Text">
+  <data name="DatabaseWarning.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Otomatik kurulum seçeneği DotNetNuke uygulaması SQL Server veritabanına bağlantı yapamadığı için devredışı bırakılmıştır. Sihirbazın sonraki aşamalarında veritabanı bağlantısı için kullanmak istediğiniz ayarları seçebilirsiniz.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
-  <data name="DbNameError.Text">
+  <data name="DbNameError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Veri tabanı adını yazmalısınız.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
-  <data name="InstallFailed.Text">
+  <data name="InstallFailed.Text" xml:space="preserve">
     <value>Veritabanı Scriptlerinin Kurulumu Başarısız</value>
   </data>
-  <data name="Page11.Title">
+  <data name="Page11.Title" xml:space="preserve">
     <value>Kurulum Tamamlandı</value>
   </data>
 </root>
