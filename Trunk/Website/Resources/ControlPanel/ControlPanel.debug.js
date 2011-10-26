@@ -42,11 +42,25 @@
 
 			function megaHoverOver() {
 				hideAll();
-				$(this).parent().find(opts.menuBorderSelector).stop().fadeTo('fast', 1).show(); //Find sub and fade it in
+				var menuSelector = $(this).parent().find(opts.menuBorderSelector);
+				if ($.browser.msie && menuSelector.prev("iframe").length == 0) {
+					var mask = $("<iframe frameborder=\"0\"></iframe>");
+					menuSelector.before(mask);
+					mask.css({
+						position: "absolute"
+								, width: menuSelector.outerWidth() + "px"
+								, height: menuSelector.outerHeight() + "px"
+								, left: menuSelector.position().left + "px"
+								, top: menuSelector.position().top + "px"
+								, opacity: 0
+					});
+				}
+				menuSelector.stop().fadeTo('fast', 1).show(); //Find sub and fade it in
 			}
 
 			function hideAll() {
 				$controlPanel.find(opts.menuBorderSelector).stop().fadeTo('fast', 0, function () { //Fade to 0 opacity
+					if ($.browser.msie) $(this).prev("iframe").remove();
 					$(this).hide();  //after fading, hide it
 				});
 			}

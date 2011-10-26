@@ -380,37 +380,6 @@ namespace DotNetNuke.Entities.Users
             Mail.SendEmail(portalSettings.Email, portalSettings.Email, message.Subject, message.Body);
         }
 
-        private static void SetAuthenticationCookie(UserInfo user, bool createPersistentCookie)
-        {
-            if (IsMemberOfPortalGroup(user.PortalID) || createPersistentCookie)
-            {
-                //Create a custom auth cookie
-
-                //first, create the authentication ticket     
-                FormsAuthenticationTicket authenticationTicket = createPersistentCookie 
-                                                                     ? new FormsAuthenticationTicket(user.Username, true, Config.GetPersistentCookieTimeout()) 
-                                                                     : new FormsAuthenticationTicket(user.Username, false, Config.GetAuthCookieTimeout());
-
-                //encrypt it     
-                var encryptedAuthTicket = FormsAuthentication.Encrypt(authenticationTicket);
-
-                //Create a new Cookie
-                var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedAuthTicket)
-                                            {
-                                                Expires = authenticationTicket.Expiration,
-                                                Domain = PortalSecurity.GetCookieDomain(user.PortalID),
-                                                Path = FormsAuthentication.FormsCookiePath,
-                                                Secure = FormsAuthentication.RequireSSL
-                                            };
-                
-                HttpContext.Current.Response.Cookies.Set(authCookie);
-            }
-            else
-            {
-                FormsAuthentication.SetAuthCookie(user.Username, false);
-            }
-        }
-
         #endregion
 
         #region Public Methods
@@ -1412,7 +1381,8 @@ namespace DotNetNuke.Entities.Users
             UpdateUser(portalId, user, false);
 
             //set the forms authentication cookie ( log the user in )
-            SetAuthenticationCookie(user, createPersistentCookie);
+            var security = new PortalSecurity();
+            security.SignIn(user, createPersistentCookie);
         }
 
         /// -----------------------------------------------------------------------------

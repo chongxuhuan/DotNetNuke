@@ -513,17 +513,65 @@ namespace DotNetNuke.Security
             return TempInput;
         }
 
+        public void SignIn(UserInfo user, bool createPersistentCookie)
+        {
+            if (PortalController.IsMemberOfPortalGroup(user.PortalID) || createPersistentCookie)
+            {
+                //Create a custom auth cookie
+
+                //first, create the authentication ticket     
+                FormsAuthenticationTicket authenticationTicket = createPersistentCookie
+                                                                     ? new FormsAuthenticationTicket(user.Username, true, Config.GetPersistentCookieTimeout())
+                                                                     : new FormsAuthenticationTicket(user.Username, false, Config.GetAuthCookieTimeout());
+
+                //encrypt it     
+                var encryptedAuthTicket = FormsAuthentication.Encrypt(authenticationTicket);
+
+                //Create a new Cookie
+                var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedAuthTicket)
+                                        {
+                                            Expires = authenticationTicket.Expiration,
+                                            Domain = GetCookieDomain(user.PortalID),
+                                            Path = FormsAuthentication.FormsCookiePath,
+                                            Secure = FormsAuthentication.RequireSSL
+                                        };
+
+                HttpContext.Current.Response.Cookies.Set(authCookie);
+
+
+                if (PortalController.IsMemberOfPortalGroup(user.PortalID))
+                {
+                    var domain = GetCookieDomain(user.PortalID);
+                    var siteGroupCookie = new HttpCookie("SiteGroup", domain)
+                    {
+                        Expires = authenticationTicket.Expiration,
+                        Domain = domain,
+                        Path = FormsAuthentication.FormsCookiePath,
+                        Secure = FormsAuthentication.RequireSSL
+                    };
+
+                    HttpContext.Current.Response.Cookies.Set(siteGroupCookie);
+                }
+            }
+            else
+            {
+                FormsAuthentication.SetAuthCookie(user.Username, false);
+            }           
+        }
+
         public void SignOut()
         {
-            PortalSettings settings = PortalController.GetCurrentPortalSettings();
-
-			//Forms Authentication's Logout
-			FormsAuthentication.SignOut();
-
 			//Log User Off from Cookie Authentication System
-            if (PortalController.IsMemberOfPortalGroup(settings.PortalId))
+            var domainCookie = HttpContext.Current.Request.Cookies["SiteGroup"];
+            if (domainCookie == null)
+            {
+                //Forms Authentication's Logout
+                FormsAuthentication.SignOut();
+            }
+            else
             {
                 //clear custom domain cookie
+                var domain = domainCookie.Value;
 
                 //Create a new Cookie
                 string str = String.Empty;
@@ -533,15 +581,25 @@ namespace DotNetNuke.Security
                 }
 
                 var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, str)
-                {
-                    Expires = new DateTime(1999, 1, 1),
-                    Domain = GetCookieDomain(settings.PortalId),
-                    Path = FormsAuthentication.FormsCookiePath,
-                    Secure = FormsAuthentication.RequireSSL
+                                    {
+                                        Expires = new DateTime(1999, 1, 1),
+                                        Domain = domain,
+                                        Path = FormsAuthentication.FormsCookiePath,
+                                        Secure = FormsAuthentication.RequireSSL
                     
-                };
+                                    };
 
                 HttpContext.Current.Response.Cookies.Set(authCookie);
+
+                var siteGroupCookie = new HttpCookie("SiteGroup", str)
+                                    {
+                                        Expires = new DateTime(1999, 1, 1),
+                                        Domain = domain,
+                                        Path = FormsAuthentication.FormsCookiePath,
+                                        Secure = FormsAuthentication.RequireSSL
+                                    };
+
+                HttpContext.Current.Response.Cookies.Set(siteGroupCookie);
             }
 
 			//Remove current userinfo from context items
@@ -603,12 +661,14 @@ namespace DotNetNuke.Security
             if (PortalController.IsMemberOfPortalGroup(portalId))
             {
                 //set cookie domain for portal group
-                PortalGroupController groupController = new PortalGroupController();
-                PortalGroupInfo group = groupController.GetPortalGroups().Where(
-                    p => p.MasterPortalId == PortalController.GetEffectivePortalId(portalId)).SingleOrDefault();
+                var groupController = new PortalGroupController();
+                var group = groupController.GetPortalGroups()
+                                .Where(p => p.MasterPortalId == PortalController.GetEffectivePortalId(portalId))
+                                .SingleOrDefault();
+
 				if (@group != null && !string.IsNullOrEmpty(@group.AuthenticationDomain))
                 {
-                    cookieDomain = string.Format(".{0}", @group.AuthenticationDomain);
+                    cookieDomain = @group.AuthenticationDomain;
                 }
 
                 if (String.IsNullOrEmpty(cookieDomain))

@@ -104,9 +104,23 @@
 					interval: opts.hoverInterval,
 					over: function () {
 						setMenuPosition($(this));
-						$module.find(opts.menuSelector).fadeTo(opts.fadeSpeed, 1);
+						var menuSelector = $module.find(opts.menuSelector);
+						if ($.browser.msie && menuSelector.prev("iframe").length == 0) {
+							var mask = $("<iframe frameborder=\"0\"></iframe>");
+							menuSelector.before(mask);
+							mask.css({
+								position: "absolute"
+								, width: menuSelector.outerWidth() + "px"
+								, height: menuSelector.outerHeight() + "px"
+								, left: menuSelector.position().left + "px"
+								, top: menuSelector.position().top + "px"
+								, opacity: 0
+							});
+						}
+						menuSelector.fadeTo(opts.fadeSpeed, 1);
 					},
 					out: function () {
+						if ($.browser.msie) $module.find(opts.menuSelector).prev("iframe").remove();
 						$module.find(opts.menuSelector).stop().fadeTo(opts.fadeSpeed, 0).hide();
 					}
 				});
