@@ -205,21 +205,21 @@ namespace DotNetNuke.UI.Skins
             string message = title;
             if (isError)
             {
-                message = "<font class=\"NormalRed\">" + title + "</font>";
+				message = "<span class=\"NormalRed\">" + title + "</span>";
             }
             switch (level)
             {
                 case -1:
-                    message = "<hr><br><b>" + message + "</b>";
+					message = "<hr /><br /><strong>" + message + "</strong>";
                     break;
                 case 0:
-                    message = "<br><br><b>" + message + "</b>";
+					message = "<br /><br /><strong>" + message + "</strong>";
                     break;
                 case 1:
-                    message = "<br><b>" + message + "</b>";
+					message = "<br /><strong>" + message + "</strong>";
                     break;
                 default:
-                    message = "<br><li>" + message;
+                    message = "<br /><li>" + message + "</li>";
                     break;
             }
             return message + ": " + body + Environment.NewLine;
@@ -557,7 +557,7 @@ namespace DotNetNuke.UI.Skins
                 var objEventLogInfo = new LogInfo();
                 objEventLogInfo.LogTypeKey = EventLogController.EventLogType.HOST_ALERT.ToString();
                 objEventLogInfo.LogProperties.Add(new LogDetailInfo("Install Skin:", skinName));
-                Array arrMessage = strMessage.Split(new[] {"<br>"}, StringSplitOptions.None);
+                Array arrMessage = strMessage.Split(new[] {"<br />"}, StringSplitOptions.None);
                 foreach (string strRow in arrMessage)
                 {
                     objEventLogInfo.LogProperties.Add(new LogDetailInfo("Info:", HtmlUtils.StripTags(strRow, true)));

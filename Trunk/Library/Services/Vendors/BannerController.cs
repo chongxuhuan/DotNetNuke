@@ -206,8 +206,8 @@ namespace DotNetNuke.Services.Vendors
             switch (BannerTypeId)
             {
                 case (int) BannerType.Text:
-                    strBanner += "<a href=\"" + strURL + "\" class=\"NormalBold\" target=\"" + strWindow + "\" rel=\"nofollow\"><u>" + BannerName + "</u></a><br>";
-                    strBanner += "<span class=\"Normal\">" + Description + "</span><br>";
+                    strBanner += "<a href=\"" + strURL + "\" class=\"NormalBold\" target=\"" + strWindow + "\" rel=\"nofollow\"><u>" + BannerName + "</u></a><br />";
+                    strBanner += "<span class=\"Normal\">" + Description + "</span><br />";
                     if (!String.IsNullOrEmpty(ImageFile))
                     {
                         URL = ImageFile;

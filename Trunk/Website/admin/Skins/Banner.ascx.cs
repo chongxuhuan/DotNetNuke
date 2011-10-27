@@ -75,6 +75,14 @@ namespace DotNetNuke.UI.Skins.Controls
 
         public string ColWidth { get; set; }
 
+		public RepeatLayout BannerLayout { get; set; }
+
+		public int BannerColumns { get; set; }
+
+		public int BannerCellPadding { get; set; }
+
+		public int BannerCellSpacing { get; set; }
+
 		#endregion
 
 		#region "Event Handlers"
@@ -132,22 +140,28 @@ namespace DotNetNuke.UI.Skins.Controls
                 //set banner display characteristics
                 if (lstBanners.Items.Count != 0)
                 {
-                    lstBanners.RepeatLayout = RepeatLayout.Table;
+                	lstBanners.RepeatLayout = BannerLayout;
+
                     if (!String.IsNullOrEmpty(Width))
                     {
                         lstBanners.Width = Unit.Parse(Width + "px");
                     }
-					
-                    if (lstBanners.Items.Count == 1)
-                    {
-                        lstBanners.CellPadding = 0;
-                        lstBanners.CellSpacing = 0;
-                    }
-                    else
-                    {
-                        lstBanners.CellPadding = 4;
-                        lstBanners.CellSpacing = 0;
-                    }
+
+					if(BannerColumns > 0)
+					{
+						lstBanners.RepeatColumns = BannerColumns;
+					}
+
+					if(BannerCellPadding > 0)
+					{
+						lstBanners.CellPadding = BannerCellPadding;
+					}
+					else
+					{
+						lstBanners.CellPadding = lstBanners.Items.Count == 1 ? 0 : 4;
+					}
+
+                	lstBanners.CellSpacing = BannerCellSpacing;
 					
                     if (!String.IsNullOrEmpty(Orientation))
                     {

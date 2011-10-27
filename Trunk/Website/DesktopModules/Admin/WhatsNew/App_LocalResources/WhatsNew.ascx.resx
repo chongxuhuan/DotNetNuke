@@ -1646,4 +1646,48 @@ corrected with each release. &lt;/p&gt;
 	&lt;li&gt;none&lt;/li&gt;
 &lt;/ul&gt;</value>
   </data>
+    <data name="WhatsNew.06.01.00" xml:space="preserve">
+      <value>
+          &lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+          &lt;ul&gt;
+          &lt;li&gt;Implemented a new way of managing client resources which dramatically improves
+          the performance of the product&lt;/li&gt;
+          &lt;li&gt;Implemented a device capability API that allows module and skin developers
+          to build mobile solutions&lt;/li&gt;
+          &lt;li&gt;Implemented a site redirection API that allows mobile visitors to be shown
+          a custom experience&lt;/li&gt;
+          &lt;li&gt;Implemented a Site Groups API that empowers organizations to implement single
+          sign on in multitenant environments&lt;/li&gt;
+          &lt;li&gt;Removed the whitespace filter, this was used for stripping whitespaces from
+          the generated page content following a Regular Expression.&lt;/li&gt;
+          &lt;li&gt;In a previous release, the DotNetNuke.Entities.Content.Common.ContentExtensions
+          namespace was renamed to DotNetNuke.Entities.Content.ContentExtensions. In this
+          release, the namespace was changed to its original name&lt;/li&gt;
+          &lt;li&gt;Fixed the order of the pages in the Control Panel when adding new pages&lt;/li&gt;
+          &lt;li&gt;Improved usability in the Edit Extensions Page&lt;/li&gt;
+          &lt;li&gt;Telerik resource files were updated to version 915 release&lt;/li&gt;
+          &lt;li&gt;Updated the Portals Module and Site Settings to consistently display &quot;site&quot;
+          instead of &quot;portal&quot;&lt;/li&gt;
+          &lt;li&gt;The community modules have been removed from the installation package and
+          will be available through the Extensions Catalog&lt;/li&gt;
+          &lt;/ul&gt;
+          &lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+          &lt;ul&gt;
+          &lt;li&gt;Browsers support the ability to remember common strings such as usernames/addresses
+          etc. Code was added to ensure this does not occur when dealing with a password.&lt;/li&gt;
+          &lt;li&gt;The messaging component was added in DotNetNuke 5.5.0 and allows for
+          inter-user communication. Text entered into it was failing to validate for
+          certain XSS issues and has now been updated to resolve this issue.&lt;/li&gt;
+          &lt;/ul&gt;
+          &lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+          &lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+          &lt;ul&gt;
+          &lt;li&gt;HTML Module&lt;/li&gt;
+          &lt;/ul&gt;
+          &lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+          &lt;ul&gt;
+          &lt;li&gt;none&lt;/li&gt;
+          &lt;/ul&gt;
+      </value>
+    </data>
 </root>

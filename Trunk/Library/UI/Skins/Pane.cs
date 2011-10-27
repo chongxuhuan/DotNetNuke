@@ -589,7 +589,7 @@ namespace DotNetNuke.UI.Skins
                         PaneControl.Attributes["class"] = cssclass.Replace(CPaneOutline, "").Trim().Replace("  ", " ") + " " + CPaneOutline;
                     }
                     //display pane name
-                    var ctlLabel = new Label { Text = "<center>" + Name + "</center><br>", CssClass = "SubHead" };
+                    var ctlLabel = new Label { Text = "<center>" + Name + "</center><br />", CssClass = "SubHead" };
                     PaneControl.Controls.AddAt(0, ctlLabel);
                 }
                 else

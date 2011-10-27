@@ -200,8 +200,8 @@ namespace DotNetNuke.Security
         ///-----------------------------------------------------------------------------
         private string FormatMultiLine(string strInput)
         {
-            string TempInput = strInput.Replace(Environment.NewLine, "<br>");
-            return TempInput.Replace("\r", "<br>");
+            string TempInput = strInput.Replace(Environment.NewLine, "<br />");
+            return TempInput.Replace("\r", "<br />");
         }
 
         ///-----------------------------------------------------------------------------

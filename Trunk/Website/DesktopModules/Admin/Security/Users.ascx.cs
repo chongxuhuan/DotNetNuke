@@ -767,6 +767,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
                 if (!Page.IsPostBack)
                 {
+					ClientAPI.RegisterKeyCapture(txtSearch, cmdSearch, 13);
 					//Load the Search Combo
                     ddlSearchType.Items.Add(AddSearchItem("Username"));
                     ddlSearchType.Items.Add(AddSearchItem("Email"));

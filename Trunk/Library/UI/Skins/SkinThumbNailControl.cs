@@ -177,7 +177,7 @@ namespace DotNetNuke.UI.Skins
         /// -----------------------------------------------------------------------------
         private void AddDefaultSkin()
         {
-            var strDefault = Localization.GetString("Not_Specified") + "<br>";
+            var strDefault = Localization.GetString("Not_Specified") + "<br />";
             strDefault += "<img src=\"" + Globals.ApplicationPath.Replace("\\", "/") + "/images/spacer.gif\" width=\"140\" height=\"135\" border=\"0\">";
             OptSkin.Items.Insert(0, new ListItem(strDefault, ""));
         }

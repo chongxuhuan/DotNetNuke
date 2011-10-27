@@ -1189,7 +1189,7 @@ namespace DotNetNuke.Security.Permissions.Controls
                 {
                     //user does not exist
                     lblUser = new Label();
-                    lblUser.Text = "<br>" + Localization.GetString("InvalidUserName");
+                    lblUser.Text = "<br />" + Localization.GetString("InvalidUserName");
                     lblUser.CssClass = "NormalRed";
                     pnlPermissions.Controls.Add(lblUser);
                 }

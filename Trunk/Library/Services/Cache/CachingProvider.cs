@@ -154,6 +154,14 @@ namespace DotNetNuke.Services.Cache
             }
             if (prefix == "DNN_")
             {
+                //First check if we are upgrading/installing
+                if (HttpContext.Current == null 
+                        || HttpContext.Current.Request.Url.LocalPath.ToLower().EndsWith("install.aspx")
+                        || HttpContext.Current.Request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
+                        || HttpContext.Current.Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
+                {
+                    return;
+                }                 
                 //Invalidate the client resources
                 ClientResourceManager.UpdateVersion();
             }
