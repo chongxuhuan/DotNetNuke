@@ -1122,8 +1122,11 @@ namespace DotNetNuke.Entities.Portals
             if (tabId > 0)
             {
                 tab = tabController.GetTab(tabId, portalId, false);
-                ActiveTab = tab.Clone();
-                isVerified = true;
+				if (tab != null)
+				{
+					ActiveTab = tab.Clone();
+					isVerified = true;
+				}
             }
 
             return isVerified;

@@ -611,7 +611,7 @@ namespace DotNetNuke.Security.Membership
         public override bool ChangePassword(UserInfo user, string oldPassword, string newPassword)
         {
             MembershipUser aspnetUser = GetMembershipUser(user);
-            if (oldPassword == Null.NullString)
+            if (string.IsNullOrEmpty(oldPassword))
             {
                 aspnetUser.UnlockUser();
                 oldPassword = aspnetUser.GetPassword();

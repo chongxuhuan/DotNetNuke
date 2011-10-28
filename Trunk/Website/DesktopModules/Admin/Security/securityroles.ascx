@@ -27,13 +27,11 @@
                 </td>
                 <td width="10"></td>
                 <td valign="top" width="150" nowrap="nowrap" align="right">
-                    <asp:TextBox ID="txtEffectiveDate" runat="server" Width="80" />
-                    <asp:HyperLink ID="cmdEffectiveCalendar" runat="server" />
+                    <dnn:DnnDatePicker ID="effectiveDatePicker" runat="server"/>
                 </td>
                 <td width="10"></td>
                 <td valign="top" width="150" nowrap="nowrap" align="right">
-                    <asp:TextBox ID="txtExpiryDate" runat="server" Width="80" />
-                    <asp:HyperLink ID="cmdExpiryCalendar" runat="server" />
+                    <dnn:DnnDatePicker ID="expiryDatePicker" runat="server"/>
                 </td>
                 <td width="30"></td>
                 <td valign="top" width="200" nowrap="nowrap">
@@ -41,9 +39,9 @@
                 </td>
             </tr>
         </table>
-        <asp:CompareValidator ID="valEffectiveDate" CssClass="dnnFormError" runat="server" resourcekey="valEffectiveDate" Display="Dynamic" Type="Date" Operator="DataTypeCheck" ControlToValidate="txtEffectiveDate" ValidationGroup="SecurityRole" />
-        <asp:CompareValidator ID="valExpiryDate" CssClass="dnnFormError" runat="server" resourcekey="valExpiryDate" Display="Dynamic" Type="Date" Operator="DataTypeCheck" ControlToValidate="txtExpiryDate" ValidationGroup="SecurityRole" />
-        <asp:CompareValidator ID="valDates" CssClass="dnnFormError" runat="server" resourcekey="valDates" Display="Dynamic" Type="Date" Operator="GreaterThan" ControlToValidate="txtExpiryDate" ControlToCompare="txtEffectiveDate" ValidationGroup="SecurityRole" />
+        <asp:CompareValidator ID="valEffectiveDate" CssClass="dnnFormError" runat="server" resourcekey="valEffectiveDate" Display="Dynamic" Type="Date" Operator="DataTypeCheck" ControlToValidate="effectiveDatePicker" ValidationGroup="SecurityRole" />
+        <asp:CompareValidator ID="valExpiryDate" CssClass="dnnFormError" runat="server" resourcekey="valExpiryDate" Display="Dynamic" Type="Date" Operator="DataTypeCheck" ControlToValidate="expiryDatePicker" ValidationGroup="SecurityRole" />
+        <asp:CompareValidator ID="valDates" CssClass="dnnFormError" runat="server" resourcekey="valDates" Display="Dynamic" Type="Date" Operator="GreaterThan" ControlToValidate="expiryDatePicker" ControlToCompare="effectiveDatePicker" ValidationGroup="SecurityRole" />
     </asp:Panel>
     <asp:CheckBox ID="chkNotify" resourcekey="SendNotification" runat="server" Checked="True" />
 

@@ -96,10 +96,12 @@
     <Reference Include="Telerik.Web.UI, Version=2009.3.1104.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
       <HintPath>..\Library\Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="WebFormsMvp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=537f18701145dff0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WebFormsMvp.1.2.0.0\lib\WebFormsMvp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -310,14 +312,17 @@
     <ProjectReference Include="..\DotNetNuke.Instrumentation\DotNetNuke.Instrumentation.csproj">
       <Project>{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}</Project>
       <Name>DotNetNuke.Instrumentation</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\DotNetNuke.Web.Client\DotNetNuke.Web.Client.csproj">
       <Project>{537B45EB-2EC3-4849-BC6B-D761F43674A5}</Project>
       <Name>DotNetNuke.Web.Client</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Library\DotNetNuke.Library.csproj">
       <Name>DotNetNuke.Library</Name>
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

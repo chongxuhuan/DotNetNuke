@@ -59,6 +59,7 @@
     <ProjectReference Include="..\..\..\DotNetNuke.Library.csproj">
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Name>DotNetNuke.Library</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -92,7 +93,7 @@
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin$(Providers)" />
-	<Copy SourceFiles="$(MSBuildProjectDirectory)\WURFLDeviceDatabase\web_browsers_patch.xml" DestinationFolder="../../../../Website/App_Data/WURFLDeviceDatabase" />
-	<Copy SourceFiles="$(MSBuildProjectDirectory)\WURFLDeviceDatabase\wurfl.xml.gz" DestinationFolder="../../../../Website/App_Data/WURFLDeviceDatabase" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\WURFLDeviceDatabase\web_browsers_patch.xml" DestinationFolder="../../../../Website/App_Data/WURFLDeviceDatabase" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\WURFLDeviceDatabase\wurfl.xml.gz" DestinationFolder="../../../../Website/App_Data/WURFLDeviceDatabase" />
   </Target>
 </Project>

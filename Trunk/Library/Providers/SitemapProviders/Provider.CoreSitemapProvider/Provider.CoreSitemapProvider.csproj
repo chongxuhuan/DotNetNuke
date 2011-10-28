@@ -104,6 +104,7 @@
     <ProjectReference Include="..\..\..\DotNetNuke.Library.csproj">
       <Name>DotNetNuke.Library</Name>
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

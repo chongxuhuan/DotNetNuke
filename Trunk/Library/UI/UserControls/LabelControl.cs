@@ -192,23 +192,6 @@ namespace DotNetNuke.UI.UserControls
 			}
 		}
 
-		/// <summary>
-		/// Determines if the tooltip should be rendered (which is an extra div), also determines if the label should be displayed as a hyperlink. 
-		/// </summary>
-		private bool ShowToolTip
-		{
-			get
-			{
-				return pnlHelp.Visible;
-			}
-			set
-			{
-				pnlHelp.Visible = value;
-				cmdHelp.Visible = value;
-				lblNoHelpLabel.Visible = !value;
-			}
-		}
-
 		#endregion
 
 		#region Event Handlers
@@ -226,10 +209,7 @@ namespace DotNetNuke.UI.UserControls
 			base.OnLoad(e);
 			try
 			{
-				if (ShowToolTip)
-				{
-					RegisterClientDependencies();
-				}
+				RegisterClientDependencies();
 			}
 			catch (Exception exc) //Module failed to load
 			{
@@ -276,7 +256,8 @@ namespace DotNetNuke.UI.UserControls
 
 			if (string.IsNullOrEmpty(HelpText))
 			{
-				ShowToolTip = false;
+				pnlHelp.Visible = cmdHelp.Visible = false;
+				lblNoHelpLabel.Visible = true;
 			}
 
 			if (!string.IsNullOrEmpty(CssClass))

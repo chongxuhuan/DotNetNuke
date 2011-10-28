@@ -77,10 +77,12 @@
     <ProjectReference Include="..\..\..\..\DotNetNuke.Instrumentation\DotNetNuke.Instrumentation.csproj">
       <Project>{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}</Project>
       <Name>DotNetNuke.Instrumentation</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\DotNetNuke.Library.csproj">
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Name>DotNetNuke.Library</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

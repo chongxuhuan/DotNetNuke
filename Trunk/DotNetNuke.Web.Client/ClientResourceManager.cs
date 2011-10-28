@@ -296,6 +296,29 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
             }
         }
 
+		public static bool IsInstalled()
+		{
+			var configPath = HostingEnvironment.MapPath("~/web.config");
+			var installed = false;
+
+			if (!String.IsNullOrEmpty(configPath))
+			{
+				var xmlDoc = new XmlDocument();
+				xmlDoc.Load(configPath);
+				XmlDocumentFragment xmlFrag;
+
+				// Config Sections
+				var sectionsConfig = xmlDoc.DocumentElement.SelectSingleNode("configSections");
+				if (sectionsConfig != null)
+				{
+					var clientDependencySectionConfig = sectionsConfig.SelectSingleNode("section[@name='clientDependency']");
+					installed = clientDependencySectionConfig != null;
+				}
+			}
+
+			return installed;
+		}
+
         /// <summary>
         /// This is a utility method that can be called to update the version of the composite files.
         /// </summary>

@@ -55,6 +55,7 @@
     <Reference Include="DotNetNuke.WebControls, Version=2.2.0.7, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Controls\DotNetNuke.WebControls\bin\DotNetNuke.WebControls.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SolpartWebControls, Version=1.7.2.0, Culture=neutral">
       <HintPath>..\..\..\Controls\SolpartMenu\bin\SolpartWebControls.dll</HintPath>

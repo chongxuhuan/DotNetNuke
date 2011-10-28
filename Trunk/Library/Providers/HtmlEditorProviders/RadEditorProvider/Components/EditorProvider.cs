@@ -1075,12 +1075,16 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
         private bool IsLocaleAvailable(string Locale)
         {
+            string path;
+
             if (Locale.ToLower() == "en-us")
             {
-                Locale = "";
+                path = HttpContext.Current.Server.MapPath(_localeFile);
             }
-
-            string path = HttpContext.Current.Server.MapPath(_localeFile.ToLower().Replace(".resx", Locale + ".resx"));
+            else
+            {
+                path = HttpContext.Current.Server.MapPath(_localeFile.ToLower().Replace(".resx", "." + Locale + ".resx"));
+            }
 
             if (File.Exists(path))
             {

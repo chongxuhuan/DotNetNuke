@@ -73,10 +73,12 @@
     <Reference Include="DotNetNuke.WebControls, Version=2.2.0.7, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Controls\DotNetNuke.WebControls\bin\DotNetNuke.WebControls.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.1.2.7, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Controls\DotNetNuke.WebUtility\bin\DotNetNuke.WebUtility.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="SharpZipLib, Version=0.81.0.1407, Culture=neutral">
@@ -101,6 +103,7 @@
     <Reference Include="Telerik.Web.UI, Version=2010.2.713.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -1112,18 +1115,22 @@
     <ProjectReference Include="..\DotNetNuke.Instrumentation\DotNetNuke.Instrumentation.csproj">
       <Project>{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}</Project>
       <Name>DotNetNuke.Instrumentation</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\DotNetNuke.Web.Client\DotNetNuke.Web.Client.csproj">
       <Project>{537B45EB-2EC3-4849-BC6B-D761F43674A5}</Project>
       <Name>DotNetNuke.Web.Client</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="Components\Syndication\DotNetNuke.Syndication.csproj">
       <Name>DotNetNuke.Syndication</Name>
       <Project>{86AF9531-D270-4C18-A8B9-C67A8782AF69}</Project>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="Controls\CountryListBox\CountryListBox.csproj">
       <Name>CountryListBox</Name>
       <Project>{89093FD0-076F-48CD-9232-B665226CDBF0}</Project>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

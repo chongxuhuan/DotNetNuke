@@ -2,6 +2,7 @@
 <%@ Import Namespace="DotNetNuke.UI.Utilities" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="WizardUser" Src="~/Install/WizardUser.ascx" %>
+<%@ Register TagPrefix="dnncrm" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
@@ -149,6 +150,12 @@
             stopAnimation();
         }
     </script>
+	<asp:placeholder runat="server" id="ClientResourceIncludes" />
+    <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader">
+        <Paths>
+            <dnncrm:ClientResourcePath Name="SharedScripts" Path="~/Resources/Shared/Scripts/" />
+        </Paths>
+    </dnncrm:ClientResourceLoader>
     <form id="form1" runat="server">
         <asp:placeholder id="BodySCRIPTS" runat="server">
             <script type="text/javascript" src="../js/dnn.js"></script>

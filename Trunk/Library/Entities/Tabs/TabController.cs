@@ -86,6 +86,7 @@ namespace DotNetNuke.Entities.Tabs
         private static void AddAllTabsModules(TabInfo tab)
         {
             var objmodules = new ModuleController();
+        	var portalSettings = new PortalSettings(tab.TabID, tab.PortalID);
             foreach (ModuleInfo allTabsModule in objmodules.GetAllTabsModules(tab.PortalID, true))
             {
                 //[DNN-6276]We need to check that the Module is not implicitly deleted.  ie If all instances are on Pages
@@ -93,7 +94,7 @@ namespace DotNetNuke.Entities.Tabs
                 //Module to be added
                 var canAdd =
                 (from ModuleInfo allTabsInstance in objmodules.GetModuleTabs(allTabsModule.ModuleID) select new TabController().GetTab(allTabsInstance.TabID, tab.PortalID, false)).Any(
-                    t => !t.IsDeleted);
+					t => !t.IsDeleted) && (!portalSettings.ContentLocalizationEnabled || allTabsModule.CultureCode == portalSettings.CultureCode);
                 if (canAdd)
                 {
                     objmodules.CopyModule(allTabsModule, tab, Null.NullString, true);
@@ -2126,6 +2127,32 @@ namespace DotNetNuke.Entities.Tabs
         {
             return new TabController().GetTabsByPortal(portalId).WithCulture(cultureCode, includeNeutral).AsList();
         }
+
+		/// <summary>
+		/// Determines whether is special tab.
+		/// </summary>
+		/// <param name="tabId">The tab id.</param>
+		/// <param name="portalId">The portal id.</param>
+		/// <returns></returns>
+		public static bool IsSpecialTab(int tabId, int portalId)
+		{
+			var locales = LocaleController.Instance.GetLocales(portalId);
+			var portalController = new PortalController();
+			var isSpecial = false;
+			foreach (var locale in locales.Values)
+			{
+				var portal = portalController.GetPortal(portalId, locale.Code);
+				var portalSettings = new PortalSettings(portal);
+				isSpecial = IsSpecialTab(tabId, portalSettings);
+
+				if(isSpecial)
+				{
+					break;
+				}
+			}
+
+			return isSpecial;
+		}
 
         /// <summary>
         /// Determines whether is special tab.

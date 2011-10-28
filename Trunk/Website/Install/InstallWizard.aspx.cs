@@ -1459,6 +1459,13 @@ namespace DotNetNuke.Services.Install
 
             if (!Page.IsPostBack)
             {
+				//Adding ClientDependency Resources config to web.config
+				BindPermissions(true);
+				if (PermissionsValid && !ClientResourceManager.IsInstalled())
+				{
+					ClientResourceManager.AddConfiguration();
+					Response.Redirect(Request.RawUrl);
+				}
                 installTypeRadioButton.Items.Clear();
                 installTypeRadioButton.Items.Add(new ListItem(LocalizeString("Typical"), "Typical"));
                 installTypeRadioButton.Items.Add(new ListItem(LocalizeString("Full"), "Full"));
@@ -1762,11 +1769,6 @@ namespace DotNetNuke.Services.Install
                 case 1: //Page 1 - File Permissions
                     BindPermissions(true);
                     e.Cancel = !PermissionsValid;
-                    //Adding ClientDependency Resources config to web.config
-                    if (PermissionsValid)
-                    {
-                        ClientResourceManager.AddConfiguration();
-                    }
                     break;
                 case 2: //Page 2 - Database Configuration
                     bool canConnect = TestDatabaseConnection();

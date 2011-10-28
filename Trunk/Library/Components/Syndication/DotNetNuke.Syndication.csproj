@@ -106,6 +106,7 @@
     <ProjectReference Include="..\..\..\DotNetNuke.Instrumentation\DotNetNuke.Instrumentation.csproj">
       <Project>{DDF18E36-41A0-4CA7-A098-78CA6E6F41C1}</Project>
       <Name>DotNetNuke.Instrumentation</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

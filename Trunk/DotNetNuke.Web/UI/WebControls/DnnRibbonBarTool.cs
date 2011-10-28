@@ -340,7 +340,7 @@ namespace DotNetNuke.Web.UI.WebControls
             switch (ToolInfo.ToolName)
             {
                 case "DeletePage":
-                    if ((TabController.IsSpecialTab(TabController.CurrentPage.TabID, PortalSettings)))
+                    if ((TabController.IsSpecialTab(TabController.CurrentPage.TabID, PortalSettings.PortalId)))
                     {
                         returnValue = false;
                     }
@@ -526,7 +526,7 @@ namespace DotNetNuke.Web.UI.WebControls
         {
             if ((ToolInfo.ToolName == "DeletePage"))
             {
-                if ((TabController.IsSpecialTab(TabController.CurrentPage.TabID, PortalSettings)))
+                if ((TabController.IsSpecialTab(TabController.CurrentPage.TabID, PortalSettings.PortalId)))
                 {
                     return GetString("Tool.DeletePage.Special.ToolTip");
                 }

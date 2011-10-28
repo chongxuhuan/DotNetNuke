@@ -35,11 +35,11 @@
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plPassword" runat="server" controlname="txtPassword" />
-			<asp:textbox id="txtPassword" runat="server" cssclass="dnnFormRequired" TextMode="Password" size="12" maxlength="20" />
+			<asp:textbox id="txtPassword" runat="server" cssclass="dnnFormRequired" TextMode="Password" size="12" maxlength="128" />
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plConfirm" runat="server" controlname="txtConfirm" text="Confirm Password:"></dnn:label>
-			<asp:textbox id="txtConfirm" runat="server" cssclass="dnnFormRequired" textmode="Password" size="12" maxlength="20" />
+			<asp:textbox id="txtConfirm" runat="server" cssclass="dnnFormRequired" textmode="Password" size="12" maxlength="128" />
             <asp:CompareValidator ID="ComparePasswordsValidator" runat="server"
                                   resourcekey = "ComparePasswordsValidator.ErrorMessage" 
                                   CssClass="dnnFormMessage dnnFormError"                                   

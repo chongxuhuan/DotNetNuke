@@ -381,8 +381,8 @@ namespace DotNetNuke.Modules.Admin.Security
         /// -----------------------------------------------------------------------------
         private void GetDates(int UserId, int RoleId)
         {
-            string strExpiryDate = "";
-            string strEffectiveDate = "";
+        	DateTime? expiryDate = null;
+        	DateTime? effectiveDate = null;
 
             var objRoles = new RoleController();
             UserRoleInfo objUserRole = objRoles.GetUserRole(PortalId, UserId, RoleId);
@@ -390,11 +390,11 @@ namespace DotNetNuke.Modules.Admin.Security
             {
                 if (Null.IsNull(objUserRole.EffectiveDate) == false)
                 {
-                    strEffectiveDate = objUserRole.EffectiveDate.ToShortDateString();
+                    effectiveDate = objUserRole.EffectiveDate;
                 }
                 if (Null.IsNull(objUserRole.ExpiryDate) == false)
                 {
-                    strExpiryDate = objUserRole.ExpiryDate.ToShortDateString();
+                    expiryDate = objUserRole.ExpiryDate;
                 }
             }
             else //new role assignment
@@ -406,22 +406,22 @@ namespace DotNetNuke.Modules.Admin.Security
                     switch (objRole.BillingFrequency)
                     {
                         case "D":
-                            strExpiryDate = DateTime.Now.AddDays(objRole.BillingPeriod).ToShortDateString();
+                            expiryDate = DateTime.Now.AddDays(objRole.BillingPeriod);
                             break;
                         case "W":
-                            strExpiryDate = DateTime.Now.AddDays(objRole.BillingPeriod*7).ToShortDateString();
+                            expiryDate = DateTime.Now.AddDays(objRole.BillingPeriod*7);
                             break;
                         case "M":
-                            strExpiryDate = DateTime.Now.AddMonths(objRole.BillingPeriod).ToShortDateString();
+                            expiryDate = DateTime.Now.AddMonths(objRole.BillingPeriod);
                             break;
                         case "Y":
-                            strExpiryDate = DateTime.Now.AddYears(objRole.BillingPeriod).ToShortDateString();
+                            expiryDate = DateTime.Now.AddYears(objRole.BillingPeriod);
                             break;
                     }
                 }
             }
-            txtEffectiveDate.Text = strEffectiveDate;
-            txtExpiryDate.Text = strExpiryDate;
+			effectiveDatePicker.SelectedDate = effectiveDate;
+			expiryDatePicker.SelectedDate = expiryDate;
         }
 
 		#endregion
@@ -443,15 +443,6 @@ namespace DotNetNuke.Modules.Admin.Security
                 Response.Redirect(Globals.NavigateURL("Access Denied"), true);
             }
             base.DataBind();
-
-            //this needs to execute always to the client script code is registred in InvokePopupCal
-            cmdEffectiveCalendar.NavigateUrl = Calendar.InvokePopupCal(txtEffectiveDate);
-            cmdExpiryCalendar.NavigateUrl = Calendar.InvokePopupCal(txtExpiryDate);
-
-            string localizedCalendarText = Localization.GetString("Calendar");
-            string calendarText = "<img src='" + ResolveUrl("~/images/calendar.png") + "' border='0' alt='" + localizedCalendarText + "'>";
-            cmdExpiryCalendar.Text = calendarText;
-            cmdEffectiveCalendar.Text = calendarText;
 
             //Localize Headers
             Localization.LocalizeDataGrid(ref grdUserRoles, LocalResourceFile);
@@ -684,22 +675,24 @@ namespace DotNetNuke.Modules.Admin.Security
 						//do not modify the portal Administrator account dates
                         if (User.UserID == PortalSettings.AdministratorId && Role.RoleID == PortalSettings.AdministratorRoleId)
                         {
-                            txtEffectiveDate.Text = "";
-                            txtExpiryDate.Text = "";
+                        	effectiveDatePicker.SelectedDate = null;
+                        	expiryDatePicker.SelectedDate = null;
                         }
+
                         DateTime datEffectiveDate;
-                        if (!String.IsNullOrEmpty(txtEffectiveDate.Text))
+                        if (effectiveDatePicker.SelectedDate != null)
                         {
-                            datEffectiveDate = DateTime.Parse(txtEffectiveDate.Text);
+							datEffectiveDate = effectiveDatePicker.SelectedDate.Value;
                         }
                         else
                         {
                             datEffectiveDate = Null.NullDate;
                         }
+
                         DateTime datExpiryDate;
-                        if (!String.IsNullOrEmpty(txtExpiryDate.Text))
+                        if (expiryDatePicker.SelectedDate != null)
                         {
-                            datExpiryDate = DateTime.Parse(txtExpiryDate.Text);
+							datExpiryDate = expiryDatePicker.SelectedDate.Value;
                         }
                         else
                         {
