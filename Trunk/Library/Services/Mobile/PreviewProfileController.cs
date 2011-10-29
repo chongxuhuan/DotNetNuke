@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 
+using DotNetNuke.Application;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
@@ -166,7 +167,7 @@ namespace DotNetNuke.Services.Mobile
 			var settings = PortalController.GetPortalSettingsDictionary(portalId);
 			List<PreviewProfile> profiles = new List<PreviewProfile>();
 
-			if (!settings.TryGetValue("DefPreviewProfiles_Created", out defaultPreviewProfiles))
+			if (!settings.TryGetValue("DefPreviewProfiles_Created", out defaultPreviewProfiles) || defaultPreviewProfiles != DotNetNukeContext.Current.Application.Name)
 			{
 				try
 				{
@@ -192,7 +193,7 @@ namespace DotNetNuke.Services.Mobile
                         }
                     }
 
-				    PortalController.UpdatePortalSetting(portalId, "DefPreviewProfiles_Created", "true");
+					PortalController.UpdatePortalSetting(portalId, "DefPreviewProfiles_Created", DotNetNukeContext.Current.Application.Name);
 				}
 				catch (Exception ex)
 				{

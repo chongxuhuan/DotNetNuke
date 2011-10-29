@@ -1019,7 +1019,14 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     var editLink = (HyperLink)imgColumnControl;
 
-                    editLink.Visible = !user.IsInRole(PortalSettings.AdministratorRoleName) || (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName));
+                    editLink.Visible = (!user.IsInRole(PortalSettings.AdministratorRoleName) || (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)));
+                    if (editLink.Visible)
+                    {
+                        if (user.IsSuperUser)
+                        {
+                            editLink.Visible = PortalSettings.UserInfo.IsSuperUser;
+                        }
+                    }
                 }
 
                 imgColumnControl = item.Controls[1].Controls[0];
