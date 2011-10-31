@@ -340,6 +340,30 @@ namespace DotNetNuke.Services.Mail
                 }
             }
         }
+
+		private List<Attachment> LoadAttachments()
+		{
+			var attachments = new List<Attachment>();
+			foreach (var attachment in _attachments)
+			{
+				var buffer = new byte[4096];
+				var memoryStream = new MemoryStream();
+				while (true)
+				{
+					var read = attachment.ContentStream.Read(buffer, 0, 4096);
+					if (read <= 0)
+					{
+						break;
+					}
+					memoryStream.Write(buffer, 0, read);
+				}
+
+				attachments.Add(new Attachment(memoryStream, attachment.ContentType));
+				attachment.ContentStream.Position = 0;
+			}
+
+			return attachments;
+		}
 		
 		#endregion
 		
@@ -462,6 +486,7 @@ namespace DotNetNuke.Services.Mail
 
                 var mailErrors = new StringBuilder();
                 var mailRecipients = new StringBuilder();
+				
                 switch (AddressMethod)
                 {
                     case AddressMethods.Send_TO:
@@ -497,6 +522,7 @@ namespace DotNetNuke.Services.Mail
                                 }
                             }
                             string recipient = AddressMethod == AddressMethods.Send_TO ? user.Email : RelayEmailAddress;
+
                             string mailError = Mail.SendMail(_sendingUser.Email,
                                                                 recipient,
                                                                 "",
@@ -507,7 +533,7 @@ namespace DotNetNuke.Services.Mail
                                                                 BodyFormat,
                                                                 Encoding.UTF8,
                                                                 body,
-                                                                _attachments,
+																LoadAttachments(),
                                                                 _smtpServer,
                                                                 _smtpAuthenticationMethod,
                                                                 _smtpUsername,
@@ -563,7 +589,7 @@ namespace DotNetNuke.Services.Mail
                                                        BodyFormat,
                                                        Encoding.UTF8,
                                                        body,
-                                                       _attachments,
+													   LoadAttachments(),
                                                        _smtpServer,
                                                        _smtpAuthenticationMethod,
                                                        _smtpUsername,
@@ -595,10 +621,10 @@ namespace DotNetNuke.Services.Mail
             }
             finally
             {
-                foreach (var attachment in _attachments)
-                {
-                    attachment.Dispose();
-                }
+				foreach (var attachment in _attachments)
+				{
+					attachment.Dispose();
+				}
             }
             return messagesSent;
         }
