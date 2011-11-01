@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
 	<packages>
-		<package name="DotNetNuke.Taxonomy" type="Module" version="06.01.00">
+		<package name="DotNetNuke.Taxonomy" type="Module" version="06.01.01">
 			<friendlyName>Taxonomy Manager</friendlyName>
 			<description>Administrators can manage the Taxonomy for their portal.</description>
       <iconFile>DesktopModules/Admin/Taxonomy/Images/taxonomy.gif</iconFile>

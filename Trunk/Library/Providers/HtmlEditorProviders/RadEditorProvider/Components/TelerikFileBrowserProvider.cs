@@ -25,6 +25,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Web;
 
+using DotNetNuke.Entities.Portals;
+
 using Telerik.Web.UI.Widgets;
 using DotNetNuke.Services.FileSystem;
 using System.IO;
@@ -627,7 +629,12 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			                    var tempVar = SearchPatterns;
 			                    if (CheckSearchPatterns(dnnFile.FileName, ref tempVar))
 			                    {
-			                        var url = Common.Globals.LinkClick("fileid=" + dnnFile.FileId, Null.NullInteger, Null.NullInteger);
+			                        var tabId = Null.NullInteger;
+                                    if (dnnFile.PortalId > Null.NullInteger)
+                                    {
+                                        tabId = new PortalSettings(dnnFile.PortalId).HomeTabId;
+                                    }
+                                    var url = Common.Globals.LinkClick("fileid=" + dnnFile.FileId, tabId, Null.NullInteger);
 
 			                        var fileItem = new FileItem(dnnFile.FileName, dnnFile.Extension, dnnFile.Size, "", url, "", folderPermissions);
 

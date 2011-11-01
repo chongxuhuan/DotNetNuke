@@ -183,8 +183,20 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("file", file);
 
-            var portalSettings = GetPortalSettings(file.PortalId);
-            return GlobalsWrapper.Instance.ResolveUrl(portalSettings.HomeDirectory + file.Folder + file.FileName);
+            string rootFolder;
+            if (file.PortalId == Null.NullInteger)
+            {
+                //Host
+                rootFolder = Globals.HostPath;
+            }
+            else
+            {
+                //Portal
+                var portalSettings = GetPortalSettings(file.PortalId);
+                rootFolder = portalSettings.HomeDirectory;
+            }
+
+            return GlobalsWrapper.Instance.ResolveUrl(rootFolder + file.Folder + file.FileName);
         }
 
         public override string GetFolderProviderIconPath()

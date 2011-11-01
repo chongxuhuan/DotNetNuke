@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
     <packages>
-        <package name="DotNetNuke.SearchIndexProvider" type="Provider" version="06.01.00">
+        <package name="DotNetNuke.SearchIndexProvider" type="Provider" version="06.01.01">
             <friendlyName>DotNetNuke Search Indexer Provider</friendlyName>
             <description>DotNetNuke Search Indexer Provider Project provides a module indexing service.</description>
             <dependencies/>

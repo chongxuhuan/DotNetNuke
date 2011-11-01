@@ -270,11 +270,11 @@ namespace DotNetNuke.Services.Installer
 
 			string nodeAction = node.Attributes["action"].Value.ToLowerInvariant();
 
-			if (rootNode == null)
+            if (rootNode == null)
             {
-				//TODO: what happens if Node can't be found
+                return;
             }
-            
+
             switch (nodeAction)
             {
                 case "add":

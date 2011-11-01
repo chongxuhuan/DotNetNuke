@@ -1996,9 +1996,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
                                     BindFolderTree();
                                     break;
                             }
-
-							//reload page to make treeview update.
-							Response.Redirect(Globals.NavigateURL(), true);
                         }
                         catch (Exception ex)
                         {
@@ -2021,6 +2018,9 @@ namespace DotNetNuke.Modules.Admin.FileManager
                         }
                     }
                 }
+
+                //reload page to make treeview update.
+                Response.Redirect(Globals.NavigateURL(), true);
             }
 
             if (String.IsNullOrEmpty(strErrorMessages))

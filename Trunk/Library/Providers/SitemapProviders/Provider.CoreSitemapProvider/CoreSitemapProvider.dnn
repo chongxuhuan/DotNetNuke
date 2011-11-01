@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
     <packages>
-        <package name="DotNetNuke.CoreSitemapProvider" type="Provider" version="06.01.00">
+        <package name="DotNetNuke.CoreSitemapProvider" type="Provider" version="06.01.01">
             <friendlyName>DotNetNuke Core Sitemap Provider</friendlyName>
             <description>Provides the sitemap for the core of a DotNetNuke portal</description>
             <owner>

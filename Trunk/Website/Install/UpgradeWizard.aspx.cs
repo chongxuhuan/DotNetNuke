@@ -68,7 +68,7 @@ namespace DotNetNuke.Services.Install
     /// 	[cnurse]	01/23/2007 Created
     /// </history>
     /// -----------------------------------------------------------------------------
-    public partial class UpgradeWizard : PageBase
+    public partial class UpgradeWizard : Page
     {
         #region Private Members
 
@@ -292,11 +292,7 @@ namespace DotNetNuke.Services.Install
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-			//Register jquery reference.
-			jQuery.RequestRegistration();
 
-			//update current thread culture to make dnn label work correctly
-			Thread.CurrentThread.CurrentUICulture = new CultureInfo(cboLanguages.SelectedValue);
 
             if (!Page.IsPostBack)
             {

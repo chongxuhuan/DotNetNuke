@@ -112,14 +112,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             else
             {
                 defaultAliasRow.Visible = true;
-                defaultAliasDropDown.DataSource = aliases;
-                defaultAliasDropDown.DataBind();
-
-                var defaultAlias = PortalController.GetPortalSetting("DefaultPortalAlias", portal.PortalID, "");
-                if (defaultAliasDropDown.Items.FindByValue(defaultAlias) != null)
-                {
-                    defaultAliasDropDown.Items.FindByValue(defaultAlias).Selected = true;
-                }
+				BindDefaultAlias(aliases);
             }
 
             //Auto Add Portal Alias
@@ -133,6 +126,18 @@ namespace DotNetNuke.Modules.Admin.Portals
                 chkAutoAddPortalAlias.Checked = HostController.Instance.GetBoolean("AutoAddPortalAlias");
             }           
         }
+
+		private void BindDefaultAlias(ArrayList aliases)
+		{
+			defaultAliasDropDown.DataSource = aliases;
+			defaultAliasDropDown.DataBind();
+
+			var defaultAlias = PortalController.GetPortalSetting("DefaultPortalAlias", _portalId, "");
+			if (defaultAliasDropDown.Items.FindByValue(defaultAlias) != null)
+			{
+				defaultAliasDropDown.Items.FindByValue(defaultAlias).Selected = true;
+			}
+		}
 
         private void BindDesktopModules()
         {
@@ -582,6 +587,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             ctlDesktopModules.AddButtonClick += OnAddModuleClick;
             ctlDesktopModules.RemoveAllButtonClick += OnRemoveAllModulesClick;
             ctlDesktopModules.RemoveButtonClick += OnRemoveModuleClick;
+			portalAliases.AliasChanged += OnPortalAliasesChanged;
 
             try
             {
@@ -807,40 +813,40 @@ namespace DotNetNuke.Modules.Admin.Portals
                     //Refresh if Background or Logo file have changed
                     bool refreshPage = (strBackground == objPortal.BackgroundFile || strLogo == objPortal.LogoFile);
 
-                    double dblHostFee = 0;
+                    float hostFee = 0;
                     if (!String.IsNullOrEmpty(txtHostFee.Text))
                     {
-                        dblHostFee = double.Parse(txtHostFee.Text);
+                        hostFee = float.Parse(txtHostFee.Text);
                     }
 					
-                    double dblHostSpace = 0;
+                    int hostSpace = 0;
                     if (!String.IsNullOrEmpty(txtHostSpace.Text))
                     {
-                        dblHostSpace = double.Parse(txtHostSpace.Text);
+                        hostSpace = int.Parse(txtHostSpace.Text);
                     }
 					
-                    int intPageQuota = 0;
+                    int pageQuota = 0;
                     if (!String.IsNullOrEmpty(txtPageQuota.Text))
                     {
-                        intPageQuota = int.Parse(txtPageQuota.Text);
+                        pageQuota = int.Parse(txtPageQuota.Text);
                     }
-					
-                    double intUserQuota = 0;
+
+                    int userQuota = 0;
                     if (!String.IsNullOrEmpty(txtUserQuota.Text))
                     {
-                        intUserQuota = int.Parse(txtUserQuota.Text);
+                        userQuota = int.Parse(txtUserQuota.Text);
                     }
 					
-                    int intSiteLogHistory = 0;
+                    int siteLogHistory = 0;
                     if (!String.IsNullOrEmpty(txtSiteLogHistory.Text))
                     {
-                        intSiteLogHistory = int.Parse(txtSiteLogHistory.Text);
+                        siteLogHistory = int.Parse(txtSiteLogHistory.Text);
                     }
 					
-                    DateTime datExpiryDate = Null.NullDate;
+                    DateTime expiryDate = Null.NullDate;
                     if (datepickerExpiryDate.SelectedDate.HasValue)
                     {
-                        datExpiryDate = datepickerExpiryDate.SelectedDate.Value;
+                        expiryDate = datepickerExpiryDate.SelectedDate.Value;
                     }
 					
                     int intSplashTabId = Null.NullInteger;
@@ -883,46 +889,6 @@ namespace DotNetNuke.Modules.Admin.Portals
                         txtPassword.Attributes["value"] = txtPassword.Text;
                     }
 					
-                    //check only relevant fields altered
-                    if (!UserInfo.IsSuperUser)
-                    {
-                        bool hostChanged = false;
-                        if (dblHostFee != objPortal.HostFee)
-                        {
-                            hostChanged = true;
-                        }
-						
-                        if (dblHostSpace != objPortal.HostSpace)
-                        {
-                            hostChanged = true;
-                        }
-						
-                        if (intPageQuota != objPortal.PageQuota)
-                        {
-                            hostChanged = true;
-                        }
-						
-                        if (intUserQuota != objPortal.UserQuota)
-                        {
-                            hostChanged = true;
-                        }
-						
-                        if (intSiteLogHistory != objPortal.SiteLogHistory)
-                        {
-                            hostChanged = true;
-                        }
-						
-                        if (datExpiryDate != objPortal.ExpiryDate)
-                        {
-                            hostChanged = true;
-                        }
-						
-                        if (hostChanged)
-                        {
-                            throw new Exception();
-                        }
-                    }
-
                     PortalInfo portal = new PortalInfo
                                             {
                                                 PortalID = _portalId,
@@ -930,15 +896,15 @@ namespace DotNetNuke.Modules.Admin.Portals
                                                 PortalName = txtPortalName.Text,
                                                 LogoFile = strLogo,
                                                 FooterText = txtFooterText.Text,
-                                                ExpiryDate = datExpiryDate,
+                                                ExpiryDate = expiryDate,
                                                 UserRegistration = optUserRegistration.SelectedIndex,
                                                 BannerAdvertising = optBanners.SelectedIndex,
                                                 Currency = currencyCombo.SelectedItem.Value,
                                                 AdministratorId = Convert.ToInt32(cboAdministratorId.SelectedItem.Value),
-                                                HostFee = (float) dblHostFee,
-                                                HostSpace = (int) dblHostSpace,
-                                                PageQuota = intPageQuota,
-                                                UserQuota = (int) intUserQuota,
+                                                HostFee = hostFee,
+                                                HostSpace = hostSpace,
+                                                PageQuota = pageQuota,
+                                                UserQuota = userQuota,
                                                 PaymentProcessor =
                                                     String.IsNullOrEmpty(processorCombo.SelectedValue)
                                                         ? ""
@@ -948,7 +914,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                                                 Description = txtDescription.Text,
                                                 KeyWords = txtKeyWords.Text,
                                                 BackgroundFile = strBackground,
-                                                SiteLogHistory = intSiteLogHistory,
+                                                SiteLogHistory = siteLogHistory,
                                                 SplashTabId = intSplashTabId,
                                                 HomeTabId = intHomeTabId,
                                                 LoginTabId = intLoginTabId,
@@ -1081,6 +1047,12 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             BindDesktopModules();
         }
+
+		protected void OnPortalAliasesChanged(object sender, EventArgs e)
+		{
+			var aliases = new PortalAliasController().GetPortalAliasArrayByPortalID(_portalId);
+			BindDefaultAlias(aliases);
+		}
 
         #endregion
 

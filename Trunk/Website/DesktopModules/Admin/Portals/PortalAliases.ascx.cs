@@ -41,6 +41,12 @@ namespace DotNetNuke.Modules.Admin.Portals
 {
     public partial class PortalAliases : PortalModuleBase
     {
+		#region "Events"
+
+    	public event EventHandler AliasChanged;
+
+		#endregion
+
 		#region "Private Members"
 
         private ArrayList _Aliases;
@@ -112,6 +118,14 @@ namespace DotNetNuke.Modules.Admin.Portals
             dgPortalAlias.DataSource = Aliases;
             dgPortalAlias.DataBind();
         }
+
+		private void OnAliasChanged()
+		{
+			if(AliasChanged != null)
+			{
+				AliasChanged(this, EventArgs.Empty);
+			}
+		}
 		
 		#endregion
 
@@ -387,6 +401,8 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             if (string.IsNullOrEmpty(message))
             {
+				string defaultAlias = PortalController.GetPortalSetting("DefaultPortalAlias", intPortalId, "");
+            	var editDefaultAias = defaultAlias == portalAlias.HTTPAlias;
                 portalAlias.HTTPAlias = strAlias;
                 if (AddMode)
                 {
@@ -395,12 +411,19 @@ namespace DotNetNuke.Modules.Admin.Portals
                 else
                 {
                     controller.UpdatePortalAliasInfo(portalAlias);
+
+					if(editDefaultAias)
+					{
+						PortalController.UpdatePortalSetting(intPortalId, "DefaultPortalAlias", portalAlias.HTTPAlias);
+					}
                 }
 
                 //Reset Edit Index
                 lblError.Visible = false;
                 dgPortalAlias.EditItemIndex = -1;
                 _Aliases = null;
+
+            	OnAliasChanged();
             }
             else
             {

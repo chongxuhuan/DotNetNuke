@@ -1,9 +1,4 @@
 <%@ Page Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Services.Install.UpgradeWizard" CodeFile="UpgradeWizard.aspx.cs" %>
-<%@ Import Namespace="DotNetNuke.UI.Utilities" %>
-<%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-<%@ Register TagPrefix="dnn" TagName="WizardUser" Src="~/Install/WizardUser.ascx" %>
-<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
-<%@ Register TagPrefix="dnncrm" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
@@ -11,7 +6,6 @@
     <link rel="stylesheet" type="text/css" href="../Portals/_default/default.css?refresh" />
     <link rel="stylesheet" type="text/css" href="Install.css?refresh" />
     <asp:placeholder id="SCRIPTS" runat="server" />
-    <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader"></dnncrm:ClientResourceLoader>
 </head>
 <body>
     <form id="form1" runat="server">

@@ -188,7 +188,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.MobileMana
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Tests.Professional", "Tests\DotNetNuke.Tests.Professional\DotNetNuke.Tests.Professional.csproj", "{F92FAF1D-D195-4746-B355-820C3610A41C}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "localhost/DotNetNuke_Community", "http://localhost/DotNetNuke_Community", "{E4584460-CFFA-4D50-9FA1-B0B326AEA4CD}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "dotnetnuke.dnndev.me", "http://dotnetnuke.dnndev.me", "{E4584460-CFFA-4D50-9FA1-B0B326AEA4CD}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = "SAK"
 		SccAuxPath = "SAK"
@@ -518,20 +518,14 @@ Global
 		SccProjectName75 = Tests/DotNetNuke.Tests.Steps
 		SccLocalPath75 = Tests\\DotNetNuke.Tests.Steps
 		SccWebProject76 = true
-		SccProjectUniqueName76 = http://localhost/DotNetNuke_Community
+		SccProjectUniqueName76 = http://dotnetnuke.dnndev.me
 		SccProjectName76 = website
 		SccLocalPath76 = website
 		SccProjectEnlistmentChoice76 = 2
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|.NET = Debug|.NET
 		Debug|Any CPU = Debug|Any CPU
-		Debug|Mixed Platforms = Debug|Mixed Platforms
-		Debug|x86 = Debug|x86
-		Release|.NET = Release|.NET
 		Release|Any CPU = Release|Any CPU
-		Release|Mixed Platforms = Release|Mixed Platforms
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D391550C-7107-49B2-A6AC-8627C8B06ADC}.Debug|.NET.ActiveCfg = Debug|Any CPU

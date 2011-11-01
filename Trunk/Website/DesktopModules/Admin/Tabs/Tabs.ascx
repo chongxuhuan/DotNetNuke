@@ -319,7 +319,7 @@
 			<li><asp:HyperLink ID="cmdMore" runat="server" resourcekey="cmdMore" CssClass="dnnSecondaryAction" /></li>
 		</ul>     
 	</div>
-	<div runat="server" visible="false" id="pnlBulk" class="tmTabContainer">
+	<div runat="server" visible="false" id="pnlBulk" class="tmTabContainer BulkContainer">
 		<div class="dnnFormMessage dnnFormInfo"><asp:Literal ID="lblBulkIntro" runat="server" /></div>
 		<div class="dnnFormItem">
             <dnn:Label ID="bulkPagesLabel" runat="server" ControlName="txtBulk" />

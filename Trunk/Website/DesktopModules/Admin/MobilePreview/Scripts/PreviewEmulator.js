@@ -59,7 +59,7 @@
         bindElement();
 
         var updateViewer = function (userAgent) {
-            var url = location.href + "&UserAgent=" + userAgent + "&SendAgent=" + sendAgent;
+        	var url = location.href + (location.href.indexOf("?") > -1 ? "&" : "?") + "UserAgent=" + userAgent + "&SendAgent=" + sendAgent;
             viewer.attr("src", url);
         };
 

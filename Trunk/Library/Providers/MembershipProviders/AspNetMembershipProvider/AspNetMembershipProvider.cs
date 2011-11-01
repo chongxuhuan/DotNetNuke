@@ -1204,7 +1204,13 @@ namespace DotNetNuke.Security.Membership
         public override bool UnLockUser(UserInfo user)
         {
             MembershipUser membershipUser = System.Web.Security.Membership.GetUser(user.Username);
-            return membershipUser != null && membershipUser.UnlockUser();
+            bool retValue = false;
+            if (membershipUser != null)
+            {
+                retValue = membershipUser.UnlockUser();
+            }
+            DataCache.RemoveCache(GetCacheKey(user.Username));
+            return retValue;
         }
 
         /// -----------------------------------------------------------------------------
