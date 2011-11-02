@@ -623,7 +623,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 if (UserInfo.IsSuperUser)
                 {
                     hostSections.Visible = true;
-                    cmdDelete.Visible = (_portalId != PortalId);
+                    cmdDelete.Visible = (_portalId != PortalId && ! PortalController.IsMemberOfPortalGroup(_portalId));
                 }
                 else
                 {

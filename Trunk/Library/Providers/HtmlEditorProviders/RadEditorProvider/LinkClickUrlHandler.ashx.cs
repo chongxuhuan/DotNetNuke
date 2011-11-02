@@ -288,7 +288,14 @@ namespace DotNetNuke.Providers.RadEditorProvider
 							{
 								try
 								{
-									link = dialogParams.LinkUrl.Split(Convert.ToChar("?"))[1].Split(Convert.ToChar("&"))[0].Split(Convert.ToChar("="))[1];
+									if (dialogParams.LinkUrl.Contains("?"))
+									{
+										link = dialogParams.LinkUrl.Split('?')[1].Split('&')[0];
+										if(link.Contains("="))
+										{
+											link = link.Split('=')[1];
+										}
+									}
 
 									int tabId = 0;
 									if (int.TryParse(link, out tabId)) //if it's a tabid get the tab path

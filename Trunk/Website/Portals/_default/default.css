@@ -243,9 +243,9 @@ div.SearchIcon img{margin-top:3px;}
 				ul.dnnActionMenuBody li span{border:none;display:block;background:none;padding:0;margin:6px 0;width:auto}
 			ul.dnnActionMenuBody li ul{overflow:hidden;padding:10px 0;margin:0;width:96%;border-top:1px #ccc solid;}
 			ul.dnnActionMenuBody li ul li{float:left;display:block;min-width:150px;font-weight:normal;clear:none;padding:3px 15px 3px 0px;font-size:11px;border:none;margin:0;}
-			ul.dnnActionMenuBody li ul li a, ul.dnnActionMenuBody li ul li a img{display:block;line-height:16px;min-height:16px;float:left;color:#328DDE;}
+			ul.dnnActionMenuBody li ul li a, ul.dnnActionMenuBody li ul li a img{display:block;line-height:16px;min-height:16px;color:#328DDE;}
 				ul.dnnActionMenuBody li ul li a:hover{color:#1B4D79;}
-			ul.dnnActionMenuBody li ul li a img{padding-right:3px;}	
+			ul.dnnActionMenuBody li ul li a img{padding-right:3px;float:left;}	
 
 /*  === Common Reusable Selectors === */
 	.dnnForm{padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;min-width:620px;width:96%;margin:0 auto}
@@ -278,8 +278,9 @@ div.SearchIcon img{margin-top:3px;}
 			.dnnAddress input[type="checkbox"]{margin:0 5px}
 			.dnnForm input.dnnFormRequired, .dnnForm textarea.dnnFormRequired, .dnnForm select.dnnFormRequired{border-left:5px #F00 solid;}
 		.dnnFormRadioButtons{float:left;width:auto;display:block;}
-				.dnnFormRadioButtons input[type=radio]{ clear: both;}
-				.dnnFormRadioButtons label{font-weight:normal;margin:0 10px 0 4px;width:auto;text-align:left;padding-right:0;}
+				.dnnFormRadioButtons input[type=radio]{ float:none;}
+				.dnnFormRadioButtons label{font-weight:normal;margin:0 10px 0 4px;width:auto;text-align:left;padding-right:0;float: none;display: inline;}
+				
 		
 		.dnnForm.dnnShortForm .dnnFormItem label{float:none;width:100%;text-align:left;margin-bottom:0.25em}
 		.dnnForm.dnnShortForm .dnnFormItem input, .dnnForm.dnnShortForm .dnnFormItem select, .dnnForm.dnnShortForm .dnnFormItem textarea{float:none;text-align:left;}

@@ -680,7 +680,7 @@ namespace DotNetNuke.Security.Membership
                         objVerifyUser = GetUserByUserName(user.PortalID, user.Username);
                         if (objVerifyUser != null)
                         {
-                            if (objVerifyUser.PortalID == user.PortalID)
+                            if (objVerifyUser.PortalID == user.PortalID && !user.IsSuperUser)
                             {
                                 createStatus = UserCreateStatus.UserAlreadyRegistered;
                             }

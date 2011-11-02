@@ -547,7 +547,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                         {
                             var delImage = (ImageButton) imgColumnControl;
                             var portal = (PortalInfo) item.DataItem;
-                            delImage.Visible = portal.PortalID != PortalSettings.PortalId;
+                            delImage.Visible = (portal.PortalID != PortalSettings.PortalId);
+                            //delImage.Visible = (portal.PortalID != PortalSettings.PortalId && !PortalController.IsMemberOfPortalGroup(portal.PortalID));
                         }
                     }
                     break;

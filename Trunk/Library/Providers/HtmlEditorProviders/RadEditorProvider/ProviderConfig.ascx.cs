@@ -798,6 +798,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 								{
 									try
 									{
+										ctl.ClearSelection();
 										if (objConfig.Value.Contains(","))
 										{
 											foreach (string strSetting in objConfig.Value.Split(char.Parse(",")))
@@ -872,6 +873,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 								{
 									try
 									{
+										ctl.ClearSelection();
 										if (objConfig.Value.Contains(","))
 										{
 											foreach (string strSetting in objConfig.Value.Split(char.Parse(",")))

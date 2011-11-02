@@ -54,6 +54,13 @@ namespace DotNetNuke.Modules.Admin.Portals
         {
             base.OnInit(e);
 
+            cmdCancel.Click += cmdCancel_Click;
+            cmdUpdate.Click += cmdUpdate_Click;
+            optType.SelectedIndexChanged += optType_SelectedIndexChanged;
+            btnCustomizeHomeDir.Click += btnCustomizeHomeDir_Click;
+            cboTemplate.SelectedIndexChanged += cboTemplate_SelectedIndexChanged;
+            useCurrent.CheckedChanged += useCurrent_CheckedChanged;
+
             //Customise the Control Title
             if (IsHostMenu)
             {
@@ -77,13 +84,7 @@ namespace DotNetNuke.Modules.Admin.Portals
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
-            cmdCancel.Click += cmdCancel_Click;
-            cmdUpdate.Click += cmdUpdate_Click;
-            optType.SelectedIndexChanged += optType_SelectedIndexChanged;
-            btnCustomizeHomeDir.Click += btnCustomizeHomeDir_Click;
-            cboTemplate.SelectedIndexChanged += cboTemplate_SelectedIndexChanged;
-
+ 
             try
             {
                 //ensure portal signup is allowed
@@ -124,19 +125,30 @@ namespace DotNetNuke.Modules.Admin.Portals
                     if (UserInfo.IsSuperUser)
                     {
                         rowType.Visible = true;
+                        useCurrentPanel.Visible = true;
+                        useCurrent.Checked = true;
+                        adminUserPanel.Visible = false;
+
                         optType.SelectedValue = "P";
                     }
                     else
                     {
+                        useCurrentPanel.Visible = false;
+                        useCurrent.Checked = false;
+                        adminUserPanel.Visible = true;
+
                         optType.SelectedValue = "C";
+
                         txtPortalName.Text = Globals.GetDomainName(Request) + @"/";
                         rowType.Visible = false;
                         string strMessage = string.Format(Localization.GetString("DemoMessage", LocalResourceFile),
                                                           Host.DemoPeriod != Null.NullInteger ? " for " + Host.DemoPeriod + " days" : "",
                                                           Globals.GetDomainName(Request));
                         lblInstructions.Text = strMessage;
+                        lblInstructions.Visible = true;
                         btnCustomizeHomeDir.Visible = false;
                     }
+
                     txtHomeDirectory.Text = @"Portals/[PortalID]";
                     txtHomeDirectory.Enabled = false;
                     if (MembershipProviderConfig.RequiresQuestionAndAnswer)
@@ -230,6 +242,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                         lstResults.Visible = true;
                         lstResults.DataSource = messages;
                         lstResults.DataBind();
+                        validationPanel.Visible = true;
                         return;
                     }
 
@@ -322,26 +335,43 @@ namespace DotNetNuke.Modules.Admin.Portals
                         string strTemplateFile = cboTemplate.SelectedItem.Text + ".template";
 
                         //Attempt to create the portal
-                        var objAdminUser = new UserInfo();
+                        UserInfo adminUser = new UserInfo();
                         int intPortalId;
                         try
                         {
-                            objAdminUser.FirstName = txtFirstName.Text;
-                            objAdminUser.LastName = txtLastName.Text;
-                            objAdminUser.Username = txtUsername.Text;
-                            objAdminUser.DisplayName = txtFirstName.Text + " " + txtLastName.Text;
-                            objAdminUser.Email = txtEmail.Text;
-                            objAdminUser.IsSuperUser = false;
+                            if (useCurrent.Checked)
+                            {
+                                adminUser = UserInfo;
+                                adminUser.Membership.Password = UserController.GetPassword(ref adminUser, String.Empty);
+                            }
+                            else
+                            {
+                                adminUser = new UserInfo
+                                                {
+                                                    FirstName = txtFirstName.Text,
+                                                    LastName = txtLastName.Text,
+                                                    Username = txtUsername.Text,
+                                                    DisplayName = txtFirstName.Text + " " + txtLastName.Text,
+                                                    Email = txtEmail.Text,
+                                                    IsSuperUser = false,
+                                                    Membership =
+                                                        {
+                                                            Approved = true, 
+                                                            Password = txtPassword.Text, 
+                                                            PasswordQuestion = txtQuestion.Text, 
+                                                            PasswordAnswer = txtAnswer.Text
+                                                        },
+                                                    Profile =
+                                                        {
+                                                            FirstName = txtFirstName.Text, 
+                                                            LastName = txtLastName.Text
+                                                        }
+                                                };
 
-                            objAdminUser.Membership.Approved = true;
-                            objAdminUser.Membership.Password = txtPassword.Text;
-                            objAdminUser.Membership.PasswordQuestion = txtQuestion.Text;
-                            objAdminUser.Membership.PasswordAnswer = txtAnswer.Text;
 
-                            objAdminUser.Profile.FirstName = txtFirstName.Text;
-                            objAdminUser.Profile.LastName = txtLastName.Text;
+                            }
                             intPortalId = objPortalController.CreatePortal(txtTitle.Text,
-                                                                           objAdminUser,
+                                                                           adminUser,
                                                                            txtDescription.Text,
                                                                            txtKeyWords.Text,
                                                                            Globals.HostMapPath,
@@ -370,8 +400,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                                     message = Mail.SendMail(PortalSettings.Email,
                                                                txtEmail.Text,
                                                                PortalSettings.Email + ";" + Host.HostEmail,
-                                                               Localization.GetSystemMessage(newSettings, "EMAIL_PORTAL_SIGNUP_SUBJECT", objAdminUser),
-                                                               Localization.GetSystemMessage(newSettings, "EMAIL_PORTAL_SIGNUP_BODY", objAdminUser),
+                                                               Localization.GetSystemMessage(newSettings, "EMAIL_PORTAL_SIGNUP_SUBJECT", adminUser),
+                                                               Localization.GetSystemMessage(newSettings, "EMAIL_PORTAL_SIGNUP_BODY", adminUser),
                                                                "",
                                                                "",
                                                                "",
@@ -384,8 +414,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                                     message = Mail.SendMail(Host.HostEmail,
                                                                txtEmail.Text,
                                                                Host.HostEmail,
-                                                               Localization.GetSystemMessage(newSettings, "EMAIL_PORTAL_SIGNUP_SUBJECT", objAdminUser),
-                                                               Localization.GetSystemMessage(newSettings, "EMAIL_PORTAL_SIGNUP_BODY", objAdminUser),
+                                                               Localization.GetSystemMessage(newSettings, "EMAIL_PORTAL_SIGNUP_SUBJECT", adminUser),
+                                                               Localization.GetSystemMessage(newSettings, "EMAIL_PORTAL_SIGNUP_BODY", adminUser),
                                                                "",
                                                                "",
                                                                "",
@@ -503,5 +533,11 @@ namespace DotNetNuke.Modules.Admin.Portals
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+
+        private void useCurrent_CheckedChanged(object sender, EventArgs e)
+        {
+            adminUserPanel.Visible = !useCurrent.Checked;
+        }
+
     }
 }

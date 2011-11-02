@@ -187,7 +187,7 @@
     <value>Last Name Is Required.</value>
   </data>
   <data name="plUsername.Text" xml:space="preserve">
-    <value>Username:</value>
+    <value>Administrator User Name:</value>
   </data>
   <data name="plUsername.Help" xml:space="preserve">
     <value>Enter a username for the Administrator Account for this site.</value>
@@ -311,5 +311,11 @@
   </data>
   <data name="valEmail2.ErrorMessage" xml:space="preserve">
     <value>Email address is invalid</value>
+  </data>
+  <data name="useCurrentLabel.Help" xml:space="preserve">
+    <value>Check this box if you want to use the current SuperUser as the Administrator for the site.  If this box is unchecked you will be able to enter user credentials for the Administrator.</value>
+  </data>
+  <data name="useCurrentLabel.Text" xml:space="preserve">
+    <value>Use Current User as Administrator:</value>
   </data>
 </root>
