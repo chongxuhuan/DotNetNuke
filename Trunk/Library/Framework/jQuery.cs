@@ -369,7 +369,7 @@ namespace DotNetNuke.Framework
 
         public static void RegisterJQuery(Page page)
         {
-            ClientResourceManager.RegisterScript(page, GetJQueryScriptReference(), FileOrder.Js.jQuery, "PageHeaderProvider");
+            ClientResourceManager.RegisterScript(page, GetJQueryScriptReference(), FileOrder.Js.jQuery, "DnnPageHeaderProvider");
         }
 
         public static void RegisterJQueryUI(Page page)
@@ -380,6 +380,7 @@ namespace DotNetNuke.Framework
 
         public static void RegisterDnnJQueryPlugins(Page page)
         {
+			ClientAPI.RegisterClientReference(page, ClientAPI.ClientNamespaceReferences.dnn);
             RegisterJQueryUI(page);
         	RegisterHoverIntent(page);
 

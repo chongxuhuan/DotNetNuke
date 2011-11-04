@@ -666,7 +666,9 @@ namespace DotNetNuke.Security
                                 .Where(p => p.MasterPortalId == PortalController.GetEffectivePortalId(portalId))
                                 .SingleOrDefault();
 
-				if (@group != null && !string.IsNullOrEmpty(@group.AuthenticationDomain))
+				if (@group != null 
+						&& !string.IsNullOrEmpty(@group.AuthenticationDomain)
+						&& PortalSettings.Current.PortalAlias.HTTPAlias.Contains(@group.AuthenticationDomain))
                 {
                     cookieDomain = @group.AuthenticationDomain;
                 }

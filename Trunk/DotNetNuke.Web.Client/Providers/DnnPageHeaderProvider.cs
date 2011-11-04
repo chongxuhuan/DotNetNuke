@@ -13,29 +13,21 @@
     /// <summary>
     /// Registers resources at the top of the body on default.aspx
     /// </summary>
-    public class DnnBodyProvider : WebFormsFileRegistrationProvider
+    public class DnnPageHeaderProvider : WebFormsFileRegistrationProvider
     {
 
         /// <summary>
-        /// The name of the provider
+        /// The default name of the provider
         /// </summary>
-        public const string DefaultName = "DnnBodyProvider";
-
+        public const string DefaultName = "DnnPageHeaderProvider";
 
         /// <summary>
         /// The name of the placeholder in which the controls will be rendered
         /// </summary>
-        public const string DnnBodyPlaceHolderName = "BodySCRIPTS";
+        public const string CssPlaceHolderName = "ClientDependencyHeadCss";
+        public const string JsPlaceHolderName = "ClientDependencyHeadJs";
 
-        /// <summary>
-        /// Initializes the provider.
-        /// </summary>
-        /// <param name="name">The friendly name of the provider.
-        ///                 </param><param name="config">A collection of the name/value pairs representing the provider-specific attributes specified in the configuration for this provider.
-        ///                 </param><exception cref="T:System.ArgumentNullException">The name of the provider is null.
-        ///                 </exception><exception cref="T:System.ArgumentException">The name of the provider has a length of zero.
-        ///                 </exception><exception cref="T:System.InvalidOperationException">An attempt is made to call <see cref="M:System.Configuration.Provider.ProviderBase.Initialize(System.String,System.Collections.Specialized.NameValueCollection)"/> on a provider after the provider has already been initialized.
-        ///                 </exception>
+
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
             // Assign the provider a default name if it doesn't have one
@@ -127,12 +119,12 @@
             var page = (Page)http.CurrentHandler;
 
             if (page.Header == null)
-                throw new NullReferenceException("DnnBodyProvider requires a runat='server' tag in the page's header tag");
+                throw new NullReferenceException("DnnPageHeaderProvider requires a runat='server' tag in the page's header tag");
 
             var jsScriptBlock = new LiteralControl(js.Replace("&", "&amp;"));
             var cssStyleBlock = new LiteralControl(css.Replace("&", "&amp;"));
-            page.FindControl(DnnBodyPlaceHolderName).Controls.Add(jsScriptBlock);
-            page.FindControl(DnnBodyPlaceHolderName).Controls.Add(cssStyleBlock);
+            page.FindControl(JsPlaceHolderName).Controls.Add(jsScriptBlock);
+            page.FindControl(CssPlaceHolderName).Controls.Add(cssStyleBlock);
         }
     }
 }

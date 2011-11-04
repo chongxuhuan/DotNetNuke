@@ -118,7 +118,7 @@
             var page = (Page)http.CurrentHandler;
 
             if (page.Header == null)
-                throw new NullReferenceException("PageHeaderProvider requires a runat='server' tag in the page's header tag");
+                throw new NullReferenceException("DnnFormBottomProvider requires a runat='server' tag in the page's header tag");
 
             var jsScriptBlock = new LiteralControl(js.Replace("&", "&amp;"));
             var cssStyleBlock = new LiteralControl(css.Replace("&", "&amp;"));

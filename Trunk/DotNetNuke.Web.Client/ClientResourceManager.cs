@@ -40,7 +40,7 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
     /// </summary>
     public class ClientResourceManager
     {
-        internal const string DefaultCssProvider = "PageHeaderProvider";
+        internal const string DefaultCssProvider = "DnnPageHeaderProvider";
         internal const string DefaultJsProvider = "DnnBodyProvider";
 
         private static bool FileExists(Page page, string filePath)
@@ -275,6 +275,7 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
                                             <fileRegistration defaultProvider=""LoaderControlProvider"">
                                               <providers>
                                                 <add name=""DnnBodyProvider"" type=""DotNetNuke.Web.Client.Providers.DnnBodyProvider, DotNetNuke.Web.Client"" enableCompositeFiles=""true"" />
+                                                <add name=""DnnPageHeaderProvider"" type=""DotNetNuke.Web.Client.Providers.DnnPageHeaderProvider, DotNetNuke.Web.Client"" enableCompositeFiles=""true"" />
                                                 <add name=""DnnFormBottomProvider"" type=""DotNetNuke.Web.Client.Providers.DnnFormBottomProvider, DotNetNuke.Web.Client"" enableCompositeFiles=""true"" />
                                                 <add name=""PageHeaderProvider"" type=""ClientDependency.Core.FileRegistration.Providers.PageHeaderProvider, ClientDependency.Core"" enableCompositeFiles=""true""/>
                                                 <add name=""LazyLoadProvider"" type=""ClientDependency.Core.FileRegistration.Providers.LazyLoadProvider, ClientDependency.Core"" enableCompositeFiles=""true""/>

@@ -7,6 +7,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
+    <asp:PlaceHolder runat="server" ID="ClientDependencyHeadCss"></asp:PlaceHolder>
+    <asp:PlaceHolder runat="server" ID="ClientDependencyHeadJs"></asp:PlaceHolder>
     <link rel="stylesheet" type="text/css" href="../Portals/_default/default.css?refresh" />
     <link rel="stylesheet" type="text/css" href="Install.css?refresh" />    
     <script type="text/javascript" src="../Resources/Shared/scripts/jquery/jquery.min.js"></script>

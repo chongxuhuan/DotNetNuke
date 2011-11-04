@@ -61,6 +61,7 @@
     <Compile Include="Controls\DnnHtmlInclude.cs" />
     <Compile Include="Controls\DnnJsInclude.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Providers\DnnPageHeaderProvider.cs" />
     <Compile Include="Providers\DnnFormBottomRenderProvider.cs" />
     <Compile Include="Providers\DnnBodyRenderProvider.cs" />
   </ItemGroup>
