@@ -35,7 +35,7 @@
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plPassword" runat="server" controlname="txtPassword" />
-			<asp:textbox id="txtPassword" runat="server" cssclass="dnnFormRequired" TextMode="Password" size="12" maxlength="128" />
+			<asp:textbox id="txtPassword" runat="server" cssclass="dnnFormRequired" TextMode="Password" size="12" maxlength="128" AutoCompleteType="Disabled" />
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plConfirm" runat="server" controlname="txtConfirm" text="Confirm Password:"></dnn:label>

@@ -23,9 +23,9 @@
     <meta name="REVISIT-AFTER" content="1 DAYS" />
     <meta name="RATING" content="GENERAL" />
     <meta http-equiv="PAGE-ENTER" content="RevealTrans(Duration=0,Transition=1)" />
+    <style type="text/css" id="StylePlaceholder" runat="server"></style>
     <asp:PlaceHolder runat="server" ID="ClientDependencyHeadCss"></asp:PlaceHolder>
     <asp:PlaceHolder runat="server" ID="ClientDependencyHeadJs"></asp:PlaceHolder>
-    <style type="text/css" id="StylePlaceholder" runat="server"></style>
     <asp:placeholder id="CSS" runat="server" />
     <asp:placeholder id="SCRIPTS" runat="server" />
 </head>

@@ -375,7 +375,7 @@ namespace DotNetNuke.Framework
         public static void RegisterJQueryUI(Page page)
         {
             RegisterJQuery(page);
-            ClientResourceManager.RegisterScript(page, GetJQueryUIScriptReference(), FileOrder.Js.jQueryUI);
+            ClientResourceManager.RegisterScript(page, GetJQueryUIScriptReference(), FileOrder.Js.jQueryUI, "DnnPageHeaderProvider");
         }
 
         public static void RegisterDnnJQueryPlugins(Page page)

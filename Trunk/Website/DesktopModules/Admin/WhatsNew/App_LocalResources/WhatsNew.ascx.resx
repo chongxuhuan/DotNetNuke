@@ -1690,4 +1690,26 @@ corrected with each release. &lt;/p&gt;
           &lt;/ul&gt;
       </value>
     </data>
+    <data name="WhatsNew.06.01.01" xml:space="preserve">
+        <value>
+            &lt;H3 class=SubSubHead&gt;Major Highlights&lt;/H3&gt;
+            &lt;UL&gt;
+            &lt;LI&gt;Fixed problem with the core skin object rendering CSS above the other
+            framework inserted files, which caused problems when using core style skin
+            objects
+            &lt;LI&gt;Fixed issue with iFrames getting removed when content is saved
+            &lt;LI&gt;Fixed issue with the HTML module removing styling and scripts from the
+            content
+            &lt;LI&gt;Fixed issue with inserting the link to jquery after the header of the page
+            &lt;/LI&gt;&lt;/UL&gt;
+            &lt;H3 class=SubSubHead&gt;Security Fixes&lt;/H3&gt;
+            &lt;H3 class=SubSubHead&gt;Updated Modules/Providers&lt;/H3&gt;
+            &lt;H4 class=SubSubHead&gt;Modules&lt;/H4&gt;
+            &lt;UL&gt;
+            &lt;LI&gt;HTML Module &lt;/LI&gt;&lt;/UL&gt;
+            &lt;H4 class=SubSubHead&gt;Providers&lt;/H4&gt;
+            &lt;UL&gt;
+            &lt;LI&gt;none &lt;/LI&gt;&lt;/UL&gt;
+        </value>
+    </data>
 </root>

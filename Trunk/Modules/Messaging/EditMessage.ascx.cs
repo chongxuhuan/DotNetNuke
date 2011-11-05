@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Web;
 
 using DotNetNuke.Framework;
 using DotNetNuke.Modules.Messaging.Presenters;
@@ -32,6 +33,7 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Messaging.Data;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.Web.Mvp;
+using DotNetNuke.Security;
 using WebFormsMvp;
 
 #endregion
@@ -72,8 +74,11 @@ namespace DotNetNuke.Modules.Messaging.Views
 
             if (IsPostBack)
             {
-                message.Subject = txtSubject.Text;
-                message.Body = messageEditor.Text;
+                message.Subject = EncodeContent(txtSubject.Text);
+                PortalSecurity ps = new PortalSecurity();
+                string filterValue = string.Empty;
+                filterValue = ps.InputFilter(messageEditor.Text, PortalSecurity.FilterFlag.NoScripting);
+                message.Body = filterValue;
             }
             else
             {
@@ -87,7 +92,7 @@ namespace DotNetNuke.Modules.Messaging.Views
         public void ShowInvalidUserError()
         {
             //'toTextBox.Text = ""
-            var toError = string.Format(Localization.GetString("Validation.Error.Message", LocalResourceFile), txtTo.Text);
+            var toError = string.Format(Localization.GetString("Validation.Error.Message", LocalResourceFile), EncodeContent(txtTo.Text));
 
             UI.Skins.Skin.AddModuleMessage(this, toError, ModuleMessage.ModuleMessageType.RedError);
 
@@ -96,7 +101,7 @@ namespace DotNetNuke.Modules.Messaging.Views
 
         public void ShowValidUserMessage()
         {
-            var toValid = string.Format(Localization.GetString("Validation.Success.Message", LocalResourceFile), txtTo.Text);
+            var toValid = string.Format(Localization.GetString("Validation.Success.Message", LocalResourceFile), EncodeContent(txtTo.Text));
 
             UI.Skins.Skin.AddModuleMessage(this, toValid, ModuleMessage.ModuleMessageType.GreenSuccess);
         }
@@ -120,7 +125,7 @@ namespace DotNetNuke.Modules.Messaging.Views
 
         protected void OnSaveDraftClick(object sender, EventArgs e)
         {
-            Model.UserName = txtTo.Text;
+            Model.UserName = EncodeContent(txtTo.Text);
             if (SaveDraft != null)
             {
                 SaveDraft(this, e);
@@ -129,7 +134,7 @@ namespace DotNetNuke.Modules.Messaging.Views
 
         protected void OnSendMessageClick(object sender, EventArgs e)
         {
-            Model.UserName = txtTo.Text;
+            Model.UserName = EncodeContent(txtTo.Text);
             if (SendMessage != null)
             {
                 SendMessage(this, e);
@@ -138,11 +143,16 @@ namespace DotNetNuke.Modules.Messaging.Views
 
         protected void OnValidateUserClick(object sender, EventArgs e)
         {
-            Model.UserName = txtTo.Text;
+            Model.UserName = EncodeContent(txtTo.Text);
             if (ValidateUser != null)
             {
                 ValidateUser(this, e);
             }
+        }
+
+        private string EncodeContent(string content)
+        {
+            return HttpUtility.HtmlEncode(content.ToString());
         }
 
         #endregion

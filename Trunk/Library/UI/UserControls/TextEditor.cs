@@ -31,6 +31,7 @@ using System.Web.UI.WebControls;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Modules.HTMLEditorProvider;
+using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Personalization;
@@ -196,8 +197,11 @@ namespace DotNetNuke.UI.UserControls
             }
             set
             {
-                TxtDesktopHTML.Text = Decode(HtmlUtils.ConvertToText(value));
-                _richTextEditor.Text = Decode(value);
+                if (!String.IsNullOrEmpty(value))
+                {
+                    TxtDesktopHTML.Text = Decode(HtmlUtils.ConvertToText(value));
+                    _richTextEditor.Text = Decode(value);
+                }
             }
         }
 
