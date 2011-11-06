@@ -1,6 +1,6 @@
 ﻿<dotnetnuke type="Package" version="5.0">
 	<packages>
-		<package name="Admin.Messaging" type="Module" version="06.01.01" isSystem="true">
+		<package name="Admin.Messaging" type="Module" version="06.01.02" isSystem="true">
 			<friendlyName>Messaging</friendlyName>
 			<description>The Messaging module allows users to send and receive private messages.</description>
 	  <iconFile>DesktopModules/Admin/Messaging/Images/messaging.gif</iconFile>
