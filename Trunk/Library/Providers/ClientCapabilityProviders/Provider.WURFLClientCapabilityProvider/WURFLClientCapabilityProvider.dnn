@@ -52,9 +52,12 @@
                     <clientcapability defaultProvider="WURFLClientCapabilityProvider">
                       <providers>
                         <clear />
-                        <add name="WURFLClientCapabilityProvider" type="DotNetNuke.Services.ClientCapability.WURFLClientCapabilityProvider, DotNetNuke.Provider.WURFLClientCapabilityProvider" />
                       </providers>
-                    </clientcapability>                  </node>                  
+                    </clientcapability>
+                  </node>
+                  <node path="/configuration/dotnetnuke/clientcapability/providers" action="update" key="name" collision="overwrite">
+                    <add name="WURFLClientCapabilityProvider" type="DotNetNuke.Services.ClientCapability.WURFLClientCapabilityProvider, DotNetNuke.Provider.WURFLClientCapabilityProvider" providerPath="~\Providers\ClientCapabilityProviders\WURFLClientCapabilityProvider\" />
+                  </node>
                 </nodes>
               </configuration>
             </install>

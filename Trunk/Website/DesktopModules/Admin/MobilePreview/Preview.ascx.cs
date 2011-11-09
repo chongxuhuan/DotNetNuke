@@ -209,7 +209,7 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 
 		private string MakeAbsoluteUrl(string content, Uri requestUri)
 		{
-			var domain = requestUri.AbsoluteUri.Replace(requestUri.PathAndQuery, string.Empty) + "/";
+			var domain = requestUri.AbsoluteUri.Replace(requestUri.PathAndQuery, string.Empty);
 			var currDirectory = domain;
 			for (var i = 0; i < requestUri.Segments.Length - 1; i++)
 			{
@@ -221,9 +221,9 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 			MatchCollection matches = pathReg.Matches(content);
 			foreach (Match match in matches)
 			{
-				if (match.Value.IndexOf("://") == -1)
-				{
-					var path = match.Groups[2].Value;
+                var path = match.Groups[2].Value;
+                if (!string.IsNullOrEmpty(path) && path.IndexOf(":") == -1 && !path.StartsWith("#"))
+                {
 					var prefix = path.StartsWith("/") ? domain : currDirectory;
 					content = content.Replace(match.Value, string.Format("{0}=\"{1}{2}\"", match.Groups[1].Value, prefix, path));
 				}
