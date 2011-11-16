@@ -86,7 +86,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             {
                 return LocaleController.Instance.GetCurrentLocale(PortalId).Code;
             }
-        } 
+        }
 
         #endregion
 
@@ -97,7 +97,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             var portalSettings = new PortalSettings(portal);
             var portalAliasController = new PortalAliasController();
             var aliases = portalAliasController.GetPortalAliasArrayByPortalID(portal.PortalID);
-            
+
             var portalAliasMapping = portalSettings.PortalAliasMappingMode.ToString().ToUpper();
             if (String.IsNullOrEmpty(portalAliasMapping))
             {
@@ -112,7 +112,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             else
             {
                 defaultAliasRow.Visible = true;
-				BindDefaultAlias(aliases);
+                BindDefaultAlias(aliases);
             }
 
             //Auto Add Portal Alias
@@ -124,20 +124,20 @@ namespace DotNetNuke.Modules.Admin.Portals
             else
             {
                 chkAutoAddPortalAlias.Checked = HostController.Instance.GetBoolean("AutoAddPortalAlias");
-            }           
+            }
         }
 
-		private void BindDefaultAlias(ArrayList aliases)
-		{
-			defaultAliasDropDown.DataSource = aliases;
-			defaultAliasDropDown.DataBind();
+        private void BindDefaultAlias(ArrayList aliases)
+        {
+            defaultAliasDropDown.DataSource = aliases;
+            defaultAliasDropDown.DataBind();
 
-			var defaultAlias = PortalController.GetPortalSetting("DefaultPortalAlias", _portalId, "");
-			if (defaultAliasDropDown.Items.FindByValue(defaultAlias) != null)
-			{
-				defaultAliasDropDown.Items.FindByValue(defaultAlias).Selected = true;
-			}
-		}
+            var defaultAlias = PortalController.GetPortalSetting("DefaultPortalAlias", _portalId, "");
+            if (defaultAliasDropDown.Items.FindByValue(defaultAlias) != null)
+            {
+                defaultAliasDropDown.Items.FindByValue(defaultAlias).Selected = true;
+            }
+        }
 
         private void BindDesktopModules()
         {
@@ -154,13 +154,13 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         private void BindDetails(PortalInfo portal)
         {
-            if (portal!=null)
+            if (portal != null)
             {
                 txtPortalName.Text = portal.PortalName;
                 txtDescription.Text = portal.Description;
                 txtKeyWords.Text = portal.KeyWords;
                 lblGUID.Text = portal.GUID.ToString().ToUpper();
-                txtFooterText.Text = portal.FooterText; 
+                txtFooterText.Text = portal.FooterText;
             }
         }
 
@@ -177,7 +177,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             if (portal.SiteLogHistory != Null.NullInteger)
             {
                 txtSiteLogHistory.Text = portal.SiteLogHistory.ToString();
-            }           
+            }
         }
 
         private void BindMarketing(PortalInfo portal)
@@ -203,7 +203,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             {
                 if (aliases.Count > 0)
                 {
-					//Get the first Alias
+                    //Get the first Alias
                     var objPortalAliasInfo = (PortalAliasInfo)aliases[0];
                     txtSiteMap.Text = Globals.AddHTTP(objPortalAliasInfo.HTTPAlias) + @"/SiteMap.aspx";
                 }
@@ -222,12 +222,12 @@ namespace DotNetNuke.Modules.Admin.Portals
                 optBanners.Enabled = portal.BannerAdvertising != 2;
                 lblBanners.Visible = portal.BannerAdvertising == 2;
             }
-            
+
         }
 
         private void BindPages(PortalInfo portal, string activeLanguage)
         {
-			//Set up special page lists
+            //Set up special page lists
             List<TabInfo> listTabs = TabController.GetPortalTabs(TabController.GetTabsBySortOrder(portal.PortalID, activeLanguage, true),
                                                                  Null.NullInteger,
                                                                  true,
@@ -277,14 +277,21 @@ namespace DotNetNuke.Modules.Admin.Portals
             processorCombo.InsertItem(0, "<" + Localization.GetString("None_Specified") + ">", "");
             processorCombo.Select(Host.PaymentProcessor, true);
 
-            processorLink.NavigateUrl = Globals.AddHTTP(processorCombo.SelectedItem.Value);
+            // use sandbox?
+            var usePayPalSandbox = Boolean.Parse(PortalController.GetPortalSetting("paypalsandbox", portal.PortalID, "false"));
+            chkPayPalSandboxEnabled.Checked = usePayPalSandbox;
+            if (usePayPalSandbox)
+            {
+                processorLink.NavigateUrl = "https://developer.paypal.com";
+            }
+            else
+            {
+                processorLink.NavigateUrl = Globals.AddHTTP(processorCombo.SelectedItem.Value);
+            }
 
             txtUserId.Text = portal.ProcessorUserId;
             txtPassword.Attributes.Add("value", portal.ProcessorPassword);
 
-            // use sandbox?
-            bool bolPayPalSandbox = Boolean.Parse(PortalController.GetPortalSetting("paypalsandbox", portal.PortalID, "false"));
-            chkPayPalSandboxEnabled.Checked = bolPayPalSandbox;
 
             // return url after payment or on cancel
             string strPayPalReturnURL = PortalController.GetPortalSetting("paypalsubscriptionreturn", portal.PortalID, Null.NullString);
@@ -332,7 +339,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             var portalSettings = new PortalSettings(portal);
 
             cboTimeZone.DataBind(portalSettings.TimeZone.Id);
-            
+
 
             if (UserInfo.IsSuperUser)
             {
@@ -366,19 +373,19 @@ namespace DotNetNuke.Modules.Admin.Portals
             editContainerCombo.DataSource = containers;
             editContainerCombo.DataBind(PortalController.GetPortalSetting("DefaultAdminContainer", portal.PortalID, Host.DefaultAdminContainer));
 
-			if (ModuleContext.PortalSettings.UserInfo.IsSuperUser)
-			{
-				uploadSkinLink.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "");
+            if (ModuleContext.PortalSettings.UserInfo.IsSuperUser)
+            {
+                uploadSkinLink.NavigateUrl = Util.InstallURL(ModuleContext.TabId, "");
 
-				if (PortalSettings.EnablePopUps)
-				{
-					uploadSkinLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(uploadSkinLink.NavigateUrl, this, PortalSettings, true, false));
-				}
-			}
-			else
-			{
-				uploadSkinLink.Visible = false;
-			}
+                if (PortalSettings.EnablePopUps)
+                {
+                    uploadSkinLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(uploadSkinLink.NavigateUrl, this, PortalSettings, true, false));
+                }
+            }
+            else
+            {
+                uploadSkinLink.Visible = false;
+            }
         }
 
         private void BindSSLSettings(PortalInfo portal)
@@ -397,7 +404,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             enablePopUpsCheckBox.Checked = portalSettings.EnablePopUps;
             chkHideSystemFolders.Checked = portalSettings.HideFoldersEnabled;
 
-            var mode = (portalSettings.DefaultControlPanelMode== PortalSettings.Mode.Edit) ? "EDIT" : "VIEW";
+            var mode = (portalSettings.DefaultControlPanelMode == PortalSettings.Mode.Edit) ? "EDIT" : "VIEW";
             optControlPanelMode.Select(mode, false);
 
             optControlPanelVisibility.Select(PortalController.GetPortalSetting("ControlPanelVisibility", portal.PortalID, "MAX"), false);
@@ -422,8 +429,8 @@ namespace DotNetNuke.Modules.Admin.Portals
             {
                 uploadDirectory = portalInfo.HomeDirectoryMapPath;
             }
-			
-			//read CSS file
+
+            //read CSS file
             if (File.Exists(uploadDirectory + "portal.css"))
             {
                 using (var text = File.OpenText(uploadDirectory + "portal.css"))
@@ -543,7 +550,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 var objPortalAlias = objPortalAliasController.GetPortalAlias(portalAlias, portalID);
                 if (objPortalAlias == null)
                 {
-                    objPortalAlias = new PortalAliasInfo {PortalID = portalID, HTTPAlias = portalAlias};
+                    objPortalAlias = new PortalAliasInfo { PortalID = portalID, HTTPAlias = portalAlias };
                     objPortalAliasController.AddPortalAlias(objPortalAlias);
                 }
             }
@@ -587,11 +594,11 @@ namespace DotNetNuke.Modules.Admin.Portals
             ctlDesktopModules.AddButtonClick += OnAddModuleClick;
             ctlDesktopModules.RemoveAllButtonClick += OnRemoveAllModulesClick;
             ctlDesktopModules.RemoveButtonClick += OnRemoveModuleClick;
-			portalAliases.AliasChanged += OnPortalAliasesChanged;
+            portalAliases.AliasChanged += OnPortalAliasesChanged;
 
             try
             {
-				if ((Request.QueryString["pid"] != null) && (Globals.IsHostTab(PortalSettings.ActiveTab.TabID) || UserInfo.IsSuperUser))
+                if ((Request.QueryString["pid"] != null) && (Globals.IsHostTab(PortalSettings.ActiveTab.TabID) || UserInfo.IsSuperUser))
                 {
                     _portalId = Int32.Parse(Request.QueryString["pid"]);
                     ctlLogo.ShowUpLoad = false;
@@ -623,7 +630,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 if (UserInfo.IsSuperUser)
                 {
                     hostSections.Visible = true;
-                    cmdDelete.Visible = (_portalId != PortalId && ! PortalController.IsMemberOfPortalGroup(_portalId));
+                    cmdDelete.Visible = (_portalId != PortalId && !PortalController.IsMemberOfPortalGroup(_portalId));
                 }
                 else
                 {
@@ -660,7 +667,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 if (objPortalInfo != null)
                 {
                     string strMessage = PortalController.DeletePortal(objPortalInfo, Globals.GetAbsoluteServerPath(Request));
-                    
+
                     if (string.IsNullOrEmpty(strMessage))
                     {
                         var objEventLog = new EventLogController();
@@ -681,7 +688,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                         else
                         {
                             if (ViewState["UrlReferrer"] != null)
-                            {                            
+                            {
                                 Response.Redirect(Convert.ToString(ViewState["UrlReferrer"]), true);
                             }
                             else
@@ -723,11 +730,11 @@ namespace DotNetNuke.Modules.Admin.Portals
                 {
                     if (File.Exists(portal.HomeDirectoryMapPath + "portal.css"))
                     {
-						//delete existing style sheet
+                        //delete existing style sheet
                         File.Delete(portal.HomeDirectoryMapPath + "portal.css");
                     }
-					
-					//copy file from Host
+
+                    //copy file from Host
                     if (File.Exists(Globals.HostMapPath + "portal.css"))
                     {
                         File.Copy(Globals.HostMapPath + "portal.css", portal.HomeDirectoryMapPath + "portal.css");
@@ -764,15 +771,15 @@ namespace DotNetNuke.Modules.Admin.Portals
                 {
                     strUploadDirectory = objPortal.HomeDirectoryMapPath;
                 }
-				
+
                 //reset attributes
                 if (File.Exists(strUploadDirectory + "portal.css"))
                 {
                     File.SetAttributes(strUploadDirectory + "portal.css", FileAttributes.Normal);
                 }
-				
+
                 //write CSS file
-                using(var writer = File.CreateText(strUploadDirectory + "portal.css"))
+                using (var writer = File.CreateText(strUploadDirectory + "portal.css"))
                 {
                     writer.WriteLine(txtStyleSheet.Text);
                 }
@@ -818,13 +825,13 @@ namespace DotNetNuke.Modules.Admin.Portals
                     {
                         hostFee = float.Parse(txtHostFee.Text);
                     }
-					
+
                     int hostSpace = 0;
                     if (!String.IsNullOrEmpty(txtHostSpace.Text))
                     {
                         hostSpace = int.Parse(txtHostSpace.Text);
                     }
-					
+
                     int pageQuota = 0;
                     if (!String.IsNullOrEmpty(txtPageQuota.Text))
                     {
@@ -836,31 +843,31 @@ namespace DotNetNuke.Modules.Admin.Portals
                     {
                         userQuota = int.Parse(txtUserQuota.Text);
                     }
-					
+
                     int siteLogHistory = 0;
                     if (!String.IsNullOrEmpty(txtSiteLogHistory.Text))
                     {
                         siteLogHistory = int.Parse(txtSiteLogHistory.Text);
                     }
-					
+
                     DateTime expiryDate = Null.NullDate;
                     if (datepickerExpiryDate.SelectedDate.HasValue)
                     {
                         expiryDate = datepickerExpiryDate.SelectedDate.Value;
                     }
-					
+
                     int intSplashTabId = Null.NullInteger;
                     if (cboSplashTabId.SelectedItem != null)
                     {
                         intSplashTabId = int.Parse(cboSplashTabId.SelectedItem.Value);
                     }
-					
+
                     int intHomeTabId = Null.NullInteger;
                     if (cboHomeTabId.SelectedItem != null)
                     {
                         intHomeTabId = int.Parse(cboHomeTabId.SelectedItem.Value);
                     }
-					
+
                     int intLoginTabId = Null.NullInteger;
                     if (cboLoginTabId.SelectedItem != null)
                     {
@@ -871,13 +878,13 @@ namespace DotNetNuke.Modules.Admin.Portals
                     {
                         intRegisterTabId = int.Parse(cboRegisterTabId.SelectedItem.Value);
                     }
-					
+
                     int intUserTabId = Null.NullInteger;
                     if (cboUserTabId.SelectedItem != null)
                     {
                         intUserTabId = int.Parse(cboUserTabId.SelectedItem.Value);
                     }
-					
+
                     int intSearchTabId = Null.NullInteger;
                     if (cboSearchTabId.SelectedItem != null)
                     {
@@ -888,7 +895,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                     {
                         txtPassword.Attributes["value"] = txtPassword.Text;
                     }
-					
+
                     PortalInfo portal = new PortalInfo
                                             {
                                                 PortalID = _portalId,
@@ -926,10 +933,10 @@ namespace DotNetNuke.Modules.Admin.Portals
                                                 CultureCode = SelectedCultureCode
                                             };
                     objPortalController.UpdatePortalInfo(portal);
-                    
+
                     if (!refreshPage)
                     {
-                        refreshPage = (PortalSettings.DefaultAdminSkin == editSkinCombo.SelectedValue) || 
+                        refreshPage = (PortalSettings.DefaultAdminSkin == editSkinCombo.SelectedValue) ||
                                         (PortalSettings.DefaultAdminContainer == editContainerCombo.SelectedValue);
                     }
                     PortalController.UpdatePortalSetting(_portalId, "EnableSkinWidgets", chkSkinWidgestEnabled.Checked.ToString(), false);
@@ -961,8 +968,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                         PortalController.UpdatePortalSetting(_portalId, "SSLURL", AddPortalAlias(txtSSLURL.Text, _portalId), false);
                         PortalController.UpdatePortalSetting(_portalId, "STDURL", AddPortalAlias(txtSTDURL.Text, _portalId), false);
                     }
-					
-					//Redirect to this site to refresh only if admin skin changed or either of the images have changed
+
+                    //Redirect to this site to refresh only if admin skin changed or either of the images have changed
                     if (refreshPage)
                     {
                         Response.Redirect(Request.RawUrl, true);
@@ -987,8 +994,8 @@ namespace DotNetNuke.Modules.Admin.Portals
             {
                 if (!File.Exists(Globals.ApplicationMapPath + "\\" + txtVerification.Text))
                 {
-					//write SiteMap verification file
-                    using(var writer = File.CreateText(Globals.ApplicationMapPath + "\\" + txtVerification.Text))
+                    //write SiteMap verification file
+                    using (var writer = File.CreateText(Globals.ApplicationMapPath + "\\" + txtVerification.Text))
                     {
                         writer.WriteLine("google-site-verification: " + txtVerification.Text);
                     }
@@ -998,7 +1005,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         protected void OnAddAllModulesClick(object sender, EventArgs e)
         {
-			//Add all Modules
+            //Add all Modules
             foreach (DesktopModuleInfo desktopModule in DesktopModuleController.GetDesktopModules(Null.NullInteger).Values)
             {
                 DesktopModuleController.AddDesktopModuleToPortal(_portalId, desktopModule.DesktopModuleID, true, false);
@@ -1024,7 +1031,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         protected void OnRemoveAllModulesClick(object sender, EventArgs e)
         {
-			//Remove all Modules
+            //Remove all Modules
             foreach (DesktopModuleInfo desktopModule in DesktopModuleController.GetDesktopModules(Null.NullInteger).Values)
             {
                 DesktopModuleController.RemoveDesktopModuleFromPortal(_portalId, desktopModule.DesktopModuleID, false);
@@ -1048,11 +1055,11 @@ namespace DotNetNuke.Modules.Admin.Portals
             BindDesktopModules();
         }
 
-		protected void OnPortalAliasesChanged(object sender, EventArgs e)
-		{
-			var aliases = new PortalAliasController().GetPortalAliasArrayByPortalID(_portalId);
-			BindDefaultAlias(aliases);
-		}
+        protected void OnPortalAliasesChanged(object sender, EventArgs e)
+        {
+            var aliases = new PortalAliasController().GetPortalAliasArrayByPortalID(_portalId);
+            BindDefaultAlias(aliases);
+        }
 
         #endregion
 
