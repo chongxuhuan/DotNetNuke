@@ -78,7 +78,7 @@ namespace DotNetNuke.SitemapProviders
                 {
                     if (includeHiddenPages || objTab.IsVisible)
                     {
-                        pageUrl = GetPageUrl(objTab, (ps.ContentLocalizationEnabled) ? objTab.CultureCode : String.Empty);
+                        pageUrl = GetPageUrl(objTab, (ps.ContentLocalizationEnabled) ? objTab.CultureCode : null);
                         urls.Add(pageUrl);
                     }
                 }
@@ -99,14 +99,7 @@ namespace DotNetNuke.SitemapProviders
         private SitemapUrl GetPageUrl(TabInfo objTab, string language)
         {
             var pageUrl = new SitemapUrl();
-            if (String.IsNullOrEmpty(language))
-            {
-                pageUrl.Url = Globals.NavigateURL(objTab.TabID, objTab.IsSuperTab, null, "", "");
-            }
-            else
-            {
-                pageUrl.Url = Globals.NavigateURL(objTab.TabID, objTab.IsSuperTab, ps, "", language);
-            }
+            pageUrl.Url = Globals.NavigateURL(objTab.TabID, objTab.IsSuperTab, ps, "", language);
 
             if (pageUrl.Url.ToLower().IndexOf(ps.PortalAlias.HTTPAlias.ToLower()) == -1)
             {

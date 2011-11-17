@@ -3107,7 +3107,7 @@ namespace DotNetNuke.Common
             }
 
             //only add language to url if more than one locale is enabled
-            if (settings != null && LocaleController.Instance.GetLocales(settings.PortalId).Count > 1)
+            if (settings != null && Language != null && LocaleController.Instance.GetLocales(settings.PortalId).Count > 1)
             {
                 if (settings.ContentLocalizationEnabled)
                 {

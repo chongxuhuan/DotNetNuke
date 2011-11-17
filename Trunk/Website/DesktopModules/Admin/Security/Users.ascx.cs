@@ -468,31 +468,36 @@ namespace DotNetNuke.Modules.Admin.Users
 
         private bool IsCommandAllowed(UserInfo user, string command)
         {
-            var immageVisibility = user.UserID != PortalSettings.AdministratorId && (!user.IsInRole(PortalSettings.AdministratorRoleName) || (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))) && user.UserID != UserId;
+            var imageVisibility = !(user.IsSuperUser) || UserInfo.IsSuperUser;
 
-            if ((immageVisibility))
+            if (imageVisibility)
+            {
+                imageVisibility = user.UserID != PortalSettings.AdministratorId
+                                        && (!user.IsInRole(PortalSettings.AdministratorRoleName)
+                                            || (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)))
+                                        && user.UserID != UserId;
+            }
+
+            if ((imageVisibility))
             {
                 switch (command)
                 {
                     case "Delete":
                         if ((user.IsDeleted))
                         {
-                            immageVisibility = false;
+                            imageVisibility = false;
                         }
                         break;
                     case "Restore":
                     case "Remove":
-                        immageVisibility = (user.IsDeleted);
+                        imageVisibility = (user.IsDeleted);
                         break;
                 }
             }
-            return immageVisibility;
+            return imageVisibility;
         }
 		
 		#endregion
-
-
-
 
 		#region "Public Methods"
 
@@ -1042,7 +1047,8 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     var rolesLink = (HyperLink) imgColumnControl;
 
-                    rolesLink.Visible = !user.IsInRole(PortalSettings.AdministratorRoleName) || (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName));
+                    rolesLink.Visible = !user.IsSuperUser && (!user.IsInRole(PortalSettings.AdministratorRoleName) 
+                                        || (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)));
                 }
 
                 imgColumnControl = item.Controls[3].FindControl("imgOnline");
