@@ -89,7 +89,10 @@ namespace DotNetNuke.Framework
                 ControlState = state.Second;
             }
             //Remove this ViewState from the cache as it has served its purpose
-            DataCache.RemoveCache(key);
+            if (!Page.IsCallback)
+            {
+                DataCache.RemoveCache(key);
+            }
         }
 
         /// -----------------------------------------------------------------------------

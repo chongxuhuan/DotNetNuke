@@ -366,11 +366,11 @@
 				if (name != "") {
 					searchEngine += encodeURI(name);
 				}
-				var description = $("textarea[id$='txtDescription']").val()
+			    var description = $("textarea[id$='txtDescription']").val();
 				if (description != "") {
 					searchEngine += encodeURI(" " + description);
 				}
-				var keyWords = $("textarea[id$='txtKeyWords']").val()
+			    var keyWords = $("textarea[id$='txtKeyWords']").val();
 				if (keyWords != "") {
 					searchEngine += encodeURI(" " + keyWords);
 				}
