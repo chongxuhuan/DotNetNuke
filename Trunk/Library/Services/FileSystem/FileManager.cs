@@ -448,14 +448,20 @@ namespace DotNetNuke.Services.FileSystem
             Requires.NotNull("file", file);
             Requires.NotNull("destinationFolder", destinationFolder);
 
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(destinationFolder.FolderMappingID);
-            var folderProvider = FolderProvider.Instance(folderMapping.FolderProviderType);
+            var existingFile = GetFile(destinationFolder, file.FileName);
+            if (existingFile != null)
+            {
+                DeleteFile(existingFile);
+            }
+
+            var destinationFolderMapping = FolderMappingController.Instance.GetFolderMapping(destinationFolder.FolderMappingID);
+            var destinationFolderProvider = FolderProvider.Instance(destinationFolderMapping.FolderProviderType);
 
             using (var fileContent = GetFileContent(file))
             {
                 try
                 {
-                    folderProvider.AddFile(destinationFolder, file.FileName, fileContent);
+                    destinationFolderProvider.AddFile(destinationFolder, file.FileName, fileContent);
                 }
                 catch (Exception ex)
                 {
@@ -464,10 +470,18 @@ namespace DotNetNuke.Services.FileSystem
                 }
             }
 
+            var sourceFolderMapping = file.FolderMappingID == destinationFolder.FolderMappingID
+                ? destinationFolderMapping
+                : FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
+
+            var sourceFolderProvider = sourceFolderMapping.FolderProviderType == destinationFolderMapping.FolderProviderType
+                ? destinationFolderProvider
+                : FolderProvider.Instance(sourceFolderMapping.FolderProviderType);
+
             try
             {
                 // We can't delete the file until the fileContent resource has been released
-                folderProvider.DeleteFile(file);
+                sourceFolderProvider.DeleteFile(file);
             }
             catch (Exception ex)
             {

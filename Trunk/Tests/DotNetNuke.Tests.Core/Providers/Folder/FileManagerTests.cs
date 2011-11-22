@@ -38,6 +38,8 @@ using MbUnit.Framework;
 
 using Moq;
 
+using FileInfo = DotNetNuke.Services.FileSystem.FileInfo;
+
 namespace DotNetNuke.Tests.Core.Providers.Folder
 {
     [TestFixture]
@@ -638,6 +640,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         public void MoveFile_Calls_FolderProvider_AddFile_And_DeleteFile_And_FileManager_UpdateFile()
         {
             _fileInfo.Setup(fi => fi.FileName).Returns(Constants.FOLDER_ValidFileName);
+            _fileInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
             _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
 
             var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
@@ -665,6 +668,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _fileInfo.Setup(fi => fi.FileName).Returns(Constants.FOLDER_ValidFileName);
             _fileInfo.Setup(fi => fi.FolderId).Returns(Constants.FOLDER_ValidFolderId);
             _fileInfo.Setup(fi => fi.Folder).Returns(Constants.FOLDER_ValidFolderRelativePath);
+            _fileInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
 
             _folderInfo.Setup(fi => fi.FolderID).Returns(Constants.FOLDER_OtherValidFolderId);
             _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_OtherValidFolderRelativePath);
@@ -680,6 +684,32 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var fileContent = new MemoryStream();
 
             _mockFileManager.Setup(mfm => mfm.GetFileContent(_fileInfo.Object)).Returns(fileContent);
+
+            _mockFileManager.Object.MoveFile(_fileInfo.Object, _folderInfo.Object);
+
+            _fileInfo.Verify();
+        }
+
+        [Test]
+        public void MoveFile_Calls_DeleteFile_When_A_File_With_The_Same_Name_Exists_On_The_Destination_Folder()
+        {
+            _fileInfo.Setup(fi => fi.FileName).Returns(Constants.FOLDER_ValidFileName);
+            _fileInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+
+            var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
+
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
+
+            var fileContent = new MemoryStream();
+
+            _mockFileManager.Setup(mfm => mfm.GetFileContent(_fileInfo.Object)).Returns(fileContent);
+
+            var existingFile = new FileInfo();
+            _mockFileManager.Setup(mfm => mfm.GetFile(_folderInfo.Object, Constants.FOLDER_ValidFileName)).Returns(existingFile);
+
+            _mockFileManager.Setup(mfm => mfm.DeleteFile(existingFile)).Verifiable();
 
             _mockFileManager.Object.MoveFile(_fileInfo.Object, _folderInfo.Object);
 

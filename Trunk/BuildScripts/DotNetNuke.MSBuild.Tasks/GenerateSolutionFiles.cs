@@ -43,12 +43,12 @@ namespace DotNetNuke.MSBuild.Tasks
                 LogFormat("Message", CreatedFile);
                 LogFormat("Message", builder.ToString());
 
-                var tr = new StreamReader(OriginalFile, true);
-                tr.Peek();
-                var fileEncoding = tr.CurrentEncoding;
-                var content = tr.ReadToEnd();
-                tr.Close();
-                LogFormat("Message", "File Encoding " + fileEncoding);
+                var content = "";
+                using (var tr = new StreamReader(OriginalFile, true))
+                {
+                    content = tr.ReadToEnd();
+                }
+
                 var globalIndex = content.IndexOf("Global");
                 var globalSection = content.Substring(globalIndex, content.Length - globalIndex);
                 var globalSections = globalSection.Split(new string[] { "GlobalSection(" }, StringSplitOptions.RemoveEmptyEntries);
@@ -115,16 +115,18 @@ namespace DotNetNuke.MSBuild.Tasks
                     content = content.Replace("vbproj", "VS2008.vbproj").Replace("csproj", "VS2008.csproj");
                 }
 
-                var newSolutionFile = new StreamWriter(CreatedFile, false, fileEncoding);
-                newSolutionFile.WriteLine(content);
-                newSolutionFile.Close();
+                if (content.StartsWith(_byteOrderMarkUtf8))
+                {
+                    LogFormat("Message", "Removed Byte Order Mark");
+                    content = content.Remove(0, _byteOrderMarkUtf8.Length);
+                }
 
-                var newFileSr = new StreamReader(OriginalFile, true);
-                newFileSr.Peek();
-                var newFileEncoding = newFileSr.CurrentEncoding;
+                using (TextWriter tw = File.CreateText(CreatedFile))
+                {
+                    tw.Write(content);
+                }
 
                 LogFormat("Message", "New File " + CreatedFile);
-                LogFormat("Message", "File Encoding " + newFileEncoding);
                 LogFormat("Message", "--------------------------------------");
                 LogFormat("Message", "End GenerateSolutionFiles Logging Info");
                 LogFormat("Message", "--------------------------------------");
@@ -136,6 +138,8 @@ namespace DotNetNuke.MSBuild.Tasks
             }
             return true;
         }
+
+        private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
 
         private void LogFormat(string level, string message, params object[] args)
         {
