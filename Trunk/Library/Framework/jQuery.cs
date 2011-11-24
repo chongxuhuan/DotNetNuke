@@ -380,8 +380,14 @@ namespace DotNetNuke.Framework
 
         public static void RegisterDnnJQueryPlugins(Page page)
         {
-			ClientAPI.RegisterClientReference(page, ClientAPI.ClientNamespaceReferences.dnn);
-            RegisterJQueryUI(page);
+			//This method maybe called when Page.Form hasn't initialized yet, in that situation if needed should reference dnn js manually.
+			//such as call jQuery.RegisterDnnJQueryPlugins in Control.OnInit.
+			if (page.Form != null)
+			{
+				ClientAPI.RegisterClientReference(page, ClientAPI.ClientNamespaceReferences.dnn);
+			}
+
+        	RegisterJQueryUI(page);
         	RegisterHoverIntent(page);
 
             var dnnJqueryPath = HttpContext.Current.IsDebuggingEnabled
