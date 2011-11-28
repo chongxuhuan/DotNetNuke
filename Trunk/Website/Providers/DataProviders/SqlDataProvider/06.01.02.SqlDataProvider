@@ -11,3 +11,10 @@
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
+/*Fix bug 18705: re-create FolderPermission's foreign key to Users with ON DELETE CASCADE*/
+ALTER TABLE {databaseOwner}[{objectQualifier}FolderPermission] DROP CONSTRAINT [FK_{objectQualifier}FolderPermission{objectQualifier}Users]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}FolderPermission] ADD
+CONSTRAINT [FK_{objectQualifier}FolderPermission{objectQualifier}Users] FOREIGN KEY ([UserID]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE CASCADE
+GO
+/*END Fix bug 18705*/
