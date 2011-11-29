@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("cc3cf175-3d9b-4176-9808-6185851a13f5")]
 
-[assembly: AssemblyVersion("6.1.0.272")]
-[assembly: AssemblyFileVersion("6.1.0.272")]
+[assembly: AssemblyVersion("6.1.2.0")]
+[assembly: AssemblyFileVersion("6.1.2.0")]
 [assembly: InternalsVisibleTo("DotNetNuke.Tests.Content")]
 [assembly: InternalsVisibleTo("DotNetNuke.Tests.Messaging")]

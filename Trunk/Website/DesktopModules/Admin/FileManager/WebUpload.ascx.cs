@@ -35,6 +35,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
+using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
@@ -227,24 +228,27 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
             foreach (FolderInfo folder in folders)
             {
-                var FolderItem = new ListItem();
-                if (folder.FolderPath == Null.NullString)
-                {
-                    if (IsHostMenu)
-                    {
-                        FolderItem.Text = Localization.GetString("HostRoot", LocalResourceFile);
-                    }
-                    else
-                    {
-                        FolderItem.Text = Localization.GetString("PortalRoot", LocalResourceFile);
-                    }
-                }
-                else
-                {
-                    FolderItem.Text = PathUtils.Instance.RemoveTrailingSlash(folder.DisplayPath);
-                }
-                FolderItem.Value = folder.FolderPath;
-                ddlFolders.Items.Add(FolderItem);
+				if (FolderPermissionController.CanAddFolder(folder))
+				{
+					var FolderItem = new ListItem();
+					if (folder.FolderPath == Null.NullString)
+					{
+						if (IsHostMenu)
+						{
+							FolderItem.Text = Localization.GetString("HostRoot", LocalResourceFile);
+						}
+						else
+						{
+							FolderItem.Text = Localization.GetString("PortalRoot", LocalResourceFile);
+						}
+					}
+					else
+					{
+						FolderItem.Text = PathUtils.Instance.RemoveTrailingSlash(folder.DisplayPath);
+					}
+					FolderItem.Value = folder.FolderPath;
+					ddlFolders.Items.Add(FolderItem);
+				}
             }
             
             if (!String.IsNullOrEmpty(DestinationFolder))

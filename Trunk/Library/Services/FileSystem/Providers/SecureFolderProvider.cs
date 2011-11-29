@@ -153,7 +153,16 @@ namespace DotNetNuke.Services.FileSystem
             for (var i = 0; i < fileNames.Length; i++)
             {
                 var fileName = Path.GetFileName(fileNames[i]);
-                fileNames[i] = fileName.Substring(0, fileName.LastIndexOf(ProtectedExtension));
+				if(!fileName.EndsWith(ProtectedExtension))
+				{
+					FileWrapper.Instance.Move(fileNames[i], fileNames[i] + ProtectedExtension);
+				}
+				else
+				{
+					fileName = fileName.Substring(0, fileName.LastIndexOf(ProtectedExtension));
+				}
+
+                fileNames[i] = fileName;
             }
 
             return fileNames;
