@@ -23,6 +23,6 @@ using System.Security;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("d6e9f303-c0db-4d08-bb53-e759baf32fd8")]
 
-[assembly: AssemblyVersion("6.1.2.31")]
-[assembly: AssemblyFileVersion("6.1.2.31")]
+[assembly: AssemblyVersion("6.1.2.42")]
+[assembly: AssemblyFileVersion("6.1.2.42")]
 [assembly: AllowPartiallyTrustedCallers]
