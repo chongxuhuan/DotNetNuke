@@ -49,34 +49,14 @@ namespace DotNetNuke.MSBuild.Tasks
                 LogFormat("Message", "Install URL: - " + url + "\r\n");
                 var wc = new DotNetNukeDeployWebClient();
 
-                var retrys = 5;
-
-                string data = "";
-                while (retrys > 0)
-                {
-                    try
-                    {
-                        data = wc.DownloadString(url);
-                        break;
-                    }
-                    catch (Exception)
-                    {
-                        LogFormat("Message", "Install Site, Tries Left " + retrys);
-                        Thread.Sleep(5000);
-                        retrys--;
-
-                        if (retrys == 0)
-                        {
-                            throw;
-                        }
-                    }
-                }
+                string data = TestUrl(wc, url);
 
                 autoFailed = (data.Contains("Error") || data.Contains("bypasses"));
 
                 if (!autoFailed)
                 {
                     var homePageUrl = string.Format("http://localhost/{0}/default.aspx", WebsiteName);
+                    string homePage = TestUrl(wc, homePageUrl);
                     LogFormat("Message", "Install URL: - " + homePageUrl + "\r\n");
                 }
 
@@ -100,6 +80,33 @@ namespace DotNetNuke.MSBuild.Tasks
                 LogFormat("Error", Error);
                 return false;
             }
+        }
+
+        private string TestUrl(DotNetNukeDeployWebClient wc, string url)
+        {
+            var retrys = 5;
+            var data = "";
+
+            while (retrys > 0)
+            {
+                try
+                {
+                    data = wc.DownloadString(url);
+                    break;
+                }
+                catch (Exception)
+                {
+                    LogFormat("Message", "Testing URL: " + url + " Failed, Tries Left " + retrys);
+                    Thread.Sleep(5000);
+                    retrys--;
+
+                    if (retrys == 0)
+                    {
+                        throw;
+                    }
+                }
+            }
+            return data;
         }
 
         private void LogFormat(string level, string message, params object[] args)

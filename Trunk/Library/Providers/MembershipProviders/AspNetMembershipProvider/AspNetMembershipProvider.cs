@@ -32,6 +32,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Host;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
@@ -380,34 +381,6 @@ namespace DotNetNuke.Security.Membership
 
                 //Get the total no of records from the second result
                 totalRecords = Globals.GetTotalRecords(ref dr);
-            }
-            catch (Exception exc)
-            {
-                Exceptions.LogException(exc);
-            }
-            finally
-            {
-                //close datareader
-                CBO.CloseDataReader(dr, true);
-            }
-            return arrUsers;
-        }
-
-        private static ArrayList FillUserCollection(int portalId, IDataReader dr)
-        {
-            //Note:  the DataReader returned from this method should contain 2 result sets.  The first set
-            //       contains the TotalRecords, that satisfy the filter, the second contains the page
-            //       of data
-            var arrUsers = new ArrayList();
-            try
-            {
-                while (dr.Read())
-                {
-                    //fill business object
-                    UserInfo user = FillUserInfo(portalId, dr, false);
-                    //add to collection
-                    arrUsers.Add(user);
-                }
             }
             catch (Exception exc)
             {
@@ -781,6 +754,34 @@ namespace DotNetNuke.Security.Membership
         public override void DeleteUsersOnline(int timeWindow)
         {
             _dataProvider.DeleteUsersOnline(timeWindow);
+        }
+
+        public static ArrayList FillUserCollection(int portalId, IDataReader dr)
+        {
+            //Note:  the DataReader returned from this method should contain 2 result sets.  The first set
+            //       contains the TotalRecords, that satisfy the filter, the second contains the page
+            //       of data
+            var arrUsers = new ArrayList();
+            try
+            {
+                while (dr.Read())
+                {
+                    //fill business object
+                    UserInfo user = FillUserInfo(portalId, dr, false);
+                    //add to collection
+                    arrUsers.Add(user);
+                }
+            }
+            catch (Exception exc)
+            {
+                Exceptions.LogException(exc);
+            }
+            finally
+            {
+                //close datareader
+                CBO.CloseDataReader(dr, true);
+            }
+            return arrUsers;
         }
 
         /// -----------------------------------------------------------------------------

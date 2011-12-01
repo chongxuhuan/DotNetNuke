@@ -309,7 +309,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 }
 				
                 //Check if User is a member of the Current Portal (or a member of the MasterPortal if PortalGroups enabled)
-                if (User.PortalID != Null.NullInteger && User.PortalID != PortalController.GetEffectivePortalId(PortalId))
+                if (User.PortalID != Null.NullInteger && User.PortalID != PortalId)
                 {
                     AddModuleMessage("InvalidUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
                     DisableForm();
@@ -497,7 +497,13 @@ namespace DotNetNuke.Modules.Admin.Users
         private void DisableForm()
         {
             adminTabNav.Visible = false;
-
+            dnnRoleDetails.Visible = false;
+            dnnPasswordDetails.Visible = false;
+            dnnProfileDetails.Visible = false;
+            dnnServicesDetails.Visible = false;
+            actionsRow.Visible = false;
+            ctlMembership.Visible = false;
+            ctlUser.Visible = false;
         }
 
         private void ShowPanel()

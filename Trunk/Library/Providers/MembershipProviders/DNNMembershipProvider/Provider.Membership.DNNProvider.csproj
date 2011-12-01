@@ -70,6 +70,10 @@
       <Name>DotNetNuke.Library</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\AspNetMembershipProvider\Provider.Membership.AspNetProvider.csproj">
+      <Project>{6A2C6160-2905-407B-9575-16210528F4C8}</Project>
+      <Name>Provider.Membership.AspNetProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataProvider\Provider.Membership.DataProvider.csproj">
       <Name>Provider.Membership.DataProvider</Name>
       <Project>{B15A45FA-02F8-4F09-A04B-13B7920CABCE}</Project>

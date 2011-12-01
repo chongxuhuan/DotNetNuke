@@ -109,6 +109,7 @@
     <Compile Include="DotNetNukeDeployWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ProcessProjectFile.cs" />
     <Compile Include="TFSComments.cs" />
     <Compile Include="DirectoryManager.cs" />
     <Compile Include="DotNetNukeDeploy.cs" />

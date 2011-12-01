@@ -548,8 +548,8 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public static UserCreateStatus CreateUser(ref UserInfo user)
         {
-            int portalId = GetEffectivePortalId(user.PortalID);
-            user.PortalID = portalId;
+            int portalId = user.PortalID;
+            user.PortalID = GetEffectivePortalId(portalId);
 
             //Create the User
             var createStatus = MemberProvider.CreateUser(ref user);
@@ -565,6 +565,9 @@ namespace DotNetNuke.Entities.Users
                     AutoAssignUsersToRoles(user, portalId);
                 }
             }
+
+            //Reset PortalId
+            user.PortalID = portalId;
             return createStatus;
         }
 
@@ -603,8 +606,8 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public static bool DeleteUser(ref UserInfo user, bool notify, bool deleteAdmin)
         {
-            int portalId = GetEffectivePortalId(user.PortalID);
-            user.PortalID = portalId;
+            int portalId = user.PortalID;
+            user.PortalID = GetEffectivePortalId(portalId);
             
             var canDelete = CanDeteteAdministrator(user, deleteAdmin);
 
@@ -628,6 +631,9 @@ namespace DotNetNuke.Entities.Users
                 DataCache.ClearPortalCache(portalId, false);
                 DataCache.ClearUserCache(portalId, user.Username);
             }
+
+            user.PortalID = portalId;
+
             return canDelete;
         }
 
@@ -687,9 +693,11 @@ namespace DotNetNuke.Entities.Users
         public static UserInfo GetCachedUser(int portalId, string username)
         {
             //Get the User cache key
-            portalId = GetEffectivePortalId(portalId);
+            var masterPortalId = GetEffectivePortalId(portalId);
             var cacheKey = string.Format(DataCache.UserCacheKey, portalId, username);
-            return CBO.GetCachedObject<UserInfo>(new CacheItemArgs(cacheKey, DataCache.UserCacheTimeOut, DataCache.UserCachePriority, portalId, username), GetCachedUserByPortalCallBack);
+            var user = CBO.GetCachedObject<UserInfo>(new CacheItemArgs(cacheKey, DataCache.UserCacheTimeOut, DataCache.UserCachePriority, masterPortalId, username), GetCachedUserByPortalCallBack);
+            user.PortalID = portalId;
+            return user;
         }
 
         /// -----------------------------------------------------------------------------
@@ -790,7 +798,9 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public static UserInfo GetUserById(int portalId, int userId)
         {
-            return MemberProvider.GetUser(GetEffectivePortalId(portalId), userId);
+            var user = MemberProvider.GetUser(GetEffectivePortalId(portalId), userId);
+            user.PortalID = portalId;
+            return user;
         }
 
         /// -----------------------------------------------------------------------------
@@ -876,9 +886,11 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public static void GetUserMembership(UserInfo user)
         {
-            int portalId = GetEffectivePortalId(user.PortalID);
-            user.PortalID = portalId;
+            int portalId = user.PortalID;
+            int masterPortalId = GetEffectivePortalId(portalId);
+            user.PortalID = masterPortalId;
             MemberProvider.GetUserMembership(ref user);
+            user.PortalID = portalId;
         }
 
         /// -----------------------------------------------------------------------------
@@ -1175,8 +1187,8 @@ namespace DotNetNuke.Entities.Users
 
         public static bool RemoveUser(UserInfo user)
         {
-            int portalId = GetEffectivePortalId(user.PortalID);
-            user.PortalID = portalId;
+            int portalId = user.PortalID;
+            user.PortalID = GetEffectivePortalId(portalId);
             
             //Remove the User
             var retValue = MemberProvider.RemoveUser(user);
@@ -1193,6 +1205,9 @@ namespace DotNetNuke.Entities.Users
                 DataCache.ClearPortalCache(portalId, false);
                 DataCache.ClearUserCache(portalId, user.Username);
             }
+
+            //Reset PortalId
+            user.PortalID = portalId;
 
             return retValue;
         }
@@ -1221,8 +1236,8 @@ namespace DotNetNuke.Entities.Users
 
         public static bool RestoreUser(ref UserInfo user)
         {
-            int portalId = GetEffectivePortalId(user.PortalID);
-            user.PortalID = portalId;
+            int portalId = user.PortalID;
+            user.PortalID = GetEffectivePortalId(portalId);
             
             //Restore the User
             var retValue = MemberProvider.RestoreUser(user);
@@ -1239,6 +1254,9 @@ namespace DotNetNuke.Entities.Users
                 DataCache.ClearPortalCache(portalId, false);
                 DataCache.ClearUserCache(portalId, user.Username);
             }
+
+            //Reset PortalId
+            user.PortalID = portalId;
 
             return retValue;
         }
@@ -1257,7 +1275,8 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public static bool UnLockUser(UserInfo user)
         {
-            int portalId = GetEffectivePortalId(user.PortalID);
+            int portalId = user.PortalID;
+            user.PortalID = GetEffectivePortalId(portalId);
 
             //Unlock the User
             var retValue = MemberProvider.UnLockUser(user);
@@ -1453,12 +1472,10 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public static UserInfo ValidateUser(int portalId, string username, string password, string authType, string verificationCode, string portalName, string ip, ref UserLoginStatus loginStatus)
         {
-            portalId = GetEffectivePortalId(portalId);
-
             loginStatus = UserLoginStatus.LOGIN_FAILURE;
 
             //Try and Log the user in
-            var objUser = MemberProvider.UserLogin(portalId, username, password, authType, verificationCode, ref loginStatus);
+            var user = MemberProvider.UserLogin(GetEffectivePortalId(portalId), username, password, authType, verificationCode, ref loginStatus);
             if (loginStatus == UserLoginStatus.LOGIN_USERLOCKEDOUT || loginStatus == UserLoginStatus.LOGIN_FAILURE)
             {
 				//User Locked Out so log to event log
@@ -1471,8 +1488,11 @@ namespace DotNetNuke.Entities.Users
                 CheckInsecurePassword(username, password, ref loginStatus);
             }
 			
+            //Reset portalId
+            user.PortalID = portalId;
+
             //return the User object
-            return objUser;
+            return user;
         }
 
         /// -----------------------------------------------------------------------------

@@ -90,84 +90,6 @@ namespace DotNetNuke.Security.Membership
                 Convert.ToInt32(dataProvider.AddUserRole(userRole.PortalID, userRole.UserID, userRole.RoleID, userRole.EffectiveDate, userRole.ExpiryDate, UserController.GetCurrentUserInfo().UserID));
         }
 
-        private static ArrayList FillUserCollection(int portalId, IDataReader dr)
-        {
-            //Note:  the DataReader returned from this method should contain 2 result sets.  The first set
-            //       contains the TotalRecords, that satisfy the filter, the second contains the page
-            //       of data
-            var arrUsers = new ArrayList();
-            try
-            {
-                while (dr.Read())
-                {
-                    //fill business object
-                    UserInfo user = FillUserInfo(portalId, dr, false);
-                    //add to collection
-                    arrUsers.Add(user);
-                }
-            }
-            catch (Exception exc)
-            {
-                Exceptions.LogException(exc);
-            }
-            finally
-            {
-                //close datareader
-                CBO.CloseDataReader(dr, true);
-            }
-            return arrUsers;
-        }
-
-        private static UserInfo FillUserInfo(int portalId, IDataReader dr, bool closeDataReader)
-        {
-            UserInfo objUserInfo = null;
-            try
-            {
-                //read datareader
-                var bContinue = true;
-                if (closeDataReader)
-                {
-                    bContinue = false;
-                    if (dr.Read())
-                    {
-                        //Ensure the data reader returned is valid
-                        if (string.Equals(dr.GetName(0), "UserID", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            bContinue = true;
-                        }
-                    }
-                }
-                if (bContinue)
-                {
-                    objUserInfo = new UserInfo
-                    {
-                        PortalID = portalId,
-                        IsSuperUser = Null.SetNullBoolean(dr["IsSuperUser"]),
-                        IsDeleted = Null.SetNullBoolean(dr["IsDeleted"]),
-                        UserID = Null.SetNullInteger(dr["UserID"]),
-                        FirstName = Null.SetNullString(dr["FirstName"]),
-                        LastName = Null.SetNullString(dr["LastName"]),
-                        RefreshRoles = Null.SetNullBoolean(dr["RefreshRoles"]),
-                        DisplayName = Null.SetNullString(dr["DisplayName"])
-                    };
-                    objUserInfo.AffiliateID = Null.SetNullInteger(Null.SetNull(dr["AffiliateID"], objUserInfo.AffiliateID));
-                    objUserInfo.Username = Null.SetNullString(dr["Username"]);
-                    UserController.GetUserMembership(objUserInfo);
-                    objUserInfo.Email = Null.SetNullString(dr["Email"]);
-                    objUserInfo.Membership.UpdatePassword = Null.SetNullBoolean(dr["UpdatePassword"]);
-                    if (!objUserInfo.IsSuperUser)
-                    {
-                        objUserInfo.Membership.Approved = Null.SetNullBoolean(dr["Authorised"]);
-                    }
-                }
-            }
-            finally
-            {
-                CBO.CloseDataReader(dr, closeDataReader);
-            }
-            return objUserInfo;
-        }
-
         #endregion
 
         #region Role Methods
@@ -609,7 +531,7 @@ namespace DotNetNuke.Security.Membership
         /// -----------------------------------------------------------------------------
         public override ArrayList GetUsersByRoleName(int portalId, string roleName)
         {
-            return FillUserCollection(portalId, dataProvider.GetUsersByRolename(portalId, roleName));
+            return AspNetMembershipProvider.FillUserCollection(portalId, dataProvider.GetUsersByRolename(portalId, roleName));
         }
 
         /// -----------------------------------------------------------------------------
