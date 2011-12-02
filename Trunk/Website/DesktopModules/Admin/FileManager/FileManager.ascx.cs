@@ -503,7 +503,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
             dgFileList.PageSize = PageSize;
             dgFileList.CurrentPageIndex = PageIndex;
 
-            GetFilesByFolder(PathUtils.Instance.StripFolderPath(DestPath).Replace("\\", "/"));
+			GetFilesByFolder(PathUtils.Instance.StripFolderPath(DestPath).Replace("\\", "/"));
 
             if (dgFileList.PageCount > 1)
             {

@@ -129,6 +129,10 @@
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Name>DotNetNuke.Library</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DotNetNuke.Tests.Instance.Utilities\DotNetNuke.Tests.Instance.Utilities.csproj">
+      <Project>{0BD44D27-6F8D-4A94-9E01-E57860B500E4}</Project>
+      <Name>DotNetNuke.Tests.Instance.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotNetNuke.Tests.Utilities\DotNetNuke.Tests.Utilities.csproj">
       <Project>{5AECE021-E449-4A7F-BF82-2FA7B236ED3E}</Project>
       <Name>DotNetNuke.Tests.Utilities</Name>

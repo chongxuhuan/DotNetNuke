@@ -45,10 +45,16 @@ using DotNetNuke.Services.Log.EventLog;
 namespace DotNetNuke.Services.Mobile
 {
 	public class RedirectionController : IRedirectionController
-	{
-		#region "Private Properties"
+    {
+        #region Constants
+        private const string DisableMobileRedirectCookieName = "disablemobileredirect";
+		private const string DisableRedirectPresistCookieName = "disableredirectpresist";
+        private const string DisableMobileRedirectQueryStringName = "nonmo"; //google uses the same name nomo=1 means do not redirect to mobile
+        #endregion
 
-		private const string UrlsCacheKey = "MobileRedirectAllUrls";
+        #region "Private Properties"
+
+        private const string UrlsCacheKey = "MobileRedirectAllUrls";
 		private const string RedirectionUrlCacheKey = "RedirectionUrl_{0}_{1}_{2}";
 		private const string FullSiteUrlCacheKey = "FullSiteUrl_{0}_{1}";
 		private const string MobileSiteUrlCacheKey = "MobileSiteUrl_{0}_{1}";
@@ -57,6 +63,66 @@ namespace DotNetNuke.Services.Mobile
 		#endregion
 
 		#region "Public Methods"
+
+        /// <summary>
+        /// Is Redirection Allowed for the session. Method analyzes the query string for special parameters to enable / disable redirects.
+        /// Cookie is created to temporarily store those parameters so that they remain available till the interactions are active.
+        /// </summary>
+        /// <returns>boolean - True if redirection </returns>
+        /// <param name="app">app - HttpApplication. Request and Response properties are used</param>
+        public bool IsRedirectAllowedForTheSession(HttpApplication app)
+        {
+            bool allowed = true;
+
+            //Check for the existence of special query string to force enable / disable of redirect
+            if (app.Request.QueryString[DisableMobileRedirectQueryStringName] != null)
+            {
+                int val;
+                if (int.TryParse(app.Request.QueryString[DisableMobileRedirectQueryStringName], out val))
+                {
+                    if (val == 0) //forced enable. clear any cookie previously set
+                    {
+                        if (app.Response.Cookies[DisableMobileRedirectCookieName] != null)
+                        {
+                            HttpCookie cookie = new HttpCookie(DisableMobileRedirectCookieName);
+                            cookie.Expires = DateTime.Now.AddMinutes(-1);
+                            app.Response.Cookies.Add(cookie);      
+                        }
+
+						if (app.Response.Cookies[DisableRedirectPresistCookieName] != null)
+						{
+							HttpCookie cookie = new HttpCookie(DisableRedirectPresistCookieName);
+							cookie.Expires = DateTime.Now.AddMinutes(-1);
+							app.Response.Cookies.Add(cookie);
+						}   
+                    }
+                    else if (val == 1) //forced disable. need to setup cookie
+                    {
+                        allowed = false;
+                    }                                        
+                }                
+            }
+			else if (app.Request.Cookies[DisableMobileRedirectCookieName] != null && app.Request.Cookies[DisableRedirectPresistCookieName] != null) //check for cookie
+            {
+                allowed = false;
+            }
+
+
+            if (!allowed) //redirect is not setup to be allowed, keep the cookie alive
+            {
+				//this cookie is set to re-enable redirect after 20 minutes
+				HttpCookie presistCookie = new HttpCookie(DisableRedirectPresistCookieName);
+				presistCookie.Expires = DateTime.Now.AddMinutes(20);
+				app.Response.Cookies.Add(presistCookie);
+
+				//this cookie is set to re-enable redirect after close browser.
+				HttpCookie cookie = new HttpCookie(DisableMobileRedirectCookieName);
+				app.Response.Cookies.Add(cookie);    
+            }
+
+            return allowed;
+        }
+        
 		/// <summary>
         /// Get Redirection Url based on UserAgent.         
         /// </summary>
@@ -170,7 +236,7 @@ namespace DotNetNuke.Services.Mobile
             {
                 string fullSiteUrl = GetFullSiteUrl(portalSettings.PortalId, portalSettings.ActiveTab.TabID);
                 if (!string.IsNullOrEmpty(fullSiteUrl) && string.Compare(fullSiteUrl, portalSettings.ActiveTab.FullUrl, true, CultureInfo.InvariantCulture) != 0)
-                {
+                {                    
                     return fullSiteUrl;
                 }
             }
@@ -248,6 +314,10 @@ namespace DotNetNuke.Services.Mobile
 				}
 			}
 
+            //append special query string            
+            if (!string.IsNullOrEmpty(fullSiteUrl))
+                fullSiteUrl += string.Format("{0}{1}=1", fullSiteUrl.Contains("?") ? "&" : "?", DisableMobileRedirectQueryStringName);
+
 			//update cache content
             SetUrlInCache(cacheKey, fullSiteUrl);
 
@@ -319,6 +389,10 @@ namespace DotNetNuke.Services.Mobile
 					mobileSiteUrl = GetRedirectUrlFromRule(firstRedirection, portalId, currentTabId);
 				}
 			}
+
+            //append special query string
+            if (!string.IsNullOrEmpty(mobileSiteUrl))
+                mobileSiteUrl += string.Format("{0}{1}=0", mobileSiteUrl.Contains("?") ? "&" : "?", DisableMobileRedirectQueryStringName);            
 
 			//update cache content
             SetUrlInCache(cacheKey, mobileSiteUrl);

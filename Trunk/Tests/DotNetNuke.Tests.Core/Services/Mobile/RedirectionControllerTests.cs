@@ -24,7 +24,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data;
+using System.Reflection;
+using System.Web;
 
 using DotNetNuke.Common;
 using DotNetNuke.ComponentModel;
@@ -37,6 +40,7 @@ using DotNetNuke.Services.ClientCapability;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Mobile;
+using DotNetNuke.Tests.Instance.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
 using MbUnit.Framework;
@@ -97,6 +101,9 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
         public const bool IncludeChildTabsFlag = true;
 	    public const string ExternalSite = "http://www.dotnetnuke.com";
 
+		private const string DisableMobileRedirectCookieName = "disablemobileredirect";
+		private const string DisableRedirectPresistCookieName = "disableredirectpresist";
+		private const string DisableMobileRedirectQueryStringName = "nonmo";
 
 		#endregion
 
@@ -441,7 +448,50 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
         #endregion
 
-        #endregion
+		#region "Redirect Enable/Disable Tests"
+
+		[Test]
+		public void RedirectionController_IsRedirectAllowedForTheSession_In_Normal_Action()
+		{
+			var app = GenerateApplication();
+
+			Assert.IsTrue(_redirectionController.IsRedirectAllowedForTheSession(app));
+		}
+
+		[Test]
+		public void RedirectionController_IsRedirectAllowedForTheSession_With_Nonmo_Param_Set_To_1()
+		{
+			var app = GenerateApplication();
+			app.Context.Request.QueryString.Add(DisableMobileRedirectQueryStringName, "1");
+			
+			Assert.IsFalse(_redirectionController.IsRedirectAllowedForTheSession(app));
+			Assert.IsNotNull(app.Request.Cookies[DisableMobileRedirectCookieName]);
+			Assert.IsNotNull(app.Request.Cookies[DisableRedirectPresistCookieName]);
+		}
+
+		[Test]
+		public void RedirectionController_IsRedirectAllowedForTheSession_With_Nonmo_Param_Set_To_0()
+		{
+			var app = GenerateApplication();
+			app.Context.Request.QueryString.Add(DisableMobileRedirectQueryStringName, "0");
+
+			Assert.IsTrue(_redirectionController.IsRedirectAllowedForTheSession(app));
+		}
+
+		[Test]
+		public void RedirectionController_IsRedirectAllowedForTheSession_With_Nonmo_Param_Set_To_1_And_Then_Setback_To_0()
+		{
+			var app = GenerateApplication();
+			app.Context.Request.QueryString.Add(DisableMobileRedirectQueryStringName, "1");
+			Assert.IsFalse(_redirectionController.IsRedirectAllowedForTheSession(app));
+
+			app.Context.Request.QueryString.Add(DisableMobileRedirectQueryStringName, "0");
+			Assert.IsTrue(_redirectionController.IsRedirectAllowedForTheSession(app));
+		}
+
+		#endregion
+
+		#endregion
 
 		#region "Private Methods"
 
@@ -880,6 +930,20 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
         {
 			_dtRedirections.Rows.Add(1, Portal0, "R1", (int)RedirectionType.AllMobile, 1, -1, DisabledFlag, (int)TargetType.Tab, AllMobileLandingPage, DisabledFlag);
         }
+
+		private HttpApplication GenerateApplication()
+		{
+			UnitTestHelper.SetHttpContextWithSimulatedRequest("localhost", "dnn", "c:\\", "default.aspx");
+			var app = new HttpApplication();
+
+			var requestProp = typeof(NameValueCollection).GetProperty("IsReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+			requestProp.SetValue(HttpContext.Current.Request.QueryString, false, null);
+
+			var stateProp = typeof(HttpApplication).GetField("_context", BindingFlags.Instance | BindingFlags.NonPublic);
+			stateProp.SetValue(app, HttpContext.Current);
+
+			return app;
+		}
 
 
         private string NavigateUrl(int tabId)

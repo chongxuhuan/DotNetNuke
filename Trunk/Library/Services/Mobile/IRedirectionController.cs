@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web;
 
 #endregion
 
@@ -57,5 +58,7 @@ namespace DotNetNuke.Services.Mobile
         string GetMobileSiteUrl();
 
         string GetMobileSiteUrl(int portalId, int currentTabId);
+
+        bool IsRedirectAllowedForTheSession(HttpApplication app);
 	}
 }
