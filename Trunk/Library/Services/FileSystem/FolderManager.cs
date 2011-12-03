@@ -321,7 +321,7 @@ namespace DotNetNuke.Services.FileSystem
             foreach (var folder in folders)
             {
                 var folderPath = folder.FolderPath;
-                if (folderPath != Null.NullString && folderPath.Contains(parentFolder.FolderPath) && folder.FolderPath != parentFolder.FolderPath)
+                if (folderPath != Null.NullString && folderPath.ToLower().Contains(parentFolder.FolderPath.ToLower()) && folder.FolderPath != parentFolder.FolderPath)
                 {
                     if (parentFolder.FolderPath == Null.NullString)
                     {
@@ -330,7 +330,7 @@ namespace DotNetNuke.Services.FileSystem
                             subFolders.Add(folder);
                         }
                     }
-                    else if (folderPath.StartsWith(parentFolder.FolderPath))
+                    else if (folderPath.ToLower().StartsWith(parentFolder.FolderPath.ToLower()))
                     {
                         folderPath = folderPath.Substring(parentFolder.FolderPath.Length + 1);
                         if (folderPath.IndexOf("/") == folderPath.LastIndexOf("/"))

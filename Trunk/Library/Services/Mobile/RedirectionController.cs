@@ -49,7 +49,7 @@ namespace DotNetNuke.Services.Mobile
         #region Constants
         private const string DisableMobileRedirectCookieName = "disablemobileredirect";
 		private const string DisableRedirectPresistCookieName = "disableredirectpresist";
-        private const string DisableMobileRedirectQueryStringName = "nonmo"; //google uses the same name nomo=1 means do not redirect to mobile
+        private const string DisableMobileRedirectQueryStringName = "nomo"; //google uses the same name nomo=1 means do not redirect to mobile
         #endregion
 
         #region "Private Properties"

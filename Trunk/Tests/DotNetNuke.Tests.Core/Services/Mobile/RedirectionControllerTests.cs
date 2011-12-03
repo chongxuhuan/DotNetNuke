@@ -103,7 +103,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
 		private const string DisableMobileRedirectCookieName = "disablemobileredirect";
 		private const string DisableRedirectPresistCookieName = "disableredirectpresist";
-		private const string DisableMobileRedirectQueryStringName = "nonmo";
+		private const string DisableMobileRedirectQueryStringName = "nomo";
 
 		#endregion
 
