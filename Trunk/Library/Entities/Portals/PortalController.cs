@@ -1271,22 +1271,27 @@ namespace DotNetNuke.Entities.Portals
                     }
                     if (message == Null.NullString)
                     {
-                        PortalInfo objportal = GetPortal(portalId);
-                        objportal.Description = description;
-                        objportal.KeyWords = keyWords;
-                        objportal.UserTabId = TabController.GetTabByTabPath(objportal.PortalID, "//UserProfile", objportal.CultureCode);
-                        objportal.SearchTabId = TabController.GetTabByTabPath(objportal.PortalID, "//SearchResults", objportal.CultureCode);
-                        UpdatePortalInfo(objportal);
-                        adminUser.Profile.PreferredLocale = objportal.DefaultLanguage;
-                        PortalSettings _PortalSettings = new PortalSettings(objportal);
-                        adminUser.Profile.PreferredTimeZone = _PortalSettings.TimeZone;
-                        UserController.UpdateUser(objportal.PortalID, adminUser);
+                        var portal = GetPortal(portalId);
+						portal.Description = description;
+						portal.KeyWords = keyWords;
+						portal.UserTabId = TabController.GetTabByTabPath(portal.PortalID, "//UserProfile", portal.CultureCode);
+						portal.SearchTabId = TabController.GetTabByTabPath(portal.PortalID, "//SearchResults", portal.CultureCode);
+						//update portal name to 'Site-{PortalID}' when portal name is empty.
+						if (string.IsNullOrEmpty(portal.PortalName))
+						{
+							portal.PortalName = string.Format("Site-{0}", portal.PortalID);
+						}
+						UpdatePortalInfo(portal);
+						adminUser.Profile.PreferredLocale = portal.DefaultLanguage;
+						var portalSettings = new PortalSettings(portal);
+						adminUser.Profile.PreferredTimeZone = portalSettings.TimeZone;
+						UserController.UpdateUser(portal.PortalID, adminUser);
                         DesktopModuleController.AddDesktopModulesToPortal(portalId);
                         AddPortalAlias(portalId, portalAlias);
                         UpdatePortalSetting(portalId, "DefaultPortalAlias", portalAlias, true);
                         try
                         {
-                            LogInfo objEventLogInfo = new LogInfo();
+                            var objEventLogInfo = new LogInfo();
                             objEventLogInfo.BypassBuffering = true;
                             objEventLogInfo.LogTypeKey = EventLogController.EventLogType.HOST_ALERT.ToString();
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("Install Portal:", portalName));
@@ -1303,7 +1308,7 @@ namespace DotNetNuke.Entities.Portals
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("ServerPath:", serverPath));
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("ChildPath:", childPath));
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("IsChildPortal:", isChildPortal.ToString()));
-                            EventLogController objEventLog = new EventLogController();
+                            var objEventLog = new EventLogController();
                             objEventLog.AddLog(objEventLogInfo);
                         }
                         catch (Exception exc)

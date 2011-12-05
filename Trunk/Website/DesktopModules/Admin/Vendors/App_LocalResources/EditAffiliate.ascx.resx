@@ -157,6 +157,6 @@
     <value>Notification not sent: {0}</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
-    <value>&lt;h1&gt;About Vendors&lt;/h1&gt;&lt;p&gt;Administrators can manage the Vendors and Banners associated to the portal. This module allows you to add a new vendor, modify an existing vendor, and delete a vendor.&lt;/p&gt;</value>
+    <value>&lt;h1&gt;About Vendors&lt;/h1&gt;&lt;p&gt;Administrators can manage the Vendors and Banners associated to the site. This module allows you to add a new vendor, modify an existing vendor, and delete a vendor.&lt;/p&gt;</value>
   </data>
 </root>

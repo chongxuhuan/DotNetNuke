@@ -1726,9 +1726,9 @@ namespace DotNetNuke.Services.Upgrade
             }
 
             //Add Google Analytics module
-            moduleDefId = AddModuleDefinition("Google Analytics", "Configure portal Google Analytics settings.", "GoogleAnalytics", false, false);
+            moduleDefId = AddModuleDefinition("Google Analytics", "Configure Site Google Analytics settings.", "GoogleAnalytics", false, false);
             AddModuleControl(moduleDefId, "", "Google Analytics", "DesktopModules/Admin/Analytics/GoogleAnalyticsSettings.ascx", "", SecurityAccessLevel.Admin, 0);
-            AddAdminPages("Google Analytics", "Configure portal Google Analytics settings.", "~/images/icon_analytics_16px.gif", "~/images/icon_analytics_32px.gif", true, moduleDefId, "Google Analytics", "~/images/icon_analytics_32px.gif"); 
+            AddAdminPages("Google Analytics", "Configure Site Google Analytics settings.", "~/images/icon_analytics_16px.gif", "~/images/icon_analytics_32px.gif", true, moduleDefId, "Google Analytics", "~/images/icon_analytics_32px.gif"); 
         }
 
         private static void UpgradeToVersion511()
@@ -2124,7 +2124,7 @@ namespace DotNetNuke.Services.Upgrade
             int moduleDefId;
             if (CoreModuleExists("LogViewer") == false)
             {
-                moduleDefId = AddModuleDefinition("LogViewer", "Allows you to view log entries for portal events.", "Log Viewer");
+                moduleDefId = AddModuleDefinition("LogViewer", "Allows you to view log entries for site events.", "Log Viewer");
                 AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/LogViewer/LogViewer.ascx", "", SecurityAccessLevel.Admin, 0);
                 AddModuleControl(moduleDefId, "Edit", "Edit Log Settings", "DesktopModules/Admin/LogViewer/EditLogTypes.ascx", "", SecurityAccessLevel.Host, 0);
 
@@ -2516,6 +2516,76 @@ namespace DotNetNuke.Services.Upgrade
 			//add mobile preview control
 			AddModuleControl(Null.NullInteger, "MobilePreview", "Mobile Preview", "DesktopModules/Admin/MobilePreview/Preview.ascx", string.Empty, SecurityAccessLevel.Admin, Null.NullInteger);
         }
+
+		private static void UpgradeToVersion612()
+		{
+			//update DotNetNuke.Portals' friend name to 'Sites'.
+			var portalPackage = PackageController.GetPackageByName("DotNetNuke.Portals");
+			if (portalPackage != null)
+			{
+				portalPackage.FriendlyName = "Site Management";
+				portalPackage.Description =
+					"The Super User can manage the various parent and child sites within the install instance. This module allows you to add a new site, modify an existing site, and delete a site.";
+				PackageController.SavePackage(portalPackage);
+			}
+
+			//update 'Portal' to 'Sites' in package description.
+			portalPackage = PackageController.GetPackageByName("DotNetNuke.Tabs");
+			if (portalPackage != null)
+			{
+				portalPackage.Description =
+					"Administrators can manage the Pages within the site. This module allows you to create a new page, modify an existing page, delete pages, change the page order, and change the hierarchical page level.";
+				PackageController.SavePackage(portalPackage);
+			}
+
+			portalPackage = PackageController.GetPackageByName("DotNetNuke.Vendors");
+			if (portalPackage != null)
+			{
+				portalPackage.Description =
+					"Administrators can manage the Vendors and Banners associated to the site. This module allows you to add a new vendor, modify an existing vendor, and delete a vendor.";
+				PackageController.SavePackage(portalPackage);
+			}
+
+			portalPackage = PackageController.GetPackageByName("DotNetNuke.SiteLog");
+			if (portalPackage != null)
+			{
+				portalPackage.Description =
+					"Administrators can view the details of visitors using their site. There are a variety of reports available to display information regarding site usage, membership, and volumes.";
+				PackageController.SavePackage(portalPackage);
+			}
+
+			portalPackage = PackageController.GetPackageByName("DotNetNuke.SiteWizard");
+			if (portalPackage != null)
+			{
+				portalPackage.Description =
+					"The Administrator can use this user-friendly wizard to set up the common features of the site.";
+				PackageController.SavePackage(portalPackage);
+			}
+
+			portalPackage = PackageController.GetPackageByName("DotNetNuke.Security");
+			if (portalPackage != null)
+			{
+				portalPackage.Description =
+					"Administrators can manage the security roles defined for their site. The module allows you to add new security roles, modify existing security roles, delete security roles, and manage the users assigned to security roles.";
+				PackageController.SavePackage(portalPackage);
+			}
+
+			portalPackage = PackageController.GetPackageByName("DotNetNuke.LogViewer");
+			if (portalPackage != null)
+			{
+				portalPackage.Description =
+					"Allows you to view log entries for site events.";
+				PackageController.SavePackage(portalPackage);
+			}
+
+			portalPackage = PackageController.GetPackageByName("DotNetNuke.Google Analytics");
+			if (portalPackage != null)
+			{
+				portalPackage.Description =
+					"Configure Site Google Analytics settings.";
+				PackageController.SavePackage(portalPackage);
+			}
+		}
 
         #endregion
 
@@ -3936,6 +4006,9 @@ namespace DotNetNuke.Services.Upgrade
                         break;
                     case "6.1.0":
                         UpgradeToVersion610();
+                        break;
+					case "6.1.2":
+						UpgradeToVersion612();
                         break;
                 }
             }

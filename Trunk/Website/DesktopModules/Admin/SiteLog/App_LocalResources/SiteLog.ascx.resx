@@ -148,7 +148,7 @@
     <value>Site Log</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
-    <value>&lt;h1&gt;About Site Log&lt;/h1&gt;&lt;p&gt;Administrators can view the details of visitors using their portal. There are a variety of reports available to display information regarding site usage, membership, and volumes.&lt;/p&gt;</value>
+    <value>&lt;h1&gt;About Site Log&lt;/h1&gt;&lt;p&gt;Administrators can view the details of visitors using their site. There are a variety of reports available to display information regarding site usage, membership, and volumes.&lt;/p&gt;</value>
   </data>
   <data name="FileSystem.Text" xml:space="preserve">
     <value>Your Hosting Provider Has Disabled the Site Log Viewer Feature For Your Portal.  The Logs can be viewed offline and are available in the \Logs\ subfolder of your Portal's Home Directory.</value>

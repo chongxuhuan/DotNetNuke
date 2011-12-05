@@ -1419,7 +1419,7 @@
       <iconfilelarge>~/Icons/Sigma/GoogleAnalytics_32X32_Standard.png</iconfilelarge>
       <disabled>false</disabled>
       <title>Google Analytics</title>
-      <description>Configure portal Google Analytics settings.</description>
+      <description>Configure Site Google Analytics settings.</description>
       <keywords />
       <url type="Normal" />
       <skinsrc />

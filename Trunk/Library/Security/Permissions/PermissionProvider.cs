@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
@@ -348,24 +349,24 @@ namespace DotNetNuke.Security.Permissions
 
         public virtual FolderPermissionCollection GetFolderPermissionsCollectionByFolder(int PortalID, string Folder)
         {
-            bool bFound = false;
-            string dictionaryKey = Folder;
-            if (string.IsNullOrEmpty(dictionaryKey))
-            {
-                dictionaryKey = "[PortalRoot]";
-            }
-            //Get the Portal FolderPermission Dictionary
-            Dictionary<string, FolderPermissionCollection> dicFolderPermissions = GetFolderPermissions(PortalID);
+			string dictionaryKey = Folder;
+			if (string.IsNullOrEmpty(dictionaryKey))
+			{
+				dictionaryKey = "[PortalRoot]";
+			}
+			//Get the Portal FolderPermission Dictionary
+			var dicFolderPermissions = GetFolderPermissions(PortalID);
 
-            //Get the Collection from the Dictionary
-            FolderPermissionCollection folderPermissions = null;
-            bFound = dicFolderPermissions.TryGetValue(dictionaryKey, out folderPermissions);
-            if (!bFound)
-            {
+			//Get the Collection from the Dictionary
+			var folderPermissions =
+				dicFolderPermissions.FirstOrDefault(kvp => kvp.Key.Equals(dictionaryKey, StringComparison.InvariantCultureIgnoreCase)).Value;
+
+			if (folderPermissions == null)
+			{
 				//try the database
-                folderPermissions = new FolderPermissionCollection(CBO.FillCollection(dataProvider.GetFolderPermissionsByFolderPath(PortalID, Folder, -1), typeof (FolderPermissionInfo)), Folder);
-            }
-            return folderPermissions;
+				folderPermissions = new FolderPermissionCollection(CBO.FillCollection(dataProvider.GetFolderPermissionsByFolderPath(PortalID, Folder, -1), typeof(FolderPermissionInfo)), Folder);
+			}
+			return folderPermissions;
         }
 
         public virtual bool HasFolderPermission(FolderPermissionCollection objFolderPermissions, string PermissionKey)
