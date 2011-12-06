@@ -134,7 +134,7 @@ namespace DotNetNuke.Services.Log.EventLog
             }
             catch (UnauthorizedAccessException exc)
             {
-                RaiseError(filePath, "Unauthorized Access Error", exc.Message + " The Windows User Account listed below must have Read/Write Privileges to this path.");
+                RaiseError(filePath, "Unauthorized Access Error", "The Windows User Account listed below must have Read/Write Privileges for the website path.");
             }
             catch (DirectoryNotFoundException exc)
             {

@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="footer.text" xml:space="preserve">
     <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/Project.aspx?Tab=Changelog&amp;PROJID=2"&gt;official change log&lt;/a&gt;.</value>
@@ -1548,8 +1548,8 @@ corrected with each release. &lt;/p&gt;
           &lt;/ul&gt;
           &lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
           &lt;ul&gt;
-          &lt;li&gt;Added DNNWerk&#39;s Page Management Module to the DotNetNuke Core &lt;/li&gt;
-          &lt;li&gt;Added DNNWerk&#39;s RadEditor Provider to the DotNetNuke Core &lt;/li&gt;
+          &lt;li&gt;Added DNNWerk's Page Management Module to the DotNetNuke Core &lt;/li&gt;
+          &lt;li&gt;Added DNNWerk's RadEditor Provider to the DotNetNuke Core &lt;/li&gt;
           &lt;/ul&gt;
           &lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
           &lt;ul&gt;
@@ -1646,8 +1646,8 @@ corrected with each release. &lt;/p&gt;
 	&lt;li&gt;none&lt;/li&gt;
 &lt;/ul&gt;</value>
   </data>
-    <data name="WhatsNew.06.01.00" xml:space="preserve">
-      <value>
+  <data name="WhatsNew.06.01.00" xml:space="preserve">
+    <value>
           &lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
           &lt;ul&gt;
           &lt;li&gt;Implemented a new way of managing client resources which dramatically improves
@@ -1666,8 +1666,8 @@ corrected with each release. &lt;/p&gt;
           &lt;li&gt;Fixed the order of the pages in the Control Panel when adding new pages&lt;/li&gt;
           &lt;li&gt;Improved usability in the Edit Extensions Page&lt;/li&gt;
           &lt;li&gt;Telerik resource files were updated to version 915 release&lt;/li&gt;
-          &lt;li&gt;Updated the Portals Module and Site Settings to consistently display &quot;site&quot;
-          instead of &quot;portal&quot;&lt;/li&gt;
+          &lt;li&gt;Updated the Portals Module and Site Settings to consistently display "site"
+          instead of "portal"&lt;/li&gt;
           &lt;li&gt;The community modules have been removed from the installation package and
           will be available through the Extensions Catalog&lt;/li&gt;
           &lt;/ul&gt;
@@ -1689,9 +1689,9 @@ corrected with each release. &lt;/p&gt;
           &lt;li&gt;none&lt;/li&gt;
           &lt;/ul&gt;
       </value>
-    </data>
-    <data name="WhatsNew.06.01.01" xml:space="preserve">
-        <value>
+  </data>
+  <data name="WhatsNew.06.01.01" xml:space="preserve">
+    <value>
             &lt;H3 class=SubSubHead&gt;Major Highlights&lt;/H3&gt;
             &lt;UL&gt;
             &lt;LI&gt;Fixed problem with the core skin object rendering CSS above the other
@@ -1711,5 +1711,8 @@ corrected with each release. &lt;/p&gt;
             &lt;UL&gt;
             &lt;LI&gt;none &lt;/LI&gt;&lt;/UL&gt;
         </value>
-    </data>
+  </data>
+  <data name="WhatsNew.06.01.02" xml:space="preserve">
+    <value>&lt;H3 class=SubSubHead&gt;Waiting For Whats New for 6.1.2&lt;/H3&gt;</value>
+  </data>
 </root>

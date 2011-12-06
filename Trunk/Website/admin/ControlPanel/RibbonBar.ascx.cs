@@ -112,27 +112,27 @@ namespace DotNetNuke.UI.ControlPanels
         {
             if (toolName == "DeletePage")
             {
-                return Localization.GetString("Tool.DeletePage.Confirm", LocalResourceFile);
+                return ClientAPI.GetSafeJSString(Localization.GetString("Tool.DeletePage.Confirm", LocalResourceFile));
             }
 
             if (toolName == "CopyPermissionsToChildren")
             {
                 if (PortalSecurity.IsInRole("Administrators"))
                 {
-                    return Localization.GetString("Tool.CopyPermissionsToChildren.Confirm", LocalResourceFile);
+                    return ClientAPI.GetSafeJSString(Localization.GetString("Tool.CopyPermissionsToChildren.Confirm", LocalResourceFile));
                 }
 
-                return Localization.GetString("Tool.CopyPermissionsToChildrenPageEditor.Confirm", LocalResourceFile);
+                return ClientAPI.GetSafeJSString(Localization.GetString("Tool.CopyPermissionsToChildrenPageEditor.Confirm", LocalResourceFile));
             }
 
             if (toolName == "CopyDesignToChildren")
             {
                 if (PortalSecurity.IsInRole("Administrators"))
                 {
-                    return Localization.GetString("Tool.CopyDesignToChildren.Confirm", LocalResourceFile);
+                    return ClientAPI.GetSafeJSString(Localization.GetString("Tool.CopyDesignToChildren.Confirm", LocalResourceFile));
                 }
 
-                return Localization.GetString("Tool.CopyDesignToChildrenPageEditor.Confirm", LocalResourceFile);
+                return ClientAPI.GetSafeJSString(Localization.GetString("Tool.CopyDesignToChildrenPageEditor.Confirm", LocalResourceFile));
             }
 
             return string.Empty;

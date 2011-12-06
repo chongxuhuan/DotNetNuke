@@ -811,46 +811,46 @@ namespace DotNetNuke.Modules.Admin.Portals
             {
                 try
                 {
-                    var objPortalController = new PortalController();
-                    PortalInfo objPortal = objPortalController.GetPortal(_portalId);
+                    var portalController = new PortalController();
+                    PortalInfo existingPortal = portalController.GetPortal(_portalId);
 
-                    string strLogo = String.Format("FileID={0}", ctlLogo.FileID);
-                    string strBackground = String.Format("FileID={0}", ctlBackground.FileID);
+                    string logo = String.Format("FileID={0}", ctlLogo.FileID);
+                    string background = String.Format("FileID={0}", ctlBackground.FileID);
 
                     //Refresh if Background or Logo file have changed
-                    bool refreshPage = (strBackground == objPortal.BackgroundFile || strLogo == objPortal.LogoFile);
+                    bool refreshPage = (background == existingPortal.BackgroundFile || logo == existingPortal.LogoFile);
 
-                    float hostFee = 0;
+                    float hostFee = existingPortal.HostFee;
                     if (!String.IsNullOrEmpty(txtHostFee.Text))
                     {
                         hostFee = float.Parse(txtHostFee.Text);
                     }
 
-                    int hostSpace = 0;
+                    int hostSpace = existingPortal.HostSpace;
                     if (!String.IsNullOrEmpty(txtHostSpace.Text))
                     {
                         hostSpace = int.Parse(txtHostSpace.Text);
                     }
 
-                    int pageQuota = 0;
+                    int pageQuota = existingPortal.PageQuota;
                     if (!String.IsNullOrEmpty(txtPageQuota.Text))
                     {
                         pageQuota = int.Parse(txtPageQuota.Text);
                     }
 
-                    int userQuota = 0;
+                    int userQuota = existingPortal.UserQuota;
                     if (!String.IsNullOrEmpty(txtUserQuota.Text))
                     {
                         userQuota = int.Parse(txtUserQuota.Text);
                     }
 
-                    int siteLogHistory = 0;
+                    int siteLogHistory = existingPortal.SiteLogHistory;
                     if (!String.IsNullOrEmpty(txtSiteLogHistory.Text))
                     {
                         siteLogHistory = int.Parse(txtSiteLogHistory.Text);
                     }
 
-                    DateTime expiryDate = Null.NullDate;
+                    DateTime expiryDate = existingPortal.ExpiryDate;
                     if (datepickerExpiryDate.SelectedDate.HasValue)
                     {
                         expiryDate = datepickerExpiryDate.SelectedDate.Value;
@@ -896,12 +896,12 @@ namespace DotNetNuke.Modules.Admin.Portals
                         txtPassword.Attributes["value"] = txtPassword.Text;
                     }
 
-                    PortalInfo portal = new PortalInfo
+                    var portal = new PortalInfo
                                             {
                                                 PortalID = _portalId,
-                                                PortalGroupID = objPortal.PortalGroupID,
+                                                PortalGroupID = existingPortal.PortalGroupID,
                                                 PortalName = txtPortalName.Text,
-                                                LogoFile = strLogo,
+                                                LogoFile = logo,
                                                 FooterText = txtFooterText.Text,
                                                 ExpiryDate = expiryDate,
                                                 UserRegistration = optUserRegistration.SelectedIndex,
@@ -920,7 +920,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                                                 ProcessorPassword = txtPassword.Text,
                                                 Description = txtDescription.Text,
                                                 KeyWords = txtKeyWords.Text,
-                                                BackgroundFile = strBackground,
+                                                BackgroundFile = background,
                                                 SiteLogHistory = siteLogHistory,
                                                 SplashTabId = intSplashTabId,
                                                 HomeTabId = intHomeTabId,
@@ -928,11 +928,11 @@ namespace DotNetNuke.Modules.Admin.Portals
                                                 RegisterTabId = intRegisterTabId,
                                                 UserTabId = intUserTabId,
                                                 SearchTabId = intSearchTabId,
-                                                DefaultLanguage = objPortal.DefaultLanguage,
+                                                DefaultLanguage = existingPortal.DefaultLanguage,
                                                 HomeDirectory = lblHomeDirectory.Text,
                                                 CultureCode = SelectedCultureCode
                                             };
-                    objPortalController.UpdatePortalInfo(portal);
+                    portalController.UpdatePortalInfo(portal);
 
                     if (!refreshPage)
                     {

@@ -163,25 +163,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Page_PreRender runs just before the page is rendered
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/15/2007	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
-
-            //Make sure that the password is not cleared on pastback
-            txtPassword.Attributes["value"] = txtPassword.Text;
-            txtConfirm.Attributes["value"] = txtConfirm.Text;
-        }
+        
 
         /// -----------------------------------------------------------------------------
         /// <summary>
