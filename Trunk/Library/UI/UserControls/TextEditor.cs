@@ -197,11 +197,8 @@ namespace DotNetNuke.UI.UserControls
             }
             set
             {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    TxtDesktopHTML.Text = Decode(HtmlUtils.ConvertToText(value));
-                    _richTextEditor.Text = Decode(value);
-                }
+				TxtDesktopHTML.Text = Decode(HtmlUtils.ConvertToText(value));
+				_richTextEditor.Text = Decode(value);
             }
         }
 

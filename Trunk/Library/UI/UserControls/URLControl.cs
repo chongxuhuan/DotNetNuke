@@ -587,6 +587,8 @@ namespace DotNetNuke.UI.UserControls
             set
             {
                 ViewState["Url"] = value;
+				txtUrl.Text = string.Empty;
+
                 if (IsTrackingViewState)
                 {
                     _doChangeURL = true;
@@ -976,8 +978,6 @@ namespace DotNetNuke.UI.UserControls
                         FileRow.Visible = false;
                         UserRow.Visible = false;
                         ImagesRow.Visible = false;
-
-                		txtUrl.Text = string.Empty;
                         break;
                     case "I": //System Image
                         URLRow.Visible = false;

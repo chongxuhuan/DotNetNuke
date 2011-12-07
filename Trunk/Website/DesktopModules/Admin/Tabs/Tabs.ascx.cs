@@ -723,13 +723,10 @@ namespace DotNetNuke.Modules.Admin.Pages
                 drpSkin.SelectedValue = tab.SkinSrc;
                 drpContainer.SelectedValue = tab.ContainerSrc;
 
-                if (tab.Url == "")
+				ctlURL.Url = tab.Url;
+                if (string.IsNullOrEmpty(tab.Url))
                 {
                     ctlURL.UrlType = "N";
-                }
-                else
-                {
-                    ctlURL.Url = tab.Url;
                 }
 
                 chkPermanentRedirect.Checked = tab.PermanentRedirect;
