@@ -142,7 +142,7 @@
     <value>Enter a name for the Site</value>
   </data>
   <data name="valPortalName.ErrorMessage" xml:space="preserve">
-    <value>Portal Name Is Required.</value>
+    <value>Site Title Is Required.</value>
   </data>
   <data name="plTitle.Text" xml:space="preserve">
     <value>Title:</value>
@@ -317,5 +317,8 @@
   </data>
   <data name="useCurrentLabel.Text" xml:space="preserve">
     <value>Use Current User as Administrator:</value>
+  </data>
+  <data name="valPortalAlias.ErrorMessage" xml:space="preserve">
+    <value>Site Alias is required.</value>
   </data>
 </root>

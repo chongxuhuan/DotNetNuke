@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="footer.text" xml:space="preserve">
     <value>For a complete list of all bug fixes and enhancements, please see the &lt;a target="_blank" href="http://support.dotnetnuke.com/project/Project.aspx?Tab=Changelog&amp;PROJID=2"&gt;official change log&lt;/a&gt;.</value>
@@ -1548,8 +1548,8 @@ corrected with each release. &lt;/p&gt;
           &lt;/ul&gt;
           &lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
           &lt;ul&gt;
-          &lt;li&gt;Added DNNWerk's Page Management Module to the DotNetNuke Core &lt;/li&gt;
-          &lt;li&gt;Added DNNWerk's RadEditor Provider to the DotNetNuke Core &lt;/li&gt;
+          &lt;li&gt;Added DNNWerk&#39;s Page Management Module to the DotNetNuke Core &lt;/li&gt;
+          &lt;li&gt;Added DNNWerk&#39;s RadEditor Provider to the DotNetNuke Core &lt;/li&gt;
           &lt;/ul&gt;
           &lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
           &lt;ul&gt;
@@ -1646,8 +1646,8 @@ corrected with each release. &lt;/p&gt;
 	&lt;li&gt;none&lt;/li&gt;
 &lt;/ul&gt;</value>
   </data>
-  <data name="WhatsNew.06.01.00" xml:space="preserve">
-    <value>
+    <data name="WhatsNew.06.01.00" xml:space="preserve">
+      <value>
           &lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
           &lt;ul&gt;
           &lt;li&gt;Implemented a new way of managing client resources which dramatically improves
@@ -1666,8 +1666,8 @@ corrected with each release. &lt;/p&gt;
           &lt;li&gt;Fixed the order of the pages in the Control Panel when adding new pages&lt;/li&gt;
           &lt;li&gt;Improved usability in the Edit Extensions Page&lt;/li&gt;
           &lt;li&gt;Telerik resource files were updated to version 915 release&lt;/li&gt;
-          &lt;li&gt;Updated the Portals Module and Site Settings to consistently display "site"
-          instead of "portal"&lt;/li&gt;
+          &lt;li&gt;Updated the Portals Module and Site Settings to consistently display &quot;site&quot;
+          instead of &quot;portal&quot;&lt;/li&gt;
           &lt;li&gt;The community modules have been removed from the installation package and
           will be available through the Extensions Catalog&lt;/li&gt;
           &lt;/ul&gt;
@@ -1689,9 +1689,9 @@ corrected with each release. &lt;/p&gt;
           &lt;li&gt;none&lt;/li&gt;
           &lt;/ul&gt;
       </value>
-  </data>
-  <data name="WhatsNew.06.01.01" xml:space="preserve">
-    <value>
+    </data>
+    <data name="WhatsNew.06.01.01" xml:space="preserve">
+        <value>
             &lt;H3 class=SubSubHead&gt;Major Highlights&lt;/H3&gt;
             &lt;UL&gt;
             &lt;LI&gt;Fixed problem with the core skin object rendering CSS above the other
@@ -1711,8 +1711,58 @@ corrected with each release. &lt;/p&gt;
             &lt;UL&gt;
             &lt;LI&gt;none &lt;/LI&gt;&lt;/UL&gt;
         </value>
-  </data>
-  <data name="WhatsNew.06.01.02" xml:space="preserve">
-    <value>&lt;H3 class=SubSubHead&gt;Waiting For Whats New for 6.1.2&lt;/H3&gt;</value>
-  </data>
+    </data>
+    <data name="WhatsNew.06.01.02" xml:space="preserve">
+      <value>
+        &lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+        &lt;ul&gt;
+        &lt;li&gt;Updated XmlMerge to support location tags in web.config&lt;/li&gt;
+        &lt;li&gt;Added a date picker control to prevent users from entering the wrong date format when assigning security roles to users&lt;/li&gt;
+        &lt;li&gt;Fixed issue with deleting the homepage of secondary languages when using Content Localization&lt;/li&gt;
+        &lt;li&gt;Fixed issue with SSL and popups that caused the website to load in Popup&lt;/li&gt;
+        &lt;li&gt;Fixed issue loading attachments in the Newsletter module&lt;/li&gt;
+        &lt;li&gt;Fixed issue in the Text Editor that stopped the user from resetting values to empty or null&lt;/li&gt;
+        &lt;li&gt;Fixed issue with Telerik Folder Browser generating incorrect LinkClick urls for child portals&lt;/li&gt;
+        &lt;li&gt;Fixed issue when using Windows authentication after upgrading to DNN 6.0&lt;/li&gt;
+        &lt;li&gt;Fixed an issue during upgrade caused by the client dependency framework updating web.config for each extension installed - this was causing a problem with web.config file access&lt;/li&gt;
+        &lt;li&gt;Fixed issue with XmlMerge which could cause extension uninstalls to fail&lt;/li&gt;
+        &lt;li&gt;Fixed RadEditor Localization issue&lt;/li&gt;
+        &lt;li&gt;Fixed issue in Site Settings that prevented admins from updating fields&lt;/li&gt;
+        &lt;li&gt;Fixed Ribbon Bar issue related to apostrophe in Localization&lt;/li&gt;
+        &lt;li&gt;Fixed the errors generated when the Preview pop-up is opened&lt;/li&gt;
+        &lt;li&gt;Removed Log4Net Config file from the upgrade package&lt;/li&gt;
+        &lt;li&gt;Fixed issue with the User Account Photo&lt;/li&gt;
+        &lt;li&gt;Fixed issue with the sitemap generating TabId's instead of friendly URL's&lt;/li&gt;
+        &lt;li&gt;Fixed issue when synchronizing secured folders. Files were not being renamed to the correct extension&lt;/li&gt;
+        &lt;li&gt;Fixed error when updating the default alias&lt;/li&gt;
+        &lt;li&gt;Fixed issue during the creation of Language Packs&lt;/li&gt;
+        &lt;li&gt;Fixed issue that prevented help text from being shown in the Pages Module&lt;/li&gt;
+        &lt;li&gt;Fixed issue that prevented help text to be shown during installation&lt;/li&gt;
+        &lt;li&gt;Enhanced the create new website flow&lt;/li&gt;
+        &lt;li&gt;Fixed issue in the File Manager that was causing folder not to be shown after sync&lt;/li&gt;
+        &lt;li&gt;Added a missing localization key in the installation flow&lt;/li&gt;
+        &lt;li&gt;Fixed issue when moving more than one file in the File Manager&lt;/li&gt;
+        &lt;li&gt;Updated the Telerik Editor Provider to the latest version&lt;/li&gt;
+        &lt;li&gt;Fixed XHTML Compatibility issues in SkinController.cs&lt;/li&gt;
+        &lt;li&gt;Removed hard coded settings from the Banner SkinObject&lt;/li&gt;&lt;/ul&gt;
+        &lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+        &lt;ul&gt;
+        &lt;li&gt;Fixed issue where setting up a site with insufficent permissions would show an unauthorized access error that showed the folder the site was in - the path has now 
+        been removed from the exceptio&lt;/li&gt;
+        &lt;li&gt;Fixed issue where cached failed passwords could theoretically be retrieved from browser cache&lt;/li&gt;
+        &lt;/ul&gt;
+        &lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+        &lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+        &lt;ul&gt;
+        &lt;li&gt;File Manager Module&lt;/li&gt;
+        &lt;li&gt;HTML Editor Module&lt;/li&gt;
+        &lt;li&gt;Newsletter Module&lt;/li&gt;
+        &lt;li&gt;Banners Module&lt;/li&gt;
+        &lt;/ul&gt;
+        &lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+        &lt;ul&gt;
+        &lt;li&gt;RadEditor Provider&lt;/li&gt;
+        &lt;/ul&gt;
+      </value>
+    </data>
 </root>

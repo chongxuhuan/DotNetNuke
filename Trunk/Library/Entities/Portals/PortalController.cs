@@ -1276,11 +1276,6 @@ namespace DotNetNuke.Entities.Portals
 						portal.KeyWords = keyWords;
 						portal.UserTabId = TabController.GetTabByTabPath(portal.PortalID, "//UserProfile", portal.CultureCode);
 						portal.SearchTabId = TabController.GetTabByTabPath(portal.PortalID, "//SearchResults", portal.CultureCode);
-						//update portal name to 'Site-{PortalID}' when portal name is empty.
-						if (string.IsNullOrEmpty(portal.PortalName))
-						{
-							portal.PortalName = string.Format("Site-{0}", portal.PortalID);
-						}
 						UpdatePortalInfo(portal);
 						adminUser.Profile.PreferredLocale = portal.DefaultLanguage;
 						var portalSettings = new PortalSettings(portal);
@@ -1308,8 +1303,8 @@ namespace DotNetNuke.Entities.Portals
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("ServerPath:", serverPath));
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("ChildPath:", childPath));
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("IsChildPortal:", isChildPortal.ToString()));
-                            var objEventLog = new EventLogController();
-                            objEventLog.AddLog(objEventLogInfo);
+                            var eventLog = new EventLogController();
+                            eventLog.AddLog(objEventLogInfo);
                         }
                         catch (Exception exc)
                         {

@@ -27,6 +27,7 @@ using System;
 using System.Web;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.EventQueue;
@@ -123,7 +124,14 @@ namespace DotNetNuke.Entities.Modules
                     desktopModule.IsPortable = (objController is IPortable);
                     desktopModule.IsSearchable = (objController is ISearchable);
                     desktopModule.IsUpgradeable = (objController is IUpgradeable);
-                    DesktopModuleController.SaveDesktopModule(desktopModule, false, true, false);
+                    DesktopModuleController.SaveDesktopModule(desktopModule, false, false, false);
+
+                    var portalController = new PortalController();
+                    foreach (PortalInfo portal in portalController.GetPortals())
+                    {
+                        DataCache.RemoveCache(String.Format(DataCache.DesktopModuleCacheKey, portal.PortalID));
+                        DataCache.RemoveCache(String.Format(DataCache.PortalDesktopModuleCacheKey, portal.PortalID));
+                    }
                 }
             }
             catch (Exception exc)

@@ -21,9 +21,9 @@
 			</asp:radiobuttonlist>
         </div>
         <div class="dnnFormItem">
-            <dnn:label id="plPortalAlias" runat="server" controlname="txtPortalName" />
-            <asp:textbox id="txtPortalName" CssClass="dnnFormRequired" runat="server" maxlength="128" />
-			<asp:requiredfieldvalidator id="valPortalName" resourcekey="valPortalName.ErrorMessage" CssClass="dnnFormMessage dnnFormError" runat="server" controltovalidate="txtPortalName" display="Dynamic" />
+            <dnn:label id="plPortalAlias" runat="server" controlname="txtPortalAlias" />
+            <asp:textbox id="txtPortalAlias" CssClass="dnnFormRequired" runat="server" maxlength="128" />
+			<asp:requiredfieldvalidator id="valPortalAlias" resourcekey="valPortalAlias.ErrorMessage" CssClass="dnnFormMessage dnnFormError" runat="server" controltovalidate="txtPortalAlias" display="Dynamic" />
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plHomeDirectory" runat="server" controlname="txtHomeDirectory" />
@@ -31,8 +31,9 @@
 			<asp:LinkButton CausesValidation="False" ID="btnCustomizeHomeDir" Runat="server" resourcekey="Customize" CssClass="dnnSecondaryAction" />
         </div>
         <div class="dnnFormItem">
-            <dnn:label id="plTitle" runat="server" controlname="txtTitle" />
-            <asp:textbox id="txtTitle" runat="server" maxlength="128" />
+            <dnn:label id="plTitle" runat="server" controlname="txtPortalName" />
+            <asp:textbox id="txtPortalName" CssClass="dnnFormRequired" runat="server" maxlength="128" />
+			<asp:requiredfieldvalidator id="valPortalName" resourcekey="valPortalName.ErrorMessage" CssClass="dnnFormMessage dnnFormError" runat="server" controltovalidate="txtPortalName" display="Dynamic" />
         </div>
         <div class="dnnFormItem">
             <dnn:label id="plDescription" runat="server" controlname="txtDescription" />

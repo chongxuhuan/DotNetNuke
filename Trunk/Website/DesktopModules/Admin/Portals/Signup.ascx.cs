@@ -139,7 +139,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
                         optType.SelectedValue = "C";
 
-                        txtPortalName.Text = Globals.GetDomainName(Request) + @"/";
+						txtPortalAlias.Text = Globals.GetDomainName(Request) + @"/";
                         rowType.Visible = false;
                         string strMessage = string.Format(Localization.GetString("DemoMessage", LocalResourceFile),
                                                           Host.DemoPeriod != Null.NullInteger ? " for " + Host.DemoPeriod + " days" : "",
@@ -229,20 +229,20 @@ namespace DotNetNuke.Modules.Admin.Portals
                     }
 
                     //Set Portal Name
-                    txtPortalName.Text = txtPortalName.Text.ToLowerInvariant();
-                    txtPortalName.Text = txtPortalName.Text.Replace("http://", "");
+					txtPortalAlias.Text = txtPortalAlias.Text.ToLowerInvariant();
+					txtPortalAlias.Text = txtPortalAlias.Text.Replace("http://", "");
 
                     //Validate Portal Name
                     if (!Globals.IsHostTab(PortalSettings.ActiveTab.TabID))
                     {
                         blnChild = true;
-                        strPortalAlias = txtPortalName.Text;
+						strPortalAlias = txtPortalAlias.Text;
                     }
                     else
                     {
                         blnChild = (optType.SelectedValue == "C");
 
-                        strPortalAlias = blnChild ? txtPortalName.Text.Substring(txtPortalName.Text.LastIndexOf("/") + 1) : txtPortalName.Text;
+						strPortalAlias = blnChild ? txtPortalAlias.Text.Substring(txtPortalAlias.Text.LastIndexOf("/") + 1) : txtPortalAlias.Text;
                     }
 
                     string message = String.Empty;
@@ -279,7 +279,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                                 }
                                 else
                                 {
-                                    strPortalAlias = txtPortalName.Text;
+									strPortalAlias = txtPortalAlias.Text;
                                 }
                             }
                         }
@@ -352,7 +352,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
 
                             }
-                            intPortalId = objPortalController.CreatePortal(txtTitle.Text,
+							intPortalId = objPortalController.CreatePortal(txtPortalName.Text,
                                                                            adminUser,
                                                                            txtDescription.Text,
                                                                            txtKeyWords.Text,
@@ -454,7 +454,7 @@ namespace DotNetNuke.Modules.Admin.Portals
         {
             try
             {
-                txtPortalName.Text = optType.SelectedValue == "C" ? Globals.GetDomainName(Request) + @"/" : "";
+				txtPortalAlias.Text = optType.SelectedValue == "C" ? Globals.GetDomainName(Request) + @"/" : "";
             }
             catch (Exception exc) //Module failed to load
             {
