@@ -431,10 +431,11 @@ namespace DotNetNuke.Entities.Profile
         /// -----------------------------------------------------------------------------
         public static void GetUserProfile(ref UserInfo user)
         {
-            int portalId = GetEffectivePortalId(user.PortalID);
-            user.PortalID = portalId;
+            int portalId = user.PortalID;
+            user.PortalID = GetEffectivePortalId(portalId);
 
             _profileProvider.GetUserProfile(ref user);
+            user.PortalID = portalId;
         }
 
         /// -----------------------------------------------------------------------------
