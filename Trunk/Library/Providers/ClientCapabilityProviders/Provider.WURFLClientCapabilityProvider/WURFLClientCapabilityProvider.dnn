@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.WURFLClientCapabilityProvider" type="Provider" version="06.01.02">
+    <package name="DotNetNuke.WURFLClientCapabilityProvider" type="Provider" version="06.02.00">
       <friendlyName>DotNetNuke WURFL Client Capability Provider</friendlyName>
       <description>DotNetNuke WURFL Based Client Capability Provider. This provider is needed to detect capabilities ( height, width, etc.) of device (mobile / table / facebook). </description>
       <dependencies/>

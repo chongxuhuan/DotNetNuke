@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
     <packages>
-        <package name="DotNetNuke.SchedulingProvider" type="Provider" version="06.01.02">
+        <package name="DotNetNuke.SchedulingProvider" type="Provider" version="06.02.00">
             <friendlyName>DotNetNuke Scheduling Provider</friendlyName>
             <description>DotNetNuke Scheduling Provider Project provides a scheduling service</description>
             <dependencies/>

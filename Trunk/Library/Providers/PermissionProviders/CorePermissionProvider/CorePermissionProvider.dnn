@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
     <packages>
-        <package name="DotNetNuke.CorePermissionProvider" type="Provider" version="06.01.02">
+        <package name="DotNetNuke.CorePermissionProvider" type="Provider" version="06.02.00">
             <friendlyName>DotNetNuke Core Permission Provider</friendlyName>
             <description>DotNetNuke Core Permission Provider Project provides a core permisisons.</description>
             <dependencies/>
