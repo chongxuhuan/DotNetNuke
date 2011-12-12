@@ -162,7 +162,7 @@ namespace DotNetNuke.Modules.Admin.Newsletters
         private void SendEmail(List<string> roleNames, List<UserInfo> users, ref string message, ref ModuleMessage.ModuleMessageType messageType)
         {
             //it is awkward to ensure that email is disposed correctly because when sent asynch it should be disposed by the  asynch thread
-            var email = new SendTokenizedBulkEmail(roleNames, users, /*removeDuplicates*/ true, txtSubject.Text, teMessage.Text);
+			var email = new SendTokenizedBulkEmail(roleNames, users, /*removeDuplicates*/ true, txtSubject.Text, ConvertToAbsoluteUrls(teMessage.Text));
 
             bool isValid;
             try
@@ -407,9 +407,7 @@ namespace DotNetNuke.Modules.Admin.Newsletters
                 }
 				
 				//convert links to absolute
-                var strBody = teMessage.Text;
-                const string pattern = "<(a|link|img|script|object).[^>]*(href|src|action)=(\\\"|'|)(?<url>(.[^\\\"']*))(\\\"|'|)[^>]*>";
-                strBody = Regex.Replace(strBody, pattern, FormatUrls);
+				var strBody = ConvertToAbsoluteUrls(teMessage.Text);
 
                 if (chkReplaceTokens.Checked)
                 {
@@ -435,6 +433,13 @@ namespace DotNetNuke.Modules.Admin.Newsletters
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+
+		private static string ConvertToAbsoluteUrls(string content)
+		{
+			//convert links to absolute
+			const string pattern = "<(a|link|img|script|object).[^>]*(href|src|action)=(\\\"|'|)(?<url>(.[^\\\"']*))(\\\"|'|)[^>]*>";
+			return Regex.Replace(content, pattern, FormatUrls);
+		}
 
         #endregion
 

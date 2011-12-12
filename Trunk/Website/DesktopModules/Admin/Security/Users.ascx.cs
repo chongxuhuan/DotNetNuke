@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -32,6 +33,7 @@ using DotNetNuke.Common.Lists;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security;
@@ -472,7 +474,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
             if (imageVisibility)
             {
-                imageVisibility = user.UserID != PortalSettings.AdministratorId
+				imageVisibility = !IsPortalAdministrator(user.UserID)
                                         && (!user.IsInRole(PortalSettings.AdministratorRoleName)
                                             || (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)))
                                         && user.UserID != UserId;
@@ -496,6 +498,18 @@ namespace DotNetNuke.Modules.Admin.Users
             }
             return imageVisibility;
         }
+
+		private bool IsPortalAdministrator(int userId)
+		{
+			var portalController = new PortalController();
+			var groupId = portalController.GetPortal(PortalSettings.PortalId).PortalGroupID;
+			if (groupId != Null.NullInteger)
+			{
+				return PortalGroupController.Instance.GetPortalsByGroup(groupId).Any(p => p.AdministratorId == userId);
+			}
+
+			return userId != PortalSettings.AdministratorId;
+		}
 		
 		#endregion
 
