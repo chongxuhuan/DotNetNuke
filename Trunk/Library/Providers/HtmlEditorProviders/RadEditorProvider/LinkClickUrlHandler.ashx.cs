@@ -75,40 +75,40 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 #region Private Functions
 
-		private string GetLinkClickURL(ref DialogParams @params, ref string link)
+		private string GetLinkClickURL(ref DialogParams dialogParams, ref string link)
 		{
-			link = GetLinkUrl(ref @params, link);
-			return "http://" + this.Context.Request.Url.Host + DotNetNuke.Common.Globals.LinkClick(link, @params.TabId, @params.ModuleId, true, false, @params.PortalId, @params.EnableUrlLanguage, @params.PortalGuid);
+			link = GetLinkUrl(ref dialogParams, link);
+			return "http://" + this.Context.Request.Url.Host + DotNetNuke.Common.Globals.LinkClick(link, dialogParams.TabId, dialogParams.ModuleId, true, false, dialogParams.PortalId, dialogParams.EnableUrlLanguage, dialogParams.PortalGuid);
 
 		}
 
-		private string GetLinkUrl(ref DialogParams @params, string link)
+		private string GetLinkUrl(ref DialogParams dialogParams, string link)
 		{
-			ArrayList aliasList = _portalAliasController.GetPortalAliasArrayByPortalID(@params.PortalId);
+			ArrayList aliasList = _portalAliasController.GetPortalAliasArrayByPortalID(dialogParams.PortalId);
 
-			if (@params.LinkUrl.Contains(@params.HomeDirectory))
+			if (dialogParams.LinkUrl.Contains(dialogParams.HomeDirectory))
 			{
-				string filePath = @params.LinkUrl.Substring(@params.LinkUrl.IndexOf(@params.HomeDirectory)).Replace(@params.HomeDirectory, "");
-				string linkedFileId = _fileController.ConvertFilePathToFileId(filePath, @params.PortalId).ToString();
+				string filePath = dialogParams.LinkUrl.Substring(dialogParams.LinkUrl.IndexOf(dialogParams.HomeDirectory)).Replace(dialogParams.HomeDirectory, "");
+				var linkedFileId = FileManager.Instance.GetFile(dialogParams.PortalId, HttpUtility.UrlDecode(filePath)).FileId;
 				link = string.Format("fileID={0}", linkedFileId);
 			}
 			else
 			{
 				foreach (PortalAliasInfo portalAlias in aliasList)
 				{
-					@params.LinkUrl = @params.LinkUrl.Replace(portalAlias.HTTPAlias, "");
+					dialogParams.LinkUrl = dialogParams.LinkUrl.Replace(portalAlias.HTTPAlias, "");
 				}
 
-				string tabPath = @params.LinkUrl.Replace("http://", "").Replace("/", "//").Replace(".aspx", "");
+				string tabPath = dialogParams.LinkUrl.Replace("http://", "").Replace("/", "//").Replace(".aspx", "");
 				string cultureCode = Localization.SystemLocale;
 
 				//Try HumanFriendlyUrl TabPath
-				link = TabController.GetTabByTabPath(@params.PortalId, tabPath, cultureCode).ToString();
+				link = TabController.GetTabByTabPath(dialogParams.PortalId, tabPath, cultureCode).ToString();
 
 				if (link == Null.NullInteger.ToString())
 				{
 					//Try getting the tabId from the querystring
-					string[] arrParams = @params.LinkUrl.Split('/');
+					string[] arrParams = dialogParams.LinkUrl.Split('/');
 					for (int i = 0; i < arrParams.Length; i++)
 					{
 						if (arrParams[i].ToLowerInvariant() == "tabid")
@@ -119,7 +119,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 					}
                     if (link == Null.NullInteger.ToString())
 					{
-						link = @params.LinkUrl;
+						link = dialogParams.LinkUrl;
 					}
 				}
 
