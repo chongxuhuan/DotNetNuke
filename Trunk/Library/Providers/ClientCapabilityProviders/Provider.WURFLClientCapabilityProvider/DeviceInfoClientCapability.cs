@@ -61,6 +61,12 @@ namespace DotNetNuke.Services.ClientCapability
         /// Returns the request prefered HTML DTD
         /// </summary>
         public string HtmlPreferedDTD { get; set; }
+
+        /// <summary>
+        ///   Http server variable that indicates that SSL offloading is enabled
+        /// </summary>
+        public string SSLOffload { get; set; }
+
         #endregion
 
         #region Constructor
@@ -93,7 +99,8 @@ namespace DotNetNuke.Services.ClientCapability
             ScreenResolutionHeightInPixels = Capability<int>(deviceInfo, resolution_height);
             SupportsFlash = Capability<bool>(deviceInfo, full_flash_support);
             BrowserName = Capability<string>(deviceInfo, mobile_browser);
-            HtmlPreferedDTD = Capability<string>(deviceInfo, html_preferred_dtd);            
+            HtmlPreferedDTD = Capability<string>(deviceInfo, html_preferred_dtd);
+            SSLOffload = Capability<string>(deviceInfo, ssl_offload);
         }
         #endregion
 
@@ -107,6 +114,7 @@ namespace DotNetNuke.Services.ClientCapability
         private const string full_flash_support = "full_flash_support";
         private const string mobile_browser = "mobile_browser";
         private const string html_preferred_dtd = "html_preferred_dtd";
+        private const string ssl_offload = "ssl_offload";
                
 
         private static IQueryable<string> _knownCapabilities;
@@ -148,6 +156,7 @@ namespace DotNetNuke.Services.ClientCapability
                     knownCapabilities.Add("xhtmlmp_preferred_mime_type");
                     knownCapabilities.Add(full_flash_support);
                     knownCapabilities.Add(html_preferred_dtd);
+                    knownCapabilities.Add(ssl_offload); 
 
                     _knownCapabilities = knownCapabilities.AsQueryable();                    
                 }

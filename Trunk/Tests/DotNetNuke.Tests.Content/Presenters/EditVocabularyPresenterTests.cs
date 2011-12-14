@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Data;
 using System.Data.SqlClient;
 using System.Web;
 
@@ -32,7 +31,6 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Content.Taxonomy;
-using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Modules.Taxonomy.Presenters;
 using DotNetNuke.Modules.Taxonomy.Views;
 using DotNetNuke.Modules.Taxonomy.Views.Models;
@@ -43,9 +41,9 @@ using DotNetNuke.Tests.Utilities.Mocks;
 using DotNetNuke.Web.UI.WebControls;
 using DotNetNuke.Web.Validators;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Content.Presenters
 {
@@ -160,10 +158,10 @@ namespace DotNetNuke.Tests.Content.Presenters
         #region View Load Tests
 
         [Test]
-        [Row(true, true)]
-        [Row(true, false)]
-        [Row(false, true)]
-        [Row(false, false)]
+        [TestCase(true, true)]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(false, false)]
         public void EditVocabularyPresenter_OnLoad_Calls_View_BindVocabulary(bool isSuperUser, bool isSystem)
         {
             // Arrange
@@ -191,8 +189,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         }
 
         [Test]
-        [Row(true)]
-        [Row(false)]
+        [TestCase(true)]
+        [TestCase(false)]
         public void EditVocabularyPresenter_OnLoad_Calls_View_BindTerms(bool isPostBack)
         {
             // Arrange

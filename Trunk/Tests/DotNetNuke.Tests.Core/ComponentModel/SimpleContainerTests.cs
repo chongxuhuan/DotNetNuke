@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 using DotNetNuke.ComponentModel;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.ComponentModel
 {
@@ -40,7 +40,7 @@ namespace DotNetNuke.Tests.Core.ComponentModel
 
             var retrieved = container.GetComponentList(typeof(IList));
 
-            Assert.AreElementsSame(new List<string> {"payload"}, retrieved);
+            CollectionAssert.AreEqual(new List<string> {"payload"}, retrieved);
         } 
     }
 }

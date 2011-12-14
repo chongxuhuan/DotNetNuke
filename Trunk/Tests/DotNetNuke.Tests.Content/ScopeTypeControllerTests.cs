@@ -32,9 +32,9 @@ using DotNetNuke.Tests.Content.Mocks;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Content
 {
@@ -150,7 +150,7 @@ namespace DotNetNuke.Tests.Content
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeTypeId = Null.NullInteger;
 
-            Assert.Throws<ArgumentException>(() => scopeTypeController.DeleteScopeType(scopeType));
+            Assert.Throws<ArgumentOutOfRangeException>(() => scopeTypeController.DeleteScopeType(scopeType));
         }
 
         [Test]
@@ -245,7 +245,7 @@ namespace DotNetNuke.Tests.Content
             ScopeType scopeType = ContentTestHelper.CreateValidScopeType();
             scopeType.ScopeType = Constants.SCOPETYPE_InValidScopeType;
 
-            Assert.Throws<ArgumentException>(() => scopeTypeController.UpdateScopeType(scopeType));
+            Assert.Throws<ArgumentOutOfRangeException>(() => scopeTypeController.UpdateScopeType(scopeType));
         }
 
         [Test]

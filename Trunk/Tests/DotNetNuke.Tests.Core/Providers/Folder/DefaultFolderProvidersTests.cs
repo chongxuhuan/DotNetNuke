@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 using DotNetNuke.Services.FileSystem.Internal;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Providers.Folder
 {
@@ -41,7 +41,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var defaultProviders = DefaultFolderProviders.GetDefaultProviders();
 
-            Assert.AreElementsEqual(expectedValues, defaultProviders);
+            CollectionAssert.AreEqual(expectedValues, defaultProviders);
         }
 
         #endregion

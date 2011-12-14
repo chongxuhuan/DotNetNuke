@@ -22,21 +22,17 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
-using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Services.Cache;
-using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Mobile;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Services.Mobile
 {
@@ -98,7 +94,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 																		id = Convert.ToInt32(_dtProfiles.Select("", "Id Desc")[0]["Id"]) + 1;
 																	}
 
-																	var row = _dtProfiles.NewRow();
+                                                                    var row = _dtProfiles.NewRow();
 																	row["Id"] = id;
 																	row["PortalId"] = portalId;
 																	row["name"] = name;

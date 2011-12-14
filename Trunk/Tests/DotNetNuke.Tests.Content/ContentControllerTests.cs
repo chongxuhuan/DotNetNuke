@@ -33,9 +33,9 @@ using DotNetNuke.Tests.Content.Mocks;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Content
 {
@@ -135,7 +135,7 @@ namespace DotNetNuke.Tests.Content
         #region DeleteContentItem Tests
 
         [Test]
-        [ExpectedArgumentNullException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ContentController_DeleteContentItem_Throws_On_Null_ContentItem()
         {
             //Arrange
@@ -156,7 +156,7 @@ namespace DotNetNuke.Tests.Content
             content.ContentItemId = Null.NullInteger;
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => controller.DeleteContentItem(content));
+            Assert.Throws<ArgumentOutOfRangeException>(() => controller.DeleteContentItem(content));
         }
 
         [Test]
@@ -384,7 +384,7 @@ namespace DotNetNuke.Tests.Content
             ContentItem content = new ContentItem();
             content.ContentItemId = Null.NullInteger;
 
-            Assert.Throws<ArgumentException>(() => controller.UpdateContentItem(content));
+            Assert.Throws<ArgumentOutOfRangeException>(() => controller.UpdateContentItem(content));
         }
 
         [Test]
@@ -432,7 +432,7 @@ namespace DotNetNuke.Tests.Content
             content.ContentItemId = Null.NullInteger;
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => controller.AddMetaData(content, Constants.CONTENT_ValidMetaDataName, Constants.CONTENT_ValidMetaDataValue));
+            Assert.Throws<ArgumentOutOfRangeException>(() => controller.AddMetaData(content, Constants.CONTENT_ValidMetaDataName, Constants.CONTENT_ValidMetaDataValue));
         }
 
         [Test]
@@ -445,7 +445,7 @@ namespace DotNetNuke.Tests.Content
             ContentItem content = ContentTestHelper.CreateValidContentItem();
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => controller.AddMetaData(content, Null.NullString, Constants.CONTENT_ValidMetaDataValue));
+            Assert.Throws<ArgumentOutOfRangeException>(() => controller.AddMetaData(content, Null.NullString, Constants.CONTENT_ValidMetaDataValue));
         }
 
         [Test]
@@ -477,7 +477,7 @@ namespace DotNetNuke.Tests.Content
             ContentController controller = new ContentController(mockDataService.Object);
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => controller.AddMetaData(null, Constants.CONTENT_ValidMetaDataName, Constants.CONTENT_ValidMetaDataValue));
+            Assert.Throws<ArgumentNullException>(() => controller.AddMetaData(null, Constants.CONTENT_ValidMetaDataName, Constants.CONTENT_ValidMetaDataValue));
         }
 
         [Test]
@@ -491,7 +491,7 @@ namespace DotNetNuke.Tests.Content
             content.ContentItemId = Null.NullInteger;
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => controller.DeleteMetaData(content, Constants.CONTENT_ValidMetaDataName, Constants.CONTENT_ValidMetaDataValue));
+            Assert.Throws<ArgumentOutOfRangeException>(() => controller.DeleteMetaData(content, Constants.CONTENT_ValidMetaDataName, Constants.CONTENT_ValidMetaDataValue));
         }
 
         [Test]
@@ -504,7 +504,7 @@ namespace DotNetNuke.Tests.Content
             ContentItem content = ContentTestHelper.CreateValidContentItem();
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => controller.AddMetaData(content, Null.NullString, Constants.CONTENT_ValidMetaDataValue));
+            Assert.Throws<ArgumentOutOfRangeException>(() => controller.AddMetaData(content, Null.NullString, Constants.CONTENT_ValidMetaDataValue));
         }
 
         [Test]
@@ -536,7 +536,7 @@ namespace DotNetNuke.Tests.Content
             ContentController controller = new ContentController(mockDataService.Object);
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => controller.GetMetaData(Null.NullInteger));
+            Assert.Throws<ArgumentOutOfRangeException>(() => controller.GetMetaData(Null.NullInteger));
         }
 
         [Test]

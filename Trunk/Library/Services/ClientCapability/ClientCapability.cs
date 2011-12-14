@@ -86,6 +86,12 @@ namespace DotNetNuke.Services.ClientCapability
         /// Returns the request prefered HTML DTD
         /// </summary>
         public string HtmlPreferedDTD { get; set; }
+
+        /// <summary>
+        ///   Http server variable used for SSL offloading - if this value is empty offloading is not enabled
+        /// </summary>
+        public string SSLOffload { get; set; }
+
         #endregion
     }
 }

@@ -35,9 +35,9 @@ using DotNetNuke.Tests.Content.Mocks;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Content.Presenters
 {
@@ -110,8 +110,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         #region View Load Tests
 
         [Test]
-        [Row(true)]
-        [Row(false)]
+        [TestCase(true)]
+        [TestCase(false)]
         public void CreateVocabularyPresenter_OnLoad_Calls_View_BindVocabulary(bool isSuperUser)
         {
             // Arrange

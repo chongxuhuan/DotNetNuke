@@ -38,6 +38,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.HttpModules.Config;
 using DotNetNuke.Instrumentation;
+using DotNetNuke.Services.ClientCapability;
 using DotNetNuke.Services.EventQueue;
 using DotNetNuke.Services.Localization;
 
@@ -702,8 +703,8 @@ namespace DotNetNuke.HttpModules
                     //if SSL is enabled
                     if (portalSettings.SSLEnabled)
                     {
-						//if page is secure and connection is not secure
-                        if (portalSettings.ActiveTab.IsSecure && !request.IsSecureConnection)
+						//if page is secure and connection is not secure orelse ssloffload is enabled and server value exists
+                        if ((portalSettings.ActiveTab.IsSecure && !request.IsSecureConnection) || (IsSSLOrOffloadEnabled(request)==true))
                         {
 							//switch to secure connection
                             strURL = requestedPath.Replace("http://", "https://");
@@ -713,8 +714,8 @@ namespace DotNetNuke.HttpModules
                     //if SSL is enforced
                     if (portalSettings.SSLEnforced)
                     {
-						//if page is not secure and connection is secure
-                        if (!portalSettings.ActiveTab.IsSecure && request.IsSecureConnection)
+						//if page is not secure and connection is secure orelse ssloffload is disabled
+                        if ((!portalSettings.ActiveTab.IsSecure && request.IsSecureConnection) || (IsSSLOrOffloadEnabled(request)==false))
                         {
                             //check if connection has already been forced to secure
                             if (request.QueryString["ssl"] == null)
@@ -766,6 +767,26 @@ namespace DotNetNuke.HttpModules
                 //Process any messages in the EventQueue for the Application_Start_FirstRequest event
                 EventQueueController.ProcessMessages("Application_Start_FirstRequest");
             }
+        }
+
+        private bool IsSSLOrOffloadEnabled(HttpRequest request)
+        {
+            //get client capabilities for the request         
+            var clientCapability = ClientCapabilityProvider.Instance().GetClientCapability(request.UserAgent);
+            //if the ssloffload variable has been set check to see if a request header with that type exists
+            if (!string.IsNullOrEmpty(clientCapability.SSLOffload))
+            {
+            var ssloffload = request.ServerVariables[clientCapability.SSLOffload];
+                if (!string.IsNullOrEmpty(ssloffload))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
         }
 
         private bool CanAutoAddPortalAlias()

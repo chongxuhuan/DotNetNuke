@@ -719,9 +719,9 @@ namespace DotNetNuke.Security.Roles
         /// <summary>
         /// Adds a User to a Role
         /// </summary>
-        /// <param name="objUser">The user to assign</param>
-        /// <param name="objRole">The role to add</param>
-        /// <param name="PortalSettings">The PortalSettings of the Portal</param>
+        /// <param name="user">The user to assign</param>
+        /// <param name="role">The role to add</param>
+        /// <param name="portalSettings">The PortalSettings of the Portal</param>
         /// <param name="effDate">The expiry Date of the Role membership</param>
         /// <param name="expDate">The expiry Date of the Role membership</param>
         /// <param name="userId">The Id of the User assigning the role</param>
@@ -730,35 +730,35 @@ namespace DotNetNuke.Security.Roles
         ///     [cnurse]    10/17/2007  Created  (Refactored code from Security Roles user control)
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static void AddUserRole(UserInfo objUser, RoleInfo objRole, PortalSettings PortalSettings, DateTime effDate, DateTime expDate, int userId, bool notifyUser)
+        public static void AddUserRole(UserInfo user, RoleInfo role, PortalSettings portalSettings, DateTime effDate, DateTime expDate, int userId, bool notifyUser)
         {
-            var objRoleController = new RoleController();
-            UserRoleInfo objUserRole = objRoleController.GetUserRole(PortalSettings.PortalId, objUser.UserID, objRole.RoleID);
-            var objEventLog = new EventLogController();
+            var roleController = new RoleController();
+            UserRoleInfo userRole = roleController.GetUserRole(portalSettings.PortalId, user.UserID, role.RoleID);
+            var eventLogController = new EventLogController();
 
             //update assignment
-            objRoleController.AddUserRole(PortalSettings.PortalId, objUser.UserID, objRole.RoleID, effDate, expDate);
+            roleController.AddUserRole(portalSettings.PortalId, user.UserID, role.RoleID, effDate, expDate);
 
             //Set flag on user to make sure its portal roles cookie is refreshed
-            objUser.RefreshRoles = true;
-            UserController.UpdateUser(PortalSettings.PortalId, objUser);
-            if (objUserRole == null)
+            user.ClearRoles();
+            UserController.UpdateUser(portalSettings.PortalId, user);
+            if (userRole == null)
             {
-                objEventLog.AddLog("Role", objRole.RoleName, PortalSettings, userId, EventLogController.EventLogType.USER_ROLE_CREATED);
+                eventLogController.AddLog("Role", role.RoleName, portalSettings, userId, EventLogController.EventLogType.USER_ROLE_CREATED);
 
                 //send notification
                 if (notifyUser)
                 {
-                    SendNotification(objUser, objRole, PortalSettings, UserRoleActions.@add);
+                    SendNotification(user, role, portalSettings, UserRoleActions.@add);
                 }
             }
             else
             {
-                objEventLog.AddLog("Role", objRole.RoleName, PortalSettings, userId, EventLogController.EventLogType.USER_ROLE_UPDATED);
+                eventLogController.AddLog("Role", role.RoleName, portalSettings, userId, EventLogController.EventLogType.USER_ROLE_UPDATED);
                 if (notifyUser)
                 {
-                    objUserRole = objRoleController.GetUserRole(PortalSettings.PortalId, objUser.UserID, objRole.RoleID);
-                    SendNotification(objUser, objRole, PortalSettings, UserRoleActions.update);
+                    userRole = roleController.GetUserRole(portalSettings.PortalId, user.UserID, role.RoleID);
+                    SendNotification(user, role, portalSettings, UserRoleActions.update);
                 }
             }
         }

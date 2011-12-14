@@ -23,11 +23,11 @@
 
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core
 {
-    [AssemblyFixture]
+    [SetUpFixture]
     internal class TestSetup
     {
         [SetUp]

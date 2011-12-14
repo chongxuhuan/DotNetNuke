@@ -28,7 +28,7 @@ using System.Threading;
 
 using DotNetNuke.Collections.Internal;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Collections
 {
@@ -64,16 +64,16 @@ namespace DotNetNuke.Tests.Core.Collections
                 }
             }
 
-            Assert.AreElementsEqual(new Dictionary<string, string> {{KEY, VALUE}}, sharedDictionary.BackingDictionary);
+            CollectionAssert.AreEqual(new Dictionary<string, string> {{KEY, VALUE}}, sharedDictionary.BackingDictionary);
         }
 
-        [Test, ExpectedException(typeof (WriteLockRequiredException)), Factory("GetWriteMethods")]
+        [Test, ExpectedException(typeof (WriteLockRequiredException)), TestCaseSource("GetWriteMethods")]
         public void WriteRequiresLock(Action<SharedDictionary<string, string>> writeAction)
         {
             writeAction.Invoke(InitSharedDictionary("key", "value"));
         }
 
-        [Test, ExpectedException(typeof (ReadLockRequiredException)), Factory("GetReadMethods")]
+        [Test, ExpectedException(typeof (ReadLockRequiredException)), TestCaseSource("GetReadMethods")]
         public void ReadRequiresLock(Action<SharedDictionary<string, string>> readAction)
         {
             readAction.Invoke(InitSharedDictionary("key", "value"));
@@ -147,7 +147,7 @@ namespace DotNetNuke.Tests.Core.Collections
         }
 
         [Test, ExpectedException(typeof (ObjectDisposedException))]
-        [Factory("GetObjectDisposedExceptionMethods")]
+        [TestCaseSource("GetObjectDisposedExceptionMethods")]
         public void MethodsThrowAfterDisposed(Action<SharedDictionary<string, string>> methodCall)
         {
             var d = new SharedDictionary<string, string>(LockingStrategy);

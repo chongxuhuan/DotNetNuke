@@ -22,23 +22,14 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Data;
 using System.Reflection;
 using System.Web;
 
-using DotNetNuke.ComponentModel;
-using DotNetNuke.Data;
-using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Services.ClientCapability;
-using DotNetNuke.Services.Mobile;
-using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
-using Moq;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Services.ClientCapability
 {

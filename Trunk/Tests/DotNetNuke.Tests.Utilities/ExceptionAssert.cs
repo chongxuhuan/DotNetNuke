@@ -24,7 +24,7 @@
 using System;
 using System.Reflection;
 
-using Gallio.Framework.Assertions;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Utilities
 {

@@ -26,9 +26,9 @@ using System.Linq;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Web.Validators;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.UI.Validation
 {

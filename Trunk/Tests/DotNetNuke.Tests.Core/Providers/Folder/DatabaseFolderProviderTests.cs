@@ -34,9 +34,9 @@ using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 using FileInfo = DotNetNuke.Services.FileSystem.FileInfo;
 
@@ -83,7 +83,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region AddFile
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void AddFile_Throws_On_Null_Folder()
         {
             var stream = new Mock<Stream>();
@@ -92,9 +92,9 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         }
 
         [Test]
-        [Row(null)]
-        [Row("")]
-        [ExpectedArgumentException]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
         public void AddFile_Throws_On_NullOrEmpty_FileName(string fileName)
         {
             var stream = new Mock<Stream>();
@@ -107,7 +107,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region DeleteFile
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void DeleteFile_Throws_On_Null_File()
         {
             _dfp.DeleteFile(null);
@@ -128,14 +128,14 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region FileExists
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ExistsFile_Throws_On_Null_Folder()
         {
             _dfp.FileExists(null, Constants.FOLDER_ValidFileName);
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ExistsFile_Throws_On_Null_FileName()
         {
             _dfp.FileExists(_folderInfo.Object, null);
@@ -185,14 +185,14 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region FolderExists
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ExistsFolder_Throws_On_Null_FolderMapping()
         {
             _dfp.FolderExists(Constants.FOLDER_ValidFolderPath, null);
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ExistsFolder_Throws_On_Null_FolderPath()
         {
             var folderMapping = new FolderMappingInfo();
@@ -256,7 +256,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region GetFiles
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void GetFiles_Throws_On_Null_Folder()
         {
             _dfp.GetFiles(null);
@@ -295,7 +295,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var files = _dfp.GetFiles(_folderInfo.Object);
 
-            Assert.AreEqual<int>(expectedFiles.Length, files.Length);
+            Assert.AreEqual(expectedFiles.Length, files.Length);
         }
 
         [Test]
@@ -314,7 +314,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var files = _dfp.GetFiles(_folderInfo.Object);
 
-            Assert.AreElementsEqual<string>(expectedFiles, files);
+            CollectionAssert.AreEqual(expectedFiles, files);
         }
 
         #endregion
@@ -322,14 +322,14 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region GetFileContent
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void GetFileStream_Throws_On_Null_Folder()
         {
             _dfp.GetFileStream(null, Constants.FOLDER_ValidFileName);
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentException))]
         public void GetFileStream_Throws_On_NullOrEmpty_FileName()
         {
             _dfp.GetFileStream(_folderInfo.Object, null);
@@ -423,7 +423,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _dfp.GetLastModificationTime(_fileInfo.Object);
 
-            Assert.AreEqual<DateTime>(expectedResult, result);
+            Assert.AreEqual(expectedResult, result);
         }
 
         #endregion
@@ -431,14 +431,14 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region GetSubFolders
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void GetSubFolders_Throws_On_Null_FolderMapping()
         {
             _dfp.GetSubFolders(Constants.FOLDER_ValidFolderPath, null).ToList();
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void GetSubFolders_Throws_On_Null_FolderPath()
         {
             var folderMappingInfo = new FolderMappingInfo();
@@ -476,7 +476,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _dfp.GetSubFolders(Constants.FOLDER_ValidFolderRelativePath, folderMapping).ToList();
 
-            Assert.AreEqual<int>(subFolders.Count, result.Count);
+            Assert.AreEqual(subFolders.Count, result.Count);
         }
 
         [Test]
@@ -500,7 +500,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _dfp.GetSubFolders(Constants.FOLDER_ValidFolderRelativePath, folderMapping).ToList();
 
-            Assert.AreElementsEqual<string>(expectedResult, result);
+            CollectionAssert.AreEqual(expectedResult, result);
         }
 
         #endregion
@@ -520,16 +520,16 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region RenameFolder
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void RenameFolder_Throws_On_Null_Folder()
         {
             _dfp.RenameFolder(null, Constants.FOLDER_ValidFolderName);
         }
 
         [Test]
-        [Row(null)]
-        [Row("")]
-        [ExpectedArgumentException]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
         public void RenameFolder_Throws_On_NullOrEmpty_NewFolderName(string newFolderName)
         {
             _dfp.RenameFolder(_folderInfo.Object, newFolderName);
@@ -600,7 +600,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region UpdateFile
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateFile_Throws_On_Null_Folder()
         {
             var stream = new Mock<Stream>();
@@ -609,9 +609,9 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         }
 
         [Test]
-        [Row(null)]
-        [Row("")]
-        [ExpectedArgumentException]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
         public void UpdateFile_Throws_On_NullOrEmpty_FileName(string fileName)
         {
             var stream = new Mock<Stream>();

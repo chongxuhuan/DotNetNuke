@@ -59,12 +59,13 @@ namespace DotNetNuke.Entities.Users
     {
         #region Private Members
 
-        private string _FullName;
-        private UserMembership _Membership;
-        private UserProfile _Profile;
-        private string[] _Roles;
-        private bool _RolesHydrated = Null.NullBoolean;
-        private string strAdministratorRoleName;
+        private string _fullName;
+        private UserMembership _membership;
+        private UserProfile _profile;
+        private bool _refreshRoles;
+        private string[] _roles;
+        private bool _rolesHydrated = Null.NullBoolean;
+        private string _administratorRoleName;
 
         #endregion
 
@@ -72,13 +73,13 @@ namespace DotNetNuke.Entities.Users
 
         public UserInfo()
         {
-            RefreshRoles = Null.NullBoolean;
+            _refreshRoles = Null.NullBoolean;
             IsDeleted = Null.NullBoolean;
             UserID = Null.NullInteger;
             PortalID = Null.NullInteger;
             IsSuperUser = Null.NullBoolean;
             AffiliateID = Null.NullInteger;
-            _Roles = new string[] {};
+            _roles = new string[] {};
         }
 
         #endregion
@@ -208,19 +209,19 @@ namespace DotNetNuke.Entities.Users
             {
 				//implemented progressive hydration
                 //this object will be hydrated on demand
-                if (_Membership == null)
+                if (_membership == null)
                 {
-                    _Membership = new UserMembership(this);
+                    _membership = new UserMembership(this);
                     if ((Username != null) && (!String.IsNullOrEmpty(Username)))
                     {
                         UserController.GetUserMembership(this);
                     }
                 }
-                return _Membership;
+                return _membership;
             }
             set
             {
-                _Membership = value;
+                _membership = value;
             }
         }
 
@@ -250,30 +251,19 @@ namespace DotNetNuke.Entities.Users
             {
 				//implemented progressive hydration
                 //this object will be hydrated on demand
-                if (_Profile == null)
+                if (_profile == null)
                 {
-                    _Profile = new UserProfile();
+                    _profile = new UserProfile();
                     UserInfo userInfo = this;
                     ProfileController.GetUserProfile(ref userInfo);
                 }
-                return _Profile;
+                return _profile;
             }
             set
             {
-                _Profile = value;
+                _profile = value;
             }
         }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets whether the User's roles should be refreshed
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	02/18/2009	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [Browsable(false)]
-        public bool RefreshRoles { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -289,21 +279,21 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                if (!_RolesHydrated)
+                if (!_rolesHydrated)
                 {
                     if (UserID > Null.NullInteger) //fill
                     {
                         var controller = new RoleController();
-                        _Roles = controller.GetRolesByUser(UserID, PortalID);
-                        _RolesHydrated = true;
+                        _roles = controller.GetRolesByUser(UserID, PortalID);
+                        _rolesHydrated = true;
                     }
                 }
-                return _Roles;
+                return _roles;
             }
             set
             {
-                _Roles = value;
-                _RolesHydrated = true;
+                _roles = value;
+                _rolesHydrated = true;
             }
         }
 
@@ -471,6 +461,42 @@ namespace DotNetNuke.Entities.Users
 
         #endregion
 
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Determine, if accessing user is Administrator
+        /// </summary>
+        /// <param name="AccessingUser">userinfo of the user to query</param>
+        /// <returns>true, if user is portal administrator or superuser</returns>
+        /// <history>
+        ///    2007-10-20 [sleupold] added
+        /// </history>
+        private bool isAdminUser(ref UserInfo AccessingUser)
+        {
+            if (AccessingUser == null || AccessingUser.UserID == -1)
+            {
+                return false;
+            }
+            else if (String.IsNullOrEmpty(_administratorRoleName))
+            {
+                PortalInfo ps = new PortalController().GetPortal(AccessingUser.PortalID);
+                _administratorRoleName = ps.AdministratorRoleName;
+            }
+            return AccessingUser.IsInRole(_administratorRoleName) || AccessingUser.IsSuperUser;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void ClearRoles()
+        {
+            _roles = new string[] {};
+            _rolesHydrated = false;
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// IsInRole determines whether the user is in the role passed
@@ -509,55 +535,6 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// UpdateDisplayName updates the displayname to the format provided
-        /// </summary>
-        /// <param name="format">The format to use</param>
-        /// <history>
-        ///     [cnurse]	02/21/2007	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public void UpdateDisplayName(string format)
-        {
-			//Replace Tokens
-            format = format.Replace("[USERID]", UserID.ToString());
-            format = format.Replace("[FIRSTNAME]", FirstName);
-            format = format.Replace("[LASTNAME]", LastName);
-            format = format.Replace("[USERNAME]", Username);
-            DisplayName = format;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Determine, if accessing user is Administrator
-        /// </summary>
-        /// <param name="AccessingUser">userinfo of the user to query</param>
-        /// <returns>true, if user is portal administrator or superuser</returns>
-        /// <history>
-        ///    2007-10-20 [sleupold] added
-        /// </history>
-        private bool isAdminUser(ref UserInfo AccessingUser)
-        {
-            if (AccessingUser == null || AccessingUser.UserID == -1)
-            {
-                return false;
-            }
-            else if (String.IsNullOrEmpty(strAdministratorRoleName))
-            {
-                PortalInfo ps = new PortalController().GetPortal(AccessingUser.PortalID);
-                strAdministratorRoleName = ps.AdministratorRoleName;
-            }
-            return AccessingUser.IsInRole(strAdministratorRoleName) || AccessingUser.IsSuperUser;
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
         /// Gets current time in User's timezone
         /// </summary>
         /// <history>
@@ -590,6 +567,25 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// UpdateDisplayName updates the displayname to the format provided
+        /// </summary>
+        /// <param name="format">The format to use</param>
+        /// <history>
+        ///     [cnurse]	02/21/2007	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public void UpdateDisplayName(string format)
+        {
+            //Replace Tokens
+            format = format.Replace("[USERID]", UserID.ToString());
+            format = format.Replace("[FIRSTNAME]", FirstName);
+            format = format.Replace("[LASTNAME]", LastName);
+            format = format.Replace("[USERNAME]", Username);
+            DisplayName = format;
+        }
+
         #endregion
 
         #region Obsolete
@@ -599,16 +595,29 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                if (String.IsNullOrEmpty(_FullName))
+                if (String.IsNullOrEmpty(_fullName))
                 {
 					//Build from component names
-                    _FullName = FirstName + " " + LastName;
+                    _fullName = FirstName + " " + LastName;
                 }
-                return _FullName;
+                return _fullName;
             }
             set
             {
-                _FullName = value;
+                _fullName = value;
+            }
+        }
+
+        [Browsable(false), Obsolete("Deprecated in DNN 6.2. Roles are no longer stored in a cookie so this property is no longer neccessary")]
+        public bool RefreshRoles
+        {
+            get
+            {
+                return _refreshRoles;
+            }
+            set
+            {
+                _refreshRoles = value;
             }
         }
 

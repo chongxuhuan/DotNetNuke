@@ -23,7 +23,7 @@
 
 using DotNetNuke.Collections.Internal;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Collections
 {

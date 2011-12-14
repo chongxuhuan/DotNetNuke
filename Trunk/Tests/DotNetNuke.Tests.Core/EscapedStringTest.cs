@@ -5,7 +5,7 @@ using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core
 {
@@ -31,7 +31,7 @@ namespace DotNetNuke.Tests.Core
         {
             IEnumerable<string> result = EscapedString.Seperate("first]second", ']');
 
-            Assert.AreElementsEqual(new[] {"first", "second"}, result);
+            CollectionAssert.AreEqual(new[] {"first", "second"}, result);
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace DotNetNuke.Tests.Core
         {
             var result = EscapedString.Seperate(data);
 
-            Assert.AreElementsEqual(expected, result);
+            CollectionAssert.AreEqual(expected, result);
         }
 
         private void CombineTest(IEnumerable data, string expected)

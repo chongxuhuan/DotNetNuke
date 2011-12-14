@@ -27,9 +27,9 @@ using System.Collections;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.ComponentModel
 {

@@ -34,9 +34,9 @@ using DotNetNuke.Services.Cache;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Controllers
 {
@@ -76,7 +76,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         #region Constructor Tests
 
         [Test]
-        [ExpectedArgumentNullException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void PortalGroupController_Constructor_Throws_On_Null_DataService()
         {
             //Arrange
@@ -87,7 +87,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         [Test]
-        [ExpectedArgumentNullException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void PortalGroupController_Constructor_Throws_On_Null_PortalController()
         {
             //Arrange
@@ -102,7 +102,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         #region AddPortalToGroup Tests
 
         [Test]
-        [ExpectedArgumentNullException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void PortalGroupController_AddPortalToGroup_Throws_On_Null_PortalGroup()
         {
             //Arrange
@@ -116,7 +116,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         [Test]
-        [ExpectedArgumentNullException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void PortalGroupController_AddPortalToGroup_Throws_On_Null_Portal()
         {
             //Arrange
@@ -131,7 +131,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void PortalGroupController_AddPortalToGroup_Throws_On_Negative_PortalGroupId()
         {
             //Arrange
@@ -148,7 +148,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void PortalGroupController_AddPortalToGroup_Throws_On_Negative_PortalId()
         {
             //Arrange
@@ -169,7 +169,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         #region AddPortalGroup Tests
 
         [Test]
-        [ExpectedArgumentNullException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void PortalGroupController_AddPortalGroup_Throws_On_Null_PortalGroup()
         {
             //Arrange
@@ -268,7 +268,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         #region DeletePortalGroup Tests
 
         [Test]
-        [ExpectedArgumentNullException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void PortalGroupController_DeletePortalGroup_Throws_On_Null_PortalGroup()
         {
             //Arrange
@@ -281,7 +281,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void PortalGroupController_DeletePortalGroup_Throws_On_Negative_PortalGroupId()
         {
             //Arrange
@@ -386,7 +386,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         #region RemovePortalFromGroup Tests
 
         [Test]
-        [ExpectedArgumentNullException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void PortalGroupController_RemovePortalFromGroup_Throws_On_Null_PortalGroup()
         {
             //Arrange
@@ -400,7 +400,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         [Test]
-        [ExpectedArgumentNullException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void PortalGroupController_RemovePortalFromGroup_Throws_On_Null_Portal()
         {
             //Arrange
@@ -415,7 +415,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void PortalGroupController_RemovePortalFromGroup_Throws_On_Negative_PortalGroupId()
         {
             //Arrange
@@ -432,7 +432,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void PortalGroupController_RemovePortalFromGroup_Throws_On_Negative_PortalId()
         {
             //Arrange
@@ -453,7 +453,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         #region UpdatePortalGroup Tests
 
         [Test]
-        [ExpectedArgumentNullException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void PortalGroupController_UpdatePortalGroup_Throws_On_Null_PortalGroup()
         {
             //Arrange
@@ -476,7 +476,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var portalGroup = new PortalGroupInfo();
             portalGroup.PortalGroupId = Null.NullInteger;
 
-            Assert.Throws<ArgumentException>(() => controller.UpdatePortalGroup(portalGroup));
+            Assert.Throws<ArgumentOutOfRangeException>(() => controller.UpdatePortalGroup(portalGroup));
         }
 
         [Test]

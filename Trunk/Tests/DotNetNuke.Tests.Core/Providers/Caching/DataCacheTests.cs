@@ -31,9 +31,9 @@ using DotNetNuke.Tests.Providers.Caching;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Providers.Caching
 {
@@ -88,8 +88,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
         }
 
         [Test]
-        [Row(null)]
-        [Row("")]
+        [TestCase(null)]
+        [TestCase("")]
         public void DataCache_GetCache_Should_Throw_On_NullOrEmpty_CacheKey(string key)
         {
             Assert.Throws<ArgumentException>(() => DataCache.GetCache(key));
@@ -127,8 +127,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
         }
 
         [Test]
-        [Row(null)]
-        [Row("")]
+        [TestCase(null)]
+        [TestCase("")]
         public void DataCache_GetCacheOfT_Should_Throw_On_NullOrEmpty_CacheKey(string key)
         {
             Assert.Throws<ArgumentException>(() => DataCache.GetCache<string>(key));
@@ -151,8 +151,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
         }
 
         [Test]
-        [Row(null)]
-        [Row("")]
+        [TestCase(null)]
+        [TestCase("")]
         public void DataCache_RemoveCache_Should_Throw_On_NullOrEmpty_CacheKey(string key)
         {
             Assert.Throws<ArgumentException>(() => DataCache.RemoveCache(key));
@@ -165,8 +165,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
         #region SetCache(string, object) Tests
 
         [Test]
-        [Row(null)]
-        [Row("")]
+        [TestCase(null)]
+        [TestCase("")]
         public void DataCache_SetCache_Should_Throw_On_Null_CacheKey(string key)
         {
             Assert.Throws<ArgumentException>(() => DataCache.SetCache(key, Constants.CACHEING_ValidValue));
@@ -198,8 +198,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
         #region SetCache(string, object, CacheDependency) Tests
 
         [Test]
-        [Row(null)]
-        [Row("")]
+        [TestCase(null)]
+        [TestCase("")]
         public void DataCache_SetCache_With_Dependency_Should_Throw_On_Null_CacheKey(string key)
         {
             DNNCacheDependency dep = CreateTestDependency(); // Dependency type or value doesn't matter
@@ -232,8 +232,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
         #region SetCache(string, object, DateTime) Tests
 
         [Test]
-        [Row(null)]
-        [Row("")]
+        [TestCase(null)]
+        [TestCase("")]
         public void DataCache_SetCache_With_AbsoluteExpiration_Should_Throw_On_Null_CacheKey(string key)
         {
             DateTime absExpiry = DateTime.Today.AddDays(1); // DateTime doesn't matter
@@ -267,8 +267,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
         #region SetCache(string, object, TimeSpan) Tests
 
         [Test]
-        [Row(null)]
-        [Row("")]
+        [TestCase(null)]
+        [TestCase("")]
         public void DataCache_SetCache_With_SlidingExpiration_Should_Throw_On_Null_CacheKey(string key)
         {
             TimeSpan slidingExpiry = TimeSpan.FromMinutes(5); // TimeSpan doesn't matter
@@ -303,8 +303,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
         #region SetCache(string, object, CacheDependency, DateTime, TimeSpan) Tests
 
         [Test]
-        [Row(null)]
-        [Row("")]
+        [TestCase(null)]
+        [TestCase("")]
         public void DataCache_SetCache_With_CacheDependency_AbsoluteExpiration_SlidingExpiration_Should_Throw_On_Null_CacheKey(string key)
         {
             DNNCacheDependency dep = CreateTestDependency(); // Dependency type or value doesn't matter
@@ -335,8 +335,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
         #region SetCache(string, object, CacheDependency, DateTime, TimeSpan, CacheItemPriority, CacheItemRemovedCallback) Tests
 
         [Test]
-        [Row(null)]
-        [Row("")]
+        [TestCase(null)]
+        [TestCase("")]
         public void DataCache_SetCache_With_Priority_Should_Throw_On_Null_CacheKey(string key)
         {
             DNNCacheDependency dep = CreateTestDependency(); // Dependency type or value doesn't matter

@@ -22,20 +22,17 @@
 #endregion
 
 using System;
-using System.Web;
 
-using DotNetNuke.Common;
 using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Modules.Taxonomy.Presenters;
 using DotNetNuke.Modules.Taxonomy.Views;
 using DotNetNuke.Modules.Taxonomy.Views.Models;
 using DotNetNuke.Services.Cache;
-using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Content.Presenters
 {
@@ -120,8 +117,8 @@ namespace DotNetNuke.Tests.Content.Presenters
         #region View Load Tests
 
         [Test]
-        [Row(true)]
-        [Row(false)]
+        [TestCase(true)]
+        [TestCase(false)]
         public void VocabularyListPresenter_Load_Calls_View_ShowAddButton(bool isEditable)
         {
             // Arrange

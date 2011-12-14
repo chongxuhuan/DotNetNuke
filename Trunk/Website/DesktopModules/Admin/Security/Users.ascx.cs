@@ -508,7 +508,7 @@ namespace DotNetNuke.Modules.Admin.Users
 				return PortalGroupController.Instance.GetPortalsByGroup(groupId).Any(p => p.AdministratorId == userId);
 			}
 
-			return userId != PortalSettings.AdministratorId;
+			return userId == PortalSettings.AdministratorId;
 		}
 		
 		#endregion

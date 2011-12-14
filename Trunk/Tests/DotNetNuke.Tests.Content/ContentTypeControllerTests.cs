@@ -32,9 +32,9 @@ using DotNetNuke.Tests.Content.Mocks;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Content
 {
@@ -153,7 +153,7 @@ namespace DotNetNuke.Tests.Content
             contentType.ContentTypeId = Null.NullInteger;
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => contentTypeController.DeleteContentType(contentType));
+            Assert.Throws<ArgumentOutOfRangeException>(() => contentTypeController.DeleteContentType(contentType));
         }
 
         [Test]
@@ -248,7 +248,7 @@ namespace DotNetNuke.Tests.Content
             var contentType = ContentTestHelper.CreateValidContentType();
             contentType.ContentType = Constants.CONTENTTYPE_InValidContentType;
 
-            Assert.Throws<ArgumentException>(() => contentTypeController.UpdateContentType(contentType));
+            Assert.Throws<ArgumentOutOfRangeException>(() => contentTypeController.UpdateContentType(contentType));
         }
 
         [Test]

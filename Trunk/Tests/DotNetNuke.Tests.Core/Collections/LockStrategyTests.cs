@@ -27,7 +27,7 @@ using System.Threading;
 
 using DotNetNuke.Collections.Internal;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Collections
 {
@@ -154,7 +154,7 @@ namespace DotNetNuke.Tests.Core.Collections
         }
 
         [Test, ExpectedException(typeof (ObjectDisposedException))]
-        [Factory("GetObjectDisposedExceptionMethods")]
+        [TestCaseSource("GetObjectDisposedExceptionMethods")]
         internal void MethodsThrowAfterDisposed(Action<ILockStrategy> methodCall)
         {
             var strategy = GetLockStrategy();

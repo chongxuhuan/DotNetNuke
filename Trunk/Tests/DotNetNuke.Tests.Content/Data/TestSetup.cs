@@ -23,16 +23,17 @@
 
 using System.Data.SqlClient;
 
+using DotNetNuke.Tests.Data;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
-namespace DotNetNuke.Tests.Data
+namespace DotNetNuke.Tests.Content.Data
 {
     /// <summary>
     ///   Summary description for TestSteup
     /// </summary>
-    [AssemblyFixture]
+    [SetUpFixture]
     public class TestSetup
     {
         #region Public Methods
@@ -40,17 +41,18 @@ namespace DotNetNuke.Tests.Data
         [SetUp]
         public void SetUp()
         {
+            SetupDatabase();
         }
 
         [TearDown]
         public void TearDown()
         {
+            DropDatabase();
+
             MockComponentProvider.ResetContainer();
         }
 
-
-        [FixtureSetUp]
-        public static void SetupDatabase()
+        private static void SetupDatabase()
         {
             // Connect to the server to create the database
             using (SqlConnection connection = new SqlConnection(DataTestHelper.AdminConnectionString))
@@ -62,8 +64,7 @@ namespace DotNetNuke.Tests.Data
             }
         }
 
-        [FixtureTearDown]
-        public static void DropDatabase()
+        private static void DropDatabase()
         {
             SqlConnection.ClearAllPools();
 

@@ -24,7 +24,7 @@
 using System;
 using System.IO;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Utilities
 {
@@ -51,7 +51,7 @@ namespace DotNetNuke.Tests.Utilities
         {
             byte[] expectedContent = File.ReadAllBytes(expectedFile);
             byte[] actualContent = File.ReadAllBytes(actualFile);
-            Assert.AreElementsEqual(expectedContent, actualContent, message);
+            CollectionAssert.AreEqual(expectedContent, actualContent, message);
         }
     }
 }

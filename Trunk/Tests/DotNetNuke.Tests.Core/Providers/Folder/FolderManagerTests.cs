@@ -34,9 +34,9 @@ using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Providers.Folder
 {
@@ -93,7 +93,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region AddFolder
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void AddFolder_Throws_On_Null_FolderPath()
         {
             _folderManager.AddFolder(It.IsAny<FolderMappingInfo>(), null);
@@ -188,7 +188,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region DeleteFolder
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void DeleteFolder_Throws_On_Null_Folder()
         {
             _folderManager.DeleteFolder(null);
@@ -279,7 +279,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region FolderExists
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ExistsFolder_Throws_On_Null_FolderPath()
         {
             _folderManager.FolderExists(Constants.CONTENT_ValidPortalId, null);
@@ -320,7 +320,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region GetFiles
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void GetFilesByFolder_Throws_On_Null_Folder()
         {
             _folderManager.GetFiles(null);
@@ -396,7 +396,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _folderManager.GetFiles(_folderInfo.Object).Cast<FileInfo>();
 
-            Assert.AreElementsEqual(filesList, result);
+            CollectionAssert.AreEqual(filesList, result);
         }
 
         #endregion
@@ -457,7 +457,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void GetFolder_Throws_On_Null_FolderPath()
         {
             _folderManager.GetFolder(It.IsAny<int>(), null);
@@ -538,7 +538,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region GetFolders
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void GetFoldersByParentFolder_Throws_On_Null_ParentFolder()
         {
             _folderManager.GetFolders((IFolderInfo)null);
@@ -597,16 +597,16 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region RenameFolder
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void RenameFolder_Throws_On_Null_Folder()
         {
             _folderManager.RenameFolder(null, It.IsAny<string>());
         }
 
         [Test]
-        [Row(null)]
-        [Row("")]
-        [ExpectedArgumentException]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
         public void RenameFolder_Throws_On_Null_Or_Empty_NewFolderName(string newFolderName)
         {
             _folderManager.RenameFolder(_folderInfo.Object, newFolderName);
@@ -649,7 +649,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region UpdateFolder
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateFolder_Throws_On_Null_Folder()
         {
             _folderManager.UpdateFolder(null);
@@ -682,7 +682,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region Synchronize
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void SynchronizeFolder_Throws_On_Null_RelativePath()
         {
             _folderManager.Synchronize(It.IsAny<int>(), null, It.IsAny<bool>(), It.IsAny<bool>());
@@ -822,7 +822,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetFileSystemFolders(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false);
 
-            Assert.Count(1, result);
+            Assert.AreEqual(1, result.Count);
             Assert.IsTrue(result.Values[0].ExistsInFileSystem);
         }
 
@@ -856,7 +856,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetFileSystemFoldersRecursive(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderPath);
 
-            Assert.Count(1, result);
+            Assert.AreEqual(1, result.Count);
         }
 
         [Test]
@@ -881,7 +881,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetFileSystemFoldersRecursive(Constants.CONTENT_ValidPortalId, @"C:\folder");
 
-            Assert.Count(5, result);
+            Assert.AreEqual(5, result.Count);
 
         }
 
@@ -907,7 +907,10 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetFileSystemFoldersRecursive(Constants.CONTENT_ValidPortalId, @"C:\folder");
 
-            Assert.ForAll(result.Values, item => item.ExistsInFileSystem);
+            foreach (var mergedTreeItem in result.Values)
+            {
+                Assert.True(mergedTreeItem.ExistsInFileSystem);
+            }
         }
 
         #endregion
@@ -931,7 +934,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetDatabaseFolders(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath, false);
 
-            Assert.Count(1, result);
+            Assert.AreEqual(1, result.Count);
             Assert.IsTrue(result.Values[0].ExistsInDatabase);
         }
 
@@ -966,7 +969,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetDatabaseFoldersRecursive(_folderInfo.Object);
 
-            Assert.Count(1, result);
+            Assert.AreEqual(1, result.Count);
         }
 
         [Test]
@@ -991,7 +994,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetDatabaseFoldersRecursive(_folderInfo.Object);
 
-            Assert.Count(5, result);
+            Assert.AreEqual(5, result.Count);
         }
 
         [Test]
@@ -1016,7 +1019,10 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetDatabaseFoldersRecursive(_folderInfo.Object);
 
-            Assert.ForAll(result.Values, item => item.ExistsInDatabase);
+            foreach (var mergedTreeItem in result.Values)
+            {
+                Assert.True(mergedTreeItem.ExistsInDatabase);
+            }
         }
 
         #endregion
@@ -1044,7 +1050,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetFolderMappingFolders(folderMapping, Constants.FOLDER_ValidFolderRelativePath, false);
 
-            Assert.Count(1, result);
+            Assert.AreEqual(1, result.Count);
             Assert.IsTrue(result.Values[0].ExistsInFolderMappings.Contains(Constants.FOLDER_ValidFolderMappingID));
         }
 
@@ -1078,7 +1084,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetFolderMappingFoldersRecursive(folderMapping, Constants.FOLDER_ValidFolderRelativePath);
 
-            Assert.Count(1, result);
+            Assert.AreEqual(1, result.Count);
         }
 
         [Test]
@@ -1096,7 +1102,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetFolderMappingFoldersRecursive(folderMapping, "folder/");
 
-            Assert.Count(5, result);
+            Assert.AreEqual(5, result.Count);
         }
 
         [Test]
@@ -1114,7 +1120,10 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _mockFolderManager.Object.GetFolderMappingFoldersRecursive(folderMapping, "folder/");
 
-            Assert.ForAll(result.Values, item => item.ExistsInFolderMappings.Contains(Constants.FOLDER_ValidFolderMappingID));
+            foreach (var mergedTreeItem in result.Values)
+            {
+                Assert.True(mergedTreeItem.ExistsInFolderMappings.Contains(Constants.FOLDER_ValidFolderMappingID));
+            }
         }
 
         #endregion
@@ -1149,7 +1158,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _folderManager.MergeFolderLists(list1, list2);
 
-            Assert.Count(3, result);
+            Assert.AreEqual(3, result.Count);
         }
 
         [Test]
@@ -1173,7 +1182,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             var result = _folderManager.MergeFolderLists(list1, list2);
 
-            Assert.Count(1, result);
+            Assert.AreEqual(1, result.Count);
             Assert.IsTrue(result.Values[0].ExistsInFileSystem);
             Assert.IsTrue(result.Values[0].ExistsInDatabase);
             Assert.AreEqual(Constants.FOLDER_ValidFolderMappingID, result.Values[0].FolderMappingID);

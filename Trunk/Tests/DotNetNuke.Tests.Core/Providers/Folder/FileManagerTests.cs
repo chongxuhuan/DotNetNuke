@@ -34,9 +34,9 @@ using DotNetNuke.Services.FileSystem.Internal;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 using FileInfo = DotNetNuke.Services.FileSystem.FileInfo;
 
@@ -108,23 +108,23 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region AddFile
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void AddFile_Throws_On_Null_Folder()
         {
             _fileManager.AddFile(null, It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>());
         }
 
         [Test]
-        [Row(null)]
-        [Row("")]
-        [ExpectedArgumentException]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
         public void AddFile_Throws_On_Null_Or_Empty_FileName(string fileName)
         {
             _fileManager.AddFile(_folderInfo.Object, fileName, It.IsAny<Stream>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>());
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentException))]
         public void AddFile_Throws_On_Null_FileContent()
         {
             _fileManager.AddFile(_folderInfo.Object, It.IsAny<string>(), null, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>());
@@ -266,14 +266,14 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region CopyFile
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void CopyFile_Throws_On_Null_File()
         {
             _fileManager.CopyFile(null, _folderInfo.Object);
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void CopyFile_Throws_On_Null_DestinationFolder()
         {
             _fileManager.CopyFile(_fileInfo.Object, null);
@@ -301,7 +301,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region DeleteFile
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void DeleteFile_Throws_On_Null_File()
         {
             _fileManager.DeleteFile(null);
@@ -352,7 +352,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region WriteFileToResponse
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void DownloadFile_Throws_On_Null_File()
         {
             _fileManager.WriteFileToResponse(null, ContentDisposition.Inline);
@@ -432,16 +432,16 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region FileExists
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ExistsFile_Throws_On_Null_Folder()
         {
             _fileManager.FileExists(null, It.IsAny<string>());
         }
 
         [Test]
-        [Row(null)]
-        [Row("")]
-        [ExpectedArgumentException]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
         public void ExistsFile_Throws_On_Null_Or_Empty_FileName(string fileName)
         {
             _fileManager.FileExists(_folderInfo.Object, fileName);
@@ -548,9 +548,9 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region GetFile
 
         [Test]
-        [Row(null)]
-        [Row("")]
-        [ExpectedArgumentException]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
         public void GetFile_Throws_On_Null_Or_Empty_FileName(string fileName)
         {
             _fileManager.GetFile(_folderInfo.Object, fileName);
@@ -623,14 +623,14 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region MoveFile
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void MoveFile_Throws_On_Null_File()
         {
             _fileManager.MoveFile(null, _folderInfo.Object);
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void MoveFile_Throws_On_Null_DestinationFolder()
         {
             _fileManager.MoveFile(_fileInfo.Object, null);
@@ -721,16 +721,16 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region RenameFile
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void RenameFile_Throws_On_Null_File()
         {
             _fileManager.RenameFile(null, It.IsAny<string>());
         }
 
         [Test]
-        [Row(null)]
-        [Row("")]
-        [ExpectedArgumentException]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
         public void RenameFile_Throws_On_Null_Or_Empty_NewFileName(string newFileName)
         {
             _fileManager.RenameFile(_fileInfo.Object, newFileName);
@@ -813,21 +813,21 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region UnzipFile
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void UnzipFile_Throws_On_Null_File()
         {
             _fileManager.UnzipFile(null, It.IsAny<IFolderInfo>());
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void UnzipFile_Throws_On_Null_DestinationFolder()
         {
             _fileManager.UnzipFile(It.IsAny<IFileInfo>(), null);
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void UnzipFile_Throws_When_File_Extension_Is_Not_Zip()
         {
             _fileInfo.Setup(fi => fi.Extension).Returns("txt");
@@ -853,7 +853,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #region UpdateFile
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateFile_Throws_On_Null_File()
         {
             _fileManager.UpdateFile(null);
@@ -881,14 +881,14 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateFile_Throws_On_Null_File_Overload()
         {
             _fileManager.UpdateFile(null, It.IsAny<Stream>());
         }
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateFile_Throws_On_Null_Stream()
         {
             _fileManager.UpdateFile(_fileInfo.Object, null);

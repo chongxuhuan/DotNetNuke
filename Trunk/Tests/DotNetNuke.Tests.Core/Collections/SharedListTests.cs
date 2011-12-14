@@ -27,7 +27,7 @@ using System.Threading;
 
 using DotNetNuke.Collections.Internal;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Collections
 {
@@ -62,16 +62,16 @@ namespace DotNetNuke.Tests.Core.Collections
                 }
             }
 
-            Assert.AreElementsEqual(new List<string> {value}, sharedList.BackingList);
+            CollectionAssert.AreEqual(new List<string> {value}, sharedList.BackingList);
         }
 
-        [Test, ExpectedException(typeof (WriteLockRequiredException)), Factory("GetWriteMethods")]
+        [Test, ExpectedException(typeof (WriteLockRequiredException)), TestCaseSource("GetWriteMethods")]
         public void WriteRequiresLock(Action<SharedList<string>> writeAction)
         {
             writeAction.Invoke(InitSharedList("value"));
         }
 
-        [Test, ExpectedException(typeof (ReadLockRequiredException)), Factory("GetReadMethods")]
+        [Test, ExpectedException(typeof (ReadLockRequiredException)), TestCaseSource("GetReadMethods")]
         public void ReadRequiresLock(Action<SharedList<string>> readAction)
         {
             readAction.Invoke(InitSharedList("value"));
@@ -145,7 +145,7 @@ namespace DotNetNuke.Tests.Core.Collections
         }
 
         [Test, ExpectedException(typeof (ObjectDisposedException))]
-        [Factory("GetObjectDisposedExceptionMethods")]
+        [TestCaseSource("GetObjectDisposedExceptionMethods")]
         public void MethodsThrowAfterDisposed(Action<SharedList<string>> methodCall)
         {
             var d = new SharedList<string>(LockingStrategy);

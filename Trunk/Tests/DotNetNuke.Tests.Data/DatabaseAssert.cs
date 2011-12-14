@@ -25,7 +25,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Data
 {

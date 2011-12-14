@@ -5,7 +5,7 @@ using System.Threading;
 
 using DotNetNuke.Collections.Internal;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Collections
 {
@@ -25,7 +25,7 @@ namespace DotNetNuke.Tests.Core.Collections
 
             list.Add("sumthin");
 
-            Assert.AreElementsEqual(new[] {"sumthin"}, list);
+            CollectionAssert.AreEqual(new[] {"sumthin"}, list);
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace DotNetNuke.Tests.Core.Collections
             var list = new NaiveLockingList<int> {0, 1, 2, 3};
             list.Clear();
 
-            Assert.AreElementsEqual(new int[] {}, list);
+            CollectionAssert.AreEqual(new int[] {}, list);
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace DotNetNuke.Tests.Core.Collections
             var dest = new int[4];
             list.CopyTo(dest, 0);
 
-            Assert.AreElementsEqual(list, dest);
+            CollectionAssert.AreEqual(list, dest);
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace DotNetNuke.Tests.Core.Collections
 
             list.Remove(2);
 
-            Assert.AreElementsEqual(new[] {0, 1, 3}, list);
+            CollectionAssert.AreEqual(new[] {0, 1, 3}, list);
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace DotNetNuke.Tests.Core.Collections
 
             list.Insert(2, 999);
 
-            Assert.AreElementsEqual(new[] {0, 1, 999, 2, 3}, list);
+            CollectionAssert.AreEqual(new[] {0, 1, 999, 2, 3}, list);
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace DotNetNuke.Tests.Core.Collections
 
             list.RemoveAt(2);
 
-            Assert.AreElementsEqual(new[] {0, 1, 2, 3}, list);
+            CollectionAssert.AreEqual(new[] {0, 1, 2, 3}, list);
         }
 
         [Test]

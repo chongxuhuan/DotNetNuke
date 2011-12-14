@@ -23,7 +23,7 @@
 
 using DotNetNuke.Common.Utilities;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Services
 {
@@ -44,7 +44,7 @@ namespace DotNetNuke.Tests.Core.Services
         }
 
         [Test]
-        [Timeout(2)]
+        [Timeout(2000)]
         public void DNN_12430_IsHtml_RegExTimeout()
         {
             var result =
@@ -55,7 +55,7 @@ namespace DotNetNuke.Tests.Core.Services
         }
 
         [Test]
-        [Timeout(2)]
+        [Timeout(2000)]
         public void DNN_12926_IsHtml_Detection()
         {
             var result = HtmlUtils.IsHtml("this is a test of dnnmail: <a href='http://www.dotnetnuke.com'>DotNetNuke</a>");

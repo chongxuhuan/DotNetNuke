@@ -26,7 +26,8 @@
 using System;
 using System.Net;
 using System.Web;
-
+using System.Web.Mvc;
+using System.Web.Routing;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
@@ -73,6 +74,8 @@ namespace DotNetNuke.Common
         {
             DnnLog.Info("Application Starting");
 
+            RegisterRoutes(RouteTable.Routes);
+
             if (String.IsNullOrEmpty(Config.GetSetting("ServerName")))
             {
                 Globals.ServerName = Dns.GetHostName();
@@ -106,6 +109,20 @@ namespace DotNetNuke.Common
             ComponentFactory.InstallComponents(new ProviderInstaller("clientcapability", typeof(ClientCapabilityProvider)));
 
             DnnLog.Info("Application Started");
+        }
+
+        private void RegisterRoutes(RouteCollection routes)
+        {
+            if (routes.Count == 0)
+            {
+                routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+                routes.MapRoute(
+                    "Default", // Route name
+                    "DesktopModules/API/{controller}/{action}/{id}", // URL with parameters
+                    new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
+                    );
+            }
         }
 
         private static void RegisterIfNotAlreadyRegistered<TConcrete>() where TConcrete : class, new()

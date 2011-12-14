@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 using DotNetNuke.Common.Utilities.Internal;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core
 {

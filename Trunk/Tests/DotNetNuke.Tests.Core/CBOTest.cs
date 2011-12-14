@@ -29,7 +29,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Providers.Caching
 {
@@ -60,7 +60,7 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
 
             var result = CBO.FillObject<IntPoco>(cboTable.CreateDataReader());
 
-            Assert.IsInstanceOfType<IntPoco>(result);
+            Assert.IsInstanceOf<IntPoco>(result);
             Assert.IsNotNull(result);
             Assert.AreEqual(colValue, result.IntProp);
         }
@@ -78,7 +78,7 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
 
             var result = CBO.FillObject<IntPoco>(cboTable.CreateDataReader());
 
-            Assert.IsInstanceOfType<IntPoco>(result);
+            Assert.IsInstanceOf<IntPoco>(result);
             Assert.IsNotNull(result);
             Assert.AreEqual(colValue, result.StringProp);
         }
@@ -96,7 +96,7 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
 
             var result = CBO.FillObject<IntPoco>(cboTable.CreateDataReader());
 
-            Assert.IsInstanceOfType<IntPoco>(result);
+            Assert.IsInstanceOf<IntPoco>(result);
             Assert.IsNotNull(result);
             Assert.AreEqual(colValue, result.DateTimeProp);
         }
@@ -114,7 +114,7 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
 
             var result = CBO.FillObject<IntPoco>(cboTable.CreateDataReader());
 
-            Assert.IsInstanceOfType<IntPoco>(result);
+            Assert.IsInstanceOf<IntPoco>(result);
             Assert.IsNotNull(result);
             Assert.AreEqual(colValue, result.ByteArrayProp);
         }
@@ -131,7 +131,7 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
 
             var result = CBO.FillObject<IntPoco>(cboTable.CreateDataReader());
 
-            Assert.IsInstanceOfType<IntPoco>(result);
+            Assert.IsInstanceOf<IntPoco>(result);
             Assert.IsNotNull(result);
             Assert.AreEqual(colValue, result.ArrayProp);
         }
@@ -148,7 +148,7 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
 
             var result = CBO.FillObject<IntPoco>(cboTable.CreateDataReader());
 
-            Assert.IsInstanceOfType<IntPoco>(result);
+            Assert.IsInstanceOf<IntPoco>(result);
             Assert.IsNotNull(result);
             Assert.AreEqual(colValue, result.BitProp);
         }
@@ -165,7 +165,7 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
 
             var result = CBO.FillObject<IntPoco>(cboTable.CreateDataReader());
 
-            Assert.IsInstanceOfType<IntPoco>(result);
+            Assert.IsInstanceOf<IntPoco>(result);
             Assert.IsNotNull(result);
             Assert.AreEqual(colValue, result.DecimalProp);
         }
@@ -182,7 +182,7 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
 
             var result = CBO.FillObject<IntPoco>(cboTable.CreateDataReader());
 
-            Assert.IsInstanceOfType<IntPoco>(result);
+            Assert.IsInstanceOf<IntPoco>(result);
             Assert.IsNotNull(result);
             Assert.AreEqual(true, result.BitProp);
         }
@@ -199,7 +199,7 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
 
             var result = CBO.FillObject<IntPoco>(cboTable.CreateDataReader());
 
-            Assert.IsInstanceOfType<IntPoco>(result);
+            Assert.IsInstanceOf<IntPoco>(result);
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.BitProp);
         }

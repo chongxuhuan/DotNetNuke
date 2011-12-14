@@ -26,9 +26,9 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Threading;
 
-using Gallio.Framework;
-
 using Microsoft.SqlServer.Management.Smo;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Utilities
 {

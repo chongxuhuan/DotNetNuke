@@ -32,9 +32,9 @@ using DotNetNuke.Tests.Content.Mocks;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Content.Taxonomy
 {
@@ -197,7 +197,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             vocabulary.VocabularyId = Null.NullInteger;
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => vocabularyController.DeleteVocabulary(vocabulary));
+            Assert.Throws<ArgumentOutOfRangeException>(() => vocabularyController.DeleteVocabulary(vocabulary));
         }
 
         [Test]
@@ -294,7 +294,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             vocabulary.VocabularyId = Null.NullInteger;
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => vocabularyController.UpdateVocabulary(vocabulary));
+            Assert.Throws<ArgumentOutOfRangeException>(() => vocabularyController.UpdateVocabulary(vocabulary));
         }
 
         [Test]
@@ -308,7 +308,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             vocabulary.Name = Constants.VOCABULARY_InValidName;
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => vocabularyController.UpdateVocabulary(vocabulary));
+            Assert.Throws<ArgumentOutOfRangeException>(() => vocabularyController.UpdateVocabulary(vocabulary));
         }
 
         [Test]

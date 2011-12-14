@@ -22,30 +22,24 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Reflection;
 using System.Web;
 
-using DotNetNuke.Common;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
-using DotNetNuke.Entities.Portals;
-using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Security.Roles;
-using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.ClientCapability;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Mobile;
 using DotNetNuke.Tests.Instance.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Services.Mobile
 {
@@ -224,7 +218,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 		#region "Get Redirections URL Tests"
 
         [Test]
-        [ExpectedArgumentException]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void RedirectionController_GetRedirectionUrl_Throws_On_Null_UserAgent()
         {
 			_redirectionController.GetRedirectUrl(null, Portal0, 0);
@@ -415,13 +409,13 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
             var mobileUrlForPage3 = _redirectionController.GetMobileSiteUrl(Portal0, Page3);
 
             //First Page returns link to first url
-            Assert.AreEqual(redirectUrlPage1, mobileUrlForPage1);
+            Assert.AreEqual(String.Format("{0}?nomo=0",redirectUrlPage1), mobileUrlForPage1);
 
             //Second Page returns link to second url
-            Assert.AreEqual(redirectUrlPage2, mobileUrlForPage2);
+            Assert.AreEqual(String.Format("{0}?nomo=0", redirectUrlPage2), mobileUrlForPage2);
             
             //Third Page returns link to first url - as this is the first found url and third page has no redirect defined
-            Assert.AreEqual(mobileUrlForPage3, redirectUrlPage1);
+            Assert.AreEqual(mobileUrlForPage3, String.Format("{0}?nomo=0", redirectUrlPage1));
         }
 
         //[Test]
@@ -607,7 +601,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 							id = Convert.ToInt32(_dtRules.Select("", "Id Desc")[0]["Id"]) + 1;
 						}
 
-						var row = _dtRules.NewRow();
+                        var row = _dtRules.NewRow();
 						row["Id"] = id;
 						row["RedirectionId"] = rid;
 						row["capability"] = capbility;

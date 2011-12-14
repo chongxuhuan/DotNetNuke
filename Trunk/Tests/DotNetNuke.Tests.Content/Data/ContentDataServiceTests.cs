@@ -31,7 +31,7 @@ using DotNetNuke.Tests.Data;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Content.Data
 {
@@ -224,13 +224,13 @@ namespace DotNetNuke.Tests.Content.Data
         #region GetContentItemsByTerm Tests
 
         [Test]
-        [Row("Black", 0)] //No items tagged as black
-        [Row("Blue", 2)] //Both items tagged as blue      
-        [Row("LCD", 1)] //ContentItem 2 tagged as LCD    
-        [Row("MP3 PLayers", 1)] //ContentItem 1 tagged as MP3 PLayers    
-        [Row("Televisions", 1)] //ContentItem 2 tagged as LCD (child of Televisions)
-        [Row("Portable Electronics", 1)] //ContentItem 1 tagged as MP3 (child of Portable Electronics)
-        [Row("Electronics", 2)] //Both MP3 and LCD are children of Electronics
+        [TestCase("Black", 0)] //No items tagged as black
+        [TestCase("Blue", 2)] //Both items tagged as blue      
+        [TestCase("LCD", 1)] //ContentItem 2 tagged as LCD    
+        [TestCase("MP3 PLayers", 1)] //ContentItem 1 tagged as MP3 PLayers    
+        [TestCase("Televisions", 1)] //ContentItem 2 tagged as LCD (child of Televisions)
+        [TestCase("Portable Electronics", 1)] //ContentItem 1 tagged as MP3 (child of Portable Electronics)
+        [TestCase("Electronics", 2)] //Both MP3 and LCD are children of Electronics
         public void DataService_GetContentItemsByTerm_Returns_Reader_Of_ContentItems(string term, int count)
         {
             //Arrange

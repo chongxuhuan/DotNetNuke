@@ -34,9 +34,9 @@ using DotNetNuke.Tests.Content.Mocks;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
-
 using Moq;
+
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Content.Taxonomy
 {
@@ -104,7 +104,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Term term = ContentTestHelper.CreateValidSimpleTerm(Null.NullInteger);
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => termController.AddTerm(term));
+            Assert.Throws<ArgumentOutOfRangeException>(() => termController.AddTerm(term));
         }
 
         [Test]
@@ -296,7 +296,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             term.TermId = Null.NullInteger;
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => termController.DeleteTerm(term));
+            Assert.Throws<ArgumentOutOfRangeException>(() => termController.DeleteTerm(term));
         }
 
         [Test]
@@ -576,7 +576,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Term term = ContentTestHelper.CreateValidSimpleTerm(Null.NullInteger);
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => termController.UpdateTerm(term));
+            Assert.Throws<ArgumentOutOfRangeException>(() => termController.UpdateTerm(term));
         }
 
         [Test]
@@ -590,7 +590,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             term.Name = Constants.TERM_InValidName;
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => termController.UpdateTerm(term));
+            Assert.Throws<ArgumentOutOfRangeException>(() => termController.UpdateTerm(term));
         }
 
         [Test]
@@ -603,7 +603,7 @@ namespace DotNetNuke.Tests.Content.Taxonomy
             Term term = ContentTestHelper.CreateValidSimpleTerm(Null.NullInteger);
 
             //Act, Arrange
-            Assert.Throws<ArgumentException>(() => termController.UpdateTerm(term));
+            Assert.Throws<ArgumentOutOfRangeException>(() => termController.UpdateTerm(term));
         }
 
         [Test]

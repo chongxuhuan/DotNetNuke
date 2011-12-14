@@ -481,8 +481,7 @@ namespace DotNetNuke.Entities.Users
                                     IsSuperUser = user.IsSuperUser,
                                     LastIPAddress = user.LastIPAddress,
                                     LastName = user.LastName,
-                                    RefreshRoles = user.RefreshRoles,
-                                    UserID = user.UserID,
+                                     UserID = user.UserID,
                                     Username = user.Username
                                 };
 

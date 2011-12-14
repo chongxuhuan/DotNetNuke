@@ -31,7 +31,7 @@ using DotNetNuke.Tests.Data;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Content.Data
 {

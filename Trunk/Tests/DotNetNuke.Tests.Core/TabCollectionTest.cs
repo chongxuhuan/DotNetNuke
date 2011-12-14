@@ -27,7 +27,7 @@ using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Tests.Utilities.Mocks;
 
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace DotNetNuke.Tests.Core.Providers.Caching
 {
