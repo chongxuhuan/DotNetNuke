@@ -105,6 +105,10 @@ namespace DotNetNuke.UI.WebControls
 
         public bool ShowRemoveAllButton { get; set; }
 
+        public bool CausesValidation { get; set; }
+
+        public string ValidationGroup { get; set; }
+
         protected override HtmlTextWriterTag TagKey
         {
             get
@@ -344,7 +348,7 @@ namespace DotNetNuke.UI.WebControls
             }
 			
             //Render Hyperlink
-            writer.AddAttribute(HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink(this, buttonType));
+            writer.AddAttribute(HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackEventReference(GetPostBackOptions(buttonType)));
             writer.AddAttribute(HtmlTextWriterAttribute.Title, buttonText);
             writer.RenderBeginTag(HtmlTextWriterTag.A);
 
@@ -489,6 +493,18 @@ namespace DotNetNuke.UI.WebControls
 
             //Render end of List Boxes Row
             writer.RenderEndTag();
+        }
+
+        protected virtual PostBackOptions GetPostBackOptions(string argument)
+        {
+            var postBackOptions = new PostBackOptions(this, argument) {RequiresJavaScriptProtocol = true};
+
+            if (this.CausesValidation && this.Page.GetValidators(this.ValidationGroup).Count > 0)
+            {
+                postBackOptions.PerformValidation = true;
+                postBackOptions.ValidationGroup = this.ValidationGroup;
+            }
+            return postBackOptions;
         }
 		
 		#endregion

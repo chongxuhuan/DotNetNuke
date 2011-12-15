@@ -27,14 +27,13 @@
 .enableLocalizationProgress .RadUploadProgressArea{width: 900px;}
 	.enableLocalizationProgress .RadUploadProgressArea .ruShadow{margin:0px; padding:0px; border-bottom:none;}
 	.enableLocalizationProgress .RadUploadProgressArea .ruShadow > div{margin:10px; background-image:none; padding-left:20px;}
-	.enableLocalizationProgress .RadUploadProgressArea .ruShadow .ruProgress li{margin-bottom:14px;}
+	.enableLocalizationProgress .RadUploadProgressArea .ruShadow .ruProgress li{margin-bottom:14px;list-style-type: none;}
+	.enableLocalizationProgress .RadUploadProgressArea .ruShadow li.ruProgressHeader{margin-bottom:24px;}
 	.enableLocalizationProgress .RadUploadProgressArea .ruShadow .ruProgress li.ruCurrentFile{margin-top:10px;}
 	.enableLocalizationProgress .RadUploadProgressArea .ruShadow .ruProgress li.ruTimeSpeed{margin-bottom:10px;}
 	
 	.enableLocalizationProgress .RadUploadProgressArea_Simple .ruProgress {background-image:none; padding-left:20px;}
 	.enableLocalizationProgress .RadUploadProgressArea_Simple .ruProgress .ruBar div {background-image:none; background:#ccc; border-right: 1px solid #333 }
 	.enableLocalizationProgress .RadUploadProgressArea > .ruShadow {background-image:none;}
-	
-	.enableLocalizationProgress .RadUploadProgressArea li.ruProgressHeader{margin:0px;}
 	
 .dnnLangEditorContent .dnnGrid .Pending {border-style: solid; border-color: Red;}

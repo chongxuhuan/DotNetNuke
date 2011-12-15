@@ -96,6 +96,39 @@ namespace DotNetNuke.Tests.Core.Controllers
         #region Get Dictionaries
 
         [Test]
+        [Ignore("Need to figure out how to do the Assert.AreElementsEqualIgnoringOrder in NUnit")]
+        public void HostController_GetSettings_GetList()
+        {
+            //Arrange
+            var excpectedDic = new Dictionary<string, ConfigurationSetting>();
+
+            foreach (DataRow row in _hostSettingsTable.Rows)
+            {
+                var conf = new ConfigurationSetting();
+                conf.Key = row["SettingName"].ToString();
+                conf.Value = row["SettingValue"].ToString();
+                bool IsSecure;
+                Boolean.TryParse(row["SettingIsSecure"].ToString(), out IsSecure);
+                conf.IsSecure = IsSecure;
+                excpectedDic.Add(conf.Key, conf);
+            }
+
+            //Act
+            var settingsDic = HostController.Instance.GetSettings();
+
+
+            //Assert
+            //Assert.AreElementsEqualIgnoringOrder(excpectedDic.Values, settingsDic.Values, new ConfigurationSettingsComparer());
+
+            //Make sure the keys in the dic correspond to keys in value
+
+            foreach (var currentConfig in settingsDic)
+            {
+                Assert.AreEqual(currentConfig.Key, currentConfig.Value.Key);
+            }
+        }
+
+        [Test]
         public void HostController_GetSettingsDictionary_GetList()
         {
             //Arrange

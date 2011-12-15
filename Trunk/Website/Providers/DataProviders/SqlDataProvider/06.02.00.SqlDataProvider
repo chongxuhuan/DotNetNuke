@@ -13,3 +13,86 @@
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelationshipTypes]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}RelationshipTypes]
+		(
+			[RelationshipTypeID] [int] IDENTITY(1,1) NOT NULL,
+			[Direction] [int] NOT NULL,
+			[Name] [nvarchar](50) NOT NULL,
+			[Description] [nvarchar](500) NULL,
+			[CreatedByUserID] [int] NOT NULL,
+			[CreatedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}RelationshipTypes_CreatedOnDate]  DEFAULT (getdate()) NOT NULL ,
+			[LastModifiedByUserID] [int] NOT NULL,
+			[LastModifiedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}RelationshipTypes_LastModifiedOnDate]  DEFAULT (getdate()) NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}RelationshipTypes] PRIMARY KEY CLUSTERED ( [RelationshipTypeID] ASC )
+		)		
+	END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Relationships]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Relationships]
+		(
+			[RelationshipID] [int] IDENTITY(1,1) NOT NULL,
+			[RelationshipTypeID] [int] NOT NULL,
+			[Name] [nvarchar](50) NOT NULL,
+			[Description] [nvarchar](500) NULL,			
+			[PortalID] [int] NOT NULL,
+			[UserID] [int] NOT NULL,
+			[CreatedByUserID] [int] NOT NULL,
+			[CreatedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}Relationships_CreatedOnDate]  DEFAULT (getdate()) NOT NULL ,
+			[LastModifiedByUserID] [int] NOT NULL,
+			[LastModifiedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}Relationships_LastModifiedOnDate]  DEFAULT (getdate()) NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}Relationships] PRIMARY KEY CLUSTERED ( [RelationshipID] ASC )
+		)		
+
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Relationships_UserID] ON {databaseOwner}[{objectQualifier}Relationships] ([UserID] ASC)		
+	
+		ALTER TABLE {databaseOwner}[{objectQualifier}Relationships]  
+			ADD CONSTRAINT [FK_{objectQualifier}Relationships_{objectQualifier}Portals] FOREIGN KEY([PortalID]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE		
+		ALTER TABLE {databaseOwner}[{objectQualifier}Relationships]  
+			ADD CONSTRAINT [FK_{objectQualifier}Relationships_{objectQualifier}Users] FOREIGN KEY([UserID]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE CASCADE			
+	END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UserRelationships]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}UserRelationships]
+		(
+			[UserRelationshipID] [int] IDENTITY(1,1) NOT NULL,
+			[UserID] [int] NOT NULL,
+			[RelatedUserID] [int] NOT NULL,
+			[RelationshipID] [int] NOT NULL,
+			[Status] [int] NOT NULL,
+			[CreatedByUserID] [int] NOT NULL,
+			[CreatedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}UserRelationships_CreatedOnDate]  DEFAULT (getdate()) NOT NULL ,
+			[LastModifiedByUserID] [int] NOT NULL,
+			[LastModifiedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}UserRelationships_LastModifiedOnDate]  DEFAULT (getdate()) NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}UserRelationships] PRIMARY KEY CLUSTERED ( [UserRelationshipID] ASC )
+		)		
+
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}UserRelationships_UserID] ON {databaseOwner}[{objectQualifier}UserRelationships] ([UserID] ASC)
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}UserRelationships_RelatedUserID] ON {databaseOwner}[{objectQualifier}UserRelationships] ([RelatedUserID] ASC)
+		
+		ALTER TABLE {databaseOwner}[{objectQualifier}UserRelationships]  
+			ADD CONSTRAINT [FK_{objectQualifier}UserRelationships_{objectQualifier}Relationships] FOREIGN KEY([RelationshipID]) REFERENCES {databaseOwner}[{objectQualifier}Relationships] ([RelationshipID]) ON DELETE CASCADE		
+		ALTER TABLE {databaseOwner}[{objectQualifier}UserRelationships]
+			ADD CONSTRAINT [FK_{objectQualifier}UserRelationships_{objectQualifier}Users] FOREIGN KEY([UserID]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) 
+		ALTER TABLE {databaseOwner}[{objectQualifier}UserRelationships]			
+			ADD CONSTRAINT [FK_{objectQualifier}UserRelationships_{objectQualifier}Users_OnRelatedUser] FOREIGN KEY([RelationshipID]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) 
+	END
+GO
+
+-- Add rows to {databaseOwner}[{objectQualifier}RelationshipTypes
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}RelationshipTypes] WHERE [Name] = N'Friends')
+    BEGIN
+	    INSERT INTO {databaseOwner}[{objectQualifier}RelationshipTypes] ([Direction], [Name], [Description],[CreatedByUserID],[LastModifiedByUserID]) VALUES (2, N'Friends', N'Friends',-1,-1)
+	END
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}RelationshipTypes] WHERE [Name] = N'Followers')
+    BEGIN
+	    INSERT INTO {databaseOwner}[{objectQualifier}RelationshipTypes] ([Direction], [Name], [Description],[CreatedByUserID],[LastModifiedByUserID]) VALUES (1, N'Followers', N'Followers',-1,-1)
+	END
+GO
+

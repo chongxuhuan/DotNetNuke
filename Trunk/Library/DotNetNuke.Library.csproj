@@ -1252,6 +1252,7 @@
   <Target Name="AfterBuild" DependsOnTargets="DebugProject">
   </Target>
   <Target Name="DebugProject">
+    <Copy SourceFiles="Components\Mvc\bin\System.Web.Mvc.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Components\SharpZipLib\bin\SharpZipLib.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Components\Telerik\bin\Telerik.Web.UI.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Controls\DotNetNuke.WebControls\bin\DotNetNuke.WebControls.dll" DestinationFolder="..\Website\bin\" />
