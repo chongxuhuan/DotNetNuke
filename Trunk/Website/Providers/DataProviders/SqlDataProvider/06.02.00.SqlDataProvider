@@ -14,6 +14,7 @@
 /*****              SqlDataProvider                     *****/
 /************************************************************/
 
+--Schema creation for Social Relationship
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelationshipTypes]') AND type in (N'U'))
 	BEGIN
 		CREATE TABLE {databaseOwner}[{objectQualifier}RelationshipTypes]
@@ -96,3 +97,442 @@ IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}RelationshipTypes]
 	END
 GO
 
+--CRUD SPs for RelationshipType
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetAllRelationshipTypes]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetAllRelationshipTypes]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetAllRelationshipTypes]
+AS 
+    SELECT  RelationshipTypeID,
+            Direction,
+            Name ,            
+            Description,
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}RelationshipTypes    
+	ORDER BY RelationshipTypeID ASC
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRelationshipType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipType]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipType] @RelationshipTypeID INT
+AS 
+    SELECT  RelationshipTypeID,
+            Direction,
+            Name ,            
+            Description,
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}RelationshipTypes    
+	WHERE RelationshipTypeID = @RelationshipTypeID
+	ORDER BY RelationshipTypeID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteRelationshipType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationshipType]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationshipType] @RelationshipTypeID INT	
+AS 
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}RelationshipTypes  
+			WHERE RelationshipTypeID = @RelationshipTypeID
+	END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveRelationshipType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveRelationshipType]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveRelationshipType]
+    @RelationshipTypeID INT ,
+    @Direction INT ,
+    @Name NVARCHAR(50) ,
+    @Description NVARCHAR(500) ,
+    @UserID INT
+AS 
+    IF ( @RelationshipTypeID = -1 ) 
+        BEGIN
+            INSERT  {databaseOwner}{objectQualifier}RelationshipTypes
+                    ( Direction,
+                      Name ,            
+                      Description,					
+                      CreatedByUserID ,
+                      CreatedOnDate ,
+                      LastModifiedByUserID ,
+                      LastModifiedOnDate
+			        
+                    )
+            VALUES  ( @Direction , --  @Direction INT 
+                      @Name , -- Name - nvarchar(50)
+                      @Description , -- @Description NVARCHAR(500)
+                      @UserID , -- CreatedBy - int
+                      GETDATE() , -- CreatedOn - datetime
+                      @UserID , -- LastModifiedBy - int
+                      GETDATE() -- LastModifiedOn - datetime
+			        
+                    )
+                    
+            SELECT  @RelationshipTypeID = SCOPE_IDENTITY()
+        END
+    ELSE 
+        BEGIN
+            UPDATE  {databaseOwner}{objectQualifier}RelationshipTypes
+            SET     Name = @Name ,
+                    Direction = @Direction ,
+                    Description = @Description ,
+                    LastModifiedByUserID = @UserID ,
+                    LastModifiedOnDate = GETDATE()
+            WHERE   RelationshipTypeID = @RelationshipTypeID
+        END
+        
+    SELECT  @RelationshipTypeID
+GO
+
+--CRUD SPs for Relationships
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRelationship]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRelationship]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRelationship] @RelationshipID INT
+AS 
+    SELECT  RelationshipID,
+			RelationshipTypeID,            
+            Name,            
+            Description,
+			UserID,
+			PortalID,
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}Relationships    
+	WHERE RelationshipID = @RelationshipID
+	ORDER BY RelationshipID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRelationshipByUserID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipByUserID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipByUserID] @UserID INT
+AS 
+    SELECT  RelationshipID,
+			RelationshipTypeID,            
+            Name,            
+            Description,
+			UserID,
+			PortalID,
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}Relationships    
+	WHERE UserID = @UserID
+	ORDER BY RelationshipID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRelationshipByPortalID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipByPortalID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipByPortalID] @PortalID INT
+AS 
+    SELECT  RelationshipID,
+			RelationshipTypeID,            
+            Name,            
+            Description,
+			UserID,
+			PortalID,
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}Relationships    
+	WHERE PortalID = @PortalID
+	ORDER BY RelationshipID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteRelationship]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationship]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationship] @RelationshipID INT	
+AS 
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}Relationships  
+			WHERE RelationshipID = @RelationshipID
+	END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteRelationshipByUserID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationshipByUserID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationshipByUserID] @UserID INT	
+AS 
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}Relationships  
+			WHERE UserID = @UserID
+	END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteRelationshipByPortalID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationshipByPortalID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationshipByPortalID] @PortalID INT	
+AS 
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}Relationships  
+			WHERE PortalID = @PortalID
+	END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveRelationship]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveRelationship]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveRelationship]
+    @RelationshipID INT,
+    @RelationshipTypeID INT,    
+    @Name NVARCHAR(50),
+    @Description NVARCHAR(500),
+	@UserID INT,
+	@PortalID INT,
+	@CreateUpdateUserID INT
+    
+AS 
+    IF ( @RelationshipID = -1 ) 
+        BEGIN
+            INSERT  {databaseOwner}{objectQualifier}Relationships
+                    ( RelationshipTypeID,
+                      Name ,            
+                      Description,					
+					  UserID,
+					  PortalID,					
+                      CreatedByUserID ,
+                      CreatedOnDate ,
+                      LastModifiedByUserID ,
+                      LastModifiedOnDate
+			        
+                    )
+            VALUES  ( @RelationshipTypeID , -- @RelationshipTypeID INT
+                      @Name , -- Name - nvarchar(50)
+                      @Description , -- @Description NVARCHAR(500)
+					  @UserID , -- @UserID int
+					  @PortalID , -- @PortalID int
+                      @CreateUpdateUserID , -- CreatedBy - int
+                      GETDATE() , -- CreatedOn - datetime
+                      @CreateUpdateUserID , -- LastModifiedBy - int
+                      GETDATE() -- LastModifiedOn - datetime
+			        
+                    )
+                    
+            SELECT  @RelationshipID = SCOPE_IDENTITY()
+        END
+    ELSE 
+        BEGIN
+            UPDATE  {databaseOwner}{objectQualifier}Relationships
+            SET     Name = @Name ,                    
+                    Description = @Description,
+					RelationshipTypeID = @RelationshipTypeID,
+					UserID = @UserID,
+					PortalID = @PortalID,
+                    LastModifiedByUserID = @CreateUpdateUserID,
+                    LastModifiedOnDate = GETDATE()
+            WHERE   RelationshipID = @RelationshipID
+        END
+        
+    SELECT  @RelationshipID
+GO
+
+--CRUD SPs for UserRelationships
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationship]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationship]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationship] @UserRelationshipID INT
+AS 
+    SELECT  UserRelationshipID,
+			UserID,
+			RelatedUserID,
+			RelationshipID,            
+			Status,            
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}UserRelationships    
+	WHERE UserRelationshipID = @UserRelationshipID
+	ORDER BY UserRelationshipID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipByUserID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByUserID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByUserID] @UserID INT
+AS 
+    SELECT  UserRelationshipID,
+			UserID,
+			RelatedUserID,
+			RelationshipID,            
+			Status,            
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}UserRelationships    
+	WHERE UserID = @UserID
+	ORDER BY UserRelationshipID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipByRelatedUserID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByRelatedUserID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByRelatedUserID] @RelatedUserID INT
+AS 
+    SELECT  UserRelationshipID,
+			UserID,
+			RelatedUserID,
+			RelationshipID,            
+			Status,            
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}UserRelationships    
+	WHERE RelatedUserID = @RelatedUserID
+	ORDER BY UserRelationshipID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipByRelationshipID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByRelationshipID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByRelationshipID] @RelationshipID INT
+AS 
+    SELECT  UserRelationshipID,
+			UserID,
+			RelatedUserID,
+			RelationshipID,            
+			Status,            
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}UserRelationships    
+	WHERE RelationshipID = @RelationshipID
+	ORDER BY UserRelationshipID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteUserRelationship]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationship]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationship] @UserRelationshipID INT	
+AS 
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}UserRelationships  
+			WHERE UserRelationshipID = @UserRelationshipID
+	END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteUserRelationshipByUserID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByUserID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByUserID] @UserID INT	
+AS 
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}UserRelationships  
+			WHERE UserID = @UserID
+	END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelatedUserID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelatedUserID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelatedUserID] @RelatedUserID INT	
+AS 
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}UserRelationships  
+			WHERE RelatedUserID = @RelatedUserID
+	END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelationshipID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelationshipID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelationshipID] @RelationshipID INT	
+AS 
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}UserRelationships  
+			WHERE RelationshipID = @RelationshipID
+	END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveUserRelationship]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveUserRelationship]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveUserRelationship]
+    @UserRelationshipID INT,
+	@UserID INT,
+	@RelatedUserID INT,
+	@RelationshipID INT,
+	@Status INT,
+	@CreateUpdateUserID INT
+    
+AS 
+    IF ( @UserRelationshipID = -1 ) 
+        BEGIN
+            INSERT  {databaseOwner}{objectQualifier}UserRelationships
+                    ( UserID,
+					  RelatedUserID,					
+					  Status,
+                      CreatedByUserID ,
+                      CreatedOnDate ,
+                      LastModifiedByUserID ,
+                      LastModifiedOnDate
+			        
+                    )
+            VALUES  ( @UserID , -- @UserID int
+					  @RelatedUserID , -- @RelatedUserlID int
+					  @Status , -- @Status int
+                      @CreateUpdateUserID , -- CreatedBy - int
+                      GETDATE() , -- CreatedOn - datetime
+                      @CreateUpdateUserID , -- LastModifiedBy - int
+                      GETDATE() -- LastModifiedOn - datetime
+			        
+                    )
+                    
+            SELECT  @RelationshipID = SCOPE_IDENTITY()
+        END
+    ELSE 
+        BEGIN
+            UPDATE  {databaseOwner}{objectQualifier}UserRelationships
+            SET     UserID = @UserID,
+					RelatedUserID = @RelatedUserID,
+					RelationshipID = @RelationshipID,
+					Status = @Status,
+                    LastModifiedByUserID = @CreateUpdateUserID,
+                    LastModifiedOnDate = GETDATE()
+            WHERE   UserRelationshipID = @UserRelationshipID
+        END
+        
+    SELECT  @UserRelationshipID
+GO
