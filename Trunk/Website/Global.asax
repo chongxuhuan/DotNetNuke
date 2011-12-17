@@ -1,1 +1,1 @@
-<%@ Application Inherits="DotNetNuke.Common.DotNetNukeHttpApplication" Language="C#" %>
+<%@ Application Inherits="DotNetNuke.Web.Common.Internal.DotNetNukeHttpApplication" Language="C#" %>

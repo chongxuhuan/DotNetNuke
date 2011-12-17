@@ -26,8 +26,7 @@
 using System;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
@@ -48,9 +47,11 @@ using DotNetNuke.Services.Search;
 using DotNetNuke.Services.Sitemap;
 using DotNetNuke.Services.Url.FriendlyUrl;
 using DotNetNuke.Instrumentation;
+using DotNetNuke.Web.Services;
+
 #endregion
 
-namespace DotNetNuke.Common
+namespace DotNetNuke.Web.Common.Internal
 {
     /// <summary>
     /// DotNetNuke Http Application. It will handle Start, End, BeginRequest, Error event for whole application.
@@ -74,7 +75,7 @@ namespace DotNetNuke.Common
         {
             DnnLog.Info("Application Starting");
 
-            RegisterRoutes(RouteTable.Routes);
+            new ServicesRoutingManager().RegisterRoutes();
 
             if (String.IsNullOrEmpty(Config.GetSetting("ServerName")))
             {
@@ -84,6 +85,7 @@ namespace DotNetNuke.Common
             {
                 Globals.ServerName = Config.GetSetting("ServerName");
             }
+
             ComponentFactory.Container = new SimpleContainer();
             ComponentFactory.InstallComponents(new ProviderInstaller("data", typeof(DataProvider)));
             ComponentFactory.InstallComponents(new ProviderInstaller("caching", typeof(CachingProvider)));
@@ -110,21 +112,7 @@ namespace DotNetNuke.Common
 
             DnnLog.Info("Application Started");
         }
-
-        private void RegisterRoutes(RouteCollection routes)
-        {
-            if (routes.Count == 0)
-            {
-                routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-
-                routes.MapRoute(
-                    "Default", // Route name
-                    "DesktopModules/API/{controller}/{action}/{id}", // URL with parameters
-                    new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
-                    );
-            }
-        }
-
+        
         private static void RegisterIfNotAlreadyRegistered<TConcrete>() where TConcrete : class, new()
         {
             RegisterIfNotAlreadyRegistered<TConcrete, TConcrete>("");
