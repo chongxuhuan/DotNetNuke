@@ -842,16 +842,13 @@ namespace DotNetNuke.Modules.Admin.Authentication
 					returnUrl = Request.QueryString["returnurl"];
 				}
 				returnUrl = HttpUtility.UrlEncode(returnUrl);
-				url = Globals.RegisterURL(returnUrl, Null.NullString);
 
+				url = Globals.RegisterURL(returnUrl, Null.NullString);
+                registerLink.NavigateUrl = url;
                 if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger)
                 {
                     registerLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(url, this, PortalSettings, true, false, 600, 950));
                 }
-				else
-				{
-					registerLink.NavigateUrl = url;
-				}
 			}
 			else
 			{
@@ -859,13 +856,10 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			}
 
 			url = Globals.NavigateURL("SendPassword", "returnurl=" + returnUrl);
+            passwordLink.NavigateUrl = url;
 			if (PortalSettings.EnablePopUps)
 			{
                 passwordLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(url, this, PortalSettings, true, false, 300, 650));
-			}
-			else
-			{
-				passwordLink.NavigateUrl = url;
 			}
 		}
 
