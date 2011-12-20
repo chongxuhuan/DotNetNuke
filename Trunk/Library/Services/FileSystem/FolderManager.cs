@@ -1459,11 +1459,10 @@ namespace DotNetNuke.Services.FileSystem
         internal virtual void RenameFolderInFileSystem(IFolderInfo folder, string newFolderPath)
         {
             var di = new DirectoryInfo(folder.PhysicalPath);
+            if (!di.Exists) return;
 
-            if (di.Exists)
-            {
-                di.MoveTo(newFolderPath);
-            }
+            var newPhysicalPath = PathUtils.Instance.GetPhysicalPath(folder.PortalID, newFolderPath);
+            di.MoveTo(newPhysicalPath);
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
@@ -1471,23 +1470,45 @@ namespace DotNetNuke.Services.FileSystem
         {
             RenameFiles(folder, newFolderPath);
 
+            var folderMappingsProcessed = new List<int> { folder.FolderMappingID };
+
             var folders = GetFolders(folder.PortalID);
 
             foreach (var portalFolder in folders)
             {
                 var portalFolderPath = portalFolder.FolderPath;
 
-                if (!String.IsNullOrEmpty(portalFolderPath) &&
-                    portalFolderPath.StartsWith(folder.FolderPath) &&
-                    portalFolderPath != folder.FolderPath)
+                if (String.IsNullOrEmpty(portalFolderPath) ||
+                    !portalFolderPath.StartsWith(folder.FolderPath) ||
+                    portalFolderPath == folder.FolderPath) continue;
+
+                portalFolderPath = portalFolderPath.Substring(folder.FolderPath.Length);
+                portalFolder.FolderPath = newFolderPath + portalFolderPath;
+
+                if (!folderMappingsProcessed.Contains(portalFolder.FolderMappingID))
                 {
-                    portalFolderPath = portalFolderPath.Substring(folder.FolderPath.Length + 1);
-                    portalFolder.FolderPath = newFolderPath + portalFolderPath;
+                    var folderMapping = FolderMappingController.Instance.GetFolderMapping(portalFolder.FolderMappingID);
 
-                    UpdateFolder(portalFolder);
+                    if (folderMapping.IsEditable)
+                    {
+                        var originalFolderMappingID = folder.FolderMappingID;
+                        folder.FolderMappingID = portalFolder.FolderMappingID; // Not remove, on purpose
 
-                    RenameFiles(portalFolder, portalFolder.FolderPath);
+                        var newFolderName = PathUtils.Instance.RemoveTrailingSlash(newFolderPath);
+                        if (newFolderName.Length > 0 && newFolderName.LastIndexOf("/") > -1)
+                        {
+                            newFolderName = newFolderName.Substring(newFolderName.LastIndexOf("/") + 1);
+                        }
+
+                        FolderProvider.Instance(folderMapping.FolderProviderType).RenameFolder(folder, newFolderName);
+                        folder.FolderMappingID = originalFolderMappingID;
+                    }
+
+                    folderMappingsProcessed.Add(portalFolder.FolderMappingID);
                 }
+
+                RenameFiles(portalFolder, portalFolder.FolderPath);
+                UpdateFolder(portalFolder);
             }
         }
 

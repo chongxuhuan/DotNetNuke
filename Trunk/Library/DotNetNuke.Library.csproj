@@ -327,6 +327,13 @@
     <Compile Include="Entities\Users\Membership\UserMembership.cs" />
     <Compile Include="Entities\Users\Profile\ProfilePropertyAccess.cs" />
     <Compile Include="Entities\Users\Profile\UserProfile.cs" />
+    <Compile Include="Entities\Users\Social\IRelationshipController.cs" />
+    <Compile Include="Entities\Users\Social\RelationshipController.cs" />
+    <Compile Include="Entities\Users\Social\RelationshipDirection.cs" />
+    <Compile Include="Entities\Users\Social\RelationshipType.cs" />
+    <Compile Include="Entities\Users\Social\Relationship.cs" />
+    <Compile Include="Entities\Users\Social\RelationshipStatus.cs" />
+    <Compile Include="Entities\Users\Social\UserRelationship.cs" />
     <Compile Include="Entities\Users\UserController.cs">
       <SubType>Code</SubType>
     </Compile>

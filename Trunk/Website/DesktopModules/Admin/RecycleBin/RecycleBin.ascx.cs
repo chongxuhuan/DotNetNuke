@@ -221,7 +221,8 @@ namespace DotNetNuke.Modules.Admin.RecycleBin
 				}
 				else
 				{
-					TabController.RestoreTab(objTab, PortalSettings, UserId);
+				    var tabController = new TabController();
+                    tabController.RestoreTab(objTab, PortalSettings);
 
 					//restore modules in this tab
 					lstModules.Items.Cast<ListItem>().ToList().ForEach(i =>

@@ -98,8 +98,6 @@
 				menu.findItemByValue('disable').set_visible(a.getAttribute("CanDisable") == 'True');
 				menu.findItemByValue('enable').set_visible(a.getAttribute("CanEnable") == 'True');
 				menu.findItemByValue('delete').set_visible(a.getAttribute("CanDelete") == 'True');
-				menu.findItemByValue('moveup').set_visible(a.getAttribute("CanMoveUp") == 'True');
-				menu.findItemByValue('movedown').set_visible(a.getAttribute("CanMoveDown") == 'True');
 				menu.findItemByValue('makehome').set_visible(a.getAttribute("CanMakeHome") == 'True');
 			}
 		}

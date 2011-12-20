@@ -115,6 +115,7 @@
     <Compile Include="EscapedStringTest.cs" />
     <Compile Include="RetryableActionTests.cs" />
     <Compile Include="Services\ClientCapability\FacebookRequestControllerTests.cs" />
+    <Compile Include="Services\Installer\XmlMergeTests.cs" />
     <Compile Include="Services\Mobile\PreviewProfileControllerTests.cs" />
     <Compile Include="Services\Mobile\RedirectionControllerTests.cs" />
     <Compile Include="TabCollectionTest.cs" />
@@ -166,6 +167,40 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Installer\MergeFiles\AddWithLocationTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\InsertAfterInLocationTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\InsertAttributeInLocationTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\InsertBeforeInLocationTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\RemoveAttributeFromLocationTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\RemoveFromLocationTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleAddMerge.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleAddTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleInsertAfterMerge.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleInsertAfterTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleInsertAttributeMerge.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleInsertAttributeTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleInsertBeforeMerge.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleInsertBeforeTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleRemoveAttributeMerge.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleRemoveAttributeTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleRemoveMerge.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleRemoveTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleUpdateInLocationTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleUpdateInLocationWithDistractingLocationsTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleUpdateMerge.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleUpdateTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleUpdateWithKeyMerge.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\SimpleUpdateWithKeyTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\UpdateAttributeInLocationTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\UpdateInFirstLocationWithDistractingLocationAndTargetPathTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\UpdateInLocationWithDistractingLocationAndTargetPathTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\UpdateInLocationWithTargetPathTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\UpdateWithDistractingLocationAndTargetPathTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\UpdateWithKeyInLocationTarget.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\UpdateWithTargetPathMerge.xml" />
+    <EmbeddedResource Include="Services\Installer\MergeFiles\UpdateWithTargetPathTarget.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

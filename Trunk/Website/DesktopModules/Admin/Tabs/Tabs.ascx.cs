@@ -270,8 +270,6 @@ namespace DotNetNuke.Modules.Admin.Pages
                     }
                     BindTree();
                 }
-
-                //ctlPages.ContextMenus(0).Items(2).Attributes.Add("onclick", "return confirm('Are you sure?');")
             }
             catch (Exception exc) //Module failed to load
             {
@@ -316,9 +314,9 @@ namespace DotNetNuke.Modules.Admin.Pages
         {
             SelectedNode = e.Node.Value;
 
-            var objTabController = new TabController();
+            var tabController = new TabController();
 			var portalId = rblMode.SelectedValue == "H" ? Null.NullInteger : PortalId;
-			var objTab = objTabController.GetTab(int.Parse(e.Node.Value), portalId, false);
+			var objTab = tabController.GetTab(int.Parse(e.Node.Value), portalId, false);
 
             switch (e.MenuItem.Value.ToLower())
             {
@@ -358,7 +356,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 case "delete":
                     if (TabPermissionController.CanDeletePage(objTab))
                     {
-                        TabController.DeleteTab(objTab.TabID, PortalSettings, UserId);
+                        tabController.SoftDeleteTab(objTab.TabID, PortalSettings);
                         BindTree();
                         //keep the parent tab selected
                         if (objTab.ParentId != Null.NullInteger)
@@ -373,20 +371,6 @@ namespace DotNetNuke.Modules.Admin.Pages
                             pnlDetails.Visible = false;
                         }
                         ShowSuccessMessage(string.Format(Localization.GetString("TabDeleted", LocalResourceFile), objTab.TabName));
-                    }
-                    break;
-                case "moveup":
-                    if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
-                    {
-                        objTabController.MoveTab(objTab, TabMoveType.Up);
-                        BindTree();
-                    }
-                    break;
-                case "movedown":
-                    if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
-                    {
-                        objTabController.MoveTab(objTab, TabMoveType.Down);
-                        BindTree();
                     }
                     break;
                 case "add":
@@ -404,7 +388,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                     if (TabPermissionController.CanManagePage(objTab))
                     {
                         objTab.IsVisible = false;
-                        objTabController.UpdateTab(objTab);
+                        tabController.UpdateTab(objTab);
                         BindTreeAndShowTab(objTab.TabID);
                         ShowSuccessMessage(string.Format(Localization.GetString("TabHidden", LocalResourceFile), objTab.TabName));
                     }
@@ -413,7 +397,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                     if (TabPermissionController.CanManagePage(objTab))
                     {
                         objTab.IsVisible = true;
-                        objTabController.UpdateTab(objTab);
+                        tabController.UpdateTab(objTab);
                         BindTreeAndShowTab(objTab.TabID);
                         ShowSuccessMessage(string.Format(Localization.GetString("TabShown", LocalResourceFile), objTab.TabName));
                     }
@@ -422,7 +406,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                     if (TabPermissionController.CanManagePage(objTab))
                     {
                         objTab.DisableLink = true;
-                        objTabController.UpdateTab(objTab);
+                        tabController.UpdateTab(objTab);
                         BindTreeAndShowTab(objTab.TabID);
                         ShowSuccessMessage(string.Format(Localization.GetString("TabDisabled", LocalResourceFile), objTab.TabName));
                     }
@@ -431,7 +415,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                     if (TabPermissionController.CanManagePage(objTab))
                     {
                         objTab.DisableLink = false;
-                        objTabController.UpdateTab(objTab);
+                        tabController.UpdateTab(objTab);
                         BindTreeAndShowTab(objTab.TabID);
                         ShowSuccessMessage(string.Format(Localization.GetString("TabEnabled", LocalResourceFile), objTab.TabName));
                     }
@@ -1180,8 +1164,6 @@ namespace DotNetNuke.Modules.Admin.Pages
                     }
                     break;
             }
-
-            DataCache.ClearTabsCache(PortalId);
         }
 
         private bool MoveTabToParent(TabInfo tab, TabInfo targetTab)
@@ -1193,21 +1175,8 @@ namespace DotNetNuke.Modules.Admin.Pages
             }
 
             var tabController = new TabController();
+            tabController.MoveTabToParent(tab, (targetTab == null) ? Null.NullInteger : targetTab.TabID);
 
-            //get current siblings of moving tab
-            var siblingTabs = GetSiblingTabs(tab);
-            var siblingCount = siblingTabs.Count;
-
-            //move all current siblings of moving tab one level up in order
-            var tabIndex = GetIndexOfTab(tab, siblingTabs);
-            UpdateTabOrder(siblingTabs, tabIndex + 1, siblingCount - 1, -2);
-
-            tab.TabOrder = -1;
-            tab.ParentId = (targetTab == null) ? Null.NullInteger : targetTab.TabID;
-            tab.Level = (targetTab == null) ? 0 : targetTab.Level + 1;
-            tabController.UpdateTab(tab);
-
-            UpdateTabOrder(tab, true);
             ShowSuccessMessage(string.Format(Localization.GetString("TabMoved", LocalResourceFile), tab.TabName));
             return true;
         }
@@ -1221,64 +1190,22 @@ namespace DotNetNuke.Modules.Admin.Pages
             }
 
             var tabController = new TabController();
-
-            //get current siblings of moving tab
-            var siblingTabs = GetSiblingTabs(tab);
-            int siblingCount = siblingTabs.Count;
-
-            //move all current siblings of moving tab one level up in order
-            int tabIndex = GetIndexOfTab(tab, siblingTabs);
-            UpdateTabOrder(siblingTabs, tabIndex + 1, siblingCount - 1, -2);
-
-            //get siblings of new position
-            siblingTabs = GetSiblingTabs(targetTab);
-            siblingCount = siblingTabs.Count;
-
-            //First make sure the list of siblings at the new position is sorted and spaced
-            UpdateTabOrder(siblingTabs, tab.CultureCode, 2);
-
-            //Find Index position of new positin in the Sibling List
-            var targetIndex = GetIndexOfTab(targetTab, siblingTabs);
-
             switch (position)
             {
                 case Position.Above:
-                    targetIndex = targetIndex - 1;
+                    if (targetTab != null)
+                    {
+                        tabController.MoveTabBefore(tab, targetTab.TabID);
+                    }
                     break;
                 case Position.Below:
+                    if (targetTab != null)
+                    {
+                        tabController.MoveTabAfter(tab, targetTab.TabID);
+                    }
                     break;
             }
 
-            //We need to update the taborder for items that were after that position
-            UpdateTabOrder(siblingTabs, targetIndex + 1, siblingCount - 1, 2);
-
-            //Get the descendents of old tab position now before the new parentid is updated
-            var descendantTabs = tabController.GetTabsByPortal(tab.PortalID).DescendentsOf(tab.TabID);
-
-            //Update the current Tab to reflect new parent id and new taborder
-            tab.ParentId = targetTab.ParentId;
-
-            tabController.UpdateTab(tab);
-
-            //Update the moving tabs level and tabpath
-        	var oldLevel = tab.Level;
-            tab.Level = targetTab.Level;
-
-            //Update TabOrder as the previous UpdateTab call pushes the tab to the bottom
-            switch (position)
-            {
-                case Position.Above:
-                    tab.TabOrder = targetTab.TabOrder - 2;
-                    break;
-                case Position.Below:
-                    tab.TabOrder = targetTab.TabOrder + 1;
-                    break;
-            }
-
-            UpdateTabOrder(tab, true);
-
-            //Update the Descendents of the moving tab
-            UpdateDescendantLevel(descendantTabs, tab.Level - oldLevel);
             ShowSuccessMessage(string.Format(Localization.GetString("TabMoved", LocalResourceFile), tab.TabName));
             return true;
         }
@@ -1324,115 +1251,6 @@ namespace DotNetNuke.Modules.Admin.Pages
         private void ShowSuccessMessage(string message)
         {
             UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.GreenSuccess);
-        }
-
-        private void UpdateDescendantLevel(IEnumerable<TabInfo> descendantTabs, int levelDelta)
-        {
-            //Update the Descendents of this tab
-            foreach (var descendent in descendantTabs)
-            {
-                descendent.Level = descendent.Level + levelDelta;
-                UpdateTabOrder(descendent, true);
-            }
-        }
-
-        private void UpdateTabOrderInternal(IEnumerable<TabInfo> tabs, int increment)
-        {
-            var tabOrder = 1;
-            foreach (var objTab in tabs.OrderBy(t => t.TabOrder))
-            {
-                if (objTab.IsDeleted)
-                {
-                    objTab.TabOrder = -1;
-                    UpdateTabOrder(objTab, false);
-
-                    //Update the tab order of all child languages
-                    foreach (var localizedtab in objTab.LocalizedTabs.Values)
-                    {
-                        localizedtab.TabOrder = -1;
-                        UpdateTabOrder(localizedtab, false);
-                    }
-                }
-                else
-                {
-                    //Only update the tabOrder if it actually needs to be updated
-                    if (objTab.TabOrder != tabOrder)
-                    {
-                        objTab.TabOrder = tabOrder;
-                        UpdateTabOrder(objTab, false);
-
-                        //Update the tab order of all child languages
-                        foreach (var localizedtab in objTab.LocalizedTabs.Values)
-                        {
-                            if (localizedtab.TabOrder != tabOrder)
-                            {
-                                localizedtab.TabOrder = tabOrder;
-                                UpdateTabOrder(localizedtab, false);
-                            }
-                        }
-                    }
-                    tabOrder += increment;
-                }
-            }
-        }
-
-        private void UpdateTabOrder(IEnumerable<TabInfo> tabs, string culture, int increment)
-        {
-            var portalSettings = PortalController.GetCurrentPortalSettings();
-            if (portalSettings != null && portalSettings.ContentLocalizationEnabled)
-            {
-                UpdateTabOrderInternal(string.IsNullOrEmpty(culture) ? tabs.Where(t => t.CultureCode == portalSettings.DefaultLanguage || string.IsNullOrEmpty(t.CultureCode)) : tabs, increment);
-            }
-            else
-            {
-                UpdateTabOrderInternal(tabs, increment);
-            }
-        }
-
-        private void UpdateTabOrder(List<TabInfo> tabs, int startIndex, int endIndex, int increment)
-        {
-            for (var index = startIndex; index <= endIndex; index++)
-            {
-                var objTab = tabs[index];
-                objTab.TabOrder += increment;
-
-                //UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                UpdateTabOrder(objTab, false);
-            }
-        }
-
-        private void UpdateTabOrder(TabInfo objTab, bool updateTabPath)
-        {
-            if (updateTabPath)
-            {
-                objTab.TabPath = Globals.GenerateTabPath(objTab.ParentId, objTab.TabName);
-            }
-
-            DataProvider.Instance().UpdateTabOrder(objTab.TabID, objTab.TabOrder, objTab.Level, objTab.ParentId, objTab.TabPath, UserController.GetCurrentUserInfo().UserID);
-            DataProvider.Instance().UpdateTabVersion(TabId, Guid.NewGuid());
-
-            var objEventLog = new EventLogController();
-            objEventLog.AddLog(objTab, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TAB_ORDER_UPDATED);
-        }
-
-        private static List<TabInfo> GetSiblingTabs(TabInfo objTab)
-        {
-            var objTabController = new TabController();
-            return objTabController.GetTabsByPortal(objTab.PortalID).WithCulture(objTab.CultureCode, true).WithParentId(objTab.ParentId);
-        }
-
-        private static int GetIndexOfTab(TabInfo objTab, List<TabInfo> tabs)
-        {
-            var tabIndex = Null.NullInteger;
-            for (var index = 0; index < tabs.Count; index++)
-            {
-                if (tabs[index].TabID == objTab.TabID)
-                {
-                    tabIndex = index;
-                    break;
-                }
-            }
-            return tabIndex;
         }
 
         private static int GetParentTabId(List<TabInfo> lstTabs, int currentIndex, int parentLevel)
@@ -1496,7 +1314,6 @@ namespace DotNetNuke.Modules.Admin.Pages
             {
                 tab.PortalID = parentTab.PortalID;
                 tab.ParentId = parentTab.TabID;
-                tab.Level = parentTab.Level + 1;
                 if (parentTab.IsSuperTab)
                     ShowPermissions(false);
             }
@@ -1505,7 +1322,6 @@ namespace DotNetNuke.Modules.Admin.Pages
                 //return Null.NullInteger;
                 tab.PortalID = PortalId;
                 tab.ParentId = Null.NullInteger;
-                tab.Level = 0;
             }
 
             tab.TabPath = Globals.GenerateTabPath(tab.ParentId, tab.TabName);
@@ -1535,12 +1351,14 @@ namespace DotNetNuke.Modules.Admin.Pages
 
                 foreach (PermissionInfo permission in permissions)
                 {
-                    TabPermissionInfo newTabPermission = new TabPermissionInfo();
-                    newTabPermission.PermissionID = permission.PermissionID;
-                    newTabPermission.PermissionKey = permission.PermissionKey;
-                    newTabPermission.PermissionName = permission.PermissionName;
-                    newTabPermission.AllowAccess = true;
-                    newTabPermission.RoleID = PortalSettings.Current.AdministratorRoleId;
+                    var newTabPermission = new TabPermissionInfo
+                                               {
+                                                   PermissionID = permission.PermissionID,
+                                                   PermissionKey = permission.PermissionKey,
+                                                   PermissionName = permission.PermissionName,
+                                                   AllowAccess = true,
+                                                   RoleID = PortalSettings.Current.AdministratorRoleId
+                                               };
                     tab.TabPermissions.Add(newTabPermission);
                 }
             }
@@ -1635,6 +1453,5 @@ namespace DotNetNuke.Modules.Admin.Pages
         }
 
         #endregion
-
     }
 }

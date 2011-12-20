@@ -199,7 +199,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 }
                 //Determine if Package is ready for packaging
                 PackageWriterBase writer = PackageWriterFactory.GetWriter(Package);
-                cmdPackage.Visible = IsSuperTab && Directory.Exists(Path.Combine(Globals.ApplicationMapPath, writer.BasePath));
+                cmdPackage.Visible = IsSuperTab && writer != null && Directory.Exists(Path.Combine(Globals.ApplicationMapPath, writer.BasePath));
 
                 cmdDelete.Visible = IsSuperTab && (!Package.IsSystemPackage) && (PackageController.CanDeletePackage(Package, ModuleContext.PortalSettings));
                 ctlAudit.Entity = Package;

@@ -37,6 +37,7 @@ using System.Web.Hosting;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
+using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Instrumentation;
 
 using Microsoft.ApplicationBlocks.Data;
@@ -1087,131 +1088,179 @@ namespace DotNetNuke.Data
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "VerifyPortalTab", PortalId, TabId);
         }
 
-        // tab
-        public override int AddTab(int ContentItemId, int PortalId, Guid UniqueId, Guid VersionGuid, Guid DefaultLanguageGuid, Guid LocalizedVersionGuid, string TabName, bool IsVisible,
-                                   bool DisableLink, int ParentId, string IconFile, string IconFileLarge, string Title, string Description, string KeyWords, string Url, string SkinSrc,
-                                   string ContainerSrc, string TabPath, DateTime StartDate, DateTime EndDate, int RefreshInterval, string PageHeadText, bool IsSecure, bool PermanentRedirect,
-                                   float SiteMapPriority, int CreatedByUserID, string CultureCode)
+        public override int AddTabAfter(TabInfo tab, int afterTabId, int createdByUserID)
         {
-            return
-                Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString,
-                                                        DatabaseOwner + ObjectQualifier + "AddTab",
-                                                        ContentItemId,
-                                                        GetNull(PortalId),
-                                                        UniqueId,
-                                                        VersionGuid,
-                                                        GetNull(DefaultLanguageGuid),
-                                                        LocalizedVersionGuid,
-                                                        TabName,
-                                                        IsVisible,
-                                                        DisableLink,
-                                                        GetNull(ParentId),
-                                                        IconFile,
-                                                        IconFileLarge,
-                                                        Title,
-                                                        Description,
-                                                        KeyWords,
-                                                        Url,
-                                                        GetNull(SkinSrc),
-                                                        GetNull(ContainerSrc),
-                                                        TabPath,
-                                                        GetNull(StartDate),
-                                                        GetNull(EndDate),
-                                                        GetNull(RefreshInterval),
-                                                        GetNull(PageHeadText),
-                                                        IsSecure,
-                                                        PermanentRedirect,
-                                                        SiteMapPriority,
-                                                        CreatedByUserID,
-                                                        GetNull(CultureCode)));
+            return ExecuteScalar<int>("AddTabAfter",
+                                        afterTabId,
+                                        tab.ContentItemId,
+                                        GetNull(tab.PortalID),
+                                        tab.UniqueId,
+                                        tab.VersionGuid,
+                                        GetNull(tab.DefaultLanguageGuid),
+                                        tab.LocalizedVersionGuid,
+                                        tab.TabName,
+                                        tab.IsVisible,
+                                        tab.DisableLink,
+                                        GetNull(tab.ParentId),
+                                        tab.IconFile,
+                                        tab.IconFileLarge,
+                                        tab.Title,
+                                        tab.Description,
+                                        tab.KeyWords,
+                                        tab.Url,
+                                        GetNull(tab.SkinSrc),
+                                        GetNull(tab.ContainerSrc),
+                                        GetNull(tab.StartDate),
+                                        GetNull(tab.EndDate),
+                                        GetNull(tab.RefreshInterval),
+                                        GetNull(tab.PageHeadText),
+                                        tab.IsSecure,
+                                        tab.PermanentRedirect,
+                                        tab.SiteMapPriority,
+                                        createdByUserID,
+                                        GetNull(tab.CultureCode));                    
         }
 
-        [Obsolete("This method is used for legacy support during the upgrade process (pre v3.1.1). It has been replaced by one that adds the RefreshInterval and PageHeadText variables.")]
-        public override void UpdateTab(int TabId, string TabName, bool IsVisible, bool DisableLink, int ParentId, string IconFile, string Title, string Description, string KeyWords, bool IsDeleted,
-                                       string Url, string SkinSrc, string ContainerSrc, string TabPath, DateTime StartDate, DateTime EndDate, string CultureCode)
+        public override int AddTabBefore(TabInfo tab, int beforeTabId, int createdByUserID)
+        {
+            return ExecuteScalar<int>("AddTabBefore",
+                                        beforeTabId,
+                                        tab.ContentItemId,
+                                        GetNull(tab.PortalID),
+                                        tab.UniqueId,
+                                        tab.VersionGuid,
+                                        GetNull(tab.DefaultLanguageGuid),
+                                        tab.LocalizedVersionGuid,
+                                        tab.TabName,
+                                        tab.IsVisible,
+                                        tab.DisableLink,
+                                        GetNull(tab.ParentId),
+                                        tab.IconFile,
+                                        tab.IconFileLarge,
+                                        tab.Title,
+                                        tab.Description,
+                                        tab.KeyWords,
+                                        tab.Url,
+                                        GetNull(tab.SkinSrc),
+                                        GetNull(tab.ContainerSrc),
+                                        GetNull(tab.StartDate),
+                                        GetNull(tab.EndDate),
+                                        GetNull(tab.RefreshInterval),
+                                        GetNull(tab.PageHeadText),
+                                        tab.IsSecure,
+                                        tab.PermanentRedirect,
+                                        tab.SiteMapPriority,
+                                        createdByUserID,
+                                        GetNull(tab.CultureCode));                 
+        }
+
+        public override int AddTabToEnd(TabInfo tab, int createdByUserID)
+        {
+            return ExecuteScalar<int>("AddTabToEnd",
+                                        tab.ContentItemId,
+                                        GetNull(tab.PortalID),
+                                        tab.UniqueId,
+                                        tab.VersionGuid,
+                                        GetNull(tab.DefaultLanguageGuid),
+                                        tab.LocalizedVersionGuid,
+                                        tab.TabName,
+                                        tab.IsVisible,
+                                        tab.DisableLink,
+                                        GetNull(tab.ParentId),
+                                        tab.IconFile,
+                                        tab.IconFileLarge,
+                                        tab.Title,
+                                        tab.Description,
+                                        tab.KeyWords,
+                                        tab.Url,
+                                        GetNull(tab.SkinSrc),
+                                        GetNull(tab.ContainerSrc),
+                                        GetNull(tab.StartDate),
+                                        GetNull(tab.EndDate),
+                                        GetNull(tab.RefreshInterval),
+                                        GetNull(tab.PageHeadText),
+                                        tab.IsSecure,
+                                        tab.PermanentRedirect,
+                                        tab.SiteMapPriority,
+                                        createdByUserID,
+                                        GetNull(tab.CultureCode));                 
+        }
+
+        public override void DeleteTab(int tabId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteTab", tabId);
+        }
+
+        public override void MoveTabAfter(int tabId, int afterTabId, int lastModifiedByUserID)
+        {
+            ExecuteNonQuery("MoveTabAfter", tabId, afterTabId, lastModifiedByUserID);
+        }
+
+        public override void MoveTabBefore(int tabId, int beforeTabId, int lastModifiedByUserID)
+        {
+            ExecuteNonQuery("MoveTabBefore", tabId, beforeTabId, lastModifiedByUserID);
+        }
+
+        public override void MoveTabToParent(int tabId, int parentId, int lastModifiedByUserID)
+        {
+            ExecuteNonQuery("MoveTabToParent", tabId, parentId, lastModifiedByUserID);
+        }
+
+        public override void UpdateTab(int tabId, int contentItemId, int portalId, Guid versionGuid, Guid defaultLanguageGuid, Guid localizedVersionGuid, string tabName, bool isVisible,
+                                       bool disableLink, int parentId, string iconFile, string iconFileLarge, string title, string description, string keyWords, bool isDeleted, string url,
+                                       string skinSrc, string containerSrc, DateTime startDate, DateTime endDate, int refreshInterval, string pageHeadText, bool isSecure,
+                                       bool permanentRedirect, float siteMapPriority, int lastModifiedByuserID, string cultureCode)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString,
                                       DatabaseOwner + ObjectQualifier + "UpdateTab",
-                                      TabId,
-                                      TabName,
-                                      IsVisible,
-                                      DisableLink,
-                                      GetNull(ParentId),
-                                      IconFile,
-                                      Title,
-                                      Description,
-                                      KeyWords,
-                                      IsDeleted,
-                                      Url,
-                                      GetNull(SkinSrc),
-                                      GetNull(ContainerSrc),
-                                      TabPath,
-                                      GetNull(StartDate),
-                                      GetNull(EndDate),
-                                      GetNull(CultureCode));
+                                      tabId,
+                                      contentItemId,
+                                      GetNull(portalId),
+                                      versionGuid,
+                                      GetNull(defaultLanguageGuid),
+                                      localizedVersionGuid,
+                                      tabName,
+                                      isVisible,
+                                      disableLink,
+                                      GetNull(parentId),
+                                      iconFile,
+                                      iconFileLarge,
+                                      title,
+                                      description,
+                                      keyWords,
+                                      isDeleted,
+                                      url,
+                                      GetNull(skinSrc),
+                                      GetNull(containerSrc),
+                                      GetNull(startDate),
+                                      GetNull(endDate),
+                                      GetNull(refreshInterval),
+                                      GetNull(pageHeadText),
+                                      isSecure,
+                                      permanentRedirect,
+                                      siteMapPriority,
+                                      lastModifiedByuserID,
+                                      GetNull(cultureCode));
         }
 
-        public override void UpdateTab(int TabId, int ContentItemId, int PortalId, Guid VersionGuid, Guid DefaultLanguageGuid, Guid LocalizedVersionGuid, string TabName, bool IsVisible,
-                                       bool DisableLink, int ParentId, string IconFile, string IconFileLarge, string Title, string Description, string KeyWords, bool IsDeleted, string Url,
-                                       string SkinSrc, string ContainerSrc, string TabPath, DateTime StartDate, DateTime EndDate, int RefreshInterval, string PageHeadText, bool IsSecure,
-                                       bool PermanentRedirect, float SiteMapPriority, int LastModifiedByUserID, string CultureCode)
+        public override void UpdateTabTranslationStatus(int tabId, Guid localizedVersionGuid, int lastModifiedByUserID)
         {
-            SqlHelper.ExecuteNonQuery(ConnectionString,
-                                      DatabaseOwner + ObjectQualifier + "UpdateTab",
-                                      TabId,
-                                      ContentItemId,
-                                      GetNull(PortalId),
-                                      VersionGuid,
-                                      GetNull(DefaultLanguageGuid),
-                                      LocalizedVersionGuid,
-                                      TabName,
-                                      IsVisible,
-                                      DisableLink,
-                                      GetNull(ParentId),
-                                      IconFile,
-                                      IconFileLarge,
-                                      Title,
-                                      Description,
-                                      KeyWords,
-                                      IsDeleted,
-                                      Url,
-                                      GetNull(SkinSrc),
-                                      GetNull(ContainerSrc),
-                                      TabPath,
-                                      GetNull(StartDate),
-                                      GetNull(EndDate),
-                                      GetNull(RefreshInterval),
-                                      GetNull(PageHeadText),
-                                      IsSecure,
-                                      PermanentRedirect,
-                                      SiteMapPriority,
-                                      LastModifiedByUserID,
-                                      GetNull(CultureCode));
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateTabTranslationStatus", tabId, localizedVersionGuid, lastModifiedByUserID);
         }
 
-        public override void UpdateTabTranslationStatus(int TabId, Guid LocalizedVersionGuid, int LastModifiedByUserID)
+        public override void UpdateTabOrder(int tabId, int tabOrder, int parentId, int lastModifiedByUserID)
         {
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateTabTranslationStatus", TabId, LocalizedVersionGuid, LastModifiedByUserID);
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateTabOrder", tabId, tabOrder, GetNull(parentId), lastModifiedByUserID);
         }
 
-        public override void UpdateTabOrder(int TabId, int TabOrder, int Level, int ParentId, string TabPath, int LastModifiedByUserID)
+        public override void UpdateTabVersion(int tabId, Guid versionGuid)
         {
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateTabOrder", TabId, TabOrder, Level, GetNull(ParentId), TabPath, LastModifiedByUserID);
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateTabVersion", tabId, versionGuid);
         }
 
-        public override void UpdateTabVersion(int TabId, Guid VersionGuid)
+        public override IDataReader GetTabs(int portalId)
         {
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "UpdateTabVersion", TabId, VersionGuid);
-        }
-
-        public override void DeleteTab(int TabId)
-        {
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteTab", TabId);
-        }
-
-        public override IDataReader GetTabs(int PortalId)
-        {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabs", GetNull(PortalId));
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabs", GetNull(portalId));
         }
 
         public override IDataReader GetAllTabs()
@@ -1219,34 +1268,34 @@ namespace DotNetNuke.Data
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetAllTabs");
         }
 
-        public override IDataReader GetTabPaths(int PortalId, string cultureCode)
+        public override IDataReader GetTabPaths(int portalId, string cultureCode)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabPaths", GetNull(PortalId), cultureCode);
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabPaths", GetNull(portalId), cultureCode);
         }
 
-        public override IDataReader GetTab(int TabId)
+        public override IDataReader GetTab(int tabId)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTab", TabId);
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTab", tabId);
         }
 
-        public override IDataReader GetTabByUniqueID(Guid UniqueId)
+        public override IDataReader GetTabByUniqueID(Guid uniqueId)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabByUniqueID", UniqueId);
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabByUniqueID", uniqueId);
         }
 
-        public override IDataReader GetTabByName(string TabName, int PortalId)
+        public override IDataReader GetTabByName(string tabName, int portalId)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabByName", TabName, GetNull(PortalId));
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabByName", tabName, GetNull(portalId));
         }
 
-        public override int GetTabCount(int PortalId)
+        public override int GetTabCount(int portalId)
         {
-            return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabCount", PortalId));
+            return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabCount", portalId));
         }
 
-        public override IDataReader GetTabsByParentId(int ParentId)
+        public override IDataReader GetTabsByParentId(int parentId)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabsByParentId", ParentId);
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabsByParentId", parentId);
         }
 
         public override IDataReader GetTabsByModuleID(int moduleID)
@@ -1259,24 +1308,24 @@ namespace DotNetNuke.Data
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabsByPackageID", GetNull(portalID), packageID, forHost);
         }
 
-        public override IDataReader GetTabPanes(int TabId)
+        public override IDataReader GetTabPanes(int tabId)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabPanes", TabId);
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabPanes", tabId);
         }
 
-        public override IDataReader GetPortalTabModules(int PortalId, int TabId)
+        public override IDataReader GetPortalTabModules(int portalId, int tabId)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabModules", TabId);
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabModules", tabId);
         }
 
-        public override IDataReader GetTabModule(int TabModuleId)
+        public override IDataReader GetTabModule(int tabModuleId)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabModule", TabModuleId);
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabModule", tabModuleId);
         }
 
-        public override IDataReader GetTabModules(int TabId)
+        public override IDataReader GetTabModules(int tabId)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabModules", TabId);
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetTabModules", tabId);
         }
 
         //module
@@ -3287,5 +3336,114 @@ namespace DotNetNuke.Data
 		}
 
 		#endregion
-	}
+
+        #region RelationShipType CRUD
+
+        public override IDataReader GetAllRelationshipTypes()
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetAllRelationshipTypes");
+        }
+
+        public override IDataReader GetRelationshipType(int relationshipTypeID)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetRelationshipType", relationshipTypeID);
+        }
+
+        public override void DeleteRelationshipType(int relationshipTypeID)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationshipType", relationshipTypeID);
+        }
+
+        public override int SaveRelationshipType(int relationshipTypeID, int direction, string name, string description, int userId)
+        {
+            return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "SaveRelationshipType", relationshipTypeID, direction, name, description, userId));
+        }
+
+        #endregion
+
+        #region RelationShip CRUD
+
+        public override IDataReader GetRelationship(int relationshipID)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetRelationship", relationshipID);
+        }
+
+        public override IDataReader GetRelationshipByUserID(int userID)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetRelationshipByUserID", userID);
+        }
+
+        public override IDataReader GetRelationshipByPortalID(int portalID)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetRelationshipByPortalID", portalID);
+        }
+
+        public override void DeleteRelationship(int relationshipID)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationship", relationshipID);
+        }
+
+        public override void DeleteRelationshipByUserID(int userID)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationshipByUserID", userID);
+        }
+
+        public override void DeleteRelationshipByPortalID(int portalID)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationshipByPortalID", portalID);
+        }
+
+        public override int SaveRelationship(int relationshipID, int relationshipTypeID, string name, string description, int userID, int portalID, int createUpdateUserID)
+        {
+            return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "SaveRelationship", relationshipID, relationshipTypeID, name, description, userID, portalID, createUpdateUserID));
+        }
+
+        #endregion    
+
+        public override IDataReader GetUserRelationship(int userRelationshipID)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetUserRelationship", userRelationshipID);
+        }
+
+        public override IDataReader GetUserRelationshipByUserID(int userID)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetUserRelationshipByUserID", userID);
+        }
+
+        public override IDataReader GetUserRelationshipByRelatedUserID(int relatedUserID)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetUserRelationshipByRelatedID", relatedUserID);
+        }
+
+        public override IDataReader GetUserRelationshipByRelationshipID(int relatationshipID)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetUserRelationshipByRelationshipID", relatationshipID);
+        }
+
+        public override void DeleteUserRelationship(int userRelationshipID)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationship", userRelationshipID);
+        }
+
+        public override void DeleteUserRelationshipByUserID(int userID)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationshipByUserID", userID);
+        }
+
+        public override void DeleteUserRelationshipByPortalID(int relatedUserID)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationshipByRelatedUserID", relatedUserID);
+        }
+
+        public override void DeleteUserRelationshipByRelationshipID(int relatationshipID)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationshipByRelatationshipID", relatationshipID);
+        }
+
+        public override int SaveUserRelationship(int userRelationshipID, int userID, int relatedUserID, int relationshipID, int status, int createUpdateUserID)
+        {
+            return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "SaveUserRelationship", userRelationshipID, userID, relatedUserID, relationshipID, status, createUpdateUserID));
+        }
+
+    }
 }

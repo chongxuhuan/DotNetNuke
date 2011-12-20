@@ -102,74 +102,27 @@ namespace DotNetNuke.Entities.Tabs
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Adds a tab to the Datastore
-        /// </summary>
-        /// <param name="tab">The tab to be added</param>
-        /// <param name="includeAllTabsModules">Include all Tab Modules</param>
-        /// <history>
-        /// 	[cnurse]	04/30/2008	Created
-        /// 	[jlucarino]	02/26/2009	added CreatedByUserID
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private int AddTabInternal(TabInfo tab, bool includeAllTabsModules)
+        private int AddTabInternal(TabInfo tab, int afterTabId, int beforeTabId, bool includeAllTabsModules)
         {
-            tab.TabPath = Globals.GenerateTabPath(tab.ParentId, tab.TabName);
-            var tabId = GetTabByTabPath(tab.PortalID, tab.TabPath, tab.CultureCode);
-            if (tabId > Null.NullInteger)
-            {
-                //Tab exists so Throw
-                throw new TabExistsException(tabId, string.Format("Page Exists in portal: {0}, path: {1}, culture: {2}", tab.PortalID, tab.TabPath, tab.CultureCode));
-            }
+            ValidateTabPath(tab);
 
             //First create ContentItem as we need the ContentItemID
-            var typeController = new ContentTypeController();
-            var contentType = (from t in typeController.GetContentTypes() where t.ContentType == "Tab" select t).SingleOrDefault();
+            CreateContentItem(tab);
 
-            var contentController = Util.GetContentController();
-            tab.Content = String.IsNullOrEmpty(tab.Title) ? tab.TabName : tab.Title;
-            tab.ContentTypeId = contentType.ContentTypeId;
-            tab.Indexed = false;
-            int contentItemID = contentController.AddContentItem(tab);
-
-            //Add Module
-            tabId = Provider.AddTab(contentItemID,
-                                    tab.PortalID,
-                                    tab.UniqueId,
-                                    tab.VersionGuid,
-                                    tab.DefaultLanguageGuid,
-                                    tab.LocalizedVersionGuid,
-                                    tab.TabName,
-                                    tab.IsVisible,
-                                    tab.DisableLink,
-                                    tab.ParentId,
-                                    tab.IconFile,
-                                    tab.IconFileLarge,
-                                    tab.Title,
-                                    tab.Description,
-                                    tab.KeyWords,
-                                    tab.Url,
-                                    tab.SkinSrc,
-                                    tab.ContainerSrc,
-                                    tab.TabPath,
-                                    tab.StartDate,
-                                    tab.EndDate,
-                                    tab.RefreshInterval,
-                                    tab.PageHeadText,
-                                    tab.IsSecure,
-                                    tab.PermanentRedirect,
-                                    tab.SiteMapPriority,
-                                    UserController.GetCurrentUserInfo().UserID,
-                                    tab.CultureCode);
-            tab.TabID = tabId;
+            //Add Tab
+            if (afterTabId > 0)
+            {
+                tab.TabID = Provider.AddTabAfter(tab, afterTabId, UserController.GetCurrentUserInfo().UserID);
+            }
+            else
+            {
+                tab.TabID = beforeTabId > 0 
+                    ? Provider.AddTabBefore(tab, beforeTabId, UserController.GetCurrentUserInfo().UserID) 
+                    : Provider.AddTabToEnd(tab, UserController.GetCurrentUserInfo().UserID);
+            }
 
             //Clear the Cache
             ClearCache(tab.PortalID);
-
-
-            //Now we have the TabID - update the contentItem
-            contentController.UpdateContentItem(tab);
 
             var termController = Util.GetTermController();
             termController.RemoveTermsFromContent(tab);
@@ -203,285 +156,103 @@ namespace DotNetNuke.Entities.Tabs
             return tab.TabID;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Adds a tab to the end of a List
-        /// </summary>
-        /// <param name="tab">The tab to be added</param>
-        /// <param name="updateTabPath">A flag that indicates whether the TabPath is updated.</param>
-        /// <history>
-        /// 	[cnurse]	04/30/2008	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void AddTabToEndOfList(TabInfo tab, bool updateTabPath)
-        {
-            //Get the List of tabs with the same parent
-            var siblingTabs = GetSiblingTabs(tab);
-
-            //Get the Parent Tab
-			if (!Null.IsNull(tab.ParentId))
-			{
-				var parentTab = GetTab(tab.ParentId, tab.PortalID, false);
-				if (parentTab == null)
-				{
-					tab.Level = 0;
-				}
-				else
-				{
-					tab.Level = parentTab.Level + 1;
-				}
-			}
-
-        	//Update the TabOrder for the Siblings
-            UpdateTabOrder(siblingTabs, tab.CultureCode, tab.PortalID, 2);
-
-            //UpdateOrder for the new tab
-            tab.TabOrder = 2 * siblingTabs.Count + 1;
-            UpdateTabOrder(tab, updateTabPath);
-        }
-
-        private void DeleteTabInternal(int tabId, int portalId)
-        {
-            //Get the tab from the Cache
-            TabInfo tab = GetTab(tabId, portalId, false);
-
-            //Delete ant tabModule Instances
-            var moduleController = new ModuleController();
-            foreach (var m in moduleController.GetTabModules(tabId).Values)
-            {
-                moduleController.DeleteTabModule(m.TabID, m.ModuleID, false);
-            }
-
-            //Delete Tab
-            Provider.DeleteTab(tabId);
-
-            //Remove the Content Item
-            if (tab.ContentItemId > Null.NullInteger)
-            {
-                var contentController = Util.GetContentController();
-                contentController.DeleteContentItem(tab);
-            }
-
-            //Log deletion
-            var eventLog = new EventLogController();
-            eventLog.AddLog("TabID", tabId.ToString(), PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.TAB_DELETED);
-        }
-
-        private void DemoteTab(TabInfo objTab, List<TabInfo> siblingTabs)
-        {
-            int siblingCount = siblingTabs.Count;
-
-            //Get Tab's Index position in the Sibling List
-            int tabIndex = GetIndexOfTab(objTab, siblingTabs);
-
-            //Cannot demote tab that is the first sibling
-            if (tabIndex > 0)
-            {
-                //All the siblings move up in the order
-                UpdateTabOrder(siblingTabs, tabIndex + 1, siblingCount - 1, -2);
-
-                //New parent is tab with index of tabIndex -1
-                TabInfo parentTab = siblingTabs[tabIndex - 1];
-
-                //Get the descendents now before the parent is updated
-                var descendantTabs = GetTabsByPortal(objTab.PortalID).DescendentsOf(objTab.TabID);
-
-                //Update the current tab and add to the end of the new parents list of children
-                objTab.ParentId = parentTab.TabID;
-                AddTabToEndOfList(objTab, true);
-
-                //Update the Descendents of this tab
-                UpdateDescendantLevel(descendantTabs, 1);
-            }
-        }
-
-        private static bool DeleteChildTabs(int intTabid, PortalSettings PortalSettings, int UserId)
-        {
-            TabController objtabs = new TabController();
-            bool bDeleted = true;
-            foreach (TabInfo objtab in GetTabsByParent(intTabid, PortalSettings.PortalId))
-            {
-                bDeleted = DeleteTab(objtab, PortalSettings, UserId);
-                if (!bDeleted)
-                {
-                    break;
-                }
-            }
-            return bDeleted;
-        }
-
-        private static bool DeleteTab(TabInfo tabToDelete, PortalSettings PortalSettings, int UserId)
-        {
-            TabController objtabs = new TabController();
-            bool bDeleted = true;
-            if (!IsSpecialTab(tabToDelete.TabID, PortalSettings))
-            {
-                if (DeleteChildTabs(tabToDelete.TabID, PortalSettings, UserId))
-                {
-                    tabToDelete.IsDeleted = true;
-                    objtabs.UpdateTab(tabToDelete);
-
-                    ModuleController moduleCtrl = new ModuleController();
-                    foreach (ModuleInfo m in moduleCtrl.GetTabModules(tabToDelete.TabID).Values)
-                    {
-                        moduleCtrl.DeleteTabModule(m.TabID, m.ModuleID, true);
-                    }
-
-                    EventLogController objEventLog = new EventLogController();
-                    objEventLog.AddLog(tabToDelete, PortalSettings, UserId, "", EventLogController.EventLogType.TAB_SENT_TO_RECYCLE_BIN);
-                }
-                else
-                {
-                    bDeleted = false;
-                }
-            }
-            else
-            {
-                bDeleted = false;
-            }
-            return bDeleted;
-        }
-
         private static void DeserializeTabSettings(XmlNodeList nodeTabSettings, TabInfo objTab)
         {
-            string sKey;
-            string sValue;
             foreach (XmlNode oTabSettingNode in nodeTabSettings)
             {
-                sKey = XmlUtils.GetNodeValue(oTabSettingNode.CreateNavigator(), "settingname");
-                sValue = XmlUtils.GetNodeValue(oTabSettingNode.CreateNavigator(), "settingvalue");
+                string sKey = XmlUtils.GetNodeValue(oTabSettingNode.CreateNavigator(), "settingname");
+                string sValue = XmlUtils.GetNodeValue(oTabSettingNode.CreateNavigator(), "settingvalue");
                 objTab.TabSettings[sKey] = sValue;
             }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Deserializes tab permissions
-        /// </summary>
-        /// <param name="nodeTabPermissions">Node for tab permissions</param>
-        /// <param name="objTab">Tab being processed</param>
-        /// <param name="IsAdminTemplate">Flag to indicate if we are parsing admin template</param>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[Vicenç]	15/10/2004	Created
-        ///     [cnurse]    10/02/2007  Moved from PortalController
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static void DeserializeTabPermissions(XmlNodeList nodeTabPermissions, TabInfo objTab, bool IsAdminTemplate)
+        private static void DeserializeTabPermissions(XmlNodeList nodeTabPermissions, TabInfo tab, bool isAdminTemplate)
         {
-            PermissionController objPermissionController = new PermissionController();
-            PermissionInfo objPermission;
-            TabPermissionInfo objTabPermission;
-            RoleController objRoleController = new RoleController();
-            RoleInfo objRole;
-            int RoleID;
-            int PermissionID = 0;
-            string PermissionKey;
-            string PermissionCode;
-            string RoleName;
-            bool AllowAccess;
-            ArrayList arrPermissions;
-            int i;
-            foreach (XmlNode xmlTabPermission in nodeTabPermissions)
+            var permissionController = new PermissionController();
+            var roleController = new RoleController();
+            int permissionID = 0;
+            foreach (XmlNode tabPermissionNode in nodeTabPermissions)
             {
-                PermissionKey = XmlUtils.GetNodeValue(xmlTabPermission.CreateNavigator(), "permissionkey");
-                PermissionCode = XmlUtils.GetNodeValue(xmlTabPermission.CreateNavigator(), "permissioncode");
-                RoleName = XmlUtils.GetNodeValue(xmlTabPermission.CreateNavigator(), "rolename");
-                AllowAccess = XmlUtils.GetNodeValueBoolean(xmlTabPermission, "allowaccess");
-                arrPermissions = objPermissionController.GetPermissionByCodeAndKey(PermissionCode, PermissionKey);
+                string permissionKey = XmlUtils.GetNodeValue(tabPermissionNode.CreateNavigator(), "permissionkey");
+                string permissionCode = XmlUtils.GetNodeValue(tabPermissionNode.CreateNavigator(), "permissioncode");
+                string roleName = XmlUtils.GetNodeValue(tabPermissionNode.CreateNavigator(), "rolename");
+                bool allowAccess = XmlUtils.GetNodeValueBoolean(tabPermissionNode, "allowaccess");
+                ArrayList arrPermissions = permissionController.GetPermissionByCodeAndKey(permissionCode, permissionKey);
+                int i;
                 for (i = 0; i <= arrPermissions.Count - 1; i++)
                 {
-                    objPermission = (PermissionInfo)arrPermissions[i];
-                    PermissionID = objPermission.PermissionID;
+                    var permission = (PermissionInfo)arrPermissions[i];
+                    permissionID = permission.PermissionID;
                 }
-                RoleID = int.MinValue;
-                switch (RoleName)
+                int roleID = int.MinValue;
+                switch (roleName)
                 {
                     case Globals.glbRoleAllUsersName:
-                        RoleID = Convert.ToInt32(Globals.glbRoleAllUsers);
+                        roleID = Convert.ToInt32(Globals.glbRoleAllUsers);
                         break;
                     case Globals.glbRoleUnauthUserName:
-                        RoleID = Convert.ToInt32(Globals.glbRoleUnauthUser);
+                        roleID = Convert.ToInt32(Globals.glbRoleUnauthUser);
                         break;
                     default:
-                        PortalController objPortals = new PortalController();
-                        PortalInfo objPortal = objPortals.GetPortal(objTab.PortalID);
-                        objRole = objRoleController.GetRoleByName(objPortal.PortalID, RoleName);
-                        if (objRole != null)
+                        var portalController = new PortalController();
+                        var portal = portalController.GetPortal(tab.PortalID);
+                        var role = roleController.GetRoleByName(portal.PortalID, roleName);
+                        if (role != null)
                         {
-                            RoleID = objRole.RoleID;
+                            roleID = role.RoleID;
                         }
                         else
                         {
-                            if (IsAdminTemplate && RoleName.ToLower() == "administrators")
+                            if (isAdminTemplate && roleName.ToLower() == "administrators")
                             {
-                                RoleID = objPortal.AdministratorRoleId;
+                                roleID = portal.AdministratorRoleId;
                             }
                         }
                         break;
                 }
-                if (RoleID != int.MinValue)
+                if (roleID != int.MinValue)
                 {
-                    objTabPermission = new TabPermissionInfo();
-                    objTabPermission.TabID = objTab.TabID;
-                    objTabPermission.PermissionID = PermissionID;
-                    objTabPermission.RoleID = RoleID;
-                    objTabPermission.AllowAccess = AllowAccess;
-                    objTab.TabPermissions.Add(objTabPermission);
+                    var tabPermission = new TabPermissionInfo
+                                            {
+                                                TabID = tab.TabID,
+                                                PermissionID = permissionID,
+                                                RoleID = roleID,
+                                                AllowAccess = allowAccess
+                                            };
+                    tab.TabPermissions.Add(tabPermission);
                 }
             }
         }
 
-        private static int GetIndexOfTab(TabInfo objTab, List<TabInfo> tabs)
+        private static int GetIndexOfTab(TabInfo objTab, IOrderedEnumerable<TabInfo> tabs)
         {
-            int tabIndex = Null.NullInteger;
-            for (int index = 0; index <= tabs.Count - 1; index++)
-            {
-                if (tabs[index].TabID == objTab.TabID)
-                {
-                    tabIndex = index;
-                    break;
-                }
-            }
-            return tabIndex;
+            return Null.NullInteger + tabs.TakeWhile(tab => tab.TabID != objTab.TabID).Count();
         }
 
-        private static int GetPortalId(int TabId, int PortalId)
+        private static int GetPortalId(int tabId, int portalId)
         {
-            if (Null.IsNull(PortalId))
+            if (Null.IsNull(portalId))
             {
                 var portalDic = PortalController.GetPortalDictionary();
-                if (portalDic != null && portalDic.ContainsKey(TabId))
+                if (portalDic != null && portalDic.ContainsKey(tabId))
                 {
-                    PortalId = portalDic[TabId];
+                    portalId = portalDic[tabId];
                 }
             }
-            return PortalId;
+            return portalId;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetTabsByPortalCallBack gets a Dictionary of Tabs by 
-        /// Portal from the the Database.
-        /// </summary>
-        /// <param name="cacheItemArgs">The CacheItemArgs object that contains the parameters
-        /// needed for the database call</param>
-        /// <history>
-        /// 	[cnurse]	01/15/2008   Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         private static object GetTabsByPortalCallBack(CacheItemArgs cacheItemArgs)
         {
-            int portalID = (int)cacheItemArgs.ParamList[0];
+            var portalID = (int)cacheItemArgs.ParamList[0];
             var tabs = CBO.FillCollection<TabInfo>(Provider.GetTabs(portalID));
             return new TabCollection(tabs);
         }
 
         private static object GetTabPathDictionaryCallback(CacheItemArgs cacheItemArgs)
         {
-            string cultureCode = Convert.ToString(cacheItemArgs.ParamList[0]);
-            int portalID = (int)cacheItemArgs.ParamList[1];
+            var cultureCode = Convert.ToString(cacheItemArgs.ParamList[0]);
+            var portalID = (int)cacheItemArgs.ParamList[1];
             var tabpathDic = new Dictionary<string, int>(StringComparer.CurrentCultureIgnoreCase);
             IDataReader dr = DataProvider.Instance().GetTabPaths(portalID, cultureCode);
             try
@@ -507,276 +278,86 @@ namespace DotNetNuke.Entities.Tabs
             return GetTabsByPortal(objTab.PortalID).WithCulture(objTab.CultureCode, true).WithParentId(objTab.ParentId);
         }
 
-        private void PromoteTab(TabInfo objTab, List<TabInfo> siblingTabs)
+        private void HardDeleteTabInternal(int tabId)
         {
-            int siblingCount = siblingTabs.Count;
-
-            //Get the Parent Tab (we need to know the current position of the parent in)
-            TabInfo parentTab = GetTab(objTab.ParentId, objTab.PortalID, false);
-            if (parentTab != null)
+            //Delete all tabModule Instances
+            var moduleController = new ModuleController();
+            foreach (var m in moduleController.GetTabModules(tabId).Values)
             {
-                //Get Tab's Index position in the Sibling List
-                int tabIndex = GetIndexOfTab(objTab, siblingTabs);
-
-                //All the siblings move up in the order
-                UpdateTabOrder(siblingTabs, tabIndex + 1, siblingCount - 1, -2);
-
-                //Get the siblings of the Parent
-                siblingTabs = GetSiblingTabs(parentTab);
-                siblingCount = siblingTabs.Count;
-
-                //First make sure the list is sorted and spaced
-                UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2);
-
-                //Get Parents Index position in the Sibling List
-                int parentIndex = GetIndexOfTab(parentTab, siblingTabs);
-
-                //We need to update the taborder for items that were after the parent
-                UpdateTabOrder(siblingTabs, parentIndex + 1, siblingCount - 1, 2);
-
-                //Get the descendents now before the parent is updated
-                var descendantTabs = GetTabsByPortal(objTab.PortalID).DescendentsOf(objTab.TabID);
-
-                //Update the current Tab
-                objTab.ParentId = parentTab.ParentId;
-                objTab.TabOrder = parentTab.TabOrder + 2;
-                UpdateTab(objTab);
-
-                //Update the current tabs level and tabpath
-                if (objTab.Level < 0)
-                {
-                    objTab.Level = 0;
-                }
-                UpdateTabOrder(objTab, true);
-
-                //Update the Descendents of this tab
-                UpdateDescendantLevel(descendantTabs, -1);
+                moduleController.DeleteTabModule(m.TabID, m.ModuleID, false);
             }
+
+            //Delete Tab
+            Provider.DeleteTab(tabId);
+
+            //Log deletion
+            var eventLog = new EventLogController();
+            eventLog.AddLog("TabID",
+                        tabId.ToString(),
+                        PortalController.GetCurrentPortalSettings(),
+                        UserController.GetCurrentUserInfo().UserID,
+                        EventLogController.EventLogType.TAB_DELETED);
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Removes a tab from its current siblings
-        /// </summary>
-        /// <param name="objTab">Tab to remove</param>
-        /// <history>
-        /// 	[cnurse]	04/30/2008	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void RemoveTab(TabInfo objTab)
+        private bool SoftDeleteChildTabs(int intTabid, PortalSettings portalSettings)
         {
-            //Tab is being moved from the original list of siblings, so update the Taborder for the remaining tabs
-            var siblingTabs = GetSiblingTabs(objTab).Where(t => t.TabID < objTab.TabID).ToList();
-
-            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Updates child tabs TabPath field
-        /// </summary>
-        /// <param name="intTabid">ID of the parent tab</param>
-        /// <param name="portalId">Portal ID</param>
-        /// <remarks>
-        /// When a ParentTab is updated this method should be called to
-        /// ensure that the TabPath of the Child Tabs is consistent with the Parent
-        /// </remarks>
-        /// <history>
-        /// 	[JWhite]	16/11/2004	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void UpdateChildTabPath(int intTabid, int portalId)
-        {
-            foreach (TabInfo childTab in GetTabsByPortal(portalId).DescendentsOf(intTabid))
+            bool bDeleted = true;
+            foreach (TabInfo objtab in GetTabsByParent(intTabid, portalSettings.PortalId))
             {
-                string oldTabPath = childTab.TabPath;
-                childTab.TabPath = Globals.GenerateTabPath(childTab.ParentId, childTab.TabName);
-                if (oldTabPath != childTab.TabPath)
+                bDeleted = SoftDeleteTabInternal(objtab, portalSettings);
+                if (!bDeleted)
                 {
-                    if (childTab.ContentItemId == Null.NullInteger && childTab.TabID != Null.NullInteger)
+                    break;
+                }
+            }
+            return bDeleted;
+        }
+
+        private bool SoftDeleteTabInternal(TabInfo tabToDelete, PortalSettings portalSettings)
+        {
+            bool deleted = true;
+            if (!IsSpecialTab(tabToDelete.TabID, portalSettings))
+            {
+                if (SoftDeleteChildTabs(tabToDelete.TabID, portalSettings))
+                {
+                    tabToDelete.IsDeleted = true;
+                    UpdateTab(tabToDelete);
+
+                    var moduleCtrl = new ModuleController();
+                    foreach (ModuleInfo m in moduleCtrl.GetTabModules(tabToDelete.TabID).Values)
                     {
-                        CreateContentItem(childTab);
+                        moduleCtrl.DeleteTabModule(m.TabID, m.ModuleID, true);
                     }
 
-                    Provider.UpdateTab(childTab.TabID,
-                                       childTab.ContentItemId,
-                                       childTab.PortalID,
-                                       childTab.VersionGuid,
-                                       childTab.DefaultLanguageGuid,
-                                       childTab.LocalizedVersionGuid,
-                                       childTab.TabName,
-                                       childTab.IsVisible,
-                                       childTab.DisableLink,
-                                       childTab.ParentId,
-                                       childTab.IconFileRaw,
-									   childTab.IconFileLargeRaw,
-                                       childTab.Title,
-                                       childTab.Description,
-                                       childTab.KeyWords,
-                                       childTab.IsDeleted,
-                                       childTab.Url,
-                                       childTab.SkinSrc,
-                                       childTab.ContainerSrc,
-                                       childTab.TabPath,
-                                       childTab.StartDate,
-                                       childTab.EndDate,
-                                       childTab.RefreshInterval,
-                                       childTab.PageHeadText,
-                                       childTab.IsSecure,
-                                       childTab.PermanentRedirect,
-                                       childTab.SiteMapPriority,
-                                       UserController.GetCurrentUserInfo().UserID,
-                                       childTab.CultureCode);
-                    UpdateTabVersion(childTab.TabID);
-                    EventLogController objEventLog = new EventLogController();
-                    objEventLog.AddLog("TabID",
-                                       intTabid.ToString(),
-                                       PortalController.GetCurrentPortalSettings(),
-                                       UserController.GetCurrentUserInfo().UserID,
-                                       EventLogController.EventLogType.TAB_UPDATED);
-                }
-            }
-        }
-
-        private void UpdateDescendantLevel(IEnumerable<TabInfo> descendantTabs, int levelDelta)
-        {
-            //Update the Descendents of this tab
-            foreach (TabInfo descendent in descendantTabs)
-            {
-                descendent.Level = descendent.Level + levelDelta;
-                UpdateTabOrder(descendent, true);
-            }
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Updates the TabOrder for a single Tab
-        /// </summary>
-        /// <param name="objTab">The tab to be updated</param>
-        /// <param name="updateTabPath">A flag that indicates whether the TabPath is updated.</param>
-        /// <history>
-        /// 	[cnurse]	04/30/2008	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void UpdateTabOrder(TabInfo objTab, bool updateTabPath)
-        {
-            if (updateTabPath)
-            {
-                objTab.TabPath = Globals.GenerateTabPath(objTab.ParentId, objTab.TabName);
-            }
-            Provider.UpdateTabOrder(objTab.TabID, objTab.TabOrder, objTab.Level, objTab.ParentId, objTab.TabPath, UserController.GetCurrentUserInfo().UserID);
-            UpdateTabVersion(objTab.TabID);
-            EventLogController objEventLog = new EventLogController();
-            objEventLog.AddLog(objTab, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TAB_ORDER_UPDATED);
-            ClearCache(objTab.PortalID);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Updates the TabOrder for a list of Tabs
-        /// </summary>
-        /// <param name="tabs">The List of tabs to be updated</param>
-        /// <param name="startIndex">The index to start updating from</param>
-        /// <param name="endIndex">The index to end updating to</param>
-        /// <param name="increment">The increment to update each tabs TabOrder</param>
-        /// <history>
-        /// 	[cnurse]	04/30/2008	Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void UpdateTabOrder(List<TabInfo> tabs, int startIndex, int endIndex, int increment)
-        {
-            for (int index = startIndex; index <= endIndex; index++)
-            {
-                TabInfo objTab = tabs[index];
-                objTab.TabOrder += increment;
-
-                //UpdateOrder - Parent hasn't changed so we don't need to regenerate TabPath
-                UpdateTabOrder(objTab, false);
-            }
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Updates the TabOrder for a list of Tabs
-        /// </summary>
-        /// <param name="tabs">The List of tabs to be updated</param>
-        /// <param name="culture">culture code</param>
-        /// <param name="portalId">Portal Id.</param>
-        /// <param name="increment">The increment to update each tabs TabOrder</param>
-        /// <history>
-        /// 	[cnurse]	06/09/2009	Created
-        /// 	[kbeigi]	14/06/2010	Updated to only update the tab order only when needed
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void UpdateTabOrder(IEnumerable<TabInfo> tabs, string culture, int portalId, int increment)
-        {
-            PortalSettings _PortalSettings = PortalController.GetCurrentPortalSettings();
-            if (_PortalSettings != null && _PortalSettings.ContentLocalizationEnabled)
-            {
-                if (string.IsNullOrEmpty(culture))
-                {
-                    UpdateTabOrderInternal(tabs.Where(t => t.CultureCode == _PortalSettings.DefaultLanguage || string.IsNullOrEmpty(t.CultureCode)), increment);
+                    var eventLogController = new EventLogController();
+                    eventLogController.AddLog(tabToDelete, portalSettings, portalSettings.UserId, "", EventLogController.EventLogType.TAB_SENT_TO_RECYCLE_BIN);
                 }
                 else
                 {
-                    UpdateTabOrderInternal(tabs, increment);
+                    deleted = false;
                 }
             }
             else
             {
-                UpdateTabOrderInternal(tabs, increment);
+                deleted = false;
             }
+            return deleted;
         }
 
-        private void UpdateTabOrderInternal(IEnumerable<TabInfo> tabs, int increment)
-        {
-            int tabOrder = 1;
-            foreach (TabInfo objTab in tabs.OrderBy(t => t.TabOrder))
-            {
-                if (objTab.IsDeleted)
-                {
-                    objTab.TabOrder = -1;
-                    UpdateTabOrder(objTab, false);
-
-                    //Update the tab order of all child languages
-                    foreach (TabInfo localizedtab in objTab.LocalizedTabs.Values)
-                    {
-                        localizedtab.TabOrder = -1;
-                        UpdateTabOrder(localizedtab, false);
-                    }
-                }
-                else
-                {
-                    //Only update the tabOrder if it actually needs to be updated
-                    if ((objTab.TabOrder != tabOrder))
-                    {
-                        objTab.TabOrder = tabOrder;
-                        UpdateTabOrder(objTab, false);
-
-                        //Update the tab order of all child languages
-                        foreach (TabInfo localizedtab in objTab.LocalizedTabs.Values)
-                        {
-                            if (localizedtab.TabOrder != tabOrder)
-                            {
-                                localizedtab.TabOrder = tabOrder;
-                                UpdateTabOrder(localizedtab, false);
-                            }
-                        }
-                    }
-
-                    tabOrder += increment;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Updates the VersionGuid
-        /// </summary>
-        /// <param name="tabId"></param>
-        /// <remarks></remarks>
         private static void UpdateTabVersion(int tabId)
         {
             Provider.UpdateTabVersion(tabId, Guid.NewGuid());
+        }
+
+        private static void ValidateTabPath(TabInfo tab)
+        {
+            var tabPath = Globals.GenerateTabPath(tab.ParentId, tab.TabName);
+            var tabId = GetTabByTabPath(tab.PortalID, tabPath, tab.CultureCode);
+            if (tabId > Null.NullInteger)
+            {
+                //Tab exists so Throw
+                throw new TabExistsException(tabId, string.Format("Page Exists in portal: {0}, path: {1}, culture: {2}", tab.PortalID, tab.TabPath, tab.CultureCode));
+            }
         }
 
         #endregion
@@ -810,9 +391,12 @@ namespace DotNetNuke.Entities.Tabs
         /// -----------------------------------------------------------------------------
         public int AddTab(TabInfo objTab, bool includeAllTabsModules)
         {
-            int tabID = AddTabInternal(objTab, includeAllTabsModules);
-            AddTabToEndOfList(objTab, false);
+            //Add tab to store
+            int tabID = AddTabInternal(objTab, -1, -1, includeAllTabsModules);
+
+            //Clear the Cache
             ClearCache(objTab.PortalID);
+
             return tabID;
         }
 
@@ -820,37 +404,20 @@ namespace DotNetNuke.Entities.Tabs
         /// <summary>
         /// Adds a tab after the specified tab
         /// </summary>
-        /// <param name="objTab">The tab to be added</param>
+        /// <param name="tab">The tab to be added</param>
         /// <param name="afterTabId">Id of the tab after which this tab is added</param>
         /// <history>
         /// 	[cnurse]	04/30/2008	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public int AddTabAfter(TabInfo objTab, int afterTabId)
+        public int AddTabAfter(TabInfo tab, int afterTabId)
         {
-            //Get the List of tabs with the same parent
-            var siblingTabs = GetSiblingTabs(objTab);
-
             //Add tab to store
-            int tabID = AddTabInternal(objTab, true);
-
-            //New tab is to be inserted into the siblings List after TabId=afterTabId
-            TabInfo afterTab = siblingTabs.Find(t => t.TabID == afterTabId);
-            if (afterTab == null)
-            {
-                //AfterTabId probably relates to a Tab in the current culture (objTab is in a different culture)
-                afterTab = GetTab(afterTabId, objTab.PortalID, false);
-            }
-            objTab.Level = afterTab.Level;
-            objTab.TabOrder = afterTab.TabOrder + 1; // tabs will be 1,3(afterTabId),4(newTab),5;
-
-            siblingTabs.Add(objTab);
-
-            //Sort and Update siblings
-            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2);
+            int tabID = AddTabInternal(tab, afterTabId, -1, true);
 
             //Clear the Cache
-            ClearCache(objTab.PortalID);
+            ClearCache(tab.PortalID);
+
             return tabID;
         }
 
@@ -866,25 +433,8 @@ namespace DotNetNuke.Entities.Tabs
         /// -----------------------------------------------------------------------------
         public int AddTabBefore(TabInfo objTab, int beforeTabId)
         {
-            //Get the List of tabs with the same parent
-            var siblingTabs = GetSiblingTabs(objTab);
-
             //Add tab to store
-            int tabID = AddTabInternal(objTab, true);
-
-            //New tab is to be inserted into the siblings List before TabId=beforeTabId
-            TabInfo beforeTab = siblingTabs.Find(t => t.TabID == beforeTabId);
-            if (beforeTab == null)
-            {
-                //beforeTabId probably relates to a Tab in the current culture (objTab is in a different culture)
-                beforeTab = GetTab(beforeTabId, objTab.PortalID, false);
-            }
-            objTab.Level = beforeTab.Level;
-            objTab.TabOrder = beforeTab.TabOrder - 1; //tabs will be 1,3,4(newTab),5(beforeTabid)
-            siblingTabs.Add(objTab);
-
-            //Sort and Update siblings
-            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2);
+            int tabID = AddTabInternal(objTab, -1, beforeTabId, true);
 
             //Clear the Cache
             ClearCache(objTab.PortalID);
@@ -909,29 +459,29 @@ namespace DotNetNuke.Entities.Tabs
         /// <summary>
         /// Creates content item for the tab..
         /// </summary>
-        /// <param name="updatedTab">The updated tab.</param>
-        public void CreateContentItem(TabInfo updatedTab)
+        /// <param name="tab">The updated tab.</param>
+        public void CreateContentItem(TabInfo tab)
         {
-            IContentTypeController typeController = new ContentTypeController();
-            ContentType contentType = (from t in typeController.GetContentTypes()
-                                       where t.ContentType == "Tab"
-                                       select t).SingleOrDefault();
+            //First create ContentItem as we need the ContentItemID
+            var typeController = new ContentTypeController();
+            var contentType = (from t in typeController.GetContentTypes() where t.ContentType == "Tab" select t).SingleOrDefault();
 
-            //This tab does not have a valid ContentItem
-            //create ContentItem
-            IContentController contentController = Util.GetContentController();
-            updatedTab.Content = string.IsNullOrEmpty(updatedTab.Title) ? updatedTab.TabName : updatedTab.Title;
-            updatedTab.ContentTypeId = contentType.ContentTypeId;
-            updatedTab.Indexed = false;
-            updatedTab.ContentItemId = contentController.AddContentItem(updatedTab);
+            var contentController = Util.GetContentController();
+            tab.Content = String.IsNullOrEmpty(tab.Title) ? tab.TabName : tab.Title;
+            if (contentType != null)
+            {
+                tab.ContentTypeId = contentType.ContentTypeId;
+            }
+            tab.Indexed = false;
+            contentController.AddContentItem(tab);
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Deletes a tab premanently from the database
+        /// Deletes a tab permanently from the database
         /// </summary>
-        /// <param name="TabId">TabId of the tab to be deleted</param>
-        /// <param name="PortalId">PortalId of the portal</param>
+        /// <param name="tabId">TabId of the tab to be deleted</param>
+        /// <param name="portalId">PortalId of the portal</param>
         /// <remarks>
         /// The tab will not delete if it has child tab(s).
         /// </remarks>
@@ -939,48 +489,80 @@ namespace DotNetNuke.Entities.Tabs
         /// 	[Vicenç]	19/09/2004	Added skin deassignment before deleting the tab.
         /// </history>
         /// -----------------------------------------------------------------------------
-        public void DeleteTab(int TabId, int PortalId)
+        public void DeleteTab(int tabId, int portalId)
         {
             //parent tabs can not be deleted
-            if (GetTabsByPortal(PortalId).WithParentId(TabId).Count == 0)
+            if (GetTabsByPortal(portalId).WithParentId(tabId).Count == 0)
             {
-                DeleteTabInternal(TabId, PortalId);
-                ClearCache(PortalId);
+                HardDeleteTabInternal(tabId);
             }
+            ClearCache(portalId);
         }
 
         /// <summary>
-        /// Deletes a tab premanently from the database
+        /// Deletes a tab permanently from the database
         /// </summary>
-        /// <param name="TabId">The tab id.</param>
-        /// <param name="PortalId">The portal id.</param>
+        /// <param name="tabId">The tab id.</param>
+        /// <param name="portalId">The portal id.</param>
         /// <param name="deleteDescendants">if set to <c>true</c> will delete all child tabs.</param>
         /// <remarks>
         /// 
         /// </remarks>
-        public void DeleteTab(int TabId, int PortalId, bool deleteDescendants)
+        public void DeleteTab(int tabId, int portalId, bool deleteDescendants)
         {
-            var descendantList = GetTabsByPortal(PortalId).DescendentsOf(TabId);
+            var descendantList = GetTabsByPortal(portalId).DescendentsOf(tabId);
             if (deleteDescendants && descendantList.Count > 0)
             {
                 //Iterate through descendants from bottom - which will remove children first
-                for (int i = descendantList.Count - 1; i >= 0; i += -1)
+                for (var i = descendantList.Count - 1; i >= 0; i += -1)
                 {
-                    DeleteTabInternal(descendantList[i].TabID, PortalId);
+                    HardDeleteTabInternal(descendantList[i].TabID);
                 }
-                ClearCache(PortalId);
             }
-            DeleteTab(TabId, PortalId);
+            DeleteTab(tabId, portalId);
+
+            ClearCache(portalId);
         }
 
         /// <summary>
-        /// Gets all tabs.
+        /// Delete a Setting of a tab instance
         /// </summary>
-        /// <param name="CheckLegacyFields">do no effec to this method.</param>
-        /// <returns>tab collection</returns>
-        public ArrayList GetAllTabs(bool CheckLegacyFields)
+        /// <param name="tabId">ID of the affected tab</param>
+        /// <param name="settingName">Name of the setting to be deleted</param>
+        /// <history>
+        ///    [jlucarino] 2009-10-01 Created
+        /// </history>
+        public void DeleteTabSetting(int tabId, string settingName)
         {
-            return CBO.FillCollection(Provider.GetAllTabs(), typeof(TabInfo));
+            Provider.DeleteTabSetting(tabId, settingName);
+            var eventLogController = new EventLogController();
+            var eventLogInfo = new LogInfo();
+            eventLogInfo.LogProperties.Add(new LogDetailInfo("TabID", tabId.ToString()));
+            eventLogInfo.LogProperties.Add(new LogDetailInfo("SettingName", settingName));
+            eventLogInfo.LogTypeKey = EventLogController.EventLogType.TAB_SETTING_DELETED.ToString();
+            eventLogController.AddLog(eventLogInfo);
+
+            UpdateTabVersion(tabId);
+            DataCache.RemoveCache("GetTabSettings" + tabId);
+        }
+
+        /// <summary>
+        /// Delete all Settings of a tab instance
+        /// </summary>
+        /// <param name="tabId">ID of the affected tab</param>
+        /// <history>
+        ///    [jlucarino] 2009-10-01 Created
+        /// </history>
+        public void DeleteTabSettings(int tabId)
+        {
+            Provider.DeleteTabSettings(tabId);
+            var eventLogController = new EventLogController();
+            var eventLogInfo = new LogInfo();
+            eventLogInfo.LogProperties.Add(new LogDetailInfo("TabId", tabId.ToString()));
+            eventLogInfo.LogTypeKey = EventLogController.EventLogType.TAB_SETTING_DELETED.ToString();
+            eventLogController.AddLog(eventLogInfo);
+            UpdateTabVersion(tabId);
+            DataCache.RemoveCache("GetTabSettings" + tabId);
         }
 
         /// <summary>
@@ -989,39 +571,37 @@ namespace DotNetNuke.Entities.Tabs
         /// <returns>tab collection</returns>
         public ArrayList GetAllTabs()
         {
-            return GetAllTabs(true);
+            return CBO.FillCollection(Provider.GetAllTabs(), typeof(TabInfo));
         }
 
         /// <summary>
         /// Gets the tab.
         /// </summary>
-        /// <param name="TabId">The tab id.</param>
-        /// <param name="PortalId">The portal id.</param>
+        /// <param name="tabId">The tab id.</param>
+        /// <param name="portalId">The portal id.</param>
         /// <param name="ignoreCache">if set to <c>true</c> will get tab info directly from database.</param>
         /// <returns>tab info.</returns>
-        public TabInfo GetTab(int TabId, int PortalId, bool ignoreCache)
+        public TabInfo GetTab(int tabId, int portalId, bool ignoreCache)
         {
-            TabInfo tab = null;
+            TabInfo tab;
+
             //if we are using the cache
             if (ignoreCache || Host.Host.PerformanceSetting == Globals.PerformanceSettings.NoCaching) 
             {
-                tab = CBO.FillObject<TabInfo>(Provider.GetTab(TabId));
+                tab = CBO.FillObject<TabInfo>(Provider.GetTab(tabId));
             }
             else
             {
                 //if we do not know the PortalId then try to find it in the Portals Dictionary using the TabId
-                PortalId = GetPortalId(TabId, PortalId);
+                portalId = GetPortalId(tabId, portalId);
 
                 //if we have the PortalId then try to get the TabInfo object
-                tab = GetTabsByPortal(PortalId).WithTabId(TabId);
-                if(tab==null)
-                {
-                    //Maybe we have the wrong PortalId - try host
-                    tab = GetTabsByPortal(GetPortalId(TabId, Null.NullInteger)).WithTabId(TabId);                   
-                }
+                tab = GetTabsByPortal(portalId).WithTabId(tabId) ??
+                      GetTabsByPortal(GetPortalId(tabId, Null.NullInteger)).WithTabId(tabId);
+
                 if (tab == null)
                 {
-                    DnnLog.Warn("Unable to find tabId {0} of portal {1}", TabId, PortalId);
+                    DnnLog.Warn("Unable to find tabId {0} of portal {1}", tabId, portalId);
                 }
             }
 
@@ -1031,13 +611,11 @@ namespace DotNetNuke.Entities.Tabs
         /// <summary>
         /// Gets the tab by unique ID.
         /// </summary>
-        /// <param name="UniqueID">The unique ID.</param>
+        /// <param name="uniqueID">The unique ID.</param>
         /// <returns>tab info.</returns>
-        public TabInfo GetTabByUniqueID(Guid UniqueID)
+        public TabInfo GetTabByUniqueID(Guid uniqueID)
         {
-            TabInfo tab = null;
-            tab = CBO.FillObject<TabInfo>(Provider.GetTabByUniqueID(UniqueID));
-            return tab;
+            return CBO.FillObject<TabInfo>(Provider.GetTabByUniqueID(uniqueID));
         }
 
         /// <summary>
@@ -1049,12 +627,11 @@ namespace DotNetNuke.Entities.Tabs
         /// <returns>tab info.</returns>
         public TabInfo GetTabByCulture(int tabId, int portalId, Locale locale)
         {
-            TabInfo originalTab = null;
             TabInfo localizedTab = null;
             TabCollection tabs = GetTabsByPortal(portalId);
 
             //Get Tab specified by Id
-            originalTab = tabs.WithTabId(tabId);
+            TabInfo originalTab = tabs.WithTabId(tabId);
 
             if (locale != null && originalTab != null)
             {
@@ -1095,24 +672,24 @@ namespace DotNetNuke.Entities.Tabs
         /// <summary>
         /// Gets the name of the tab by name.
         /// </summary>
-        /// <param name="TabName">Name of the tab.</param>
-        /// <param name="PortalId">The portal id.</param>
+        /// <param name="tabName">Name of the tab.</param>
+        /// <param name="portalId">The portal id.</param>
         /// <returns>tab info.</returns>
-        public TabInfo GetTabByName(string TabName, int PortalId)
+        public TabInfo GetTabByName(string tabName, int portalId)
         {
-            return GetTabsByPortal(PortalId).WithTabName(TabName);
+            return GetTabsByPortal(portalId).WithTabName(tabName);
         }
 
         /// <summary>
         /// Gets the name of the tab by name and parent id.
         /// </summary>
-        /// <param name="TabName">Name of the tab.</param>
-        /// <param name="PortalId">The portal id.</param>
-        /// <param name="ParentId">The parent id.</param>
+        /// <param name="tabName">Name of the tab.</param>
+        /// <param name="portalId">The portal id.</param>
+        /// <param name="parentId">The parent id.</param>
         /// <returns>tab info</returns>
-        public TabInfo GetTabByName(string TabName, int PortalId, int ParentId)
+        public TabInfo GetTabByName(string tabName, int portalId, int parentId)
         {
-            return GetTabsByPortal(PortalId).WithTabNameAndParentId(TabName, ParentId);
+            return GetTabsByPortal(portalId).WithTabNameAndParentId(tabName, parentId);
         }
 
         /// <summary>
@@ -1134,6 +711,44 @@ namespace DotNetNuke.Entities.Tabs
         {
             string cacheKey = string.Format(DataCache.TabCacheKey, portalId);
             return CBO.GetCachedObject<TabCollection>(new CacheItemArgs(cacheKey, DataCache.TabCacheTimeOut, DataCache.TabCachePriority, portalId), GetTabsByPortalCallBack);
+        }
+
+        /// <summary>
+        /// read all settings for a tab from TabSettings table
+        /// </summary>
+        /// <param name="tabId">ID of the Tab to query</param>
+        /// <returns>
+        /// (cached) hashtable containing all settings
+        /// </returns>
+        /// <history>
+        /// [jlucarino] 2009-08-31 Created
+        ///   </history>
+        public Hashtable GetTabSettings(int tabId)
+        {
+            string cacheKey = "GetTabSettings" + tabId;
+            var tabSettings = (Hashtable)DataCache.GetCache(cacheKey);
+            if (tabSettings == null)
+            {
+                tabSettings = new Hashtable();
+                IDataReader dr = Provider.GetTabSettings(tabId);
+                while (dr.Read())
+                {
+                    if (!dr.IsDBNull(1))
+                    {
+                        tabSettings[dr.GetString(0)] = dr.GetString(1);
+                    }
+                    else
+                    {
+                        tabSettings[dr.GetString(0)] = "";
+                    }
+                }
+                dr.Close();
+
+                //cache data
+                int intCacheTimeout = 20 * Convert.ToInt32(Host.Host.PerformanceSetting);
+                DataCache.SetCache(cacheKey, tabSettings, TimeSpan.FromMinutes(intCacheTimeout));
+            }
+            return tabSettings;
         }
 
         /// <summary>
@@ -1161,7 +776,7 @@ namespace DotNetNuke.Entities.Tabs
         /// <summary>
         /// Moves the tab by the tab move type.
         /// </summary>
-        /// <param name="objTab">The obj tab.</param>
+        /// <param name="tab">The obj tab.</param>
         /// <param name="type">The type.</param>
         /// <seealso cref="TabMoveType"/>
         /// <example>
@@ -1170,120 +785,70 @@ namespace DotNetNuke.Entities.Tabs
         /// tabCtrl.MoveTab(tab, TabMoveType.Up);
         /// </code>
         /// </example>
-        public void MoveTab(TabInfo objTab, TabMoveType type)
+        public void MoveTab(TabInfo tab, TabMoveType type)
         {
             //Get the List of tabs with the same parent
-            var siblingTabs = GetSiblingTabs(objTab);
-            int siblingCount = siblingTabs.Count;
+            var siblingTabs = GetSiblingTabs(tab).OrderBy(t => t.TabOrder);
+            var tabIndex = GetIndexOfTab(tab, siblingTabs);
             switch (type)
             {
                 case TabMoveType.Top:
-                    //Tab is being moved to the top of the current level - Set TabOrder = -1 to ensure it gets put at the top
-                    objTab.TabOrder = 1;
-
-                    //Sort and Update siblings
-                    UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2);
+                    MoveTabBefore(tab, siblingTabs.First().TabID);
                     break;
                 case TabMoveType.Bottom:
-                    //Tab is being moved to the bottom of the current level - Set TabOrder = 2*TabCount - 1
-                    objTab.TabOrder = siblingCount * 2 - 1;
-                    //Sort and Update siblings
-                    UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2);
+                    MoveTabAfter(tab, siblingTabs.Last().TabID);
                     break;
                 case TabMoveType.Up:
-                    //Tab is being moved up one position in the current level
-                    objTab.TabOrder -= 3;
-
-                    //Sort and Update siblings
-                    UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2);
+                    MoveTabBefore(tab, siblingTabs.ElementAt(tabIndex - 1).TabID);
                     break;
                 case TabMoveType.Down:
-                    //Tab is being moved down one position in the current level
-                    objTab.TabOrder += 3;
-
-                    //Sort and Update siblings
-                    UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2);
+                    MoveTabAfter(tab, siblingTabs.ElementAt(tabIndex + 1).TabID);
                     break;
                 case TabMoveType.Promote:
-                    //Tab is being promoted to the next level up in the heirarchy
-                    PromoteTab(objTab, siblingTabs);
+                    MoveTabAfter(tab, tab.ParentId);
                     break;
                 case TabMoveType.Demote:
-                    //Tab is being demoted to the next level down in the heirarchy
-                    DemoteTab(objTab, siblingTabs);
+                    MoveTabToParent(tab, siblingTabs.ElementAt(tabIndex - 1).TabID);
                     break;
             }
-            ClearCache(objTab.PortalID);
+            ClearCache(tab.PortalID);
         }
 
         /// <summary>
         /// Moves the tab after a specific tab.
         /// </summary>
-        /// <param name="objTab">The tab want to move.</param>
+        /// <param name="tab">The tab want to move.</param>
         /// <param name="afterTabId">will move objTab after this tab.</param>
-        public void MoveTabAfter(TabInfo objTab, int afterTabId)
+        public void MoveTabAfter(TabInfo tab, int afterTabId)
         {
-            if ((objTab.TabID < 0))
-            {
-                return;
-            }
-
-            //Get the List of tabs with the same parent
-            var siblingTabs = GetSiblingTabs(objTab);
-
-            //tab is to be moved after TabId=afterTabId
-            TabInfo afterTab = siblingTabs.Find(t => t.TabID == afterTabId);
-            objTab.Level = afterTab.Level;
-            objTab.TabOrder = afterTab.TabOrder + 1;
-            // tabs will be 1,3(afterTabId),4(moveTab),5
-
-            if (siblingTabs.Find(t => t.TabID == objTab.TabID) != null)
-            {
-                siblingTabs.Remove(siblingTabs.Find(t => t.TabID == objTab.TabID));
-            }
-
-            siblingTabs.Add(objTab);
-
-            //Sort and Update siblings
-            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2);
+            //Move Tab
+            Provider.MoveTabAfter(tab.TabID, afterTabId, UserController.GetCurrentUserInfo().UserID);
 
             //Clear the Cache
-            ClearCache(objTab.PortalID);
+            ClearCache(tab.PortalID);
         }
 
         /// <summary>
         /// Moves the tab before a specific tab.
         /// </summary>
-        /// <param name="objTab">The tab want to move.</param>
+        /// <param name="tab">The tab want to move.</param>
         /// <param name="beforeTabId">will move objTab before this tab.</param>
-        public void MoveTabBefore(TabInfo objTab, int beforeTabId)
+        public void MoveTabBefore(TabInfo tab, int beforeTabId)
         {
-            if ((objTab.TabID < 0))
-            {
-                return;
-            }
-
-            //Get the List of tabs with the same parent
-            var siblingTabs = GetSiblingTabs(objTab);
-
-            //tab is to be moved after TabId=afterTabId
-            TabInfo beforeTab = siblingTabs.Find(t => t.TabID == beforeTabId);
-            objTab.Level = beforeTab.Level;
-            objTab.TabOrder = beforeTab.TabOrder - 1;
-            // tabs will be 1,3(afterTabId),4(moveTab),5
-
-            if (siblingTabs.Find(t => t.TabID == objTab.TabID) != null)
-            {
-                siblingTabs.Remove(siblingTabs.Find(t => t.TabID == objTab.TabID));
-            }
-
-            siblingTabs.Add(objTab);
-
-            //Sort and Update siblings
-            UpdateTabOrder(siblingTabs, objTab.CultureCode, objTab.PortalID, 2);
+            //Move Tab
+            Provider.MoveTabBefore(tab.TabID, beforeTabId, UserController.GetCurrentUserInfo().UserID);
 
             //Clear the Cache
-            ClearCache(objTab.PortalID);
+            ClearCache(tab.PortalID);
+        }
+
+        public void MoveTabToParent(TabInfo tab, int parentId)
+        {
+            //Move Tab
+            Provider.MoveTabToParent(tab.TabID, parentId, UserController.GetCurrentUserInfo().UserID);
+
+            //Clear the Cache
+            ClearCache(tab.PortalID);
         }
 
         /// <summary>
@@ -1294,7 +859,7 @@ namespace DotNetNuke.Entities.Tabs
         {
             if ((tab.BreadCrumbs == null))
             {
-                ArrayList crumbs = new ArrayList();
+                var crumbs = new ArrayList();
                 PopulateBreadCrumbs(tab.PortalID, ref crumbs, tab.TabID);
                 tab.BreadCrumbs = crumbs;
             }
@@ -1309,26 +874,100 @@ namespace DotNetNuke.Entities.Tabs
         public void PopulateBreadCrumbs(int portalID, ref ArrayList breadCrumbs, int tabID)
         {
             //find the tab in the tabs collection
-            TabInfo objTab = null;
-            TabController objTabController = new TabController();
-            TabCollection portalTabs = objTabController.GetTabsByPortal(portalID);
-            TabCollection hostTabs = objTabController.GetTabsByPortal(Null.NullInteger);
-            bool blnFound = portalTabs.TryGetValue(tabID, out objTab);
-            if (!blnFound)
+            TabInfo tab;
+            var tabController = new TabController();
+            var portalTabs = tabController.GetTabsByPortal(portalID);
+            var hostTabs = tabController.GetTabsByPortal(Null.NullInteger);
+            bool found = portalTabs.TryGetValue(tabID, out tab);
+            if (!found)
             {
-                blnFound = hostTabs.TryGetValue(tabID, out objTab);
+                found = hostTabs.TryGetValue(tabID, out tab);
             }
             //if tab was found
-            if (blnFound)
+            if (found)
             {
-                breadCrumbs.Insert(0, objTab.Clone());
+                breadCrumbs.Insert(0, tab.Clone());
 
                 //get the tab parent
-                if (!Null.IsNull(objTab.ParentId))
+                if (!Null.IsNull(tab.ParentId))
                 {
-                    PopulateBreadCrumbs(portalID, ref breadCrumbs, objTab.ParentId);
+                    PopulateBreadCrumbs(portalID, ref breadCrumbs, tab.ParentId);
                 }
             }
+        }
+
+        /// <summary>
+        /// Restores the tab.
+        /// </summary>
+        /// <param name="tab">The obj tab.</param>
+        /// <param name="portalSettings">The portal settings.</param>
+        public void RestoreTab(TabInfo tab, PortalSettings portalSettings)
+        {
+            if (tab.DefaultLanguageTab != null)
+            {
+                //We are trying to restore the child, so recall this function with the master language's tab id
+                RestoreTab(tab.DefaultLanguageTab, portalSettings);
+                return;
+            }
+
+            tab.IsDeleted = false;
+            UpdateTab(tab);
+
+            //Restore any localized children
+            foreach (TabInfo localizedtab in tab.LocalizedTabs.Values)
+            {
+                localizedtab.IsDeleted = false;
+                UpdateTab(localizedtab);
+            }
+
+            var eventLogController = new EventLogController();
+            eventLogController.AddLog(tab, portalSettings, portalSettings.UserId, "", EventLogController.EventLogType.TAB_RESTORED);
+
+            var moduleController = new ModuleController();
+            ArrayList allTabsModules = moduleController.GetAllTabsModules(tab.PortalID, true);
+            foreach (ModuleInfo objModule in allTabsModules)
+            {
+                moduleController.CopyModule(objModule, tab, Null.NullString, true);
+            }
+
+            ClearCache(tab.PortalID);
+        }
+
+        /// <summary>
+        /// Soft Deletes the tab by setting the IsDeleted property to true.
+        /// </summary>
+        /// <param name="tabId">The tab id.</param>
+        /// <param name="portalSettings">The portal settings.</param>
+        /// <returns></returns>
+        public bool SoftDeleteTab(int tabId, PortalSettings portalSettings)
+        {
+            bool deleted;
+            TabInfo tab = GetTab(tabId, portalSettings.PortalId, false);
+            if (tab != null)
+            {
+                if (tab.DefaultLanguageTab != null)
+                {
+                    //We are trying to delete the child, so recall this function with the master language's tab id
+                    return SoftDeleteTab(tab.DefaultLanguageTab.TabID, portalSettings);
+                }
+
+                //Delete the Tab
+                deleted = SoftDeleteTabInternal(tab, portalSettings);
+
+                //Delete any localized children
+                if (deleted)
+                {
+                    foreach (TabInfo localizedtab in tab.LocalizedTabs.Values)
+                    {
+                        SoftDeleteTabInternal(localizedtab, portalSettings);
+                    }
+                }
+            }
+            else
+            {
+                deleted = false;
+            }
+            return deleted;
         }
 
         /// <summary>
@@ -1338,9 +977,6 @@ namespace DotNetNuke.Entities.Tabs
         public void UpdateTab(TabInfo updatedTab)
         {
             TabInfo originalTab = GetTab(updatedTab.TabID, updatedTab.PortalID, true);
-            bool updateOrder = (originalTab.ParentId != updatedTab.ParentId);
-            int levelDelta = (updatedTab.Level - originalTab.Level);
-            bool updateChildren = (originalTab.TabName != updatedTab.TabName || updateOrder);
 
             //Update ContentItem If neccessary
             if (updatedTab.ContentItemId == Null.NullInteger && updatedTab.TabID != Null.NullInteger)
@@ -1368,7 +1004,6 @@ namespace DotNetNuke.Entities.Tabs
                                updatedTab.Url,
                                updatedTab.SkinSrc,
                                updatedTab.ContainerSrc,
-                               updatedTab.TabPath,
                                updatedTab.StartDate,
                                updatedTab.EndDate,
                                updatedTab.RefreshInterval,
@@ -1382,13 +1017,13 @@ namespace DotNetNuke.Entities.Tabs
             //Update Tags
             ITermController termController = Util.GetTermController();
             termController.RemoveTermsFromContent(updatedTab);
-            foreach (Term _Term in updatedTab.Terms)
+            foreach (Term term in updatedTab.Terms)
             {
-                termController.AddTermToContent(_Term, updatedTab);
+                termController.AddTermToContent(term, updatedTab);
             }
 
-            EventLogController objEventLog = new EventLogController();
-            objEventLog.AddLog(updatedTab, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TAB_UPDATED);
+            var eventLogController = new EventLogController();
+            eventLogController.AddLog(updatedTab, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TAB_UPDATED);
 
             //Update Tab permissions
             TabPermissionController.SaveTabPermissions(updatedTab);
@@ -1401,34 +1036,6 @@ namespace DotNetNuke.Entities.Tabs
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-            }
-
-            //Updated Tab Level
-            if (levelDelta != 0)
-            {
-                //Get the descendents
-                var descendantTabs = GetTabsByPortal(updatedTab.PortalID).DescendentsOf(updatedTab.TabID, originalTab.Level);
-
-                //Update the Descendents of this tab
-                UpdateDescendantLevel(descendantTabs, levelDelta);
-            }
-
-            //Update Tab Order
-            if (updateOrder)
-            {
-                //Tab is being moved from the original list of siblings, so update the Taborder for the remaining tabs
-                RemoveTab(originalTab);
-
-                //UpdateOrder - Parent has changed so we need to regenerate TabPath
-                AddTabToEndOfList(updatedTab, true);
-            }
-
-            //Update Tab Path for descendents
-            if (updateChildren)
-            {
-                //Clear Tab Cache to ensure that previous updates are picked up
-                ClearCache(updatedTab.PortalID);
-                UpdateChildTabPath(updatedTab.TabID, updatedTab.PortalID);
             }
 
             //Update Tab Version
@@ -1448,21 +1055,47 @@ namespace DotNetNuke.Entities.Tabs
         /// <param name="updatedTab">The updated tab.</param>
         private void UpdateTabSettings(ref TabInfo updatedTab)
         {
-            string sKey = null;
-            foreach (string sKey_loopVariable in updatedTab.TabSettings.Keys)
+            foreach (string sKeyLoopVariable in updatedTab.TabSettings.Keys)
             {
-                sKey = sKey_loopVariable;
+                string sKey = sKeyLoopVariable;
                 UpdateTabSetting(updatedTab.TabID, sKey, Convert.ToString(updatedTab.TabSettings[sKey]));
             }
         }
 
         /// <summary>
-        /// Updates the tab order.
+        /// Adds or updates a tab's setting value
         /// </summary>
-        /// <param name="objTab">The obj tab.</param>
-        public void UpdateTabOrder(TabInfo objTab)
+        /// <param name="tabId">ID of the tab to update</param>
+        /// <param name="settingName">name of the setting property</param>
+        /// <param name="settingValue">value of the setting (String).</param>
+        /// <remarks>empty SettingValue will remove the setting, if not preserveIfEmpty is true</remarks>
+        /// <history>
+        ///    [jlucarino] 2009-10-01 Created
+        /// </history>
+        public void UpdateTabSetting(int tabId, string settingName, string settingValue)
         {
-            UpdateTabOrder(objTab, true);
+            var eventLogController = new EventLogController();
+            var eventLogInfo = new LogInfo();
+            eventLogInfo.LogProperties.Add(new LogDetailInfo("TabId", tabId.ToString()));
+            eventLogInfo.LogProperties.Add(new LogDetailInfo("SettingName", settingName));
+            eventLogInfo.LogProperties.Add(new LogDetailInfo("SettingValue", settingValue));
+            IDataReader dr = Provider.GetTabSetting(tabId, settingName);
+            if (dr.Read())
+            {
+                Provider.UpdateTabSetting(tabId, settingName, settingValue, UserController.GetCurrentUserInfo().UserID);
+                eventLogInfo.LogTypeKey = EventLogController.EventLogType.TAB_SETTING_UPDATED.ToString();
+                eventLogController.AddLog(eventLogInfo);
+            }
+            else
+            {
+                Provider.AddTabSetting(tabId, settingName, settingValue, UserController.GetCurrentUserInfo().UserID);
+                eventLogInfo.LogTypeKey = EventLogController.EventLogType.TAB_SETTING_CREATED.ToString();
+                eventLogController.AddLog(eventLogInfo);
+            }
+            dr.Close();
+
+            UpdateTabVersion(tabId);
+            DataCache.RemoveCache("GetTabSettings" + tabId);
         }
 
         /// <summary>
@@ -1486,121 +1119,7 @@ namespace DotNetNuke.Entities.Tabs
             ClearCache(localizedTab.PortalID);
         }
 
-        /// <summary>
-        /// read all settings for a tab from TabSettings table
-        /// </summary>
-        /// <param name="TabId">ID of the Tab to query</param>
-        /// <returns>
-        /// (cached) hashtable containing all settings
-        /// </returns>
-        /// <history>
-        /// [jlucarino] 2009-08-31 Created
-        ///   </history>
-        public Hashtable GetTabSettings(int TabId)
-        {
-            Hashtable objSettings;
-            string strCacheKey = "GetTabSettings" + TabId;
-            objSettings = (Hashtable)DataCache.GetCache(strCacheKey);
-            if (objSettings == null)
-            {
-                objSettings = new Hashtable();
-                IDataReader dr = Provider.GetTabSettings(TabId);
-                while (dr.Read())
-                {
-                    if (!dr.IsDBNull(1))
-                    {
-                        objSettings[dr.GetString(0)] = dr.GetString(1);
-                    }
-                    else
-                    {
-                        objSettings[dr.GetString(0)] = "";
-                    }
-                }
-                dr.Close();
-
-                //cache data
-                int intCacheTimeout = 20 * Convert.ToInt32(Host.Host.PerformanceSetting);
-                DataCache.SetCache(strCacheKey, objSettings, TimeSpan.FromMinutes(intCacheTimeout));
-            }
-            return objSettings;
-        }
-
-        /// <summary>
-        /// Adds or updates a tab's setting value
-        /// </summary>
-        /// <param name="TabId">ID of the tab to update</param>
-        /// <param name="SettingName">name of the setting property</param>
-        /// <param name="SettingValue">value of the setting (String).</param>
-        /// <remarks>empty SettingValue will remove the setting, if not preserveIfEmpty is true</remarks>
-        /// <history>
-        ///    [jlucarino] 2009-10-01 Created
-        /// </history>
-        public void UpdateTabSetting(int TabId, string SettingName, string SettingValue)
-        {
-            EventLogController objEventLog = new EventLogController();
-            LogInfo objEventLogInfo = new LogInfo();
-            objEventLogInfo.LogProperties.Add(new LogDetailInfo("TabId", TabId.ToString()));
-            objEventLogInfo.LogProperties.Add(new LogDetailInfo("SettingName", SettingName));
-            objEventLogInfo.LogProperties.Add(new LogDetailInfo("SettingValue", SettingValue));
-            IDataReader dr = Provider.GetTabSetting(TabId, SettingName);
-            if (dr.Read())
-            {
-                Provider.UpdateTabSetting(TabId, SettingName, SettingValue, UserController.GetCurrentUserInfo().UserID);
-                objEventLogInfo.LogTypeKey = EventLogController.EventLogType.TAB_SETTING_UPDATED.ToString();
-                objEventLog.AddLog(objEventLogInfo);
-            }
-            else
-            {
-                Provider.AddTabSetting(TabId, SettingName, SettingValue, UserController.GetCurrentUserInfo().UserID);
-                objEventLogInfo.LogTypeKey = EventLogController.EventLogType.TAB_SETTING_CREATED.ToString();
-                objEventLog.AddLog(objEventLogInfo);
-            }
-            dr.Close();
-
-            UpdateTabVersion(TabId);
-            DataCache.RemoveCache("GetTabSettings" + TabId);
-        }
-
-        /// <summary>
-        /// Delete a Setting of a tab instance
-        /// </summary>
-        /// <param name="TabId">ID of the affected tab</param>
-        /// <param name="SettingName">Name of the setting to be deleted</param>
-        /// <history>
-        ///    [jlucarino] 2009-10-01 Created
-        /// </history>
-        public void DeleteTabSetting(int TabId, string SettingName)
-        {
-            Provider.DeleteTabSetting(TabId, SettingName);
-            EventLogController objEventLog = new EventLogController();
-            LogInfo objEventLogInfo = new LogInfo();
-            objEventLogInfo.LogProperties.Add(new LogDetailInfo("TabID", TabId.ToString()));
-            objEventLogInfo.LogProperties.Add(new LogDetailInfo("SettingName", SettingName));
-            objEventLogInfo.LogTypeKey = EventLogController.EventLogType.TAB_SETTING_DELETED.ToString();
-            objEventLog.AddLog(objEventLogInfo);
-
-            UpdateTabVersion(TabId);
-            DataCache.RemoveCache("GetTabSettings" + TabId);
-        }
-
-        /// <summary>
-        /// Delete all Settings of a tab instance
-        /// </summary>
-        /// <param name="TabId">ID of the affected tab</param>
-        /// <history>
-        ///    [jlucarino] 2009-10-01 Created
-        /// </history>
-        public void DeleteTabSettings(int TabId)
-        {
-            Provider.DeleteTabSettings(TabId);
-            EventLogController objEventLog = new EventLogController();
-            LogInfo objEventLogInfo = new LogInfo();
-            objEventLogInfo.LogProperties.Add(new LogDetailInfo("TabId", TabId.ToString()));
-            objEventLogInfo.LogTypeKey = EventLogController.EventLogType.TAB_SETTING_DELETED.ToString();
-            objEventLog.AddLog(objEventLogInfo);
-            UpdateTabVersion(TabId);
-            DataCache.RemoveCache("GetTabSettings" + TabId);
-        }
+        #region Static Methods
 
         /// <summary>
         /// Copies the design to children.
@@ -1619,50 +1138,49 @@ namespace DotNetNuke.Entities.Tabs
         /// <param name="parentTab">The parent tab.</param>
         /// <param name="skinSrc">The skin SRC.</param>
         /// <param name="containerSrc">The container SRC.</param>
-        /// <param name="CultureCode">The culture code.</param>
-        public static void CopyDesignToChildren(TabInfo parentTab, string skinSrc, string containerSrc, string CultureCode)
+        /// <param name="cultureCode">The culture code.</param>
+        public static void CopyDesignToChildren(TabInfo parentTab, string skinSrc, string containerSrc, string cultureCode)
         {
             bool clearCache = Null.NullBoolean;
-            var childTabs = new TabController().GetTabsByPortal(parentTab.PortalID).DescendentsOf(parentTab.TabID);
-            TabController objTabController = new TabController();
-            foreach (TabInfo objTab in childTabs)
+            var tabController = new TabController();
+            var childTabs = tabController.GetTabsByPortal(parentTab.PortalID).DescendentsOf(parentTab.TabID);
+            foreach (TabInfo tab in childTabs)
             {
-                if (TabPermissionController.CanAdminPage(objTab))
+                if (TabPermissionController.CanAdminPage(tab))
                 {
-                    Provider.UpdateTab(objTab.TabID,
-                                       objTab.ContentItemId,
-                                       objTab.PortalID,
-                                       objTab.VersionGuid,
-                                       objTab.DefaultLanguageGuid,
-                                       objTab.LocalizedVersionGuid,
-                                       objTab.TabName,
-                                       objTab.IsVisible,
-                                       objTab.DisableLink,
-                                       objTab.ParentId,
-									   objTab.IconFileRaw,
-									   objTab.IconFileLargeRaw,
-                                       objTab.Title,
-                                       objTab.Description,
-                                       objTab.KeyWords,
-                                       objTab.IsDeleted,
-                                       objTab.Url,
+                    Provider.UpdateTab(tab.TabID,
+                                       tab.ContentItemId,
+                                       tab.PortalID,
+                                       tab.VersionGuid,
+                                       tab.DefaultLanguageGuid,
+                                       tab.LocalizedVersionGuid,
+                                       tab.TabName,
+                                       tab.IsVisible,
+                                       tab.DisableLink,
+                                       tab.ParentId,
+									   tab.IconFileRaw,
+									   tab.IconFileLargeRaw,
+                                       tab.Title,
+                                       tab.Description,
+                                       tab.KeyWords,
+                                       tab.IsDeleted,
+                                       tab.Url,
                                        skinSrc,
                                        containerSrc,
-                                       objTab.TabPath,
-                                       objTab.StartDate,
-                                       objTab.EndDate,
-                                       objTab.RefreshInterval,
-                                       objTab.PageHeadText,
-                                       objTab.IsSecure,
-                                       objTab.PermanentRedirect,
-                                       objTab.SiteMapPriority,
+                                       tab.StartDate,
+                                       tab.EndDate,
+                                       tab.RefreshInterval,
+                                       tab.PageHeadText,
+                                       tab.IsSecure,
+                                       tab.PermanentRedirect,
+                                       tab.SiteMapPriority,
                                        UserController.GetCurrentUserInfo().UserID,
-                                       objTab.CultureCode);
+                                       tab.CultureCode);
 
-                    UpdateTabVersion(objTab.TabID);
+                    UpdateTabVersion(tab.TabID);
 
-                    EventLogController objEventLog = new EventLogController();
-                    objEventLog.AddLog(objTab, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TAB_UPDATED);
+                    var eventLogController = new EventLogController();
+                    eventLogController.AddLog(tab, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TAB_UPDATED);
                     clearCache = true;
                 }
             }
@@ -1679,18 +1197,16 @@ namespace DotNetNuke.Entities.Tabs
         /// <param name="newPermissions">The new permissions.</param>
         public static void CopyPermissionsToChildren(TabInfo parentTab, TabPermissionCollection newPermissions)
         {
-            TabPermissionController objTabPermissionController = new TabPermissionController();
             bool clearCache = Null.NullBoolean;
-            TabController objTabController = new TabController();
             var childTabs = new TabController().GetTabsByPortal(parentTab.PortalID).DescendentsOf(parentTab.TabID);
-            foreach (TabInfo objTab in childTabs)
+            foreach (TabInfo tab in childTabs)
             {
-                if (TabPermissionController.CanAdminPage(objTab))
+                if (TabPermissionController.CanAdminPage(tab))
                 {
-                    objTab.TabPermissions.Clear();
-                    objTab.TabPermissions.AddRange(newPermissions);
-                    TabPermissionController.SaveTabPermissions(objTab);
-                    UpdateTabVersion(objTab.TabID);
+                    tab.TabPermissions.Clear();
+                    tab.TabPermissions.AddRange(newPermissions);
+                    TabPermissionController.SaveTabPermissions(tab);
+                    UpdateTabVersion(tab.TabID);
                     clearCache = true;
                 }
             }
@@ -1700,57 +1216,13 @@ namespace DotNetNuke.Entities.Tabs
             }
         }
 
-        /// <summary>
-        /// Deletes the tab.
-        /// </summary>
-        /// <param name="tabId">The tab id.</param>
-        /// <param name="PortalSettings">The portal settings.</param>
-        /// <param name="UserId">The user id.</param>
-        /// <returns></returns>
-        public static bool DeleteTab(int tabId, PortalSettings PortalSettings, int UserId)
-        {
-            bool bDeleted = true;
-            TabController objController = new TabController();
-            TabInfo objTab = objController.GetTab(tabId, PortalSettings.PortalId, false);
-            if (objTab != null)
-            {
-                if (objTab.DefaultLanguageTab != null)
-                {
-                    //We are trying to delete the child, so recall this function with the master language's tab id
-                    return DeleteTab(objTab.DefaultLanguageTab.TabID, PortalSettings, UserId);
-                }
-                //Delete Tab
-                bDeleted = DeleteTab(objTab, PortalSettings, UserId);
-
-                //Delete any localized children
-                if (bDeleted)
-                {
-                    foreach (TabInfo localizedtab in objTab.LocalizedTabs.Values)
-                    {
-                        DeleteTab(localizedtab, PortalSettings, UserId);
-                    }
-                }
-
-                //Get the List of tabs with the same parent
-                var siblingTabs = objController.GetSiblingTabs(objTab);
-
-                //Update TabOrder
-                objController.UpdateTabOrder(siblingTabs, objTab.CultureCode, PortalSettings.PortalId, 2);
-            }
-            else
-            {
-                bDeleted = false;
-            }
-            return bDeleted;
-        }
-
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Processes all panes and modules in the template file
         /// </summary>
         /// <param name="nodePanes">Template file node for the panes is current tab</param>
-        /// <param name="PortalId">PortalId of the new portal</param>
-        /// <param name="TabId">Tab being processed</param>
+        /// <param name="portalId">PortalId of the new portal</param>
+        /// <param name="tabId">Tab being processed</param>
         /// <param name="mergeTabs">Tabs need to merge.</param>
         /// <param name="hModules">Modules Hashtable.</param>
         /// <remarks>
@@ -1763,20 +1235,19 @@ namespace DotNetNuke.Entities.Tabs
         ///     [cnurse]    10/02/2007  Moved from PortalController
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static void DeserializePanes(XmlNode nodePanes, int PortalId, int TabId, PortalTemplateModuleAction mergeTabs, Hashtable hModules)
+        public static void DeserializePanes(XmlNode nodePanes, int portalId, int tabId, PortalTemplateModuleAction mergeTabs, Hashtable hModules)
         {
-            ModuleController objModules = new ModuleController();
-            ModuleInfo objModule;
+            var moduleController = new ModuleController();
 
-            var dicModules = objModules.GetTabModules(TabId);
+            var dicModules = moduleController.GetTabModules(tabId);
 
             //If Mode is Replace remove all the modules already on this Tab
             if (mergeTabs == PortalTemplateModuleAction.Replace)
             {
                 foreach (KeyValuePair<int, ModuleInfo> kvp in dicModules)
                 {
-                    objModule = kvp.Value;
-                    objModules.DeleteTabModule(TabId, objModule.ModuleID, false);
+                    ModuleInfo module = kvp.Value;
+                    moduleController.DeleteTabModule(tabId, module.ModuleID, false);
                 }
             }
 
@@ -1786,9 +1257,13 @@ namespace DotNetNuke.Entities.Tabs
                 //iterate through the modules
                 if (nodePane.SelectSingleNode("modules") != null)
                 {
-                    foreach (XmlNode nodeModule in nodePane.SelectSingleNode("modules"))
+                    var selectSingleNode = nodePane.SelectSingleNode("modules");
+                    if (selectSingleNode != null)
                     {
-                        ModuleController.DeserializeModule(nodeModule, nodePane, PortalId, TabId, mergeTabs, hModules);
+                        foreach (XmlNode nodeModule in selectSingleNode)
+                        {
+                            ModuleController.DeserializeModule(nodeModule, nodePane, portalId, tabId, mergeTabs, hModules);
+                        }
                     }
                 }
             }
@@ -1799,12 +1274,12 @@ namespace DotNetNuke.Entities.Tabs
         /// </summary>
         /// <param name="tabNode">The node tab.</param>
         /// <param name="tab">The obj tab.</param>
-        /// <param name="PortalId">The portal id.</param>
+        /// <param name="portalId">The portal id.</param>
         /// <param name="mergeTabs">The merge tabs.</param>
         /// <returns></returns>
-        public static TabInfo DeserializeTab(XmlNode tabNode, TabInfo tab, int PortalId, PortalTemplateModuleAction mergeTabs)
+        public static TabInfo DeserializeTab(XmlNode tabNode, TabInfo tab, int portalId, PortalTemplateModuleAction mergeTabs)
         {
-            return DeserializeTab(tabNode, tab, new Hashtable(), PortalId, false, mergeTabs, new Hashtable());
+            return DeserializeTab(tabNode, tab, new Hashtable(), portalId, false, mergeTabs, new Hashtable());
         }
 
         /// <summary>
@@ -1820,16 +1295,13 @@ namespace DotNetNuke.Entities.Tabs
         /// <returns></returns>
         public static TabInfo DeserializeTab(XmlNode tabNode, TabInfo tab, Hashtable tabs, int portalId, bool isAdminTemplate, PortalTemplateModuleAction mergeTabs, Hashtable modules)
         {
-            TabController tabController = new TabController();
+            var tabController = new TabController();
             string tabName = XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "name");
             if (!String.IsNullOrEmpty(tabName))
             {
                 if (tab == null)
                 {
-                    tab = new TabInfo();
-                    tab.TabID = Null.NullInteger;
-                    tab.ParentId = Null.NullInteger;
-                    tab.TabName = tabName;
+                    tab = new TabInfo {TabID = Null.NullInteger, ParentId = Null.NullInteger, TabName = tabName};
                 }
                 tab.PortalID = portalId;
                 tab.Title = XmlUtils.GetNodeValue(tabNode.CreateNavigator(), "title");
@@ -1994,20 +1466,20 @@ namespace DotNetNuke.Entities.Tabs
         /// <param name="portalId">The portal id.</param>
         /// <param name="excludeTabId">The exclude tab id.</param>
         /// <param name="includeNoneSpecified">if set to <c>true</c> [include none specified].</param>
-        /// <param name="NoneSpecifiedText">The none specified text.</param>
+        /// <param name="noneSpecifiedText">The none specified text.</param>
         /// <param name="includeHidden">if set to <c>true</c> [include hidden].</param>
         /// <param name="includeDeleted">if set to <c>true</c> [include deleted].</param>
         /// <param name="includeURL">if set to <c>true</c> [include URL].</param>
         /// <param name="checkViewPermisison">if set to <c>true</c> [check view permisison].</param>
         /// <param name="checkEditPermission">if set to <c>true</c> [check edit permission].</param>
         /// <returns></returns>
-        public static List<TabInfo> GetPortalTabs(int portalId, int excludeTabId, bool includeNoneSpecified, string NoneSpecifiedText, bool includeHidden, bool includeDeleted, bool includeURL,
+        public static List<TabInfo> GetPortalTabs(int portalId, int excludeTabId, bool includeNoneSpecified, string noneSpecifiedText, bool includeHidden, bool includeDeleted, bool includeURL,
                                                   bool checkViewPermisison, bool checkEditPermission)
         {
             return GetPortalTabs(GetTabsBySortOrder(portalId, PortalController.GetActivePortalLanguage(portalId), true),
                                  excludeTabId,
                                  includeNoneSpecified,
-                                 NoneSpecifiedText,
+                                 noneSpecifiedText,
                                  includeHidden,
                                  includeDeleted,
                                  includeURL,
@@ -2021,25 +1493,21 @@ namespace DotNetNuke.Entities.Tabs
         /// <param name="tabs">The tabs.</param>
         /// <param name="excludeTabId">The exclude tab id.</param>
         /// <param name="includeNoneSpecified">if set to <c>true</c> [include none specified].</param>
-        /// <param name="NoneSpecifiedText">The none specified text.</param>
+        /// <param name="noneSpecifiedText">The none specified text.</param>
         /// <param name="includeHidden">if set to <c>true</c> [include hidden].</param>
         /// <param name="includeDeleted">if set to <c>true</c> [include deleted].</param>
         /// <param name="includeURL">if set to <c>true</c> [include URL].</param>
         /// <param name="checkViewPermisison">if set to <c>true</c> [check view permisison].</param>
         /// <param name="checkEditPermission">if set to <c>true</c> [check edit permission].</param>
         /// <returns></returns>
-        public static List<TabInfo> GetPortalTabs(List<TabInfo> tabs, int excludeTabId, bool includeNoneSpecified, string NoneSpecifiedText, bool includeHidden, bool includeDeleted, bool includeURL,
+        public static List<TabInfo> GetPortalTabs(List<TabInfo> tabs, int excludeTabId, bool includeNoneSpecified, string noneSpecifiedText, bool includeHidden, bool includeDeleted, bool includeURL,
                                                   bool checkViewPermisison, bool checkEditPermission)
         {
             var listTabs = new List<TabInfo>();
             if (includeNoneSpecified)
             {
-                TabInfo objTab = new TabInfo();
-                objTab.TabID = -1;
-                objTab.TabName = NoneSpecifiedText;
-                objTab.TabOrder = 0;
-                objTab.ParentId = -2;
-                listTabs.Add(objTab);
+                var tab = new TabInfo {TabID = -1, TabName = noneSpecifiedText, TabOrder = 0, ParentId = -2};
+                listTabs.Add(tab);
             }
             foreach (TabInfo objTab in tabs)
             {
@@ -2051,7 +1519,7 @@ namespace DotNetNuke.Entities.Tabs
                         //Check if User has View/Edit Permission for this tab
                         if (checkEditPermission || checkViewPermisison)
                         {
-                            string permissionList = "ADD,COPY,EDIT,MANAGE";
+                            const string permissionList = "ADD,COPY,EDIT,MANAGE";
                             if (checkEditPermission && TabPermissionController.HasTabPermission(objTab.TabPermissions, permissionList))
                             {
                                 listTabs.Add(objTab);
@@ -2086,10 +1554,7 @@ namespace DotNetNuke.Entities.Tabs
             {
                 return tabpathDic[tabPath];
             }
-            else
-            {
-                return -1;
-            }
+            return -1;
         }
 
         /// <summary>
@@ -2128,6 +1593,22 @@ namespace DotNetNuke.Entities.Tabs
             return new TabController().GetTabsByPortal(portalId).WithCulture(cultureCode, includeNeutral).AsList();
         }
 
+        /// <summary>
+        /// Get all TabInfo for the current culture in SortOrder
+        /// </summary>
+        /// <param name="portalId">The portalid to load tabs for</param>
+        /// <returns>
+        /// List of TabInfo oredered by default SortOrder
+        /// </returns>
+        /// <remarks>
+        /// This method uses the Active culture.  There is an overload <seealso cref="TabController.GetTabsBySortOrder(int, string, bool)"/>
+        /// which allows the culture information to be specified.
+        /// </remarks>
+        public static List<TabInfo> GetTabsBySortOrder(int portalId)
+        {
+            return GetTabsBySortOrder(portalId, PortalController.GetActivePortalLanguage(portalId), true);
+        }
+
 		/// <summary>
 		/// Determines whether is special tab.
 		/// </summary>
@@ -2158,56 +1639,14 @@ namespace DotNetNuke.Entities.Tabs
         /// Determines whether is special tab.
         /// </summary>
         /// <param name="tabId">The tab id.</param>
-        /// <param name="PortalSettings">The portal settings.</param>
+        /// <param name="portalSettings">The portal settings.</param>
         /// <returns>
         ///   <c>true</c> if is special tab; otherwise, <c>false</c>.
         /// </returns>
-        public static bool IsSpecialTab(int tabId, PortalSettings PortalSettings)
+        public static bool IsSpecialTab(int tabId, PortalSettings portalSettings)
         {
-            return tabId == PortalSettings.SplashTabId || tabId == PortalSettings.HomeTabId || tabId == PortalSettings.LoginTabId || tabId == PortalSettings.UserTabId ||
-                   tabId == PortalSettings.AdminTabId || tabId == PortalSettings.SuperTabId;
-        }
-
-        /// <summary>
-        /// Restores the tab.
-        /// </summary>
-        /// <param name="objTab">The obj tab.</param>
-        /// <param name="PortalSettings">The portal settings.</param>
-        /// <param name="UserId">The user id.</param>
-        public static void RestoreTab(TabInfo objTab, PortalSettings PortalSettings, int UserId)
-        {
-            EventLogController objEventLog = new EventLogController();
-            TabController objController = new TabController();
-
-            if (objTab.DefaultLanguageTab != null)
-            {
-                //We are trying to restore the child, so recall this function with the master language's tab id
-                RestoreTab(objTab.DefaultLanguageTab, PortalSettings, UserId);
-                return;
-            }
-
-            objTab.IsDeleted = false;
-            objController.UpdateTab(objTab);
-
-            //Restore any localized children
-            foreach (TabInfo localizedtab in objTab.LocalizedTabs.Values)
-            {
-                localizedtab.IsDeleted = false;
-                objController.UpdateTab(localizedtab);
-            }
-
-            var siblingTabs = objController.GetSiblingTabs(objTab);
-
-            objController.UpdateTabOrder(siblingTabs, objTab.CultureCode, PortalSettings.PortalId, 2);
-
-            objEventLog.AddLog(objTab, PortalSettings, UserId, "", EventLogController.EventLogType.TAB_RESTORED);
-            ModuleController objmodules = new ModuleController();
-            ArrayList arrMods = objmodules.GetAllTabsModules(objTab.PortalID, true);
-            foreach (ModuleInfo objModule in arrMods)
-            {
-                objmodules.CopyModule(objModule, objTab, Null.NullString, true);
-            }
-            objController.ClearCache(objTab.PortalID);
+            return tabId == portalSettings.SplashTabId || tabId == portalSettings.HomeTabId || tabId == portalSettings.LoginTabId || tabId == portalSettings.UserTabId ||
+                   tabId == portalSettings.AdminTabId || tabId == portalSettings.SuperTabId;
         }
 
         /// <summary>
@@ -2231,42 +1670,52 @@ namespace DotNetNuke.Entities.Tabs
         /// <param name="includeContent">A flag used to determine if the Module content is included</param>
         public static XmlNode SerializeTab(XmlDocument tabXml, Hashtable tabs, TabInfo tab, PortalInfo portal, bool includeContent)
         {
-            XmlNode tabNode;
-            XmlNode urlNode;
             XmlNode newnode;
             CBO.SerializeObject(tab, tabXml);
 
-            tabNode = tabXml.SelectSingleNode("tab");
-            tabNode.Attributes.Remove(tabNode.Attributes["xmlns:xsd"]);
-            tabNode.Attributes.Remove(tabNode.Attributes["xmlns:xsi"]);
-
-            //remove unwanted elements
-            tabNode.RemoveChild(tabNode.SelectSingleNode("tabid"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("moduleID"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("taborder"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("portalid"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("parentid"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("isdeleted"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("tabpath"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("haschildren"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("skindoctype"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("uniqueid"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("versionguid"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("defaultLanguageGuid"));
-            tabNode.RemoveChild(tabNode.SelectSingleNode("localizedVersionGuid"));
-            foreach (XmlNode nodePermission in tabNode.SelectNodes("tabpermissions/permission"))
+            XmlNode tabNode = tabXml.SelectSingleNode("tab");
+            if (tabNode != null)
             {
-                nodePermission.RemoveChild(nodePermission.SelectSingleNode("tabpermissionid"));
-                nodePermission.RemoveChild(nodePermission.SelectSingleNode("permissionid"));
-                nodePermission.RemoveChild(nodePermission.SelectSingleNode("tabid"));
-                nodePermission.RemoveChild(nodePermission.SelectSingleNode("roleid"));
-                nodePermission.RemoveChild(nodePermission.SelectSingleNode("userid"));
-                nodePermission.RemoveChild(nodePermission.SelectSingleNode("username"));
-                nodePermission.RemoveChild(nodePermission.SelectSingleNode("displayname"));
+                if (tabNode.Attributes != null)
+                {
+                    tabNode.Attributes.Remove(tabNode.Attributes["xmlns:xsd"]);
+                    tabNode.Attributes.Remove(tabNode.Attributes["xmlns:xsi"]);
+                }
+
+                //remove unwanted elements
+// ReSharper disable AssignNullToNotNullAttribute
+                tabNode.RemoveChild(tabNode.SelectSingleNode("tabid"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("moduleID"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("taborder"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("portalid"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("parentid"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("isdeleted"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("tabpath"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("haschildren"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("skindoctype"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("uniqueid"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("versionguid"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("defaultLanguageGuid"));
+                tabNode.RemoveChild(tabNode.SelectSingleNode("localizedVersionGuid"));
+                var xmlNodeList = tabNode.SelectNodes("tabpermissions/permission");
+                if (xmlNodeList != null)
+                {
+                    foreach (XmlNode nodePermission in xmlNodeList)
+                    {
+                        nodePermission.RemoveChild(nodePermission.SelectSingleNode("tabpermissionid"));
+                        nodePermission.RemoveChild(nodePermission.SelectSingleNode("permissionid"));
+                        nodePermission.RemoveChild(nodePermission.SelectSingleNode("tabid"));
+                        nodePermission.RemoveChild(nodePermission.SelectSingleNode("roleid"));
+                        nodePermission.RemoveChild(nodePermission.SelectSingleNode("userid"));
+                        nodePermission.RemoveChild(nodePermission.SelectSingleNode("username"));
+                        nodePermission.RemoveChild(nodePermission.SelectSingleNode("displayname"));
+                    }
+                }
+// ReSharper restore AssignNullToNotNullAttribute
             }
 
             //Manage Url
-            urlNode = tabXml.SelectSingleNode("tab/url");
+            XmlNode urlNode = tabXml.SelectSingleNode("tab/url");
             switch (tab.TabType)
             {
                 case TabType.Normal:
@@ -2378,197 +1827,9 @@ namespace DotNetNuke.Entities.Tabs
             return tabNode;
         }
 
-        [Obsolete("Deprecated in DotNetNuke 5.5.Replaced by ModuleController.CopyModules")]
-        public void CopyTab(int PortalId, int FromTabId, int ToTabId, bool asReference)
-        {
-            ModuleController objModules = new ModuleController();
-            TabInfo sourceTab = GetTab(FromTabId, PortalId, false);
-            TabInfo destinationTab = GetTab(FromTabId, ToTabId, false);
+        #endregion
 
-            if (sourceTab != null && destinationTab != null)
-            {
-                objModules.CopyModules(sourceTab, destinationTab, asReference);
-            }
-        }
-
-        [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")]
-        public static TabInfo DeserializeTab(string tabName, XmlNode nodeTab, int PortalId)
-        {
-            return DeserializeTab(nodeTab, null, new Hashtable(), PortalId, false, PortalTemplateModuleAction.Ignore, new Hashtable());
-        }
-
-        [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")]
-        public static TabInfo DeserializeTab(XmlNode tabNode, TabInfo tab, int PortalId)
-        {
-            return DeserializeTab(tabNode, tab, new Hashtable(), PortalId, false, PortalTemplateModuleAction.Ignore, new Hashtable());
-        }
-
-        [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal hTabs As Hashtable, ByVal PortalId As Integer, ByVal IsAdminTemplate As Boolean, ByVal mergeTabs As PortalTemplateModuleAction, ByVal hModules As Hashtable)")]
-        public static TabInfo DeserializeTab(string tabName, XmlNode nodeTab, TabInfo objTab, Hashtable hTabs, int PortalId, bool IsAdminTemplate, PortalTemplateModuleAction mergeTabs,
-                                             Hashtable hModules)
-        {
-            return DeserializeTab(nodeTab, objTab, hTabs, PortalId, IsAdminTemplate, mergeTabs, hModules);
-        }
-
-        [Obsolete("This method has replaced in DotNetNuke 5.0 by CopyDesignToChildren(TabInfo,String, String)")]
-        public void CopyDesignToChildren(ArrayList tabs, string skinSrc, string containerSrc)
-        {
-            foreach (TabInfo objTab in tabs)
-            {
-                Provider.UpdateTab(objTab.TabID,
-                                   objTab.ContentItemId,
-                                   objTab.PortalID,
-                                   objTab.VersionGuid,
-                                   objTab.DefaultLanguageGuid,
-                                   objTab.LocalizedVersionGuid,
-                                   objTab.TabName,
-                                   objTab.IsVisible,
-                                   objTab.DisableLink,
-                                   objTab.ParentId,
-								   objTab.IconFileRaw,
-								   objTab.IconFileLargeRaw,
-                                   objTab.Title,
-                                   objTab.Description,
-                                   objTab.KeyWords,
-                                   objTab.IsDeleted,
-                                   objTab.Url,
-                                   skinSrc,
-                                   containerSrc,
-                                   objTab.TabPath,
-                                   objTab.StartDate,
-                                   objTab.EndDate,
-                                   objTab.RefreshInterval,
-                                   objTab.PageHeadText,
-                                   objTab.IsSecure,
-                                   objTab.PermanentRedirect,
-                                   objTab.SiteMapPriority,
-                                   UserController.GetCurrentUserInfo().UserID,
-                                   objTab.CultureCode);
-                EventLogController objEventLog = new EventLogController();
-                objEventLog.AddLog(objTab, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TAB_UPDATED);
-            }
-            if (tabs.Count > 0)
-            {
-                DataCache.ClearTabsCache(((TabInfo)tabs[0]).PortalID);
-            }
-        }
-
-        [Obsolete("Deprecated in DotNetNuke 5.0. Replaced by CopyPermissionsToChildren(TabInfo, TabPermissionCollection)")]
-        public void CopyPermissionsToChildren(ArrayList tabs, TabPermissionCollection newPermissions)
-        {
-            TabPermissionController objTabPermissionController = new TabPermissionController();
-            foreach (TabInfo objTab in tabs)
-            {
-                objTab.TabPermissions.Clear();
-                objTab.TabPermissions.AddRange(newPermissions);
-                TabPermissionController.SaveTabPermissions(objTab);
-            }
-            if (tabs.Count > 0)
-            {
-                DataCache.ClearTabsCache(((TabInfo)tabs[0]).PortalID);
-            }
-        }
-
-        [Obsolete("This method is obsolete.  It has been replaced by GetTab(ByVal TabId As Integer, ByVal PortalId As Integer, ByVal ignoreCache As Boolean) ")]
-        public TabInfo GetTab(int TabId)
-        {
-            return CBO.FillObject<TabInfo>(DataProvider.Instance().GetTab(TabId));
-        }
-
-        [Obsolete("Deprecated in DNN 5.5. Replaced by GetTabByTabPath(portalId, tabPath, cultureCode) ")]
-        public static int GetTabByTabPath(int portalId, string tabPath)
-        {
-            return GetTabByTabPath(portalId, tabPath, Null.NullString);
-        }
-
-        [Obsolete("Deprecated in DNN 5.5. Replaced by GetTabPathDictionary(portalId, cultureCode) ")]
-        public static Dictionary<string, int> GetTabPathDictionary(int portalId)
-        {
-            return GetTabPathDictionary(portalId, Null.NullString);
-        }
-
-        [Obsolete("This method has been replaced in 5.0 by GetTabPathDictionary(ByVal portalId As Integer) As Dictionary(Of String, Integer) ")]
-        public static Dictionary<string, int> GetTabPathDictionary()
-        {
-            var tabpathDic = new Dictionary<string, int>(StringComparer.CurrentCultureIgnoreCase);
-            IDataReader dr = DataProvider.Instance().GetTabPaths(Null.NullInteger, Null.NullString);
-            try
-            {
-                while (dr.Read())
-                {
-                    string strKey = "//" + Null.SetNullInteger(dr["PortalID"]) + Null.SetNullString(dr["TabPath"]);
-                    tabpathDic[strKey] = Null.SetNullInteger(dr["TabID"]);
-                }
-            }
-            catch (Exception exc)
-            {
-                Exceptions.LogException(exc);
-            }
-            finally
-            {
-                CBO.CloseDataReader(dr, true);
-            }
-            return tabpathDic;
-        }
-
-        [Obsolete("This method has replaced in DotNetNuke 5.0 by GetTabsByPortal()")]
-        public ArrayList GetTabs(int PortalId)
-        {
-            return GetTabsByPortal(PortalId).ToArrayList();
-        }
-
-        [Obsolete("This method is obsolete.  It has been replaced by GetTabsByParent(ByVal ParentId As Integer, ByVal PortalId As Integer) ")]
-        public ArrayList GetTabsByParentId(int ParentId)
-        {
-            return CBO.FillCollection((DataProvider.Instance().GetTabsByParentId(ParentId)), typeof(TabInfo));
-        }
-
-        [Obsolete("This method has replaced in DotNetNuke 5.0 by GetTabsByParent(ByVal ParentId As Integer, ByVal PortalId As Integer)")]
-        public ArrayList GetTabsByParentId(int ParentId, int PortalId)
-        {
-            ArrayList arrTabs = new ArrayList();
-            foreach (TabInfo objTab in GetTabsByParent(ParentId, PortalId))
-            {
-                arrTabs.Add(objTab);
-            }
-            return arrTabs;
-        }
-
-        /// <summary>
-        /// Get all TabInfo for the current culture in SortOrder
-        /// </summary>
-        /// <param name="portalId">The portalid to load tabs for</param>
-        /// <returns>
-        /// List of TabInfo oredered by default SortOrder
-        /// </returns>
-        /// <remarks>
-        /// This method uses the Active culture.  There is an overload <seealso cref="TabController.GetTabsBySortOrder(int, string, bool)"/>
-        /// which allows the culture information to be specified.
-        /// </remarks>
-        public static List<TabInfo> GetTabsBySortOrder(int portalId)
-        {
-            return GetTabsBySortOrder(portalId, PortalController.GetActivePortalLanguage(portalId), true);
-        }
-
-        [Obsolete("Deprecated in DNN 5.5. Replaced by UpdateTab(updatedTab)")]
-        public void UpdateTab(TabInfo updatedTab, string CultureCode)
-        {
-            updatedTab.CultureCode = CultureCode;
-            UpdateTab(updatedTab);
-        }
-
-
-        [Obsolete("This method is obsolete.  It has been replaced by UpdateTabOrder(ByVal objTab As TabInfo) ")]
-        public void UpdateTabOrder(int PortalID, int TabId, int TabOrder, int Level, int ParentId)
-        {
-            TabInfo objTab = GetTab(TabId, PortalID, false);
-            objTab.TabOrder = TabOrder;
-            objTab.Level = Level;
-            objTab.ParentId = ParentId;
-            UpdateTabOrder(objTab);
-        }
-
-        #region "Content Localization"
+        #region Content Localization
 
         /// <summary>
         /// Creates the localized copies.
@@ -2579,7 +1840,7 @@ namespace DotNetNuke.Entities.Tabs
             Locale defaultLocale = LocaleController.Instance.GetDefaultLocale(originalTab.PortalID);
             foreach (Locale subLocale in LocaleController.Instance.GetLocales(originalTab.PortalID).Values)
             {
-                if (!(subLocale.Code == defaultLocale.Code))
+                if (subLocale.Code != defaultLocale.Code)
                 {
                     CreateLocalizedCopy(originalTab, subLocale);
                 }
@@ -2619,8 +1880,8 @@ namespace DotNetNuke.Entities.Tabs
             localizedCopy.TabName = localizedCopy.TabName + " (" + locale.Code + ")";
 
             //Copy Permissions from original Tab for Admins only
-            PortalController portalCtrl = new PortalController();
-            PortalInfo portal = portalCtrl.GetPortal(originalTab.PortalID);
+            var portalCtrl = new PortalController();
+            var portal = portalCtrl.GetPortal(originalTab.PortalID);
             localizedCopy.TabPermissions.AddRange(originalTab.TabPermissions.Where(p => p.RoleID == portal.AdministratorRoleId));
 
             //Get the original Tabs Parent
@@ -2639,13 +1900,10 @@ namespace DotNetNuke.Entities.Tabs
 			}
 
         	//Save Tab
-            int localizedTabId = AddTabInternal(localizedCopy, true);
-
-            //Update TabOrder for this tab
-            UpdateTabOrder(localizedCopy, false);
+            AddTabInternal(localizedCopy, -1, -1, true);
 
             //Make shallow copies of all modules
-            ModuleController moduleCtrl = new ModuleController();
+            var moduleCtrl = new ModuleController();
             moduleCtrl.CopyModules(originalTab, localizedCopy, true);
 
             //Convert these shallow copies to deep copies
@@ -2695,9 +1953,9 @@ namespace DotNetNuke.Entities.Tabs
         /// <param name="users">The users.</param>
         public void GiveTranslatorRoleEditRights(TabInfo localizedTab, Dictionary<int, UserInfo> users)
         {
-            RoleController roleCtrl = new RoleController();
-            PermissionController permissionCtrl = new PermissionController();
-            ArrayList permissionsList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_TAB", "EDIT");
+            var roleCtrl = new RoleController();
+            var permissionCtrl = new PermissionController();
+            var permissionsList = permissionCtrl.GetPermissionByCodeAndKey("SYSTEM_TAB", "EDIT");
 
             string translatorRoles = PortalController.GetPortalSetting(string.Format("DefaultTranslatorRoles-{0}", localizedTab.CultureCode), localizedTab.PortalID, "");
             foreach (string translatorRole in translatorRoles.Split(';'))
@@ -2712,7 +1970,7 @@ namespace DotNetNuke.Entities.Tabs
 
                 if (permissionsList != null && permissionsList.Count > 0)
                 {
-                    PermissionInfo translatePermisison = (PermissionInfo)permissionsList[0];
+                    var translatePermisison = (PermissionInfo)permissionsList[0];
                     string roleName = translatorRole;
                     RoleInfo role = new RoleController().GetRoleByName(localizedTab.PortalID, roleName);
                     if (role != null)
@@ -2721,10 +1979,12 @@ namespace DotNetNuke.Entities.Tabs
                         if (perm == null)
                         {
                             //Create Permission
-                            TabPermissionInfo tabTranslatePermission = new TabPermissionInfo(translatePermisison);
-                            tabTranslatePermission.RoleID = role.RoleID;
-                            tabTranslatePermission.AllowAccess = true;
-                            tabTranslatePermission.RoleName = roleName;
+                            var tabTranslatePermission = new TabPermissionInfo(translatePermisison)
+                                                             {
+                                                                 RoleID = role.RoleID,
+                                                                 AllowAccess = true,
+                                                                 RoleName = roleName
+                                                             };
                             localizedTab.TabPermissions.Add(tabTranslatePermission);
                             UpdateTab(localizedTab);
                         }
@@ -2745,7 +2005,7 @@ namespace DotNetNuke.Entities.Tabs
             UpdateTab(originalTab);
 
             //Update culture of modules on this page
-            ModuleController moduleCtl = new ModuleController();
+            var moduleCtl = new ModuleController();
             foreach (KeyValuePair<int, ModuleInfo> kvp in moduleCtl.GetTabModules(originalTab.TabID))
             {
                 kvp.Value.CultureCode = locale.Code;
@@ -2793,6 +2053,210 @@ namespace DotNetNuke.Entities.Tabs
                 }
             }
         }
+
+        #endregion
+
+        #region Obsolete
+
+        [Obsolete("This method has replaced in DotNetNuke 5.0 by CopyDesignToChildren(TabInfo,String, String)")]
+        public void CopyDesignToChildren(ArrayList tabs, string skinSrc, string containerSrc)
+        {
+            foreach (TabInfo tab in tabs)
+            {
+                Provider.UpdateTab(tab.TabID,
+                                   tab.ContentItemId,
+                                   tab.PortalID,
+                                   tab.VersionGuid,
+                                   tab.DefaultLanguageGuid,
+                                   tab.LocalizedVersionGuid,
+                                   tab.TabName,
+                                   tab.IsVisible,
+                                   tab.DisableLink,
+                                   tab.ParentId,
+                                   tab.IconFileRaw,
+                                   tab.IconFileLargeRaw,
+                                   tab.Title,
+                                   tab.Description,
+                                   tab.KeyWords,
+                                   tab.IsDeleted,
+                                   tab.Url,
+                                   skinSrc,
+                                   containerSrc,
+                                   tab.StartDate,
+                                   tab.EndDate,
+                                   tab.RefreshInterval,
+                                   tab.PageHeadText,
+                                   tab.IsSecure,
+                                   tab.PermanentRedirect,
+                                   tab.SiteMapPriority,
+                                   UserController.GetCurrentUserInfo().UserID,
+                                   tab.CultureCode);
+                var eventLog = new EventLogController();
+                eventLog.AddLog(tab, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TAB_UPDATED);
+            }
+            if (tabs.Count > 0)
+            {
+                DataCache.ClearTabsCache(((TabInfo)tabs[0]).PortalID);
+            }
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 5.0. Replaced by CopyPermissionsToChildren(TabInfo, TabPermissionCollection)")]
+        public void CopyPermissionsToChildren(ArrayList tabs, TabPermissionCollection newPermissions)
+        {
+            foreach (TabInfo tab in tabs)
+            {
+                tab.TabPermissions.Clear();
+                tab.TabPermissions.AddRange(newPermissions);
+                TabPermissionController.SaveTabPermissions(tab);
+            }
+            if (tabs.Count > 0)
+            {
+                DataCache.ClearTabsCache(((TabInfo)tabs[0]).PortalID);
+            }
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 5.5.Replaced by ModuleController.CopyModules")]
+        public void CopyTab(int portalId, int fromTabId, int toTabId, bool asReference)
+        {
+            var modules = new ModuleController();
+            TabInfo sourceTab = GetTab(fromTabId, portalId, false);
+            TabInfo destinationTab = GetTab(fromTabId, toTabId, false);
+
+            if (sourceTab != null && destinationTab != null)
+            {
+                modules.CopyModules(sourceTab, destinationTab, asReference);
+            }
+        }
+
+        [Obsolete("Deprecated in DNN 6.2. Replaced by SoftDeleteTab(tabId, portalSettings)")]
+        public static bool DeleteTab(int tabId, PortalSettings portalSettings, int userId)
+        {
+            return new TabController().SoftDeleteTab(tabId, portalSettings);
+        }
+
+        [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")]
+        public static TabInfo DeserializeTab(string tabName, XmlNode nodeTab, int portalId)
+        {
+            return DeserializeTab(nodeTab, null, new Hashtable(), portalId, false, PortalTemplateModuleAction.Ignore, new Hashtable());
+        }
+
+        [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal PortalId As Integer, ByVal mergeTabs As PortalTemplateModuleAction)")]
+        public static TabInfo DeserializeTab(XmlNode tabNode, TabInfo tab, int portalId)
+        {
+            return DeserializeTab(tabNode, tab, new Hashtable(), portalId, false, PortalTemplateModuleAction.Ignore, new Hashtable());
+        }
+
+        [Obsolete("This method has replaced in DotNetNuke 5.0 by DeserializeTab(ByVal nodeTab As XmlNode, ByVal objTab As TabInfo, ByVal hTabs As Hashtable, ByVal PortalId As Integer, ByVal IsAdminTemplate As Boolean, ByVal mergeTabs As PortalTemplateModuleAction, ByVal hModules As Hashtable)")]
+        public static TabInfo DeserializeTab(string tabName, XmlNode nodeTab, TabInfo objTab, Hashtable hTabs, int portalId, bool isAdminTemplate, PortalTemplateModuleAction mergeTabs,
+                                             Hashtable hModules)
+        {
+            return DeserializeTab(nodeTab, objTab, hTabs, portalId, isAdminTemplate, mergeTabs, hModules);
+        }
+
+        [Obsolete("Deprecated in DNN 6.2. Method is redundant. Replaced by GetAllTabs()")]
+        public ArrayList GetAllTabs(bool checkLegacyFields)
+        {
+            return GetAllTabs();
+        }
+
+        [Obsolete("This method is obsolete.  It has been replaced by GetTab(ByVal TabId As Integer, ByVal PortalId As Integer, ByVal ignoreCache As Boolean) ")]
+        public TabInfo GetTab(int tabId)
+        {
+            return CBO.FillObject<TabInfo>(DataProvider.Instance().GetTab(tabId));
+        }
+
+        [Obsolete("Deprecated in DNN 5.5. Replaced by GetTabByTabPath(portalId, tabPath, cultureCode) ")]
+        public static int GetTabByTabPath(int portalId, string tabPath)
+        {
+            return GetTabByTabPath(portalId, tabPath, Null.NullString);
+        }
+
+        [Obsolete("Deprecated in DNN 5.5. Replaced by GetTabPathDictionary(portalId, cultureCode) ")]
+        public static Dictionary<string, int> GetTabPathDictionary(int portalId)
+        {
+            return GetTabPathDictionary(portalId, Null.NullString);
+        }
+
+        [Obsolete("This method has been replaced in 5.0 by GetTabPathDictionary(ByVal portalId As Integer) As Dictionary(Of String, Integer) ")]
+        public static Dictionary<string, int> GetTabPathDictionary()
+        {
+            var tabpathDic = new Dictionary<string, int>(StringComparer.CurrentCultureIgnoreCase);
+            IDataReader dr = DataProvider.Instance().GetTabPaths(Null.NullInteger, Null.NullString);
+            try
+            {
+                while (dr.Read())
+                {
+                    string strKey = "//" + Null.SetNullInteger(dr["PortalID"]) + Null.SetNullString(dr["TabPath"]);
+                    tabpathDic[strKey] = Null.SetNullInteger(dr["TabID"]);
+                }
+            }
+            catch (Exception exc)
+            {
+                Exceptions.LogException(exc);
+            }
+            finally
+            {
+                CBO.CloseDataReader(dr, true);
+            }
+            return tabpathDic;
+        }
+
+        [Obsolete("This method has replaced in DotNetNuke 5.0 by GetTabsByPortal()")]
+        public ArrayList GetTabs(int portalId)
+        {
+            return GetTabsByPortal(portalId).ToArrayList();
+        }
+
+        [Obsolete("This method is obsolete.  It has been replaced by GetTabsByParent(ByVal ParentId As Integer, ByVal PortalId As Integer) ")]
+        public ArrayList GetTabsByParentId(int parentId)
+        {
+            return CBO.FillCollection((DataProvider.Instance().GetTabsByParentId(parentId)), typeof(TabInfo));
+        }
+
+        [Obsolete("This method has replaced in DotNetNuke 5.0 by GetTabsByParent(ByVal ParentId As Integer, ByVal PortalId As Integer)")]
+        public ArrayList GetTabsByParentId(int parentId, int portalId)
+        {
+            var arrTabs = new ArrayList();
+            foreach (TabInfo objTab in GetTabsByParent(parentId, portalId))
+            {
+                arrTabs.Add(objTab);
+            }
+            return arrTabs;
+        }
+
+        [Obsolete("Deprecated in DNN 6.2. Replaced by RestoreTab(tabId, portalSettings)")]
+        public static void RestoreTab(TabInfo tab, PortalSettings portalSettings, int userId)
+        {
+            new TabController().RestoreTab(tab, portalSettings);
+        }
+
+        [Obsolete("Deprecated in DNN 5.5. Replaced by UpdateTab(updatedTab)")]
+        public void UpdateTab(TabInfo updatedTab, string cultureCode)
+        {
+            updatedTab.CultureCode = cultureCode;
+            UpdateTab(updatedTab);
+        }
+
+        [Obsolete("Deprecated in DNN 6.2.  Tab Ordering is handled in the DB ")]
+        public void UpdateTabOrder(int portalID, int tabId, int tabOrder, int level, int parentId)
+        {
+            TabInfo objTab = GetTab(tabId, portalID, false);
+            objTab.TabOrder = tabOrder;
+            objTab.Level = level;
+            objTab.ParentId = parentId;
+            UpdateTabOrder(objTab);
+        }
+
+        [Obsolete("Deprecated in DNN 6.2.  Tab Ordering is handled in the DB ")]
+        public void UpdateTabOrder(TabInfo objTab)
+        {
+            Provider.UpdateTabOrder(objTab.TabID, objTab.TabOrder, objTab.ParentId, UserController.GetCurrentUserInfo().UserID);
+            UpdateTabVersion(objTab.TabID);
+            var eventLogController = new EventLogController();
+            eventLogController.AddLog(objTab, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.TAB_ORDER_UPDATED);
+            ClearCache(objTab.PortalID);
+        }
+
 
         #endregion
     }

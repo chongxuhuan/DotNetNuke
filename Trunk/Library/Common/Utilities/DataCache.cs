@@ -195,6 +195,11 @@ namespace DotNetNuke.Common.Utilities
 		public const CacheItemPriority PreviewProfilesCachePriority = CacheItemPriority.Default;
 		public const int PreviewProfilesCacheTimeOut = 20;
 
+        public const string RelationshipTypesCacheKey = "RelationshipTypes:{0}";
+        public const CacheItemPriority RelationshipTypesCachePriority = CacheItemPriority.Default;
+        public const int RelationshipTypesCacheTimeOut = 20;
+
+
         private static string _CachePersistenceEnabled = "";
 
         private static readonly ReaderWriterLock dictionaryLock = new ReaderWriterLock();
