@@ -3337,7 +3337,7 @@ namespace DotNetNuke.Data
 
 		#endregion
 
-        #region RelationShipType CRUD
+        #region RelationshipType CRUD
 
         public override IDataReader GetAllRelationshipTypes()
         {
@@ -3361,19 +3361,19 @@ namespace DotNetNuke.Data
 
         #endregion
 
-        #region RelationShip CRUD
+        #region Relationship CRUD
 
         public override IDataReader GetRelationship(int relationshipID)
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetRelationship", relationshipID);
         }
 
-        public override IDataReader GetRelationshipByUserID(int userID)
+        public override IDataReader GetRelationshipsByUserID(int userID)
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetRelationshipByUserID", userID);
         }
 
-        public override IDataReader GetRelationshipByPortalID(int portalID)
+        public override IDataReader GetRelationshipsByPortalID(int portalID)
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetRelationshipByPortalID", portalID);
         }
@@ -3400,24 +3400,26 @@ namespace DotNetNuke.Data
 
         #endregion    
 
+        #region UserRelationship CRUD
+
         public override IDataReader GetUserRelationship(int userRelationshipID)
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetUserRelationship", userRelationshipID);
         }
 
-        public override IDataReader GetUserRelationshipByUserID(int userID)
+        public override IDataReader GetUserRelationshipsByUserID(int userID)
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetUserRelationshipByUserID", userID);
         }
 
-        public override IDataReader GetUserRelationshipByRelatedUserID(int relatedUserID)
+        public override IDataReader GetUserRelationshipsByRelatedUserID(int relatedUserID)
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetUserRelationshipByRelatedID", relatedUserID);
         }
 
-        public override IDataReader GetUserRelationshipByRelationshipID(int relatationshipID)
+        public override IDataReader GetUserRelationshipsByRelationshipID(int relationshipID)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetUserRelationshipByRelationshipID", relatationshipID);
+            return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetUserRelationshipByRelationshipID", relationshipID);
         }
 
         public override void DeleteUserRelationship(int userRelationshipID)
@@ -3430,20 +3432,22 @@ namespace DotNetNuke.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationshipByUserID", userID);
         }
 
-        public override void DeleteUserRelationshipByPortalID(int relatedUserID)
+        public override void DeleteUserRelationshipByRelatedUserID(int relatedUserID)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationshipByRelatedUserID", relatedUserID);
         }
 
-        public override void DeleteUserRelationshipByRelationshipID(int relatationshipID)
+        public override void DeleteUserRelationshipByRelationshipID(int relationshipID)
         {
-            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationshipByRelatationshipID", relatationshipID);
+            SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteRelationshipByRelatationshipID", relationshipID);
         }
 
         public override int SaveUserRelationship(int userRelationshipID, int userID, int relatedUserID, int relationshipID, int status, int createUpdateUserID)
         {
             return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, DatabaseOwner + ObjectQualifier + "SaveUserRelationship", userRelationshipID, userID, relatedUserID, relationshipID, status, createUpdateUserID));
         }
+
+        #endregion
 
     }
 }

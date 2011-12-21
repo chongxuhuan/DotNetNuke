@@ -172,7 +172,7 @@ namespace DotNetNuke.Tests.Core.Collections
             }
         }
 
-        private IEnumerable<Action<SharedDictionary<string, string>>> GetObjectDisposedExceptionMethods()
+        protected IEnumerable<Action<SharedDictionary<string, string>>> GetObjectDisposedExceptionMethods()
         {
             var l = new List<Action<SharedDictionary<string, string>>> {(SharedDictionary<string, string> d) => d.GetReadLock(), (SharedDictionary<string, string> d) => d.GetWriteLock()};
 
@@ -182,7 +182,7 @@ namespace DotNetNuke.Tests.Core.Collections
             return l;
         }
 
-        private static IEnumerable<Action<SharedDictionary<string, string>>> GetReadMethods()
+        protected IEnumerable<Action<SharedDictionary<string, string>>> GetReadMethods()
         {
             var l = new List<Action<SharedDictionary<string, string>>>();
 
@@ -211,7 +211,7 @@ namespace DotNetNuke.Tests.Core.Collections
             return l;
         }
 
-        private static IEnumerable<Action<SharedDictionary<string, string>>> GetWriteMethods()
+        protected IEnumerable<Action<SharedDictionary<string, string>>> GetWriteMethods()
         {
             var l = new List<Action<SharedDictionary<string, string>>>();
 

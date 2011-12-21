@@ -170,7 +170,7 @@ namespace DotNetNuke.Tests.Core.Collections
             }
         }
 
-        private IEnumerable<Action<SharedList<string>>> GetObjectDisposedExceptionMethods()
+        protected IEnumerable<Action<SharedList<string>>> GetObjectDisposedExceptionMethods()
         {
             var list = new List<Action<SharedList<string>>> {(SharedList<string> l) => l.GetReadLock(), (SharedList<string> l) => l.GetWriteLock()};
 
@@ -180,7 +180,7 @@ namespace DotNetNuke.Tests.Core.Collections
             return list;
         }
 
-        private static IEnumerable<Action<SharedList<string>>> GetReadMethods()
+        protected IEnumerable<Action<SharedList<string>>> GetReadMethods()
         {
             var list = new List<Action<SharedList<string>>>();
 
@@ -200,7 +200,7 @@ namespace DotNetNuke.Tests.Core.Collections
             return list;
         }
 
-        private static IEnumerable<Action<SharedList<string>>> GetWriteMethods()
+        protected IEnumerable<Action<SharedList<string>>> GetWriteMethods()
         {
             var list = new List<Action<SharedList<string>>> {l => l.Add("more"), l => l.Clear(), l => l.Remove("value"), l => l.Insert(0, "more"), l => l[0] = "more", l => l.RemoveAt(0)};
 

@@ -1072,49 +1072,6 @@
     </Compile>
     <Compile Include="WebControls\FeedBrowser.cs" />
     <Compile Include="WebControls\WebControlBase.cs" />
-    <None Include="Entities\Content\Data\Scripts\ContentItems\AddContentItem.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentItems\AddMetaData.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentItems\DeleteContentItem.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentItems\DeleteMetaData.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentItems\GetContentItem.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentItems\GetContentItemsByTerm.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentItems\GetMetaData.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentItems\GetUnIndexedContentItems.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentItems\UpdateContentItem.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentType\AddContentType.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentType\DeleteContentType.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentType\GetContentTypes.sql" />
-    <None Include="Entities\Content\Data\Scripts\ContentType\UpdateContentType.sql" />
-    <None Include="Entities\Content\Data\Scripts\Scope\AddScopeType.sql" />
-    <None Include="Entities\Content\Data\Scripts\Scope\DeleteScopeType.sql" />
-    <None Include="Entities\Content\Data\Scripts\Scope\GetScopeTypes.sql" />
-    <None Include="Entities\Content\Data\Scripts\Scope\UpdateScopeType.sql" />
-    <None Include="Entities\Content\Data\Scripts\Tables\ContentItems.sql" />
-    <None Include="Entities\Content\Data\Scripts\Tables\ContentItems_MetaData.sql" />
-    <None Include="Entities\Content\Data\Scripts\Tables\ContentItems_Tags.sql" />
-    <None Include="Entities\Content\Data\Scripts\Tables\ContentTypes.sql" />
-    <None Include="Entities\Content\Data\Scripts\Tables\MetaData.sql" />
-    <None Include="Entities\Content\Data\Scripts\Tables\Taxonomy_ScopeTypes.sql" />
-    <None Include="Entities\Content\Data\Scripts\Tables\Taxonomy_Terms.sql" />
-    <None Include="Entities\Content\Data\Scripts\Tables\Taxonomy_Vocabularies.sql" />
-    <None Include="Entities\Content\Data\Scripts\Tables\Taxonomy_VocabularyTypes.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\AddHeirarchicalTerm.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\AddSimpleTerm.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\AddTermToContent.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\DeleteHeirarchicalTerm.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\DeleteSimpleTerm.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\GetTerm.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\GetTermsByContent.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\GetTermsByVocabulary.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\RemoveTermsFromContent.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\UpdateHeirarchicalTerm.sql" />
-    <None Include="Entities\Content\Data\Scripts\Terms\UpdateSimpleTerm.sql" />
-    <None Include="Entities\Content\Data\Scripts\TestSetupScript.sql" />
-    <None Include="Entities\Content\Data\Scripts\UpdateScript.sql" />
-    <None Include="Entities\Content\Data\Scripts\Vocabularies\AddVocabulary.sql" />
-    <None Include="Entities\Content\Data\Scripts\Vocabularies\DeleteVocabulary.sql" />
-    <None Include="Entities\Content\Data\Scripts\Vocabularies\GetVocabularies.sql" />
-    <None Include="Entities\Content\Data\Scripts\Vocabularies\UpdateVocabulary.sql" />
     <None Include="UI\Diagrams\Skinning.cd" />
   </ItemGroup>
   <ItemGroup>
@@ -1246,9 +1203,6 @@
   <ItemGroup>
     <Folder Include="Components\" />
     <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Entities\Content\Data\Scripts\ContentItems\GetContentItems.sql" />
   </ItemGroup>
   <Target Name="AfterBuild" DependsOnTargets="DebugProject">
   </Target>

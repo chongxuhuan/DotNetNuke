@@ -47,21 +47,21 @@ namespace DotNetNuke.Entities.Users
     [Serializable]
     public class UserRelationship : BaseEntityInfo, IHydratable
     {
-        private int _userRelationShipID = -1;
+        private int _userRelationshipID = -1;
 
         /// <summary>
-        /// UserRelationShipID - The primary key
+        /// UserRelationshipID - The primary key
         /// </summary>
         [XmlAttribute]
-        public int UserRelationShipID
+        public int UserRelationshipID
         {
             get
             {
-                return _userRelationShipID;
+                return _userRelationshipID;
             }
             set
             {
-                _userRelationShipID = value;
+                _userRelationshipID = value;
             }
         }
 
@@ -98,11 +98,11 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                return this.UserRelationShipID;
+                return this.UserRelationshipID;
             }
             set
             {
-                this.UserRelationShipID = value;
+                this.UserRelationshipID = value;
             }
         }
 

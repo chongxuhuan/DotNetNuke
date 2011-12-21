@@ -75,8 +75,6 @@ namespace DotNetNuke.Web.Common.Internal
         {
             DnnLog.Info("Application Starting");
 
-            new ServicesRoutingManager().RegisterRoutes();
-
             if (String.IsNullOrEmpty(Config.GetSetting("ServerName")))
             {
                 Globals.ServerName = Dns.GetHostName();
@@ -109,6 +107,8 @@ namespace DotNetNuke.Web.Common.Internal
             ComponentFactory.InstallComponents(new ProviderInstaller("htmlEditor", typeof(HtmlEditorProvider), ComponentLifeStyleType.Transient));
             ComponentFactory.InstallComponents(new ProviderInstaller("navigationControl", typeof(NavigationProvider), ComponentLifeStyleType.Transient));
             ComponentFactory.InstallComponents(new ProviderInstaller("clientcapability", typeof(ClientCapabilityProvider)));
+
+            new ServicesRoutingManager().RegisterRoutes();
 
             DnnLog.Info("Application Started");
         }

@@ -98,16 +98,6 @@
     <Compile Include="ContentControllerTests.cs" />
     <Compile Include="ContentTestHelper.cs" />
     <Compile Include="ContentTypeControllerTests.cs" />
-    <Compile Include="Data\ContentDataServiceTests.cs" />
-    <Compile Include="Data\ContentDataTestHelper.cs" />
-    <Compile Include="Data\ContentResources.Designer.cs" />
-    <Compile Include="Data\ContentTagsDataServiceTests.cs" />
-    <Compile Include="Data\ContentTypeDataServiceTests.cs" />
-    <Compile Include="Data\HeirarchicalTermDataServiceTests.cs" />
-    <Compile Include="Data\ScopeTypeDataServiceTests.cs" />
-    <Compile Include="Data\SimpleTermDataServiceTests.cs" />
-    <Compile Include="Data\TestSetup.cs" />
-    <Compile Include="Data\VocabularyDataServiceTests.cs" />
     <Compile Include="Mocks\MockHelper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -145,11 +135,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\ContentResources.resx" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\App.config">
       <Link>App.config</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
   </ItemGroup>

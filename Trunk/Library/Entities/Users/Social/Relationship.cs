@@ -50,7 +50,7 @@ namespace DotNetNuke.Entities.Users
         private int _relationshipID = -1;
 
         /// <summary>
-        /// RelationShipID - The primary key
+        /// RelationshipID - The primary key
         /// </summary>
         [XmlAttribute]
         public int RelationshipID

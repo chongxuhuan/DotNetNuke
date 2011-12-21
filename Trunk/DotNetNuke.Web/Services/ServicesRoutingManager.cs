@@ -26,6 +26,7 @@ namespace DotNetNuke.Web.Services
         {
             _routes.Clear();
             LocateServicesAndMapRoutes();
+            DnnLog.Trace("Registered a total of {0} routes", _routes.Count);
         }
 
         private void LocateServicesAndMapRoutes()
@@ -40,7 +41,7 @@ namespace DotNetNuke.Web.Services
                 }
                 catch (Exception e)
                 {
-                    DnnLog.Error("{0}.RegisterRoutes threw and exception.  {1}", routeMapper.GetType().FullName, e.Message);
+                    DnnLog.Error("{0}.RegisterRoutes threw an exception.  {1}\r\n{2}", routeMapper.GetType().FullName, e.Message, e.StackTrace);
                 }
             }
         }
@@ -53,6 +54,8 @@ namespace DotNetNuke.Web.Services
         private IEnumerable<IServiceRouteMapper> GetServiceRouteMappers()
         {
             var types = GetAllServiceRouteMapperTypes();
+
+            DnnLog.Trace("Located {0} types that implement IServiceRouteMapper");
 
             foreach (var routeMapperType in types)
             {
@@ -112,7 +115,7 @@ namespace DotNetNuke.Web.Services
                 var routeName = uniqueServiceName + "-" + name + "-" + i;
                 var routeUrl = prefix + "DesktopModules/API/" + uniqueServiceName + "/" + url;
                 routes.Add(_routes.MapRoute(routeName, routeUrl, defaults, constraints, namespaces));
-                DnnLog.Trace("Mapping route: " + routeName + "/" + routeUrl);
+                DnnLog.Trace("Mapping route: " + routeName + " @ " + routeUrl);
 
                 i++;
             }
@@ -125,7 +128,7 @@ namespace DotNetNuke.Web.Services
             return MapRoute(uniqueServiceName, name, url, defaults, null, namespaces);
         }
 
-        private List<string> GetRoutePrefixes()
+        private IEnumerable<string> GetRoutePrefixes()
         {
             if(_prefixes == null)
             {
@@ -154,7 +157,7 @@ namespace DotNetNuke.Web.Services
                 }
             }
 
-            return _prefixes;
+            return _prefixes.OrderByDescending(x => x.Length);
         }
 
         private List<int> CountSegmentsInPortalAliases()
