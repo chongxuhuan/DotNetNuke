@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,6 +35,7 @@ using System.Web;
 using System.Web.Security;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Lists;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Modules;
@@ -68,7 +70,28 @@ namespace DotNetNuke.Security
             NoMarkup = 2,
             NoScripting = 4,
             NoSQL = 8,
-            NoAngleBrackets = 16
+            NoAngleBrackets = 16,
+            NoProfanity =32
+        }
+
+        /// <summary>
+        /// Determines the configuration source for the remove and replace functions
+        /// </summary>
+        public enum ConfigType
+        {
+            ListController,
+            ExternalFile
+        }
+
+        /// <summary>
+        /// determines whether to use system (host) list, portal specific list, or combine both
+        /// At present only supported by ConfigType.ListController
+        /// </summary>
+        public enum FilterScope
+        {
+            SystemList,
+            PortalList,
+            SystemAndPortalList
         }
 
         #endregion
@@ -510,8 +533,45 @@ namespace DotNetNuke.Security
                     TempInput = FormatMultiLine(TempInput);
                 }
             }
+            if ((FilterType & FilterFlag.NoProfanity)== FilterFlag.NoProfanity)
+            {
+                Remove(TempInput, ConfigType.ListController, "ProfanityFilter", FilterScope.SystemAndPortalList);
+            }
             return TempInput;
         }
+
+        public string Replace(string userInput, ConfigType configType, string configSource, FilterScope replaceRemoveScope)
+        {
+            //function not required for initial global inputfilter version
+            return userInput;
+        }
+
+        public string Remove(string userInput, ConfigType configType, string configSource, FilterScope replaceRemoveScope)
+        {
+            RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+            string strReplacement = "";
+            var listController = new ListController();
+            IEnumerable<ListEntryInfo> listEntryHostInfos = listController.GetListEntryInfoItems("ProfanityFilter", "", Null.NullInteger);
+            PortalSettings settings = PortalController.GetCurrentPortalSettings();
+            IEnumerable<ListEntryInfo> listEntryPortalInfos = listController.GetListEntryInfoItems("ProfanityFilter", "", settings.PortalId);
+            switch (replaceRemoveScope)
+            {
+                case FilterScope.SystemList:
+                    userInput = listEntryHostInfos.Aggregate(userInput, (current, removeItem) => Regex.Replace(current, removeItem.Value, strReplacement, options));
+                    break;
+                case FilterScope.SystemAndPortalList:
+                    userInput = listEntryHostInfos.Aggregate(userInput, (current, removeItem) => Regex.Replace(current, removeItem.Value, strReplacement, options));
+                    userInput=listEntryPortalInfos.Aggregate(userInput, (current, removeItem) => Regex.Replace(current, removeItem.Value, strReplacement, options));
+                    break;
+                case FilterScope.PortalList:
+                    userInput=listEntryPortalInfos.Aggregate(userInput, (current, removeItem) => Regex.Replace(current, removeItem.Value, strReplacement, options));        
+                    break;
+            }
+            
+            return userInput;
+        }
+
+      
 
         public void SignIn(UserInfo user, bool createPersistentCookie)
         {

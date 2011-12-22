@@ -44,7 +44,6 @@ using System.Web.UI.HtmlControls;
 using System.Xml;
 
 using DotNetNuke.Application;
-using DotNetNuke.Collections;
 using DotNetNuke.Collections.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
@@ -66,7 +65,6 @@ using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Url.FriendlyUrl;
-using DotNetNuke.UI;
 using DotNetNuke.UI.Skins;
 using DotNetNuke.UI.Utilities;
 
@@ -490,7 +488,7 @@ namespace DotNetNuke.Common
         /// Gets or sets the name of the IIS app.
         /// </summary>
         /// <value>
-        /// Request.ServerVariables["APPL_MD_PATH"]
+        /// request.ServerVariables["APPL_MD_PATH"]
         /// </value>
         public static string IISAppName { get; set; }
 
@@ -1110,20 +1108,41 @@ namespace DotNetNuke.Common
         /// <summary>
         /// Gets the name of the domain.
         /// </summary>
-        /// <param name="Request">The request.</param>
+        /// <param name="request">The request.</param>
         /// <returns>domain name</returns>
-        public static string GetDomainName(HttpRequest Request)
+        public static string GetDomainName(HttpRequest request)
         {
-            return GetDomainName(Request, false);
+            return GetDomainName(new HttpRequestWrapper(request), false);
+        }
+
+        /// <summary>
+        /// Gets the name of the domain.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns>domain name</returns>
+        public static string GetDomainName(HttpRequestBase request)
+        {
+            return GetDomainName(request, false);
         }
 
         /// <summary>
         /// returns the domain name of the current request ( ie. www.domain.com or 207.132.12.123 or www.domain.com/directory if subhost )
         /// </summary>
-        /// <param name="Request">The request.</param>
-        /// <param name="ParsePortNumber">if set to <c>true</c> [parse port number].</param>
+        /// <param name="request">The request.</param>
+        /// <param name="parsePortNumber">if set to <c>true</c> [parse port number].</param>
         /// <returns>domain name</returns>
-        public static string GetDomainName(HttpRequest Request, bool ParsePortNumber)
+        public static string GetDomainName(HttpRequest request, bool parsePortNumber)
+        {
+            return GetDomainName(new HttpRequestWrapper(request), parsePortNumber);
+        }
+
+        /// <summary>
+        /// returns the domain name of the current request ( ie. www.domain.com or 207.132.12.123 or www.domain.com/directory if subhost )
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="parsePortNumber">if set to <c>true</c> [parse port number].</param>
+        /// <returns>domain name</returns>
+        public static string GetDomainName(HttpRequestBase request, bool parsePortNumber)
         {
             var DomainName = new StringBuilder();
             string[] URL;
@@ -1134,7 +1153,7 @@ namespace DotNetNuke.Common
             // Test:   'www.aspxforum.net'  should be returned as a valid domain name.
             // just consider left of '?' in URI
             // Binary, else '?' isn't taken literally; only interested in one (left) string
-            URI = Request.Url.ToString();
+            URI = request.Url.ToString();
             string hostHeader = Config.GetSetting("HostHeader");
             if (!String.IsNullOrEmpty(hostHeader))
             {
@@ -1184,13 +1203,13 @@ namespace DotNetNuke.Common
                     break;
                 }
             }
-            if (ParsePortNumber)
+            if (parsePortNumber)
             {
                 if (DomainName.ToString().IndexOf(":") != -1)
                 {
                     if (!UsePortNumber())
                     {
-                        DomainName = DomainName.Replace(":" + Request.Url.Port, "");
+                        DomainName = DomainName.Replace(":" + request.Url.Port, "");
                     }
                 }
             }
@@ -2140,7 +2159,7 @@ namespace DotNetNuke.Common
         /// Gets the external request.
         /// </summary>
         /// <param name="Address">The address.</param>
-        /// <returns>Web Request</returns>
+        /// <returns>Web request</returns>
         public static HttpWebRequest GetExternalRequest(string Address)
         {
             //Obtain PortalSettings from Current Context
@@ -2151,7 +2170,7 @@ namespace DotNetNuke.Common
             objRequest.Timeout = Host.WebRequestTimeout;
             //Attach a User Agent to the request
             objRequest.UserAgent = "DotNetNuke";
-            //If there is Proxy info, apply it to the Request
+            //If there is Proxy info, apply it to the request
             if (!string.IsNullOrEmpty(Host.ProxyServer))
             {
                 //Create a new Proxy
@@ -2167,7 +2186,7 @@ namespace DotNetNuke.Common
                     //Apply credentials to proxy
                     Proxy.Credentials = ProxyCredentials;
                 }
-                //Apply Proxy to Request
+                //Apply Proxy to request
                 objRequest.Proxy = Proxy;
             }
             return objRequest;
@@ -2178,7 +2197,7 @@ namespace DotNetNuke.Common
         /// </summary>
         /// <param name="Address">The address.</param>
         /// <param name="Credentials">The credentials.</param>
-        /// <returns>Web Request</returns>
+        /// <returns>Web request</returns>
         public static HttpWebRequest GetExternalRequest(string Address, NetworkCredential Credentials)
         {
             //Create the request object
@@ -2192,7 +2211,7 @@ namespace DotNetNuke.Common
             {
                 objRequest.Credentials = Credentials;
             }
-            // If there is Proxy info, apply it to the Request
+            // If there is Proxy info, apply it to the request
             if (!string.IsNullOrEmpty(Host.ProxyServer))
             {
                 // Create a new Proxy

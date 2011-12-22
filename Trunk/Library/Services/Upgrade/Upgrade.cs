@@ -4010,6 +4010,9 @@ namespace DotNetNuke.Services.Upgrade
 					case "6.1.2":
 						UpgradeToVersion612();
                         break;
+                    case "6.2.0":
+                        UpgradeToVersion620();
+                        break;
                 }
             }
             catch (Exception ex)
@@ -4037,6 +4040,33 @@ namespace DotNetNuke.Services.Upgrade
             }
 
             return exceptions;
+        }
+
+        private static void UpgradeToVersion620()
+        {
+            //add host (system) profanityfilter list
+            var listController = new ListController();
+			var entry = new ListEntryInfo();
+			{
+				entry.DefinitionID = Null.NullInteger;
+                entry.PortalID = Null.NullInteger;
+				entry.ListName = "ProfanityFilter";
+				entry.Value = "ReplaceWithNothing";
+				entry.Text = "FindThisText";
+                entry.SystemList = true;
+			}
+            listController.AddListEntry(entry);
+
+            //add same list to each portal
+            var portalController = new PortalController();
+            foreach (PortalInfo portal in portalController.GetPortals())
+            {
+                entry.PortalID = portal.PortalID;
+                entry.SystemList = false;
+                listController.AddListEntry(entry);
+            }
+
+
         }
 
         public static string UpdateConfig(string providerPath, Version version, bool writeFeedback)

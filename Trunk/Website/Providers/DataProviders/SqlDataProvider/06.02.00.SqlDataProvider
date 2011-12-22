@@ -1011,6 +1011,35 @@ AS
     END
 GO
 
+/* Update LocalizeTab Procedure */
+/********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}LocalizeTab]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}LocalizeTab]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}LocalizeTab] 
+	@TabId					int,
+	@CultureCode			nvarchar(10),
+	@LastModifiedByUserID	int
+AS
+	BEGIN
+		UPDATE {objectQualifier}Tabs
+			SET 
+				CultureCode				= @CultureCode,
+				LastModifiedByUserID	= @LastModifiedByUserID,
+				LastModifiedOnDate		= getdate()					
+			WHERE TabID = @TabId
+			
+		UPDATE {objectQualifier}TabModules
+			SET 
+				CultureCode				= @CultureCode,
+				LastModifiedByUserID	= @LastModifiedByUserID,
+				LastModifiedOnDate		= getdate()					
+			WHERE TabID = @TabId
+	END
+GO
+
 --Schema creation for Social Relationship
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelationshipTypes]') AND type in (N'U'))
 	BEGIN

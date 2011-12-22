@@ -113,6 +113,7 @@
   <ItemGroup>
     <Compile Include="Common\DotNetNukeHttpApplication.cs" />
     <Compile Include="Services\AssemblyWrapper.cs" />
+    <Compile Include="Services\DNNController.cs" />
     <Compile Include="Services\IAssembly.cs" />
     <Compile Include="Services\IAssemblyLocator.cs" />
     <Compile Include="Services\IServiceRouteMapper.cs" />
@@ -337,6 +338,10 @@
       <Name>DotNetNuke.Library</Name>
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Library\HttpModules\DotNetNuke.HttpModules.csproj">
+      <Project>{6F0A5B23-E09F-431A-879A-993CB77E23D8}</Project>
+      <Name>DotNetNuke.HttpModules</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

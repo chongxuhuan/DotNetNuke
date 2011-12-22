@@ -25,8 +25,6 @@
 
 using System;
 using System.Web;
-using System.Web.Security;
-
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
@@ -63,28 +61,35 @@ namespace DotNetNuke.HttpModules.Membership
 
         #endregion
 
-        public void OnAuthenticateRequest(object s, EventArgs e)
+        private void OnAuthenticateRequest(object sender, EventArgs e)
         {
-            HttpContext context = ((HttpApplication) s).Context;
-            HttpRequest request = context.Request;
-            HttpResponse response = context.Response;
+            var application = (HttpApplication) sender;
+            AuthenticateRequest(new HttpContextWrapper(application.Context), false);
+        }
+
+        public static void AuthenticateRequest(HttpContextBase context, bool allowUnknownExtensinons)
+        {
+            HttpRequestBase request = context.Request;
+            HttpResponseBase response = context.Response;
 
             //First check if we are upgrading/installing
-            if (request.Url.LocalPath.ToLower().EndsWith("install.aspx")
-                    || request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
-                    || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
+            if (request == null || request.Url == null
+                || request.Url.LocalPath.ToLower().EndsWith("install.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
             {
                 return;
             }
-			
+
             //exit if a request for a .net mapping that isn't a content page is made i.e. axd
-            if (request.Url.LocalPath.ToLower().EndsWith(".aspx") == false 
-                && request.Url.LocalPath.ToLower().EndsWith(".asmx") == false 
+            if (allowUnknownExtensinons == false
+                && request.Url.LocalPath.ToLower().EndsWith(".aspx") == false
+                && request.Url.LocalPath.ToLower().EndsWith(".asmx") == false
                 && request.Url.LocalPath.ToLower().EndsWith(".ashx") == false)
             {
                 return;
             }
-			
+
             //Obtain PortalSettings from Current Context
             PortalSettings portalSettings = PortalController.GetCurrentPortalSettings();
 
@@ -92,21 +97,21 @@ namespace DotNetNuke.HttpModules.Membership
             {
                 var roleController = new RoleController();
                 UserInfo user = UserController.GetCachedUser(portalSettings.PortalId, context.User.Identity.Name);
-				
+
                 //authenticate user and set last login ( this is necessary for users who have a permanent Auth cookie set ) 
-                if (user == null || user.IsDeleted || user.Membership.LockedOut 
-                        || user.Membership.Approved == false 
-                        || user.Username.ToLower() != context.User.Identity.Name.ToLower())
+                if (user == null || user.IsDeleted || user.Membership.LockedOut
+                    || user.Membership.Approved == false
+                    || user.Username.ToLower() != context.User.Identity.Name.ToLower())
                 {
                     var portalSecurity = new PortalSecurity();
                     portalSecurity.SignOut();
-					
+
                     //Remove user from cache
                     if (user != null)
                     {
                         DataCache.ClearUserCache(portalSettings.PortalId, context.User.Identity.Name);
                     }
-					
+
                     //Redirect browser back to home page
                     response.Redirect(request.RawUrl, true);
                     return;
@@ -120,7 +125,7 @@ namespace DotNetNuke.HttpModules.Membership
                     user.LastIPAddress = request.UserHostAddress;
                     UserController.UpdateUser(portalSettings.PortalId, user, false);
                 }
-					
+
                 //check for RSVP code
                 if (request.QueryString["rsvp"] != null && !string.IsNullOrEmpty(request.QueryString["rsvp"]))
                 {
@@ -144,7 +149,7 @@ namespace DotNetNuke.HttpModules.Membership
                 //Localization.SetLanguage also updates the user profile, so this needs to go after the profile is loaded
                 Localization.SetLanguage(user.Profile.PreferredLocale);
             }
-            if (HttpContext.Current.Items["UserInfo"] == null)
+            if (context.Items["UserInfo"] == null)
             {
                 context.Items.Add("UserInfo", new UserInfo());
             }

@@ -1191,6 +1191,11 @@ namespace DotNetNuke.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, DatabaseOwner + ObjectQualifier + "DeleteTab", tabId);
         }
 
+        public override void LocalizeTab(int tabId, string cultureCode, int lastModifiedByUserID)
+        {
+            ExecuteNonQuery("LocalizeTab", tabId, cultureCode, lastModifiedByUserID);
+        }
+
         public override void MoveTabAfter(int tabId, int afterTabId, int lastModifiedByUserID)
         {
             ExecuteNonQuery("MoveTabAfter", tabId, afterTabId, lastModifiedByUserID);
@@ -3401,7 +3406,6 @@ namespace DotNetNuke.Data
         #endregion    
 
         #region UserRelationship CRUD
-
         public override IDataReader GetUserRelationship(int userRelationshipID)
         {
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetUserRelationship", userRelationshipID);
@@ -3448,6 +3452,5 @@ namespace DotNetNuke.Data
         }
 
         #endregion
-
     }
 }

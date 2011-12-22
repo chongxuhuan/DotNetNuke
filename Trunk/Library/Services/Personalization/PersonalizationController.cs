@@ -39,11 +39,16 @@ namespace DotNetNuke.Services.Personalization
     public class PersonalizationController
     {
         //default implementation relies on HTTPContext
-        public void LoadProfile(HttpContext objHTTPContext, int UserId, int PortalId)
+        public void LoadProfile(HttpContext httpContext, int userId, int portalId)
+        {
+            LoadProfile(new HttpContextWrapper(httpContext), userId, portalId);
+        }
+
+        public void LoadProfile(HttpContextBase httpContext, int userId, int portalId)
         {
             if (HttpContext.Current.Items["Personalization"] == null)
             {
-                objHTTPContext.Items.Add("Personalization", LoadProfile(UserId, PortalId));
+                httpContext.Items.Add("Personalization", LoadProfile(userId, portalId));
             }
         }
 
@@ -51,11 +56,9 @@ namespace DotNetNuke.Services.Personalization
         public PersonalizationInfo LoadProfile(int UserId, int PortalId)
         {
             var objPersonalization = new PersonalizationInfo();
-
             objPersonalization.UserId = UserId;
             objPersonalization.PortalId = PortalId;
             objPersonalization.IsModified = false;
-
             string profileData = Null.NullString;
             if (UserId > Null.NullInteger)
             {

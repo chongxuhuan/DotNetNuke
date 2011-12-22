@@ -2000,17 +2000,7 @@ namespace DotNetNuke.Entities.Tabs
         /// <param name="locale">The locale.</param>
         public void LocalizeTab(TabInfo originalTab, Locale locale)
         {
-            originalTab.CultureCode = locale.Code;
-
-            UpdateTab(originalTab);
-
-            //Update culture of modules on this page
-            var moduleCtl = new ModuleController();
-            foreach (KeyValuePair<int, ModuleInfo> kvp in moduleCtl.GetTabModules(originalTab.TabID))
-            {
-                kvp.Value.CultureCode = locale.Code;
-                moduleCtl.UpdateModule(kvp.Value);
-            }
+            Provider.LocalizeTab(originalTab.TabID, locale.Code, UserController.GetCurrentUserInfo().UserID);
         }
 
         /// <summary>
