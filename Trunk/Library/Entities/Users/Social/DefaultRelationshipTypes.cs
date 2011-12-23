@@ -1,7 +1,7 @@
 #region Copyright
 
 // 
-// DotNetNukeï¿½ - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
@@ -24,15 +24,32 @@
 #region Usings
 
 using System;
-using System.Reflection;
+using System.Data;
+using System.Xml.Serialization;
+using DotNetNuke.Entities.Modules;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyVersion("6.2.0.80")]
+namespace DotNetNuke.Entities.Users
+{
+    /// <summary>
+    /// DefaultRelationshipType defined in system
+    /// </summary>
+    public enum DefaultRelationshipTypes
+    {
+        /// <summary>
+        /// Friends Relationship Type
+        /// </summary>
+        Friends = 1,
+
+        /// <summary>
+        /// Followers Relationship Type
+        /// </summary>
+        Followers = 2,
+
+        /// <summary>
+        /// A user-owned custom-list, e.g. my best friends
+        /// </summary>
+        CustomList = 3        
+    }
+}

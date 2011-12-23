@@ -35,6 +35,8 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.FileSystem;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 
 #endregion
@@ -396,6 +398,69 @@ namespace DotNetNuke.Entities.Users
 	    {
             return CBO.FillCollection<UserRelationship>(DataProvider.Instance().GetUserRelationshipsByRelationshipID(relationshipID)).ToList();
 	    }
+
+        #endregion
+
+        #region Relationship Business APIs
+        public UserRelationship InitiateRelationship(UserInfo initiatingUser, UserInfo targetUser, Relationship relationship)
+        {
+            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+            Requires.NotNull("The targetUser can't be null", targetUser);
+            Requires.NotNull("The relationship can't be null", relationship);
+
+            var userRelationship = new UserRelationship { UserRelationshipID = Null.NullInteger, UserID = initiatingUser.UserID, RelatedUserID = targetUser.UserID, RelationshipID = relationship.RelationshipTypeID, Status = relationship.DefaultResponse};
+
+            SaveUserRelationship(userRelationship);
+
+            return userRelationship;
+
+
+            //if (GetRelationshipType(relationshipTypeID) == null)
+            //{
+            //    throw new InvalidRelationshipTypeException(string.Format(Localization.GetExceptionMessage("InvalidRelationshipTypeError", "RelationshipType '{0}' is not allowed."), relationshipTypeID));
+            //}
+
+            return null;
+        }
+
+        #endregion
+
+        #region Easy Wrapper APIs
+
+        public UserRelationship AddFriend(UserInfo targetUser)
+        {
+            return AddFriend(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        public UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+
+            return InitiateRelationship(initiatingUser, targetUser, GetRelationshipsByPortalID(initiatingUser.PortalID).Where(re => re.RelationshipTypeID == (int)DefaultRelationshipTypes.Friends).FirstOrDefault());
+        }
+
+        public Relationship AddUserList(string listName, string listDescription)
+        {
+            return AddUserList(UserController.GetCurrentUserInfo(), listName, listDescription, RelationshipStatus.None);
+        }
+
+        public Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus)
+        {
+            var relationship = new Relationship { RelationshipID = Null.NullInteger, Name = listName, Description = listDescription, PortalID = owningUser.PortalID, UserID = owningUser.UserID, DefaultResponse = defaultStatus, RelationshipTypeID = (int)DefaultRelationshipTypes.CustomList};
+
+            SaveRelationship(relationship);
+
+            return relationship;
+        }
+
+        public Relationship AddPortalRelationship(int portalID, string listName, string listDescription, RelationshipStatus defaultStatus, int relationshipTypeID)
+        {
+            var relationship = new Relationship { RelationshipID = Null.NullInteger, Name = listName, Description = listDescription, PortalID = portalID, UserID = Null.NullInteger, DefaultResponse = defaultStatus, RelationshipTypeID = relationshipTypeID};
+
+            SaveRelationship(relationship);
+
+            return relationship;            
+        }
 
         #endregion
 

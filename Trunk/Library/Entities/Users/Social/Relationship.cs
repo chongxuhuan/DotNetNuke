@@ -38,10 +38,11 @@ namespace DotNetNuke.Entities.Users
     /// Class:      Relationship
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The Relationship class describes the relationships that the user owns.  
-    /// There would be a small group of Relationships that are defined by the system (Friends, Followers, Family).  
-    /// In addition, a User could add extra relationships – groups, lists – hence the UserID column in the table, 
-    ///  which indicates ownership of the Relationship.
+    /// The Relationship class describes the relationships that a user or portal owns.  
+    /// A handful of default Portal-Level Relationships will be be present for every portal (e.g. Friends, Followers, Family).  
+    /// Portal-Level Relationship will have a -1 in UserID field.
+    /// Any custom User-Level Relationship created by user will also be defined by this class (e.g. My InLaws, Engineering Group).
+    /// User-Relationship will always have an associcated PortalID. User-Level Relationship will always be tied to a specific Portal.    
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
@@ -78,13 +79,13 @@ namespace DotNetNuke.Entities.Users
         public string Description { get; set; }
 
         /// <summary>
-        /// UserID of the User that owns the relationship. A value of -1 indicates that it's a Portal-level relationship
+        /// UserID of the User that owns the Relationship. A value of -1 indicates that it's a Portal-Level Relationship
         /// </summary>
         [XmlAttribute]
         public int UserID { get; set; }
 
         /// <summary>
-        /// PortalID of the User that owns the relationship. A value of -1 indicates that it's a User-level relationship
+        /// PortalID of the User that owns the Relationship. A value of -1 in UserID field indicates that it's a Portal-Level Relationship
         /// </summary>
         [XmlAttribute]
         public int PortalID { get; set; }
@@ -94,6 +95,12 @@ namespace DotNetNuke.Entities.Users
         /// </summary>
         [XmlAttribute]
         public int RelationshipTypeID { get; set; }
+
+        /// <summary>
+        /// Default Relationship Status to be provided to any new Relationship Request
+        /// </summary>
+        [XmlAttribute]
+        public RelationshipStatus DefaultResponse { get; set; }
 
         /// <summary>
         /// IHydratable.KeyID.
@@ -122,6 +129,7 @@ namespace DotNetNuke.Entities.Users
             this.PortalID = Convert.ToInt32(dr["PortalID"]);
             this.Name = dr["Name"].ToString();
             this.Description = dr["Description"].ToString();
+            this.DefaultResponse = (RelationshipStatus)Convert.ToInt32(dr["DefaultResponse"]);
             this.RelationshipTypeID = Convert.ToInt32(dr["RelationshipTypeID"]);
         }
     }

@@ -328,6 +328,9 @@
     <Compile Include="Entities\Users\Membership\UserMembership.cs" />
     <Compile Include="Entities\Users\Profile\ProfilePropertyAccess.cs" />
     <Compile Include="Entities\Users\Profile\UserProfile.cs" />
+    <Compile Include="Entities\Users\Social\DefaultRelationshipTypes.cs" />
+    <Compile Include="Entities\Users\Social\Exceptions\RelationshipBlockedException.cs" />
+    <Compile Include="Entities\Users\Social\Exceptions\InvalidRelationshipTypeException.cs" />
     <Compile Include="Entities\Users\Social\IRelationshipController.cs" />
     <Compile Include="Entities\Users\Social\RelationshipController.cs" />
     <Compile Include="Entities\Users\Social\RelationshipDirection.cs" />

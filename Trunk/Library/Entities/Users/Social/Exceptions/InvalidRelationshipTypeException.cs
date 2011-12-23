@@ -1,7 +1,7 @@
-#region Copyright
+﻿#region Copyright
 
 // 
-// DotNetNuke� - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
@@ -21,18 +21,33 @@
 
 #endregion
 
-#region Usings
-
 using System;
-using System.Reflection;
+using System.Runtime.Serialization;
 
-#endregion
+using DotNetNuke.Services.Exceptions;
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyVersion("6.2.0.80")]
+namespace DotNetNuke.Entities.Users
+{
+    [Serializable]
+    public class InvalidRelationshipTypeException : Exception
+    {
+        public InvalidRelationshipTypeException()
+        {
+        }
+
+        public InvalidRelationshipTypeException(string message)
+            : base(message)
+        {
+        }
+
+        public InvalidRelationshipTypeException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+
+        public InvalidRelationshipTypeException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+    }
+}

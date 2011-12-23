@@ -1117,9 +1117,15 @@ IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}RelationshipTypes]
     BEGIN
 	    INSERT INTO {databaseOwner}[{objectQualifier}RelationshipTypes] ([Direction], [Name], [Description],[CreatedByUserID],[LastModifiedByUserID]) VALUES (2, N'Friends', N'Friends',-1,-1)
 	END
+GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}RelationshipTypes] WHERE [Name] = N'Followers')
     BEGIN
 	    INSERT INTO {databaseOwner}[{objectQualifier}RelationshipTypes] ([Direction], [Name], [Description],[CreatedByUserID],[LastModifiedByUserID]) VALUES (1, N'Followers', N'Followers',-1,-1)
+	END
+GO
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}RelationshipTypes] WHERE [Name] = N'CustomList')
+    BEGIN
+	    INSERT INTO {databaseOwner}[{objectQualifier}RelationshipTypes] ([Direction], [Name], [Description],[CreatedByUserID],[LastModifiedByUserID]) VALUES (1, N'CustomList', N'A user-owned custom-list, e.g. my best friends',-1,-1)
 	END
 GO
 

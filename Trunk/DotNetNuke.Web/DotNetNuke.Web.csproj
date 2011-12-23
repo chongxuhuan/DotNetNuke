@@ -113,6 +113,7 @@
   <ItemGroup>
     <Compile Include="Common\DotNetNukeHttpApplication.cs" />
     <Compile Include="Services\AssemblyWrapper.cs" />
+    <Compile Include="Services\DNNAuthorizeAttribute.cs" />
     <Compile Include="Services\DNNController.cs" />
     <Compile Include="Services\IAssembly.cs" />
     <Compile Include="Services\IAssemblyLocator.cs" />
