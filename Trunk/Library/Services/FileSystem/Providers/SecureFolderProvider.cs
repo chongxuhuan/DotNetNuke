@@ -262,6 +262,7 @@ namespace DotNetNuke.Services.FileSystem
             }
         }
 
+        [Obsolete("Deprecated in DNN 6.2.  It has been replaced by MoveFolder(string folderPath, string newFolderPath, FolderMappingInfo folderMapping) ")]
         public override void RenameFolder(IFolderInfo folder, string newFolderName)
         {
             Requires.NotNull("folder", folder);

@@ -106,6 +106,7 @@
     <Compile Include="Controllers\PortalGroupControllerTests.cs" />
     <Compile Include="Controllers\HostControllerTest.cs" />
     <Compile Include="CBOTest.cs" />
+    <Compile Include="Controllers\Social\RelationshipControllerTests.cs" />
     <Compile Include="Providers\Folder\DatabaseFolderProviderTests.cs" />
     <Compile Include="Providers\Folder\FileManagerTests.cs" />
     <Compile Include="Providers\Folder\FolderManagerTests.cs" />

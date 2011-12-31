@@ -28,7 +28,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common;
@@ -37,7 +36,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.WebControls;
+using DotNetNuke.UI.WebControls.Internal;
 
 #endregion
 
@@ -390,7 +389,7 @@ namespace DotNetNuke.Security.Permissions.Controls
                     PermissionInfo objPerm;
                     objPerm = (PermissionInfo)_permissions[j];
                     row[objPerm.PermissionName + "_Enabled"] = GetEnabled(objPerm, role, j + 1);
-                    if (SupportsDenyPermissions())
+                    if (SupportsDenyPermissions(objPerm))
                     {
                         row[objPerm.PermissionName] = GetPermission(objPerm, role, j + 1, PermissionTypeNull);
                     }
@@ -465,7 +464,7 @@ namespace DotNetNuke.Security.Permissions.Controls
                             PermissionInfo objPerm;
                             objPerm = (PermissionInfo)_permissions[j];
                             row[objPerm.PermissionName + "_Enabled"] = GetEnabled(objPerm, user, j + 1);
-                            if (SupportsDenyPermissions())
+                            if (SupportsDenyPermissions(objPerm))
                             {
                                 row[objPerm.PermissionName] = GetPermission(objPerm, user, j + 1, PermissionTypeNull);
                             }
@@ -551,7 +550,7 @@ namespace DotNetNuke.Security.Permissions.Controls
                 var columnTemplate = new PermissionTriStateTemplate();
                 columnTemplate.DataField = objPermission.PermissionName;
                 columnTemplate.EnabledField = objPermission.PermissionName + "_Enabled";
-                columnTemplate.SupportDenyMode = SupportsDenyPermissions();
+                columnTemplate.SupportDenyMode = SupportsDenyPermissions(objPermission);
                 templateCol.ItemTemplate = columnTemplate;
 
                 var locName = "";
@@ -601,7 +600,7 @@ namespace DotNetNuke.Security.Permissions.Controls
                     var columnTemplate = new PermissionTriStateTemplate();
                     columnTemplate.DataField = objPermission.PermissionName;
                     columnTemplate.EnabledField = objPermission.PermissionName + "_Enabled";
-                    columnTemplate.SupportDenyMode = SupportsDenyPermissions();
+                    columnTemplate.SupportDenyMode = SupportsDenyPermissions(objPermission);
                     templateCol.ItemTemplate = columnTemplate;
 
 
@@ -1069,9 +1068,18 @@ namespace DotNetNuke.Security.Permissions.Controls
         /// <history>
         ///     [cnurse]    01/09/2006  Created
         /// </history>
+        [Obsolete("Deprecated in 6.2.0 use SupportsDenyPermissions(PermissionInfo) instead.")]  //todo just guessing at the version that this will release in
         protected virtual bool SupportsDenyPermissions()
         {
             return false; //to support Deny permissions a derived grid typically needs to implement the new GetPermission and UpdatePermission overload methods which support StateKey
+        }
+
+        protected virtual bool SupportsDenyPermissions(PermissionInfo permissionInfo)
+        {
+            //to maintain backward compatibility the base implementation must always call the simple parameterless version of this method
+#pragma warning disable 612,618
+            return SupportsDenyPermissions();
+#pragma warning restore 612,618
         }
 
         /// <summary>
@@ -1105,14 +1113,15 @@ namespace DotNetNuke.Security.Permissions.Controls
                         //all except first two cells which is role names and role ids
                         if (dgi.Cells[i].Controls.Count > 0)
                         {
+                            var permissionInfo = (PermissionInfo)_permissions[i - 2];
                             var triState = (PermissionTriState)dgi.Cells[i].Controls[0];
-                            if (SupportsDenyPermissions())
+                            if (SupportsDenyPermissions(permissionInfo))
                             {
-                                UpdatePermission((PermissionInfo)_permissions[i - 2], int.Parse(dgi.Cells[1].Text), dgi.Cells[0].Text, triState.Value);
+                                UpdatePermission(permissionInfo, int.Parse(dgi.Cells[1].Text), dgi.Cells[0].Text, triState.Value);
                             }
                             else
                             {
-                                UpdatePermission((PermissionInfo)_permissions[i - 2], int.Parse(dgi.Cells[1].Text), dgi.Cells[0].Text, triState.Value == PermissionTypeGrant);
+                                UpdatePermission(permissionInfo, int.Parse(dgi.Cells[1].Text), dgi.Cells[0].Text, triState.Value == PermissionTypeGrant);
                             }
                         }
                     }
@@ -1138,14 +1147,15 @@ namespace DotNetNuke.Security.Permissions.Controls
                         //all except first two cells which is displayname and userid
                         if (dgi.Cells[i].Controls.Count > 0)
                         {
+                            var permissionInfo = (PermissionInfo)_permissions[i - 2];
                             var triState = (PermissionTriState)dgi.Cells[i].Controls[0];
-                            if (SupportsDenyPermissions())
+                            if (SupportsDenyPermissions(permissionInfo))
                             {
-                                UpdatePermission((PermissionInfo)_permissions[i - 2], dgi.Cells[0].Text, int.Parse(dgi.Cells[1].Text), triState.Value);
+                                UpdatePermission(permissionInfo, dgi.Cells[0].Text, int.Parse(dgi.Cells[1].Text), triState.Value);
                             }
                             else
                             {
-                                UpdatePermission((PermissionInfo)_permissions[i - 2], dgi.Cells[0].Text, int.Parse(dgi.Cells[1].Text), triState.Value == PermissionTypeGrant);
+                                UpdatePermission(permissionInfo, dgi.Cells[0].Text, int.Parse(dgi.Cells[1].Text), triState.Value == PermissionTypeGrant);
                             }
                         }
                     }

@@ -112,9 +112,10 @@ namespace DotNetNuke.Entities.Users
         /// <param name="dr">the data reader.</param>
         public void Fill(IDataReader dr)
         {
-            this.RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
+            this.UserRelationshipID = Convert.ToInt32(dr["UserRelationshipID"]);
             this.UserID = Convert.ToInt32(dr["UserID"]);
             this.RelatedUserID = Convert.ToInt32(dr["RelatedUserID"]);
+            this.RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
             this.Status = (RelationshipStatus)Convert.ToInt32(dr["Status"]);
         }
     }

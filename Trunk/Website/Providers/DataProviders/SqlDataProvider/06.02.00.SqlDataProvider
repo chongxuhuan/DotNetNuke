@@ -518,7 +518,7 @@ AS
 	BEGIN
 		DECLARE @TabId int
 		DECLARE @TabOrder INT 
-		SET @TabOrder = (SELECT TabOrder FROM dnn_Tabs WHERE TabID = @AfterTabID)
+		SET @TabOrder = (SELECT TabOrder FROM {objectQualifier}Tabs WHERE TabID = @AfterTabID)
 		
 		-- Update TabOrders for all Tabs higher than @TabOrder
 		UPDATE {objectQualifier}Tabs
@@ -528,7 +528,7 @@ AS
 		
 		-- Create Tab
 		SET @TabOrder = @TabOrder + 2
-		EXECUTE @TabId = dnn_AddTab 
+		EXECUTE @TabId = {objectQualifier}AddTab 
 							@ContentItemID,
 							@PortalID,
 							@TabOrder,
@@ -1066,8 +1066,9 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			[RelationshipTypeID] [int] NOT NULL,
 			[Name] [nvarchar](50) NOT NULL,
 			[Description] [nvarchar](500) NULL,			
-			[PortalID] [int] NOT NULL,
-			[UserID] [int] NOT NULL,
+			[PortalID] [int] NULL,
+			[UserID] [int] NULL,
+			[DefaultResponse] [int] NOT NULL,
 			[CreatedByUserID] [int] NOT NULL,
 			[CreatedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}Relationships_CreatedOnDate]  DEFAULT (getdate()) NOT NULL ,
 			[LastModifiedByUserID] [int] NOT NULL,
@@ -1237,11 +1238,12 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRelationship] @RelationshipID INT
 AS 
     SELECT  RelationshipID,
-			RelationshipTypeID,            
+            RelationshipTypeID,            
             Name,            
             Description,
-			UserID,
-			PortalID,
+            UserID,
+            PortalID,
+            DefaultResponse,
             CreatedByUserID ,
             CreatedOnDate ,
             LastModifiedByUserID ,
@@ -1263,6 +1265,7 @@ AS
             Description,
 			UserID,
 			PortalID,
+			DefaultResponse,
             CreatedByUserID ,
             CreatedOnDate ,
             LastModifiedByUserID ,
@@ -1284,12 +1287,13 @@ AS
             Description,
 			UserID,
 			PortalID,
+			DefaultResponse,
             CreatedByUserID ,
             CreatedOnDate ,
             LastModifiedByUserID ,
             LastModifiedOnDate
     FROM    {databaseOwner}{objectQualifier}Relationships    
-	WHERE PortalID = @PortalID
+	WHERE PortalID = @PortalID AND UserID IS NULL
 	ORDER BY RelationshipID ASC    
 GO
 
@@ -1340,6 +1344,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveRelationship]
     @Description NVARCHAR(500),
 	@UserID INT,
 	@PortalID INT,
+	@DefaultResponse INT,
 	@CreateUpdateUserID INT
     
 AS 
@@ -1350,7 +1355,8 @@ AS
                       Name ,            
                       Description,					
 					  UserID,
-					  PortalID,					
+					  PortalID,		
+					  DefaultResponse,			
                       CreatedByUserID ,
                       CreatedOnDate ,
                       LastModifiedByUserID ,
@@ -1362,6 +1368,7 @@ AS
                       @Description , -- @Description NVARCHAR(500)
 					  @UserID , -- @UserID int
 					  @PortalID , -- @PortalID int
+					  @DefaultResponse, -- @DefaultResponse int
                       @CreateUpdateUserID , -- CreatedBy - int
                       GETDATE() , -- CreatedOn - datetime
                       @CreateUpdateUserID , -- LastModifiedBy - int
@@ -1379,6 +1386,7 @@ AS
 					RelationshipTypeID = @RelationshipTypeID,
 					UserID = @UserID,
 					PortalID = @PortalID,
+					DefaultResponse = @DefaultResponse,
                     LastModifiedByUserID = @CreateUpdateUserID,
                     LastModifiedOnDate = GETDATE()
             WHERE   RelationshipID = @RelationshipID
@@ -1406,6 +1414,31 @@ AS
             LastModifiedOnDate
     FROM    {databaseOwner}{objectQualifier}UserRelationships    
 	WHERE UserRelationshipID = @UserRelationshipID
+	ORDER BY UserRelationshipID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipByMultipleIDs]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByMultipleIDs]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByMultipleIDs] 
+	@UserID INT,
+	@RelatedUserID INT,
+	@RelationshipID INT
+AS 
+    SELECT  UserRelationshipID,
+			UserID,
+			RelatedUserID,
+			RelationshipID,            
+			Status,            
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}UserRelationships    
+	WHERE UserID = @UserID
+	AND   RelatedUserID = @RelatedUserID
+	AND   RelationshipID = @RelationshipID
 	ORDER BY UserRelationshipID ASC    
 GO
 
@@ -1535,6 +1568,7 @@ AS
             INSERT  {databaseOwner}{objectQualifier}UserRelationships
                     ( UserID,
 					  RelatedUserID,					
+					  RelationshipID,
 					  Status,
                       CreatedByUserID ,
                       CreatedOnDate ,
@@ -1544,6 +1578,7 @@ AS
                     )
             VALUES  ( @UserID , -- @UserID int
 					  @RelatedUserID , -- @RelatedUserlID int
+					  @RelationshipID, -- @RelationshipID int
 					  @Status , -- @Status int
                       @CreateUpdateUserID , -- CreatedBy - int
                       GETDATE() , -- CreatedOn - datetime

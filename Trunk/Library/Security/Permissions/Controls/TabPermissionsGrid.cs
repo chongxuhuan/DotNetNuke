@@ -40,14 +40,14 @@ namespace DotNetNuke.Security.Permissions.Controls
     public class TabPermissionsGrid : PermissionsGrid
     {
         #region "Private Members"
-		
-		private List<PermissionInfoBase> _PermissionsList;
+
+        private List<PermissionInfoBase> _PermissionsList;
         private int _TabID = -1;
         private TabPermissionCollection _TabPermissions;
-		
-		#endregion
-		
-		#region "Protected Properties"
+
+        #endregion
+
+        #region "Protected Properties"
 
         protected override List<PermissionInfoBase> PermissionsList
         {
@@ -73,7 +73,7 @@ namespace DotNetNuke.Security.Permissions.Controls
         {
             get
             {
-				//First Update Permissions in case they have been changed
+                //First Update Permissions in case they have been changed
                 UpdatePermissions();
 
                 //Return the TabPermissions
@@ -180,7 +180,7 @@ namespace DotNetNuke.Security.Permissions.Controls
         /// -----------------------------------------------------------------------------
         protected override void AddPermission(ArrayList permissions, UserInfo user)
         {
-			//Search TabPermission Collection for the user 
+            //Search TabPermission Collection for the user 
             bool isMatch = false;
             foreach (TabPermissionInfo objTabPermission in _TabPermissions)
             {
@@ -190,7 +190,7 @@ namespace DotNetNuke.Security.Permissions.Controls
                     break;
                 }
             }
-			
+
             //user not found so add new
             if (!isMatch)
             {
@@ -236,14 +236,14 @@ namespace DotNetNuke.Security.Permissions.Controls
         protected override string GetPermission(PermissionInfo objPerm, RoleInfo role, int column, string defaultState)
         {
             string permission;
-			
+
             if (role.RoleID == AdministratorRoleId)
             {
                 permission = PermissionTypeGrant;
             }
             else
             {
-				//Call base class method to handle standard permissions
+                //Call base class method to handle standard permissions
                 permission = base.GetPermission(objPerm, role, column, PermissionTypeNull);
             }
             return permission;
@@ -275,30 +275,30 @@ namespace DotNetNuke.Security.Permissions.Controls
         {
             if (savedState != null)
             {
-				//Load State from the array of objects that was saved with SaveViewState.
-                var myState = (object[]) savedState;
-				
-				//Load Base Controls ViewState
+                //Load State from the array of objects that was saved with SaveViewState.
+                var myState = (object[])savedState;
+
+                //Load Base Controls ViewState
                 if (myState[0] != null)
                 {
                     base.LoadViewState(myState[0]);
                 }
-				
-				//Load TabId
+
+                //Load TabId
                 if (myState[1] != null)
                 {
                     TabID = Convert.ToInt32(myState[1]);
                 }
-				
-				//Load TabPermissions
+
+                //Load TabPermissions
                 if (myState[2] != null)
                 {
                     _TabPermissions = new TabPermissionCollection();
                     string state = Convert.ToString(myState[2]);
                     if (!String.IsNullOrEmpty(state))
                     {
-						//First Break the String into individual Keys
-                        string[] permissionKeys = state.Split(new[] {"##"}, StringSplitOptions.None);
+                        //First Break the String into individual Keys
+                        string[] permissionKeys = state.Split(new[] { "##" }, StringSplitOptions.None);
                         foreach (string key in permissionKeys)
                         {
                             string[] Settings = key.Split('|');
@@ -325,8 +325,8 @@ namespace DotNetNuke.Security.Permissions.Controls
         protected override object SaveViewState()
         {
             var allStates = new object[3];
-			
-			//Save the Base Controls ViewState
+
+            //Save the Base Controls ViewState
             allStates[0] = base.SaveViewState();
 
             //Save the Tab Id
@@ -368,19 +368,19 @@ namespace DotNetNuke.Security.Permissions.Controls
         ///     [cnurse]    01/09/2006  Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        protected override bool SupportsDenyPermissions()
+        protected override bool SupportsDenyPermissions(PermissionInfo permissionInfo)
         {
             return true;
         }
-		
-		#endregion
-		
-		#region "Public Methods"
+
+        #endregion
+
+        #region "Public Methods"
 
         public override void GenerateDataGrid()
         {
         }
-		
-		#endregion
+
+        #endregion
     }
 }

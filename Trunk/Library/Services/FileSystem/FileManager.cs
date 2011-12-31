@@ -48,6 +48,12 @@ namespace DotNetNuke.Services.FileSystem
     /// </summary>
     public class FileManager : ComponentBase<IFileManager, FileManager>, IFileManager
     {
+        #region Constants
+
+        private const int BufferSize = 4096;
+
+        #endregion
+
         #region Constructor
 
         internal FileManager()
@@ -124,7 +130,7 @@ namespace DotNetNuke.Services.FileSystem
 
             if (!fileContent.CanSeek)
             {
-                fileContent = GetSeekableStream(folder.PhysicalPath, fileContent);
+                fileContent = GetSeekableStream(fileContent);
                 seekableStreamCreated = true;
             }
 
@@ -206,6 +212,47 @@ namespace DotNetNuke.Services.FileSystem
 
             Requires.NotNull("file", file);
             Requires.NotNull("destinationFolder", destinationFolder);
+
+            if (file.FolderMappingID == destinationFolder.FolderMappingID)
+            {
+                if (!FolderPermissionControllerWrapper.Instance.CanAddFolder(destinationFolder))
+                {
+                    throw new PermissionsNotMetException(Localization.Localization.GetExceptionMessage("CopyFilePermissionsNotMet", "Permissions are not met. The file has not been copied."));
+                }
+
+                if (!PortalControllerWrapper.Instance.HasSpaceAvailable(destinationFolder.PortalID, file.Size))
+                {
+                    throw new NoSpaceAvailableException(Localization.Localization.GetExceptionMessage("CopyFileNoSpaceAvailable", "The portal has no space available to store the specified file. The file has not been copied."));
+                }
+
+                var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
+                try
+                {
+                    FolderProvider.Instance(folderMapping.FolderProviderType).CopyFile(file.Folder, file.FileName, destinationFolder.FolderPath, folderMapping);
+                }
+                catch (Exception ex)
+                {
+                    DnnLog.Error(ex);
+                    throw new FolderProviderException(Localization.Localization.GetExceptionMessage("CopyFileUnderlyingSystemError", "The underlying system throw an exception. The file has not been copied."), ex);
+                }
+
+                var fileId = DataProvider.Instance().AddFile(
+                    file.PortalId,
+                    file.UniqueId,
+                    file.VersionGuid,
+                    file.FileName,
+                    file.Extension,
+                    file.Size,
+                    file.Width,
+                    file.Height,
+                    file.ContentType,
+                    destinationFolder.FolderPath,
+                    destinationFolder.FolderID,
+                    GetCurrentUserID(),
+                    file.SHA1Hash);
+
+                return GetFile(fileId);
+            }
 
             using (var fileContent = GetFileContent(file))
             {
@@ -290,6 +337,92 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             return existsFile;
+        }
+
+        /// <summary>
+        /// Gets the Content Type for the specified file extension.
+        /// </summary>
+        /// <param name="extension">The file extension.</param>
+        /// <returns>The Content Type for the specified extension.</returns>
+        public virtual string GetContentType(string extension)
+        {
+            DnnLog.MethodEntry();
+
+            Requires.NotNullOrEmpty("extension", extension);
+
+            string contentType;
+
+            switch (extension.TrimStart('.').ToLower())
+            {
+                case "txt":
+                    contentType = "text/plain";
+                    break;
+                case "htm":
+                case "html":
+                    contentType = "text/html";
+                    break;
+                case "rtf":
+                    contentType = "text/richtext";
+                    break;
+                case "jpg":
+                case "jpeg":
+                    contentType = "image/jpeg";
+                    break;
+                case "gif":
+                    contentType = "image/gif";
+                    break;
+                case "bmp":
+                    contentType = "image/bmp";
+                    break;
+                case "png":
+                    contentType = "image/png";
+                    break;
+                case "ico":
+                    contentType = "image/x-icon";
+                    break;
+                case "mp3":
+                    contentType = "audio/mpeg";
+                    break;
+                case "wma":
+                    contentType = "audio/x-ms-wma";
+                    break;
+                case "mpg":
+                case "mpeg":
+                    contentType = "video/mpeg";
+                    break;
+                case "avi":
+                    contentType = "video/avi";
+                    break;
+                case "mp4":
+                    contentType = "video/mp4";
+                    break;
+                case "wmv":
+                    contentType = "video/x-ms-wmv";
+                    break;
+                case "pdf":
+                    contentType = "application/pdf";
+                    break;
+                case "doc":
+                case "dot":
+                case "docx":
+                case "dotx":
+                    contentType = "application/msword";
+                    break;
+                case "csv":
+                    contentType = "text/csv";
+                    break;
+                case "xls":
+                case "xlt":
+                case "xlsx":
+                case "xltx":
+                    contentType = "application/x-msexcel";
+                    break;
+                default:
+                    contentType = "application/octet-stream";
+                    break;
+            }
+
+            return contentType;
         }
 
         /// <summary>
@@ -404,6 +537,42 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         /// <summary>
+        /// Gets a seekable Stream based on the specified non-seekable Stream.
+        /// </summary>
+        /// <param name="stream">A non-seekable Stream.</param>
+        /// <returns>A seekable Stream.</returns>
+        public virtual Stream GetSeekableStream(Stream stream)
+        {
+            DnnLog.MethodEntry();
+
+            Requires.NotNull("stream", stream);
+
+            if (stream.CanSeek) return stream;
+
+            var folderPath = GetHostMapPath();
+            string filePath;
+
+            do
+            {
+                filePath = Path.Combine(folderPath, Path.GetRandomFileName()) + ".resx";
+            } while (File.Exists(filePath));
+
+            var fileStream = GetAutoDeleteFileStream(filePath);
+
+            var array = new byte[BufferSize];
+
+            int bytesRead;
+            while ((bytesRead = stream.Read(array, 0, BufferSize)) > 0)
+            {
+                fileStream.Write(array, 0, bytesRead);
+            }
+
+            fileStream.Position = 0;
+
+            return fileStream;
+        }
+
+        /// <summary>
         /// Gets the direct Url to the file.
         /// </summary>
         /// <param name="file">The file to get the Url.</param>
@@ -461,7 +630,17 @@ namespace DotNetNuke.Services.FileSystem
             {
                 try
                 {
-                    destinationFolderProvider.AddFile(destinationFolder, file.FileName, fileContent);
+                    if (!fileContent.CanSeek)
+                    {
+                        using (var seekableStream = GetSeekableStream(fileContent))
+                        {
+                            destinationFolderProvider.AddFile(destinationFolder, file.FileName, seekableStream);
+                        }
+                    }
+                    else
+                    {
+                        destinationFolderProvider.AddFile(destinationFolder, file.FileName, fileContent);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -901,83 +1080,9 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
-        internal virtual string GetContentType(string extension)
+        internal virtual Stream GetAutoDeleteFileStream(string filePath)
         {
-            Requires.NotNullOrEmpty("extension", extension);
-
-            string contentType;
-
-            switch (extension.TrimStart('.').ToLower())
-            {
-                case "txt":
-                    contentType = "text/plain";
-                    break;
-                case "htm":
-                case "html":
-                    contentType = "text/html";
-                    break;
-                case "rtf":
-                    contentType = "text/richtext";
-                    break;
-                case "jpg":
-                case "jpeg":
-                    contentType = "image/jpeg";
-                    break;
-                case "gif":
-                    contentType = "image/gif";
-                    break;
-                case "bmp":
-                    contentType = "image/bmp";
-                    break;
-                case "png":
-                    contentType = "image/png";
-                    break;
-                case "ico":
-                    contentType = "image/x-icon";
-                    break;
-                case "mp3":
-                    contentType = "audio/mpeg";
-                    break;
-                case "wma":
-                    contentType = "audio/x-ms-wma";
-                    break;
-                case "mpg":
-                case "mpeg":
-                    contentType = "video/mpeg";
-                    break;
-                case "avi":
-                    contentType = "video/avi";
-                    break;
-                case "mp4":
-                    contentType = "video/mp4";
-                    break;
-                case "wmv":
-                    contentType = "video/x-ms-wmv";
-                    break;
-                case "pdf":
-                    contentType = "application/pdf";
-                    break;
-                case "doc":
-                case "dot":
-                case "docx":
-                case "dotx":
-                    contentType = "application/msword";
-                    break;
-                case "csv":
-                    contentType = "text/csv";
-                    break;
-                case "xls":
-                case "xlt":
-                case "xlsx":
-                case "xltx":
-                    contentType = "application/x-msexcel";
-                    break;
-                default:
-                    contentType = "application/octet-stream";
-                    break;
-            }
-
-            return contentType;
+            return new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, BufferSize, FileOptions.DeleteOnClose);
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
@@ -1021,6 +1126,12 @@ namespace DotNetNuke.Services.FileSystem
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
+        internal virtual string GetHostMapPath()
+        {
+            return Globals.HostMapPath;
+        }
+
+        /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual Image GetImageFromStream(Stream stream)
         {
             return Image.FromStream(stream);
@@ -1030,35 +1141,6 @@ namespace DotNetNuke.Services.FileSystem
         internal virtual Globals.PerformanceSettings GetPerformanceSetting()
         {
             return Host.PerformanceSetting;
-        }
-
-        /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
-        internal static Stream GetSeekableStream(string folderPath, Stream stream)
-        {
-            if (stream.CanSeek) return stream;
-
-            string filePath;
-
-            do
-            {
-                filePath = Path.Combine(folderPath, Path.GetRandomFileName());
-            } while (File.Exists(filePath));
-
-            const int bufferSize = 4096;
-
-            var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, bufferSize, FileOptions.DeleteOnClose);
-
-            var array = new byte[bufferSize];
-
-            int bytesRead;
-            while ((bytesRead = stream.Read(array, 0, bufferSize)) > 0)
-            {
-                fileStream.Write(array, 0, bytesRead);
-            }
-
-            fileStream.Position = 0;
-
-            return fileStream;
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>

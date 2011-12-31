@@ -27,6 +27,9 @@ using System.IO;
 
 namespace DotNetNuke.Services.FileSystem
 {
+    /// <summary>
+    /// This interface has been created only with testing purposes. Do not implement it in your code as it is subject to change.
+    /// </summary>
     public interface IFileManager
     {
         /// <summary>
@@ -59,7 +62,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="contentType">The content type of the file.</param>
         /// <returns>A <see cref="DotNetNuke.Services.FileSystem.IFileInfo">IFileInfo</see> as specified by the parameters.</returns>
         IFileInfo AddFile(IFolderInfo folder, string fileName, Stream fileContent, bool overwrite, bool checkPermissions, string contentType);
-        
+
         /// <summary>
         /// Copies the specified file into the specified folder.
         /// </summary>
@@ -79,7 +82,7 @@ namespace DotNetNuke.Services.FileSystem
         /// </summary>
         /// <param name="files">The files to delete.</param>
         void DeleteFiles(IEnumerable<IFileInfo> files);
-        
+
         /// <summary>
         /// Checks the existence of the specified file in the specified folder.
         /// </summary>
@@ -87,7 +90,14 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="fileName">The file name to check the existence of.</param>
         /// <returns>A bool value indicating whether the file exists or not in the specified folder.</returns>
         bool FileExists(IFolderInfo folder, string fileName);
-        
+
+        /// <summary>
+        /// Gets the Content Type for the specified file extension.
+        /// </summary>
+        /// <param name="extension">The file extension.</param>
+        /// <returns>The Content Type for the specified extension.</returns>
+        string GetContentType(string extension);
+
         /// <summary>
         /// Gets the file metadata for the specified file.
         /// </summary>
@@ -118,6 +128,13 @@ namespace DotNetNuke.Services.FileSystem
         /// <param name="file">The file to get the content from.</param>
         /// <returns>A stream with the content of the file.</returns>
         Stream GetFileContent(IFileInfo file);
+
+        /// <summary>
+        /// Gets a seekable Stream based on the specified non-seekable Stream.
+        /// </summary>
+        /// <param name="stream">A non-seekable Stream.</param>
+        /// <returns>A seekable Stream.</returns>
+        Stream GetSeekableStream(Stream stream);
 
         /// <summary>
         /// Gets the direct Url to the file.

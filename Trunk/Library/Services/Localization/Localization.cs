@@ -1050,7 +1050,8 @@ namespace DotNetNuke.Services.Localization
             {
                 return string.Format(defaultValue, @params);
             }
-            return string.Format(GetString(key, ExceptionsResourceFile), @params);
+            var conent = GetString(key, ExceptionsResourceFile);
+            return string.Format(String.IsNullOrEmpty(conent) ? defaultValue : GetString(key, ExceptionsResourceFile), @params);
         }
 
         public static string GetLanguageDisplayMode(int portalId)

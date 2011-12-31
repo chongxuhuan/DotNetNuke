@@ -26,6 +26,8 @@
 using System;
 using System.Data;
 using System.Xml.Serialization;
+
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 
 #endregion
@@ -125,8 +127,8 @@ namespace DotNetNuke.Entities.Users
         public void Fill(IDataReader dr)
         {
             this.RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
-            this.UserID = Convert.ToInt32(dr["UserID"]);
-            this.PortalID = Convert.ToInt32(dr["PortalID"]);
+            this.UserID = Null.SetNullInteger(dr["UserID"]);
+            this.PortalID = Null.SetNullInteger(dr["PortalID"]);
             this.Name = dr["Name"].ToString();
             this.Description = dr["Description"].ToString();
             this.DefaultResponse = (RelationshipStatus)Convert.ToInt32(dr["DefaultResponse"]);

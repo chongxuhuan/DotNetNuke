@@ -23,12 +23,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Permissions;
 
 namespace DotNetNuke.Services.FileSystem
 {
+    /// <summary>
+    /// This interface has been created only with testing purposes. Do not implement it in your code as it is subject to change.
+    /// </summary>
     public interface IFolderManager
     {
         /// <summary>
@@ -150,14 +154,14 @@ namespace DotNetNuke.Services.FileSystem
         IEnumerable<IFolderInfo> GetFolders(int portalID, string permissions, int userID);
 
         /// <summary>
-        /// Gets the list of folders the specified user has read permissions
+        /// Gets the list of folders the specified user has read permissions.
         /// </summary>
         /// <param name="user">The user info</param>
         /// <returns>The list of folders the specified user has read permissions.</returns>
         IEnumerable<IFolderInfo> GetFolders(UserInfo user);
 
         /// <summary>
-        /// Gets the list of folders the specified user has the provided permissions
+        /// Gets the list of folders the specified user has the provided permissions.
         /// </summary>
         /// <param name="user">The user info</param>
         /// <param name="permissions">The permissions the folders have to met.</param>
@@ -165,10 +169,20 @@ namespace DotNetNuke.Services.FileSystem
         IEnumerable<IFolderInfo> GetFolders(UserInfo user, string permissions);
 
         /// <summary>
+        /// Moves the specified folder and its contents to a new location.
+        /// </summary>
+        /// <param name="folder">The folder to move.</param>
+        /// <param name="newFolderPath">The new folder path.</param>
+        /// <returns>The moved folder.</returns>
+        IFolderInfo MoveFolder(IFolderInfo folder, string newFolderPath);
+
+        /// <summary>
         /// Renames the specified folder by setting the new provided folder name.
         /// </summary>
         /// <param name="folder">The folder to rename.</param>
         /// <param name="newFolderName">The new name to apply to the folder.</param>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete("Deprecated in DNN 6.2.  It has been replaced by FolderManager.Instance.MoveFolder(IFolderInfo folder, string newFolderPath) ")]
         void RenameFolder(IFolderInfo folder, string newFolderName);
 
         /// <summary>

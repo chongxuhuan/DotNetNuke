@@ -29,23 +29,23 @@ using DotNetNuke.Services.Exceptions;
 namespace DotNetNuke.Entities.Users
 {
     [Serializable]
-    public class RelationshipBlockedException : Exception
+    public class UserRelationshipForSameUsersException : Exception
     {
-        public RelationshipBlockedException()
+        public UserRelationshipForSameUsersException()
         {
         }
 
-        public RelationshipBlockedException(string message)
+        public UserRelationshipForSameUsersException(string message)
             : base(message)
         {
         }
 
-        public RelationshipBlockedException(string message, Exception inner)
+        public UserRelationshipForSameUsersException(string message, Exception inner)
             : base(message, inner)
         {
         }
 
-        public RelationshipBlockedException(SerializationInfo info, StreamingContext context)
+        public UserRelationshipForSameUsersException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

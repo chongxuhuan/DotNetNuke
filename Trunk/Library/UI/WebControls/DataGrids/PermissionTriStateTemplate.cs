@@ -3,7 +3,7 @@ using System.Data;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace DotNetNuke.UI.WebControls
+namespace DotNetNuke.UI.WebControls.Internal
 {
     class PermissionTriStateTemplate : ITemplate
     {

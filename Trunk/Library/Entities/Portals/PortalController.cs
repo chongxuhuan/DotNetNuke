@@ -1284,6 +1284,18 @@ namespace DotNetNuke.Entities.Portals
                         DesktopModuleController.AddDesktopModulesToPortal(portalId);
                         AddPortalAlias(portalId, portalAlias);
                         UpdatePortalSetting(portalId, "DefaultPortalAlias", portalAlias, true);
+
+                        try
+                        {
+                            //create default portal relationships
+                            var relationshipController = new RelationshipController();
+                            relationshipController.CreateDefaultRelationshipsForPortal(portalId);
+                        }
+                        catch (Exception Exc)
+                        {
+                            DnnLog.Error(Exc);                            
+                        }
+
                         try
                         {
                             var objEventLogInfo = new LogInfo();

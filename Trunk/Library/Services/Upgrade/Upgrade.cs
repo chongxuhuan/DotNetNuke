@@ -4057,6 +4057,8 @@ namespace DotNetNuke.Services.Upgrade
 			}
             listController.AddListEntry(entry);
 
+            var relationshipController = new RelationshipController();
+
             //add same list to each portal
             var portalController = new PortalController();
             foreach (PortalInfo portal in portalController.GetPortals())
@@ -4064,6 +4066,9 @@ namespace DotNetNuke.Services.Upgrade
                 entry.PortalID = portal.PortalID;
                 entry.SystemList = false;
                 listController.AddListEntry(entry);
+
+                //also create default social relationship entries for the portal
+                relationshipController.CreateDefaultRelationshipsForPortal(portal.PortalID);
             }
 
 

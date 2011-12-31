@@ -126,6 +126,15 @@ namespace DotNetNuke.Security.Permissions
         /// -----------------------------------------------------------------------------
         public static void SaveFolderPermissions(FolderInfo folder)
         {
+            SaveFolderPermissions((IFolderInfo)folder);
+        }
+
+        /// <summary>
+        /// SaveFolderPermissions updates a Folder's permissions
+        /// </summary>
+        /// <param name="folder">The Folder to update</param>
+        public static void SaveFolderPermissions(IFolderInfo folder)
+        {
             provider.SaveFolderPermissions(folder);
             ClearPermissionCache(folder.PortalID);
         }
@@ -173,7 +182,7 @@ namespace DotNetNuke.Security.Permissions
         [Obsolete("Deprecated in DNN 5.0. Please use GetFolderPermissionsCollectionByFolderPath(PortalId, Folder)")]
         public ArrayList GetFolderPermissionsByFolder(int PortalID, string Folder)
         {
-            return CBO.FillCollection(DataProvider.Instance().GetFolderPermissionsByFolderPath(PortalID, Folder, -1), typeof (FolderPermissionInfo));
+            return CBO.FillCollection(DataProvider.Instance().GetFolderPermissionsByFolderPath(PortalID, Folder, -1), typeof(FolderPermissionInfo));
         }
 
         [Obsolete("Deprecated in DNN 5.0. Please use GetFolderPermissionsCollectionByFolderPath(PortalId, Folder)")]

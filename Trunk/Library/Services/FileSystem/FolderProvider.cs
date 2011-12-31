@@ -23,8 +23,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 
@@ -55,12 +58,12 @@ namespace DotNetNuke.Services.FileSystem
         public static Dictionary<string, FolderProvider> GetProviderList()
         {
             var providerList = ComponentFactory.GetComponents<FolderProvider>();
-            
+
             foreach (var key in providerList.Keys)
             {
                 providerList[key]._providerName = key;
             }
-            
+
             return providerList;
         }
 
@@ -70,15 +73,46 @@ namespace DotNetNuke.Services.FileSystem
         public static FolderProvider Instance(string friendlyName)
         {
             var provider = ComponentFactory.GetComponent<FolderProvider>(friendlyName);
-            
+
             provider._providerName = friendlyName;
-            
+
             return provider;
         }
 
         #endregion
 
         #region Virtual Methods
+
+        /// <summary>
+        /// Copies the specified file to the destination folder.
+        /// </summary>
+        public virtual void CopyFile(string folderPath, string fileName, string newFolderPath, FolderMappingInfo folderMapping)
+        {
+            Requires.NotNull("folderPath", folderPath);
+            Requires.NotNullOrEmpty("fileName", fileName);
+            Requires.NotNull("newFolderPath", newFolderPath);
+            Requires.NotNull("folderMapping", folderMapping);
+
+            if (folderPath == newFolderPath) return;
+
+            var sourceFolder = new FolderInfo { FolderPath = folderPath, FolderMappingID = folderMapping.FolderMappingID, PortalID = folderMapping.PortalID };
+            var destinationFolder = new FolderInfo { FolderPath = newFolderPath, FolderMappingID = folderMapping.FolderMappingID, PortalID = folderMapping.PortalID };
+
+            using (var fileContent = GetFileStream(sourceFolder, fileName))
+            {
+                if (!fileContent.CanSeek)
+                {
+                    using (var seekableStream = FileManager.Instance.GetSeekableStream(fileContent))
+                    {
+                        AddFile(destinationFolder, fileName, seekableStream);
+                    }
+                }
+                else
+                {
+                    AddFile(destinationFolder, fileName, fileContent);
+                }
+            }
+        }
 
         /// <summary>
         ///   Gets the virtual path of the control file used to display and update specific folder mapping settings. By default, the control name is Settings.ascx.
@@ -92,7 +126,7 @@ namespace DotNetNuke.Services.FileSystem
         public virtual string GetSettingsControlVirtualPath()
         {
             var provider = Config.GetProvider("folder", _providerName);
-            
+
             if (provider != null)
             {
                 var virtualPath = provider.Attributes["providerPath"] + SettingsControlID;
@@ -104,6 +138,77 @@ namespace DotNetNuke.Services.FileSystem
             }
 
             return string.Empty;
+        }
+
+        /// <summary>
+        /// Moves the folder and files at the specified folder path to the new folder path.
+        /// </summary>
+        public virtual void MoveFolder(string folderPath, string newFolderPath, FolderMappingInfo folderMapping)
+        {
+            Requires.NotNullOrEmpty("folderPath", folderPath);
+            Requires.NotNullOrEmpty("newFolderPath", newFolderPath);
+            Requires.NotNull("folderMapping", folderMapping);
+
+            var folderProvider = Instance(folderMapping.FolderProviderType);
+
+            AddFolderAndMoveFiles(folderPath, newFolderPath, folderMapping);
+
+            var folderManager = new FolderManager();
+            var subFolders = folderManager.GetFolderMappingFoldersRecursive(folderMapping, folderPath).Skip(1).Reverse();
+
+            foreach (var subFolderPath in subFolders.Select(s => s.Key))
+            {
+                var newSubFolderPath = newFolderPath + subFolderPath.Substring(folderPath.Length);
+                AddFolderAndMoveFiles(subFolderPath, newSubFolderPath, folderMapping);
+
+                folderProvider.DeleteFolder(new FolderInfo { FolderPath = subFolderPath, FolderMappingID = folderMapping.FolderMappingID, PortalID = folderMapping.FolderMappingID });
+            }
+
+            folderProvider.DeleteFolder(new FolderInfo { FolderPath = folderPath, FolderMappingID = folderMapping.FolderMappingID, PortalID = folderMapping.PortalID });
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private static void AddFolderAndMoveFiles(string folderPath, string newFolderPath, FolderMappingInfo folderMapping)
+        {
+            var folderProvider = Instance(folderMapping.FolderProviderType);
+
+            if (!folderProvider.FolderExists(newFolderPath, folderMapping))
+            {
+                folderProvider.AddFolder(newFolderPath, folderMapping);
+            }
+
+            var folder = new FolderInfo { FolderPath = folderPath, FolderMappingID = folderMapping.FolderMappingID, PortalID = folderMapping.PortalID };
+            var newFolder = new FolderInfo { FolderPath = newFolderPath, FolderMappingID = folderMapping.FolderMappingID, PortalID = folderMapping.PortalID };
+
+            MoveFiles(folder, newFolder, folderMapping);
+        }
+
+        private static void MoveFiles(IFolderInfo folder, IFolderInfo newFolder, FolderMappingInfo folderMapping)
+        {
+            var folderProvider = Instance(folderMapping.FolderProviderType);
+            var files = folderProvider.GetFiles(folder);
+
+            foreach (var file in files)
+            {
+                using (var fileContent = folderProvider.GetFileStream(folder, file))
+                {
+                    if (!fileContent.CanSeek)
+                    {
+                        using (var seekableStream = FileManager.Instance.GetSeekableStream(fileContent))
+                        {
+                            folderProvider.AddFile(newFolder, file, seekableStream);
+                        }
+                    }
+                    else
+                    {
+                        folderProvider.AddFile(newFolder, file, fileContent);
+                    }
+                }
+                folderProvider.DeleteFile(new FileInfo { FileName = file, Folder = folder.FolderPath, FolderMappingID = folderMapping.FolderMappingID, PortalId = folderMapping.PortalID });
+            }
         }
 
         #endregion
@@ -147,17 +252,17 @@ namespace DotNetNuke.Services.FileSystem
         ///   Do not close content Stream.
         /// </remarks>
         public abstract void AddFile(IFolderInfo folder, string fileName, Stream content);
-        
+
         /// <summary>
         ///   Adds a new folder to a specified parent folder.
         /// </summary>
         public abstract void AddFolder(string folderPath, FolderMappingInfo folderMapping);
-        
+
         /// <summary>
         ///   Deletes the specified file.
         /// </summary>
         public abstract void DeleteFile(IFileInfo file);
-        
+
         /// <summary>
         ///   Deletes the specified folder.
         /// </summary>
@@ -205,7 +310,7 @@ namespace DotNetNuke.Services.FileSystem
         /// Gets the direct Url to the file.
         /// </summary>
         public abstract string GetFileUrl(IFileInfo file);
-        
+
         /// <summary>
         ///   Gets the URL of the image to display in FileManager tree.
         /// </summary>
@@ -234,6 +339,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>
         ///   Renames the specified folder using the new foldername.
         /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete("Deprecated in DNN 6.2.  It has been replaced by MoveFolder(string folderPath, string newFolderPath, FolderMappingInfo folderMapping) ")]
         public abstract void RenameFolder(IFolderInfo folder, string newFolderName);
 
         /// <summary>

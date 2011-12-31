@@ -27,7 +27,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
@@ -47,7 +46,7 @@ namespace DotNetNuke.Security.Permissions
 {
     public class PermissionProvider
     {
-		#region "Private Members"
+        #region "Private Members"
 
         //Module Permission Codes
         private const string AdminFolderPermissionCode = "WRITE";
@@ -79,9 +78,9 @@ namespace DotNetNuke.Security.Permissions
         private const string ViewPagePermissionCode = "VIEW";
         private readonly DataProvider dataProvider = DataProvider.Instance();
 
-		#endregion
+        #endregion
 
-		#region "Shared/Static Methods"
+        #region "Shared/Static Methods"
 
         //return the provider
         public virtual string LocalResourceFile
@@ -96,14 +95,14 @@ namespace DotNetNuke.Security.Permissions
         {
             return ComponentFactory.GetComponent<PermissionProvider>();
         }
-		
-		#endregion
-		
-		#region "Private Methods"
+
+        #endregion
+
+        #region "Private Methods"
 
         private object GetFolderPermissionsCallBack(CacheItemArgs cacheItemArgs)
         {
-            var PortalID = (int) cacheItemArgs.ParamList[0];
+            var PortalID = (int)cacheItemArgs.ParamList[0];
             IDataReader dr = dataProvider.GetFolderPermissionsByPortal(PortalID);
             var dic = new Dictionary<string, FolderPermissionCollection>();
             try
@@ -111,14 +110,14 @@ namespace DotNetNuke.Security.Permissions
                 FolderPermissionInfo obj;
                 while (dr.Read())
                 {
-					//fill business object
+                    //fill business object
                     obj = CBO.FillObject<FolderPermissionInfo>(dr, false);
                     string dictionaryKey = obj.FolderPath;
                     if (string.IsNullOrEmpty(dictionaryKey))
                     {
                         dictionaryKey = "[PortalRoot]";
                     }
-					
+
                     //add Folder Permission to dictionary
                     if (dic.ContainsKey(dictionaryKey))
                     {
@@ -127,7 +126,7 @@ namespace DotNetNuke.Security.Permissions
                     }
                     else
                     {
-						//Create new FolderPermission Collection for TabId
+                        //Create new FolderPermission Collection for TabId
                         var collection = new FolderPermissionCollection();
 
                         //Add Permission to Collection
@@ -187,7 +186,7 @@ namespace DotNetNuke.Security.Permissions
         /// -----------------------------------------------------------------------------
         private object GetModulePermissionsCallBack(CacheItemArgs cacheItemArgs)
         {
-            var tabID = (int) cacheItemArgs.ParamList[0];
+            var tabID = (int)cacheItemArgs.ParamList[0];
             IDataReader dr = dataProvider.GetModulePermissionsByTabID(tabID);
             var dic = new Dictionary<int, ModulePermissionCollection>();
             try
@@ -195,7 +194,7 @@ namespace DotNetNuke.Security.Permissions
                 ModulePermissionInfo obj;
                 while (dr.Read())
                 {
-					//fill business object
+                    //fill business object
                     obj = CBO.FillObject<ModulePermissionInfo>(dr, false);
 
                     //add Module Permission to dictionary
@@ -205,7 +204,7 @@ namespace DotNetNuke.Security.Permissions
                     }
                     else
                     {
-						//Create new ModulePermission Collection for ModuleId
+                        //Create new ModulePermission Collection for ModuleId
                         var collection = new ModulePermissionCollection();
 
                         //Add Permission to Collection
@@ -222,7 +221,7 @@ namespace DotNetNuke.Security.Permissions
             }
             finally
             {
-				//close datareader
+                //close datareader
                 CBO.CloseDataReader(dr, true);
             }
             return dic;
@@ -258,7 +257,7 @@ namespace DotNetNuke.Security.Permissions
         /// -----------------------------------------------------------------------------
         private object GetTabPermissionsCallBack(CacheItemArgs cacheItemArgs)
         {
-            var portalID = (int) cacheItemArgs.ParamList[0];
+            var portalID = (int)cacheItemArgs.ParamList[0];
             IDataReader dr = dataProvider.GetTabPermissionsByPortal(portalID);
             var dic = new Dictionary<int, TabPermissionCollection>();
             try
@@ -266,7 +265,7 @@ namespace DotNetNuke.Security.Permissions
                 TabPermissionInfo obj;
                 while (dr.Read())
                 {
-					//fill business object
+                    //fill business object
                     obj = CBO.FillObject<TabPermissionInfo>(dr, false);
 
                     //add Tab Permission to dictionary
@@ -277,7 +276,7 @@ namespace DotNetNuke.Security.Permissions
                     }
                     else
                     {
-						//Create new TabPermission Collection for TabId
+                        //Create new TabPermission Collection for TabId
                         var collection = new TabPermissionCollection();
 
                         //Add Permission to Collection
@@ -294,17 +293,17 @@ namespace DotNetNuke.Security.Permissions
             }
             finally
             {
-				//close datareader
+                //close datareader
                 CBO.CloseDataReader(dr, true);
             }
             return dic;
         }
-		
-		#endregion
-		
-		#region "Public Methods"
-		
-		#region "FolderPermission Methods"
+
+        #endregion
+
+        #region "Public Methods"
+
+        #region "FolderPermission Methods"
 
         public virtual bool CanAdminFolder(FolderInfo folder)
         {
@@ -349,29 +348,38 @@ namespace DotNetNuke.Security.Permissions
 
         public virtual FolderPermissionCollection GetFolderPermissionsCollectionByFolder(int PortalID, string Folder)
         {
-			string dictionaryKey = Folder;
-			if (string.IsNullOrEmpty(dictionaryKey))
-			{
-				dictionaryKey = "[PortalRoot]";
-			}
-			//Get the Portal FolderPermission Dictionary
-			var dicFolderPermissions = GetFolderPermissions(PortalID);
+            bool bFound = false;
+            string dictionaryKey = Folder;
+            if (string.IsNullOrEmpty(dictionaryKey))
+            {
+                dictionaryKey = "[PortalRoot]";
+            }
+            //Get the Portal FolderPermission Dictionary
+            Dictionary<string, FolderPermissionCollection> dicFolderPermissions = GetFolderPermissions(PortalID);
 
-			//Get the Collection from the Dictionary
-			var folderPermissions =
-				dicFolderPermissions.FirstOrDefault(kvp => kvp.Key.Equals(dictionaryKey, StringComparison.InvariantCultureIgnoreCase)).Value;
-
-			if (folderPermissions == null)
-			{
-				//try the database
-				folderPermissions = new FolderPermissionCollection(CBO.FillCollection(dataProvider.GetFolderPermissionsByFolderPath(PortalID, Folder, -1), typeof(FolderPermissionInfo)), Folder);
-			}
-			return folderPermissions;
+            //Get the Collection from the Dictionary
+            FolderPermissionCollection folderPermissions = null;
+            bFound = dicFolderPermissions.TryGetValue(dictionaryKey, out folderPermissions);
+            if (!bFound)
+            {
+                //try the database
+                folderPermissions = new FolderPermissionCollection(CBO.FillCollection(dataProvider.GetFolderPermissionsByFolderPath(PortalID, Folder, -1), typeof(FolderPermissionInfo)), Folder);
+            }
+            return folderPermissions;
         }
 
         public virtual bool HasFolderPermission(FolderPermissionCollection objFolderPermissions, string PermissionKey)
         {
             return PortalSecurity.IsInRoles(objFolderPermissions.ToString(PermissionKey));
+        }
+
+        /// <summary>
+        /// SaveFolderPermissions updates a Folder's permissions
+        /// </summary>
+        /// <param name="folder">The Folder to update</param>
+        public virtual void SaveFolderPermissions(FolderInfo folder)
+        {
+            SaveFolderPermissions((IFolderInfo)folder);
         }
 
         /// -----------------------------------------------------------------------------
@@ -383,7 +391,7 @@ namespace DotNetNuke.Security.Permissions
         /// 	[cnurse]	04/15/2009   Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual void SaveFolderPermissions(FolderInfo folder)
+        public virtual void SaveFolderPermissions(IFolderInfo folder)
         {
             if ((folder.FolderPermissions != null))
             {
@@ -451,10 +459,10 @@ namespace DotNetNuke.Security.Permissions
                 }
             }
         }
-		
-		#endregion
-		
-		#region "ModulePermission Methods"
+
+        #endregion
+
+        #region "ModulePermission Methods"
 
         public virtual bool CanAdminModule(ModuleInfo objModule)
         {
@@ -528,8 +536,8 @@ namespace DotNetNuke.Security.Permissions
             bFound = dicModulePermissions.TryGetValue(moduleID, out modulePermissions);
             if (!bFound)
             {
-				//try the database
-                modulePermissions = new ModulePermissionCollection(CBO.FillCollection(dataProvider.GetModulePermissionsByModuleID(moduleID, -1), typeof (ModulePermissionInfo)), moduleID);
+                //try the database
+                modulePermissions = new ModulePermissionCollection(CBO.FillCollection(dataProvider.GetModulePermissionsByModuleID(moduleID, -1), typeof(ModulePermissionInfo)), moduleID);
             }
             return modulePermissions;
         }
@@ -585,10 +593,10 @@ namespace DotNetNuke.Security.Permissions
                 }
             }
         }
-		
-		#endregion
-		
-		#region "TabPermission Methods"
+
+        #endregion
+
+        #region "TabPermission Methods"
 
         public virtual bool CanAddContentToPage(TabInfo objTab)
         {
@@ -678,7 +686,7 @@ namespace DotNetNuke.Security.Permissions
             if (!bFound)
             {
                 //try the database
-                tabPermissions = new TabPermissionCollection(CBO.FillCollection(dataProvider.GetTabPermissionsByTabID(tabID, -1), typeof (TabPermissionInfo)), tabID);
+                tabPermissions = new TabPermissionCollection(CBO.FillCollection(dataProvider.GetTabPermissionsByTabID(tabID, -1), typeof(TabPermissionInfo)), tabID);
             }
             return tabPermissions;
         }
@@ -730,9 +738,9 @@ namespace DotNetNuke.Security.Permissions
                 }
             }
         }
-		
-		#endregion
-		
-		#endregion
+
+        #endregion
+
+        #endregion
     }
 }

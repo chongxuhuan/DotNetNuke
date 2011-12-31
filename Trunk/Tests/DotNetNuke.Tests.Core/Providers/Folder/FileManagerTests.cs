@@ -280,10 +280,16 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         }
 
         [Test]
-        public void CopyFile_Calls_FileManager_AddFile()
+        public void CopyFile_Calls_FileManager_AddFile_When_FolderMapping_Of_Source_And_Destination_Folders_Are_Not_Equal()
         {
+            const int sourceFolderMappingID = Constants.FOLDER_ValidFolderMappingID;
+            const int destinationFolderMappingID = Constants.FOLDER_ValidFolderMappingID + 1;
+
             _fileInfo.Setup(fi => fi.FileName).Returns(Constants.FOLDER_ValidFileName);
             _fileInfo.Setup(fi => fi.ContentType).Returns(Constants.CONTENTTYPE_ValidContentType);
+            _fileInfo.Setup(fi => fi.FolderMappingID).Returns(sourceFolderMappingID);
+
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(destinationFolderMappingID);
 
             var bytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             var fileContent = new MemoryStream(bytes);
@@ -294,6 +300,77 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _mockFileManager.Object.CopyFile(_fileInfo.Object, _folderInfo.Object);
 
             _mockFileManager.Verify(fm => fm.AddFile(_folderInfo.Object, Constants.FOLDER_ValidFileName, fileContent, true, true, Constants.CONTENTTYPE_ValidContentType), Times.Once());
+        }
+
+        [Test]
+        [ExpectedException(typeof(PermissionsNotMetException))]
+        public void CopyFile_Throws_When_FolderMapping_Of_Source_And_Destination_Folders_Are_Equal_And_Cannot_Add_Folder()
+        {
+            _fileInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+
+            _folderPermissionController.Setup(fpc => fpc.CanAddFolder(_folderInfo.Object)).Returns(false);
+
+            _fileManager.CopyFile(_fileInfo.Object, _folderInfo.Object);
+        }
+
+        [Test]
+        [ExpectedException(typeof(NoSpaceAvailableException))]
+        public void CopyFile_Throws_When_FolderMapping_Of_Source_And_Destination_Folders_Are_Equal_And_Portal_Has_No_Space_Available()
+        {
+            _fileInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+            _fileInfo.Setup(fi => fi.Size).Returns(Constants.FOLDER_ValidFileSize);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+            _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
+
+            _folderPermissionController.Setup(fpc => fpc.CanAddFolder(_folderInfo.Object)).Returns(true);
+            _portalController.Setup(pc => pc.HasSpaceAvailable(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFileSize)).Returns(false);
+
+            _fileManager.CopyFile(_fileInfo.Object, _folderInfo.Object);
+        }
+
+        [Test]
+        public void CopyFile_Calls_FolderProvider_CopyFile_And_DataProvider_AddFile()
+        {
+            _fileInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+            _fileInfo.Setup(fi => fi.Size).Returns(Constants.FOLDER_ValidFileSize);
+            _fileInfo.Setup(fi => fi.Folder).Returns(Constants.FOLDER_ValidFolderRelativePath);
+            _fileInfo.Setup(fi => fi.FileName).Returns(Constants.FOLDER_ValidFileName);
+
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+            _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_OtherValidFolderRelativePath);
+
+            _folderPermissionController.Setup(fpc => fpc.CanAddFolder(_folderInfo.Object)).Returns(true);
+            _portalController.Setup(pc => pc.HasSpaceAvailable(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFileSize)).Returns(true);
+
+            var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
+
+            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
+
+            _mockFolder.Setup(mf => mf.CopyFile(Constants.FOLDER_ValidFolderRelativePath, Constants.FOLDER_ValidFileName, Constants.FOLDER_OtherValidFolderRelativePath, folderMapping)).Verifiable();
+
+            _mockFileManager.Setup(mfm => mfm.GetCurrentUserID()).Returns(Constants.USER_ValidId);
+
+            _mockData.Setup(md => md.AddFile(
+                It.IsAny<int>(),
+                It.IsAny<Guid>(),
+                It.IsAny<Guid>(),
+                Constants.FOLDER_ValidFileName,
+                It.IsAny<string>(),
+                Constants.FOLDER_ValidFileSize,
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<string>(),
+                Constants.FOLDER_OtherValidFolderRelativePath,
+                It.IsAny<int>(),
+                Constants.USER_ValidId,
+                It.IsAny<string>())).Verifiable();
+
+            _mockFileManager.Object.CopyFile(_fileInfo.Object, _folderInfo.Object);
+
+            _mockFolder.Verify();
+            _mockData.Verify();
         }
 
         #endregion
@@ -938,6 +1015,65 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _mockFileManager.Object.UpdateFile(_fileInfo.Object, stream);
 
             _mockFileManager.Verify(mfm => mfm.UpdateFile(_fileInfo.Object), Times.Once());
+        }
+
+        #endregion
+
+        #region GetSeekableStream
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GetSeekableStream_Throws_On_Null_Stream()
+        {
+            _fileManager.GetSeekableStream(null);
+        }
+
+        [Test]
+        public void GetSeekableStream_Returns_The_Same_Stream_If_It_Is_Seekable()
+        {
+            var inputStream = new MemoryStream();
+            var seekableStream = _fileManager.GetSeekableStream(inputStream);
+
+            Assert.AreEqual(inputStream, seekableStream);
+        }
+
+        [Test]
+        public void GetSeekableStream_Calls_GetHostMapPath_And_Creates_A_Temporary_FileStream_With_Resx_Extension()
+        {
+            var inputStream = new Mock<Stream>();
+            inputStream.Setup(s => s.CanSeek).Returns(false);
+            inputStream.Setup(s => s.Read(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>())).Returns(0);
+
+            _mockFileManager.Setup(mfm => mfm.GetHostMapPath()).Returns("").Verifiable();
+            _mockFileManager.Setup(mfm => mfm.GetAutoDeleteFileStream(It.Is((string x) => x.EndsWith(".resx")))).Returns(new MemoryStream()).Verifiable();
+
+            _mockFileManager.Object.GetSeekableStream(inputStream.Object);
+
+            _mockFileManager.Verify();
+        }
+
+
+        #endregion
+
+        #region GetContentType
+
+        [Test]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GetContentType_Throws_On_Null_Or_Empty_Extension(string extension)
+        {
+            _fileManager.GetContentType(extension);
+        }
+
+        [Test]
+        public void GetContentType_Returns_Known_Value_When_Extension_Is_Not_Managed()
+        {
+            const string notManagedExtension = "asdf609vas21AS:F,l/&%/(%$";
+
+            var contentType = _fileManager.GetContentType(notManagedExtension);
+
+            Assert.AreEqual("application/octet-stream", contentType);
         }
 
         #endregion

@@ -7,14 +7,14 @@ using DotNetNuke.Framework;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
 
-namespace DotNetNuke.UI.WebControls
+namespace DotNetNuke.UI.WebControls.Internal
 {
     /// <summary>
     /// A TriState permission control built specifically for use in the PermissionGrid control
     /// This control is not general in any way shape of form and should NOT be used outside 
     /// of the PermissionGrid
     /// </summary>
-    class PermissionTriState : HiddenField
+    public class PermissionTriState : HiddenField
     {
         private readonly string _grantImagePath;
         private readonly string _denyImagePath;
@@ -42,28 +42,33 @@ namespace DotNetNuke.UI.WebControls
         public static void RegisterScripts(Page page, Control ctl)
         {
             const string scriptKey = "initTriState";
-            if( ! ClientAPI.IsClientScriptBlockRegistered(page, scriptKey))
+            if (!ClientAPI.IsClientScriptBlockRegistered(page, scriptKey))
             {
                 AJAX.RegisterScriptManager();
                 jQuery.RequestRegistration();
                 ClientAPI.RegisterClientScriptBlock(page, "dnn.permissiontristate.js");
-                
-                string grantImagePath, denyImagePath, nullImagePath, lockImagePath, grantAltText, denyAltText, nullAltText;
 
-                LookupScriptValues(ctl, out grantImagePath, out denyImagePath, out nullImagePath, out lockImagePath, out grantAltText, out denyAltText, out nullAltText);
-                
-                string script =
+                ClientAPI.RegisterStartUpScript(page, scriptKey, "<script type='text/javascript'>" + GetInitScript(ctl) + "</script>");
+            }
+        }
+
+        public static string GetInitScript(Control ctl)
+        {
+            string grantImagePath, denyImagePath, nullImagePath, lockImagePath, grantAltText, denyAltText, nullAltText;
+
+            LookupScriptValues(ctl, out grantImagePath, out denyImagePath, out nullImagePath, out lockImagePath, out grantAltText, out denyAltText, out nullAltText);
+
+            string script =
                     String.Format(
-                        @"<script type='text/javascript'>
-                            jQuery(document).ready(
-                             function() {{
+                        @"jQuery(document).ready(
+                            function() {{
                                 var images = {{ 'True': '{0}', 'False': '{1}', 'Null': '{2}' }};
                                 var toolTips = {{ 'True': '{3}', 'False': '{4}', 'Null': '{5}' }};
                                 var tsm = dnn.controls.triStateManager(images, toolTips);
                                 jQuery('.tristate').each( function(i, elem) {{
                                   tsm.initControl( elem );
                                 }});
-                             }});</script>",
+                             }});",
                         grantImagePath,
                         denyImagePath,
                         nullImagePath,
@@ -71,8 +76,7 @@ namespace DotNetNuke.UI.WebControls
                         denyAltText,
                         nullAltText);
 
-                ClientAPI.RegisterStartUpScript(page, scriptKey, script);
-            }
+            return script;
         }
 
         private static void LookupScriptValues(Control ctl, out string grantImagePath, out string denyImagePath, out string nullImagePath, out string lockImagePath, out string grantAltText, out string denyAltText, out string nullAltText)
@@ -110,14 +114,14 @@ namespace DotNetNuke.UI.WebControls
             }
 
             string cssClass = "tristate";
-            if(Locked)
+            if (Locked)
             {
                 imagePath = _lockImagePath;
                 cssClass += " lockedPerm";
                 //altText is set based on Value
             }
 
-            if(!SupportsDenyMode)
+            if (!SupportsDenyMode)
             {
                 cssClass += " noDenyPerm";
             }

@@ -328,8 +328,15 @@
     <Compile Include="Entities\Users\Membership\UserMembership.cs" />
     <Compile Include="Entities\Users\Profile\ProfilePropertyAccess.cs" />
     <Compile Include="Entities\Users\Profile\UserProfile.cs" />
+    <Compile Include="Entities\Users\Social\Data\DataService.cs" />
+    <Compile Include="Entities\Users\Social\Data\IDataService.cs" />
+    <Compile Include="Entities\Users\Social\Exceptions\UserRelationshipDoesNotExistException.cs" />
+    <Compile Include="Entities\Users\Social\Exceptions\UserRelationshipExistsException.cs" />
+    <Compile Include="Entities\Users\Social\Exceptions\UserRelationshipForDifferentPortalException.cs" />
+    <Compile Include="Entities\Users\Social\Exceptions\UserRelationshipForSameUsersException.cs" />
+    <Compile Include="Entities\Users\Social\UserSocial.cs" />
     <Compile Include="Entities\Users\Social\DefaultRelationshipTypes.cs" />
-    <Compile Include="Entities\Users\Social\Exceptions\RelationshipBlockedException.cs" />
+    <Compile Include="Entities\Users\Social\Exceptions\UserRelationshipBlockedException.cs" />
     <Compile Include="Entities\Users\Social\Exceptions\InvalidRelationshipTypeException.cs" />
     <Compile Include="Entities\Users\Social\IRelationshipController.cs" />
     <Compile Include="Entities\Users\Social\RelationshipController.cs" />

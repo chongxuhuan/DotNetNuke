@@ -36,6 +36,27 @@ namespace DotNetNuke.Tests.Utilities
 
         #endregion
 
+        #region User Constants
+
+        public const int USER_Null = -1;
+        public const int USER_ValidId = 200;
+        public const int USER_InValidId = 42;
+        public const int USER_AnonymousUserId = -1;
+        public const int USER_TenId = 10;
+        public const int USER_ElevenId = 11;
+
+        #endregion
+
+
+        #region Portal Constants
+
+        public const int PORTAL_Zero = 0;
+        public const int PORTAL_One = 1;
+        public const int PORTAL_Null = -1;
+        public const int PORTAL_ValidPortalId = 1;
+
+        #endregion
+
         #region PortalGroup Constants
 
         public const int PORTALGROUP_ValidPortalGroupId = 1;
@@ -234,6 +255,7 @@ namespace DotNetNuke.Tests.Utilities
         #region Folder Constants
 
         public const int FOLDER_ValidFileId = 1;
+        public const int FOLDER_ValidFileSize = 16;
         public const int FOLDER_ValidFolderId = 3;
         public const int FOLDER_OtherValidFolderId = 7;
         public const int FOLDER_ValidFolderMappingID = 5;
@@ -263,12 +285,20 @@ namespace DotNetNuke.Tests.Utilities
         public const string FOLDER_ModifiedFileHash = "0123456789X";
         public const string FOLDER_UnmodifiedFileHash = "0123456789";
 
-        #endregion
+        #endregion        
 
-        public const int PORTAL_ValidPortalId = 1;
-        public const int USER_ValidId = 200;
-        public const int USER_InValidId = 42;
-        public const int USER_AnonymousUserId = -1;
+        #region Social constants
+
+        public const int SOCIAL_InValidRelationshipType = 999;
+        public const int SOCIAL_FriendRelationshipTypeID = 1;
+        public const int SOCIAL_FollowerRelationshipTypeID = 2;
+        public const int SOCIAL_FriendRelationshipID = 1;
+        public const int SOCIAL_FollowerRelationshipID = 2;
+        public const int SOCIAL_UserRelationshipIDUser10User11 = 3;
+        public const int SOCIAL_UserRelationshipIDUser12User13 = 4;
+
+        #endregion
+        
         public const int TAB_ValidId = 10;
         public const int MODULE_ValidId = 100;
     }

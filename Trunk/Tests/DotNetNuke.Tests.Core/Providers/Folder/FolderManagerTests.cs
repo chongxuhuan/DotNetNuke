@@ -231,7 +231,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         }
 
         [Test]
-        public void DeleteFolder_Calls_Directory_Delete()
+        public void DeleteFolder_Calls_Directory_Delete_When_Directory_Exists()
         {
             _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
             _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
@@ -244,6 +244,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _mockFolder.Setup(mf => mf.DeleteFolder(_folderInfo.Object));
 
+            _directory.Setup(d => d.Exists(Constants.FOLDER_ValidFolderPath)).Returns(true);
             _directory.Setup(d => d.Delete(Constants.FOLDER_ValidFolderPath, false)).Verifiable();
 
             _mockFolderManager.Setup(mfm => mfm.DeleteFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath));
@@ -613,35 +614,35 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         }
 
         [Test]
-        public void RenameFolder_Calls_FolderProvider_RenameFolder_When_NewFolderName_Is_Different_From_FolderName()
+        [ExpectedException(typeof(FolderAlreadyExistsException))]
+        public void RenameFolder_Throws_When_DestinationFolder_Exists()
         {
-            _pathUtils.Setup(pu => pu.RemoveTrailingSlash(Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderName);
+            _pathUtils.Setup(pu => pu.FormatFolderPath(Constants.FOLDER_OtherValidFolderName)).Returns(Constants.FOLDER_OtherValidFolderRelativePath);
 
-            var folderInfo = new FolderInfo { FolderPath = Constants.FOLDER_ValidFolderRelativePath, FolderMappingID = Constants.FOLDER_ValidFolderMappingID };
+            _folderInfo.Setup(fi => fi.FolderName).Returns(Constants.FOLDER_ValidFolderName);
+            _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
 
-            var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
+            _mockFolderManager.Setup(mfm => mfm.FolderExists(Constants.CONTENT_ValidPortalId, Constants.FOLDER_OtherValidFolderRelativePath)).Returns(true);
 
-            _folderMappingController.Setup(fmc => fmc.GetFolderMapping(Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
-
-            _mockFolderManager.Setup(mfm => mfm.RenameFolderInFileSystem(folderInfo, It.IsAny<string>()));
-            _mockFolderManager.Setup(mfm => mfm.RenameFolderInDatabase(folderInfo, It.IsAny<string>()));
-
-            _mockFolderManager.Object.RenameFolder(folderInfo, Constants.FOLDER_OtherValidFolderName);
-
-            _mockFolder.Verify(mf => mf.RenameFolder(folderInfo, Constants.FOLDER_OtherValidFolderName), Times.Once());
+            _mockFolderManager.Object.RenameFolder(_folderInfo.Object, Constants.FOLDER_OtherValidFolderName);
         }
 
         [Test]
-        public void RenameFolder_Does_Not_Call_FolderProvider_RenameFolder_When_NewFolderName_Equals_FolderName()
+        public void RenameFolder_Calls_MoveFolder_When_DestinationFolder_Does_Not_Exist()
         {
-            _pathUtils.Setup(pu => pu.RemoveTrailingSlash(Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderName);
+            _pathUtils.Setup(pu => pu.FormatFolderPath(Constants.FOLDER_OtherValidFolderName)).Returns(Constants.FOLDER_OtherValidFolderRelativePath);
 
-            var folderInfo = new FolderInfo();
-            folderInfo.FolderPath = Constants.FOLDER_ValidFolderRelativePath;
+            _folderInfo.Setup(fi => fi.FolderName).Returns(Constants.FOLDER_ValidFolderName);
+            _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
 
-            _folderManager.RenameFolder(folderInfo, Constants.FOLDER_ValidFolderName);
+            _mockFolderManager.Setup(mfm => mfm.FolderExists(_folderInfo.Object.PortalID, Constants.FOLDER_OtherValidFolderRelativePath)).Returns(false);
+            _mockFolderManager.Setup(mfm => mfm.MoveFolder(_folderInfo.Object, Constants.FOLDER_OtherValidFolderRelativePath)).Verifiable();
 
-            _mockFolder.Verify(mf => mf.RenameFolder(folderInfo, Constants.FOLDER_ValidFolderName), Times.Never());
+            _mockFolderManager.Object.RenameFolder(_folderInfo.Object, Constants.FOLDER_OtherValidFolderName);
+
+            _mockFolderManager.Verify();
         }
 
         #endregion
@@ -2072,6 +2073,249 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _mockFolderManager.Verify(mfm => mfm.UpdateFolderMappingID(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never());
             _mockFolderManager.Verify(mfm => mfm.DeleteFolder(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             _directory.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
+        }
+
+        #endregion
+
+        #region MoveFolder
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void MoveFolder_Throws_On_Null_Folder()
+        {
+            _folderManager.MoveFolder(null, It.IsAny<string>());
+        }
+
+        [Test]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
+        public void MoveFolder_Throws_On_Null_Or_Emtpy_NewFolderPath(string newFolderPath)
+        {
+            _folderManager.MoveFolder(_folderInfo.Object, newFolderPath);
+        }
+
+        [Test]
+        public void MoveFolder_Returns_The_Same_Folder_If_The_Paths_Are_The_Same()
+        {
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
+
+            _pathUtils.Setup(pu => pu.FormatFolderPath(Constants.FOLDER_ValidFolderRelativePath)).Returns(Constants.FOLDER_ValidFolderRelativePath);
+
+            var movedFolder = _folderManager.MoveFolder(_folderInfo.Object, Constants.FOLDER_ValidFolderRelativePath);
+
+            Assert.AreEqual(_folderInfo.Object, movedFolder);
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void MoveFolder_Throws_When_Move_Operation_Is_Not_Valid()
+        {
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
+
+            _pathUtils.Setup(pu => pu.FormatFolderPath(Constants.FOLDER_OtherValidFolderRelativePath)).Returns(Constants.FOLDER_OtherValidFolderRelativePath);
+
+            _mockFolderManager.Setup(mfm => mfm.IsMoveOperationValid(_folderInfo.Object, Constants.FOLDER_OtherValidFolderRelativePath)).Returns(false);
+
+            _mockFolderManager.Object.MoveFolder(_folderInfo.Object, Constants.FOLDER_OtherValidFolderRelativePath);
+        }
+
+        [Test]
+        public void MoveFolder_Calls_Internal_OverwriteFolder_When_Target_Folder_Already_Exists()
+        {
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
+            _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
+
+            _pathUtils.Setup(pu => pu.FormatFolderPath(Constants.FOLDER_OtherValidFolderRelativePath)).Returns(Constants.FOLDER_OtherValidFolderRelativePath);
+
+            _mockFolderManager.Setup(mfm => mfm.IsMoveOperationValid(_folderInfo.Object, Constants.FOLDER_OtherValidFolderRelativePath)).Returns(true);
+
+            var folders = new List<IFolderInfo> { _folderInfo.Object };
+            var targetFolder = new FolderInfo { FolderPath = Constants.FOLDER_OtherValidFolderRelativePath };
+
+            _mockFolderManager.Setup(mfm => mfm.GetFolders(Constants.CONTENT_ValidPortalId)).Returns(folders);
+            _mockFolderManager.Setup(mfm => mfm.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_OtherValidFolderRelativePath)).Returns(targetFolder);
+
+            _mockFolderManager.Setup(mfm => mfm.OverwriteFolder(_folderInfo.Object, targetFolder, It.IsAny<Dictionary<int, FolderMappingInfo>>(), It.IsAny<SortedList<string, IFolderInfo>>())).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.RenameFolderInFileSystem(_folderInfo.Object, Constants.FOLDER_OtherValidFolderRelativePath));
+
+            _mockFolderManager.Object.MoveFolder(_folderInfo.Object, Constants.FOLDER_OtherValidFolderRelativePath);
+
+            _mockFolderManager.Verify();
+        }
+
+        [Test]
+        public void MoveFolder_Calls_Internal_MoveFolder_When_Target_Folder_Does_Not_Exist()
+        {
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
+            _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
+
+            _pathUtils.Setup(pu => pu.FormatFolderPath(Constants.FOLDER_OtherValidFolderRelativePath)).Returns(Constants.FOLDER_OtherValidFolderRelativePath);
+
+            _mockFolderManager.Setup(mfm => mfm.IsMoveOperationValid(_folderInfo.Object, Constants.FOLDER_OtherValidFolderRelativePath)).Returns(true);
+
+            var folders = new List<IFolderInfo> { _folderInfo.Object };
+
+            _mockFolderManager.Setup(mfm => mfm.GetFolders(Constants.CONTENT_ValidPortalId)).Returns(folders);
+            _mockFolderManager.Setup(mfm => mfm.GetFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_OtherValidFolderRelativePath)).Returns((IFolderInfo)null);
+
+            _mockFolderManager.Setup(
+                mfm =>
+                mfm.MoveFolder(_folderInfo.Object,
+                               Constants.FOLDER_OtherValidFolderRelativePath,
+                               Constants.FOLDER_OtherValidFolderRelativePath,
+                               It.IsAny<List<int>>(),
+                               _folderInfo.Object,
+                               It.IsAny<Dictionary<int, FolderMappingInfo>>())).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.RenameFolderInFileSystem(_folderInfo.Object, Constants.FOLDER_OtherValidFolderRelativePath));
+
+            _mockFolderManager.Object.MoveFolder(_folderInfo.Object, Constants.FOLDER_OtherValidFolderRelativePath);
+
+            _mockFolderManager.Verify();
+        }
+
+        #endregion
+
+        #region OverwriteFolder (Internal method)
+
+        [Test]
+        public void OverwriteFolder_Calls_MoveFile_For_Each_File_In_Source_Folder()
+        {
+            _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+
+            var destinationFolder = new FolderInfo();
+
+            var file1 = new FileInfo();
+            var file2 = new FileInfo();
+            var file3 = new FileInfo();
+
+            var files = new List<IFileInfo> { file1, file2, file3 };
+            _mockFolderManager.Setup(mfm => mfm.GetFiles(_folderInfo.Object)).Returns(files);
+
+            var fileManager = new Mock<IFileManager>();
+            FileManager.RegisterInstance(fileManager.Object);
+
+            fileManager.Setup(fm => fm.MoveFile(It.IsAny<IFileInfo>(), destinationFolder));
+
+            _mockFolderManager.Setup(mfm => mfm.DeleteFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath));
+
+            var folderMapping = new FolderMappingInfo();
+
+            _mockFolderManager.Setup(mfm => mfm.GetFolderMapping(It.IsAny<Dictionary<int, FolderMappingInfo>>(), Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
+            _mockFolderManager.Setup(mfm => mfm.IsFolderMappingEditable(folderMapping)).Returns(false);
+
+            _mockFolderManager.Object.OverwriteFolder(_folderInfo.Object, destinationFolder, new Dictionary<int, FolderMappingInfo>(), new SortedList<string, IFolderInfo>());
+
+            fileManager.Verify(fm => fm.MoveFile(It.IsAny<IFileInfo>(), destinationFolder), Times.Exactly(3));
+        }
+
+        [Test]
+        public void OverwriteFolder_Deletes_Source_Folder_In_Database()
+        {
+            var fileManager = new Mock<IFileManager>();
+            FileManager.RegisterInstance(fileManager.Object);
+
+            _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+
+            var files = new List<IFileInfo>();
+            _mockFolderManager.Setup(mfm => mfm.GetFiles(_folderInfo.Object)).Returns(files);
+
+            var destinationFolder = new FolderInfo();
+
+            _mockFolderManager.Setup(mfm => mfm.DeleteFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath)).Verifiable();
+
+            var folderMapping = new FolderMappingInfo();
+
+            _mockFolderManager.Setup(mfm => mfm.GetFolderMapping(It.IsAny<Dictionary<int, FolderMappingInfo>>(), Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
+            _mockFolderManager.Setup(mfm => mfm.IsFolderMappingEditable(folderMapping)).Returns(false);
+
+            _mockFolderManager.Object.OverwriteFolder(_folderInfo.Object, destinationFolder, new Dictionary<int, FolderMappingInfo>(), new SortedList<string, IFolderInfo>());
+
+            _mockFolderManager.Verify();
+        }
+
+        [Test]
+        public void OverwriteFolder_Adds_Folder_To_FoldersToDelete_If_FolderMapping_Is_Editable()
+        {
+            var fileManager = new Mock<IFileManager>();
+            FileManager.RegisterInstance(fileManager.Object);
+
+            _folderInfo.Setup(fi => fi.PortalID).Returns(Constants.CONTENT_ValidPortalId);
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
+            _folderInfo.Setup(fi => fi.FolderMappingID).Returns(Constants.FOLDER_ValidFolderMappingID);
+
+            var files = new List<IFileInfo>();
+            _mockFolderManager.Setup(mfm => mfm.GetFiles(_folderInfo.Object)).Returns(files);
+
+            var destinationFolder = new FolderInfo();
+
+            _mockFolderManager.Setup(mfm => mfm.DeleteFolder(Constants.CONTENT_ValidPortalId, Constants.FOLDER_ValidFolderRelativePath));
+
+            var folderMapping = new FolderMappingInfo();
+
+            _mockFolderManager.Setup(mfm => mfm.GetFolderMapping(It.IsAny<Dictionary<int, FolderMappingInfo>>(), Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
+            _mockFolderManager.Setup(mfm => mfm.IsFolderMappingEditable(folderMapping)).Returns(true);
+
+            var foldersToDelete = new SortedList<string, IFolderInfo>();
+            _mockFolderManager.Object.OverwriteFolder(_folderInfo.Object, destinationFolder, new Dictionary<int, FolderMappingInfo>(), foldersToDelete);
+
+            Assert.AreEqual(1, foldersToDelete.Count);
+        }
+
+        #endregion
+
+        #region MoveFolder (Internal method)
+
+        [Test]
+        public void MoveFolder_Calls_FolderProvider_MoveFolder_When_FolderMapping_Is_Not_Already_Processed_And_Is_Editable()
+        {
+            _folderInfo.Setup(fi => fi.FolderPath).Returns(Constants.FOLDER_ValidFolderRelativePath);
+
+            var subFolder = new FolderInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID };
+            var folderMappingsProcessed = new List<int>();
+            var folderMapping = new FolderMappingInfo { FolderProviderType = Constants.FOLDER_ValidFolderProviderType };
+            var folderMappings = new Dictionary<int, FolderMappingInfo>();
+
+            _mockFolderManager.Setup(mfm => mfm.GetFolderMapping(folderMappings, Constants.FOLDER_ValidFolderMappingID)).Returns(folderMapping);
+            _mockFolderManager.Setup(mfm => mfm.IsFolderMappingEditable(folderMapping)).Returns(true);
+
+            _mockFolder.Setup(mf => mf.MoveFolder(Constants.FOLDER_ValidFolderRelativePath, Constants.FOLDER_OtherValidFolderRelativePath, folderMapping)).Verifiable();
+
+            _mockFolderManager.Setup(mfm => mfm.RenameFiles(subFolder, Constants.FOLDER_OtherValidFolderRelativePath));
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolder(subFolder));
+
+            _mockFolderManager.Object.MoveFolder(_folderInfo.Object,
+                                                 Constants.FOLDER_OtherValidFolderRelativePath,
+                                                 Constants.FOLDER_OtherValidFolderRelativePath,
+                                                 folderMappingsProcessed,
+                                                 subFolder,
+                                                 folderMappings);
+
+            _mockFolder.Verify();
+        }
+
+        [Test]
+        public void MoveFolder_Calls_RenameFiles_And_UpdateFolder()
+        {
+            var subFolder = new FolderInfo { FolderMappingID = Constants.FOLDER_ValidFolderMappingID };
+            var folderMappingsProcessed = new List<int> { Constants.FOLDER_ValidFolderMappingID };
+            var folderMappings = new Dictionary<int, FolderMappingInfo>();
+
+            _mockFolderManager.Setup(mfm => mfm.RenameFiles(subFolder, Constants.FOLDER_OtherValidFolderRelativePath)).Verifiable();
+            _mockFolderManager.Setup(mfm => mfm.UpdateFolder(subFolder)).Verifiable();
+
+            _mockFolderManager.Object.MoveFolder(_folderInfo.Object,
+                                                 Constants.FOLDER_OtherValidFolderRelativePath,
+                                                 Constants.FOLDER_OtherValidFolderRelativePath,
+                                                 folderMappingsProcessed,
+                                                 subFolder,
+                                                 folderMappings);
+
+            _mockFolderManager.Verify();
         }
 
         #endregion

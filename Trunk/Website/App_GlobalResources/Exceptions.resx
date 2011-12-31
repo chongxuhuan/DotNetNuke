@@ -141,6 +141,15 @@
   <data name="ArgumentCannotBeNullOrEmpty.Text" xml:space="preserve">
     <value>The argument '{0}' cannot be null or empty.</value>
   </data>
+  <data name="CopyFileNoSpaceAvailable.Text" xml:space="preserve">
+    <value>The portal has no space available to store the specified file. The file has not been copied.</value>
+  </data>
+  <data name="CopyFilePermissionsNotMet.Text" xml:space="preserve">
+    <value>Permissions are not met. The file has not been copied.</value>
+  </data>
+  <data name="CopyFileUnderlyingSystemError.Text" xml:space="preserve">
+    <value>The underlying system throw an exception. The file has not been copied.</value>
+  </data>
   <data name="DeleteFileUnderlyingSystemError.Text" xml:space="preserve">
     <value>The underlying system threw an exception. The file has not been deleted.</value>
   </data>
@@ -149,6 +158,12 @@
   </data>
   <data name="InvalidZipFile.Text" xml:space="preserve">
     <value>The file specified is not a zip compressed file.</value>
+  </data>
+  <data name="MoveFolderCannotComplete.Text" xml:space="preserve">
+    <value>The operation cannot be completed.</value>
+  </data>
+  <data name="MoveFolderUnderlyingSystemError.Text" xml:space="preserve">
+    <value>The underlying system threw an exception. The move operation cannot be completed. A manual folder synchronization may be necessary.</value>
   </data>
   <data name="NoNetworkAvailableError.Text" xml:space="preserve">
     <value>Network connectivity is needed but there is no network available.</value>
@@ -168,6 +183,9 @@
   <data name="RenameFileUnderlyingSystemError.Text" xml:space="preserve">
     <value>The underlying system threw an exception. The file has not been renamed.</value>
   </data>
+  <data name="RenameFolderAlreadyExists.Text" xml:space="preserve">
+    <value>The destination folder already exists. The folder has not been renamed.</value>
+  </data>
   <data name="RenameFolderUnderlyingSystemError.Text" xml:space="preserve">
     <value>The underlying system threw an exception. The folder has not been renamed.</value>
   </data>
@@ -182,5 +200,20 @@
   </data>
   <data name="WriteFileToResponsePermissionsNotMet.Text" xml:space="preserve">
     <value>Permissions are not met. The file cannot be downloaded.</value>
+  </data>
+  <data name="UserRelationshipForSameUsersError.Text" xml:space="preserve">
+    <value>Initiating and Target Users cannot have same UserID '{0}'.</value>
+  </data>
+  <data name="UserRelationshipForDifferentPortalError.Text" xml:space="preserve">
+    <value>Portal ID '{0}' of Initiating User is different from Portal ID '{1}' of Target  User.</value>
+  </data>
+  <data name="UserRelationshipBlockedError.Text" xml:space="preserve">
+    <value>Target User '{0}' has Blcoked Relationship '{1}' from Target User '{2}'.</value>
+  </data>
+  <data name="UserRelationshipExistsError.Text" xml:space="preserve">
+    <value>Relationship already exists for Initiating User '{0}' Target User '{1}' RelationshipID '{2}'.</value>
+  </data>
+  <data name="UserRelationshipDoesNotExistError.Text" xml:space="preserve">
+    <value>UserRelationshipID '{0}' does not exist.</value>
   </data>
 </root>

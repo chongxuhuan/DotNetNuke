@@ -40,17 +40,17 @@ namespace DotNetNuke.Security.Permissions.Controls
     public class ModulePermissionsGrid : PermissionsGrid
     {
         #region "Private Members"
-		
-		private bool _InheritViewPermissionsFromTab;
+
+        private bool _InheritViewPermissionsFromTab;
         private int _ModuleID = -1;
         private ModulePermissionCollection _ModulePermissions;
         private List<PermissionInfoBase> _PermissionsList;
         private int _TabId = -1;
         private int _ViewColumnIndex;
-		
-		#endregion
-		
-		#region "Protected Properties"
+
+        #endregion
+
+        #region "Protected Properties"
 
         protected override List<PermissionInfoBase> PermissionsList
         {
@@ -63,10 +63,10 @@ namespace DotNetNuke.Security.Permissions.Controls
                 return _PermissionsList;
             }
         }
-		
-		#endregion
-		
-		#region "Public Properties"
+
+        #endregion
+
+        #region "Public Properties"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -145,7 +145,7 @@ namespace DotNetNuke.Security.Permissions.Controls
         {
             get
             {
-				//First Update Permissions in case they have been changed
+                //First Update Permissions in case they have been changed
                 UpdatePermissions();
 
                 //Return the ModulePermissions
@@ -193,10 +193,10 @@ namespace DotNetNuke.Security.Permissions.Controls
             objModulePermission.ModuleID = ModuleID;
             return objModulePermission;
         }
-		
-		#endregion
-		
-		#region "Protected Methods"
+
+        #endregion
+
+        #region "Protected Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -219,8 +219,8 @@ namespace DotNetNuke.Security.Permissions.Controls
                     break;
                 }
             }
-			
-			//user not found so add new
+
+            //user not found so add new
             if (!isMatch)
             {
                 foreach (PermissionInfo objPermission in permissions)
@@ -324,7 +324,7 @@ namespace DotNetNuke.Security.Permissions.Controls
                 }
                 else
                 {
-					//Call base class method to handle standard permissions
+                    //Call base class method to handle standard permissions
                     permission = base.GetPermission(objPerm, role, column, defaultState);
                 }
             }
@@ -353,7 +353,7 @@ namespace DotNetNuke.Security.Permissions.Controls
             }
             else
             {
-				//Call base class method to handle standard permissions
+                //Call base class method to handle standard permissions
                 permission = base.GetPermission(objPerm, user, column, defaultState);
             }
             return permission;
@@ -375,7 +375,7 @@ namespace DotNetNuke.Security.Permissions.Controls
             for (i = 0; i <= arrPermissions.Count - 1; i++)
             {
                 PermissionInfo objPermission;
-                objPermission = (PermissionInfo) arrPermissions[i];
+                objPermission = (PermissionInfo)arrPermissions[i];
                 if (objPermission.PermissionKey == "VIEW")
                 {
                     _ViewColumnIndex = i + 1;
@@ -397,36 +397,36 @@ namespace DotNetNuke.Security.Permissions.Controls
         {
             if (savedState != null)
             {
-				//Load State from the array of objects that was saved with SaveViewState.
-                var myState = (object[]) savedState;
-                
-				//Load Base Controls ViewState
-				if (myState[0] != null)
+                //Load State from the array of objects that was saved with SaveViewState.
+                var myState = (object[])savedState;
+
+                //Load Base Controls ViewState
+                if (myState[0] != null)
                 {
                     base.LoadViewState(myState[0]);
                 }
-				
-				//Load ModuleID
+
+                //Load ModuleID
                 if (myState[1] != null)
                 {
                     ModuleID = Convert.ToInt32(myState[1]);
                 }
-				
-				//Load InheritViewPermissionsFromTab
+
+                //Load InheritViewPermissionsFromTab
                 if (myState[2] != null)
                 {
                     InheritViewPermissionsFromTab = Convert.ToBoolean(myState[2]);
                 }
-				
-				//Load ModulePermissions
+
+                //Load ModulePermissions
                 if (myState[3] != null)
                 {
                     _ModulePermissions = new ModulePermissionCollection();
                     string state = Convert.ToString(myState[3]);
                     if (!String.IsNullOrEmpty(state))
                     {
-						//First Break the String into individual Keys
-                        string[] permissionKeys = state.Split(new[] {"##"}, StringSplitOptions.None);
+                        //First Break the String into individual Keys
+                        string[] permissionKeys = state.Split(new[] { "##" }, StringSplitOptions.None);
                         foreach (string key in permissionKeys)
                         {
                             string[] Settings = key.Split('|');
@@ -453,8 +453,8 @@ namespace DotNetNuke.Security.Permissions.Controls
         protected override object SaveViewState()
         {
             var allStates = new object[4];
-			
-			//Save the Base Controls ViewState
+
+            //Save the Base Controls ViewState
             allStates[0] = base.SaveViewState();
 
             //Save the ModuleID
@@ -499,14 +499,14 @@ namespace DotNetNuke.Security.Permissions.Controls
         ///     [cnurse]    01/09/2006  Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        protected override bool SupportsDenyPermissions()
+        protected override bool SupportsDenyPermissions(PermissionInfo permissionInfo)
         {
             return true;
         }
-		
-		#endregion
-		
-		#region "Public Methods"
+
+        #endregion
+
+        #region "Public Methods"
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -519,7 +519,7 @@ namespace DotNetNuke.Security.Permissions.Controls
         public override void GenerateDataGrid()
         {
         }
-		
-		#endregion
+
+        #endregion
     }
 }
