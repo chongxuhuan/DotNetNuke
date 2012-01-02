@@ -213,13 +213,13 @@ namespace DotNetNuke.Services.Mobile
 						{
 							//find the redirect url
 							redirectUrl = GetRedirectUrlFromRule(redirection, portalId, currentTabId);
+
+                            //update cache content
+                            SetUrlInCache(cacheKey, redirectUrl);
 							break;
 						}
 					}
 				}
-
-				//update cache content
-                SetUrlInCache(cacheKey, redirectUrl);
 			}
 
         	return redirectUrl;

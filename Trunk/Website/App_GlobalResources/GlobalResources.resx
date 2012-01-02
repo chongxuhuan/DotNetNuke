@@ -1206,4 +1206,7 @@ Sincerely,
   <data name="//Host//ProfessionalFeatures//SiteGroups.String" xml:space="preserve">
     <value>Site Groups</value>
   </data>
+  <data name="//Admin//Lists.String" xml:space="preserve">
+    <value>Lists</value>
+  </data>
 </root>

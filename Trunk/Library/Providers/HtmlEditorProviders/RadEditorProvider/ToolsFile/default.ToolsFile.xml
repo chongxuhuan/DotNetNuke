@@ -16,14 +16,14 @@
 
     <tools name="InsertToolbar" >
         <EditorToolStrip Name="InsertOptions" PopupHeight="250px">
-            <EditorTool Name="ImageManager" Text="Insert Media" />
+            <EditorTool Name="ImageManager" />
             <EditorTool Name="DocumentManager" />
             <EditorTool Name="FlashManager" />
             <EditorTool Name="MediaManager" />
             <EditorTool Name="ImageMapDialog"/>
         </EditorToolStrip>
         <EditorToolStrip Name="TemplateOptions" PopupHeight="80px">
-            <EditorTool Name="SaveTemplate" Text="Save Template" />
+            <EditorTool Name="SaveTemplate" />
             <EditorTool Name="TemplateManager" />
         </EditorToolStrip>
         <tool separator="true"/>

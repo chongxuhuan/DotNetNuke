@@ -22,7 +22,7 @@
     <tool name="FlashManager" />
     <tool name="MediaManager" />
     <tool name="TemplateManager" />
-    <tool name="SaveTemplate" Text="Save Template" />
+    <tool name="SaveTemplate" />
     <tool separator="true"/>
     <tool name="LinkManager" shortcut="CTRL+K"/>
     <tool name="Unlink" shortcut="CTRL+SHIFT+K"/>
