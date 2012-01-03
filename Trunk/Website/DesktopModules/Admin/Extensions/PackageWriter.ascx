@@ -69,10 +69,9 @@
                     <dnn:label id="plArchiveName" controlname="txtArchiveName" runat="server" />
                     <asp:TextBox ID="txtArchiveName" runat="server" Style="width: 250px" />
                 </div>                            
-                <div class="dnnFormMessage dnnFormValidationSummary"><asp:Label ID="lblMessage" runat="server" EnableViewState="False" /></div>
+                <div class="dnnFormMessage dnnFormValidationSummary" runat="server" Visible="false"><asp:Label ID="lblMessage" runat="server" EnableViewState="False" /></div>
             </asp:WizardStep>
             <asp:WizardStep ID="StepFinish" runat="Server" Title="WriterResults" StepType="Finish">
-                <div class="dnnFormMessage dnnFormValidationSummary"><asp:Label ID="lblInstallMessage" runat="server" EnableViewState="False" /></div>
                 <div class="dnnFormItem"><asp:PlaceHolder ID="phInstallLogs" runat="server" /></div>
             </asp:WizardStep>
         </WizardSteps>

@@ -18,6 +18,8 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+using System.Web.Configuration;
+
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Services.Exceptions;
@@ -459,6 +461,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			XmlNode rootNode = xmlConfig.DocumentElement.SelectSingleNode("/configuration");
 			string setting = Null.NullString;
 			List<ConfigInfo> currentConfig = DefaultConfig;
+		    var maxFileSize = 0;
 
 			foreach (ConfigInfo objConfig in currentConfig)
 			{
@@ -639,6 +642,15 @@ namespace DotNetNuke.Providers.RadEditorProvider
 								try
 								{
 									setting = ctl.Value.ToString().Replace(".00", "").Replace(".0", "");
+
+                                    if(objConfig.Key.ToLowerInvariant().EndsWith("size"))
+                                    {
+                                        var allowSize = Convert.ToInt32(ctl.Value.Value);
+                                        if(allowSize > maxFileSize)
+                                        {
+                                            maxFileSize = allowSize;
+                                        }
+                                    }
 								}
 								catch
 								{
@@ -725,6 +737,18 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 
 			xmlConfig.Save(strPath);
+
+            //update web.config to allow the max file size in http runtime section.
+		    var configAllowSize = Config.GetMaxUploadSize();
+            if(maxFileSize > configAllowSize)
+            {
+                var configNav = Config.Load();
+                var httpNode = configNav.SelectSingleNode("configuration//system.web//httpRuntime");
+
+                XmlUtils.UpdateAttribute(httpNode, "maxRequestLength", (maxFileSize / 1024).ToString());
+
+                Config.Save(configNav);
+            }
 		}
 
 		private void BindSelectedConfig(string strPath)
@@ -1290,6 +1314,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 						{
 							RadNumericTextBox ctl = new RadNumericTextBox();
 							ctl.MinValue = 1024;
+						    ctl.MaxValue = 2147482624; //max value is set to 2G.
 							ctl.Type = NumericType.Number;
 							ctl.ShowSpinButtons = true;
 							ctl.IncrementSettings.Step = 1024;

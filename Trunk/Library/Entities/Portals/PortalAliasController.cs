@@ -277,7 +277,7 @@ namespace DotNetNuke.Entities.Portals
         {
             bool isValid = true;
 
-            string validChars = "abcdefghijklmnopqrstuvwxyz0123456789-_";
+            string validChars = "abcdefghijklmnopqrstuvwxyz0123456789-";
             if (!ischild)
             {
                 validChars += "./:";

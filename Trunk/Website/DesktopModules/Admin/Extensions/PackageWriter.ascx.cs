@@ -567,16 +567,19 @@ namespace DotNetNuke.Modules.Admin.Extensions
                     if (chkManifest.Checked && (!string.IsNullOrEmpty(txtManifestName.Text)) && (!txtManifestName.Text.ToLower().EndsWith(".dnn")))
                     {
                         lblMessage.Text = Localization.GetString("InvalidManifestExtension", LocalResourceFile);
+                        lblMessage.Parent.Visible = true;
                         e.Cancel = true;
                     }
                     else if (chkPackage.Checked && string.IsNullOrEmpty(txtArchiveName.Text))
                     {
                         lblMessage.Text = Localization.GetString("NoFileName", LocalResourceFile);
+                        lblMessage.Parent.Visible = true;
                         e.Cancel = true;
                     }
                     else if (chkPackage.Checked && !txtArchiveName.Text.ToLower().EndsWith(".zip"))
                     {
                         lblMessage.Text = Localization.GetString("InvalidPackageName", LocalResourceFile);
+                        lblMessage.Parent.Visible = true;
                         e.Cancel = true;
                     }
                     else
