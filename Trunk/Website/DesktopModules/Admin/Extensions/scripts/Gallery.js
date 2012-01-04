@@ -13,7 +13,7 @@ function Gallery(params) {
         rowId: 0
         , index: 1
         , pageSize: 10
-        , orderBy: "ExtensionName"
+        , orderBy: "Title"
         , orderDir: "asc"
         , thenBy: ""
         , thenDir: "asc"
@@ -108,7 +108,7 @@ function Gallery(params) {
         _gallery.tagFilter = '';
         _gallery.tagFilterName = '';
         _gallery.ownerFilter = '';
-        _gallery.orderBy = 'ExtensionName';
+        _gallery.orderBy = 'Title';
         _gallery.orderDir = 'asc';
         _gallery.extensionFilter = 'module';
         $("#typeDDL").val('module');
@@ -146,7 +146,7 @@ function Gallery(params) {
 
     $("#NameSorter").click(function (e) {
         e = e || window.event;
-        _gallery.SortExtensions('ExtensionName');
+        _gallery.SortExtensions('Title');
         return false;
     });
 
@@ -206,7 +206,7 @@ Gallery.prototype.SortExtensions = function (fld, order) {
     if (this.orderBy && this.orderDir) {
         var NameSorter = $("#NameSorter");
         var PriceSorter = $("#PriceSorter");
-        if (this.orderBy == "ExtensionName") {
+        if (this.orderBy == "Title") {
             if (this.orderDir == "asc")
                 NameSorter.text(this.NameTextDESC);
             else
@@ -374,7 +374,7 @@ Gallery.prototype.getExtensions = function (callback) {
 
         url = url + "&$orderby=" + encodeURIComponent(prefix + "" + this.orderBy + " " + this.orderDir);
 
-        if (this.orderBy == "ExtensionName") {
+        if (this.orderBy == "Title") {
             if (this.orderDir == "asc") {
                 filterDesc = filterDesc + this.NameTextASC;
             } else {
@@ -397,7 +397,7 @@ Gallery.prototype.getExtensions = function (callback) {
 
         url = url + "," + encodeURIComponent(prefix + "" + this.thenBy + " " + this.thenDir);
 
-        if (this.thenBy == "ExtensionName") {
+        if (this.thenBy == "Title") {
             if (this.thenDir == "asc") {
                 filterDesc = filterDesc + ", " + this.NameTextASC;
             } else {

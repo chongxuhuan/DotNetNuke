@@ -57,7 +57,7 @@
                     <add name="Telerik.Web.UI.ChartHttpHandler" verb="*" path="ChartImage.axd" type="Telerik.Web.UI.ChartHttpHandler, Telerik.Web.UI, Culture=neutral, PublicKeyToken=121fae78165ba3d4"/>
                   </node>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Telerik.Web.UI']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Telerik.Web.UI']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="2008.0.0.0-2020.0.0.0" newVersion="2011.2.915.35" />
+                    <bindingRedirect oldVersion="2008.0.0.0-2020.0.0.0" newVersion="2011.3.1115.35" />
                   </node>
                 </nodes>
               </configuration>

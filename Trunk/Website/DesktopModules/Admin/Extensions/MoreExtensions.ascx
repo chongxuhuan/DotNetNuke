@@ -64,8 +64,10 @@
                                 <a class="galleryLink  inline" onclick="return _gallery.ShowDetails(${ExtensionID})">                    
                                     <img class='productTypeImage dnnIcon' alt='License for ${Title}' title='License Specified' src='<%=IconController.IconURL("CatalogLicense")%>' />
                                 </a>
-                            {{/if}}                            
-                            {{if Catalog.CatalogUrl}}                                            
+                            {{/if}}
+                            {{if DetailURL}}
+                                <a class="galleryLink inline" href="${DetailURL}" target="_new"><img class='deploy galleryLink' alt='Browse ${Catalog.CatalogName}' Title='Browse ${Catalog.CatalogName}' src='${_gallery.resolveImage(Catalog.CatalogIcon)}' /></a>
+                            {{else Catalog.CatalogUrl}}                                            
                                 <a class="galleryLink inline" href="${Catalog.CatalogUrl}" target="_new"><img class='deploy galleryLink' alt='Browse ${Catalog.CatalogName}' Title='Browse ${Catalog.CatalogName}' src='${_gallery.resolveImage(Catalog.CatalogIcon)}' /></a>
                             {{/if}}                
                         </div>

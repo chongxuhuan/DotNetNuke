@@ -2587,6 +2587,27 @@ namespace DotNetNuke.Services.Upgrade
 			}
 		}
 
+        private static void UpgradeToVersion613()
+        {
+            //Rename admin pages page's title to 'Page Management'.
+            var portalController = new PortalController();
+            foreach (PortalInfo portal in portalController.GetPortals())
+            {
+                var tabController = new TabController();
+                var pagesTabId = TabController.GetTabByTabPath(portal.PortalID, "//Admin//Pages", Null.NullString);
+
+                if (pagesTabId != Null.NullInteger)
+                {
+                    var pagesTab = tabController.GetTab(pagesTabId, portal.PortalID, false);
+                    if (pagesTab != null && pagesTab.Title == "Pages")
+                    {
+                        pagesTab.Title = "Page Management";
+                        tabController.UpdateTab(pagesTab);
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -4009,6 +4030,9 @@ namespace DotNetNuke.Services.Upgrade
                         break;
 					case "6.1.2":
 						UpgradeToVersion612();
+                        break;
+                    case "6.1.3":
+                        UpgradeToVersion613();
                         break;
                     case "6.2.0":
                         UpgradeToVersion620();
