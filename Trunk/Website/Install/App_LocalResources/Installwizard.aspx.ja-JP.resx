@@ -12,7 +12,7 @@
     
     Example:
     
-    ... ado.net/XML headers && schema ...
+    ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
@@ -360,7 +360,7 @@
 &lt;p&gt;管理者ユーザーアカウントを作成する必要があります。このユーザーは、ポータルのすべての機能にアクセスすることができます。ホストユーザーと同様、悪意のあるユーザーからの不正侵入を防ぐため、より複雑なユーザー名およびパスワードを設定することをお勧めします。&lt;/p&gt;</value>
   </data>
   <data name="PortalTitle.Text" xml:space="preserve">
-    <value>ホストポータルのインストール</value>
+    <value>ポータルのタイトル:</value>
   </data>
   <data name="Page7.Title" xml:space="preserve">
     <value>スキンのインストール</value>
@@ -414,9 +414,6 @@ Windows エクスプローラを使用して、Web サイトのルートフォ�
   </data>
   <data name="PortalTemplate.Text" xml:space="preserve">
     <value>テンプレート:</value>
-  </data>
-  <data name="PortalTitle.Text" xml:space="preserve">
-    <value>ポータルのタイトル:</value>
   </data>
   <data name="Previous.Text" xml:space="preserve">
     <value>前へ</value>
@@ -478,5 +475,8 @@ Windows エクスプローラを使用して、Web サイトのルートフォ�
   </data>
   <data name="WhatsNext.Text" xml:space="preserve">
     <value>「次へ」とは</value>
+  </data>
+  <data name="InvalidQualifier.Text" xml:space="preserve">
+    <value>Object Qualifier must start with letter and no more than 50 characters.</value>
   </data>
 </root>

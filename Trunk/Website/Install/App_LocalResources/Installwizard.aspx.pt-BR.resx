@@ -3,14 +3,14 @@
   <!-- 
     Microsoft ResX Schema 
     
-    Versão 2.0
+    Version 2.0
     
-	Os principais objetivos deste formato é permitir um formato XML simples
-	que é mais legível. A geração e análise dos
-	vários tipos de dados são feitas através das classes TypeConverter
-	associado com os tipos de dados.
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
     
-    Exemplo:
+    Example:
     
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
@@ -24,40 +24,40 @@
     </data>
     <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>Este é um comentário</comment>
+        <comment>This is a comment</comment>
     </data>
                 
-    Há um grande número de "resheader" linhas que contêm simples
-	pares de nome/valor.
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
     
-    Cada linha de dados contém um nome e valor. A linha contém também um
-	tipo ou mimetype. Tipo corresponde a uma classe.NET que suporta
-	text/valor de conversão através da arquitetura TypeConverter.
-	Classes que não suportam isso são serializadas e armazenadas com o
-	mimetype.
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
     
     The mimetype is used for serialized objects, and tells the 
     ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
     
-    Nota - application/x-microsoft.net.object.binary.base64 é o formato
-    que o ResXResourceWriter irá gerar, no entanto, o leitor pode
-    ler qualquer um dos formatos listados abaixo.
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
     
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : O objeto deve ser serializado com 
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : e, em seguida, codificados com codificação base64.
-
+            : and then encoded with base64 encoding.
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : O objeto deve ser serializado com 
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : e, em seguida, codificados com codificação base64.
+            : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : O objeto deve ser serializado em um array de byte 
-            : usando um System.ComponentModel.TypeConverter
-            : e, em seguida, codificados com codificação base64.
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
     -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -200,7 +200,7 @@
   </data>
   <data name="Full.Text" xml:space="preserve">
     <value>&lt;b&gt;Customizada&lt;/b&gt; - o método de instalação "Customizada" dá aos usuários avançados a possibilidade de criar uma configuração completamente customizada para o seu DotNetNuke website.</value>
- </data>
+  </data>
   <data name="HomePage.Text" xml:space="preserve">
     <value>Página Inicial</value>
   </data>
@@ -605,5 +605,8 @@ Usando o Windows Explorer, navegue até a pasta raiz do site ({0}). Clique com o
   </data>
   <data name="AdminUserDetail.Text" xml:space="preserve">
     <value>Por favor insira as informações para o conta "Administrador". Esta conta terá acesso a criar e gerenciar todos os sites dentro desta instalação. Recomendamos o uso de uma senha forte, por exemplo: pelo menos 7 caracteres, incluindo uma mistura de letras, números e símbolos. Você pode alterar essa senha no futuro através da seção Administração do seu site.</value>
+  </data>
+  <data name="InvalidQualifier.Text" xml:space="preserve">
+    <value>Object Qualifier must start with letter and no more than 50 characters.</value>
   </data>
 </root>

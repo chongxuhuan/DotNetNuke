@@ -1082,6 +1082,8 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			ADD CONSTRAINT [FK_{objectQualifier}Relationships_{objectQualifier}Portals] FOREIGN KEY([PortalID]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE		
 		ALTER TABLE {databaseOwner}[{objectQualifier}Relationships]  
 			ADD CONSTRAINT [FK_{objectQualifier}Relationships_{objectQualifier}Users] FOREIGN KEY([UserID]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE CASCADE			
+		ALTER TABLE {databaseOwner}[{objectQualifier}Relationships]  
+			ADD CONSTRAINT [FK_{objectQualifier}Relationships_{objectQualifier}RelationshipTypes] FOREIGN KEY([RelationshipTypeID]) REFERENCES {databaseOwner}[{objectQualifier}RelationshipTypes] ([RelationshipTypeID]) ON DELETE CASCADE			
 	END
 GO
 
@@ -1110,6 +1112,28 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			ADD CONSTRAINT [FK_{objectQualifier}UserRelationships_{objectQualifier}Users] FOREIGN KEY([UserID]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) 
 		ALTER TABLE {databaseOwner}[{objectQualifier}UserRelationships]			
 			ADD CONSTRAINT [FK_{objectQualifier}UserRelationships_{objectQualifier}Users_OnRelatedUser] FOREIGN KEY([RelationshipID]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) 
+	END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UserRelationshipPreferences]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}UserRelationshipPreferences]
+		(		
+			[PreferenceID] [int] IDENTITY(1,1) NOT NULL,	
+			[UserID] [int] NOT NULL,
+			[RelationshipID] [int] NOT NULL,
+			[DefaultResponse] [int] NOT NULL,
+			[CreatedByUserID] [int] NOT NULL,
+			[CreatedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}UserRelationshipPreferences_CreatedOnDate]  DEFAULT (getdate()) NOT NULL ,
+			[LastModifiedByUserID] [int] NOT NULL,
+			[LastModifiedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}UserRelationshipPreferences_LastModifiedOnDate]  DEFAULT (getdate()) NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}UserRelationshipPreferences] PRIMARY KEY CLUSTERED ( [PreferenceID] ASC, [RelationshipID] ASC )
+		)				
+		
+		ALTER TABLE {databaseOwner}[{objectQualifier}UserRelationshipPreferences]  
+			ADD CONSTRAINT [FK_{objectQualifier}UserRelationshipPreferences_{objectQualifier}Relationships] FOREIGN KEY([RelationshipID]) REFERENCES {databaseOwner}[{objectQualifier}Relationships] ([RelationshipID]) ON DELETE CASCADE		
+		ALTER TABLE {databaseOwner}[{objectQualifier}UserRelationshipPreferences]
+			ADD CONSTRAINT [FK_{objectQualifier}UserRelationshipPreferences_{objectQualifier}Users] FOREIGN KEY([UserID]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) 
 	END
 GO
 
@@ -1253,11 +1277,11 @@ AS
 	ORDER BY RelationshipID ASC    
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRelationshipByUserID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipByUserID]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRelationshipsByUserID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipsByUserID]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipByUserID] @UserID INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipsByUserID] @UserID INT
 AS 
     SELECT  RelationshipID,
 			RelationshipTypeID,            
@@ -1275,11 +1299,11 @@ AS
 	ORDER BY RelationshipID ASC    
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRelationshipByPortalID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipByPortalID]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRelationshipsByPortalID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipsByPortalID]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipByPortalID] @PortalID INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRelationshipsByPortalID] @PortalID INT
 AS 
     SELECT  RelationshipID,
 			RelationshipTypeID,            
@@ -1417,11 +1441,36 @@ AS
 	ORDER BY UserRelationshipID ASC    
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipByMultipleIDs]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByMultipleIDs]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByUserRelationshipAndStatus]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByUserRelationshipAndStatus]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByMultipleIDs] 
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByUserRelationshipAndStatus] 
+	@UserID INT,	
+	@RelationshipID INT,
+	@Status INT
+AS 
+    SELECT  UserRelationshipID,
+			UserID,
+			RelatedUserID,
+			RelationshipID,            
+			Status,            
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}UserRelationships    
+	WHERE UserID = @UserID	
+	AND   RelationshipID = @RelationshipID
+	AND   Status = @Status
+	ORDER BY UserRelationshipID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByMultipleIDs]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByMultipleIDs]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByMultipleIDs] 
 	@UserID INT,
 	@RelatedUserID INT,
 	@RelationshipID INT
@@ -1442,11 +1491,11 @@ AS
 	ORDER BY UserRelationshipID ASC    
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipByUserID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByUserID]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByUserID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByUserID]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByUserID] @UserID INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByUserID] @UserID INT
 AS 
     SELECT  UserRelationshipID,
 			UserID,
@@ -1462,11 +1511,11 @@ AS
 	ORDER BY UserRelationshipID ASC    
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipByRelatedUserID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByRelatedUserID]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUserID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUserID]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByRelatedUserID] @RelatedUserID INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUserID] @RelatedUserID INT
 AS 
     SELECT  UserRelationshipID,
 			UserID,
@@ -1482,11 +1531,11 @@ AS
 	ORDER BY UserRelationshipID ASC    
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipByRelationshipID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByRelationshipID]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByRelationshipID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelationshipID]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipByRelationshipID] @RelationshipID INT
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelationshipID] @RelationshipID INT
 AS 
     SELECT  UserRelationshipID,
 			UserID,
@@ -1602,6 +1651,115 @@ AS
         END
         
     SELECT  @UserRelationshipID
+GO
+
+--CRUD SPs for UserRelationshipPreferences
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipPrefernceByID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPrefernceByID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPrefernceByID] 
+	@PreferenceID INT	
+AS 
+    SELECT  PreferenceID,
+			UserID,
+			RelationshipID,            
+			DefaultResponse,            
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}UserRelationshipPreference    
+	WHERE @PreferenceID = @PreferenceID	  
+	ORDER BY PreferenceID ASC
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipPrefernce]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPrefernce]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPrefernce] 
+	@UserID INT,
+	@RelationshipID INT
+AS 
+    SELECT  PreferenceID,
+			UserID,
+			RelationshipID,            
+			DefaultResponse,            
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}UserRelationshipPreference    
+	WHERE UserID = @UserID
+	  AND RelationshipID = @RelationshipID
+	ORDER BY UserID ASC, RelationshipID ASC
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteUserRelationshipPreference]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipPreference]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipPreference]
+	@PreferenceID INT	
+AS 
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}UserRelationshipPreference  
+		WHERE PreferenceID = @PreferenceID
+
+	END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveUserRelationshipPreference]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveUserRelationshipPreference]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveUserRelationshipPreference]
+    @PreferenceID INT,
+	@UserID INT,	
+	@RelationshipID INT,
+	@DefaultResponse INT,
+	@CreateUpdateUserID INT
+    
+AS 
+    IF ( @PreferenceID = -1 ) 
+        BEGIN
+            INSERT  {databaseOwner}{objectQualifier}UserRelationshipPreference
+                    ( UserID,					  
+					  RelationshipID,
+					  DefaultResponse,
+                      CreatedByUserID ,
+                      CreatedOnDate ,
+                      LastModifiedByUserID ,
+                      LastModifiedOnDate
+			        
+                    )
+            VALUES  ( @UserID , -- @UserID int					  
+					  @RelationshipID, -- @RelationshipID int
+					  @DefaultResponse , -- @DefaultResponse int
+                      @CreateUpdateUserID , -- CreatedBy - int
+                      GETDATE() , -- CreatedOn - datetime
+                      @CreateUpdateUserID , -- LastModifiedBy - int
+                      GETDATE() -- LastModifiedOn - datetime
+			        
+                    )
+                    
+            SELECT  @PreferenceID = SCOPE_IDENTITY()
+        END
+    ELSE 
+        BEGIN
+            UPDATE  {databaseOwner}{objectQualifier}UserRelationshipPreference
+            SET     UserID = @UserID,					
+					RelationshipID = @RelationshipID,
+					DefaultResponse = @DefaultResponse,
+                    LastModifiedByUserID = @CreateUpdateUserID,
+                    LastModifiedOnDate = GETDATE()
+            WHERE   PreferenceID = @PreferenceID
+        END
+        
+    SELECT  @PreferenceID
+        
 GO
 
 /************************************************************/

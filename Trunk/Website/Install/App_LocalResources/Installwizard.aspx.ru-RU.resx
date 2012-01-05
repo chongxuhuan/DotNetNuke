@@ -12,7 +12,7 @@
     
     Example:
     
-    ... ado.net/XML headers && schema ...
+    ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
@@ -425,84 +425,87 @@
   <data name="WhatsNext.Text" xml:space="preserve">
     <value>Что дальше</value>
   </data>
-  <data name="DatabaseConfigDetail.Text">
+  <data name="DatabaseConfigDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;На этой странице Вы можете изменить настройки базы данных, используемой DotNetNuke. Если Вы устанавливаете DotNetNuke на хостинг, ваш хостинг-провайдер должен предоставить Вам необходимую информацию.&lt;/p&gt;
 &lt;p&gt;Для SQL Server 2005 возможны 2 варианта. SQL Server 2005 поддерживает использование файлов БД. В большинстве случаев Вам следует использовать вариант База Данных, однако, при использовании SQL Server 2005 Express следует выбрать вариант Файл.&lt;/p&gt;</value>
   </data>
-  <data name="DatabaseConfigTitle.Text">
+  <data name="DatabaseConfigTitle.Text" xml:space="preserve">
     <value>Настройка соединения с базой данных</value>
   </data>
-  <data name="DatabaseInstallDetail.Text">
+  <data name="DatabaseInstallDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;Установка скриптов базы данных должна была начаться сразу после загрузки этой страницы. Кнопка Далее будет отключена до окончания установки.&lt;/p&gt;</value>
   </data>
-  <data name="DatabaseInstallTitle.Text">
+  <data name="DatabaseInstallTitle.Text" xml:space="preserve">
     <value>Запустить скрипты установки базы данных</value>
   </data>
-  <data name="HostUserDetail.Text">
+  <data name="HostUserDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;На данной странице Вам необходимо предоставить информацию для учетной записи Host или SuperUser. Этот пользователь имеет доступ ко всем порталам на сайте, и по этой причине следует ответственно подойти к выбору такой комбинации Имя_Пользователя/Пароль, которую будет трудно подобрать злоумышленникам.&lt;/p&gt;</value>
   </data>
-  <data name="HostUserTitle.Text">
+  <data name="HostUserTitle.Text" xml:space="preserve">
     <value>Настройка пользователя Host</value>
   </data>
-  <data name="InstallPackageError.Text">
+  <data name="InstallPackageError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Ошибка установки пакета(ов):&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
-  <data name="IntroDetail.Text">
+  <data name="IntroDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;Вас приветствует Мастер Установки DotNetNuke. Этот мастер проведет Вас через весь процесс установки Вашего DotNetNuke приложения.&lt;/p&gt;
 &lt;p&gt;Вы можете перемещаться между страницами Мастера с помощью кнопок Далее и Назад. На некоторых страницах присутствует кнопка "Проверка ...", нажатие которой позволяет протестировать настройки и увидеть эффект от проведенных изменений перед тем, как двигаться дальше.&lt;/p&gt;
 &lt;p&gt;Первый шаг - выбор метода и языка установки.&lt;/p&gt;
 
 </value>
   </data>
-  <data name="IntroTitle.Text">
+  <data name="IntroTitle.Text" xml:space="preserve">
     <value>Мастер Установки DotNetNuke - Версия {0}</value>
   </data>
-  <data name="LanguagesDetail.Text">
+  <data name="LanguagesDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke полностью локализуем. На этой странице Вы можете выбрать языки, которые желаете установить.&lt;/p&gt;
 &lt;p&gt;Установка языка не включает его автоматически, но делает его доступным для выбора.&lt;/p&gt;</value>
   </data>
-  <data name="LanguagesTitle.Text">
+  <data name="LanguagesTitle.Text" xml:space="preserve">
     <value>Установка языковых пакетов</value>
   </data>
-  <data name="ModulesDetail.Text">
+  <data name="ModulesDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke обладает хорошими возможностями по расширению. Эти возможности предоставляются в рамках концепции устанавливаемых модулей. &lt;/p&gt;
 &lt;p&gt;На данной странице Вы можете указать дополнительные модули для установки. Установка модулей делает их доступными для редакторов страниц.&lt;/p&gt;</value>
   </data>
-  <data name="ModulesTitle.Text">
+  <data name="ModulesTitle.Text" xml:space="preserve">
     <value>Установить дополнительные модули</value>
   </data>
-  <data name="NoPackages.Text">
+  <data name="NoPackages.Text" xml:space="preserve">
     <value>Нет систем аутентификации для установки</value>
   </data>
-  <data name="Packages.Text">
+  <data name="Packages.Text" xml:space="preserve">
     <value>Службы аутентификации</value>
   </data>
-  <data name="PackagesDetail.Text">
+  <data name="PackagesDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke поддерживает множество систем аутентификации. На этой странице Вы можете выбрать системы, которые желаете установить.&lt;/p&gt;
 &lt;p&gt;Установка системы аутентификации не активирует ее автоматически для каждого портала, но делает ее доступной для настройки администратором портала.&lt;/p&gt;</value>
   </data>
-  <data name="PackagesTitle.Text">
+  <data name="PackagesTitle.Text" xml:space="preserve">
     <value>Установка служб аутентификации</value>
   </data>
-  <data name="Page9.Title">
+  <data name="Page9.Title" xml:space="preserve">
     <value>Установка портала</value>
   </data>
-  <data name="PermissionsDetail.Text">
+  <data name="PermissionsDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke обладает расширенными возможностями по загрузке файлов контента, модулей и шаблонов. Данные возможности требуют специальных настроек безопасности для того, чтобы приложение могло создавать и удалять файлы на Вашем веб-сайте.&lt;/p&gt;
 &lt;p&gt;Эта страница проверяет текущие файловые разрешения, чтобы в дальнейшем не было проблем с использованием данных возможностей.&lt;/p&gt;</value>
   </data>
-  <data name="PermissionsTitle.Text">
+  <data name="PermissionsTitle.Text" xml:space="preserve">
     <value>Проверка файловых разрешений</value>
   </data>
-  <data name="PortalDetail.Text">
+  <data name="PortalDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;На данной странице Вы можете настроить Host (или начальный) Портал (сайт).&lt;/p&gt;
 &lt;p&gt;Вам необходимо создать учетную запись администратора. Администратор имеет доступ ко всей функциональности портала, и для него, как и в случае Host-пользователя, необходимо указать такую комбинацию Имя_Пользователя/Пароль, которую будет максимально сложно подобрать  злоумышленникам. &lt;/p&gt;</value>
   </data>
-  <data name="SkinsDetail.Text">
+  <data name="SkinsDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke обладает богатыми возможностями настройки интерфейса с помощью шаблонов. На этой странице Вы можете указать дополнительные шаблоны и контейнеры для установки.&lt;/p&gt;
 &lt;p&gt;Установка шаблонов и/или контейнеров не активирует их автоматически, но делает их доступными для выбора.&lt;/p&gt;</value>
   </data>
-  <data name="SkinsTitle.Text">
+  <data name="SkinsTitle.Text" xml:space="preserve">
     <value>Установка дополнительных шаблонов и контейнеров</value>
+  </data>
+  <data name="InvalidQualifier.Text" xml:space="preserve">
+    <value>Object Qualifier must start with letter and no more than 50 characters.</value>
   </data>
 </root>

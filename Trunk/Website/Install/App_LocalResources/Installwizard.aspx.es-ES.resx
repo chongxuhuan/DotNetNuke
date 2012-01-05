@@ -603,10 +603,13 @@ Con el Explorador de Windows abra la carpeta raíz de la web ( {0} ). Haga clic 
   <data name="Page11.Title" xml:space="preserve">
     <value>Instalación Completa</value>
   </data>
-  <data name="AdminUserDetail.Text">
+  <data name="AdminUserDetail.Text" xml:space="preserve">
     <value>Por favor, introduzca la información del usuario Administrador del sistema. Este usuario podrá crear y gestionar todos los sitios web creados en esta instalación. Es recomendable que utilize un contraseña segura, por ejemplo: al menos 7 caracteres con combinaciones de letras, números y símbolos. Podrá modificar la contraseña posteriormente en la sección de administración de la web.</value>
   </data>
-  <data name="AdminUserTitle.Text">
+  <data name="AdminUserTitle.Text" xml:space="preserve">
     <value>Configuración del usuario Administrador e información del sitio web</value>
+  </data>
+  <data name="InvalidQualifier.Text" xml:space="preserve">
+    <value>Object Qualifier must start with letter and no more than 50 characters.</value>
   </data>
 </root>

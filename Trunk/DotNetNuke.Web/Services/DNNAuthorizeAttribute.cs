@@ -8,7 +8,7 @@ using DotNetNuke.Entities.Users;
 
 namespace DotNetNuke.Web.Services
 {
-    public class DNNAuthorizeAttribute : AuthorizeAttribute
+    public class DnnAuthorizeAttribute : AuthorizeAttribute
     {
         protected string[] UsersSplitBackingField;
         protected string[] RolesSplitBackingField;
@@ -23,7 +23,7 @@ namespace DotNetNuke.Web.Services
             }
 
             IPrincipal user = httpContext.User;
-            if (!user.Identity.IsAuthenticated)
+            if (!AllowAnonymous && !user.Identity.IsAuthenticated)
             {
                 return false;
             }
@@ -34,9 +34,14 @@ namespace DotNetNuke.Web.Services
             }
 
 
-            if (RolesSplit.Length > 0)
+            if (RequiresHost || RolesSplit.Length > 0)
             {
                 var userInfo = PortalController.GetCurrentPortalSettings().UserInfo;
+
+                if(RequiresHost && !userInfo.IsSuperUser)
+                {
+                    return false;
+                }
 
                 if (!RolesSplit.Any(userInfo.IsInRole))
                 {
@@ -72,6 +77,20 @@ namespace DotNetNuke.Web.Services
                 return UsersSplitBackingField;
             }
         }
+
+        /// <summary>
+        /// Indicates that Host level credentials are required
+        /// </summary>
+        public bool RequiresHost { get; set; }
+
+        /// <summary>
+        /// Allows authorization of anonymous users
+        /// <remarks>
+        /// AllowAnonymous is used to allow anonymous access to specific methods in a controller that has a higher DefaultAuthLevel
+        /// This setting will be ignored if any of User, Roles or Host level access are also specified
+        /// </remarks>
+        /// </summary>
+        public bool AllowAnonymous { get; set; }
 
         protected string[] SplitString(string original)
         {

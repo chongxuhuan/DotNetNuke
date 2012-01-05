@@ -105,6 +105,41 @@ namespace DotNetNuke.Entities.Users
         public RelationshipStatus DefaultResponse { get; set; }
 
         /// <summary>
+        /// Is this a Portal-Level Relationship
+        /// </summary>
+        [XmlIgnore]
+        public bool IsPortalList 
+        { 
+            get
+            {
+                return UserID == Null.NullInteger && PortalID >= 0;
+            }
+        }
+
+        /// <summary>
+        /// Is this a Host-Level Relationship (very uncommon)
+        /// </summary>
+        [XmlIgnore]
+        public bool IsHostList
+        {
+            get
+            {
+                return UserID == Null.NullInteger && PortalID == Null.NullInteger;
+            }
+        }
+
+        /// <summary>
+        /// Is this a USer-Level Relationship 
+        /// </summary>
+        [XmlIgnore]
+        public bool IsUserList
+        {
+            get
+            {
+                return UserID > 0 && PortalID >= 0;
+            }
+        }
+        /// <summary>
         /// IHydratable.KeyID.
         /// </summary>
         [XmlIgnore]

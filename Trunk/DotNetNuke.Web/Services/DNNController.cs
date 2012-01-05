@@ -9,6 +9,12 @@ namespace DotNetNuke.Web.Services
 {
     public class DnnController : Controller
     {
+        public DnnController()
+        {
+            ActionInvoker = new DnnControllerActionInvoker();
+            DefaultAuthLevel = ServiceAuthLevel.Host; 
+        }
+
         protected override void Initialize(RequestContext requestContext)
         {
             var domainName = Globals.GetDomainName(requestContext.HttpContext.Request);
@@ -26,5 +32,7 @@ namespace DotNetNuke.Web.Services
         public PortalSettings PortalSettings{get { return PortalController.GetCurrentPortalSettings(); }}
 
         public UserInfo UserInfo { get {return PortalSettings.UserInfo;}}
+
+        public ServiceAuthLevel DefaultAuthLevel { get; set; }
     }
 }

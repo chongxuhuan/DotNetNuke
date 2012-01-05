@@ -80,7 +80,7 @@ namespace DotNetNuke.Entities.Users
 		{
             Requires.NotNull("The relationshipType can't be null", relationshipType);
 
-            int relationshipTypeID = _dataService.SaveRelationshipType(relationshipType, UserController.GetCurrentUserInfo().UserID);
+            var relationshipTypeID = _dataService.SaveRelationshipType(relationshipType, UserController.GetCurrentUserInfo().UserID);
 
             //log event
             var logContent = string.Format("'{0}' RelationshipType '{1}'", relationshipType.RelationshipTypeID == Null.NullInteger ? "Added" : "Updated", relationshipType.Name);
@@ -157,7 +157,7 @@ namespace DotNetNuke.Entities.Users
         {
             Requires.NotNull("The relationship can't be null", relationship);
 
-            int relationshipID = _dataService.SaveRelationship(relationship, UserController.GetCurrentUserInfo().UserID);
+            var relationshipID = _dataService.SaveRelationship(relationship, UserController.GetCurrentUserInfo().UserID);
 
             //log event
             var logContent = string.Format("'{0}' Relationship '{1}'", relationship.RelationshipID == Null.NullInteger ? "Added" : "Updated", relationship.Name);
@@ -295,7 +295,7 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Delete Relationship By UserRelationshipID
+        /// Delete UserRelationship By UserRelationshipID
         /// </summary>
         /// <param name="userRelationshipID">UserRelationshipID</param>        
         /// -----------------------------------------------------------------------------
@@ -307,7 +307,7 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Delete USerRelationship By UserID
+        /// Delete UserRelationship By UserID
         /// </summary>
         /// <param name="userID">UserID</param>        
         /// -----------------------------------------------------------------------------
@@ -323,11 +323,11 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Delete Relationship By RelatedUserlID
+        /// Delete UserRelationship By RelatedUserlID
         /// </summary>
         /// <param name="relatedUserID">RelatedUserID</param>        
         /// -----------------------------------------------------------------------------
-        public void DeleteRelationshipByRelatedID(int relatedUserID)
+        public void DeleteUserRelationshipByRelatedID(int relatedUserID)
         {
             var userRelationships = GetUserRelationshipsByRelatedUserID(relatedUserID);
 
@@ -339,7 +339,7 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Delete Relationship By RelationshipID
+        /// Delete UserRelationship By RelationshipID
         /// </summary>
         /// <param name="relationshipID">RelationshipID</param>        
         /// -----------------------------------------------------------------------------
@@ -413,6 +413,80 @@ namespace DotNetNuke.Entities.Users
 
         #endregion
 
+        #region UserRelationshipPrefernce CRUD
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Save UserRelationshipPreference
+        /// </summary>
+        /// <param name="userRelationshipPreference">UserRelationshipPreference object</param>        
+        /// <remarks>
+        /// If PreferenceID is -1 (Null.NullIntger), then a new UserRelationshipPreference is created, 
+        /// else existing UserRelationshipPreference is updated
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public void SaveUserRelationshipPreference(UserRelationshipPreference userRelationshipPreference)
+        {
+            Requires.NotNull("The user relationship preference can't be null", userRelationshipPreference);
+
+            var preferenceID = _dataService.SaveUserRelationshipPreference(userRelationshipPreference, UserController.GetCurrentUserInfo().UserID);
+
+            //log event            
+            var logContent = string.Format("PreferenceID for ID '{0}', UserID '{1}', RelationID '{2}' '{3}'", userRelationshipPreference.PreferenceID, userRelationshipPreference.UserID, userRelationshipPreference.RelationshipID, userRelationshipPreference.PreferenceID == Null.NullInteger ? "Added" : "Updated");
+            AddLog(logContent);
+
+            userRelationshipPreference.PreferenceID = preferenceID;
+
+            //clear cache            
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Delete UserRelationshipPreference By PreferenceID
+        /// </summary>
+        /// <param name="preferenceID">PreferenceID</param>        
+        /// -----------------------------------------------------------------------------
+        public void DeleteUserRelationshipPreference(int preferenceID)
+        {
+            var userRelationshipPreference = GetUserRelationshipPreference(preferenceID);
+
+            if (userRelationshipPreference != null)
+            {
+                _dataService.DeleteUserRelationshipPreference(preferenceID);
+
+                //log event
+                var logContent = string.Format("UserRelationshipPreference ID '{0}' for User ID '{1}', Relationship ID '{2}' Deleted UserRelationshipPreference 'Deleted'", userRelationshipPreference.PreferenceID, userRelationshipPreference.UserID, userRelationshipPreference.RelationshipID);
+                AddLog(logContent);
+
+                //clear cache                
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Get UserRelationshipPreference By RelationshipTypeID
+        /// </summary>        
+        /// <param name="preferenceID">PreferenceID</param>        
+        /// -----------------------------------------------------------------------------
+        public UserRelationshipPreference GetUserRelationshipPreference(int preferenceID)
+        {
+            return CBO.FillCollection<UserRelationshipPreference>(_dataService.GetUserRelationshipPreferenceByID(preferenceID)).FirstOrDefault();
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Get UserRelationshipPreference By UserID and RelationshipID
+        /// </summary>        
+        /// <param name="userID">UserID</param>        
+        /// <param name="relationshipID">RelationshipID</param>        
+        /// -----------------------------------------------------------------------------
+        public UserRelationshipPreference GetUserRelationshipPreference(int userID, int relationshipID)
+        {
+            return CBO.FillCollection<UserRelationshipPreference>(_dataService.GetUserRelationshipPreference(userID, relationshipID)).FirstOrDefault();
+        }
+
+        #endregion
+
         #region Relationship Business APIs
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -474,7 +548,16 @@ namespace DotNetNuke.Entities.Users
             //use Relationship DefaultResponse as status
             var status = relationship.DefaultResponse;
 
-            //check if there is a custom relationship status setting for the user
+            //check if there is a custom relationship status setting for the user. 
+            //TODO - Is this check only applicable for portal or host list
+            //if (relationship.IsPortalList || relationship.IsHostList)
+            {
+                var preference = GetUserRelationshipPreference(targetUser.UserID, relationship.RelationshipID);
+                if (preference != null) 
+                {
+                    status = preference.DefaultResponse;
+                }                
+            }
 
             if(status == RelationshipStatus.None)
                 status = RelationshipStatus.Initiated;
@@ -535,6 +618,13 @@ namespace DotNetNuke.Entities.Users
             Requires.NotNull("The initiatingUser can't be null", initiatingUser);
 
             return InitiateUserRelationship(initiatingUser, targetUser, GetFriendsRelatioshipByPortal(initiatingUser.PortalID));
+        }
+
+        public List<UserRelationship> GetFriends(UserInfo initiatingUser)
+        {
+            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, GetFriendsRelatioshipByPortal(initiatingUser.PortalID).RelationshipID, RelationshipStatus.Accepted)).ToList();
         }
 
         public Relationship AddUserList(string listName, string listDescription)
@@ -665,19 +755,19 @@ namespace DotNetNuke.Entities.Users
 
         private IList<Relationship> GetRelationshipsByUserIDCallBack(CacheItemArgs cacheItemArgs)
         {
-            int userID = (int)cacheItemArgs.ParamList[0];
+            var userID = (int)cacheItemArgs.ParamList[0];
             return CBO.FillCollection<Relationship>(_dataService.GetRelationshipsByUserID(userID)).ToList();
         }
 
         private IList<Relationship> GetUserRelationshipsByUserIDCallBack(CacheItemArgs cacheItemArgs)
         {
-            int userID = (int)cacheItemArgs.ParamList[0];
+            var userID = (int)cacheItemArgs.ParamList[0];
             return CBO.FillCollection<Relationship>(_dataService.GetUserRelationshipsByUserID(userID)).ToList();
         }
 
         private IList<Relationship> GetRelationshipsByPortalIDCallBack(CacheItemArgs cacheItemArgs)
         {
-            int portalID = (int)cacheItemArgs.ParamList[0];
+            var portalID = (int)cacheItemArgs.ParamList[0];
             return CBO.FillCollection<Relationship>(_dataService.GetRelationshipsByPortalID(portalID)).ToList();
         }
 

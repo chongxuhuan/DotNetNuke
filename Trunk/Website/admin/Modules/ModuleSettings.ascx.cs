@@ -683,7 +683,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                             if (tmpModule == null)
                             {
                                 //Move module
-                                objModules.MoveModule(_moduleId, TabId, newTabId, "");
+                                objModules.MoveModule(_moduleId, TabId, newTabId, Globals.glbDefaultPane);
                             }
                             else
                             {

@@ -66,6 +66,8 @@ namespace DotNetNuke.Entities.Users.Social.Data
 
         IDataReader GetUserRelationship(int userRelationshipID);
 
+        IDataReader GetUserRelationship(int userID, int relatedUserID, RelationshipStatus status);
+
         IDataReader GetUserRelationship(int userID, int relatedUserID, int relationshipID);
 
         IDataReader GetUserRelationshipsByUserID(int userID);
@@ -83,6 +85,18 @@ namespace DotNetNuke.Entities.Users.Social.Data
         void DeleteUserRelationshipByRelationshipID(int relationshipID);
 
         int SaveUserRelationship(UserRelationship userRelationship, int createUpdateUserID);
+
+        #endregion
+
+        #region UserRelationshipPreference CRUD
+
+        IDataReader GetUserRelationshipPreferenceByID(int preferenceID);
+
+        IDataReader GetUserRelationshipPreference(int userID, int relationshipID);
+
+        void DeleteUserRelationshipPreference(int preferenceID);
+
+        int SaveUserRelationshipPreference(UserRelationshipPreference userRelationshipPreference, int createUpdateUserID);
 
         #endregion
     }

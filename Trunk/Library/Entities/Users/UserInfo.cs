@@ -62,6 +62,7 @@ namespace DotNetNuke.Entities.Users
         private string _fullName;
         private UserMembership _membership;
         private UserProfile _profile;
+        private UserSocial _social;
         private bool _refreshRoles;
         private string[] _roles;
         private bool _rolesHydrated = Null.NullBoolean;
@@ -319,6 +320,20 @@ namespace DotNetNuke.Entities.Users
         [SortOrder(0), MaxLength(100), IsReadOnly(true), Required(true)]
         public string Username { get; set; }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Scoial object
+        /// </summary>
+        /// -----------------------------------------------------------------------------
+        [Browsable(false)]
+        public UserSocial Social
+        {
+            get
+            {
+                return _social ?? (_social = new UserSocial(this));
+            }
+        }
+    
         #region IPropertyAccess Members
 
         /// <summary>

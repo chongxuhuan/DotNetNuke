@@ -269,6 +269,12 @@
                             <div class="dnnFormItem">
                                 <dnn:Label runat="server" ControlName="txtqualifier" ResourceKey="Qualifier" HelpKey="QualifierHelp" />
                                 <asp:TextBox ID="txtqualifier" runat="Server" />
+                                <asp:RegularExpressionValidator ID="valQualifier" runat="server"
+                                  resourcekey="InvalidQualifier.Text" 
+                                  CssClass="dnnFormMessage dnnFormError"                                   
+                                  ControlToValidate="txtqualifier"
+                                  ValidationExpression="^[a-zA-Z][a-zA-Z0-9_]{0,49}$"
+                                  ></asp:RegularExpressionValidator>
                             </div>
                         </div>
                         <br />
@@ -430,7 +436,7 @@
                 }
             	
             	//prevent next button to be click twice, install scripts' button will be handled by other function.
-            	if(pageNo !== 3) {
+            	if(pageNo !== 2 && pageNo !== 3) {
             		$("#" + nextButtonID).click(function(e) {
             			if (!$(this).hasClass("dnnDisabledAction")) {
             				$(this).addClass("dnnDisabledAction");

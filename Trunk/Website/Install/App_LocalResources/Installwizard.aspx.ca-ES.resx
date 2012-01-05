@@ -12,7 +12,7 @@
     
     Example:
     
-    ... ado.net/XML headers && schema ...
+    ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
@@ -474,138 +474,141 @@ Amb l'Explorador de Windows obriu la carpeta arrel de la web (per defecte C:\Dot
   <data name="Complete.Text" xml:space="preserve">
     <value>Instal·lació de la base de dades finalitzada</value>
   </data>
-  <data name="AuthSystems.Text">
+  <data name="AuthSystems.Text" xml:space="preserve">
     <value>Sistemes d'autenticació</value>
   </data>
-  <data name="AuthSystemsDetail.Text">
+  <data name="AuthSystemsDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke suporta múltiples sistemes d'autenticació. En aquesta pàgina podeu escollir quins sistemes voleu que s'instal·lin.&lt;/p&gt;
 &lt;p&gt;La instal·lació d'un sistema d'autenticació no fa que aquest s'activi automàticament per tots els portals, però el fa disponible per a poder-lo configurar.&lt;/p&gt;</value>
   </data>
-  <data name="AuthSystemsTitle.Text">
+  <data name="AuthSystemsTitle.Text" xml:space="preserve">
     <value>Instal·lació de sistemes d'autenticació</value>
   </data>
-  <data name="EmailErrorMessage.Text">
+  <data name="EmailErrorMessage.Text" xml:space="preserve">
     <value>S'ha produït un error en l'enviament del correu de prova. L'error és:&lt;br /&gt;{0}</value>
   </data>
-  <data name="EmailSentMessage.Text">
+  <data name="EmailSentMessage.Text" xml:space="preserve">
     <value>El correu s'ha enviat correctament</value>
   </data>
-  <data name="EmailTestMessageSubject.Text">
+  <data name="EmailTestMessageSubject.Text" xml:space="preserve">
     <value>Test de configuració de SMTP</value>
   </data>
-  <data name="EnableUpdate.Text">
+  <data name="EnableUpdate.Text" xml:space="preserve">
     <value>Voleu que el sistema mostri un avís de notificació quan hi hagi actualitzacions disponibles?</value>
   </data>
-  <data name="HostWarning.Text">
+  <data name="HostWarning.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;El nom de l'usuari amfitrió conté caràcters invàlids (només A-Z, 0-9, - i . són permesos).  Modifiqueu el nom d'usuari per poder continuar amb la instal·lació.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
-  <data name="InstallAuthSystemError.Text">
+  <data name="InstallAuthSystemError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;S'ha produït un error en la instal·lació dels sistemes d'autenticació:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
-  <data name="InstallContainerError.Text">
+  <data name="InstallContainerError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;S'ha produït un error en la instal·lació dels contenidors:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
-  <data name="InstallLanguageError.Text">
+  <data name="InstallLanguageError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;S'ha produït un error en la instal·lació dels idiomes:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="InstallProviderError.Text">
+  <data name="InstallProviderError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;S'ha produït un error en la instal·lació dels Proveïdors:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="InstallSkinError.Text">
+  <data name="InstallSkinError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;S'ha produït un error en la instal·lació de l'aparença:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
-  <data name="No.Text">
+  <data name="No.Text" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="NoPackages.Text">
+  <data name="NoPackages.Text" xml:space="preserve">
     <value>No hi cap sistema d'autenticació per instal·lar.</value>
   </data>
-  <data name="Page10.Title">
+  <data name="Page10.Title" xml:space="preserve">
     <value>Instal·lació del portal</value>
   </data>
-  <data name="Page6.Title">
+  <data name="Page6.Title" xml:space="preserve">
     <value>Instal·lació d'aparences</value>
   </data>
-  <data name="Providers.Text">
+  <data name="Providers.Text" xml:space="preserve">
     <value>Proveïdors</value>
   </data>
-  <data name="ProvidersDetail.Text">
+  <data name="ProvidersDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;DotNetNuke utilitza el model de proveïdors per determinades extensions. En aquesta pàgina podeu escollir quins proveïdors s'han d'instal·lar.&lt;/p&gt;
 </value>
   </data>
-  <data name="ProvidersTitle.Text">
+  <data name="ProvidersTitle.Text" xml:space="preserve">
     <value>Instal·lació de proveïdors</value>
   </data>
-  <data name="SMTPAnonymous.Text">
+  <data name="SMTPAnonymous.Text" xml:space="preserve">
     <value>Anònima</value>
   </data>
-  <data name="SMTPAuthentication.Text">
+  <data name="SMTPAuthentication.Text" xml:space="preserve">
     <value>Autenticació:</value>
   </data>
-  <data name="SMTPBasic.Text">
+  <data name="SMTPBasic.Text" xml:space="preserve">
     <value>Bàsica</value>
   </data>
-  <data name="SMTPEnableSSL.Text">
+  <data name="SMTPEnableSSL.Text" xml:space="preserve">
     <value>Activa SSL:</value>
   </data>
-  <data name="SMTPError.Text">
+  <data name="SMTPError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Errors d'SMTP:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="SMTPNTLM.Text">
+  <data name="SMTPNTLM.Text" xml:space="preserve">
     <value>NTLM</value>
   </data>
-  <data name="SMTPPassword.Text">
+  <data name="SMTPPassword.Text" xml:space="preserve">
     <value>Contrasenya:</value>
   </data>
-  <data name="SMTPServer.Text">
+  <data name="SMTPServer.Text" xml:space="preserve">
     <value>Servidor:</value>
   </data>
-  <data name="SMTPSettings.Text">
+  <data name="SMTPSettings.Text" xml:space="preserve">
     <value>Configuració del servidor SMTP</value>
   </data>
-  <data name="SMTPSettingsHelp.Text">
+  <data name="SMTPSettingsHelp.Text" xml:space="preserve">
     <value>Aquí podeu configurar i provar el vostre servidor SMTP</value>
   </data>
-  <data name="SMTPSuccess.Text">
+  <data name="SMTPSuccess.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='green'&gt;SMTP correcte:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="SMTPUsername.Text">
+  <data name="SMTPUsername.Text" xml:space="preserve">
     <value>Usuari:</value>
   </data>
-  <data name="SpecifyHostEmailMessage.Text">
+  <data name="SpecifyHostEmailMessage.Text" xml:space="preserve">
     <value>Heu d'indicar el correu de l'usuari amfitrió</value>
   </data>
-  <data name="TestSMTP.Text">
+  <data name="TestSMTP.Text" xml:space="preserve">
     <value>Prova de configuració de SMTP</value>
   </data>
-  <data name="UpdateDetail.Text">
+  <data name="UpdateDetail.Text" xml:space="preserve">
     <value>El sistema pot verificar periòdicament si hi actualitzacions importants. Aquí s'inclouen actualitzacions de seguretat, crítiques i menors. En cap cas es guardarà informació que es pugui utilitzar per identificar-vos o per contactar-vos sense el vostre consentiment explícit.</value>
   </data>
-  <data name="UpdateEmail.Text">
+  <data name="UpdateEmail.Text" xml:space="preserve">
     <value>Voleu rebre notificacions per correu de les actualitzacions del producte?</value>
   </data>
-  <data name="UpdateTitle.Text">
+  <data name="UpdateTitle.Text" xml:space="preserve">
     <value>Servei d'actualitzacions - Ajuda a protegir la integritat del vostre web</value>
   </data>
-  <data name="Yes.Text">
+  <data name="Yes.Text" xml:space="preserve">
     <value>Sí</value>
   </data>
-  <data name="DatabaseWarning.Text">
+  <data name="DatabaseWarning.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;El mètode automàtic s'ha deactivat ja que no s'ha trobat cap connexió vàlida a SQL Server. Podeu continuar amb la instal·lació i seleccionar alguna de les altres opcions, podreu configurar la connexió a la base de dades en un pas posterior.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
-  <data name="DbNameError.Text">
+  <data name="DbNameError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;Heu d'entrar el nom de la base de dades.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
-  <data name="InstallFailed.Text">
+  <data name="InstallFailed.Text" xml:space="preserve">
     <value>Error d'instal·lació d'scripts de base de dades</value>
   </data>
-  <data name="Page11.Title">
+  <data name="Page11.Title" xml:space="preserve">
     <value>Instal·lació finalitzada</value>
   </data>
-  <data name="AdminUserDetail.Text">
+  <data name="AdminUserDetail.Text" xml:space="preserve">
     <value>Entreu la informació per l'usuari administrador del sistema. Aquest usuari podrà crear i gestionar tots els web creats en aquesta instal·lació. És recomanable que utilitzeu una contrasenya segura, per exemple: almenys 7 caràcters amb una combinació de lletres, números i símbols. Podreu canviar la contrasenya més endavant a la secció d'administració del web.</value>
   </data>
-  <data name="AdminUserTitle.Text">
+  <data name="AdminUserTitle.Text" xml:space="preserve">
     <value>Configuració de l'usuari Administrador i informació del web</value>
+  </data>
+  <data name="InvalidQualifier.Text" xml:space="preserve">
+    <value>Object Qualifier must start with letter and no more than 50 characters.</value>
   </data>
 </root>

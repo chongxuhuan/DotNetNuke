@@ -24,7 +24,6 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Xml.Serialization;
 using DotNetNuke.Entities.Modules;
@@ -36,48 +35,78 @@ namespace DotNetNuke.Entities.Users
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
     /// Namespace:  DotNetNuke.Entities.Users
-    /// Class:      UserSocial
+    /// Class:      UserRelationshipPreference
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The UserSocial is a high-level class describing social details of a user. 
-    /// As an example, this calss contains Friends, Followers, Follows lists.
-    /// This class also contains the lists that the User owns, both Portal-Level and User-Level.
+    /// The UserRelationshipPreference class defines the relationship preference per user
+    /// The user initiating the relationship is UserID. 
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class UserSocial
+    public class UserRelationshipPreference : BaseEntityInfo, IHydratable
     {
-        #region Private
-
-        private UserInfo _userInfo;
-
-        #endregion
-
-        #region Constructor
-
-        public UserSocial(UserInfo userInfo)
-        {
-            _userInfo = userInfo;
-        }
-
-        #endregion
-
-
-        #region Public Properties
+        private int _preferenceID = -1;
 
         /// <summary>
-        /// List of Friends. Relationship.Status is Accepted.
+        /// PreferenceID - The primary key
         /// </summary>
         [XmlAttribute]
-        public IList<UserRelationship> Friends
+        public int PreferenceID
         {
             get
             {
-                var controller = new RelationshipController();
-                return controller.GetFriends(_userInfo);
+                return _preferenceID;
+            }
+            set
+            {
+                _preferenceID = value;
             }
         }
 
-        #endregion
+        /// <summary>
+        /// UserID of the User that owns the relationship
+        /// </summary>
+        [XmlAttribute]
+        public int UserID { get; set; }
+
+        /// <summary>
+        /// The ID of the Relationship to which this Relation belongs to (e.g. Friend List or Coworkers)
+        /// </summary>
+        [XmlAttribute]
+        public int RelationshipID { get; set; }
+
+        /// <summary>
+        /// Default Relationship Status to be provided to any new Relationship Request
+        /// </summary>
+        [XmlAttribute]
+        public RelationshipStatus DefaultResponse { get; set; }
+
+        /// <summary>
+        /// IHydratable.KeyID.
+        /// </summary>
+        [XmlIgnore]
+        public int KeyID
+        {
+            get
+            {
+                return this.PreferenceID;
+            }
+            set
+            {
+                this.PreferenceID = value;
+            }
+        }
+
+        /// <summary>
+        /// Fill the object with data from database.
+        /// </summary>
+        /// <param name="dr">the data reader.</param>
+        public void Fill(IDataReader dr)
+        {
+            this.PreferenceID = Convert.ToInt32(dr["PreferenceID"]);
+            this.UserID = Convert.ToInt32(dr["UserID"]);            
+            this.RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
+            this.DefaultResponse = (RelationshipStatus)Convert.ToInt32(dr["DefaultResponse"]);
+        }
     }
 }

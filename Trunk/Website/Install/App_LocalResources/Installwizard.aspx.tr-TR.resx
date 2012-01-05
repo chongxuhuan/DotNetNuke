@@ -638,4 +638,7 @@ sağlayabilirsiniz. Kurulan modüller Sayfa Editörlerinin kullanımına sunulur
   <data name="Page11.Title" xml:space="preserve">
     <value>Kurulum Tamamlandı</value>
   </data>
+  <data name="InvalidQualifier.Text" xml:space="preserve">
+    <value>Object Qualifier must start with letter and no more than 50 characters.</value>
+  </data>
 </root>

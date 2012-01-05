@@ -12,7 +12,7 @@
     
     Example:
     
-    ... ado.net/XML headers && schema ...
+    ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
@@ -430,184 +430,187 @@
   <data name="WhatsNext.Text" xml:space="preserve">
     <value>ما التالي</value>
   </data>
-  <data name="DatabaseConfigDetail.Text">
+  <data name="DatabaseConfigDetail.Text" xml:space="preserve">
     <value>&lt;div dir="rtl"&gt;يمكنك تكوين(تركيب) وضعيات قاعدة البيانات المستخدمة لدوتنت نوك في هذه الصفحة . اذا كنت تنصب دوتنت نوك في &amp;quot;حساب استضافة&amp;quot; فمزود الاستضافة سيزودك بهذه المعلومات .&lt;/div&gt;
 &lt;div dir="rtl"&gt;&amp;nbsp;&lt;/div&gt;
 &lt;div dir="rtl"&gt;هناك اختيارين ل&lt;span dir="ltr"&gt;SQL Server 2005 &lt;/span&gt;.&lt;/div&gt;
 &lt;div dir="rtl"&gt;&lt;span dir="ltr"&gt;&amp;nbsp;&lt;/span&gt;&lt;span dir="ltr"&gt;SQLServer 2005&lt;/span&gt; &lt;span&gt;تدعم استخدام ملفات قاعدة البيانات .&lt;/span&gt;&lt;/div&gt;
 &lt;div dir="rtl"&gt;في معظم الحالات يجب عليك اختيار خيار قاعدة البيانات , لكن اذا كنت تستخدم &lt;span dir="ltr"&gt;SQL Server 2005 Express&lt;/span&gt; &lt;span&gt;فوجب عليك استخدام خيار الملف .&lt;/span&gt;&lt;/div&gt;</value>
   </data>
-  <data name="DatabaseConfigTitle.Text">
+  <data name="DatabaseConfigTitle.Text" xml:space="preserve">
     <value>تكوين اتصال قاعدة البيانات</value>
   </data>
-  <data name="DatabaseInstallDetail.Text">
+  <data name="DatabaseInstallDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;تنصيب سكريبتات(برنامج نصي) قاعدة البيانات يجب ان يبدأ عند تحميل هذه الصفحة . زر التالي سوف يتم عدم تفعيله حتى استكمال تنصيب   السكريبتات.&lt;/p&gt;</value>
   </data>
-  <data name="DatabaseInstallTitle.Text">
+  <data name="DatabaseInstallTitle.Text" xml:space="preserve">
     <value>تشغيل سكريبتات(نص برامجي) لتنصيب قاعدة البيانات</value>
   </data>
-  <data name="HostUserDetail.Text">
+  <data name="HostUserDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;في هذه الصفحة يجب عليك تزويد معلومات حول حساب المستخدم مضيف او رئيس المستخدمين . هذا المستخدم يملك الوصول لجميع البوابات المنشأة في الموقع , يجب اخذ الحيطة عند تزويد المزيج اسم المستخدم/الرقم السري بحيث تكون قيمة صعبة الاختراق من قبل المستخدمين الهاكر و الماكرين  &lt;/p&gt;</value>
   </data>
-  <data name="HostUserTitle.Text">
+  <data name="HostUserTitle.Text" xml:space="preserve">
     <value>تكوين مستخدم مضيف</value>
   </data>
-  <data name="IntroDetail.Text">
+  <data name="IntroDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;مرحبا بك في معالج تنصيب دوتنت نوك . هذا المعالج سيرشدك خلال تنصيبك لتطبيق دوتنت نوك الخاص بك.&lt;/p&gt;
 &lt;p&gt;بمكنك الابحار خلال المعالج مستخدما الزرين التالي و السابق . في بعض الصفحات سترى زر ثالث "فحص...." . هذا الزر سيسمح لك بفحص التكوين(التركيب) قبل الاستمرار , لترى تأثير التغييرات .&lt;/p&gt;
 &lt;p&gt;الخطوة الاولى هي اختيار طريقة التنصيب المراد استخدامها وكذلك اللغة التي ترغب بإستخدامها لعملية التنصيب .&lt;/p&gt;</value>
   </data>
-  <data name="IntroTitle.Text">
+  <data name="IntroTitle.Text" xml:space="preserve">
     <value>{0} معالج تنصيب دوتنت نوك - الاصدار    </value>
   </data>
-  <data name="LanguagesDetail.Text">
+  <data name="LanguagesDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;دوتنت نوك قالب للتحول للهجة المحلية بصورة كاملة . في هذه الصفحة اختار اللغات التي ترغب بتنصيبها .&lt;/p&gt;
 &lt;p&gt;تنصيب اللغة لا يعني تفعيلها اوتوماتيكيا , لكن يجعل اللغة متوفرة لك .&lt;/p&gt;</value>
   </data>
-  <data name="LanguagesTitle.Text">
+  <data name="LanguagesTitle.Text" xml:space="preserve">
     <value>تنصيب الرزم اللغوية</value>
   </data>
-  <data name="ModulesDetail.Text">
+  <data name="ModulesDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;دوتنت نوك قابل للتمدد بصورة كبيرة . قابيلة التمدد هذه تزود من خلال المفهوم وحدات "تنصيبية" .&lt;/p&gt;
 &lt;p&gt;في هذه الصفحة يمكنك اختيار الوحدات الاختيارية المراد تنصيبها . تنصيب هذه الوحدات يجعلها متوفرة لإداري البوابة .&lt;/p&gt;</value>
   </data>
-  <data name="ModulesTitle.Text">
+  <data name="ModulesTitle.Text" xml:space="preserve">
     <value>تنصيب الوحدات الاختيارية</value>
   </data>
-  <data name="NoPackages.Text">
+  <data name="NoPackages.Text" xml:space="preserve">
     <value>لا يوجد انظمة تصديق يراد تنصيبها</value>
   </data>
-  <data name="Page9.Title">
+  <data name="Page9.Title" xml:space="preserve">
     <value>تنصيب مزودات</value>
   </data>
-  <data name="PermissionsDetail.Text">
+  <data name="PermissionsDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;دوتنت نوك  تملك قابلية واسعة  لإيداع الملفات وذلك للمحتوى والوحدات والجلود , هذه المميزات تتطلب وضعيات أمنية خاصة وبالتالي التطبيق يملك القابلية لإنشاء وإزالة الملفات في موقعك .&lt;/p&gt;
 &lt;p&gt;هذه الصفحة تفحص اذونات الملف الحالية للتأكد من هذه المميزات ستعمل بصورة صحيحة .&lt;/p&gt;</value>
   </data>
-  <data name="PermissionsTitle.Text">
+  <data name="PermissionsTitle.Text" xml:space="preserve">
     <value>فحص أذون الملف </value>
   </data>
-  <data name="PortalDetail.Text">
+  <data name="PortalDetail.Text" xml:space="preserve">
     <value>&lt;p&gt; في هذه الصفحة ستقوم بتكوين مضيف (او تفعيل) البوابة (الموقع).&lt;/p&gt;
 &lt;p&gt;ستحتاج لتزويد حساب مستخدم اداري . هذا المستخدم يملك الوصول لجميع وظائف البوابة , كما المستخدم مضيف يجب اخذ الحيطة عند تزويد المزيج اسم المستخدم/الرقم السري بحث تكون قيمة صعبة الاختراق من قبل المستخدمين الهاكر و الماكرين.&lt;/p&gt;</value>
   </data>
-  <data name="SkinsDetail.Text">
+  <data name="SkinsDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;دوتنت نوك يملك قابلية تجليد غنية . في هذه الصفحة يمكنك اختيار الجلود والحاويات المراد تنصيبها .&lt;/p&gt;
 &lt;p&gt;تنصيب الجلد و/او الحاوية لا يعني تفعيلها اوتو ماتيكيا , لكن يجعل الجلد متوفر لك .&lt;/p&gt;</value>
   </data>
-  <data name="SkinsTitle.Text">
+  <data name="SkinsTitle.Text" xml:space="preserve">
     <value>تنصيب الجلود والحاويات الاختيارية</value>
   </data>
-  <data name="AuthSystems.Text">
+  <data name="AuthSystems.Text" xml:space="preserve">
     <value>انظمة التصديق</value>
   </data>
-  <data name="AuthSystemsDetail.Text">
+  <data name="AuthSystemsDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;دوتنت نوك تدعم انظمة تصديق متعددة . في هذه الصفحة يمكنك اختيار الانظمة التي ترغب بتنصيبها.&lt;/p&gt;
 &lt;p&gt;تنصيب نظام التصديق لا يفعل اوتوماتيكيا لكل بوابة , لكنه سيكون متوفر لإداري البوابة .&lt;/p&gt;
 &lt;BR&gt;&lt;BR&gt;Authentication Systems : انظمة التصديق</value>
   </data>
-  <data name="AuthSystemsTitle.Text">
+  <data name="AuthSystemsTitle.Text" xml:space="preserve">
     <value>تنصيب انظمة التصديق</value>
   </data>
-  <data name="EmailErrorMessage.Text">
+  <data name="EmailErrorMessage.Text" xml:space="preserve">
     <value>كان هناك خطأ لدي المحاولة ارسال بريدالكتروني للفحص .الخطأ هو:&lt;br /&gt;{0}</value>
   </data>
-  <data name="EmailSentMessage.Text">
+  <data name="EmailSentMessage.Text" xml:space="preserve">
     <value>البريد الالكتروني ارسل بنجاح</value>
   </data>
-  <data name="EmailTestMessageSubject.Text">
+  <data name="EmailTestMessageSubject.Text" xml:space="preserve">
     <value> SMTP فحص تكوين</value>
   </data>
-  <data name="EnableUpdate.Text">
+  <data name="EnableUpdate.Text" xml:space="preserve">
     <value>هل ترغب لبرنامجك بإظهار مبين مرئي(صوري) يشعرك بأن التحديث متوفر؟</value>
   </data>
-  <data name="InstallAuthSystemError.Text">
+  <data name="InstallAuthSystemError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;خطأ بتنصيب انظمة التصديق):&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
-  <data name="InstallContainerError.Text">
+  <data name="InstallContainerError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;خطأ بتنصيب الحاوية:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
-  <data name="InstallLanguageError.Text">
+  <data name="InstallLanguageError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;خطأ بتنصيب اللغات:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="InstallSkinError.Text">
+  <data name="InstallSkinError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;خطأ بتصيب الجلد:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt; {0}</value>
   </data>
-  <data name="No.Text">
+  <data name="No.Text" xml:space="preserve">
     <value>لا</value>
   </data>
-  <data name="Page10.Title">
+  <data name="Page10.Title" xml:space="preserve">
     <value>خدمة التحديث</value>
   </data>
-  <data name="Providers.Text">
+  <data name="Providers.Text" xml:space="preserve">
     <value>Providers</value>
   </data>
-  <data name="ProvidersDetail.Text">
+  <data name="ProvidersDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;دوتنت نوك تستخدم موديل مزود وذلك للإمتداد . في هذه الصفحة يمكنك اختيار المزودات المراد تنصيبها&lt;/p&gt;
 </value>
   </data>
-  <data name="ProvidersTitle.Text">
+  <data name="ProvidersTitle.Text" xml:space="preserve">
     <value>تنصيب المزودات</value>
   </data>
-  <data name="SMTPAnonymous.Text">
+  <data name="SMTPAnonymous.Text" xml:space="preserve">
     <value>Anonymous</value>
   </data>
-  <data name="SMTPAuthentication.Text">
+  <data name="SMTPAuthentication.Text" xml:space="preserve">
     <value>Authentication:</value>
   </data>
-  <data name="SMTPBasic.Text">
+  <data name="SMTPBasic.Text" xml:space="preserve">
     <value>Basic</value>
   </data>
-  <data name="SMTPEnableSSL.Text">
+  <data name="SMTPEnableSSL.Text" xml:space="preserve">
     <value>Enable SSL:</value>
   </data>
-  <data name="SMTPError.Text">
+  <data name="SMTPError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;SMTP خطأ ب:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="SMTPNTLM.Text">
+  <data name="SMTPNTLM.Text" xml:space="preserve">
     <value>NTLM</value>
   </data>
-  <data name="SMTPPassword.Text">
+  <data name="SMTPPassword.Text" xml:space="preserve">
     <value>الرقم السري:</value>
   </data>
-  <data name="SMTPServer.Text">
+  <data name="SMTPServer.Text" xml:space="preserve">
     <value>الخادم:</value>
   </data>
-  <data name="SMTPSettings.Text">
+  <data name="SMTPSettings.Text" xml:space="preserve">
     <value>وضعيات خادم اس.ام.ت.ب</value>
   </data>
-  <data name="SMTPSettingsHelp.Text">
+  <data name="SMTPSettingsHelp.Text" xml:space="preserve">
     <value>يمكنك تكوين وفحص وضعيات خادم اس.ام.ت.ب
 &lt;BR&gt;&lt;BR&gt;SMTP Server settings.</value>
   </data>
-  <data name="SMTPSuccess.Text">
+  <data name="SMTPSuccess.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='green'&gt;SMTP نجاح :&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="SMTPUsername.Text">
+  <data name="SMTPUsername.Text" xml:space="preserve">
     <value>اسم المستخدم:</value>
   </data>
-  <data name="SpecifyHostEmailMessage.Text">
+  <data name="SpecifyHostEmailMessage.Text" xml:space="preserve">
     <value>يجب عليك تحديد عنوان البريد الالكتروني للمضيف</value>
   </data>
-  <data name="TestSMTP.Text">
+  <data name="TestSMTP.Text" xml:space="preserve">
     <value>فحص وضعيات اس.ام.ت.ب</value>
   </data>
-  <data name="UpdateDetail.Text">
+  <data name="UpdateDetail.Text" xml:space="preserve">
     <value>هذا البرنامج يمكنه روتنيا فحص اخر تحديثات مهمة لهذا الموقع . هذه التحديثات يمكن ان تكون تحديثات أمنية  , تحديثات هامة واصلاحات .(لا معلومات يتم تجميعها من الممكن ان تستخدم للتعرف عليك او الاتصال بك بدون موافقة واضحة منك). </value>
   </data>
-  <data name="UpdateEmail.Text">
+  <data name="UpdateEmail.Text" xml:space="preserve">
     <value>هل ترغب بإستلام اشعار عبر البريد الالكتروني يتعلق بتحديثات البرنامج؟</value>
   </data>
-  <data name="UpdateTitle.Text">
+  <data name="UpdateTitle.Text" xml:space="preserve">
     <value>خدمة التحديث - تساعد بحماية متكاملة لموقعك</value>
   </data>
-  <data name="Yes.Text">
+  <data name="Yes.Text" xml:space="preserve">
     <value>نعم</value>
   </data>
-  <data name="InstallProviderError.Text">
+  <data name="InstallProviderError.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;خطأ بتنصيب المزود:&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;{0}</value>
   </data>
-  <data name="HostWarning.Text">
+  <data name="HostWarning.Text" xml:space="preserve">
     <value>&lt;b&gt;&lt;font color='red'&gt;اسم مستضيفك يحوي علامات(احرف وارقام) غير قانونية . يجب عليك تعديل اسم المضيف المستخدم. المسموح به وممكن استخدامه هو :&lt;Br&gt;(A-Z, 0-9, - and . ).  &lt;/font&gt;&lt;/b&gt;</value>
+  </data>
+  <data name="InvalidQualifier.Text" xml:space="preserve">
+    <value>Object Qualifier must start with letter and no more than 50 characters.</value>
   </data>
 </root>

@@ -32,6 +32,7 @@ namespace DotNetNuke.Entities.Users
 
         UserRelationship AddFriend(UserInfo targetUser);
         UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser);
+        List<UserRelationship> GetFriends(UserInfo initiatingUser);
 
         Relationship AddUserList(string listName, string listDescription);
         Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus);
