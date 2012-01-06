@@ -490,7 +490,7 @@ namespace DotNetNuke.Entities.Users
         #region Relationship Business APIs
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Initiate a UserRelationship Request
+        /// Initiate an UserRelationship Request
         /// </summary>
         /// <param name="initiatingUser">UserInfo of the user initiating the request</param>        
         /// <param name="targetUser">UserInfo of the user being solicited for initiating the request</param>        
@@ -569,31 +569,85 @@ namespace DotNetNuke.Entities.Users
             return userRelationship;            
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Accept an existing UserRelationship Request
+        /// </summary>
+        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <remarks>
+        /// Method updates the status of the UserRelationship to Accepted.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
         public void AcceptUserRelationship(int userRelationshipID)
         {
             ManageUserRelationshipStatus(userRelationshipID, RelationshipStatus.Accepted);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Reject an existing UserRelationship Request
+        /// </summary>
+        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <remarks>
+        /// Method updates the status of the UserRelationship to Rejected.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
         public void RejectUserRelationship(int userRelationshipID)
         {
             ManageUserRelationshipStatus(userRelationshipID, RelationshipStatus.Rejected);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Report an existing UserRelationship Request
+        /// </summary>
+        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <remarks>
+        /// Method updates the status of the UserRelationship to Reported.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------        
         public void ReportUserRelationship(int userRelationshipID)
         {
             ManageUserRelationshipStatus(userRelationshipID, RelationshipStatus.Reported);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Ignore an existing UserRelationship Request
+        /// </summary>
+        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <remarks>
+        /// Method updates the status of the UserRelationship to Ignored.
+        /// </remarks>
+        /// ----------------------------------------------------------------------------- 
         public void IgnoreUserRelationship(int userRelationshipID)
         {
             ManageUserRelationshipStatus(userRelationshipID, RelationshipStatus.Ignored);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Block an existing UserRelationship Request
+        /// </summary>
+        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <remarks>
+        /// Method updates the status of the UserRelationship to Blocked.
+        /// </remarks>
+        /// ----------------------------------------------------------------------------- 
         public void BlockUserRelationship(int userRelationshipID)
         {
             ManageUserRelationshipStatus(userRelationshipID, RelationshipStatus.Blocked);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Remove an existing UserRelationship Request
+        /// </summary>
+        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <remarks>
+        /// UserRelationship record is physically removed.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------  
         public void RemoveUserRelationship(int userRelationshipID)
         {
             var userRelationship = VerifyUserRelationshipExist(userRelationshipID);
@@ -608,11 +662,32 @@ namespace DotNetNuke.Entities.Users
 
         #region Easy Wrapper APIs
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddFriend - Current User initiates a Friend Request to the Target User
+        /// </summary>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship object</returns>
+        /// <remarks>If the Friend Relationship is setup for auto-acceptance at the Portal level, the UserRelationship
+        /// status is set as Accepted, otherwise it is set as Initiated.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
         public UserRelationship AddFriend(UserInfo targetUser)
         {
             return AddFriend(UserController.GetCurrentUserInfo(), targetUser);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddFriend - Initiating User initiates a Friend Request to the Target User
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship object</returns>
+        /// <remarks>If the Friend Relationship is setup for auto-acceptance at the Portal level, the UserRelationship
+        /// status is set as Accepted, otherwise it is set as Initiated.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
         public UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser)
         {
             Requires.NotNull("The initiatingUser can't be null", initiatingUser);
@@ -620,6 +695,48 @@ namespace DotNetNuke.Entities.Users
             return InitiateUserRelationship(initiatingUser, targetUser, GetFriendsRelatioshipByPortal(initiatingUser.PortalID));
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddFollower - Current User initiates a Follower Request to the Target User
+        /// </summary>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship object</returns>
+        /// <remarks>If the Follower Relationship is setup for auto-acceptance (default) at the Portal level, the UserRelationship
+        /// status is set as Accepted, otherwise it is set as Initiated.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship AddFollower(UserInfo targetUser)
+        {
+            return AddFollower(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddFollower - Initiating User initiates a Friend Request to the Target User
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship object</returns>
+        /// <remarks>If the Follower Relationship is setup for auto-acceptance (default) at the Portal level, the UserRelationship
+        /// status is set as Accepted, otherwise it is set as Initiated.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship AddFollower(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+
+            return InitiateUserRelationship(initiatingUser, targetUser, GetFollowersRelatioshipByPortal(initiatingUser.PortalID));
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFriends - Get List of Friends (UserRelationship with status as Accepted) for an User
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <returns>List of UserRelationship objects</returns>
+        /// <remarks>This method can bring huge set of data.         
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
         public List<UserRelationship> GetFriends(UserInfo initiatingUser)
         {
             Requires.NotNull("The initiatingUser can't be null", initiatingUser);
@@ -627,11 +744,54 @@ namespace DotNetNuke.Entities.Users
             return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, GetFriendsRelatioshipByPortal(initiatingUser.PortalID).RelationshipID, RelationshipStatus.Accepted)).ToList();
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFollowers - Get List of Followers (UserRelationship with status as Accepted) for an User
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <returns>List of UserRelationship objects</returns>
+        /// <remarks>This method can bring huge set of data.         
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public List<UserRelationship> GetFollowers(UserInfo initiatingUser)
+        {
+            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, GetFollowersRelatioshipByPortal(initiatingUser.PortalID).RelationshipID, RelationshipStatus.Accepted)).ToList();
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddUserList - Add a new Relationship for the Current User, e.g. My Best Briends or My Inlaws.
+        /// </summary>        
+        /// <param name="listName">Name of the Relationship. It is also called as List Name, e.g. My School Friends.</param> 
+        /// <param name="listDescription">Description of the Relationship. It is also called as List Description </param>         
+        /// <returns>Relationship object</returns>
+        /// <remarks>Each Portal contains default Relationships of Friends and Followers. 
+        /// AddUserList can be used to create addiotional User-Level Relationships.
+        /// A DefaultStatus of None is used in this call, indicating there will not be any auto-acceptance 
+        /// when an UserRelationship request is made for this Relationship.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
         public Relationship AddUserList(string listName, string listDescription)
         {
             return AddUserList(UserController.GetCurrentUserInfo(), listName, listDescription, RelationshipStatus.None);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddUserList - Add a new Relationship for an User, e.g. My Best Briends or My Inlaws.
+        /// </summary>        
+        /// <param name="owningUser">UserInfo for the User to which the Relationship will belong. </param>        
+        /// <param name="listName">Name of the Relationship. It is also called as List Name, e.g. My School Friends.</param> 
+        /// <param name="listDescription">Description of the Relationship. It is also called as List Description </param>         
+        /// <param name="defaultStatus">DefaultRelationshiStatus of the Relationship when a new UserRelationship is initiated. 
+        /// E.g. Accepted, which means automatically accept all UserRelationship request. Default is None, meaning no automatic action.</param>         
+        /// <returns>Relationship object</returns>
+        /// <remarks>Each Portal contains default Relationships of Friends and Followers. 
+        /// AddUserList can be used to create addiotional User-Level Relationships.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
         public Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus)
         {
             var relationship = new Relationship { RelationshipID = Null.NullInteger, Name = listName, Description = listDescription, PortalID = owningUser.PortalID, UserID = owningUser.UserID, DefaultResponse = defaultStatus, RelationshipTypeID = (int)DefaultRelationshipTypes.CustomList};
@@ -641,6 +801,21 @@ namespace DotNetNuke.Entities.Users
             return relationship;
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddPortalRelationship - Add a new Relationship for a Portal, e.g. Co-workers
+        /// </summary>        
+        /// <param name="portalID">PortalID to which the Relationship will belong. Valid value includes Non-Negative number.</param>        
+        /// <param name="listName">Name of the Relationship. It is also called as List Name, e.g. Co-Workers </param> 
+        /// <param name="listDescription">Description of the Relationship. It is also called as List Description </param>         
+        /// <param name="defaultStatus">DefaultRelationshiStatus of the Relationship when a new UserRelationship is initiated. 
+        /// E.g. Accepted, which means automatically accept all UserRelationship request. Default is None, meaning no automatic action.</param> 
+        /// <param name="relationshipTypeID">RelationshipTypeID. A new Relationship requires RelationshipType to be present in the system. </param> 
+        /// <returns>Relationship object</returns>
+        /// <remarks>Each Portal contains default Relationships of Friends and Followers. 
+        /// AddPortalRelationship can be used to create addiotional Relationships
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
         public Relationship AddPortalRelationship(int portalID, string listName, string listDescription, RelationshipStatus defaultStatus, int relationshipTypeID)
         {
             var relationship = new Relationship { RelationshipID = Null.NullInteger, Name = listName, Description = listDescription, PortalID = portalID, UserID = Null.NullInteger, DefaultResponse = defaultStatus, RelationshipTypeID = relationshipTypeID};
@@ -686,7 +861,7 @@ namespace DotNetNuke.Entities.Users
                     Description = DefaultRelationshipTypes.Followers.ToString(),
                     PortalID = portalID,
                     UserID = Null.NullInteger,
-                    DefaultResponse = RelationshipStatus.None,
+                    DefaultResponse = RelationshipStatus.Accepted,
                     RelationshipTypeID = (int)DefaultRelationshipTypes.Followers
                 };
                 SaveRelationship(followerRelationship);

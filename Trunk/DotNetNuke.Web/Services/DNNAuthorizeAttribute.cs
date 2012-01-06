@@ -23,12 +23,15 @@ namespace DotNetNuke.Web.Services
             }
 
             IPrincipal user = httpContext.User;
-            if (!AllowAnonymous && !user.Identity.IsAuthenticated)
+            if (!AllowAnonymous)
             {
-                return false;
+                if (user == null || !user.Identity.IsAuthenticated)
+                {
+                    return false;
+                }
             }
 
-            if (UsersSplit.Length > 0 && !UsersSplit.Contains(user.Identity.Name, StringComparer.OrdinalIgnoreCase))
+            if (UsersSplit.Length > 0 && (user == null || !UsersSplit.Contains(user.Identity.Name, StringComparer.OrdinalIgnoreCase)))
             {
                 return false;
             }

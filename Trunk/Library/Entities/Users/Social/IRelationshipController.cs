@@ -34,6 +34,10 @@ namespace DotNetNuke.Entities.Users
         UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser);
         List<UserRelationship> GetFriends(UserInfo initiatingUser);
 
+        UserRelationship AddFollower(UserInfo targetUser);
+        UserRelationship AddFollower(UserInfo initiatingUser, UserInfo targetUser);
+        List<UserRelationship> GetFollowers(UserInfo initiatingUser);
+
         Relationship AddUserList(string listName, string listDescription);
         Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus);
         Relationship AddPortalRelationship(int portalID, string listName, string listDescription, RelationshipStatus defaultStatus, int relationshipTypeID);

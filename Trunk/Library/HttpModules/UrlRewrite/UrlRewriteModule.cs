@@ -470,14 +470,14 @@ namespace DotNetNuke.HttpModules
             var strDoubleDecodeURL = server.UrlDecode(server.UrlDecode(request.RawUrl));
             if (Regex.Match(strURL, "[\\\\/]\\.\\.[\\\\/]").Success || Regex.Match(strDoubleDecodeURL, "[\\\\/]\\.\\.[\\\\/]").Success)
             {
-                Services.Exceptions.Exceptions.ProcessHttpException(request);
+                DotNetNuke.Services.Exceptions.Exceptions.ProcessHttpException(request);
             }
             try
             {
                 //fix for ASP.NET canonicalization issues http://support.microsoft.com/?kbid=887459
                 if ((request.Path.IndexOf("\\") >= 0 || Path.GetFullPath(request.PhysicalPath) != request.PhysicalPath))
                 {
-                    Services.Exceptions.Exceptions.ProcessHttpException(request);
+                    DotNetNuke.Services.Exceptions.Exceptions.ProcessHttpException(request);
                 }
             }
             catch (Exception exc)
@@ -532,7 +532,7 @@ namespace DotNetNuke.HttpModules
             if (parsingError)
             {
                 //The tabId or PortalId are incorrectly formatted (potential DOS)
-                Services.Exceptions.Exceptions.ProcessHttpException(request);
+                DotNetNuke.Services.Exceptions.Exceptions.ProcessHttpException(request);
             }
 
 

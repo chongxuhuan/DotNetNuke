@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -38,6 +39,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 
@@ -397,6 +399,9 @@ namespace DotNetNuke.Web.UI
                 {
                     xmlDoc.Load(templateMapPath);
                     TabController.DeserializePanes(xmlDoc.SelectSingleNode("//portal/tabs/tab/panes"), tab.PortalID, tab.TabID, PortalTemplateModuleAction.Ignore, new Hashtable());
+                    
+                    //save tab permissions
+                    DeserializeTabPermissions(xmlDoc.SelectNodes("//portal/tabs/tab/tabpermissions/permission"), tab);
                 }
                 catch (Exception ex)
                 {
@@ -440,6 +445,58 @@ namespace DotNetNuke.Web.UI
             {
                 return false;
             }
+        }
+
+        private static void DeserializeTabPermissions(XmlNodeList nodeTabPermissions, TabInfo tab)
+        {
+            var permissionController = new PermissionController();
+            var roleController = new RoleController();
+            foreach (XmlNode xmlTabPermission in nodeTabPermissions)
+            {
+                var permissionKey = XmlUtils.GetNodeValue(xmlTabPermission.CreateNavigator(), "permissionkey");
+                var permissionCode = XmlUtils.GetNodeValue(xmlTabPermission.CreateNavigator(), "permissioncode");
+                var roleName = XmlUtils.GetNodeValue(xmlTabPermission.CreateNavigator(), "rolename");
+                var allowAccess = XmlUtils.GetNodeValueBoolean(xmlTabPermission, "allowaccess");
+                var permissions = permissionController.GetPermissionByCodeAndKey(permissionCode, permissionKey);
+                var permissionId = permissions.Cast<PermissionInfo>().Last().PermissionID;
+
+                var roleId = int.MinValue;
+                switch (roleName)
+                {
+                    case Globals.glbRoleAllUsersName:
+                        roleId = Convert.ToInt32(Globals.glbRoleAllUsers);
+                        break;
+                    case Globals.glbRoleUnauthUserName:
+                        roleId = Convert.ToInt32(Globals.glbRoleUnauthUser);
+                        break;
+                    default:
+                        var portalController = new PortalController();
+                        var portal = portalController.GetPortal(tab.PortalID);
+                        var role = roleController.GetRoleByName(portal.PortalID, roleName);
+                        if (role != null)
+                        {
+                            roleId = role.RoleID;
+                        }
+                        break;
+                }
+                if (roleId != int.MinValue &&
+                        !tab.TabPermissions.Cast<TabPermissionInfo>().Any(p =>
+                                                                            p.RoleID == roleId
+                                                                            && p.PermissionID == permissionId))
+                {
+                    var tabPermission = new TabPermissionInfo
+                    {
+                        TabID = tab.TabID,
+                        PermissionID = permissionId,
+                        RoleID = roleId,
+                        AllowAccess = allowAccess
+                    };
+
+                    tab.TabPermissions.Add(tabPermission);
+                }
+            }
+
+            new TabController().UpdateTab(tab);
         }
     }
 

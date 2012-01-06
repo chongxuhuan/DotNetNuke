@@ -40,8 +40,7 @@ namespace DotNetNuke.Entities.Users
     /// -----------------------------------------------------------------------------
     /// <summary>
     /// The UserSocial is a high-level class describing social details of a user. 
-    /// As an example, this calss contains Friends, Followers, Follows lists.
-    /// This class also contains the lists that the User owns, both Portal-Level and User-Level.
+    /// As an example, this class contains Friends, Followers, Follows lists.
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
@@ -66,7 +65,7 @@ namespace DotNetNuke.Entities.Users
         #region Public Properties
 
         /// <summary>
-        /// List of Friends. Relationship.Status is Accepted.
+        /// List of Friends with UserRelationship Status as Accepted.
         /// </summary>
         [XmlAttribute]
         public IList<UserRelationship> Friends
@@ -75,6 +74,19 @@ namespace DotNetNuke.Entities.Users
             {
                 var controller = new RelationshipController();
                 return controller.GetFriends(_userInfo);
+            }
+        }
+
+        /// <summary>
+        /// List of Followerss with UserRelationship Status as Accepted.
+        /// </summary>
+        [XmlAttribute]
+        public IList<UserRelationship> Followers
+        {
+            get
+            {
+                var controller = new RelationshipController();
+                return controller.GetFollowers(_userInfo);
             }
         }
 

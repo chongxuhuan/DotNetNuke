@@ -200,7 +200,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             writer.WriteStartElement("profiledefinitions");
             foreach (ProfilePropertyDefinition objProfileProperty in
-                ProfileController.GetPropertyDefinitionsByPortal(objportal.PortalID, false))
+                ProfileController.GetPropertyDefinitionsByPortal(objportal.PortalID, false, false))
             {
                 writer.WriteStartElement("profiledefinition");
 

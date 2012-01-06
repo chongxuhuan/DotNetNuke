@@ -590,7 +590,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public void InitialiseProfile(int portalId, bool useDefaults)
         {
-            _profileProperties = ProfileController.GetPropertyDefinitionsByPortal(portalId, true);
+            _profileProperties = ProfileController.GetPropertyDefinitionsByPortal(portalId, true, false);
             if (useDefaults)
             {
                 foreach (ProfilePropertyDefinition ProfileProperty in _profileProperties)

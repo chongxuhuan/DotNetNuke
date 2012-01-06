@@ -68,6 +68,7 @@
     <Compile Include="Exception\ExceptionModule.cs" />
     <Compile Include="Membership\MembershipModule.cs" />
     <Compile Include="Personalization\PersonalizationModule.cs" />
+    <Compile Include="Services\ServicesModule.cs" />
     <Compile Include="Users Online\UsersOnlineModule.cs" />
   </ItemGroup>
   <ItemGroup>

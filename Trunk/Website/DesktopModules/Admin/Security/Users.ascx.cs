@@ -790,7 +790,7 @@ namespace DotNetNuke.Modules.Admin.Users
 					//Load the Search Combo
                     ddlSearchType.Items.Add(AddSearchItem("Username"));
                     ddlSearchType.Items.Add(AddSearchItem("Email"));
-                    ProfilePropertyDefinitionCollection profileProperties = ProfileController.GetPropertyDefinitionsByPortal(PortalId, false);
+                    ProfilePropertyDefinitionCollection profileProperties = ProfileController.GetPropertyDefinitionsByPortal(PortalId, false, false);
                     foreach (ProfilePropertyDefinition definition in profileProperties)
                     {
                         var controller = new ListController();

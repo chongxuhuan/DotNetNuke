@@ -412,12 +412,29 @@ namespace DotNetNuke.Entities.Profile
         /// -----------------------------------------------------------------------------
         public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByPortal(int portalId, bool clone)
         {
+            return GetPropertyDefinitionsByPortal(portalId, clone, true);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a collection of Property Defintions from the Data Store by portal
+        /// </summary>
+        /// <param name="portalId">The id of the Portal</param>
+        /// <param name="clone">Whether to use a clone object.</param>
+        /// <param name="includeDeleted">Whether to include deleted profile properties.</param>
+        /// <returns>A ProfilePropertyDefinitionCollection object</returns>
+        /// -----------------------------------------------------------------------------
+        public static ProfilePropertyDefinitionCollection GetPropertyDefinitionsByPortal(int portalId, bool clone, bool includeDeleted)
+        {
             portalId = GetEffectivePortalId(portalId);
-            
+
             var definitions = new ProfilePropertyDefinitionCollection();
             foreach (ProfilePropertyDefinition definition in GetPropertyDefinitions(portalId))
             {
-                definitions.Add(clone ? definition.Clone() : definition);
+                if (!definition.Deleted || includeDeleted)
+                {
+                    definitions.Add(clone ? definition.Clone() : definition);
+                }
             }
             return definitions;
         }

@@ -51,7 +51,8 @@ namespace DotNetNuke.Tests.Core.Controllers
 
         private DataTable _dtRelationshipTypes;
         private DataTable _dtRelationships;
-        private DataTable _dtUserRelationships;		
+        private DataTable _dtUserRelationships;
+        private DataTable _dtUserRelationshipPreferences;		
 
 
 		#endregion
@@ -118,6 +119,14 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtUserRelationships.Columns.Add("RelationshipID", typeof(int));
             _dtUserRelationships.Columns.Add("Status", typeof(int));
             _dtUserRelationships.PrimaryKey = new[] { pkUserRelationshipID };
+
+            //UserRelationships
+            _dtUserRelationshipPreferences = new DataTable("UserRelationshipPreferences");
+            var pkPreferenceID = _dtUserRelationshipPreferences.Columns.Add("PreferenceID", typeof(int));
+            _dtUserRelationshipPreferences.Columns.Add("UserID", typeof(int));
+            _dtUserRelationshipPreferences.Columns.Add("RelationshipID", typeof(int));
+            _dtUserRelationshipPreferences.Columns.Add("DefaultResponse", typeof(int));
+            _dtUserRelationshipPreferences.PrimaryKey = new[] { pkPreferenceID };
 
             //create default UserRelationship records            
         }
@@ -221,6 +230,44 @@ namespace DotNetNuke.Tests.Core.Controllers
             _relationshipController.AddFriend(initiatingUser, targetUser);
         }
 
+        [Test]
+        [ExpectedException(typeof(UserRelationshipExistsException))]
+        public void RelationshipController_AddFriend_Throws_On_Existing_Relationship()
+        {
+            //Arrange
+            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
+            var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
+
+            //Any UserRelationship between user10 and user11
+            _dtUserRelationships.Rows.Clear();
+            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
+
+            //setup mock DataService            
+            _mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+
+            //Act, Assert
+            _relationshipController.AddFriend(initiatingUser, targetUser);
+        }
+
+        [Test]
+        [ExpectedException(typeof(UserRelationshipBlockedException))]
+        public void RelationshipController_AddFriend_Throws_On_Blocked_Relationship()
+        {
+            //Arrange
+            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
+            var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
+
+            //Blocked UserRelationship between user10 and user11
+            _dtUserRelationships.Rows.Clear();
+            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.Blocked);
+
+            //setup mock DataService            
+            _mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+
+            //Act, Assert
+            _relationshipController.AddFriend(initiatingUser, targetUser);
+        }
+
         #endregion
 
         #region InitiateUserRelationship Tests
@@ -236,45 +283,102 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             //Act, Assert
             _relationshipController.InitiateUserRelationship(initiatingUser, targetUser, relationship);
+        }     
+
+        [Test]       
+        public void RelationshipController_InitiateUserRelationship_Returns_Status_Accepted_When_Default_Relationship_Action_Is_Accepted()
+        {
+            //Arrange
+            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
+            var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
+            var relationship = new Relationship { RelationshipID = Constants.SOCIAL_FollowerRelationshipTypeID , DefaultResponse = RelationshipStatus.Accepted};
+           
+            _dtUserRelationships.Rows.Clear();
+            _dtUserRelationshipPreferences.Rows.Clear();
+
+            //setup mock DataService
+            var mockDataService = new Mock<IDataService>();
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationshipPreferences.CreateDataReader());
+
+            //Act
+            var userRelationship = (new RelationshipController(mockDataService.Object)).InitiateUserRelationship(initiatingUser, targetUser, relationship);
+
+            //Assert
+            Assert.AreEqual(userRelationship.Status, RelationshipStatus.Accepted);
         }
 
         [Test]
-        [ExpectedException(typeof(UserRelationshipExistsException))]
-        public void RelationshipController_InitiateUserRelationship_Throws_On_Existing_Relationship()
+        public void RelationshipController_InitiateUserRelationship_Returns_Status_Initiated_When_Default_Relationship_Action_Is_None()
         {
             //Arrange
-            var initiatingUser = new UserInfo {UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero};
-            var targetUser = new UserInfo {UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero};
+            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
+            var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
+            var relationship = new Relationship { RelationshipID = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.None };
 
-            //Any UserRelationship between user10 and user11
             _dtUserRelationships.Rows.Clear();
-            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
+            _dtUserRelationshipPreferences.Rows.Clear();
 
-            //setup mock DataService            
-            _mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
-            
-            //Act, Assert
-            _relationshipController.AddFriend(initiatingUser, targetUser);
+            //setup mock DataService
+            var mockDataService = new Mock<IDataService>();
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationshipPreferences.CreateDataReader());
+
+            //Act
+            var userRelationship = (new RelationshipController(mockDataService.Object)).InitiateUserRelationship(initiatingUser, targetUser, relationship);
+
+            //Assert
+            Assert.AreEqual(userRelationship.Status, RelationshipStatus.Initiated);
         }
 
         [Test]
-        [ExpectedException(typeof(UserRelationshipBlockedException))]
-        public void RelationshipController_InitiateUserRelationship_Throws_On_Blocked_Relationship()
+        public void RelationshipController_InitiateUserRelationship_Returns_Status_Accepted_When_TargetUsers_Relationship_Action_Is_Accepted()
         {
             //Arrange
-            var initiatingUser = new UserInfo {UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero};
-            var targetUser = new UserInfo {UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero};
+            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
+            var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
+            var relationship = new Relationship { RelationshipID = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
 
-            //Blocked UserRelationship between user10 and user11
             _dtUserRelationships.Rows.Clear();
-            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.Blocked);
+            _dtUserRelationshipPreferences.Rows.Clear();
+            _dtUserRelationshipPreferences.Rows.Add(Constants.SOCIAL_PrefereceIDForUser11, Constants.USER_TenId, Constants.USER_ElevenId, RelationshipStatus.Accepted);
 
-            //setup mock DataService            
-            _mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());            
+            //setup mock DataService
+            var mockDataService = new Mock<IDataService>();
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationshipPreferences.CreateDataReader());
 
-            //Act, Assert
-            _relationshipController.AddFriend(initiatingUser, targetUser);
+            //Act
+            var userRelationship = (new RelationshipController(mockDataService.Object)).InitiateUserRelationship(initiatingUser, targetUser, relationship);
+
+            //Assert
+            Assert.AreEqual(userRelationship.Status, RelationshipStatus.Accepted);
         }
+
+        [Test]
+        public void RelationshipController_InitiateUserRelationship_Returns_Status_Initiated_When_TargetUsers_Relationship_Action_Is_None()
+        {
+            //Arrange
+            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
+            var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
+            var relationship = new Relationship { RelationshipID = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
+
+            _dtUserRelationships.Rows.Clear();
+            _dtUserRelationshipPreferences.Rows.Clear();
+            _dtUserRelationshipPreferences.Rows.Add(Constants.SOCIAL_PrefereceIDForUser11, Constants.USER_TenId, Constants.USER_ElevenId, RelationshipStatus.None);
+
+            //setup mock DataService
+            var mockDataService = new Mock<IDataService>();
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationshipPreferences.CreateDataReader());
+
+            //Act
+            var userRelationship = (new RelationshipController(mockDataService.Object)).InitiateUserRelationship(initiatingUser, targetUser, relationship);
+
+            //Assert
+            Assert.AreEqual(userRelationship.Status, RelationshipStatus.Initiated);
+        }
+
         #endregion
 
         #region UpdateRelationship Tests

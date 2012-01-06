@@ -148,7 +148,7 @@ namespace DotNetNuke.Security.Profile
             ProfilePropertyDefinition profProperty;
 
             int portalId = user.IsSuperUser ? Globals.glbSuperUserAppName : user.PortalID;
-            var properties = ProfileController.GetPropertyDefinitionsByPortal(portalId, true);
+            var properties = ProfileController.GetPropertyDefinitionsByPortal(portalId, true, false);
 
             //Load the Profile properties
             if (user.UserID > Null.NullInteger)

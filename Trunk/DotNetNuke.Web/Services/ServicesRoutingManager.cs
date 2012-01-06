@@ -8,7 +8,7 @@ using DotNetNuke.Instrumentation;
 
 namespace DotNetNuke.Web.Services
 {
-    public class ServicesRoutingManager
+    public sealed class ServicesRoutingManager
     {
         private readonly RouteCollection _routes;
         private IList<string> _prefixes;
@@ -91,17 +91,26 @@ namespace DotNetNuke.Web.Services
             return t != null && t.IsClass && !t.IsAbstract && t.IsVisible && typeof(IServiceRouteMapper).IsAssignableFrom(t);
         }
 
-        //todo paramter ordering informed by MVC, or just make it work nice for us
-        public IList<Route> MapRoute(string uniqueServiceName, string name, string url, object defaults, object constraints, string[] namespaces)
+        /// <summary>
+        /// Sets up the route(s) for DotNetNuke services
+        /// </summary>
+        /// <param name="moduleFolderName">The name of the folder under DesktopModules in which your module resides</param>
+        /// <param name="name">The name of the route</param>
+        /// <param name="url">The parameterized portion of the route</param>
+        /// <param name="defaults">Default values for the route parameters</param>
+        /// <param name="constraints">The constraints</param>
+        /// <param name="namespaces">The namespace(s) in which to locate the controllers for this route</param>
+        /// <returns>A list of all routes that were registered.</returns>
+        public IList<Route> MapRoute(string moduleFolderName, string name, string url, object defaults, object constraints, string[] namespaces)
         {
             if(namespaces == null || namespaces.Length == 0 || String.IsNullOrEmpty(namespaces[0]))
             {
                 throw new ArgumentException("At least one namespace must be specified.");
             }
 
-            if(String.IsNullOrEmpty(uniqueServiceName))
+            if(String.IsNullOrEmpty(moduleFolderName))
             {
-                throw new ArgumentNullException("uniqueServiceName");
+                throw new ArgumentNullException("moduleFolderName");
             }
 
             url = url.Trim(new[] {'/', '\\'});
@@ -112,8 +121,8 @@ namespace DotNetNuke.Web.Services
             int i = 0;
             foreach (var prefix in prefixes)
             {
-                var routeName = uniqueServiceName + "-" + name + "-" + i;
-                var routeUrl = prefix + "DesktopModules/API/" + uniqueServiceName + "/" + url;
+                var routeName = moduleFolderName + "-" + name + "-" + i;
+                var routeUrl = string.Format("{0}DesktopModules/{1}/API/{2}", prefix, moduleFolderName, url);
                 routes.Add(_routes.MapRoute(routeName, routeUrl, defaults, constraints, namespaces));
                 DnnLog.Trace("Mapping route: " + routeName + " @ " + routeUrl);
 
@@ -123,9 +132,18 @@ namespace DotNetNuke.Web.Services
             return routes;
         }
 
-        public IList<Route> MapRoute(string uniqueServiceName, string name, string url, object defaults, string[] namespaces)
+        /// <summary>
+        /// Sets up the route(s) for DotNetNuke services
+        /// </summary>
+        /// <param name="moduleFolderName">The name of the folder under DesktopModules in which your module resides</param>
+        /// <param name="name">The name of the route</param>
+        /// <param name="url">The parameterized portion of the route</param>
+        /// <param name="defaults">Default values for the route parameters</param>
+        /// <param name="namespaces">The namespace(s) in which to locate the controllers for this route</param>
+        /// <returns>A list of all routes that were registered.</returns>
+        public IList<Route> MapRoute(string moduleFolderName, string name, string url, object defaults, string[] namespaces)
         {
-            return MapRoute(uniqueServiceName, name, url, defaults, null, namespaces);
+            return MapRoute(moduleFolderName, name, url, defaults, null, namespaces);
         }
 
         private IEnumerable<string> GetRoutePrefixes()

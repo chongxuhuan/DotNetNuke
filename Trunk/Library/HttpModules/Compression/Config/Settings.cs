@@ -90,7 +90,7 @@ namespace DotNetNuke.HttpModules.Compression
                 }
                 catch (Exception e)
                 {
-                    Services.Exceptions.Exceptions.LogException(e);
+                    DotNetNuke.Services.Exceptions.Exceptions.LogException(e);
                 }
 
                 string filePath = Common.Utilities.Config.GetPathToFile(Common.Utilities.Config.ConfigFileType.Compression);

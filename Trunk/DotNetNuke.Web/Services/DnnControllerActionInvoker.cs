@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace DotNetNuke.Web.Services
@@ -38,6 +39,18 @@ namespace DotNetNuke.Web.Services
             }
 
             return filters;
+        }
+
+        protected override AuthorizationContext InvokeAuthorizationFilters(ControllerContext controllerContext, IList<IAuthorizationFilter> filters, ActionDescriptor actionDescriptor)
+        {
+            var context = base.InvokeAuthorizationFilters(controllerContext, filters, actionDescriptor);
+
+            if(context.Result != null && context.Result is HttpUnauthorizedResult)
+            {
+                controllerContext.HttpContext.Items["DnnReal401"] = true;
+            }
+
+            return context;
         }
     }
 }

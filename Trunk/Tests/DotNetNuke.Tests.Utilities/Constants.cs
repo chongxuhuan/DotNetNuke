@@ -296,6 +296,7 @@ namespace DotNetNuke.Tests.Utilities
         public const int SOCIAL_FollowerRelationshipID = 2;
         public const int SOCIAL_UserRelationshipIDUser10User11 = 3;
         public const int SOCIAL_UserRelationshipIDUser12User13 = 4;
+        public const int SOCIAL_PrefereceIDForUser11 = 1;
 
         #endregion
         

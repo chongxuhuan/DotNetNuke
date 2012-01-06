@@ -29,6 +29,15 @@ using System;
 
 namespace DotNetNuke.Entities.Users
 {
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Entities.Users
+    /// Enum:      RelationshipStatus
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The RelationshipStatus enum describes various UserRelationship statuses. E.g. Accepted, Blocked, Initiated.
+    /// </summary>
+    /// -----------------------------------------------------------------------------
 	public enum RelationshipStatus
 	{
         /// <summary>

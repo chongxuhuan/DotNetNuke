@@ -618,9 +618,9 @@ namespace DotNetNuke.UI.ControlPanel
 				ModuleDefinitionController.GetModuleDefinitionsByDesktopModuleID(desktopModuleId).Values)
 			{
 				var objModule = new ModuleInfo();
-				objModule.Initialize(PortalSettings.Current.PortalId);
+                objModule.Initialize(PortalSettings.Current.ActiveTab.PortalID);
 
-				objModule.PortalID = PortalSettings.Current.PortalId;
+                objModule.PortalID = PortalSettings.Current.ActiveTab.PortalID;
 				objModule.TabID = PortalSettings.Current.ActiveTab.TabID;
 				objModule.ModuleOrder = position;
 				objModule.ModuleTitle = string.IsNullOrEmpty(title) ? objModuleDefinition.FriendlyName : title;

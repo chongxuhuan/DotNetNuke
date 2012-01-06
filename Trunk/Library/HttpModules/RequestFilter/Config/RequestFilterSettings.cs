@@ -95,7 +95,7 @@ namespace DotNetNuke.HttpModules.RequestFilter
                     }
                     catch (Exception ex)
                     {
-                        Services.Exceptions.Exceptions.LogException(new Exception(string.Format("Unable to read RequestFilter Rule: {0}:", ruleList.Current.OuterXml), ex));
+                        DotNetNuke.Services.Exceptions.Exceptions.LogException(new Exception(string.Format("Unable to read RequestFilter Rule: {0}:", ruleList.Current.OuterXml), ex));
                     }
                 }
                 if ((File.Exists(filePath)))

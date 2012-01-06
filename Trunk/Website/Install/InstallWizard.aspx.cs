@@ -25,9 +25,11 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
@@ -443,12 +445,16 @@ namespace DotNetNuke.Services.Install
 
             lstPermissions.Items.Clear();
             var permissionItem = new ListItem();
-            var verifier = new FileSystemPermissionVerifier(Server.MapPath("~"));
+            var verifiers = new List<FileSystemPermissionVerifier>
+                                {
+                                    new FileSystemPermissionVerifier(Server.MapPath("~")),
+                                    new FileSystemPermissionVerifier(Server.MapPath("~/App_Data"))
+                                };
 
             //FolderCreate
 			if (test && PermissionsValid)
-            {
-                permissionItem.Selected = verifier.VerifyFolderCreate();
+			{
+			    permissionItem.Selected = verifiers.All(v => v.VerifyFolderCreate());
                 PermissionsValid = PermissionsValid && permissionItem.Selected;
             }
             permissionItem.Enabled = false;
@@ -459,7 +465,7 @@ namespace DotNetNuke.Services.Install
             permissionItem = new ListItem();
 			if (test && PermissionsValid)
             {
-                permissionItem.Selected = verifier.VerifyFileCreate();
+                permissionItem.Selected = verifiers.All(v => v.VerifyFileCreate());
                 PermissionsValid = PermissionsValid && permissionItem.Selected;
             }
             permissionItem.Enabled = false;
@@ -470,7 +476,7 @@ namespace DotNetNuke.Services.Install
             permissionItem = new ListItem();
 			if (test && PermissionsValid)
             {
-                permissionItem.Selected = verifier.VerifyFileDelete();
+                permissionItem.Selected = verifiers.All(v => v.VerifyFileDelete());
                 PermissionsValid = PermissionsValid && permissionItem.Selected;
             }
             permissionItem.Enabled = false;
@@ -481,7 +487,7 @@ namespace DotNetNuke.Services.Install
             permissionItem = new ListItem();
 			if (test && PermissionsValid)
             {
-                permissionItem.Selected = verifier.VerifyFolderDelete();
+                permissionItem.Selected = verifiers.All(v => v.VerifyFolderDelete());
                 PermissionsValid = PermissionsValid && permissionItem.Selected;
             }
             permissionItem.Enabled = false;
