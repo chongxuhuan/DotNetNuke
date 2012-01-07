@@ -37,6 +37,7 @@ namespace DotNetNuke.Entities.Users
         UserRelationship AddFollower(UserInfo targetUser);
         UserRelationship AddFollower(UserInfo initiatingUser, UserInfo targetUser);
         List<UserRelationship> GetFollowers(UserInfo initiatingUser);
+        List<UserRelationship> GetFollowing(UserInfo initiatingUser);
 
         Relationship AddUserList(string listName, string listDescription);
         Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus);

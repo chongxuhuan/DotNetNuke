@@ -1148,11 +1148,6 @@ IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}RelationshipTypes]
 	    INSERT INTO {databaseOwner}[{objectQualifier}RelationshipTypes] ([Direction], [Name], [Description],[CreatedByUserID],[LastModifiedByUserID]) VALUES (1, N'Followers', N'Followers',-1,-1)
 	END
 GO
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}RelationshipTypes] WHERE [Name] = N'CustomList')
-    BEGIN
-	    INSERT INTO {databaseOwner}[{objectQualifier}RelationshipTypes] ([Direction], [Name], [Description],[CreatedByUserID],[LastModifiedByUserID]) VALUES (1, N'CustomList', N'A user-owned custom-list, e.g. my best friends',-1,-1)
-	END
-GO
 
 --CRUD SPs for RelationshipType
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetAllRelationshipTypes]') AND type in (N'P', N'PC'))
@@ -1448,9 +1443,12 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByUserRelationshipAndStatus] 
 	@UserID INT,	
 	@RelationshipID INT,
+	@Direction INT,
 	@Status INT
 AS 
-    SELECT  UserRelationshipID,
+	IF ( @Direction = 1 ) --OneWay
+	  BEGIN
+		 SELECT  UserRelationshipID,
 			UserID,
 			RelatedUserID,
 			RelationshipID,            
@@ -1459,11 +1457,29 @@ AS
             CreatedOnDate ,
             LastModifiedByUserID ,
             LastModifiedOnDate
-    FROM    {databaseOwner}{objectQualifier}UserRelationships    
-	WHERE UserID = @UserID	
-	AND   RelationshipID = @RelationshipID
-	AND   Status = @Status
-	ORDER BY UserRelationshipID ASC    
+		FROM    {databaseOwner}{objectQualifier}UserRelationships    
+		WHERE UserID = @UserID	
+		AND   RelationshipID = @RelationshipID
+		AND   Status = @Status
+		ORDER BY UserRelationshipID ASC    
+	  END
+	  ELSE IF ( @Direction = 2 ) --TwoWay
+	  BEGIN
+		 SELECT  UserRelationshipID,
+			UserID,
+			RelatedUserID,
+			RelationshipID,            
+			Status,            
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+		FROM    {databaseOwner}{objectQualifier}UserRelationships    
+		WHERE (UserID = @UserID OR RelatedUserID = @UserID)	--Check UserId in both the columns
+		AND   RelationshipID = @RelationshipID
+		AND   Status = @Status
+		ORDER BY UserRelationshipID ASC    		  
+	  END       
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByMultipleIDs]') AND type in (N'P', N'PC'))
@@ -1473,22 +1489,44 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByMultipleIDs] 
 	@UserID INT,
 	@RelatedUserID INT,
-	@RelationshipID INT
+	@RelationshipID INT,
+	@Direction INT
 AS 
-    SELECT  UserRelationshipID,
-			UserID,
-			RelatedUserID,
-			RelationshipID,            
-			Status,            
-            CreatedByUserID ,
-            CreatedOnDate ,
-            LastModifiedByUserID ,
-            LastModifiedOnDate
-    FROM    {databaseOwner}{objectQualifier}UserRelationships    
-	WHERE UserID = @UserID
-	AND   RelatedUserID = @RelatedUserID
-	AND   RelationshipID = @RelationshipID
-	ORDER BY UserRelationshipID ASC    
+	IF ( @Direction = 1 ) --OneWay
+	  BEGIN
+		SELECT  UserRelationshipID,
+				UserID,
+				RelatedUserID,
+				RelationshipID,            
+				Status,            
+				CreatedByUserID ,
+				CreatedOnDate ,
+				LastModifiedByUserID ,
+				LastModifiedOnDate
+		FROM    {databaseOwner}{objectQualifier}UserRelationships    
+		WHERE UserID = @UserID
+		AND   RelatedUserID = @RelatedUserID
+		AND   RelationshipID = @RelationshipID
+		ORDER BY UserRelationshipID ASC    
+	  END
+	  ELSE IF ( @Direction = 2 ) --TwoWay
+	  BEGIN
+		SELECT  UserRelationshipID,
+				UserID,
+				RelatedUserID,
+				RelationshipID,            
+				Status,            
+				CreatedByUserID ,
+				CreatedOnDate ,
+				LastModifiedByUserID ,
+				LastModifiedOnDate
+		FROM    {databaseOwner}{objectQualifier}UserRelationships    		
+		WHERE (  (UserID = @UserID AND RelatedUserID = @RelatedUserID) 
+			  OR (RelatedUserID = @UserID AND UserID = @RelatedUserID) --swap userids and check
+			  )
+		AND   RelationshipID = @RelationshipID
+		ORDER BY UserRelationshipID ASC    
+	  END
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByUserID]') AND type in (N'P', N'PC'))
@@ -1528,6 +1566,31 @@ AS
             LastModifiedOnDate
     FROM    {databaseOwner}{objectQualifier}UserRelationships    
 	WHERE RelatedUserID = @RelatedUserID
+	ORDER BY UserRelationshipID ASC    
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUser]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUser]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUser] 
+    @RelatedUserID INT,
+    @RelationshipID INT,
+    @Status INT
+AS 
+    SELECT  UserRelationshipID,
+			UserID,
+			RelatedUserID,
+			RelationshipID,            
+			Status,            
+            CreatedByUserID ,
+            CreatedOnDate ,
+            LastModifiedByUserID ,
+            LastModifiedOnDate
+    FROM    {databaseOwner}{objectQualifier}UserRelationships    
+	WHERE RelatedUserID = @RelatedUserID
+	  AND RelationshipID = @RelationshipID
+	  AND Status = @Status
 	ORDER BY UserRelationshipID ASC    
 GO
 
@@ -1655,11 +1718,11 @@ GO
 
 --CRUD SPs for UserRelationshipPreferences
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipPrefernceByID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPrefernceByID]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipPreferenceByID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPreferenceByID]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPrefernceByID] 
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPreferenceByID] 
 	@PreferenceID INT	
 AS 
     SELECT  PreferenceID,
@@ -1670,16 +1733,16 @@ AS
             CreatedOnDate ,
             LastModifiedByUserID ,
             LastModifiedOnDate
-    FROM    {databaseOwner}{objectQualifier}UserRelationshipPreference    
+    FROM    {databaseOwner}{objectQualifier}UserRelationshipPreferences    
 	WHERE @PreferenceID = @PreferenceID	  
 	ORDER BY PreferenceID ASC
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipPrefernce]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPrefernce]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipPreference]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPreference]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPrefernce] 
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipPreference] 
 	@UserID INT,
 	@RelationshipID INT
 AS 
@@ -1691,7 +1754,7 @@ AS
             CreatedOnDate ,
             LastModifiedByUserID ,
             LastModifiedOnDate
-    FROM    {databaseOwner}{objectQualifier}UserRelationshipPreference    
+    FROM    {databaseOwner}{objectQualifier}UserRelationshipPreferences    
 	WHERE UserID = @UserID
 	  AND RelationshipID = @RelationshipID
 	ORDER BY UserID ASC, RelationshipID ASC
@@ -1705,7 +1768,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipPreferen
 	@PreferenceID INT	
 AS 
 	BEGIN
-		DELETE FROM {databaseOwner}{objectQualifier}UserRelationshipPreference  
+		DELETE FROM {databaseOwner}{objectQualifier}UserRelationshipPreferences  
 		WHERE PreferenceID = @PreferenceID
 
 	END
@@ -1725,7 +1788,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveUserRelationshipPreference
 AS 
     IF ( @PreferenceID = -1 ) 
         BEGIN
-            INSERT  {databaseOwner}{objectQualifier}UserRelationshipPreference
+            INSERT  {databaseOwner}{objectQualifier}UserRelationshipPreferences
                     ( UserID,					  
 					  RelationshipID,
 					  DefaultResponse,
@@ -1749,7 +1812,7 @@ AS
         END
     ELSE 
         BEGIN
-            UPDATE  {databaseOwner}{objectQualifier}UserRelationshipPreference
+            UPDATE  {databaseOwner}{objectQualifier}UserRelationshipPreferences
             SET     UserID = @UserID,					
 					RelationshipID = @RelationshipID,
 					DefaultResponse = @DefaultResponse,

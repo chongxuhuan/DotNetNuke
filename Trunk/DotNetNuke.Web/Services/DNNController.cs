@@ -1,6 +1,5 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
-using DotNetNuke.Common;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.HttpModules.Membership;
@@ -17,11 +16,7 @@ namespace DotNetNuke.Web.Services
 
         protected override void Initialize(RequestContext requestContext)
         {
-            var domainName = Globals.GetDomainName(requestContext.HttpContext.Request);
-            var alias = PortalAliasController.GetPortalAliasInfo(domainName);
-
-            //load the PortalSettings into current context
-            var portalSettings = new PortalSettings(-1, alias);
+            var portalSettings = new PortalController().LoadPortalSettingsWhenOtherwiseUnavailable(requestContext.HttpContext.Request);
             requestContext.HttpContext.Items["PortalSettings"] = portalSettings;
 
             MembershipModule.AuthenticateRequest(requestContext.HttpContext, true /*allowUnknownExtension*/);

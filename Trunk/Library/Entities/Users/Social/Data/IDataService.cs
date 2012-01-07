@@ -66,13 +66,15 @@ namespace DotNetNuke.Entities.Users.Social.Data
 
         IDataReader GetUserRelationship(int userRelationshipID);
 
-        IDataReader GetUserRelationship(int userID, int relatedUserID, RelationshipStatus status);
+        IDataReader GetUserRelationship(int userID, int relatedUserID, RelationshipDirection relationshipDirection, RelationshipStatus status);
 
-        IDataReader GetUserRelationship(int userID, int relatedUserID, int relationshipID);
+        IDataReader GetUserRelationship(int userID, int relatedUserID, int relationshipID, RelationshipDirection relationshipDirection);
 
-        IDataReader GetUserRelationshipsByUserID(int userID);
+        IDataReader GetUserRelationshipsByInitiatingUserID(int userID);
 
         IDataReader GetUserRelationshipsByRelatedUserID(int relatedUserID);
+
+        IDataReader GetUserRelationshipsByRelatedUser(int relatedUserID, int relationshipID, RelationshipStatus status);
 
         IDataReader GetUserRelationshipsByRelationshipID(int relationshipID);
 

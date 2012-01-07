@@ -704,7 +704,7 @@ namespace DotNetNuke.HttpModules
                     if (portalSettings.SSLEnabled)
                     {
 						//if page is secure and connection is not secure orelse ssloffload is enabled and server value exists
-                        if ((portalSettings.ActiveTab.IsSecure && !request.IsSecureConnection) || (IsSSLOrOffloadEnabled(request)==true))
+                        if ((portalSettings.ActiveTab.IsSecure && !request.IsSecureConnection) && (IsSSLOffloadEnabled(request) == false))
                         {
 							//switch to secure connection
                             strURL = requestedPath.Replace("http://", "https://");
@@ -714,10 +714,10 @@ namespace DotNetNuke.HttpModules
                     //if SSL is enforced
                     if (portalSettings.SSLEnforced)
                     {
-						//if page is not secure and connection is secure orelse ssloffload is disabled
-                        if ((!portalSettings.ActiveTab.IsSecure && request.IsSecureConnection) || (IsSSLOrOffloadEnabled(request)==false))
+						//if page is not secure and connection is secure 
+                        if ((!portalSettings.ActiveTab.IsSecure && request.IsSecureConnection) )
                         {
-                            //check if connection has already been forced to secure
+                            //check if connection has already been forced to secure orelse ssloffload is disabled
                             if (request.QueryString["ssl"] == null)
                             {
                                 strURL = requestedPath.Replace("https://", "http://");
@@ -769,14 +769,14 @@ namespace DotNetNuke.HttpModules
             }
         }
 
-        private bool IsSSLOrOffloadEnabled(HttpRequest request)
+        private bool IsSSLOffloadEnabled(HttpRequest request)
         {
-            //get client capabilities for the request         
-            var clientCapability = ClientCapabilityProvider.Instance().GetClientCapability(request.UserAgent);
-            //if the ssloffload variable has been set check to see if a request header with that type exists
-            if (!string.IsNullOrEmpty(clientCapability.SSLOffload))
+
+            var ssloffloadheader = HostController.Instance.GetString("SSLOffloadHeader", "");
+            //if the ssloffloadheader variable has been set check to see if a request header with that type exists
+            if (!string.IsNullOrEmpty(ssloffloadheader.ToString()))
             {
-            var ssloffload = request.ServerVariables[clientCapability.SSLOffload];
+                var ssloffload = request.Headers[ssloffloadheader.ToString()];
                 if (!string.IsNullOrEmpty(ssloffload))
                 {
                     return true;

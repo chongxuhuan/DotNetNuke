@@ -290,7 +290,7 @@ namespace DotNetNuke.Entities.Users
             userRelationship.UserRelationshipID = userRelationshipID;
 
             //clear cache
-            DataCache.RemoveCache(string.Format(DataCache.UserRelationshipByUserIDCacheKey, userRelationship.UserID));
+            DataCache.RemoveCache(string.Format(DataCache.UserRelationshipByInitiatingUserIDCacheKey, userRelationship.UserID));
         }
 
         /// -----------------------------------------------------------------------------
@@ -307,13 +307,13 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Delete UserRelationship By UserID
+        /// Delete UserRelationship By Initiating UserID
         /// </summary>
         /// <param name="userID">UserID</param>        
         /// -----------------------------------------------------------------------------
-        public void DeleteUserRelationshipByUserID(int userID)
+        public void DeleteUserRelationshipByInitiatingUserID(int userID)
         {
-            var userRelationships = GetUserRelationshipsByUserID(userID);
+            var userRelationships = GetUserRelationshipsByInitiatingUserID(userID);
 
             foreach (var userRelationship in userRelationships)
             {
@@ -327,7 +327,7 @@ namespace DotNetNuke.Entities.Users
         /// </summary>
         /// <param name="relatedUserID">RelatedUserID</param>        
         /// -----------------------------------------------------------------------------
-        public void DeleteUserRelationshipByRelatedID(int relatedUserID)
+        public void DeleteUserRelationshipsByRelatedID(int relatedUserID)
         {
             var userRelationships = GetUserRelationshipsByRelatedUserID(relatedUserID);
 
@@ -370,11 +370,11 @@ namespace DotNetNuke.Entities.Users
         /// </summary>        
         /// <param name="userID">UserID</param>        
         /// <param name="relatedUserID">RelatedUserID</param>   
-        /// <param name="relationshipID">RelationshipID</param>             
+        /// <param name="relationship">Relationship Object</param>             
         /// -----------------------------------------------------------------------------
-        public UserRelationship GetUserRelationship(int userID, int relatedUserID, int relationshipID)
+        public UserRelationship GetUserRelationship(int userID, int relatedUserID, Relationship relationship)
         {
-            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(userID, relatedUserID, relationshipID)).FirstOrDefault();
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(userID, relatedUserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipTypeID).Direction)).FirstOrDefault();
         }
 
         /// -----------------------------------------------------------------------------
@@ -383,10 +383,10 @@ namespace DotNetNuke.Entities.Users
         /// </summary>        
         /// <param name="userID">UserID</param>        
         /// -----------------------------------------------------------------------------
-        public IList<UserRelationship> GetUserRelationshipsByUserID(int userID)
+        public IList<UserRelationship> GetUserRelationshipsByInitiatingUserID(int userID)
         {
-            var cacheArg = new CacheItemArgs(string.Format(DataCache.UserRelationshipByUserIDCacheKey, userID), DataCache.UserRelationshipByUserIDCacheTimeOut, DataCache.UserRelationshipByUserIDCachePriority, userID);
-            return CBO.GetCachedObject<IList<UserRelationship>>(cacheArg, GetUserRelationshipsByUserIDCallBack);            
+            var cacheArg = new CacheItemArgs(string.Format(DataCache.UserRelationshipByInitiatingUserIDCacheKey, userID), DataCache.UserRelationshipByInitiatingUserIDCacheTimeOut, DataCache.UserRelationshipByInitiatingUserIDCachePriority, userID);
+            return CBO.GetCachedObject<IList<UserRelationship>>(cacheArg, GetUserRelationshipsByInitiatingUserIDCallBack);            
         }
 
         /// -----------------------------------------------------------------------------
@@ -398,6 +398,19 @@ namespace DotNetNuke.Entities.Users
         public IList<UserRelationship> GetUserRelationshipsByRelatedUserID(int relatedUserID)
         {
             return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationshipsByRelatedUserID(relatedUserID)).ToList();
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Get UserRelationship By RelatedUser
+        /// </summary>        
+        /// <param name="relatedUserID">RelatedUserID</param>        
+        /// <param name="relationshipID">RelationshipID</param>        
+        /// <param name="status">RelationshipStatus</param>         
+        /// -----------------------------------------------------------------------------
+        public IList<UserRelationship> GetUserRelationshipsByRelatedUser(int relatedUserID, int relationshipID, RelationshipStatus status)
+        {
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationshipsByRelatedUser(relatedUserID, relationshipID, status)).ToList();
         }
 
         /// -----------------------------------------------------------------------------
@@ -531,7 +544,7 @@ namespace DotNetNuke.Entities.Users
             }
 
             //check for existing UserRelationship record
-            var existingRelationship = GetUserRelationship(initiatingUser.UserID, targetUser.UserID, relationship.RelationshipID);
+            var existingRelationship = GetUserRelationship(initiatingUser.UserID, targetUser.UserID, relationship);
             if(existingRelationship != null) 
             {
                 if (existingRelationship.Status == RelationshipStatus.Blocked)
@@ -741,7 +754,8 @@ namespace DotNetNuke.Entities.Users
         {
             Requires.NotNull("The initiatingUser can't be null", initiatingUser);
 
-            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, GetFriendsRelatioshipByPortal(initiatingUser.PortalID).RelationshipID, RelationshipStatus.Accepted)).ToList();
+            var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipID).Direction, RelationshipStatus.Accepted)).ToList();
         }
 
         /// -----------------------------------------------------------------------------
@@ -750,14 +764,32 @@ namespace DotNetNuke.Entities.Users
         /// </summary>        
         /// <param name="initiatingUser">UserInfo for Initiating User</param>        
         /// <returns>List of UserRelationship objects</returns>
-        /// <remarks>This method can bring huge set of data.         
+        /// <remarks>This method can bring huge set of data. Followers means the User is being Followed by x other Users        
         /// </remarks>
         /// -----------------------------------------------------------------------------
         public List<UserRelationship> GetFollowers(UserInfo initiatingUser)
         {
             Requires.NotNull("The initiatingUser can't be null", initiatingUser);
 
-            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, GetFollowersRelatioshipByPortal(initiatingUser.PortalID).RelationshipID, RelationshipStatus.Accepted)).ToList();
+            var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationshipsByRelatedUser(initiatingUser.UserID, GetFollowersRelatioshipByPortal(initiatingUser.PortalID).RelationshipID, RelationshipStatus.Accepted)).ToList();
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFriends - Get List of Following (UserRelationship with status as Accepted) for an User
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <returns>List of UserRelationship objects</returns>
+        /// <remarks>This method can bring huge set of data. Following means the User is Following x other Users        
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public List<UserRelationship> GetFollowing(UserInfo initiatingUser)
+        {
+            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+
+            var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipID).Direction, RelationshipStatus.Accepted)).ToList();
         }
 
         /// -----------------------------------------------------------------------------
@@ -934,10 +966,10 @@ namespace DotNetNuke.Entities.Users
             return CBO.FillCollection<Relationship>(_dataService.GetRelationshipsByUserID(userID)).ToList();
         }
 
-        private IList<Relationship> GetUserRelationshipsByUserIDCallBack(CacheItemArgs cacheItemArgs)
+        private IList<Relationship> GetUserRelationshipsByInitiatingUserIDCallBack(CacheItemArgs cacheItemArgs)
         {
             var userID = (int)cacheItemArgs.ParamList[0];
-            return CBO.FillCollection<Relationship>(_dataService.GetUserRelationshipsByUserID(userID)).ToList();
+            return CBO.FillCollection<Relationship>(_dataService.GetUserRelationshipsByInitiatingUserID(userID)).ToList();
         }
 
         private IList<Relationship> GetRelationshipsByPortalIDCallBack(CacheItemArgs cacheItemArgs)
@@ -961,7 +993,7 @@ namespace DotNetNuke.Entities.Users
             AddLog(logContent);
 
             //cache clear
-            DataCache.RemoveCache(string.Format(DataCache.UserRelationshipByUserIDCacheKey, userRelationship.UserID));
+            DataCache.RemoveCache(string.Format(DataCache.UserRelationshipByInitiatingUserIDCacheKey, userRelationship.UserID));
         }
 
 

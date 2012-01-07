@@ -33,7 +33,7 @@ using DotNetNuke.Data;
 
 namespace DotNetNuke.Entities.Users.Social.Data
 {
-    public class DataService : ComponentBase<IDataService, DataService>, IDataService        
+    internal class DataService : ComponentBase<IDataService, DataService>, IDataService        
     {
         private readonly DataProvider _provider = DataProvider.Instance();
 
@@ -106,24 +106,29 @@ namespace DotNetNuke.Entities.Users.Social.Data
             return _provider.ExecuteReader("GetUserRelationship", userRelationshipID);
         }
 
-        public IDataReader GetUserRelationship(int userID, int relationshipID, RelationshipStatus status)
+        public IDataReader GetUserRelationship(int userID, int relationshipID, RelationshipDirection relationshipDirection, RelationshipStatus status)
         {
-            return _provider.ExecuteReader("GetUserRelationshipsByUserRelationshipAndStatus", userID, relationshipID, status);
+            return _provider.ExecuteReader("GetUserRelationshipsByUserRelationshipAndStatus", userID, relationshipID, relationshipDirection, status);
         }
 
-        public IDataReader GetUserRelationship(int userID, int relatedUserID, int relationshipID)
+        public IDataReader GetUserRelationship(int userID, int relatedUserID, int relationshipID, RelationshipDirection relationshipDirection)
         {
-            return _provider.ExecuteReader("GetUserRelationshipsByMultipleIDs", userID, relatedUserID, relationshipID);
+            return _provider.ExecuteReader("GetUserRelationshipsByMultipleIDs", userID, relatedUserID, relationshipID, relationshipDirection);
         }
 
-        public IDataReader GetUserRelationshipsByUserID(int userID)
+        public IDataReader GetUserRelationshipsByInitiatingUserID(int userID)
         {
             return _provider.ExecuteReader("GetUserRelationshipsByUserID", userID);
         }
 
         public IDataReader GetUserRelationshipsByRelatedUserID(int relatedUserID)
         {
-            return _provider.ExecuteReader("GetUserRelationshipsByRelatedID", relatedUserID);
+            return _provider.ExecuteReader("GetUserRelationshipsByRelatedUserID", relatedUserID);
+        }
+
+        public IDataReader GetUserRelationshipsByRelatedUser(int relatedUserID, int relationshipID, RelationshipStatus status)
+        {
+            return _provider.ExecuteReader("GetUserRelationshipsByRelatedUser", relatedUserID, relationshipID, status);
         }
 
         public IDataReader GetUserRelationshipsByRelationshipID(int relationshipID)
