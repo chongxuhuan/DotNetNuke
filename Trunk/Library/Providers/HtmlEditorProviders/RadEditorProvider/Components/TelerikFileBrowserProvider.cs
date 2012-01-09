@@ -678,7 +678,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			    {
 			        var directory = TelerikContent.ResolveRootDirectoryAsTree(radDirectory.Path);
 			        var tempVar2 = directory.Directories;
-			        newDirectory = new DirectoryItem(dirName, "", endUserPath, "", folderPermissions, folderFiles, AddChildDirectoriesToList(ref tempVar2, false, false));
+			        AddChildDirectoriesToList(ref tempVar2, false, false);
+                    newDirectory = new DirectoryItem(dirName, "", endUserPath, "", folderPermissions, folderFiles, tempVar2);
 			        radDirectory.Directories = tempVar2;
 			    }
 			    else

@@ -117,8 +117,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
             base.OnLoad(e);
 
             try
-			{
-
+            {
 				//If Not ViewState("EditorConfigPath") Is Nothing Then
 				//    Dim path As String = CType(ViewState("EditorConfigPath"), String)
 				//    BindSelectedConfig(path)
@@ -304,6 +303,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 					EnableOtherEditor(editorList.SelectedValue);
 					break;
 			}
+
+            MessagePanel.Visible = GetSelectedEditor() != radEditorProviderName;
 		}
 
 #region Private Methods
@@ -408,6 +409,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				editorList.SelectedIndex = -1;
 				item.Selected = true;
 			}
+
+            MessagePanel.Visible = GetSelectedEditor() != radEditorProviderName;
 		}
 
 		private List<string> GetEditorsList()

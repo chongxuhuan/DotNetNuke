@@ -21,6 +21,7 @@
 //INSTANT C# NOTE: Formerly VB project-level imports:
 using System.Text.RegularExpressions;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
@@ -856,7 +857,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				{
 					_UserFolders = new Dictionary<string, FolderInfo>();
 
-					ArrayList folders = FileSystemUtils.GetFoldersByUser(PortalSettings.PortalId, true, true, "READ");
+				    var folders = FolderManager.Instance.GetFolders(PortalSettings.PortalId, "READ", UserController.GetCurrentUserInfo().UserID);
 
 					foreach (var folder in folders)
 					{

@@ -3,7 +3,7 @@
 <%@ Register TagPrefix="Telerik" Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" TagName="label" Src="~/controls/LabelControl.ascx" %>
-<div class="dnnProviderConfig dnnClear" id="dnnProviderConfig">
+<asp:Panel class="dnnProviderConfig dnnClear" id="dnnProviderConfig">
 	<div class="dnnTreeArea">
 		<asp:Panel id="pnlSelectProvider" runat="server" class="dnnProviderSelect">
 			<h3><asp:Label ID="lblSelectedProvider" runat="server" resourcekey="lblSelectedProvider" /></h3>
@@ -15,7 +15,10 @@
 			<Telerik:RadTreeView Runat="server" Id="treeTools" AllowNodeEditing="true" MultipleSelect="false" SingleExpandPath="true" /> 
 		</div>  
 	</div>     
-	<asp:Panel ID="pnlTabContent" runat="server" class="dnnpcTabs">                                                                                       
+	<asp:Panel ID="pnlTabContent" runat="server" class="dnnpcTabs">
+	    <asp:Panel ID="MessagePanel" class="dnnFormMessage dnnFormValidationSummary" runat="server">
+	        <%=LocalizeString("NotCurrentProvider") %>
+	    </asp:Panel>                                                                                       
 		<asp:Panel ID="pnlEditor" runat="server" CssClass="dnnForm">                   
 			<ul class="dnnAdminTabNav dnnClear">
 				<li><a href="#dnnEditorConfig"><%=LocalizeString("EditConfigTab")%></a></li>

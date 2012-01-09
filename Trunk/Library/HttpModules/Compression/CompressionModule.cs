@@ -138,6 +138,14 @@ namespace DotNetNuke.HttpModules.Compression
                 return;
             }
 
+            //Bypass ClientAPI Callbacks. They cannot be compressed
+            if (app.Request["__DNNCAPISCI"] != null 
+                && app.Request["__DNNCAPISCI"].Length > 0 
+                && app.Request.HttpMethod.Equals("POST", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return;
+            }
+
             //only do this if we havn't already attempted an install.  This prevents PreSendRequestHeaders from
             //trying to add this item way to late.  We only want the first run through to do anything.
             //also, we use the context to store whether or not we've attempted an add, as it's thread-safe and
