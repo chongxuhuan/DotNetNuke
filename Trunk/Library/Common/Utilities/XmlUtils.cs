@@ -36,6 +36,7 @@ using System.Xml.Xsl;
 
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Permissions;
 
 #endregion
@@ -181,35 +182,38 @@ namespace DotNetNuke.Common.Utilities
 
         public static Hashtable DeSerializeHashtable(string xmlSource, string rootname)
         {
-            Hashtable objHashTable;
+            var hashTable  = new Hashtable();
+
             if (!String.IsNullOrEmpty(xmlSource))
             {
-                objHashTable = new Hashtable();
-
-                var xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(xmlSource);
-
-                foreach (XmlElement xmlItem in xmlDoc.SelectNodes(rootname + "/item"))
+                try
                 {
-                    string key = xmlItem.GetAttribute("key");
-                    string typeName = xmlItem.GetAttribute("type");
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(xmlSource);
 
-                    //Create the XmlSerializer
-                    var xser = new XmlSerializer(Type.GetType(typeName));
+                    foreach (XmlElement xmlItem in xmlDoc.SelectNodes(rootname + "/item"))
+                    {
+                        string key = xmlItem.GetAttribute("key");
+                        string typeName = xmlItem.GetAttribute("type");
 
-                    //A reader is needed to read the XML document.
-                    var reader = new XmlTextReader(new StringReader(xmlItem.InnerXml));
+                        //Create the XmlSerializer
+                        var xser = new XmlSerializer(Type.GetType(typeName));
 
-                    //Use the Deserialize method to restore the object's state, and store it
-                    //in the Hashtable
-                    objHashTable.Add(key, xser.Deserialize(reader));
+                        //A reader is needed to read the XML document.
+                        var reader = new XmlTextReader(new StringReader(xmlItem.InnerXml));
+
+                        //Use the Deserialize method to restore the object's state, and store it
+                        //in the Hashtable
+                        hashTable.Add(key, xser.Deserialize(reader));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //DnnLog.Error(ex); /*Ignore Log because if failed on profile this will log on every request.*/
                 }
             }
-            else
-            {
-                objHashTable = new Hashtable();
-            }
-            return objHashTable;
+
+            return hashTable;
         }
 
         /// -----------------------------------------------------------------------------

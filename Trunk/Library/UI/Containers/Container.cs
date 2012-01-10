@@ -367,8 +367,8 @@ namespace DotNetNuke.UI.Containers
 			//inject the footer
             if (!String.IsNullOrEmpty(ModuleConfiguration.Footer))
             {
-                var objLabel = new Label {Text = ModuleConfiguration.Footer, CssClass = "Normal"};
-                ContentPane.Controls.Add(objLabel);
+                var footer = new Literal {Text = ModuleConfiguration.Footer};
+                ContentPane.Controls.Add(footer);
             }
 			
             //inject an end comment around the module content
@@ -397,8 +397,8 @@ namespace DotNetNuke.UI.Containers
             //inject the header
             if (!String.IsNullOrEmpty(ModuleConfiguration.Header))
             {
-                var objLabel = new Label {Text = ModuleConfiguration.Header, CssClass = "Normal"};
-                ContentPane.Controls.Add(objLabel);
+                var header = new Literal {Text = ModuleConfiguration.Header};
+                ContentPane.Controls.Add(header);
             }
         }
 

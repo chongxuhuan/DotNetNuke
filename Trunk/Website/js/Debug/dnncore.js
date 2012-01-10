@@ -6,7 +6,7 @@ var DNN_COL_DELIMITER = String.fromCharCode(16);
 var DNN_ROW_DELIMITER = String.fromCharCode(15);
 var __dnn_m_bPageLoaded = false;
 
-window.onload = __dnn_Page_OnLoad;
+dnn.dom.attachEvent(window, "onload", __dnn_Page_OnLoad);
 
 function __dnn_ClientAPIEnabled()
 {

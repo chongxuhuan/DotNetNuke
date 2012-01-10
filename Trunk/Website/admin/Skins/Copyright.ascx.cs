@@ -54,7 +54,7 @@ namespace DotNetNuke.UI.Skins.Controls
             }
             if (!String.IsNullOrEmpty(PortalSettings.FooterText))
             {
-                lblCopyright.Text = PortalSettings.FooterText;
+                lblCopyright.Text = PortalSettings.FooterText.Replace("[year]", DateTime.Now.Year.ToString());
             }
             else
             {

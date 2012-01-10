@@ -78,7 +78,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public void SaveRelationshipType(RelationshipType relationshipType)
 		{
-            Requires.NotNull("The relationshipType can't be null", relationshipType);
+            Requires.NotNull("relationshipType", relationshipType);
 
             var relationshipTypeID = _dataService.SaveRelationshipType(relationshipType, UserController.GetCurrentUserInfo().UserID);
 
@@ -123,7 +123,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public IList<RelationshipType> GetAllRelationshipTypes()
         {
-            var cacheArg = new CacheItemArgs(DataCache.RelationshipTypesCacheKey, DataCache.RelationshipTypesCacheTimeOut, DataCache.RelationshipTypesCachePriority, "");
+            var cacheArg = new CacheItemArgs(DataCache.RelationshipTypesCacheKey, DataCache.RelationshipTypesCacheTimeOut, DataCache.RelationshipTypesCachePriority);
             return CBO.GetCachedObject<IList<RelationshipType>>(cacheArg, GetAllRelationshipTypesCallBack);
         }
 
@@ -155,7 +155,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public void SaveRelationship(Relationship relationship)
         {
-            Requires.NotNull("The relationship can't be null", relationship);
+            Requires.NotNull("relationship", relationship);
 
             var relationshipID = _dataService.SaveRelationship(relationship, UserController.GetCurrentUserInfo().UserID);
 
@@ -279,7 +279,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public void SaveUserRelationship(UserRelationship userRelationship)
         {
-            Requires.NotNull("The user relationship can't be null", userRelationship);
+            Requires.NotNull("userRelationship", userRelationship);
 
             int userRelationshipID = _dataService.SaveUserRelationship(userRelationship, UserController.GetCurrentUserInfo().UserID);
 
@@ -440,7 +440,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public void SaveUserRelationshipPreference(UserRelationshipPreference userRelationshipPreference)
         {
-            Requires.NotNull("The user relationship preference can't be null", userRelationshipPreference);
+            Requires.NotNull("userRelationshipPreference", userRelationshipPreference);
 
             var preferenceID = _dataService.SaveUserRelationshipPreference(userRelationshipPreference, UserController.GetCurrentUserInfo().UserID);
 
@@ -519,9 +519,9 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public UserRelationship InitiateUserRelationship(UserInfo initiatingUser, UserInfo targetUser, Relationship relationship)
         {
-            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
-            Requires.NotNull("The targetUser can't be null", targetUser);
-            Requires.NotNull("The relationship can't be null", relationship);
+            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("targetUser", targetUser);
+            Requires.NotNull("relationship", relationship);
 
             Requires.PropertyNotNegative("initiatingUser", "UserID", initiatingUser.UserID);
             Requires.PropertyNotNegative("targetUser", "UserID", targetUser.UserID);
@@ -703,7 +703,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser)
         {
-            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+            Requires.NotNull("initiatingUser", initiatingUser);
 
             return InitiateUserRelationship(initiatingUser, targetUser, GetFriendsRelatioshipByPortal(initiatingUser.PortalID));
         }
@@ -736,7 +736,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public UserRelationship AddFollower(UserInfo initiatingUser, UserInfo targetUser)
         {
-            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+            Requires.NotNull("initiatingUser", initiatingUser);
 
             return InitiateUserRelationship(initiatingUser, targetUser, GetFollowersRelatioshipByPortal(initiatingUser.PortalID));
         }
@@ -752,7 +752,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public List<UserRelationship> GetFriends(UserInfo initiatingUser)
         {
-            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+            Requires.NotNull("initiatingUser", initiatingUser);
 
             var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
             return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipID).Direction, RelationshipStatus.Accepted)).ToList();
@@ -769,7 +769,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public List<UserRelationship> GetFollowers(UserInfo initiatingUser)
         {
-            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+            Requires.NotNull("initiatingUser", initiatingUser);
 
             var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
             return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationshipsByRelatedUser(initiatingUser.UserID, GetFollowersRelatioshipByPortal(initiatingUser.PortalID).RelationshipID, RelationshipStatus.Accepted)).ToList();
@@ -786,7 +786,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public List<UserRelationship> GetFollowing(UserInfo initiatingUser)
         {
-            Requires.NotNull("The initiatingUser can't be null", initiatingUser);
+            Requires.NotNull("initiatingUser", initiatingUser);
 
             var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
             return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipID).Direction, RelationshipStatus.Accepted)).ToList();
@@ -794,7 +794,7 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// AddUserList - Add a new Relationship for the Current User, e.g. My Best Briends or My Inlaws.
+        /// AddUserList - Add a new Relationship for the Current User, e.g. My Best Friends or My Inlaws.
         /// </summary>        
         /// <param name="listName">Name of the Relationship. It is also called as List Name, e.g. My School Friends.</param> 
         /// <param name="listDescription">Description of the Relationship. It is also called as List Description </param>         
@@ -812,7 +812,7 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// AddUserList - Add a new Relationship for an User, e.g. My Best Briends or My Inlaws.
+        /// AddUserList - Add a new Relationship for an User, e.g. My Best Friends or My Inlaws.
         /// </summary>        
         /// <param name="owningUser">UserInfo for the User to which the Relationship will belong. </param>        
         /// <param name="listName">Name of the Relationship. It is also called as List Name, e.g. My School Friends.</param> 
@@ -876,7 +876,7 @@ namespace DotNetNuke.Entities.Users
                     Description = DefaultRelationshipTypes.Friends.ToString(),
                     PortalID = portalID,
                     UserID = Null.NullInteger,
-                    DefaultResponse = RelationshipStatus.None,
+                    DefaultResponse = RelationshipStatus.None, //default response is None
                     RelationshipTypeID = (int)DefaultRelationshipTypes.Friends
                 };
                 SaveRelationship(friendRelationship);
@@ -893,7 +893,7 @@ namespace DotNetNuke.Entities.Users
                     Description = DefaultRelationshipTypes.Followers.ToString(),
                     PortalID = portalID,
                     UserID = Null.NullInteger,
-                    DefaultResponse = RelationshipStatus.Accepted,
+                    DefaultResponse = RelationshipStatus.Accepted, //default response is Accepted
                     RelationshipTypeID = (int)DefaultRelationshipTypes.Followers
                 };
                 SaveRelationship(followerRelationship);
@@ -980,8 +980,8 @@ namespace DotNetNuke.Entities.Users
 
 		private void AddLog(string logContent)
 		{
-			var objEventLog = new EventLogController();
-			objEventLog.AddLog("Message", logContent, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.ADMIN_ALERT);
+            var eventLogController = new EventLogController();
+            eventLogController.AddLog("Message", logContent, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.ADMIN_ALERT);
 		}
 
         private void DeleteUserRelationship(UserRelationship userRelationship)

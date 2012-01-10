@@ -127,6 +127,7 @@
     <Compile Include="UI\WebControls\DnnFormTabStrip.cs" />
     <Compile Include="UI\WebControls\DnnImageButton.cs" />
     <Compile Include="UI\WebControls\DnnImage.cs" />
+    <Compile Include="UI\WebControls\DnnMemberListControl.cs" />
     <Compile Include="UI\WebControls\DnnTreeNode.cs" />
     <Compile Include="Mvp\IWebServiceViewOfT.cs" />
     <Compile Include="Mvp\IWebServiceView.cs" />
