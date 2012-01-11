@@ -601,6 +601,6 @@
     <value>&lt;b&gt;&lt;font color='red'&gt;데이터베이스의 이름을 넣어야합니다.&lt;/font&gt;&lt;/b&gt;</value>
   </data>
   <data name="InvalidQualifier.Text" xml:space="preserve">
-    <value>Object Qualifier must start with letter and no more than 50 characters.</value>
+    <value>Object Qualifier must start with a letter and no more than 50 characters.</value>
   </data>
 </root>

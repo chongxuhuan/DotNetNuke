@@ -81,6 +81,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Extensions, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Externals\AJAX\bin\System.Web.Extensions.dll</HintPath>
@@ -115,6 +116,7 @@
     <Compile Include="Providers\Folder\StandardFolderProviderTests.cs" />
     <Compile Include="EscapedStringTest.cs" />
     <Compile Include="RetryableActionTests.cs" />
+    <Compile Include="HttpModules\ServicesModuleTests.cs" />
     <Compile Include="Services\ClientCapability\FacebookRequestControllerTests.cs" />
     <Compile Include="Services\Installer\XmlMergeTests.cs" />
     <Compile Include="Services\Mobile\PreviewProfileControllerTests.cs" />
@@ -131,6 +133,10 @@
     <ProjectReference Include="..\..\Library\DotNetNuke.Library.csproj">
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Name>DotNetNuke.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Library\HttpModules\DotNetNuke.HttpModules.csproj">
+      <Project>{6F0A5B23-E09F-431A-879A-993CB77E23D8}</Project>
+      <Name>DotNetNuke.HttpModules</Name>
     </ProjectReference>
     <ProjectReference Include="..\DotNetNuke.Tests.Instance.Utilities\DotNetNuke.Tests.Instance.Utilities.csproj">
       <Project>{0BD44D27-6F8D-4A94-9E01-E57860B500E4}</Project>

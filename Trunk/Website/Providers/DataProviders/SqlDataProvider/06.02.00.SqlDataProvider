@@ -1103,6 +1103,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 			CONSTRAINT [PK_{objectQualifier}UserRelationships] PRIMARY KEY CLUSTERED ( [UserRelationshipID] ASC )
 		)		
 
+		CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}UserRelationships_UserID_RelatedUserID_RelationshipID] ON {databaseOwner}[{objectQualifier}UserRelationships] ([UserID] ASC, [RelatedUserID] ASC, [RelationshipID] ASC)
 		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}UserRelationships_UserID] ON {databaseOwner}[{objectQualifier}UserRelationships] ([UserID] ASC)
 		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}UserRelationships_RelatedUserID] ON {databaseOwner}[{objectQualifier}UserRelationships] ([RelatedUserID] ASC)
 		

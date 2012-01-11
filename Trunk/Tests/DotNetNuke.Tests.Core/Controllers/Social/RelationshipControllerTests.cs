@@ -248,26 +248,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             //Act, Assert
             _relationshipController.AddFriend(initiatingUser, targetUser);
         }
-
-        [Test]
-        [ExpectedException(typeof(UserRelationshipBlockedException))]
-        public void RelationshipController_AddFriend_Throws_On_Blocked_Relationship()
-        {
-            //Arrange
-            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
-            var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
-
-            //Blocked UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.Blocked);
-
-            //setup mock DataService            
-            _mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(_dtUserRelationships.CreateDataReader());
-
-            //Act, Assert
-            _relationshipController.AddFriend(initiatingUser, targetUser);
-        }
-
+    
         #endregion
 
         #region InitiateUserRelationship Tests

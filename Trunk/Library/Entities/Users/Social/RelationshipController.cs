@@ -371,10 +371,24 @@ namespace DotNetNuke.Entities.Users
         /// <param name="userID">UserID</param>        
         /// <param name="relatedUserID">RelatedUserID</param>   
         /// <param name="relationship">Relationship Object</param>             
+        /// <param name="status">Expecting status</param>             
         /// -----------------------------------------------------------------------------
-        public UserRelationship GetUserRelationship(int userID, int relatedUserID, Relationship relationship)
+        public UserRelationship GetUserRelationship(int userID, int relatedUserID, Relationship relationship, RelationshipStatus status)
+        {            
+            return GetUserRelationships(userID, relatedUserID, relationship).Where(us => us.Status == status).FirstOrDefault();            
+        }
+
+	    /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Get List of UserRelationship By Multiple IDs
+        /// </summary>        
+        /// <param name="userID">UserID</param>        
+        /// <param name="relatedUserID">RelatedUserID</param>   
+        /// <param name="relationship">Relationship Object</param>             
+        /// -----------------------------------------------------------------------------
+        public IList<UserRelationship> GetUserRelationships(int userID, int relatedUserID, Relationship relationship)
         {
-            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(userID, relatedUserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipTypeID).Direction)).FirstOrDefault();
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(userID, relatedUserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipTypeID).Direction));
         }
 
         /// -----------------------------------------------------------------------------
@@ -544,14 +558,9 @@ namespace DotNetNuke.Entities.Users
             }
 
             //check for existing UserRelationship record
-            var existingRelationship = GetUserRelationship(initiatingUser.UserID, targetUser.UserID, relationship);
-            if(existingRelationship != null) 
-            {
-                if (existingRelationship.Status == RelationshipStatus.Blocked)
-                {
-                    throw new UserRelationshipBlockedException(Localization.GetExceptionMessage("UserRelationshipBlockedError", "Target User '{0}' has Blcoked Relationship '{1}' from Target User '{2}'.", initiatingUser.UserID, relationship.RelationshipID, targetUser.UserID));
-                }
-                                    
+            var existingRelationships = GetUserRelationships(initiatingUser.UserID, targetUser.UserID, relationship);
+            if(existingRelationships.Count >= 1) 
+            {                                    
                 throw new UserRelationshipExistsException(Localization.GetExceptionMessage("UserRelationshipExistsError", "Relationship already exists for Initiating User '{0}' Target User '{1}' RelationshipID '{2}'.", initiatingUser.UserID, targetUser.UserID, relationship.RelationshipID));
             }
 
@@ -677,8 +686,76 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// AddFriend - Current User initiates a Friend Request to the Target User
+        /// IsFriend - Are the Current User and the Target Users in Friend Relationship
         /// </summary>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>True or False</returns>
+        /// <remarks>True is returned only if a Friend Relationship exists between the two Users. 
+        /// The relation status must be Accepted. Friend Relationship can be initited by either of the Users.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public bool IsFriend(UserInfo targetUser)
+        {
+            return AreFriends(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AreFriends - Are the Initiating User and the Target Users in Friend Relationship
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>                
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>True or False</returns>
+        /// <remarks>True is returned only if a Friend Relationship exists between the two Users. 
+        /// The relation status must be Accepted. Friend Relationship can be initited by either of the Users.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public bool AreFriends(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("targetUser", targetUser);
+       
+            return GetUserRelationship(initiatingUser.UserID, targetUser.UserID, GetFriendsRelatioshipByPortal(initiatingUser.PortalID), RelationshipStatus.Accepted) != null;
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFriendRelationship - Get the UserRelationship between Current User and the Target Users in Friend Relationship
+        /// </summary>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship</returns>
+        /// <remarks>UserRelationship object is returned if a Friend Relationship exists between the two Users. 
+        /// The relation status can be Any (Initiated / Accepted / Blocked). Friend Relationship can be initited by either of the Users.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship GetFriendRelationship(UserInfo targetUser)
+        {
+            return GetFriendRelationship(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFriendRelationship - Get the UserRelationship between InitiatingUser User and the Target Users in Friend Relationship
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship</returns>
+        /// <remarks>UserRelationship object is returned if a Friend Relationship exists between the two Users. 
+        /// The relation status can be Any (Initiated / Accepted / Blocked). Friend Relationship can be initited by either of the Users.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship GetFriendRelationship(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("targetUser", targetUser);
+
+            return GetUserRelationships(initiatingUser.UserID, targetUser.UserID, GetFriendsRelatioshipByPortal(initiatingUser.PortalID)).FirstOrDefault();
+        }
+
+	    /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddFriend - Current User initiates a Friend Request to the Target User
+        /// </summary>                
         /// <param name="targetUser">UserInfo for Target User</param>        
         /// <returns>UserRelationship object</returns>
         /// <remarks>If the Friend Relationship is setup for auto-acceptance at the Portal level, the UserRelationship
@@ -750,12 +827,12 @@ namespace DotNetNuke.Entities.Users
         /// <remarks>This method can bring huge set of data.         
         /// </remarks>
         /// -----------------------------------------------------------------------------
-        public List<UserRelationship> GetFriends(UserInfo initiatingUser)
+        public IList<UserRelationship> GetFriends(UserInfo initiatingUser)
         {
             Requires.NotNull("initiatingUser", initiatingUser);
 
             var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
-            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipID).Direction, RelationshipStatus.Accepted)).ToList();
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipID).Direction, RelationshipStatus.Accepted));
         }
 
         /// -----------------------------------------------------------------------------
@@ -767,12 +844,11 @@ namespace DotNetNuke.Entities.Users
         /// <remarks>This method can bring huge set of data. Followers means the User is being Followed by x other Users        
         /// </remarks>
         /// -----------------------------------------------------------------------------
-        public List<UserRelationship> GetFollowers(UserInfo initiatingUser)
+        public IList<UserRelationship> GetFollowers(UserInfo initiatingUser)
         {
             Requires.NotNull("initiatingUser", initiatingUser);
-
-            var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
-            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationshipsByRelatedUser(initiatingUser.UserID, GetFollowersRelatioshipByPortal(initiatingUser.PortalID).RelationshipID, RelationshipStatus.Accepted)).ToList();
+            
+            return GetUserRelationshipsByRelatedUser(initiatingUser.UserID, GetFollowersRelatioshipByPortal(initiatingUser.PortalID).RelationshipID, RelationshipStatus.Accepted);
         }
 
         /// -----------------------------------------------------------------------------
@@ -784,12 +860,12 @@ namespace DotNetNuke.Entities.Users
         /// <remarks>This method can bring huge set of data. Following means the User is Following x other Users        
         /// </remarks>
         /// -----------------------------------------------------------------------------
-        public List<UserRelationship> GetFollowing(UserInfo initiatingUser)
+        public IList<UserRelationship> GetFollowing(UserInfo initiatingUser)
         {
             Requires.NotNull("initiatingUser", initiatingUser);
 
             var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
-            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipID).Direction, RelationshipStatus.Accepted)).ToList();
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationship(initiatingUser.UserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipID).Direction, RelationshipStatus.Accepted));
         }
 
         /// -----------------------------------------------------------------------------

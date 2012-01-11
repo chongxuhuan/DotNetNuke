@@ -13,12 +13,24 @@ namespace DotNetNuke.HttpModules.Services
         private static void CheckForReal401(object sender, EventArgs e)
         {
             var app = sender as HttpApplication;
-            var response = app.Response;
-
-            if ((bool?)HttpContext.Current.Items["DnnReal401"] ?? false)
+            if(app != null)
             {
-                response.ClearContent();
-                response.StatusCode = 401;
+                CheckForReal401(new HttpContextWrapper(app.Context));
+            }
+        }
+
+        internal static void CheckForReal401(HttpContextBase context)
+        {
+            if(context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
+
+            if ((bool?)context.Items["DnnReal401"] ?? false)
+            {
+                context.Response.ClearContent();
+                context.Response.StatusCode = 401;
+                context.Response.Headers.Remove("Location");
             }
         }
 

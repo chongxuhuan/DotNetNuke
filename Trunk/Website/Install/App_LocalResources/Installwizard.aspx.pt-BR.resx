@@ -607,6 +607,6 @@ Usando o Windows Explorer, navegue até a pasta raiz do site ({0}). Clique com o
     <value>Por favor insira as informações para o conta "Administrador". Esta conta terá acesso a criar e gerenciar todos os sites dentro desta instalação. Recomendamos o uso de uma senha forte, por exemplo: pelo menos 7 caracteres, incluindo uma mistura de letras, números e símbolos. Você pode alterar essa senha no futuro através da seção Administração do seu site.</value>
   </data>
   <data name="InvalidQualifier.Text" xml:space="preserve">
-    <value>Object Qualifier must start with letter and no more than 50 characters.</value>
+    <value>Object Qualifier must start with a letter and no more than 50 characters.</value>
   </data>
 </root>

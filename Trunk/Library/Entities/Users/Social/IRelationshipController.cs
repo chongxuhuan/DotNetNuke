@@ -12,6 +12,8 @@ namespace DotNetNuke.Entities.Users
         #region Relationship Business APIs
 
         UserRelationship InitiateUserRelationship(UserInfo initiatingUser, UserInfo targetUser, Relationship relationship);
+
+        UserRelationship GetUserRelationship(int userID, int relatedUserID, Relationship relationship, RelationshipStatus status);
         
         void AcceptUserRelationship(int userRelationshipID);
 
@@ -24,20 +26,24 @@ namespace DotNetNuke.Entities.Users
         void BlockUserRelationship(int userRelationshipID);
 
         void RemoveUserRelationship(int userRelationshipID);
-        
-              
+                      
         #endregion
 
         #region Easy Wrapper APIs
 
+        bool IsFriend(UserInfo targetUser);
+        bool AreFriends(UserInfo initiatingUser, UserInfo targetUser);
+        UserRelationship GetFriendRelationship(UserInfo targetUser);
+        UserRelationship GetFriendRelationship(UserInfo initiatingUser, UserInfo targetUser);
+
         UserRelationship AddFriend(UserInfo targetUser);
         UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser);
-        List<UserRelationship> GetFriends(UserInfo initiatingUser);
+        IList<UserRelationship> GetFriends(UserInfo initiatingUser);
 
         UserRelationship AddFollower(UserInfo targetUser);
         UserRelationship AddFollower(UserInfo initiatingUser, UserInfo targetUser);
-        List<UserRelationship> GetFollowers(UserInfo initiatingUser);
-        List<UserRelationship> GetFollowing(UserInfo initiatingUser);
+        IList<UserRelationship> GetFollowers(UserInfo initiatingUser);
+        IList<UserRelationship> GetFollowing(UserInfo initiatingUser);
 
         Relationship AddUserList(string listName, string listDescription);
         Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus);
