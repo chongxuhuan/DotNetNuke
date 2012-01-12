@@ -34,7 +34,7 @@ using DotNetNuke.UI.WebControls;
 
 #endregion
 
-namespace DotNetNuke.Modules.Admin.Users
+namespace DesktopModules.Admin.Security
 {
     /// -----------------------------------------------------------------------------
     /// <summary>
@@ -103,13 +103,7 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                bool _IsValid = false;
-
-                if (ProfileProperties.IsValid || IsAdmin)
-                {
-                    _IsValid = true;
-                }
-                return _IsValid;
+                return ProfileProperties.IsValid || IsAdmin;
             }
         }
 

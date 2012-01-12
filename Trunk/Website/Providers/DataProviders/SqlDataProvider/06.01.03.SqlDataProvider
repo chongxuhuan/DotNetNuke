@@ -15,3 +15,18 @@
 
 ALTER TABLE {databaseOwner}[{objectQualifier}Files] ALTER COLUMN [Folder] NVARCHAR(246) NULL
 GO
+
+/***** Fix Issue 18967: Join MetaData to get meta name *****/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetMetaData]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetMetaData]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMetaData] 
+	@ContentItemId   int
+AS
+	SELECT md.MetaDataName, cmd.MetaDataValue
+	FROM {databaseOwner}[{objectQualifier}ContentItems_MetaData] cmd
+	JOIN {databaseOwner}[{objectQualifier}MetaData] md on (cmd.MetaDataID = md.MetaDataID)
+	WHERE ContentItemId = @ContentItemId
+GO
+/***** End Fix Issue 18967 *****/

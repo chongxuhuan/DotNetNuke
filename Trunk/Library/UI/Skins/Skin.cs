@@ -45,6 +45,7 @@ using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.ControlPanels;
+using DotNetNuke.UI.Modules;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Skins.EventListeners;
 
@@ -899,7 +900,19 @@ namespace DotNetNuke.UI.Skins
             //try to inject the module into the pane
             try
             {
-                pane.InjectModule(module);
+                if(PortalSettings.ActiveTab.TabID == PortalSettings.UserTabId)
+                {
+                    var profileModule = ModuleControlFactory.LoadModuleControl(Page, module) as IProfileModule;
+                    if (profileModule == null || profileModule.DisplayModule)
+                    {
+                        pane.InjectModule(module);
+                    }                    
+                }
+                else
+                {
+                    pane.InjectModule(module);                   
+                }
+
             }
             catch (Exception ex)
             {

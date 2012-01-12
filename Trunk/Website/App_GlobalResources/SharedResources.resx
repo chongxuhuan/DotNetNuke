@@ -1440,4 +1440,7 @@
   <data name="ResourceNotFound.Text" xml:space="preserve">
     <value>Resource Not Found</value>
   </data>
+  <data name="ModuleNotIntended.Text" xml:space="preserve">
+    <value>This module is only intended for use on a page which is defined as the profile page for the portal.</value>
+  </data>
 </root>

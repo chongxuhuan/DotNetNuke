@@ -321,4 +321,7 @@
   <data name="valPortalAlias.ErrorMessage" xml:space="preserve">
     <value>Site Alias is required.</value>
   </data>
+  <data name="DuplicateWithTab.Text" xml:space="preserve">
+    <value>There has a page which's name is same with your site alias, please change a site alias.</value>
+  </data>
 </root>

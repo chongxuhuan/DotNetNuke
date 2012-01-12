@@ -80,16 +80,15 @@ namespace DotNetNuke.UI.Containers
     /// -----------------------------------------------------------------------------
     public class Container : UserControl
     {
-		#region "Private Members"
+		#region Private Members
 		
-        //private const string ContainerAdminBorder = "containerAdminBorder";
         private HtmlContainerControl _contentPane;
         private ModuleInfo _moduleConfiguration;
         private ModuleHost _moduleHost;
 
 		#endregion
 
-		#region "Protected Properties"
+		#region Protected Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -127,7 +126,7 @@ namespace DotNetNuke.UI.Containers
 		
 		#endregion
 
-		#region "Public Properties"
+		#region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -244,20 +243,10 @@ namespace DotNetNuke.UI.Containers
 		
 		#endregion
 
-		#region "Private Helper Methods"
+		#region Private Helper Methods
 
         private void AddAdministratorOnlyHighlighting(string message)
         {
-            //string cssclass = ContentPane.Attributes["class"];
-            //if (string.IsNullOrEmpty(cssclass))
-            //{
-            //    ContentPane.Attributes["class"] = ContainerAdminBorder;
-            //}
-            //else
-            //{
-            //    ContentPane.Attributes["class"] = string.Format("{0} {1}", cssclass.Replace(ContainerAdminBorder, "").Trim().Replace(" ", " "), ContainerAdminBorder);
-            //}
-
             ContentPane.Controls.Add(new LiteralControl(string.Format("<div class=\"dnnFormMessage dnnFormInfo\">{0}</div>", message)));
         }
 
@@ -511,7 +500,7 @@ namespace DotNetNuke.UI.Containers
 		
 		#endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -590,7 +579,7 @@ namespace DotNetNuke.UI.Containers
 		
 		#endregion
 
-		#region "Public Methods"
+		#region Public Methods
 
         public void SetModuleConfiguration(ModuleInfo configuration)
         {
@@ -600,7 +589,7 @@ namespace DotNetNuke.UI.Containers
 
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -634,7 +623,7 @@ namespace DotNetNuke.UI.Containers
 		
 		#endregion
 
-		#region "Obsolete"
+		#region Obsolete
 
         [Obsolete("Deprecated in 5.0. Shouldn't need to be used any more.  ContainerObjects (IContainerControl implementations) have a property ModuleControl.")]
         public static PortalModuleBase GetPortalModuleBase(UserControl control)

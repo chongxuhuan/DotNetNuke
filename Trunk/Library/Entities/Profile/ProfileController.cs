@@ -142,7 +142,7 @@ namespace DotNetNuke.Entities.Profile
                 definition.Visible = Convert.ToBoolean(Null.SetNull(dr["Visible"], definition.Visible));
                 definition.DefaultVisibility = (UserVisibilityMode) Convert.ToInt32(Null.SetNull(dr["DefaultVisibility"], definition.DefaultVisibility));
                 definition.Visibility = definition.DefaultVisibility;
-                definition.Deleted = Convert.ToBoolean(Null.SetNull(dr["Deleted"], definition.Visible));
+                definition.Deleted = Convert.ToBoolean(Null.SetNull(dr["Deleted"], definition.Deleted));
             }
             return definition;
         }

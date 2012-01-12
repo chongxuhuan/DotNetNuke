@@ -44,7 +44,7 @@ namespace DotNetNuke.Modules.Messaging.Views
 {
 
     [PresenterBinding(typeof (MessageListPresenter))]
-    public partial class MessageList : ModuleView<MessageListModel>, IMessageListView, IProfileModule
+    public partial class MessageList : ProfileModuleViewBase<MessageListModel>, IMessageListView
     {
 
         #region Constructor
@@ -56,30 +56,13 @@ namespace DotNetNuke.Modules.Messaging.Views
 
         #endregion
 
-        #region IProfileModule Implementation
-
-        public bool DisplayModule
+        public override bool DisplayModule
         {
             get
             {
                 return Request.IsAuthenticated && (ProfileUserId == ModuleContext.PortalSettings.UserId);
             }
         }
-
-        public int ProfileUserId
-        {
-            get
-            {
-                var profileUserId = Null.NullInteger;
-                if (!string.IsNullOrEmpty(Request.Params["UserId"]))
-                {
-                    profileUserId = Int32.Parse(Request.Params["UserId"]);
-                }
-                return profileUserId;
-            }
-        }
-
-        #endregion
 
         #region IMessageListView Implementation
 

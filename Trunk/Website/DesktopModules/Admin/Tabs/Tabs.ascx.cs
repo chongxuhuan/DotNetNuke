@@ -1433,6 +1433,13 @@ namespace DotNetNuke.Modules.Admin.Pages
                 valid = false;
             }
 
+            //check whether have conflict between tab path and portal alias.
+            if (TabController.IsDuplicateWithPortalAlias(tab.PortalID, newTabPath))
+            {
+                ShowWarningMessage(Localization.GetString("PathDuplicateWithAlias", LocalResourceFile));
+                valid = false;
+            }
+
             return valid;
         }
 

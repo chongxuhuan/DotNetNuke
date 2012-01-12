@@ -112,6 +112,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DotNetNukeHttpApplication.cs" />
+    <Compile Include="Mvp\ProfileModuleViewBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Services\AssemblyWrapper.cs" />
     <Compile Include="Services\DNNAuthorizeAttribute.cs" />
     <Compile Include="Services\DNNController.cs" />

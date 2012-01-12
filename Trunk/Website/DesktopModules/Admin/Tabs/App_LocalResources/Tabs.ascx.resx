@@ -417,4 +417,7 @@
   <data name="bulkPagesLabel.Text" xml:space="preserve">
     <value>Pages:</value>
   </data>
+  <data name="PathDuplicateWithAlias.Text" xml:space="preserve">
+    <value>There has a site domain same with your page path.</value>
+  </data>
 </root>

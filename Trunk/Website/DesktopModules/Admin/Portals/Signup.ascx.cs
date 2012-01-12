@@ -34,6 +34,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
@@ -250,6 +251,13 @@ namespace DotNetNuke.Modules.Admin.Portals
                     if (!PortalAliasController.ValidateAlias(strPortalAlias, blnChild))
                     {
                         message = Localization.GetString("InvalidName", LocalResourceFile);
+                    }
+
+                    //check whether have conflict between tab path and portal alias.
+                    var checkTabPath = string.Format("//{0}", strPortalAlias);
+                    if (TabController.GetTabByTabPath(PortalSettings.PortalId, checkTabPath, string.Empty) != Null.NullInteger)
+                    {
+                        message = Localization.GetString("DuplicateWithTab", LocalResourceFile);
                     }
 
                     //Validate Password

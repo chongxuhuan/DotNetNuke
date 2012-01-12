@@ -308,6 +308,11 @@ namespace DotNetNuke.Web.UI
             }
 
             tab.TabPath = Globals.GenerateTabPath(tab.ParentId, tab.TabName);
+            //check whether have conflict between tab path and portal alias.
+            if(TabController.IsDuplicateWithPortalAlias(PortalSettings.Current.PortalId, tab.TabPath))
+            {
+                throw new DotNetNukeException("The page path is duplicate with a site alias", DotNetNukeErrorCode.DuplicateWithAlias);
+            }
 
             try
             {
@@ -549,7 +554,8 @@ namespace DotNetNuke.Web.UI
         PageCircularReference,
         ParentTabInvalid,
         PageEditorPermissionError,
-        HostBeforeAfterError
+        HostBeforeAfterError,
+        DuplicateWithAlias
     }
 
     public enum TabRelativeLocation

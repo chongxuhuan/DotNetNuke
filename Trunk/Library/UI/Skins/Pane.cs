@@ -63,7 +63,7 @@ namespace DotNetNuke.UI.Skins
     /// -----------------------------------------------------------------------------
     public class Pane
     {
-        #region "Private Members"
+        #region Private Members
 
         private const string CPaneOutline = "paneOutline";
         private HtmlGenericControl _containerWrapperControl;
@@ -71,7 +71,7 @@ namespace DotNetNuke.UI.Skins
 
         #endregion
 
-        #region "Constructors"
+        #region Constructors
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -106,7 +106,7 @@ namespace DotNetNuke.UI.Skins
 
         #endregion
 
-        #region "Protected Properties"
+        #region Protected Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -195,7 +195,7 @@ namespace DotNetNuke.UI.Skins
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -444,7 +444,7 @@ namespace DotNetNuke.UI.Skins
 
         #endregion
 
-        #region "Public Methods"
+        #region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>

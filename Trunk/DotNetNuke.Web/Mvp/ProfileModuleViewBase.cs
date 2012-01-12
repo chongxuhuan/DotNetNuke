@@ -21,8 +21,6 @@
 
 #endregion
 
-#region Usings
-
 using System;
 
 using DotNetNuke.Common;
@@ -30,13 +28,12 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.UI.Modules;
 using DotNetNuke.UI.Skins.Controls;
 
-#endregion
-
-namespace DotNetNuke.UI.Modules
+namespace DotNetNuke.Web.Mvp
 {
-    public abstract class ProfileModuleUserControlBase : ModuleUserControlBase, IProfileModule
+    public abstract class ProfileModuleViewBase<TModel> : ModuleView<TModel>, IProfileModule where TModel : class, new()
     {
         #region IProfileModule Members
 
@@ -61,7 +58,10 @@ namespace DotNetNuke.UI.Modules
 
         protected bool IsUser
         {
-            get { return ProfileUserId == ModuleContext.PortalSettings.UserId; }
+            get
+            {
+                return ProfileUserId == ModuleContext.PortalSettings.UserId;
+            }
         }
 
         protected UserInfo ProfileUser
@@ -85,8 +85,7 @@ namespace DotNetNuke.UI.Modules
             }
             else
             {
-                redirectUrl = Globals.GetPortalDomainName(PortalSettings.Current.PortalAlias.HTTPAlias, Request, true) +
-                              "/" + Globals.glbDefaultPage;
+                redirectUrl = Globals.GetPortalDomainName(PortalSettings.Current.PortalAlias.HTTPAlias, Request, true) + "/" + Globals.glbDefaultPage;
             }
 
             return redirectUrl;
@@ -100,9 +99,7 @@ namespace DotNetNuke.UI.Modules
         {
             if (ModuleContext.TabId != ModuleContext.PortalSettings.UserTabId)
             {
-                Skins.Skin.AddModuleMessage(this,
-                                            Localization.GetString("ModuleNotIntended", Localization.SharedResourceFile),
-                                            ModuleMessage.ModuleMessageType.RedError);
+                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("ModuleNotIntended", Localization.SharedResourceFile), ModuleMessage.ModuleMessageType.RedError);
             }
             else
             {
@@ -110,8 +107,8 @@ namespace DotNetNuke.UI.Modules
                 {
                     //Clicked on breadcrumb - don't know which user
                     Response.Redirect(Request.IsAuthenticated
-                                          ? Globals.UserProfileURL(ModuleContext.PortalSettings.UserId)
-                                          : GetRedirectUrl(), true);
+                            ? Globals.UserProfileURL(ModuleContext.PortalSettings.UserId)
+                            : GetRedirectUrl(), true);
                 }
             }
             base.OnInit(e);

@@ -39,116 +39,21 @@ using DotNetNuke.Services.Tokens;
 
 #endregion
 
+// ReSharper disable CheckNamespace
 namespace DotNetNuke.Entities.Users
+// ReSharper restore CheckNamespace
 {
     public class ProfilePropertyAccess : IPropertyAccess
     {
-        private readonly UserInfo objUser;
-        private string strAdministratorRoleName;
+        private readonly UserInfo user;
+        private string _administratorRoleName;
 
         public ProfilePropertyAccess(UserInfo user)
         {
-            objUser = user;
+            this.user = user;
         }
 
-        #region IPropertyAccess Members
-
-        public string GetProperty(string propertyName, string format, CultureInfo formatProvider, UserInfo AccessingUser, Scope currentScope, ref bool PropertyNotFound)
-        {
-            if (currentScope >= Scope.DefaultSettings && objUser != null && objUser.Profile != null)
-            {
-                UserProfile objProfile = objUser.Profile;
-                foreach (ProfilePropertyDefinition prop in objProfile.ProfileProperties)
-                {
-                    if (prop.PropertyName.ToLower() == propertyName.ToLower())
-                    {
-                        if (CheckAccessLevel(prop.Visibility, AccessingUser))
-                        {
-                            return GetRichValue(prop, format, formatProvider);
-                        }
-                        else
-                        {
-                            PropertyNotFound = true;
-                            return PropertyAccess.ContentLocked;
-                        }
-                        //break;
-                    }
-                }
-            }
-            PropertyNotFound = true;
-            return string.Empty;
-        }
-
-        public CacheLevel Cacheability
-        {
-            get
-            {
-                return CacheLevel.notCacheable;
-            }
-        }
-
-        #endregion
-
-        public static string GetRichValue(ProfilePropertyDefinition prop, string strFormat, CultureInfo formatProvider)
-        {
-            string result = "";
-            if (!String.IsNullOrEmpty(prop.PropertyValue) || DisplayDataType(prop).ToLower() == "image")
-            {
-                switch (DisplayDataType(prop).ToLower())
-                {
-                    case "truefalse":
-                        result = PropertyAccess.Boolean2LocalizedYesNo(Convert.ToBoolean(prop.PropertyValue), formatProvider);
-                        break;
-                    case "date":
-                    case "datetime":
-                        if (strFormat == string.Empty)
-                        {
-                            strFormat = "g";
-                        }
-                        result = DateTime.Parse(prop.PropertyValue, CultureInfo.InvariantCulture).ToString(strFormat, formatProvider);
-                        break;
-                    case "integer":
-                        if (strFormat == string.Empty)
-                        {
-                            strFormat = "g";
-                        }
-                        result = int.Parse(prop.PropertyValue).ToString(strFormat, formatProvider);
-                        break;
-                    case "page":
-                        var TabCtrl = new TabController();
-                        int tabid;
-                        if (int.TryParse(prop.PropertyValue, out tabid))
-                        {
-                            TabInfo Tab = TabCtrl.GetTab(tabid, Null.NullInteger, false);
-                            if (Tab != null)
-                            {
-                                result = string.Format("<a href='{0}'>{1}</a>", Globals.NavigateURL(tabid), Tab.LocalizedTabName);
-                            }
-                        }
-                        break;
-                    case "image":
-                        //File is stored as a FileID
-                        int fileID;
-                        if (Int32.TryParse(prop.PropertyValue, out fileID) && fileID > 0)
-                        {
-                            result = Globals.LinkClick(String.Format("fileid={0}", fileID), Null.NullInteger, Null.NullInteger);
-                        }
-                        else
-                        {
-                            result = IconController.IconURL("Spacer","1X1");
-                        }
-                        break;
-                    case "richtext":
-                        var objSecurity = new PortalSecurity();
-                        result = PropertyAccess.FormatString(objSecurity.InputFilter(HttpUtility.HtmlDecode(prop.PropertyValue), PortalSecurity.FilterFlag.NoScripting), strFormat);
-                        break;
-                    default:
-                        result = HttpUtility.HtmlEncode(PropertyAccess.FormatString(prop.PropertyValue, strFormat));
-                        break;
-                }
-            }
-            return result;
-        }
+        #region Private Members
 
         private static string DisplayDataType(ProfilePropertyDefinition definition)
         {
@@ -163,15 +68,155 @@ namespace DotNetNuke.Entities.Users
             return strDataType;
         }
 
-        private bool CheckAccessLevel(UserVisibilityMode VisibilityMode, UserInfo AccessingUser)
+        private bool CheckAccessLevel(ProfilePropertyDefinition property, UserInfo accessingUser)
         {
-            if (String.IsNullOrEmpty(strAdministratorRoleName) && !AccessingUser.IsSuperUser)
+            var isAdminUser = IsAdminUser(accessingUser);
+
+            //Use properties visible property but admins and hosts can always see the property
+            var isVisible = property.Visible || isAdminUser;
+
+            if (isVisible && !isAdminUser)
             {
-                PortalInfo ps = new PortalController().GetPortal(objUser.PortalID);
-                strAdministratorRoleName = ps.AdministratorRoleName;
+                switch (property.Visibility)
+                {
+                    case UserVisibilityMode.AllUsers:
+                        // property is visible
+                        break;
+                    case UserVisibilityMode.MembersOnly:
+                        // property visible if accessing user is a member
+                        isVisible = accessingUser != null && accessingUser.UserID != -1;
+                        break;
+                    case UserVisibilityMode.AdminOnly:
+                        //accessing user not admin user so property is hidden (unless it is the user him/herself)
+                        isVisible = (user.UserID == accessingUser.UserID);
+                        break;
+                }               
             }
-            return VisibilityMode == UserVisibilityMode.AllUsers || (VisibilityMode == UserVisibilityMode.MembersOnly && AccessingUser != null && AccessingUser.UserID != -1) ||
-                   (AccessingUser.IsSuperUser || objUser.UserID == AccessingUser.UserID || AccessingUser.IsInRole(strAdministratorRoleName));
+
+            return isVisible;
         }
+
+        private bool IsAdminUser(UserInfo accessingUser)
+        {
+            bool isAdmin = false;
+
+            if (accessingUser != null)
+            {
+                //Is Super User?
+                isAdmin = accessingUser.IsSuperUser;
+
+                if (!isAdmin)
+                {
+                    //Is Administrator
+                    if (String.IsNullOrEmpty(_administratorRoleName))
+                    {
+                        PortalInfo ps = new PortalController().GetPortal(user.PortalID);
+                        _administratorRoleName = ps.AdministratorRoleName;
+                    }
+
+                    isAdmin = accessingUser.IsInRole(_administratorRoleName);
+                }
+            }
+
+            return isAdmin;
+        }
+
+        #endregion
+
+        #region IPropertyAccess Members
+
+        public string GetProperty(string propertyName, string format, CultureInfo formatProvider, UserInfo accessingUser, Scope currentScope, ref bool propertyNotFound)
+        {
+            if (currentScope >= Scope.DefaultSettings && user != null && user.Profile != null)
+            {
+                var profile = user.Profile;
+                foreach (ProfilePropertyDefinition property in profile.ProfileProperties)
+                {
+                    if (property.PropertyName.ToLower() == propertyName.ToLower())
+                    {
+                        if (CheckAccessLevel(property, accessingUser))
+                        {
+                            return GetRichValue(property, format, formatProvider);
+                        }
+                        propertyNotFound = true;
+                        return PropertyAccess.ContentLocked;
+                    }
+                }
+            }
+            propertyNotFound = true;
+            return string.Empty;
+        }
+
+        public CacheLevel Cacheability
+        {
+            get
+            {
+                return CacheLevel.notCacheable;
+            }
+        }
+
+        #endregion
+
+        public static string GetRichValue(ProfilePropertyDefinition property, string formatString, CultureInfo formatProvider)
+        {
+            string result = "";
+            if (!String.IsNullOrEmpty(property.PropertyValue) || DisplayDataType(property).ToLower() == "image")
+            {
+                switch (DisplayDataType(property).ToLower())
+                {
+                    case "truefalse":
+                        result = PropertyAccess.Boolean2LocalizedYesNo(Convert.ToBoolean(property.PropertyValue), formatProvider);
+                        break;
+                    case "date":
+                    case "datetime":
+                        if (formatString == string.Empty)
+                        {
+                            formatString = "g";
+                        }
+                        result = DateTime.Parse(property.PropertyValue, CultureInfo.InvariantCulture).ToString(formatString, formatProvider);
+                        break;
+                    case "integer":
+                        if (formatString == string.Empty)
+                        {
+                            formatString = "g";
+                        }
+                        result = int.Parse(property.PropertyValue).ToString(formatString, formatProvider);
+                        break;
+                    case "page":
+                        var TabCtrl = new TabController();
+                        int tabid;
+                        if (int.TryParse(property.PropertyValue, out tabid))
+                        {
+                            TabInfo Tab = TabCtrl.GetTab(tabid, Null.NullInteger, false);
+                            if (Tab != null)
+                            {
+                                result = string.Format("<a href='{0}'>{1}</a>", Globals.NavigateURL(tabid), Tab.LocalizedTabName);
+                            }
+                        }
+                        break;
+                    case "image":
+                        //File is stored as a FileID
+                        int fileID;
+                        if (Int32.TryParse(property.PropertyValue, out fileID) && fileID > 0)
+                        {
+                            result = Globals.LinkClick(String.Format("fileid={0}", fileID), Null.NullInteger, Null.NullInteger);
+                        }
+                        else
+                        {
+                            result = IconController.IconURL("Spacer","1X1");
+                        }
+                        break;
+                    case "richtext":
+                        var objSecurity = new PortalSecurity();
+                        result = PropertyAccess.FormatString(objSecurity.InputFilter(HttpUtility.HtmlDecode(property.PropertyValue), PortalSecurity.FilterFlag.NoScripting), formatString);
+                        break;
+                    default:
+                        result = HttpUtility.HtmlEncode(PropertyAccess.FormatString(property.PropertyValue, formatString));
+                        break;
+                }
+            }
+            return result;
+        }
+
     }
 }

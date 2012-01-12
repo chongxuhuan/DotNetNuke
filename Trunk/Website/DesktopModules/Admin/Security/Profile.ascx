@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Users.DNNProfile" CodeFile="Profile.ascx.cs" %>
+<%@ Control Language="C#" AutoEventWireup="false" Inherits="DesktopModules.Admin.Security.DNNProfile" CodeFile="Profile.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <div class="dnnForm dnnProfile dnnClear">
 	<h2 id="divTitle" runat="server" class="dnnFormSectionHead"><asp:label id="lblTitle" runat="server" /></h2>

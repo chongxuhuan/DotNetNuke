@@ -24,6 +24,7 @@
 #region Usings
 
 using System;
+using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
@@ -60,28 +61,8 @@ namespace DotNetNuke.Modules.Admin.Users
                     lblNoProperties.Visible = true;
                     return;
                 }
-                ProfilePropertyDefinitionCollection properties = ctlProfile.UserProfile.ProfileProperties;
-                int visibleCount = 0;
-                foreach (ProfilePropertyDefinition profProperty in properties)
-                {
-                    if (profProperty.Visible)
-                    {
-                        if (profProperty.Visibility == UserVisibilityMode.AdminOnly)
-                        {
-                            profProperty.Visible = (IsAdmin || IsUser);
-                        }
-                        else if (profProperty.Visibility == UserVisibilityMode.MembersOnly)
-                        {
-                            profProperty.Visible = Request.IsAuthenticated;
-                        }
-                    }
-                    if (profProperty.Visible)
-                    {
-                        visibleCount += 1;
-                    }
-                }
                 ctlProfile.DataBind();
-                if (visibleCount == 0)
+                if (ctlProfile.UserProfile.ProfileProperties.Cast<ProfilePropertyDefinition>().Count(profProperty => profProperty.Visible) == 0)
                 {
                     lblNoProperties.Visible = true;
                 }

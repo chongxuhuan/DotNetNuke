@@ -1827,6 +1827,29 @@ namespace DotNetNuke.Entities.Tabs
             return tabNode;
         }
 
+        /// <summary>
+        /// check whether have conflict between tab path and portal alias.
+        /// </summary>
+        /// <param name="portalId">portal id.</param>
+        /// <param name="tabPath">tab path.</param>
+        /// <returns></returns>
+        public static bool IsDuplicateWithPortalAlias(int portalId, string tabPath)
+        {
+            var aliasController = new PortalAliasController();
+            var aliasLookup = aliasController.GetPortalAliases().Values.Cast<PortalAliasInfo>();
+
+            foreach (PortalAliasInfo alias in aliasController.GetPortalAliasArrayByPortalID(portalId))
+            {
+                var checkAlias = string.Format("{0}{1}", alias.HTTPAlias, tabPath.Replace("//", "/"));
+                if(aliasLookup.Any(a => a.HTTPAlias.Equals(checkAlias, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region Content Localization

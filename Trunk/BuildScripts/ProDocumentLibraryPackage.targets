@@ -38,7 +38,7 @@
     <CreateItem Include="swf\*.*">
       <Output TaskParameter="Include" ItemName="PackageSwfs" />
     </CreateItem>
-    <CreateItem Include="*.SqlDataProvider">
+    <CreateItem Include="Providers\DataProviders\SqlDataProvider\*.SqlDataProvider">
       <Output TaskParameter="Include" ItemName="PackageSqlDataProviderFiles" />
     </CreateItem>
     <CreateItem Include="App_LocalResources\*.*">
@@ -62,7 +62,7 @@
     <Copy SourceFiles="@(PackageThumbnailsFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Components\Thumbnails" />
     <Copy SourceFiles="@(PackageUserPickerFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Components\UserPicker" />
     <Copy SourceFiles="@(PackageSwfs)" DestinationFolder="$(MSBuildProjectDirectory)\Package\swf" />
-    <Copy SourceFiles="@(PackageSqlDataProviderFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
+    <Copy SourceFiles="@(PackageSqlDataProviderFiles)" DestinationFolder="$(MSBuildProjectDirectory)\Package\Providers\DataProviders\SqlDataProvider" />
     <Copy SourceFiles="@(PackageLocalResources)" DestinationFolder="$(MSBuildProjectDirectory)\Package\App_LocalResources" />
     <CreateItem Include="Images\**\*.*">
       <Output TaskParameter="Include" ItemName="ImageResources" />
