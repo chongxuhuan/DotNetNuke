@@ -1,8 +1,7 @@
 #region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,9 +17,7 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
 #region Usings
 
 using System;
@@ -2244,10 +2241,11 @@ namespace DotNetNuke.Data
         }
 
         //profile property definitions
-        public override int AddPropertyDefinition(int PortalId, int ModuleDefId, int DataType, string DefaultValue, string PropertyCategory, string PropertyName, bool Required,
-                                                  string ValidationExpression, int ViewOrder, bool Visible, int Length, int DefaultVisibility, int CreatedByUserID)
+        public override int AddPropertyDefinition(int PortalId, int ModuleDefId, int DataType, string DefaultValue, string PropertyCategory,
+                                                    string PropertyName, bool ReadOnly, bool Required, string ValidationExpression, int ViewOrder, 
+                                                    bool Visible, int Length, int DefaultVisibility, int CreatedByUserID)
         {
-            int retValue = Null.NullInteger;
+            int retValue;
             try
             {
                 retValue =
@@ -2259,6 +2257,7 @@ namespace DotNetNuke.Data
                                                             DefaultValue,
                                                             PropertyCategory,
                                                             PropertyName,
+                                                            ReadOnly,
                                                             Required,
                                                             ValidationExpression,
                                                             ViewOrder,
@@ -2301,8 +2300,9 @@ namespace DotNetNuke.Data
             return SqlHelper.ExecuteReader(ConnectionString, DatabaseOwner + ObjectQualifier + "GetPropertyDefinitionsByPortal", GetNull(portalId));
         }
 
-        public override void UpdatePropertyDefinition(int PropertyDefinitionId, int DataType, string DefaultValue, string PropertyCategory, string PropertyName, bool Required,
-                                                      string ValidationExpression, int ViewOrder, bool Visible, int Length, int DefaultVisibility, int LastModifiedByUserID)
+        public override void UpdatePropertyDefinition(int PropertyDefinitionId, int DataType, string DefaultValue, string PropertyCategory, 
+                                                        string PropertyName, bool ReadOnly, bool Required, string ValidationExpression, 
+                                                        int ViewOrder, bool Visible, int Length, int DefaultVisibility, int LastModifiedByUserID)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString,
                                       DatabaseOwner + ObjectQualifier + "UpdatePropertyDefinition",
@@ -2311,6 +2311,7 @@ namespace DotNetNuke.Data
                                       DefaultValue,
                                       PropertyCategory,
                                       PropertyName,
+                                      ReadOnly,
                                       Required,
                                       ValidationExpression,
                                       ViewOrder,

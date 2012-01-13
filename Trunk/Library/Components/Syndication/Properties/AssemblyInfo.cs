@@ -1,8 +1,7 @@
 #region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,9 +17,7 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
 #region Usings
 
 using System;
@@ -29,11 +26,11 @@ using System.Reflection;
 #endregion
 
 [assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2011 by DotNetNuke Corporation. All Rights Reserved.")]
+[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
 [assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyInformationalVersion("6.2.0.166")]
-[assembly: AssemblyFileVersion("6.2.0.166")]
-[assembly: AssemblyVersion("6.2.0.166")]
+[assembly: AssemblyInformationalVersion("6.2.0.177")]
+[assembly: AssemblyFileVersion("6.2.0.177")]
+[assembly: AssemblyVersion("6.2.0.177")]
 [assembly: AssemblyTitle("DotNetNuke.Services.Syndication")]
 [assembly: AssemblyDescription("Open Source Web Application Framework")]
 

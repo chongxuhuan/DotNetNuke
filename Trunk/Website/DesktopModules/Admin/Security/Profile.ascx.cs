@@ -1,8 +1,7 @@
 #region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,9 +17,7 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
 #region Usings
 
 using System;
@@ -48,7 +45,7 @@ namespace DesktopModules.Admin.Security
     /// -----------------------------------------------------------------------------
     public partial class DNNProfile : ProfileUserControlBase
     {
-		#region "Protected Properties"
+		#region Protected Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -69,7 +66,7 @@ namespace DesktopModules.Admin.Security
 
 		#endregion
 
-		#region "Public Properties"
+		#region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -150,7 +147,7 @@ namespace DesktopModules.Admin.Security
 
 		#endregion
 
-		#region "Public Methods"
+		#region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -197,7 +194,7 @@ namespace DesktopModules.Admin.Security
 
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -218,14 +215,7 @@ namespace DesktopModules.Admin.Security
             if (basePage != null)
             {
 				//Check if culture is RTL
-                if (basePage.PageCulture.TextInfo.IsRightToLeft)
-                {
-                    ProfileProperties.LabelMode = LabelMode.Right;
-                }
-                else
-                {
-                    ProfileProperties.LabelMode = LabelMode.Left;
-                }
+                ProfileProperties.LabelMode = basePage.PageCulture.TextInfo.IsRightToLeft ? LabelMode.Right : LabelMode.Left;
             }
         }
 

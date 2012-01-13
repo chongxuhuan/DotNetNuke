@@ -1,8 +1,7 @@
 #region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,9 +17,7 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
 #region Usings
 
 using System;
@@ -136,6 +133,7 @@ namespace DotNetNuke.Entities.Profile
                 definition.PropertyCategory = Convert.ToString(Null.SetNull(dr["PropertyCategory"], definition.PropertyCategory));
                 definition.PropertyName = Convert.ToString(Null.SetNull(dr["PropertyName"], definition.PropertyName));
                 definition.Length = Convert.ToInt32(Null.SetNull(dr["Length"], definition.Length));
+                definition.ReadOnly = Convert.ToBoolean(Null.SetNull(dr["ReadOnly"], definition.ReadOnly));
                 definition.Required = Convert.ToBoolean(Null.SetNull(dr["Required"], definition.Required));
                 definition.ValidationExpression = Convert.ToString(Null.SetNull(dr["ValidationExpression"], definition.ValidationExpression));
                 definition.ViewOrder = Convert.ToInt32(Null.SetNull(dr["ViewOrder"], definition.ViewOrder));
@@ -269,6 +267,7 @@ namespace DotNetNuke.Entities.Profile
                                                                definition.DefaultValue,
                                                                definition.PropertyCategory,
                                                                definition.PropertyName,
+                                                               definition.ReadOnly,
                                                                definition.Required,
                                                                definition.ValidationExpression,
                                                                definition.ViewOrder,
@@ -473,6 +472,7 @@ namespace DotNetNuke.Entities.Profile
                                               definition.DefaultValue,
                                               definition.PropertyCategory,
                                               definition.PropertyName,
+                                              definition.ReadOnly,
                                               definition.Required,
                                               definition.ValidationExpression,
                                               definition.ViewOrder,

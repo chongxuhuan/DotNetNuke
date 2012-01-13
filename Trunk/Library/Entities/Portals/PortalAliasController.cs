@@ -1,8 +1,7 @@
 #region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,9 +17,7 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
 #region Usings
 
 using System;
@@ -29,6 +26,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Tabs;
@@ -63,6 +61,40 @@ namespace DotNetNuke.Entities.Portals
         private static object GetPortalAliasLookupCallBack(CacheItemArgs cacheItemArgs)
         {
             return new PortalAliasController().GetPortalAliases();
+        }
+
+        /// <summary>
+        /// Validates the alias.
+        /// </summary>
+        /// <param name="portalAlias">The portal alias.</param>
+        /// <param name="ischild">if set to <c>true</c> [ischild].</param>
+        /// <param name="isDomain">Whether is validate as domain format.</param>
+        /// <returns><c>true</c> if the alias is a valid url format; otherwise return <c>false</c>.</returns>
+        private static bool ValidateAlias(string portalAlias, bool ischild, bool isDomain)
+        {
+            bool isValid = true;
+
+            string validChars = "abcdefghijklmnopqrstuvwxyz0123456789-";
+            if (!ischild)
+            {
+                validChars += "./:";
+            }
+
+            if(!isDomain)
+            {
+                validChars += "_";
+            }
+
+            foreach (char c in portalAlias)
+            {
+                if (!validChars.Contains(c.ToString()))
+                {
+                    isValid = false;
+                    break;
+                }
+            }
+
+            return isValid;
         }
 
 		/// <summary>
@@ -274,27 +306,25 @@ namespace DotNetNuke.Entities.Portals
 		/// <param name="ischild">if set to <c>true</c> [ischild].</param>
 		/// <returns><c>true</c> if the alias is a valid url format; otherwise return <c>false</c>.</returns>
         public static bool ValidateAlias(string portalAlias, bool ischild)
-        {
-            bool isValid = true;
-
-            string validChars = "abcdefghijklmnopqrstuvwxyz0123456789-";
-            if (!ischild)
-            {
-                validChars += "./:";
-            }
-
-            foreach (char c in portalAlias)
-            {
-                if (!validChars.Contains(c.ToString()))
+		{
+		    if(ischild)
+		    {
+		        return ValidateAlias(portalAlias, ischild, false);
+		    }
+		    else
+		    {
+		        //validate the domain
+		        Uri result;
+                if(Uri.TryCreate(Globals.AddHTTP(portalAlias), UriKind.Absolute, out result))
                 {
-                    isValid = false;
-                    break;
+                    return ValidateAlias(result.Host, false, true) && ValidateAlias(portalAlias, false, false);
                 }
-            }
-
-            return isValid;
-        }
-
+                else
+                {
+                    return false;
+                }
+		    }
+		}
 
 		/// <summary>
 		/// Adds the portal alias.

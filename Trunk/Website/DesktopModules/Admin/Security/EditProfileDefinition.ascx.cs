@@ -1,8 +1,7 @@
 #region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,9 +17,7 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
 #region Usings
 
 using System;
@@ -58,7 +55,7 @@ namespace DotNetNuke.Modules.Admin.Users
     /// -----------------------------------------------------------------------------
     public partial class EditProfileDefinition : PortalModuleBase
     {
-		#region "Private Members"
+		#region Private Members
 
         private string ResourceFile = "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx";
         private string _Message = Null.NullString;
@@ -66,7 +63,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
 		#endregion
 
-		#region "Protected Members"
+		#region Protected Members
 
         protected bool IsAddMode
         {
@@ -170,7 +167,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
 		#endregion
 
-		#region "Private Methods"
+		#region Private Methods
 
         private void UpdateResourceFileNode(XmlDocument xmlDoc, string key, string text)
         {
@@ -252,7 +249,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
 		#endregion
 
-		#region "Public Methods"
+		#region Public Methods
 
         public string GetText(string type)
         {
@@ -284,7 +281,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
         /// -----------------------------------------------------------------------------
         /// <summary>

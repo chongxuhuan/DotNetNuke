@@ -1,8 +1,7 @@
 #region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,16 +17,17 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
 #region Usings
 
 using System;
 using System.Web.UI;
 
 using DotNetNuke.Common.Lists;
+using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Security;
 
 #endregion
 
@@ -77,9 +77,23 @@ namespace DotNetNuke.UI.WebControls
 
             base.CreateEditor();
 
-            //We need to wire up the RegionControl to the CountryControl
             foreach (FieldEditorControl editor in Fields)
             {
+                //Check whether Field is readonly
+                string fieldName = editor.Editor.Name;
+                ProfilePropertyDefinitionCollection definitions = editor.DataSource as ProfilePropertyDefinitionCollection;
+                ProfilePropertyDefinition definition = definitions[fieldName];
+
+                if (definition != null && definition.ReadOnly && (editor.Editor.EditMode == PropertyEditorMode.Edit))
+                {
+                    PortalSettings ps = PortalController.GetCurrentPortalSettings();
+                    if (!PortalSecurity.IsInRole(ps.AdministratorRoleName))
+                    {
+                        editor.Editor.EditMode = PropertyEditorMode.View;
+                    }
+                }
+
+                //We need to wire up the RegionControl to the CountryControl
                 if (editor.Editor is DNNRegionEditControl)
                 {
                     ListEntryInfo country = null;

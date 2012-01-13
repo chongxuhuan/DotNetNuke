@@ -13,7 +13,10 @@
     </HeaderTemplate>
     <WizardSteps>
         <asp:WizardStep ID="wizIntroduction" runat="server" Title="Introduction" StepType="Start" AllowReturn="false">
-            <dnn:propertyeditorcontrol id="Properties" runat="Server" SortMode="SortOrderAttribute" ErrorStyle-cssclass="dnnFormError" helpstyle-cssclass="dnnFormHelpContent dnnClear" />
+            <dnn:propertyeditorcontrol id="Properties" runat="Server" SortMode="SortOrderAttribute" 
+                                ErrorStyle-cssclass="dnnFormError" helpstyle-cssclass="dnnFormHelpContent dnnClear">
+
+            </dnn:propertyeditorcontrol>
         </asp:WizardStep>
         <asp:WizardStep ID="wizLists" runat="server" Title="List" AllowReturn="false"><dnn:ListEntries id="lstEntries" runat="server" /></asp:WizardStep>
 		<asp:WizardStep ID="wizLocalization" runat="server" Title="Localization" AllowReturn="false">

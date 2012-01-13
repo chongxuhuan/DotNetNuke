@@ -1,8 +1,7 @@
 #region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,9 +17,7 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
 #region Usings
 
 using System;
@@ -55,6 +52,8 @@ namespace DotNetNuke.Entities.Profile
     [Serializable]
     public class ProfilePropertyDefinition : BaseEntityInfo
     {
+        #region Private Members
+
         private int _DataType = Null.NullInteger;
         private string _DefaultValue;
         private UserVisibilityMode _DefaultVisibility = UserVisibilityMode.AdminOnly;
@@ -66,12 +65,17 @@ namespace DotNetNuke.Entities.Profile
         private int _PropertyDefinitionId = Null.NullInteger;
         private string _PropertyName;
         private string _PropertyValue;
+        private bool _ReadOnly = false;
         private bool _Required;
         private string _ValidationExpression;
         private int _ViewOrder;
         private UserVisibilityMode _Visibility = UserVisibilityMode.AdminOnly;
         private bool _Visible;
         private bool _Deleted;
+
+        #endregion
+
+        #region Constructors
 
         public ProfilePropertyDefinition()
         {
@@ -84,6 +88,10 @@ namespace DotNetNuke.Entities.Profile
         {
             PortalId = portalId;
         }
+
+        #endregion
+
+        #region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -346,6 +354,32 @@ namespace DotNetNuke.Entities.Profile
 
         /// -----------------------------------------------------------------------------
         /// <summary>
+        /// Gets and sets whether the property is read only
+        /// </summary>
+        /// <history>
+        ///     [cnurse]	01/31/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        [SortOrder(7)]
+        [XmlIgnore]
+        public bool ReadOnly
+        {
+            get
+            {
+                return _ReadOnly;
+            }
+            set
+            {
+                if (_ReadOnly != value)
+                {
+                    _IsDirty = true;
+                }
+                _ReadOnly = value;
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
         /// Gets and sets whether the property is required
         /// </summary>
         /// <history>
@@ -404,7 +438,7 @@ namespace DotNetNuke.Entities.Profile
         ///     [cnurse]	01/31/2006	created
         /// </history>
         /// -----------------------------------------------------------------------------
-        [IsReadOnly(true), SortOrder(8)]
+        [IsReadOnly(true), SortOrder(9)]
         [XmlIgnore]
         public int ViewOrder
         {
@@ -430,7 +464,7 @@ namespace DotNetNuke.Entities.Profile
         ///     [cnurse]	01/31/2006	created
         /// </history>
         /// -----------------------------------------------------------------------------
-        [SortOrder(7)]
+        [SortOrder(8)]
         [XmlIgnore]
         public bool Visible
         {
@@ -456,7 +490,7 @@ namespace DotNetNuke.Entities.Profile
         ///   [sbwalker]	06/28/2010	created
         /// </history>
         /// -----------------------------------------------------------------------------
-        [SortOrder(9)]
+        [SortOrder(10)]
         [XmlIgnore]
         public UserVisibilityMode DefaultVisibility
         {
@@ -473,7 +507,6 @@ namespace DotNetNuke.Entities.Profile
                 _DefaultVisibility = value;
             }
         }
-
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -501,6 +534,10 @@ namespace DotNetNuke.Entities.Profile
             }
         }
 
+        #endregion
+
+        #region Public Methods
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Clears the IsDirty Flag
@@ -514,26 +551,35 @@ namespace DotNetNuke.Entities.Profile
             _IsDirty = false;
         }
 
+        /// <summary>
+        /// Clone a ProfilePropertyDefinition
+        /// </summary>
+        /// <returns>A ProfilePropertyDefinition</returns>
         public ProfilePropertyDefinition Clone()
         {
-            var objClone = new ProfilePropertyDefinition(PortalId);
-            objClone.DataType = DataType;
-            objClone.DefaultValue = DefaultValue;
-            objClone.Length = Length;
-            objClone.ModuleDefId = ModuleDefId;
-            objClone.PropertyCategory = PropertyCategory;
-            objClone.PropertyDefinitionId = PropertyDefinitionId;
-            objClone.PropertyName = PropertyName;
-            objClone.PropertyValue = PropertyValue;
-            objClone.Required = Required;
-            objClone.ValidationExpression = ValidationExpression;
-            objClone.ViewOrder = ViewOrder;
-            objClone.DefaultVisibility = DefaultVisibility;
-            objClone.Visibility = Visibility;
-            objClone.Visible = Visible;
-            objClone.Deleted = Deleted;
-            objClone.ClearIsDirty();
-            return objClone;
+            var clone = new ProfilePropertyDefinition(PortalId)
+                            {
+                                DataType = DataType,
+                                DefaultValue = DefaultValue,
+                                Length = Length,
+                                ModuleDefId = ModuleDefId,
+                                PropertyCategory = PropertyCategory,
+                                PropertyDefinitionId = PropertyDefinitionId,
+                                PropertyName = PropertyName,
+                                PropertyValue = PropertyValue,
+                                ReadOnly = ReadOnly,
+                                Required = Required,
+                                ValidationExpression = ValidationExpression,
+                                ViewOrder = ViewOrder,
+                                DefaultVisibility = DefaultVisibility,
+                                Visibility = Visibility,
+                                Visible = Visible,
+                                Deleted = Deleted
+                            };
+            clone.ClearIsDirty();
+            return clone;
         }
+
+        #endregion
     }
 }

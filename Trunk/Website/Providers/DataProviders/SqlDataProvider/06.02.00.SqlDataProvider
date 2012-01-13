@@ -1826,6 +1826,390 @@ AS
         
 GO
 
+/* Add ReadOnly Column To ProfilePropertyDefinition Table */
+/**********************************************************/
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}ProfilePropertyDefinition' AND COLUMN_NAME='ReadOnly')
+	BEGIN
+		-- Add new Column
+		ALTER TABLE {databaseOwner}{objectQualifier}ProfilePropertyDefinition
+			ADD ReadOnly bit CONSTRAINT [DF_{objectQualifier}ProfilePropertyDefinition_ReadOnly]  DEFAULT (0) NOT NULL
+	END
+GO
+
+/* Update AddPropertyDefinition Procedure */
+/******************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddPropertyDefinition]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddPropertyDefinition]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddPropertyDefinition]
+	@PortalId int,
+	@ModuleDefId int,
+	@DataType int,
+	@DefaultValue ntext,
+	@PropertyCategory nvarchar(50),
+	@PropertyName nvarchar(50),
+	@ReadOnly bit,
+	@Required bit,
+	@ValidationExpression nvarchar(2000),
+	@ViewOrder int,
+	@Visible bit,
+    @Length int,
+    @DefaultVisibility int,
+	@CreatedByUserID int
+
+AS
+	DECLARE @PropertyDefinitionId int
+
+	SELECT @PropertyDefinitionId = PropertyDefinitionId
+		FROM   {databaseOwner}{objectQualifier}ProfilePropertyDefinition
+		WHERE  (PortalId = @PortalId OR (PortalId IS NULL AND @PortalId IS NULL))
+			AND PropertyName = @PropertyName
+			
+	IF @vieworder=-1
+		BEGIN
+			SELECT	@vieworder = MAX(ViewOrder) + 1 
+			FROM	{databaseOwner}{objectQualifier}ProfilePropertyDefinition
+		END
+
+	IF @PropertyDefinitionId IS NULL
+		BEGIN
+			INSERT {databaseOwner}{objectQualifier}ProfilePropertyDefinition	(
+					PortalId,
+					ModuleDefId,
+					Deleted,
+					DataType,
+					DefaultValue,
+					PropertyCategory,
+					PropertyName,
+					ReadOnly,
+					Required,
+					ValidationExpression,
+					ViewOrder,
+					Visible,
+					Length,
+                    DefaultVisibility,
+					[CreatedByUserID],
+					[CreatedOnDate],
+					[LastModifiedByUserID],
+					[LastModifiedOnDate]
+
+				)
+				VALUES	(
+					@PortalId,
+					@ModuleDefId,
+					0,
+					@DataType,
+					@DefaultValue,
+					@PropertyCategory,
+					@PropertyName,
+					@ReadOnly,
+					@Required,
+					@ValidationExpression,
+					@ViewOrder,
+					@Visible,
+					@Length,
+                    @DefaultVisibility,
+					@CreatedByUserID,
+  					getdate(),
+  					@CreatedByUserID,
+  					getdate()
+				)
+
+			SELECT @PropertyDefinitionId = SCOPE_IDENTITY()
+		END
+	ELSE
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}ProfilePropertyDefinition 
+				SET DataType = @DataType,
+					ModuleDefId = @ModuleDefId,
+					DefaultValue = @DefaultValue,
+					PropertyCategory = @PropertyCategory,
+					ReadOnly = @ReadOnly,
+					Required = @Required,
+					ValidationExpression = @ValidationExpression,
+					ViewOrder = @ViewOrder,
+					Deleted = 0,
+					Visible = @Visible,
+					Length = @Length,
+                    DefaultVisibility = @DefaultVisibility,
+					[LastModifiedByUserID] = @CreatedByUserID,	
+					[LastModifiedOnDate] = getdate()
+				WHERE PropertyDefinitionId = @PropertyDefinitionId
+		END
+		
+	SELECT @PropertyDefinitionId
+GO
+
+/* Update UpdatePropertyDefinition Procedure */
+/*********************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdatePropertyDefinition]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdatePropertyDefinition]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdatePropertyDefinition]
+	@PropertyDefinitionId int,
+	@DataType int,
+	@DefaultValue nvarchar(50),
+	@PropertyCategory nvarchar(50),
+	@PropertyName nvarchar(50),
+	@ReadOnly bit,
+	@Required bit,
+	@ValidationExpression nvarchar(100),
+	@ViewOrder int,
+	@Visible bit,
+    @Length int,
+    @DefaultVisibility int,
+	@LastModifiedByUserID	int
+
+AS
+	UPDATE {databaseOwner}{objectQualifier}ProfilePropertyDefinition 
+		SET DataType = @DataType,
+			DefaultValue = @DefaultValue,
+			PropertyCategory = @PropertyCategory,
+			PropertyName = @PropertyName,
+			ReadOnly = @ReadOnly,
+			Required = @Required,
+			ValidationExpression = @ValidationExpression,
+			ViewOrder = @ViewOrder,
+			Visible = @Visible,
+			Length = @Length,
+            DefaultVisibility = @DefaultVisibility,
+			[LastModifiedByUserID] = @LastModifiedByUserID,	
+			[LastModifiedOnDate] = getdate()
+		WHERE PropertyDefinitionId = @PropertyDefinitionId
+GO
+
+/* Add objects for social messaging */
+/*************************************/
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Messages]') AND type in (N'U'))
+BEGIN
+CREATE TABLE {databaseOwner}{objectQualifier}Social_Messages(
+	[MessageID] [int] IDENTITY(1,1) NOT NULL,
+	[Subject] [nvarchar](max) NULL,
+	[Body] [nvarchar](max) NULL,
+	[ParentMessageID] [int] NULL,
+	[GroupMail] [bit] NULL,
+	[SenderUserID] [int] NULL,
+	[CreatedByUserID] [int] NULL,
+	[CreatedOnDate] [datetime] NULL,
+	[LastModifiedByUserID] [int] NULL,
+	[LastModifiedOnDate] [datetime] NULL,
+ CONSTRAINT [PK_{objectQualifier}Social_Messages] PRIMARY KEY CLUSTERED 
+	(
+		[MessageID] ASC
+	)
+)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Recipients]') AND type in (N'U'))
+BEGIN
+CREATE TABLE {databaseOwner}{objectQualifier}Social_Message_Recipients(
+	[RecepientID] [int] IDENTITY(1,1) NOT NULL,
+	[MessageID] [int] NOT NULL,
+	[UserID] [int] NULL,
+	[Status] [tinyint] NULL,
+	[CreatedByUserID] [int] NULL,
+	[CreatedOnDate] [datetime] NULL,
+	[LastModifiedByUserID] [int] NULL,
+	[LastModifiedOnDate] [datetime] NULL,
+ CONSTRAINT [PK_{objectQualifier}Social_Message_Recipients] PRIMARY KEY CLUSTERED 
+	(
+		[RecepientID] ASC
+	)
+)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Attachments]') AND type in (N'U'))
+BEGIN
+CREATE TABLE {databaseOwner}{objectQualifier}Social_Message_Attachments(
+	[MessageAttachmentID] [int] IDENTITY(1,1) NOT NULL,
+	[MessageID] [int] NOT NULL,
+	[FileID] [int] NULL,
+	[CreatedByUserID] [int] NULL,
+	[CreatedOnDate] [datetime] NULL,
+	[LastModifiedByUserID] [int] NULL,
+	[LastModifiedOnDate] [datetime] NULL,
+ CONSTRAINT [PK_{objectQualifier}Social_Message_Attachments_1] PRIMARY KEY CLUSTERED 
+	(
+		[MessageAttachmentID] ASC
+	)
+)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Social_Message_Attachments_Social_Messages]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Attachments]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}Social_Message_Attachments]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Social_Message_Attachments_Social_Messages] FOREIGN KEY([MessageID])
+REFERENCES {databaseOwner}[{objectQualifier}Social_Messages] ([MessageID])
+GO
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Social_Message_Attachments_Social_Messages]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Attachments]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}Social_Message_Attachments] CHECK CONSTRAINT [FK_{objectQualifier}Social_Message_Attachments_Social_Messages]
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Social_Message_Recipients_Social_Messages]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Recipients]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}Social_Message_Recipients]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Social_Message_Recipients_Social_Messages] FOREIGN KEY([MessageID])
+REFERENCES {databaseOwner}[{objectQualifier}Social_Messages] ([MessageID])
+GO
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Social_Message_Recipients_Social_Messages]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Recipients]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}Social_Message_Recipients] CHECK CONSTRAINT [FK_{objectQualifier}Social_Message_Recipients_Social_Messages]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocial_Messages]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocial_Messages]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}GetSocial_Messages] 
+    @MessageID INT
+AS 
+	SELECT [MessageID], [Subject], [Body], [ParentMessageID], [GroupMail], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   [dbo].[Social_Messages] 
+	WHERE  [MessageID] = @MessageID 
+
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}AddSocial_Messages]]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddSocial_Messages]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}AddSocial_Messages] 
+    @Subject nvarchar(MAX),
+    @Body nvarchar(MAX),
+    @ParentMessageID int,
+    @GroupMail bit,
+    @SenderUserID int,
+    @CreatedByUserID int
+AS 
+
+	INSERT  [dbo].[Social_Messages] ([Subject], [Body], [ParentMessageID], [GroupMail], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate])
+	VALUES (@Subject, @Body, @ParentMessageID, @GroupMail, @SenderUserID, @CreatedByUserID, GETDATE(), @CreatedByUserID, GETDATE())
+	
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}UpdateSocial_Messages]]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocial_Messages]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}UpdateSocial_Messages] 
+    @MessageID int,
+    @Subject nvarchar(MAX),
+    @Body nvarchar(MAX),
+    @ParentMessageID int,
+    @GroupMail bit,
+    @SenderUserID int,
+    @LastModifiedByUserID int
+AS 
+	UPDATE [dbo].[Social_Messages]
+	SET    [Subject] = @Subject, [Body] = @Body, [ParentMessageID] = @ParentMessageID, [GroupMail] = @GroupMail, [SenderUserID] = @SenderUserID,  [LastModifiedByUserID] = @LastModifiedByUserID, [LastModifiedOnDate] = GETDATE()
+	WHERE  [MessageID] = @MessageID
+
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}DeleteSocial_Messages]]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocial_Messages]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocial_Messages] 
+    @MessageID int
+AS 
+	DELETE
+	FROM   [dbo].[Social_Messages]
+	WHERE  [MessageID] = @MessageID
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}GetSocial_Message_Recipients]]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocial_Message_Recipients]
+GO
+
+
+CREATE PROC {databaseOwner}[{objectQualifier}GetSocial_Message_Recipients] 
+    @RecepientID INT
+AS 
+	SELECT [RecepientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   [dbo].[Social_Message_Recipients] 
+	WHERE  [RecepientID] = @RecepientID 
+
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}AddSocial_Message_Recipients]]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddSocial_Message_Recipients]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}AddSocial_Message_Recipients] 
+    @MessageID int,
+    @UserID int,
+    @Status tinyint,
+    @CreatedByUserID int
+AS 
+
+	INSERT [dbo].[Social_Message_Recipients] ([MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate])
+	VALUES( @MessageID, @UserID, @Status, @CreatedByUserID, GETDATE(), @CreatedByUserID, GETDATE())
+
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}UpdateSocial_Message_Recipients]]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocial_Message_Recipients]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}UpdateSocial_Message_Recipients] 
+    @RecepientID int,
+    @MessageID int,
+    @UserID int,
+    @Status tinyint,
+    @LastModifiedByUserID int
+
+AS 
+	UPDATE [dbo].[Social_Message_Recipients]
+	SET    [MessageID] = @MessageID, [UserID] = @UserID, [Status] = @Status, [LastModifiedByUserID] = @LastModifiedByUserID, [LastModifiedOnDate] = GETDATE()
+	WHERE  [RecepientID] = @RecepientID
+
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}DeleteSocial_Message_Recipients]]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocial_Message_Recipients]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocial_Message_Recipients] 
+    @RecepientID int
+AS 
+	DELETE
+	FROM   [dbo].[Social_Message_Recipients]
+	WHERE  [RecepientID] = @RecepientID
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}AddSocial_Message_Attachments]]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddSocial_Message_Attachments]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}AddSocial_Message_Attachments] 
+    @MessageID int,
+    @FileID int,
+    @CreatedByUserID int
+AS 
+
+	INSERT [dbo].[Social_Message_Attachments] ([MessageID], [FileID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate])
+	VALUES ( @MessageID, @FileID, @CreatedByUserID, GETDATE(), @CreatedByUserID, GETDATE())
+	
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}DeleteSocial_Message_Attachments]]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocial_Message_Attachments]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocial_Message_Attachments] 
+    @MessageAttachmentID int
+AS 
+	DELETE
+	FROM   [dbo].[Social_Message_Attachments]
+	WHERE  [MessageAttachmentID] = @MessageAttachmentID
+GO
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
