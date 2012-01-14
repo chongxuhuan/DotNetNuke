@@ -67,8 +67,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
             object cacheValue = DataCache.GetCache(Constants.CACHEING_ValidKey);
 
             // Assert
-            Assert.IsInstanceOfType(typeof (string), cacheValue);
-            Assert.AreEqual(Constants.CACHEING_ValidValue, (string) cacheValue);
+            Assert.IsInstanceOf<string>(cacheValue);
+            Assert.AreEqual(Constants.CACHEING_ValidValue, cacheValue);
         }
 
         [Test]
@@ -106,8 +106,8 @@ namespace DotNetNuke.Tests.Core.Providers.Caching
             object cacheValue = DataCache.GetCache<string>(Constants.CACHEING_ValidKey);
 
             // Assert
-            Assert.IsInstanceOfType(typeof (string), cacheValue);
-            Assert.AreEqual(Constants.CACHEING_ValidValue, (string) cacheValue);
+            Assert.IsInstanceOf<string>(cacheValue);
+            Assert.AreEqual(Constants.CACHEING_ValidValue, cacheValue);
         }
 
         [Test]

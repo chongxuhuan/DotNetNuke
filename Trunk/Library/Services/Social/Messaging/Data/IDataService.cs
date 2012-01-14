@@ -1,6 +1,6 @@
-﻿#region Copyright
+#region Copyright
 // 
-// DotNetNuke® - http://www.dotnetnuke.com
+// DotNetNuke� - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -18,13 +18,34 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-using DotNetNuke.Entities.Portals;
+#region Usings
 
-namespace DotNetNuke.Services.FileSystem
+using System;
+using System.Data;
+
+#endregion
+
+namespace DotNetNuke.Services.Social.Messaging.Data
 {
-    internal interface IPortalController
+    public interface IDataService
     {
-        PortalSettings GetCurrentPortalSettings();
-        bool HasSpaceAvailable(int portalId, long fileSizeBytes);
+        #region Messages CRUD
+
+       
+        #endregion
+
+        #region Message_Recipients CRUD
+
+        
+
+        #endregion
+
+        #region Message_Attachments CRUD
+
+       
+
+        #endregion
+
+        
     }
 }

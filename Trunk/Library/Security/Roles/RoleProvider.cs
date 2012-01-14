@@ -20,7 +20,10 @@
 #endregion
 #region Usings
 
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Users;
@@ -31,7 +34,7 @@ namespace DotNetNuke.Security.Roles
 {
     public abstract class RoleProvider
     {
-		#region "Shared/Static Methods"
+		#region Shared/Static Methods
 
         //return the provider
         public static RoleProvider Instance()
@@ -41,7 +44,7 @@ namespace DotNetNuke.Security.Roles
 		
 		#endregion
 
-		#region "Abstract Methods"
+		#region Abstract Methods
 
         //Roles
         public abstract bool CreateRole(int portalId, ref RoleInfo role);
@@ -78,23 +81,50 @@ namespace DotNetNuke.Security.Roles
 
         public abstract UserRoleInfo GetUserRole(int PortalId, int UserId, int RoleId);
 
-        public abstract ArrayList GetUserRoles(int PortalId, int UserId, bool includePrivate);
-
         public abstract ArrayList GetUserRoles(int PortalId, string Username, string Rolename);
 
         public abstract ArrayList GetUsersByRoleName(int portalId, string roleName);
-
-        public abstract ArrayList GetUserRolesByRoleName(int portalId, string roleName);
 
         public abstract void RemoveUserFromRole(int portalId, UserInfo user, UserRoleInfo userRole);
 
         public abstract void UpdateUserRole(UserRoleInfo userRole);
 
+		#endregion
+
+        #region Virtual Methods
+
         public virtual RoleGroupInfo GetRoleGroupByName(int PortalID, string RoleGroupName)
         {
             return null;
         }
-		
-		#endregion
+
+        public virtual IList<UserRoleInfo> GetUserRoles(UserInfo user, bool includePrivate)
+        {
+#pragma warning disable 612,618
+            return GetUserRoles(user.PortalID, user.UserID, includePrivate).Cast<UserRoleInfo>().ToList();
+#pragma warning restore 612,618
+        }
+
+        #endregion
+
+        #region Obsolete Methods
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by overload that returns IList")]
+        public virtual ArrayList GetUserRoles(int PortalId, int UserId, bool includePrivate)
+        {
+            UserController userController = new UserController();
+            UserInfo user = userController.GetUser(PortalId, UserId);
+
+            return new ArrayList(GetUserRoles(user, includePrivate).ToArray());
+        }
+
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by GetUserRoles overload that returns IList")]
+        public virtual ArrayList GetUserRolesByRoleName(int portalId, string roleName)
+        {
+            return GetUserRoles(portalId, null, roleName);
+        }
+
+        #endregion
     }
 }

@@ -48,9 +48,11 @@ namespace DotNetNuke.HttpModules.Services
 
             if ((bool?)context.Items["DnnReal401"] ?? false)
             {
-                context.Response.ClearContent();
-                context.Response.StatusCode = 401;
-                context.Response.Headers.Remove("Location");
+                var response = context.Response;
+                response.ClearContent();
+                response.StatusCode = 401;
+                response.Headers.Remove("Location"); 
+                response.AppendHeader("WWW-Authenticate", "Basic realm=\"DNNAPI\"");
             }
         }
 

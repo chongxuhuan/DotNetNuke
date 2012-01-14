@@ -1,7 +1,8 @@
 #region Copyright
+
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,14 +18,18 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
+
 #endregion
+
 #region Usings
 
 using System;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Localization;
 
@@ -45,6 +50,13 @@ namespace DotNetNuke.UI.WebControls
 	[ToolboxData("<{0}:VisibilityControl runat=server></{0}:VisibilityControl>")]
 	public class VisibilityControl : WebControl, IPostBackDataHandler, INamingContainer
 	{
+	    private UserVisibilityMode _visibility;
+
+	    protected UserVisibilityMode Visibility
+	    {
+            get { return (UserVisibilityMode) Convert.ToInt32(Value); }
+            set { _visibility = value; }
+	    }
 
 		#region Public Properties
 		
@@ -66,6 +78,11 @@ namespace DotNetNuke.UI.WebControls
 		/// </history>
 		public string Name { get; set; }
 
+        /// <summary>
+        /// The UserInfo object that represents the User whose profile is being displayed
+        /// </summary>
+        public UserInfo User { get; set; }
+
 		/// <summary>
 		/// StringValue is the value of the control expressed as a String
 		/// </summary>
@@ -73,7 +90,7 @@ namespace DotNetNuke.UI.WebControls
 		/// <history>
 		///     [cnurse]	05/03/2006	created
 		/// </history>
-		public object Value { get; set; }
+        public object Value { get; set; }
 		
 		#endregion
 
@@ -126,6 +143,13 @@ namespace DotNetNuke.UI.WebControls
 
 		#region Protected Methods
 
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+
+            Page.RegisterRequiresPostBack(this);
+        }
+
 		/// <summary>
 		/// OnVisibilityChanged runs when the Visibility has changed.  It raises the VisibilityChanged
 		/// Event
@@ -141,6 +165,69 @@ namespace DotNetNuke.UI.WebControls
 			}
 		}
 
+        private void RenderVisibility(HtmlTextWriter writer, string optionValue, UserVisibilityMode selectedVisibility, string optionText)
+        {
+            //Render Li
+            writer.RenderBeginTag(HtmlTextWriterTag.Li);
+
+            //Render radio button
+            writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID + ":visibility");
+            writer.AddAttribute(HtmlTextWriterAttribute.Value, optionValue);
+            if ((Visibility == selectedVisibility))
+            {
+                writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
+            }
+            writer.RenderBeginTag(HtmlTextWriterTag.Input);
+            writer.Write(optionText);
+            writer.RenderEndTag();
+
+            //Close Li
+            writer.RenderEndTag();
+        }
+
+        private void RenderGroups(HtmlTextWriter writer)
+        {
+            foreach (string group in User.Roles)
+            {
+                //Render Li
+                writer.RenderBeginTag(HtmlTextWriterTag.Li);
+
+                //Render radio button
+                writer.AddAttribute(HtmlTextWriterAttribute.Type, "checkbox");
+                writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID + ":group");
+                writer.AddAttribute(HtmlTextWriterAttribute.Value, group);
+
+                writer.RenderBeginTag(HtmlTextWriterTag.Input);
+                writer.Write(group);
+                writer.RenderEndTag();
+
+                //Close Li
+                writer.RenderEndTag();
+            }
+        }
+
+        private void RenderRelationships(HtmlTextWriter writer)
+        {
+            foreach(Relationship relationship in User.Social.Relationships)
+            {
+                //Render Li
+                writer.RenderBeginTag(HtmlTextWriterTag.Li);
+
+                //Render radio button
+                writer.AddAttribute(HtmlTextWriterAttribute.Type, "checkbox");
+                writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID + ":relationship");
+                writer.AddAttribute(HtmlTextWriterAttribute.Value, relationship.RelationshipID.ToString(CultureInfo.InvariantCulture));
+
+                writer.RenderBeginTag(HtmlTextWriterTag.Input);
+                writer.Write(relationship.Name);
+                writer.RenderEndTag();
+
+                //Close Li
+                writer.RenderEndTag();
+            }
+        }
+
 		/// <summary>
 		/// Render renders the control
 		/// </summary>
@@ -150,39 +237,47 @@ namespace DotNetNuke.UI.WebControls
 		/// </history>
 		protected override void Render(HtmlTextWriter writer)
 		{
+            //Render Div container
             writer.AddAttribute(HtmlTextWriterAttribute.Class, "dnnFormVisibility");
-			var propValue = (UserVisibilityMode)(Convert.ToInt32(Value));
-
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
-			writer.RenderBeginTag(HtmlTextWriterTag.Select);
+			writer.RenderBeginTag(HtmlTextWriterTag.Div);
 
-			writer.AddAttribute(HtmlTextWriterAttribute.Value, "0");
-			if ((propValue == UserVisibilityMode.AllUsers))
-			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Selected, "true");
-			}
-			writer.RenderBeginTag(HtmlTextWriterTag.Option);
-			writer.Write(Localization.GetString("Public").Trim());
-			writer.RenderEndTag();
+            //Render anchor for Image
+            writer.RenderBeginTag(HtmlTextWriterTag.A);
 
-			writer.AddAttribute(HtmlTextWriterAttribute.Value, "1");
-			if ((propValue == UserVisibilityMode.MembersOnly))
-			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Selected, "true");
-			}
-			writer.RenderBeginTag(HtmlTextWriterTag.Option);
-			writer.Write(Localization.GetString("MembersOnly"));
-			writer.RenderEndTag();
+            writer.AddAttribute(HtmlTextWriterAttribute.Src, IconController.IconURL("Lock"));
+            writer.RenderBeginTag(HtmlTextWriterTag.Img);
+            
+            //Close Image Tag
+            writer.RenderEndTag();
 
-			writer.AddAttribute(HtmlTextWriterAttribute.Value, "2");
-			if ((propValue == UserVisibilityMode.AdminOnly))
-			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Selected, "true");
-			}
-			writer.RenderBeginTag(HtmlTextWriterTag.Option);
-			writer.Write(Localization.GetString("AdminOnly"));
-			writer.RenderEndTag();
+            //Close Anchor
+            writer.RenderEndTag();
 
+            //Render UL for radio Button List
+            writer.RenderBeginTag(HtmlTextWriterTag.Ul);
+
+            RenderVisibility(writer, "0", UserVisibilityMode.AllUsers, Localization.GetString("Public").Trim());
+
+            RenderVisibility(writer, "1", UserVisibilityMode.MembersOnly, Localization.GetString("MembersOnly").Trim());
+
+            RenderVisibility(writer, "2", UserVisibilityMode.AdminOnly, Localization.GetString("AdminOnly").Trim());
+
+            RenderVisibility(writer, "3", UserVisibilityMode.FriendsGroups, Localization.GetString("FriendsGroups").Trim());
+
+            //Render UL for radio Button List
+            writer.RenderBeginTag(HtmlTextWriterTag.Ul);
+
+		    RenderRelationships(writer);
+            RenderGroups(writer);
+
+            //Close UL
+            writer.RenderEndTag();
+
+            //Close UL
+            writer.RenderEndTag();
+
+            //Close Div
 			writer.RenderEndTag();
 		}
 		

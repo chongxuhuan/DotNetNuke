@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -21,17 +21,35 @@
 #region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Data;
+
+using DotNetNuke.ComponentModel;
+using DotNetNuke.Data;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("25C9803D-A80E-44D5-A87E-1CDFB05C99A0")]
-[assembly: AssemblyVersion("6.2.0.191")]
+namespace DotNetNuke.Services.Social.Messaging.Data
+{
+    internal class DataService : ComponentBase<IDataService, DataService>, IDataService        
+    {
+        private readonly DataProvider _provider = DataProvider.Instance();
+
+        #region Messages CRUD
+
+
+        #endregion
+
+        #region Message_Recipients CRUD
+
+
+
+        #endregion
+
+        #region Message_Attachments CRUD
+
+
+
+        #endregion
+
+    }
+}

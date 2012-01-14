@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
@@ -94,13 +95,6 @@ namespace DotNetNuke.Modules.Admin.Security
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
             return formatPrice;
-        }
-
-        private ArrayList GetRoles(int portalId, int userId)
-        {
-            var objRoles = new RoleController();
-
-            return objRoles.GetUserRoles(portalId, userId, false);
         }
 
         private void Subscribe(int roleID, bool cancel)
@@ -396,7 +390,8 @@ namespace DotNetNuke.Modules.Admin.Security
         {
             if (Request.IsAuthenticated)
             {
-                grdServices.DataSource = GetRoles(PortalId, UserInfo.UserID);
+                RoleController roleController = new RoleController();
+                grdServices.DataSource = roleController.GetUserRoles(UserInfo, false);
                 grdServices.DataBind();
 
                 //if no service available then hide options

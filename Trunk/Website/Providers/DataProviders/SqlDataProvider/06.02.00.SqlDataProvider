@@ -1990,10 +1990,11 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 BEGIN
 CREATE TABLE {databaseOwner}{objectQualifier}Social_Messages(
 	[MessageID] [int] IDENTITY(1,1) NOT NULL,
-	[Subject] [nvarchar](max) NULL,
-	[Body] [nvarchar](max) NULL,
+	[To] [nvarchar](2000) NULL,
+	[Subject] [nvarchar](400) NULL,
+	[Body] [ntext] NULL,
 	[ParentMessageID] [int] NULL,
-	[GroupMail] [bit] NULL,
+	[ReplyAllAllowed] [bit] NULL,
 	[SenderUserID] [int] NULL,
 	[CreatedByUserID] [int] NULL,
 	[CreatedOnDate] [datetime] NULL,
@@ -2004,12 +2005,15 @@ CREATE TABLE {databaseOwner}{objectQualifier}Social_Messages(
 		[MessageID] ASC
 	)
 )
+
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Social_Messages_SenderUserID] ON {databaseOwner}[{objectQualifier}Social_Messages] ([SenderUserID] ASC, [CreatedOnDate] DESC)		
+
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Recipients]') AND type in (N'U'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_MessageRecipients]') AND type in (N'U'))
 BEGIN
-CREATE TABLE {databaseOwner}{objectQualifier}Social_Message_Recipients(
+CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageRecipients(
 	[RecepientID] [int] IDENTITY(1,1) NOT NULL,
 	[MessageID] [int] NOT NULL,
 	[UserID] [int] NULL,
@@ -2018,17 +2022,23 @@ CREATE TABLE {databaseOwner}{objectQualifier}Social_Message_Recipients(
 	[CreatedOnDate] [datetime] NULL,
 	[LastModifiedByUserID] [int] NULL,
 	[LastModifiedOnDate] [datetime] NULL,
- CONSTRAINT [PK_{objectQualifier}Social_Message_Recipients] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_{objectQualifier}Social_MessageRecipients] PRIMARY KEY CLUSTERED 
 	(
 		[RecepientID] ASC
 	)
 )
+
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Social_MessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}Social_MessageRecipients] ([UserID] ASC, [CreatedOnDate] DESC)		
+
+ALTER TABLE {databaseOwner}[{objectQualifier}Social_MessageRecipients]  
+	ADD CONSTRAINT [FK_{objectQualifier}Social_MessageRecipients_{objectQualifier}Social_Messages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}Social_Messages] ([MessageID]) ON DELETE CASCADE
+
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Attachments]') AND type in (N'U'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_MessageAttachments]') AND type in (N'U'))
 BEGIN
-CREATE TABLE {databaseOwner}{objectQualifier}Social_Message_Attachments(
+CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageAttachments(
 	[MessageAttachmentID] [int] IDENTITY(1,1) NOT NULL,
 	[MessageID] [int] NOT NULL,
 	[FileID] [int] NULL,
@@ -2036,180 +2046,314 @@ CREATE TABLE {databaseOwner}{objectQualifier}Social_Message_Attachments(
 	[CreatedOnDate] [datetime] NULL,
 	[LastModifiedByUserID] [int] NULL,
 	[LastModifiedOnDate] [datetime] NULL,
- CONSTRAINT [PK_{objectQualifier}Social_Message_Attachments_1] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_{objectQualifier}Social_MessageAttachments] PRIMARY KEY CLUSTERED 
 	(
 		[MessageAttachmentID] ASC
 	)
 )
+
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Social_MessageAttachments_MessageID] ON {databaseOwner}[{objectQualifier}Social_MessageAttachments] ([MessageID] ASC)		
+
+ALTER TABLE {databaseOwner}[{objectQualifier}Social_MessageAttachments]  
+	ADD CONSTRAINT [FK_{objectQualifier}Social_MessageAttachments_{objectQualifier}Social_Messages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}Social_Messages] ([MessageID]) ON DELETE CASCADE
+
 END
+
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Social_Message_Attachments_Social_Messages]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Attachments]'))
-ALTER TABLE {databaseOwner}[{objectQualifier}Social_Message_Attachments]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Social_Message_Attachments_Social_Messages] FOREIGN KEY([MessageID])
-REFERENCES {databaseOwner}[{objectQualifier}Social_Messages] ([MessageID])
+--CRUD for Social_Messages
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessage]
 GO
 
-IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Social_Message_Attachments_Social_Messages]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Attachments]'))
-ALTER TABLE {databaseOwner}[{objectQualifier}Social_Message_Attachments] CHECK CONSTRAINT [FK_{objectQualifier}Social_Message_Attachments_Social_Messages]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessage]
+    @MessageID INT,
+	@To nvarchar(2000),
+    @Subject nvarchar(400),
+    @Body ntext,
+    @ParentMessageID int,
+    @ReplyAllAllowed bit,
+    @SenderUserID int,
+	@CreateUpdateUserID INT
+    
+AS 
+    IF ( @MessageID = -1 ) 
+        BEGIN
+            INSERT {databaseOwner}{objectQualifier}Social_Messages(                    
+  					[To],
+					[Subject],
+					[Body],
+					[ParentMessageID],
+					[ReplyAllAllowed],
+					[SenderUserID],
+                    [CreatedByUserID],
+                    [CreatedOnDate],
+                    [LastModifiedByUserID],
+                    [LastModifiedOnDate]			        
+                    )
+            VALUES  (       
+     			    @To,
+					@Subject,
+					@Body,
+					@ParentMessageID,
+					@ReplyAllAllowed,
+					@SenderUserID,
+                    @CreateUpdateUserID , -- CreatedBy - int
+                    GETDATE() , -- CreatedOn - datetime
+                    @CreateUpdateUserID , -- LastModifiedBy - int
+                    GETDATE() -- LastModifiedOn - datetime			        
+                    )
+                    
+            SELECT  @MessageID = SCOPE_IDENTITY()
+        END
+    ELSE 
+        BEGIN
+            UPDATE  {databaseOwner}{objectQualifier}Social_Messages
+            SET     [To] = @To,
+					[SUBJECT] = @Subject,
+					[Body] = @Body,
+					[ParentMessageID] = @ParentMessageID,
+					[ReplyAllAllowed] = @ReplyAllAllowed,
+					[SenderUserID] = SenderUserID,
+                    LastModifiedByUserID = @CreateUpdateUserID,
+                    LastModifiedOnDate = GETDATE()
+            WHERE   MessageID = @MessageID
+        END
+        
+    SELECT  @MessageID
+        
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Social_Message_Recipients_Social_Messages]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Recipients]'))
-ALTER TABLE {databaseOwner}[{objectQualifier}Social_Message_Recipients]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Social_Message_Recipients_Social_Messages] FOREIGN KEY([MessageID])
-REFERENCES {databaseOwner}[{objectQualifier}Social_Messages] ([MessageID])
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessage]
 GO
 
-IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Social_Message_Recipients_Social_Messages]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Message_Recipients]'))
-ALTER TABLE {databaseOwner}[{objectQualifier}Social_Message_Recipients] CHECK CONSTRAINT [FK_{objectQualifier}Social_Message_Recipients_Social_Messages]
-GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocial_Messages]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocial_Messages]
-GO
-
-CREATE PROC {databaseOwner}[{objectQualifier}GetSocial_Messages] 
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessage]
     @MessageID INT
 AS 
 	SELECT [MessageID], [Subject], [Body], [ParentMessageID], [GroupMail], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   [dbo].[Social_Messages] 
+	FROM   {databaseOwner}{objectQualifier}[Social_Messages] 
 	WHERE  [MessageID] = @MessageID 
 
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}AddSocial_Messages]]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddSocial_Messages]
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessagesBySender]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessagesBySender]
 GO
 
-CREATE PROC {databaseOwner}[{objectQualifier}AddSocial_Messages] 
-    @Subject nvarchar(MAX),
-    @Body nvarchar(MAX),
-    @ParentMessageID int,
-    @GroupMail bit,
-    @SenderUserID int,
-    @CreatedByUserID int
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessagesBySender]
+    @SenderUserID INT
 AS 
+	SELECT [MessageID], [Subject], [Body], [ParentMessageID], [GroupMail], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   {databaseOwner}{objectQualifier}[Social_Messages] 
+	WHERE  [SenderUserID] = @SenderUserID 
 
-	INSERT  [dbo].[Social_Messages] ([Subject], [Body], [ParentMessageID], [GroupMail], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate])
-	VALUES (@Subject, @Body, @ParentMessageID, @GroupMail, @SenderUserID, @CreatedByUserID, GETDATE(), @CreatedByUserID, GETDATE())
-	
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}UpdateSocial_Messages]]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocial_Messages]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteSocialMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessage]
 GO
 
-CREATE PROC {databaseOwner}[{objectQualifier}UpdateSocial_Messages] 
-    @MessageID int,
-    @Subject nvarchar(MAX),
-    @Body nvarchar(MAX),
-    @ParentMessageID int,
-    @GroupMail bit,
-    @SenderUserID int,
-    @LastModifiedByUserID int
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessage]    
+	@MessageID int
 AS 
-	UPDATE [dbo].[Social_Messages]
-	SET    [Subject] = @Subject, [Body] = @Body, [ParentMessageID] = @ParentMessageID, [GroupMail] = @GroupMail, [SenderUserID] = @SenderUserID,  [LastModifiedByUserID] = @LastModifiedByUserID, [LastModifiedOnDate] = GETDATE()
-	WHERE  [MessageID] = @MessageID
-
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}DeleteSocial_Messages]]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocial_Messages]
-GO
-
-CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocial_Messages] 
-    @MessageID int
-AS 
-	DELETE
-	FROM   [dbo].[Social_Messages]
+	DELETE FROM {databaseOwner}{objectQualifier}Social_Messages
 	WHERE  [MessageID] = @MessageID
 GO
 
+--CRUD for Social_MessageRecipients
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}GetSocial_Message_Recipients]]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocial_Message_Recipients]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
 GO
 
-
-CREATE PROC {databaseOwner}[{objectQualifier}GetSocial_Message_Recipients] 
-    @RecepientID INT
-AS 
-	SELECT [RecepientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   [dbo].[Social_Message_Recipients] 
-	WHERE  [RecepientID] = @RecepientID 
-
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}AddSocial_Message_Recipients]]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddSocial_Message_Recipients]
-GO
-
-CREATE PROC {databaseOwner}[{objectQualifier}AddSocial_Message_Recipients] 
-    @MessageID int,
-    @UserID int,
-    @Status tinyint,
-    @CreatedByUserID int
-AS 
-
-	INSERT [dbo].[Social_Message_Recipients] ([MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate])
-	VALUES( @MessageID, @UserID, @Status, @CreatedByUserID, GETDATE(), @CreatedByUserID, GETDATE())
-
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}UpdateSocial_Message_Recipients]]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocial_Message_Recipients]
-GO
-
-CREATE PROC {databaseOwner}[{objectQualifier}UpdateSocial_Message_Recipients] 
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
     @RecepientID int,
     @MessageID int,
     @UserID int,
     @Status tinyint,
-    @LastModifiedByUserID int
-
+	@CreateUpdateUserID INT    
 AS 
-	UPDATE [dbo].[Social_Message_Recipients]
-	SET    [MessageID] = @MessageID, [UserID] = @UserID, [Status] = @Status, [LastModifiedByUserID] = @LastModifiedByUserID, [LastModifiedOnDate] = GETDATE()
-	WHERE  [RecepientID] = @RecepientID
+    IF ( @MessageID = -1 ) 
+        BEGIN
+            INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
+					[RecepientID],
+					[MessageID],
+					[UserID],
+					[Status],	
+                    [CreatedByUserID],
+                    [CreatedOnDate],
+                    [LastModifiedByUserID],
+                    [LastModifiedOnDate]			        												        
+                    )
+            VALUES  (       
+					@RecepientID,
+					@MessageID,
+					@UserID,
+					@Status,            
+                    @CreateUpdateUserID , -- CreatedBy - int
+                    GETDATE() , -- CreatedOn - datetime
+                    @CreateUpdateUserID , -- LastModifiedBy - int
+                    GETDATE() -- LastModifiedOn - datetime			        
+                    )
+                    
+            SELECT  @RecepientID = SCOPE_IDENTITY()
+        END
+    ELSE 
+        BEGIN
+            UPDATE  {databaseOwner}{objectQualifier}Social_MessageRecipients
+            SET     [MessageID] = @MessageID,
+					[UserID] = @UserID,
+                    LastModifiedByUserID = @CreateUpdateUserID,
+                    LastModifiedOnDate = GETDATE()
+            WHERE   RecepientID = @RecepientID
+        END
+        
+    SELECT  @RecepientID        
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipient]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageRecipient]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipient] 
+    @RecepientID INT
+AS 
+	SELECT [RecepientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
+	WHERE  [RecepientID] = @RecepientID 
 
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}DeleteSocial_Message_Recipients]]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocial_Message_Recipients]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser]
 GO
 
-CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocial_Message_Recipients] 
+CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser] 
+    @UserID INT
+AS 
+	SELECT [RecepientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
+	WHERE  [UserID] = @UserID 
+
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage] 
+    @MessageID INT
+AS 
+	SELECT [RecepientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
+	WHERE  [MessageID] = @MessageID 
+
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteSocialMessageRecipient]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessageRecipient]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocialMessageRecipient] 
     @RecepientID int
 AS 
-	DELETE
-	FROM   [dbo].[Social_Message_Recipients]
+	DELETE FROM {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [RecepientID] = @RecepientID
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}AddSocial_Message_Attachments]]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}AddSocial_Message_Attachments]
+--CRUD for Social_MessageAttachments
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessageAttachment]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageAttachment]
 GO
 
-CREATE PROC {databaseOwner}[{objectQualifier}AddSocial_Message_Attachments] 
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageAttachment]
+    @MessageAttachmentID int,
     @MessageID int,
-    @FileID int,
-    @CreatedByUserID int
+    @FileID int,  
+	@CreateUpdateUserID INT
+    
 AS 
-
-	INSERT [dbo].[Social_Message_Attachments] ([MessageID], [FileID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate])
-	VALUES ( @MessageID, @FileID, @CreatedByUserID, GETDATE(), @CreatedByUserID, GETDATE())
-	
+    IF ( @MessageAttachmentID = -1 ) 
+        BEGIN
+            INSERT {databaseOwner}{objectQualifier}Social_Message_Attachments(                    
+					[FileID],
+					[MessageID],
+					[UserID],
+					[Status],		
+                    [CreatedByUserID],
+                    [CreatedOnDate],
+                    [LastModifiedByUserID],
+                    [LastModifiedOnDate]			        												        											        
+                    )
+            VALUES  (       
+					@FileID,
+					@MessageID,
+                    @CreateUpdateUserID , -- CreatedBy - int
+                    GETDATE() , -- CreatedOn - datetime
+                    @CreateUpdateUserID , -- LastModifiedBy - int
+                    GETDATE() -- LastModifiedOn - datetime			        
+                    )
+                    
+            SELECT  @MessageAttachmentID = SCOPE_IDENTITY()
+        END
+    ELSE 
+        BEGIN
+            UPDATE  {databaseOwner}{objectQualifier}Social_Message_Attachments
+            SET     [FileID] = @FileID,
+					[MessageID] = @MessageID,
+                    LastModifiedByUserID = @CreateUpdateUserID,
+                    LastModifiedOnDate = GETDATE()
+            WHERE   MessageAttachmentID = @MessageAttachmentID
+        END
+        
+    SELECT  @MessageAttachmentID
+        
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}[{databaseowner}DeleteSocial_Message_Attachments]]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocial_Message_Attachments]
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageAttachment]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageAttachment]
 GO
 
-CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocial_Message_Attachments] 
+CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageAttachment] 
+    @MessageAttachmentID INT
+AS 
+	SELECT [MessageID], [FileID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   {databaseOwner}{objectQualifier}Social_MessageAttachments
+	WHERE  [MessageAttachmentID] = @MessageAttachmentID 
+
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageAttachmentsByMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageAttachmentsByMessage]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageAttachmentsByMessage] 
+    @MessageID INT
+AS 
+	SELECT [MessageID], [FileID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   {databaseOwner}{objectQualifier}Social_MessageAttachments
+	WHERE  [MessageID] = @MessageID 
+
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteSocialMessageAttachment]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessageAttachment]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocialMessageAttachment] 
     @MessageAttachmentID int
 AS 
-	DELETE
-	FROM   [dbo].[Social_Message_Attachments]
+	DELETE FROM {databaseOwner}{objectQualifier}Social_MessageAttachments
 	WHERE  [MessageAttachmentID] = @MessageAttachmentID
 GO
+
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

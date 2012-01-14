@@ -69,7 +69,7 @@ namespace DotNetNuke.Services.Install
     {
         #region Private Members
 
-        protected new string LocalResourceFile = "~/Install/App_LocalResources/UpgradeWizard.aspx.resx";
+        protected string LocalResourceFile = "~/Install/App_LocalResources/UpgradeWizard.aspx.resx";
         private Version _dataBaseVersion;
         private const string LocalesFile = "/Install/App_LocalResources/Locales.xml";
 

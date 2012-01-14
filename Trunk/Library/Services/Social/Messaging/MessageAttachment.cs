@@ -1,8 +1,7 @@
 #region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,103 +17,93 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Xml.Serialization;
+
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities;
 using DotNetNuke.Entities.Modules;
 
 #endregion
 
-namespace DotNetNuke.Entities.Users
+namespace DotNetNuke.Services.Social.Messaging
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.Entities.Users
-    /// Class:      UserSocial
+    /// Namespace:  DotNetNuke.Entities.Messaging
+    /// Class:      MessageAttachments
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The UserSocial is a high-level class describing social details of a user. 
-    /// As an example, this class contains Friends, Followers, Follows lists.
+    /// The MessageAttachments class describes the content attachments associated with a message
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class UserSocial
+    public class MessageAttachment : BaseEntityInfo, IHydratable
     {
-        #region Private
-
-        private IList<Relationship> _relationships;
-        //private Dictionary<Relationship, IList<UserRelationship>> _userRelationships;
-        private UserInfo _userInfo;
-        private RelationshipController _relationshipController;
-
-        #endregion
-
-        #region Constructor
-
-        public UserSocial(UserInfo userInfo)
-        {
-            _relationshipController = new RelationshipController();
-            _userInfo = userInfo;
-        }
-
-        #endregion
-
-
-        #region Public Properties
+        private int _messageattachmentID = -1;
 
         /// <summary>
-        /// List of Friends with UserRelationship Status as Accepted.
+        /// MessageAttachmentID - The primary key
         /// </summary>
         [XmlAttribute]
-        public IList<UserRelationship> Friends
+        public int MessageAttachmentID
         {
             get
             {
-                return _relationshipController.GetFriends(_userInfo);
+                return _messageattachmentID;
+            }
+            set
+            {
+                _messageattachmentID = value;
             }
         }
 
         /// <summary>
-        /// List of Followerss with UserRelationship Status as Accepted.
+        /// MessageID of the message that contains this attachment
         /// </summary>
         [XmlAttribute]
-        public IList<UserRelationship> Followers
+        public int MessageID { get; set; }
+
+        /// <summary>
+        /// The FileID of the attachment (what will be used against the Files table to provide the attachment)
+        /// </summary>
+        [XmlAttribute]
+        public int FileID { get; set; }
+
+      
+        /// <summary>
+        /// IHydratable.KeyID.
+        /// </summary>
+        [XmlIgnore]
+        public int KeyID
         {
             get
             {
-                return _relationshipController.GetFollowers(_userInfo);
+                return this.MessageAttachmentID;
+            }
+            set
+            {
+                this.MessageAttachmentID = value;
             }
         }
 
         /// <summary>
-        /// List of Relationships for the User
+        /// Fill the object with data from database.
         /// </summary>
-        [XmlAttribute]
-        public IList<Relationship> Relationships
+        /// <param name="dr">the data reader.</param>
+        public void Fill(IDataReader dr)
         {
-            get
-            {
-                if (_relationships == null)
-                {
-                    _relationships = _relationshipController.GetRelationshipsByPortalID(_userInfo.PortalID);
-
-                    foreach(var r in _relationshipController.GetRelationshipsByUserID(_userInfo.UserID))
-                    {
-                        _relationships.Add(r);
-                    }
-                }
-
-                return _relationships;
-            }
+            this.MessageAttachmentID = Convert.ToInt32(dr["MessageAttachmentID"]);
+            this.MessageID = Convert.ToInt32(dr["MessageID"]);
+            this.FileID = Convert.ToInt32(dr["FileID"]);
+            
+            //add audit column data
+            FillInternal(dr);
+            
         }
-
-
-        #endregion
     }
 }

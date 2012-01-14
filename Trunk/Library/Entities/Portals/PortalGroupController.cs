@@ -39,7 +39,7 @@ namespace DotNetNuke.Entities.Portals
     public class PortalGroupController : ComponentBase<IPortalGroupController, PortalGroupController>, IPortalGroupController
     {
         private readonly IDataService _dataService;
-        private readonly IPortalController _portalController;
+        private readonly PortalControllerBase _portalController;
 
         #region Constructors
 
@@ -47,7 +47,7 @@ namespace DotNetNuke.Entities.Portals
         {
         }
 
-        public PortalGroupController(IDataService dataService, IPortalController portalController)
+        public PortalGroupController(IDataService dataService, PortalControllerBase portalController)
         {
             //Argument Contract
             Requires.NotNull("dataService", dataService);

@@ -65,7 +65,7 @@ namespace DotNetNuke.Entities.Portals
 	/// DotNetNuke supports the concept of virtualised sites in a single install. This means that multiple sites, 
 	/// each potentially with multiple unique URL's, can exist in one instance of DotNetNuke i.e. one set of files and one database.
 	/// </remarks>
-    public class PortalController : IPortalController
+    public class PortalController : PortalControllerBase
 	{
         #region Private Methods
 
@@ -1047,8 +1047,7 @@ namespace DotNetNuke.Entities.Portals
 
         #endregion
 
-        #region IPortalController Members
-        /// <summary>
+	    /// <summary>
         /// Loads the portal settings when not provided by "normal" DNN mechanisms
         /// </summary>
         /// <remarks>This method is for very special situations where the normal DNN page lifecycle does not run.
@@ -1056,7 +1055,7 @@ namespace DotNetNuke.Entities.Portals
         /// </remarks>
         /// <param name="request">The current request</param> 
         /// <returns>PortaSettings</returns>
-        public PortalSettings LoadPortalSettingsWhenOtherwiseUnavailable(HttpRequestBase request)
+        public override PortalSettings LoadPortalSettingsWhenOtherwiseUnavailable(HttpRequestBase request)
         {
             var domainName = Globals.GetDomainName(request);
             var alias = PortalAliasController.GetPortalAliasInfo(domainName);
@@ -1077,7 +1076,7 @@ namespace DotNetNuke.Entities.Portals
         ///     [cnurse]    01/11/2005  created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public void AddPortalAlias(int portalId, string portalAlias)
+        public override void AddPortalAlias(int portalId, string portalAlias)
         {
             PortalAliasController portalAliasController = new PortalAliasController();
 
@@ -1099,7 +1098,7 @@ namespace DotNetNuke.Entities.Portals
         /// </summary>
         /// <param name="templateFile">The template file.</param>
         /// <param name="mappedHomeDirectory">The mapped home directory.</param>
-        public void CopyPageTemplate(string templateFile, string mappedHomeDirectory)
+        public override void CopyPageTemplate(string templateFile, string mappedHomeDirectory)
         {
             string hostTemplateFile = string.Format("{0}Templates\\{1}", Globals.HostMapPath, templateFile);
             if (File.Exists(hostTemplateFile))
@@ -1133,7 +1132,7 @@ namespace DotNetNuke.Entities.Portals
         /// <param name="childPath">The child path.</param>
         /// <param name="isChildPortal">if set to <c>true</c> means the portal is child portal.</param>
         /// <returns>Portal id.</returns>
-        public int CreatePortal(string portalName, UserInfo adminUser, string description, string keyWords, string templatePath, 
+        public override int CreatePortal(string portalName, UserInfo adminUser, string description, string keyWords, string templatePath, 
                                 string templateFile, string homeDirectory, string portalAlias,
                                 string serverPath, string childPath, bool isChildPortal)
         {
@@ -1386,7 +1385,7 @@ namespace DotNetNuke.Entities.Portals
         /// 	[cnurse]	11/08/2004	created (most of this code was moved from SignUp.ascx.vb)
         /// </history>
         /// -----------------------------------------------------------------------------
-        public int CreatePortal(string portalName, string firstName, string lastName, string username, string password, string email, 
+        public override int CreatePortal(string portalName, string firstName, string lastName, string username, string password, string email, 
                                 string description, string keyWords, string templatePath, string templateFile, string homeDirectory, 
                                 string portalAlias, string serverPath, string childPath, bool isChildPortal)
         {
@@ -1417,7 +1416,7 @@ namespace DotNetNuke.Entities.Portals
         ///     [cnurse]    24/11/2006  Removal of Modules moved to sproc
         /// </history>
         /// -----------------------------------------------------------------------------
-        public void DeletePortalInfo(int portalId)
+        public override void DeletePortalInfo(int portalId)
         {
             UserController.DeleteUsers(portalId, false, true);
             DataProvider.Instance().DeletePortalInfo(portalId);
@@ -1437,7 +1436,7 @@ namespace DotNetNuke.Entities.Portals
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
-        public PortalInfo GetPortal(int portalId)
+        public override PortalInfo GetPortal(int portalId)
         {
             string defaultLanguage = GetActivePortalLanguage(portalId);
             PortalInfo portal = GetPortal(portalId, defaultLanguage);
@@ -1450,7 +1449,7 @@ namespace DotNetNuke.Entities.Portals
             return portal;
         }
 
-        public PortalInfo GetPortal(int portalId, string cultureCode)
+        public override PortalInfo GetPortal(int portalId, string cultureCode)
         {
             if (Localization.ActiveLanguagesByPortalID(portalId) == 1)
             {
@@ -1488,7 +1487,7 @@ namespace DotNetNuke.Entities.Portals
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
-        public ArrayList GetPortals()
+        public override ArrayList GetPortals()
         {
             string cultureCode = Localization.SystemLocale;
             string cacheKey = String.Format(DataCache.PortalCacheKey, Null.NullInteger, cultureCode);
@@ -1497,7 +1496,7 @@ namespace DotNetNuke.Entities.Portals
             return new ArrayList(portals);
         }
 
-        public List<PortalInfo> GetPortalList(string cultureCode)
+        public override List<PortalInfo> GetPortalList(string cultureCode)
         {
             string cacheKey = String.Format(DataCache.PortalCacheKey, Null.NullInteger, cultureCode);
             return CBO.GetCachedObject<List<PortalInfo>>(new CacheItemArgs(cacheKey, DataCache.PortalCacheTimeOut, DataCache.PortalCachePriority, cultureCode),
@@ -1518,7 +1517,7 @@ namespace DotNetNuke.Entities.Portals
 		/// </summary>
 		/// <param name="uniqueId">The unique id.</param>
 		/// <returns>Portal info.</returns>
-        public PortalInfo GetPortal(Guid uniqueId)
+        public override PortalInfo GetPortal(Guid uniqueId)
         {
             ArrayList portals = GetPortals();
             PortalInfo targetPortal = null;
@@ -1545,7 +1544,7 @@ namespace DotNetNuke.Entities.Portals
         /// 	[VMasanas]	19/04/2006	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public long GetPortalSpaceUsedBytes()
+        public override long GetPortalSpaceUsedBytes()
         {
             return GetPortalSpaceUsedBytes(-1);
         }
@@ -1555,7 +1554,7 @@ namespace DotNetNuke.Entities.Portals
 		/// </summary>
 		/// <param name="portalId">The portal id.</param>
 		/// <returns>Space used in bytes</returns>
-        public long GetPortalSpaceUsedBytes(int portalId)
+        public override long GetPortalSpaceUsedBytes(int portalId)
         {
             long size = 0;
             IDataReader dr = null;
@@ -1594,7 +1593,7 @@ namespace DotNetNuke.Entities.Portals
         /// 	[VMasanas]	19/04/2006	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public bool HasSpaceAvailable(int portalId, long fileSizeBytes)
+        public override bool HasSpaceAvailable(int portalId, long fileSizeBytes)
         {
             int hostSpace;
             if (portalId == -1)
@@ -1623,7 +1622,7 @@ namespace DotNetNuke.Entities.Portals
         /// </summary>
         /// <remarks>
         /// </remarks>
-        public void MapLocalizedSpecialPages(int portalId, string cultureCode)
+        public override void MapLocalizedSpecialPages(int portalId, string cultureCode)
         {
             TabController tabCont = new TabController();
 
@@ -1679,7 +1678,7 @@ namespace DotNetNuke.Entities.Portals
         /// 	[VMasanas]	27/08/2004	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public void ParseTemplate(int PortalId, string TemplatePath, string TemplateFile, int AdministratorId, PortalTemplateModuleAction mergeTabs, bool IsNewPortal)
+        public override void ParseTemplate(int PortalId, string TemplatePath, string TemplateFile, int AdministratorId, PortalTemplateModuleAction mergeTabs, bool IsNewPortal)
         {
             XmlDocument xmlPortal = new XmlDocument();
             IFolderInfo objFolder;
@@ -1812,7 +1811,7 @@ namespace DotNetNuke.Entities.Portals
         ///     [cnurse]    05/20/2005  moved most of processing to new method in FileSystemUtils
         /// </history>
         /// -----------------------------------------------------------------------------
-        public void ProcessResourceFile(string portalPath, string TemplateFile)
+        public override void ProcessResourceFile(string portalPath, string TemplateFile)
         {
             ZipInputStream objZipInputStream;
             try
@@ -1830,7 +1829,7 @@ namespace DotNetNuke.Entities.Portals
 		/// Updates the portal expiry.
 		/// </summary>
 		/// <param name="PortalId">The portal id.</param>
-        public void UpdatePortalExpiry(int PortalId)
+        public override void UpdatePortalExpiry(int PortalId)
         {
             UpdatePortalExpiry(PortalId, GetActivePortalLanguage(PortalId));
         }
@@ -1840,7 +1839,7 @@ namespace DotNetNuke.Entities.Portals
 		/// </summary>
 		/// <param name="PortalId">The portal id.</param>
 		/// <param name="CultureCode">The culture code.</param>
-        public void UpdatePortalExpiry(int PortalId, string CultureCode)
+        public override void UpdatePortalExpiry(int PortalId, string CultureCode)
         {
             DateTime ExpiryDate;
             IDataReader dr = null;
@@ -1913,7 +1912,7 @@ namespace DotNetNuke.Entities.Portals
         /// 	[cnurse]	10/13/2004	created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public void UpdatePortalInfo(PortalInfo portal)
+        public override void UpdatePortalInfo(PortalInfo portal)
         {
             DataProvider.Instance().UpdatePortalInfo(portal.PortalID,
                                             portal.PortalGroupID,
@@ -1957,9 +1956,7 @@ namespace DotNetNuke.Entities.Portals
             DataCache.ClearHostCache(true);
         }
 
-        #endregion
-
-        #region Public Static Methods
+	    #region Public Static Methods
 
         /// <summary>
         /// Adds the portal dictionary.

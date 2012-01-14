@@ -200,6 +200,12 @@
     <Compile Include="Entities\Host\ServerController.cs" />
     <Compile Include="Entities\Host\ServerInfo.cs" />
     <Compile Include="Entities\Icons\IconController.cs" />
+    <Compile Include="Services\Social\Messaging\Data\DataService.cs" />
+    <Compile Include="Services\Social\Messaging\Data\IDataService.cs" />
+    <Compile Include="Services\Social\Messaging\IMessagingController.cs" />
+    <Compile Include="Services\Social\Messaging\MessageAttachment.cs" />
+    <Compile Include="Services\Social\Messaging\MessageRecipient.cs" />
+    <Compile Include="Services\Social\Messaging\Message.cs" />
     <Compile Include="Entities\Modules\Actions\ActionEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -282,7 +288,6 @@
     <Compile Include="Entities\Modules\VisibilityState.cs" />
     <Compile Include="Entities\Portals\Data\DataService.cs" />
     <Compile Include="Entities\Portals\Data\IDataService.cs" />
-    <Compile Include="Entities\Portals\IPortalController.cs" />
     <Compile Include="Entities\Portals\IPortalGroupController.cs" />
     <Compile Include="Entities\Portals\PortalAliasCollection.cs">
       <SubType>Code</SubType>
@@ -296,6 +301,7 @@
     <Compile Include="Entities\Portals\PortalController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\Portals\PortalControllerBase.cs" />
     <Compile Include="Entities\Portals\PortalGroupController.cs" />
     <Compile Include="Entities\Portals\PortalGroupInfo.cs" />
     <Compile Include="Entities\Portals\PortalInfo.cs">
@@ -576,7 +582,6 @@
     <Compile Include="Services\FileSystem\Wrappers\IFile.cs" />
     <Compile Include="Services\FileSystem\Wrappers\IFolderPermissionController.cs" />
     <Compile Include="Services\FileSystem\Wrappers\IGlobals.cs" />
-    <Compile Include="Services\FileSystem\Wrappers\IPortalController.cs" />
     <Compile Include="Services\FileSystem\Wrappers\IUserController.cs" />
     <Compile Include="Services\FileSystem\Wrappers\PortalControllerWrapper.cs" />
     <Compile Include="Services\FileSystem\Wrappers\UserControllerWrapper.cs" />
@@ -1221,7 +1226,7 @@
   <Target Name="DebugProject">
     <Copy SourceFiles="Components\SharpZipLib\bin\SharpZipLib.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Components\Telerik\bin\Telerik.Web.UI.dll" DestinationFolder="..\Website\bin\" />
-	<Copy SourceFiles="Components\Telerik\bin\Telerik.Web.UI.Skins.dll" DestinationFolder="..\Website\bin\" />
+    <Copy SourceFiles="Components\Telerik\bin\Telerik.Web.UI.Skins.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="Controls\DotNetNuke.WebControls\bin\DotNetNuke.WebControls.dll" DestinationFolder="..\Website\bin\" />
     <Copy SourceFiles="bin\DotNetNuke.dll" DestinationFolder="..\Website\bin" />
     <Copy SourceFiles="bin\DotNetNuke.pdb" DestinationFolder="..\Website\bin" />

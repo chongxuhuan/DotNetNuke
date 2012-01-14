@@ -43,7 +43,9 @@ namespace DotNetNuke.Tests.Core.Controllers
     public class PortalGroupControllerTests
     {
         private Mock<DataProvider> _mockData;
+#pragma warning disable 649
         private UserCopiedCallback userCopied;
+#pragma warning restore 649
 
         #region Test Initialize
 
@@ -77,7 +79,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void PortalGroupController_Constructor_Throws_On_Null_DataService()
         {
             //Arrange
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
 
             //Act, Assert
             new PortalGroupController(null, mockPortalController.Object);
@@ -104,7 +106,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
             var portal = new PortalInfo { PortalID = Constants.PORTAL_ValidPortalId };
 
@@ -118,7 +120,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
             var portalGroup = new PortalGroupInfo { PortalGroupId = Constants.PORTALGROUP_ValidPortalGroupId };
 
@@ -133,7 +135,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             var portal = new PortalInfo {PortalID = Constants.PORTAL_ValidPortalId};
@@ -150,7 +152,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             var portal = new PortalInfo { PortalID = -1 };
@@ -171,7 +173,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             //Act, Assert
@@ -184,7 +186,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             //Arrange
             MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             PortalGroupInfo portalGroup = CreateValidPortalGroup();
@@ -204,7 +206,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
             var masterPortal = new PortalInfo { PortalID = Constants.PORTAL_ValidPortalId };
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             mockPortalController.Setup(pc => pc.GetPortal(Constants.PORTAL_ValidPortalId))
                         .Returns(masterPortal);
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
@@ -227,7 +229,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddPortalGroup(It.IsAny<PortalGroupInfo>(), It.IsAny<int>())).Returns(Constants.PORTALGROUP_AddPortalGroupId);
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             PortalGroupInfo portalGroup = CreateValidPortalGroup();
@@ -247,7 +249,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.AddPortalGroup(It.IsAny<PortalGroupInfo>(), It.IsAny<int>())).Returns(Constants.PORTALGROUP_AddPortalGroupId);
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             PortalGroupInfo portalGroup = CreateValidPortalGroup();
@@ -270,7 +272,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             //Act, Assert
@@ -283,7 +285,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             PortalGroupInfo portalGroup = CreateValidPortalGroup();
@@ -299,7 +301,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             //Arrange
             MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             PortalGroupInfo portalGroup = CreateValidPortalGroup();
@@ -327,7 +329,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetPortalGroups()).Returns(CreateValidPortalGroupsReader(0, Constants.USER_ValidId));
 
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             //Act
@@ -347,7 +349,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             Mock<IDataService> mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetPortalGroups()).Returns(CreateValidPortalGroupsReader(0, Constants.USER_ValidId));
 
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             //Act
@@ -368,7 +370,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             mockDataService.Setup(ds => ds.GetPortalGroups()).Returns(CreateValidPortalGroupsReader(Constants.PORTALGROUP_ValidPortalGroupCount,
                                                                                                         Constants.USER_ValidId));
 
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             //Act
@@ -388,7 +390,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
             var portal = new PortalInfo { PortalID = Constants.PORTAL_ValidPortalId };
 
@@ -402,7 +404,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
             var portalGroup = new PortalGroupInfo { PortalGroupId = Constants.PORTALGROUP_ValidPortalGroupId };
 
@@ -417,7 +419,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             var portal = new PortalInfo { PortalID = Constants.PORTAL_ValidPortalId };
@@ -434,7 +436,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             var portal = new PortalInfo { PortalID = -1 };
@@ -455,7 +457,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             //Act, Assert
@@ -467,7 +469,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             var portalGroup = new PortalGroupInfo();
@@ -482,7 +484,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             //Arrange
             MockComponentProvider.CreateNew<CachingProvider>();
             var mockDataService = new Mock<IDataService>();
-            var mockPortalController = new Mock<IPortalController>();
+            var mockPortalController = new Mock<PortalControllerBase>();
             var controller = new PortalGroupController(mockDataService.Object, mockPortalController.Object);
 
             var portalGroup = CreateValidPortalGroup();

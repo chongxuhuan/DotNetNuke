@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -83,8 +84,9 @@ namespace DotNetNuke.Security.Membership
         private void AddDNNUserRole(UserRoleInfo userRole)
         {
             //Add UserRole to DNN
-            userRole.UserRoleID =
-                Convert.ToInt32(dataProvider.AddUserRole(userRole.PortalID, userRole.UserID, userRole.RoleID, userRole.EffectiveDate, userRole.ExpiryDate, UserController.GetCurrentUserInfo().UserID));
+            userRole.UserRoleID = Convert.ToInt32(dataProvider.AddUserRole(userRole.PortalID, userRole.UserID, userRole.RoleID, 
+                                                                userRole.EffectiveDate, userRole.ExpiryDate, 
+                                                                UserController.GetCurrentUserInfo().UserID));
         }
 
         #endregion
@@ -314,6 +316,148 @@ namespace DotNetNuke.Security.Membership
                                     UserController.GetCurrentUserInfo().UserID);
         }
 
+		#endregion
+		
+		#region User Role Methods
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddUserToRole adds a User to a Role
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="portalId">Id of the portal</param>
+        /// <param name="user">The user to add.</param>
+        /// <param name="userRole">The role to add the user to.</param>
+        /// <returns>A Boolean indicating success or failure.</returns>
+        /// <history>
+        ///     [cnurse]	03/28/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public override bool AddUserToRole(int portalId, UserInfo user, UserRoleInfo userRole)
+        {
+            bool createStatus = true;
+            try
+            {
+				//Add UserRole to DNN
+                AddDNNUserRole(userRole);
+            }
+            catch (Exception exc)
+            {
+				//Clear User (duplicate User information)
+                DnnLog.Error(exc);
+
+                createStatus = false;
+            }
+            return createStatus;
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetUserRole gets a User/Role object from the Data Store
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="portalId">Id of the portal</param>
+        /// <param name="userId">The Id of the User</param>
+        /// <param name="roleId">The Id of the Role.</param>
+        /// <returns>The UserRoleInfo object</returns>
+        /// <history>
+        ///     [cnurse]	03/28/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public override UserRoleInfo GetUserRole(int portalId, int userId, int roleId)
+        {
+            return CBO.FillObject<UserRoleInfo>(dataProvider.GetUserRole(portalId, userId, roleId));
+        }
+
+        /// <summary>
+        /// Gets a list of UserRoles for the user
+        /// </summary>
+        /// <param name="user">A UserInfo object representaing the user</param>
+        /// <param name="includePrivate">Include private roles.</param>
+        /// <returns>A list of UserRoleInfo objects</returns>
+        public override IList<UserRoleInfo> GetUserRoles(UserInfo user, bool includePrivate)
+        {
+            if (includePrivate)
+            {
+                return CBO.FillCollection<UserRoleInfo>(dataProvider.GetUserRoles(user.PortalID, user.UserID));
+            }
+            return CBO.FillCollection<UserRoleInfo>(dataProvider.GetServices(user.PortalID, user.UserID));
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetUserRoles gets a collection of User/Role objects from the Data Store
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="portalId">Id of the portal</param>
+        /// <param name="userName">The user to fetch roles for</param>
+        /// <param name="roleName">The role to fetch users for</param>
+        /// <returns>An ArrayList of UserRoleInfo objects</returns>
+        /// <history>
+        ///     [cnurse]	03/28/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public override ArrayList GetUserRoles(int portalId, string userName, string roleName)
+        {
+            return CBO.FillCollection(dataProvider.GetUserRolesByUsername(portalId, userName, roleName), typeof (UserRoleInfo));
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Get the users in a role (as User objects)
+        /// </summary>
+        /// <param name="portalId">Id of the portal (If -1 all roles for all portals are 
+        /// retrieved.</param>
+        /// <param name="roleName">The role to fetch users for</param>
+        /// <returns>An ArrayList of UserInfo objects</returns>
+        /// <history>
+        ///     [cnurse]	03/28/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public override ArrayList GetUsersByRoleName(int portalId, string roleName)
+        {
+            return AspNetMembershipProvider.FillUserCollection(portalId, dataProvider.GetUsersByRolename(portalId, roleName));
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Remove a User from a Role
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="portalId">Id of the portal</param>
+        /// <param name="user">The user to remove.</param>
+        /// <param name="userRole">The role to remove the user from.</param>
+        /// <history>
+        ///     [cnurse]	03/28/2006	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public override void RemoveUserFromRole(int portalId, UserInfo user, UserRoleInfo userRole)
+        {
+            dataProvider.DeleteUserRole(userRole.UserID, userRole.RoleID);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Updates a User/Role
+        /// </summary>
+        /// <param name="userRole">The User/Role to update</param>
+        /// <history>
+        ///     [cnurse]	12/15/2005	created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public override void UpdateUserRole(UserRoleInfo userRole)
+        {
+            dataProvider.UpdateUserRole(userRole.UserRoleID, userRole.EffectiveDate, userRole.ExpiryDate, UserController.GetCurrentUserInfo().UserID);
+		}
+
+		#endregion
+
+        #region RoleGroup Methods
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// CreateRoleGroup persists a RoleGroup to the Data Store
@@ -379,7 +523,7 @@ namespace DotNetNuke.Security.Membership
         /// -----------------------------------------------------------------------------
         public override ArrayList GetRoleGroups(int portalId)
         {
-            return CBO.FillCollection(dataProvider.GetRoleGroups(portalId), typeof (RoleGroupInfo));
+            return CBO.FillCollection(dataProvider.GetRoleGroups(portalId), typeof(RoleGroupInfo));
         }
 
         /// -----------------------------------------------------------------------------
@@ -397,172 +541,7 @@ namespace DotNetNuke.Security.Membership
             dataProvider.UpdateRoleGroup(roleGroup.RoleGroupID, roleGroup.RoleGroupName, roleGroup.Description, UserController.GetCurrentUserInfo().UserID);
         }
 		
-		#endregion
-		
-		#region User Role Methods
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// AddUserToRole adds a User to a Role
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="user">The user to add.</param>
-        /// <param name="userRole">The role to add the user to.</param>
-        /// <returns>A Boolean indicating success or failure.</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override bool AddUserToRole(int portalId, UserInfo user, UserRoleInfo userRole)
-        {
-            bool createStatus = true;
-            try
-            {
-				//Add UserRole to DNN
-                AddDNNUserRole(userRole);
-            }
-            catch (Exception exc)
-            {
-				//Clear User (duplicate User information)
-                DnnLog.Error(exc);
-
-                createStatus = false;
-            }
-            return createStatus;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetUserRole gets a User/Role object from the Data Store
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="userId">The Id of the User</param>
-        /// <param name="roleId">The Id of the Role.</param>
-        /// <returns>The UserRoleInfo object</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override UserRoleInfo GetUserRole(int portalId, int userId, int roleId)
-        {
-            return CBO.FillObject<UserRoleInfo>(dataProvider.GetUserRole(portalId, userId, roleId));
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetUserRoles gets a collection of User/Role objects from the Data Store
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="userId">The user to fetch roles for</param>
-        /// <param name="includePrivate">Include private roles.</param>
-        /// <returns>An ArrayList of UserRoleInfo objects</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override ArrayList GetUserRoles(int portalId, int userId, bool includePrivate)
-        {
-            if (includePrivate)
-            {
-                return CBO.FillCollection(dataProvider.GetUserRoles(portalId, userId), typeof (UserRoleInfo));
-            }
-            else
-            {
-                return CBO.FillCollection(dataProvider.GetServices(portalId, userId), typeof (UserRoleInfo));
-            }
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetUserRoles gets a collection of User/Role objects from the Data Store
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="userName">The user to fetch roles for</param>
-        /// <param name="roleName">The role to fetch users for</param>
-        /// <returns>An ArrayList of UserRoleInfo objects</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override ArrayList GetUserRoles(int portalId, string userName, string roleName)
-        {
-            return CBO.FillCollection(dataProvider.GetUserRolesByUsername(portalId, userName, roleName), typeof (UserRoleInfo));
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Get the users in a role (as UserRole objects)
-        /// </summary>
-        /// <param name="portalId">Id of the portal (If -1 all roles for all portals are 
-        /// retrieved.</param>
-        /// <param name="roleName">The role to fetch users for</param>
-        /// <returns>An ArrayList of UserRoleInfo objects</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override ArrayList GetUserRolesByRoleName(int portalId, string roleName)
-        {
-            return GetUserRoles(portalId, null, roleName);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Get the users in a role (as User objects)
-        /// </summary>
-        /// <param name="portalId">Id of the portal (If -1 all roles for all portals are 
-        /// retrieved.</param>
-        /// <param name="roleName">The role to fetch users for</param>
-        /// <returns>An ArrayList of UserInfo objects</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override ArrayList GetUsersByRoleName(int portalId, string roleName)
-        {
-            return AspNetMembershipProvider.FillUserCollection(portalId, dataProvider.GetUsersByRolename(portalId, roleName));
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Remove a User from a Role
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="user">The user to remove.</param>
-        /// <param name="userRole">The role to remove the user from.</param>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override void RemoveUserFromRole(int portalId, UserInfo user, UserRoleInfo userRole)
-        {
-            dataProvider.DeleteUserRole(userRole.UserID, userRole.RoleID);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Updates a User/Role
-        /// </summary>
-        /// <param name="userRole">The User/Role to update</param>
-        /// <history>
-        ///     [cnurse]	12/15/2005	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override void UpdateUserRole(UserRoleInfo userRole)
-        {
-            dataProvider.UpdateUserRole(userRole.UserRoleID, userRole.EffectiveDate, userRole.ExpiryDate, UserController.GetCurrentUserInfo().UserID);
-		}
-
-		#endregion
-	}
+        #endregion
+    }
 }

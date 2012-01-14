@@ -310,9 +310,8 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
 			{
 				var xmlDoc = new XmlDocument();
 				xmlDoc.Load(configPath);
-				XmlDocumentFragment xmlFrag;
 
-				// Config Sections
+			    // Config Sections
 				var sectionsConfig = xmlDoc.DocumentElement.SelectSingleNode("configSections");
 				if (sectionsConfig != null)
 				{

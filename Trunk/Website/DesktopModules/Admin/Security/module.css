@@ -28,8 +28,11 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 	.dnnProfile .dnnFilePicker .dnnFormItem{padding:0;}
 	.dnnProfile .dnnFormItem input[type="text"], .dnnProfile .dnnFormItem select{margin-right:10px;}
 .dnnProfileDetails .dnnFormItem select{width: 300px;}
-.dnnProfileDetails .dnnFormItem .dnnFormVisibility{width:42%;float:right;}
+.dnnProfileDetails .dnnFormItem .dnnFormVisibility{width:40%;float:right;}
+.dnnProfileDetails .dnnForm .dnnFormVisibility ul li { list-style-type: none;}
 .dnnProfileDetails .dnnFormItem .dnnFormVisibility input[type="radio"]{width:8%;float:none;}
+.dnnProfileDetails .dnnFormItem .dnnFormVisibility input[type="checkbox"]{width:8%;float:none;margin-left:30px;}
+
 .dnnProfileDetails .dnnFormItem .dnnFormInput input[type="radio"]{width:8%;float:none;}
 .dnnEditRoleGroups .dnnFormItem input, .dnnEditRoleGroups .dnnFormItem textarea{width:35%;}
 .erAdvancedSettings .dnnFormItem input[type="text"], .dnnManageUsers .dnnFormItem input[type="text"]{width:35%;}

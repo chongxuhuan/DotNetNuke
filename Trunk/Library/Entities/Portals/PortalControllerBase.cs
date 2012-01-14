@@ -1,6 +1,7 @@
-#region Copyright
+﻿#region Copyright
+
 // 
-// DotNetNuke� - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -17,17 +18,22 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
+
 #endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
-
+using System.Web;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 
 namespace DotNetNuke.Entities.Portals
 {
-    public interface IPortalController
+    /// <summary>
+    /// An all virtual base class that can be used to mock PortalController in unit tests 
+    /// </summary>
+    public class PortalControllerBase
     {
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -41,14 +47,18 @@ namespace DotNetNuke.Entities.Portals
         ///     [cnurse]    01/11/2005  created
         /// </history>
         /// -----------------------------------------------------------------------------
-        void AddPortalAlias(int portalId, string portalAlias);
+        public virtual void AddPortalAlias(int portalId, string portalAlias)
+        {
+        }
 
         /// <summary>
         /// Copies the page template.
         /// </summary>
         /// <param name="templateFile">The template file.</param>
         /// <param name="mappedHomeDirectory">The mapped home directory.</param>
-        void CopyPageTemplate(string templateFile, string mappedHomeDirectory);
+        public virtual void CopyPageTemplate(string templateFile, string mappedHomeDirectory)
+        {
+        }
 
         /// <summary>
         /// Creates the portal.
@@ -65,9 +75,12 @@ namespace DotNetNuke.Entities.Portals
         /// <param name="childPath">The child path.</param>
         /// <param name="isChildPortal">if set to <c>true</c> means the portal is child portal.</param>
         /// <returns>Portal id.</returns>
-        int CreatePortal(string portalName, UserInfo adminUser, string description, string keyWords, string templatePath, 
-                                         string templateFile, string homeDirectory, string portalAlias,
-                                         string serverPath, string childPath, bool isChildPortal);
+        public virtual int CreatePortal(string portalName, UserInfo adminUser, string description, string keyWords,
+                                        string templatePath, string templateFile, string homeDirectory,
+                                        string portalAlias, string serverPath, string childPath, bool isChildPortal)
+        {
+            return Null.NullInteger;
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -99,9 +112,13 @@ namespace DotNetNuke.Entities.Portals
         /// 	[cnurse]	11/08/2004	created (most of this code was moved from SignUp.ascx.vb)
         /// </history>
         /// -----------------------------------------------------------------------------
-        int CreatePortal(string portalName, string firstName, string lastName, string username, string password, string email, 
-                                         string description, string keyWords, string templatePath, string templateFile, string homeDirectory, 
-                                         string portalAlias, string serverPath, string childPath, bool isChildPortal);
+        public virtual int CreatePortal(string portalName, string firstName, string lastName, string username,
+                                        string password, string email, string description, string keyWords,
+                                        string templatePath, string templateFile, string homeDirectory,
+                                        string portalAlias, string serverPath, string childPath, bool isChildPortal)
+        {
+            return Null.NullInteger;
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -116,7 +133,9 @@ namespace DotNetNuke.Entities.Portals
         ///     [cnurse]    24/11/2006  Removal of Modules moved to sproc
         /// </history>
         /// -----------------------------------------------------------------------------
-        void DeletePortalInfo(int portalId);
+        public virtual void DeletePortalInfo(int portalId)
+        {
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -129,11 +148,20 @@ namespace DotNetNuke.Entities.Portals
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
-        PortalInfo GetPortal(int portalId);
+        public virtual PortalInfo GetPortal(int portalId)
+        {
+            return null;
+        }
 
-        PortalInfo GetPortal(int portalId, string cultureCode);
+        public virtual PortalInfo GetPortal(int portalId, string cultureCode)
+        {
+            return null;
+        }
 
-        List<PortalInfo> GetPortalList(string cultureCode);
+        public virtual List<PortalInfo> GetPortalList(string cultureCode)
+        {
+            return null;
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -145,14 +173,20 @@ namespace DotNetNuke.Entities.Portals
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
-        ArrayList GetPortals();
+        public virtual ArrayList GetPortals()
+        {
+            return null;
+        }
 
         /// <summary>
         /// Gets the portal.
         /// </summary>
         /// <param name="uniqueId">The unique id.</param>
         /// <returns>Portal info.</returns>
-        PortalInfo GetPortal(Guid uniqueId);
+        public virtual PortalInfo GetPortal(Guid uniqueId)
+        {
+            return null;
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -165,14 +199,20 @@ namespace DotNetNuke.Entities.Portals
         /// 	[VMasanas]	19/04/2006	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        long GetPortalSpaceUsedBytes();
+        public virtual long GetPortalSpaceUsedBytes()
+        {
+            return Null.NullInteger;
+        }
 
         /// <summary>
         /// Gets the portal space used bytes.
         /// </summary>
         /// <param name="portalId">The portal id.</param>
         /// <returns>Space used in bytes</returns>
-        long GetPortalSpaceUsedBytes(int portalId);
+        public virtual long GetPortalSpaceUsedBytes(int portalId)
+        {
+            return Null.NullInteger;
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -187,7 +227,10 @@ namespace DotNetNuke.Entities.Portals
         /// 	[VMasanas]	19/04/2006	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        bool HasSpaceAvailable(int portalId, long fileSizeBytes);
+        public virtual bool HasSpaceAvailable(int portalId, long fileSizeBytes)
+        {
+            return false;
+        }
 
         /// <summary>
         ///   Remaps the Special Pages such as Home, Profile, Search
@@ -195,18 +238,20 @@ namespace DotNetNuke.Entities.Portals
         /// </summary>
         /// <remarks>
         /// </remarks>
-        void MapLocalizedSpecialPages(int portalId, string cultureCode);
+        public virtual void MapLocalizedSpecialPages(int portalId, string cultureCode)
+        {
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Processess a template file for the new portal. This method will be called twice: for the portal template and for the admin template
         /// </summary>
-        /// <param name="PortalId">PortalId of the new portal</param>
-        /// <param name="TemplatePath">Path for the folder where templates are stored</param>
-        /// <param name="TemplateFile">Template file to process</param>
-        /// <param name="AdministratorId">UserId for the portal administrator. This is used to assign roles to this user</param>
+        /// <param name="portalId">PortalId of the new portal</param>
+        /// <param name="templatePath">Path for the folder where templates are stored</param>
+        /// <param name="templateFile">Template file to process</param>
+        /// <param name="administratorId">UserId for the portal administrator. This is used to assign roles to this user</param>
         /// <param name="mergeTabs">Flag to determine whether Module content is merged.</param>
-        /// <param name="IsNewPortal">Flag to determine is the template is applied to an existing portal or a new one.</param>
+        /// <param name="isNewPortal">Flag to determine is the template is applied to an existing portal or a new one.</param>
         /// <remarks>
         /// The roles and settings nodes will only be processed on the portal template file.
         /// </remarks>
@@ -214,14 +259,17 @@ namespace DotNetNuke.Entities.Portals
         /// 	[VMasanas]	27/08/2004	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        void ParseTemplate(int PortalId, string TemplatePath, string TemplateFile, int AdministratorId, PortalTemplateModuleAction mergeTabs, bool IsNewPortal);
+        public virtual void ParseTemplate(int portalId, string templatePath, string templateFile, int administratorId,
+                                          PortalTemplateModuleAction mergeTabs, bool isNewPortal)
+        {
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Processes the resource file for the template file selected
         /// </summary>
         /// <param name="portalPath">New portal's folder</param>
-        /// <param name="TemplateFile">Selected template file</param>
+        /// <param name="templateFile">Selected template file</param>
         /// <remarks>
         /// The resource file is a zip file with the same name as the selected template file and with
         /// an extension of .resources (to unable this file being downloaded).
@@ -234,32 +282,45 @@ namespace DotNetNuke.Entities.Portals
         ///     [cnurse]    05/20/2005  moved most of processing to new method in FileSystemUtils
         /// </history>
         /// -----------------------------------------------------------------------------
-        void ProcessResourceFile(string portalPath, string TemplateFile);
+        public virtual void ProcessResourceFile(string portalPath, string templateFile)
+        {
+        }
 
         /// <summary>
         /// Updates the portal expiry.
         /// </summary>
-        /// <param name="PortalId">The portal id.</param>
-        void UpdatePortalExpiry(int PortalId);
+        /// <param name="portalId">The portal id.</param>
+        public virtual void UpdatePortalExpiry(int portalId)
+        {
+        }
 
         /// <summary>
         /// Updates the portal expiry.
         /// </summary>
-        /// <param name="PortalId">The portal id.</param>
-        /// <param name="CultureCode">The culture code.</param>
-        void UpdatePortalExpiry(int PortalId, string CultureCode);
+        /// <param name="portalId">The portal id.</param>
+        /// <param name="cultureCode">The culture code.</param>
+        public virtual void UpdatePortalExpiry(int portalId, string cultureCode)
+        {
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Updates basic portal information
         /// </summary>
-        /// <param name="Portal"></param>
+        /// <param name="portal"></param>
         /// <remarks>
         /// </remarks>
         /// <history>
         /// 	[cnurse]	10/13/2004	created
         /// </history>
         /// -----------------------------------------------------------------------------
-        void UpdatePortalInfo(PortalInfo Portal);
+        public virtual void UpdatePortalInfo(PortalInfo portal)
+        {
+        }
+
+        public virtual PortalSettings LoadPortalSettingsWhenOtherwiseUnavailable(HttpRequestBase request)
+        {
+            return null;
+        }
     }
 }

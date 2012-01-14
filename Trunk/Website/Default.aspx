@@ -1,10 +1,6 @@
-<%@ Page Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Framework.DefaultPage"
-    CodeFile="Default.aspx.cs" %>
-
-<%@ Register TagPrefix="dnnui" Namespace="DotNetNuke.Web.UI.WebControls" Assembly="DotNetNuke.Web" %>
+<%@ Page Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Framework.DefaultPage" CodeFile="Default.aspx.cs" %>
 <%@ Register TagPrefix="dnncrm" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Common.Controls" Assembly="DotNetNuke" %>
-<%@ Register TagPrefix="telerik" Namespace="Telerik.Web.UI" Assembly="Telerik.Web.UI" %>
 <asp:literal id="skinDocType" runat="server"></asp:literal>
 <html <%= HtmlAttributeList %>>
 <head id="Head" runat="server">
@@ -42,7 +38,7 @@
     <asp:placeholder runat="server" id="ClientResourceIncludes" />
     <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader">
         <Paths>
-            <dnncrm:ClientResourcePath Name="SkinPath" Path="<%# this.CurrentSkinPath %>" />
+            <dnncrm:ClientResourcePath Name="SkinPath" Path="<%# CurrentSkinPath %>" />
             <dnncrm:ClientResourcePath Name="SharedScripts" Path="~/Resources/Shared/Scripts/" />
         </Paths>
     </dnncrm:ClientResourceLoader>

@@ -420,7 +420,6 @@ namespace DotNetNuke.Security.Membership
                         UserID = Null.SetNullInteger(dr["UserID"]),
                         FirstName = Null.SetNullString(dr["FirstName"]),
                         LastName = Null.SetNullString(dr["LastName"]),
-                        RefreshRoles = Null.SetNullBoolean(dr["RefreshRoles"]),
                         DisplayName = Null.SetNullString(dr["DisplayName"])
                     };
                     user.AffiliateID = Null.SetNullInteger(Null.SetNull(dr["AffiliateID"], user.AffiliateID));
@@ -1246,7 +1245,7 @@ namespace DotNetNuke.Security.Membership
                                     displayName,
                                     updatePassword,
                                     isApproved,
-                                    user.RefreshRoles,
+                                    false,
                                     user.LastIPAddress,
                                     user.IsDeleted,
                                     UserController.GetCurrentUserInfo().UserID);

@@ -148,8 +148,7 @@ namespace DotNetNuke.Modules.Html
                             RoleInfo objRole = new RoleController().GetRole(permission.RoleID, objHtmlText.PortalID);
                             if ((objRole != null))
                             {
-                                foreach (UserRoleInfo objUserRole in
-                                    objRoles.GetUserRolesByRoleName(objHtmlText.PortalID, objRole.RoleName))
+                                foreach (UserRoleInfo objUserRole in objRoles.GetUserRoles(objHtmlText.PortalID, null, objRole.RoleName))
                                 {
                                     if (!arrUsers.Contains(objUserRole.UserID))
                                     {

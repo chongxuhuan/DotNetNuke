@@ -1,6 +1,6 @@
 #region Copyright
 // 
-// DotNetNukeÂ® - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -18,20 +18,33 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
-
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Collections;
+using System.Collections.Generic;
+using System.Xml;
 
-#endregion
+using DotNetNuke.Entities.Users;
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("25C9803D-A80E-44D5-A87E-1CDFB05C99A0")]
-[assembly: AssemblyVersion("6.2.0.191")]
+namespace DotNetNuke.Services.Social.Messaging
+{
+    internal interface IMessagingController
+    {
+        #region Messaging Business APIs
+
+                      
+        #endregion
+
+        #region Easy Wrapper APIs
+
+        void MarkRead(int messageRecipientID);
+        void MarkUnRead(int messageRecipientID);
+        void MarkArchived(int messageRecipientID);
+      
+        IList<Message> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
+
+        //Gets the latest 10 messages.
+        IList<Message> GetRecentMessages(int userID);         
+
+        #endregion
+    }
+}

@@ -18,6 +18,8 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using DotNetNuke.Entities.Portals;
@@ -28,26 +30,66 @@ namespace DotNetNuke.Web.Services
 {
     public class DnnController : Controller
     {
+        private PortalControllerBase _portalController;
+        private AuthenticatorBase _basicAuthenticator;
+
         public DnnController()
         {
             ActionInvoker = new DnnControllerActionInvoker();
-            DefaultAuthLevel = ServiceAuthLevel.Host; 
+            DefaultAuthLevel = ServiceAuthLevel.Host;
+            _basicAuthenticator = new BasicAuthenticator();
+            _portalController = new PortalController();
         }
 
         protected override void Initialize(RequestContext requestContext)
         {
-            var portalSettings = new PortalController().LoadPortalSettingsWhenOtherwiseUnavailable(requestContext.HttpContext.Request);
-            requestContext.HttpContext.Items["PortalSettings"] = portalSettings;
-
-            MembershipModule.AuthenticateRequest(requestContext.HttpContext, true /*allowUnknownExtension*/);
+            var portalSettings = LoadPortalSettings(requestContext.HttpContext);
+            AuthenticateRequest(requestContext.HttpContext, portalSettings.PortalId);
 
             base.Initialize(requestContext);
         }
 
-        public PortalSettings PortalSettings{get { return PortalController.GetCurrentPortalSettings(); }}
+        protected virtual void AuthenticateRequest(HttpContextBase context, int portalId)
+        {
+            if (!context.Request.IsAuthenticated)
+            {
+                _basicAuthenticator.TryToAuthenticate(context, portalId);
+            }
+            MembershipModule.AuthenticateRequest(context, true /*allowUnknownExtension*/);
+        }
 
+        protected virtual PortalSettings LoadPortalSettings(HttpContextBase context)
+        {
+            var portalSettings = _portalController.LoadPortalSettingsWhenOtherwiseUnavailable(context.Request);
+            context.Items["PortalSettings"] = portalSettings;
+            return portalSettings;
+        }
+
+        /// <summary>
+        /// PortalSettings for the current portal
+        /// </summary>
+        public PortalSettings PortalSettings{get { return Entities.Portals.PortalController.GetCurrentPortalSettings(); }}
+
+        /// <summary>
+        /// UserInfo for the current user
+        /// </summary>
         public UserInfo UserInfo { get {return PortalSettings.UserInfo;}}
 
+        /// <summary>
+        /// Default Authorization level required to call access the methods of this controller
+        /// </summary>
         public ServiceAuthLevel DefaultAuthLevel { get; set; }
+
+        /// <summary>
+        /// Injection point for BasicAuth Authenticator
+        /// <remarks>Should be used for unit test purposes only</remarks> 
+        /// </summary>
+        public AuthenticatorBase BasicAuthenticator { set { _basicAuthenticator = value; } }
+
+        /// <summary>
+        /// Injection point for PortalController
+        /// <remarks>Should be used for unit test purposes only</remarks>
+        /// </summary>
+        public PortalControllerBase PortalController { set { _portalController = value; } }
     }
 }

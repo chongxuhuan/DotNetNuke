@@ -23,23 +23,5 @@ using DotNetNuke.Entities.Portals;
 
 namespace DotNetNuke.Services.FileSystem
 {
-    internal class PortalControllerWrapper : ComponentBase<IPortalController, PortalControllerWrapper>, IPortalController
-    {
-        private PortalController PortalController { get; set; }
-
-        internal PortalControllerWrapper()
-        {
-            PortalController = new PortalController();
-        }
-
-        public bool HasSpaceAvailable(int portalId, long fileSizeBytes)
-        {
-            return PortalController.HasSpaceAvailable(portalId, fileSizeBytes);
-        }
-
-        public PortalSettings GetCurrentPortalSettings()
-        {
-            return PortalController.GetCurrentPortalSettings();
-        }
-    }
+    internal class PortalControllerWrapper : ComponentBase<PortalControllerBase, PortalController> {}
 }

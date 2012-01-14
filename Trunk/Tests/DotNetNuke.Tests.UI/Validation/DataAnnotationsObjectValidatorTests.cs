@@ -113,8 +113,8 @@ namespace DotNetNuke.Tests.UI.Validation
 
             // Assert
             Assert.IsFalse(result.IsValid);
-            Assert.IsInstanceOfType(typeof (RequiredAttribute), result.Errors.Where(e => e.PropertyName == "Foo").Single().Validator);
-            Assert.IsInstanceOfType(typeof (StringLengthAttribute), result.Errors.Where(e => e.PropertyName == "Bar").Single().Validator);
+            Assert.IsInstanceOf<RequiredAttribute>(result.Errors.Single(e => e.PropertyName == "Foo").Validator);
+            Assert.IsInstanceOf<StringLengthAttribute>(result.Errors.Single(e => e.PropertyName == "Bar").Validator);
         }
 
         #endregion

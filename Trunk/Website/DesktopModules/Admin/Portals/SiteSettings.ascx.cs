@@ -329,7 +329,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             BindUsability(portal);
 
             var roleController = new RoleController();
-            cboAdministratorId.DataSource = roleController.GetUserRolesByRoleName(portalId, portal.AdministratorRoleName);
+            cboAdministratorId.DataSource = roleController.GetUserRoles(portalId, null, portal.AdministratorRoleName);
             cboAdministratorId.DataBind(portal.AdministratorId.ToString());
 
             //PortalSettings for portal being edited

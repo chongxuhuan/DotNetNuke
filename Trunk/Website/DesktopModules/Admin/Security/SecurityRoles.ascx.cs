@@ -349,7 +349,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 cmdAdd.Text = Localization.GetString("AddUser.Text", LocalResourceFile);
                 grdUserRoles.DataKeyField = "UserId";
                 grdUserRoles.Columns[2].Visible = false;
-                grdUserRoles.DataSource = objRoleController.GetUserRolesByRoleName(PortalId, Role.RoleName);
+                grdUserRoles.DataSource = objRoleController.GetUserRoles(PortalId, null, Role.RoleName);
                 grdUserRoles.DataBind();
             }
             if (UserId != -1)
@@ -357,7 +357,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 cmdAdd.Text = Localization.GetString("AddRole.Text", LocalResourceFile);
                 grdUserRoles.DataKeyField = "RoleId";
                 grdUserRoles.Columns[1].Visible = false;
-                grdUserRoles.DataSource = objRoleController.GetUserRolesByUsername(PortalId, User.Username, Null.NullString);
+                grdUserRoles.DataSource = objRoleController.GetUserRoles(User, false);
                 grdUserRoles.DataBind();
             }
         }
