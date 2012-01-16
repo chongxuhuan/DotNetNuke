@@ -856,7 +856,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				{
 					_UserFolders = new Dictionary<string, FolderInfo>();
 
-				    var folders = FolderManager.Instance.GetFolders(PortalSettings.PortalId, "READ", UserController.GetCurrentUserInfo().UserID);
+                    var folders = FileSystemUtils.GetFoldersByUser(PortalSettings.PortalId, true, true, "READ");
 
 					foreach (var folder in folders)
 					{

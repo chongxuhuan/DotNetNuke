@@ -30,22 +30,36 @@ namespace DotNetNuke.Services.Social.Messaging.Data
     public interface IDataService
     {
         #region Messages CRUD
-
-       
+        
+        void SaveSocialMessage(Message message, int createUpdateUserID);
+        IDataReader GetSocialMessage();
+        IDataReader GetSocialMessagesBySender();
+        void DeleteSocialMessage(int messageID);
+        
         #endregion
 
         #region Message_Recipients CRUD
-
         
+        void SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserID);
+        IDataReader GetSocialMessageRecipient();
+        IDataReader GetSocialMessageRecipientsByUser();
+        IDataReader GetSocialMessageRecipientsByMessage();
+        void DeleteSocialMessageRecipient(int messageRecipientID);
 
         #endregion
 
         #region Message_Attachments CRUD
 
-       
+        void SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserID);
+        IDataReader GetSocialMessageAttachment();
+        IDataReader GetSocialMessageAttachmentsByMessage();
+        void DeleteSocialMessageAttachment(int messageAttachmentID);
 
         #endregion
 
+        
+
+        
         
     }
 }

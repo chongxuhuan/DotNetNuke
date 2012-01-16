@@ -30,26 +30,88 @@ using DotNetNuke.Data;
 
 namespace DotNetNuke.Services.Social.Messaging.Data
 {
-    internal class DataService : ComponentBase<IDataService, DataService>, IDataService        
+    internal class DataService : ComponentBase<IDataService, DataService>, IDataService
+        
     {
         private readonly DataProvider _provider = DataProvider.Instance();
 
         #region Messages CRUD
+
+        public void SaveSocialMessage(Message message, int createUpdateUserID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IDataReader GetSocialMessage()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IDataReader GetSocialMessagesBySender()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteSocialMessage(int messageID)
+        {
+            throw new NotImplementedException();
+        }
 
 
         #endregion
 
         #region Message_Recipients CRUD
 
+        public void SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserID)
+        {
+            throw new NotImplementedException();
+        }
 
+        public IDataReader GetSocialMessageRecipient()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IDataReader GetSocialMessageRecipientsByUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IDataReader GetSocialMessageRecipientsByMessage()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteSocialMessageRecipient(int messageRecipientID)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
 
         #region Message_Attachments CRUD
 
+        public void SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserID)
+        {
+            throw new NotImplementedException();
+        }
 
+        public IDataReader GetSocialMessageAttachment()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IDataReader GetSocialMessageAttachmentsByMessage()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteSocialMessageAttachment(int messageAttachmentID)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
-
+       
     }
 }

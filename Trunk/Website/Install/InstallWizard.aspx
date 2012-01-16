@@ -153,11 +153,6 @@
         }
     </script>
 	<asp:placeholder runat="server" id="ClientResourceIncludes" />
-    <dnncrm:ClientResourceLoader runat="server" id="ClientResourceLoader">
-        <Paths>
-            <dnncrm:ClientResourcePath Name="SharedScripts" Path="~/Resources/Shared/Scripts/" />
-        </Paths>
-    </dnncrm:ClientResourceLoader>
     <form id="form1" runat="server">
         <asp:placeholder id="BodySCRIPTS" runat="server">
             <script type="text/javascript" src="../js/dnn.js"></script>
