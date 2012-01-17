@@ -40,7 +40,7 @@
 .dnnTreePages{border-right: 1px solid #ccc; margin-bottom:20px;margin-top:10px}
 .dnnTreeLegend{clear:both;border: 1px solid #d5d5d5;background: #eee;padding:5px; margin-left:5px; margin-top: 10px;padding-bottom:10px;}
 	.dnnTreeLegend h3{margin-top:10px;}
-		.dtlItem{margin-left: 10px;white-space: nowrap;margin-top:5px;}
+		.dtlItem{white-space:normal;text-indent:-20px;margin-left:25px;}
 #dnnTabsModule .dnnHSRadioButtons input{float:none;}
 #dnnTabsModule .dnnHSRadioButtons label{float:none;width:auto;display:inline;padding-left:4px;}
 #dnnTabsModule .ucLinkTypeRadioButtons{width:100%;}

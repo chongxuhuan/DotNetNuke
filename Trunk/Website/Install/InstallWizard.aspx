@@ -268,7 +268,7 @@
                                   resourcekey="InvalidQualifier.Text" 
                                   CssClass="dnnFormMessage dnnFormError"                                   
                                   ControlToValidate="txtqualifier"
-                                  ValidationExpression="^[a-zA-Z][a-zA-Z0-9_]{0,49}$"
+                                  ValidationExpression="^[a-zA-Z][a-zA-Z0-9_]{0,19}$"
                                   ></asp:RegularExpressionValidator>
                             </div>
                         </div>

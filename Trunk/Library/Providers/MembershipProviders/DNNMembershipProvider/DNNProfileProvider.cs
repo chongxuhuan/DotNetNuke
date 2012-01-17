@@ -165,7 +165,7 @@ namespace DotNetNuke.Security.Profile
                         if (profProperty != null)
                         {
                             profProperty.PropertyValue = Convert.ToString(dr["PropertyValue"]);
-                            profProperty.Visibility = (UserVisibilityMode) dr["Visibility"];
+                            profProperty.Visibility = (UserVisibilityMode)Convert.ToInt32(dr["Visibility"]);
                         }
                     }
                 }

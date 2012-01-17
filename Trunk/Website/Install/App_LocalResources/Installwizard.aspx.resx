@@ -607,6 +607,6 @@ Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-
     <value>Please enter the information for the “SuperUser” account. This account will have access to build and manage all websites created within this installation. We recommend using a strong password, for example: at least 7 characters long and including a mix of letters, numbers and symbols. You can change this password in the future through the Host section of your website.</value>
   </data>
   <data name="InvalidQualifier.Text" xml:space="preserve">
-    <value>Object Qualifier must start with a letter and no more than 50 characters.</value>
+    <value>Object Qualifier must start with a letter and no more than 20 characters.</value>
   </data>
 </root>

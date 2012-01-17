@@ -49,22 +49,37 @@ namespace DotNetNuke.Web.UI.WebControls
 
         public override GridColumn Clone()
         {
-            DnnGridColumn dnnGridColumn = new DnnGridColumn();
-
-            //you should override CopyBaseProperties if you have some column specific properties
+            var dnnGridColumn = new DnnGridColumn();
             dnnGridColumn.CopyBaseProperties(this);
-
+            dnnGridColumn.setHeaderText = HeaderText;
             return dnnGridColumn;
         }
 
-        public override void InitializeCell(TableCell cell, int columnIndex, GridItem inItem)
+        private String _HeaderText;
+
+        public override string HeaderText
         {
-            base.InitializeCell(cell, columnIndex, inItem);
-            if (inItem is GridHeaderItem && !String.IsNullOrEmpty(HeaderText))
+            get
             {
-                cell.Text = Localization.GetString(string.Format("{0}.Header", HeaderText), LocalResourceFile);
+                if (String.IsNullOrEmpty(base.HeaderText))
+                    base.HeaderText = Localization.GetString(string.Format("{0}.Header", _HeaderText), DotNetNuke.Web.UI.Utilities.GetLocalResourceFile(Owner.OwnerGrid.Parent));
+                return base.HeaderText;
+            }
+            set
+            {
+                _HeaderText = value;
+                base.HeaderText = "";
             }
         }
+
+        public String setHeaderText
+        {
+            set
+            {
+                base.HeaderText = value;
+            }
+        }
+
 
         #endregion
     }

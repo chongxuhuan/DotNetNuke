@@ -48,7 +48,7 @@ namespace DotNetNuke.Services.Cache
             {
                 ScheduleHistoryItem.Succeeded = false; //REQUIRED
 
-                ScheduleHistoryItem.AddLogNote(string.Format("Purging cache task failed.", exc.ToString()));
+                ScheduleHistoryItem.AddLogNote(string.Format("Purging cache task failed: {0}.", exc.ToString()));
 
                 //notification that we have errored
                 Errored(ref exc); //REQUIRED

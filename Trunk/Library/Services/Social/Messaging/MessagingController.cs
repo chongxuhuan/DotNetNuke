@@ -1,0 +1,176 @@
+﻿#region Copyright
+// 
+// DotNetNuke® - http://www.dotnetnuke.com
+// Copyright (c) 2002-2012
+// by DotNetNuke Corporation
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// DEALINGS IN THE SOFTWARE.
+#endregion
+#region Usings
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text;
+
+using DotNetNuke.Common;
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.ComponentModel;
+using DotNetNuke.Entities.Users;
+using DotNetNuke.Security.Roles;
+using DotNetNuke.Services.Social.Messaging.Data;
+
+#endregion
+
+namespace DotNetNuke.Services.Social.Messaging
+{
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    ///   The Controller class for social Messaging
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    /// <history>
+    /// </history>
+    /// -----------------------------------------------------------------------------
+    public class MessagingController : IMessagingController
+    {
+        #region constants
+
+        internal const int MESSAGING_MAX_TO = 2000;
+        internal const int MESSAGING_MAX_SUBJECT = 400;
+
+        #endregion
+
+
+        private readonly IDataService _DataService;
+
+        #region "Constructors"
+
+        public MessagingController()
+            : this(GetDataService())
+        {
+        }
+
+        public MessagingController(IDataService dataService)
+        {
+            _DataService = dataService;
+        }
+
+        #endregion
+
+        #region Private Shared Methods
+
+        private static IDataService GetDataService()
+        {
+            var ds = ComponentFactory.GetComponent<IDataService>();
+
+            if (ds == null)
+            {
+                ds = new DataService();
+                ComponentFactory.RegisterComponentInstance<IDataService>(ds);
+            }
+            return ds;
+        }
+
+        #endregion
+
+
+        #region Public Methods
+
+
+
+        #region Easy Wrapper APIs
+
+        public void MarkRead(int messageRecipientID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MarkUnRead(int messageRecipientID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MarkArchived(int messageRecipientID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<Message> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
+        {
+           //TODO:
+            // return CBO.FillCollection<Message>(_DataService.GetInbox(userID, pageIndex, pageSize, totalRecords));
+            return null;
+        }
+
+        public IList<Message> GetRecentMessages(int userID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users)
+        {
+            if(string.IsNullOrEmpty(subject) && string.IsNullOrEmpty(body))
+            {
+                throw new InvalidEnumArgumentException(Localization.Localization.GetExceptionMessage("SubjectOrBodyRequiredError", "Both Subject and Body cannot be null or empty."));
+            }
+
+            if ((roles == null && users == null) || (roles.Count == 0 && users.Count == 0))
+            {
+                throw new InvalidEnumArgumentException(Localization.Localization.GetExceptionMessage("RolesOrUsersRequiredError", "Both Roles and Users cannot be null or empty-lists."));
+            }
+
+            if (!string.IsNullOrEmpty(subject) && subject.Length > MESSAGING_MAX_SUBJECT)
+            {
+                throw new InvalidEnumArgumentException(Localization.Localization.GetExceptionMessage("SubjectTooBigError", "Subject supplied is too big. Maximum {0}, Actual {1}.", MESSAGING_MAX_SUBJECT, subject.Length));
+            }
+
+            var sbTo = new StringBuilder();
+            foreach(var role in roles)
+            {                
+                sbTo.Append(role.RoleName);
+                sbTo.Append(",");
+            }
+
+            foreach (var user in users)
+            {                
+                sbTo.Append(user.DisplayName);
+                sbTo.Append(",");
+            }
+
+            string to = string.Empty;
+            if (sbTo.Length > 0)
+            {
+                to = sbTo.ToString(0, sbTo.Length - 1);
+                if (to.Length > MESSAGING_MAX_TO)
+                {
+                    throw new InvalidEnumArgumentException(Localization.Localization.GetExceptionMessage("ToListTooBigError", "To List supplied is too big. Maximum {0}, Actual {1}.", MESSAGING_MAX_TO, to.Length));
+                }
+            }
+
+            Message message = new Message {Body = body, Subject = subject, To = to};
+
+
+            return message;
+        }
+
+        #endregion
+
+        #endregion
+
+    }
+}

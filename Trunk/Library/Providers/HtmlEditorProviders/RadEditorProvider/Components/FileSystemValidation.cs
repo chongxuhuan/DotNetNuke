@@ -19,6 +19,8 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 using System.Text.RegularExpressions;
+
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
@@ -152,6 +154,64 @@ namespace DotNetNuke.Providers.RadEditorProvider
 #endregion
 
 #region Public File Validate Methods
+
+        public virtual void OnFolderRenamed(string oldFolderPath, string newFolderPath)
+        {
+            try
+            {
+                var folder = GetDNNFolder(oldFolderPath);
+                folder.FolderPath = ToDBPath(newFolderPath);
+                DNNFolderCtrl.UpdateFolder(folder);
+            }
+            catch (Exception ex)
+            {
+                LogUnknownError(ex, newFolderPath);
+            }
+
+        }
+
+        public virtual void OnFolderCreated(string virtualFolderPath, string virtualParentPath)
+        {
+            try
+            {
+                //rename secure files
+                var folder = GetDNNFolder(virtualFolderPath);
+                var parent = GetDNNFolder(virtualParentPath);
+
+                folder.StorageLocation = parent.StorageLocation;
+                folder.FolderMappingID = parent.FolderMappingID;
+                DNNFolderCtrl.UpdateFolder(folder);
+            }
+            catch (Exception ex)
+            {
+                LogUnknownError(ex, virtualFolderPath);
+            }
+
+        }
+
+        public virtual void OnFileCreated(string virtualPathAndFile, int contentLength)
+        {
+            try
+            {
+                //rename secure files
+                var folder = GetDNNFolder(virtualPathAndFile);
+                if (folder.StorageLocation == (int)FolderController.StorageLocationTypes.SecureFileSystem)
+                {
+                    var securedFile = virtualPathAndFile + Globals.glbProtectedExtension;
+                    var absolutePathAndFile = HttpContext.Current.Request.MapPath(virtualPathAndFile);
+                    var securedFileAbsolute = HttpContext.Current.Request.MapPath(securedFile);
+
+                    File.Move(absolutePathAndFile, securedFileAbsolute);
+                }
+
+                FolderManager.Instance.Synchronize(folder.PortalID, folder.FolderPath, false, true);
+            }
+            catch (Exception ex)
+            {
+                LogUnknownError(ex, virtualPathAndFile, contentLength.ToString());
+            }
+
+        }
 
 		public virtual string OnCreateFile(string virtualPathAndFile, int contentLength)
 		{
@@ -609,17 +669,18 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 		public virtual bool CanAddToFolder(FolderInfo dnnFolder)
 		{
-			if (! (FolderPermissionController.CanAddFolder(dnnFolder)))
-			{
-				return false;
-			}
+            if(!FolderPermissionController.CanAddFolder(dnnFolder))
+            {
+                return false;
+            }
 
-            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
-			{
-				return false;
-			}
+            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem 
+                && dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.SecureFileSystem)
+            {
+                return false;
+            }
 
-			return true;
+		    return true;
 		}
 
 		public virtual bool CanDeleteFolder(FolderInfo dnnFolder)
@@ -629,7 +690,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				return false;
 			}
 
-            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
+            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem
+                && dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.SecureFileSystem)
 			{
 				return false;
 			}
@@ -663,11 +725,12 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				return LogDetailError(ErrorCodes.AddFolder_NoPermission, ToVirtualPath(dnnFolder.FolderPath), logDetail);
 			}
 
-			//only allow management of regular storage type
-            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
-			{
-				return LogDetailError(ErrorCodes.AddFolder_NotInsecureFolder, ToVirtualPath(dnnFolder.FolderPath), logDetail);
-			}
+            //only allow management of regular storage type
+            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem 
+                && dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.SecureFileSystem)
+            {
+                return LogDetailError(ErrorCodes.AddFolder_NotInsecureFolder, ToVirtualPath(dnnFolder.FolderPath), logDetail);
+            }
 
 			return string.Empty;
 		}
@@ -696,7 +759,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 
 			//only allow management of regular storage type
-			if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
+			if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem
+                && dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.SecureFileSystem)
 			{
 				return LogDetailError(ErrorCodes.CopyFolder_NotInsecureFolder, ToVirtualPath(dnnFolder.FolderPath), logDetail);
 			}
@@ -749,7 +813,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			}
 
 			//only allow management of regular storage type
-            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem)
+            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem
+                && dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.SecureFileSystem)
 			{
 				return LogDetailError(ErrorCodes.DeleteFolder_NotInsecureFolder, ToVirtualPath(dnnFolder.FolderPath), logDetail);
 			}

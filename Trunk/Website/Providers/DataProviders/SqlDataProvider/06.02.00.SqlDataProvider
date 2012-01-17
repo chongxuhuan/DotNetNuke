@@ -2133,7 +2133,7 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessage]
     @MessageID INT
 AS 
-	SELECT [MessageID], [Subject], [Body], [ParentMessageID], [GroupMail], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [MessageID], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}[Social_Messages] 
 	WHERE  [MessageID] = @MessageID 
 
@@ -2146,7 +2146,7 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessagesBySender]
     @SenderUserID INT
 AS 
-	SELECT [MessageID], [Subject], [Body], [ParentMessageID], [GroupMail], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [MessageID], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}[Social_Messages] 
 	WHERE  [SenderUserID] = @SenderUserID 
 

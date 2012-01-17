@@ -21,6 +21,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 using DotNetNuke.ComponentModel;
@@ -37,22 +38,28 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region Messages CRUD
 
-        public void SaveSocialMessage(Message message, int createUpdateUserID)
+        public int SaveSocialMessage(Message message, int createUpdateUserID)
         {
-            throw new NotImplementedException();
+            //need to fix groupmail
+            return _provider.ExecuteScalar<int>("SaveSocialMessage", message.Subject,message.Body,message.ParentMessageID,message.SenderUserID, createUpdateUserID);
         }
 
         public IDataReader GetSocialMessage()
         {
-            throw new NotImplementedException();
+            return _provider.ExecuteReader("GetSocialMessage");
         }
 
         public IDataReader GetSocialMessagesBySender()
         {
-            throw new NotImplementedException();
+            return _provider.ExecuteReader("GetSocialMessagesBySender");
         }
 
         public void DeleteSocialMessage(int messageID)
+        {
+            _provider.ExecuteNonQuery("DeleteSocialMessage", messageID);
+        }
+
+        public IList<Message> GetInbox(int userID, int pageIndex, int pageSize, int totalRecords)
         {
             throw new NotImplementedException();
         }
@@ -62,53 +69,53 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region Message_Recipients CRUD
 
-        public void SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserID)
+        public int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserID)
         {
-            throw new NotImplementedException();
+            return _provider.ExecuteScalar<int>("SaveSocialMessageRecipient", messageRecipient.UserID, messageRecipient.Status, createUpdateUserID);
         }
 
         public IDataReader GetSocialMessageRecipient()
         {
-            throw new NotImplementedException();
+            return _provider.ExecuteReader("GetSocialMessageRecipient");
         }
 
         public IDataReader GetSocialMessageRecipientsByUser()
         {
-            throw new NotImplementedException();
+            return _provider.ExecuteReader("GetSocialMessageRecipientsByUser");
         }
 
         public IDataReader GetSocialMessageRecipientsByMessage()
         {
-            throw new NotImplementedException();
+            return _provider.ExecuteReader("GetSocialMessageRecipientsByMessage");
         }
 
         public void DeleteSocialMessageRecipient(int messageRecipientID)
         {
-            throw new NotImplementedException();
+            _provider.ExecuteNonQuery("DeleteSocialMessageRecipient", messageRecipientID);
         }
 
         #endregion
 
         #region Message_Attachments CRUD
 
-        public void SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserID)
+        public int SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserID)
         {
-            throw new NotImplementedException();
+            return _provider.ExecuteScalar<int>("SaveSocialMessageAttachment", messageAttachment.MessageID, messageAttachment.FileID,createUpdateUserID);
         }
 
         public IDataReader GetSocialMessageAttachment()
         {
-            throw new NotImplementedException();
+            return _provider.ExecuteReader("GetSocialMessageAttachment");
         }
 
         public IDataReader GetSocialMessageAttachmentsByMessage()
         {
-            throw new NotImplementedException();
+            return _provider.ExecuteReader("GetSocialMessageAttachmentsByMessage");
         }
 
         public void DeleteSocialMessageAttachment(int messageAttachmentID)
         {
-            throw new NotImplementedException();
+            _provider.ExecuteNonQuery("DeleteSocialMessageAttachment", messageAttachmentID);
         }
 
         #endregion

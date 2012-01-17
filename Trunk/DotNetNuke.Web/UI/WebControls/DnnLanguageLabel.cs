@@ -116,7 +116,7 @@ namespace DotNetNuke.Web.UI.WebControls
 
             if (string.IsNullOrEmpty(Language))
             {
-                _Flag.ImageUrl = string.Format("~/images/Flags/none.gif", Language);
+                _Flag.ImageUrl = "~/images/Flags/none.gif";
             }
             else
             {

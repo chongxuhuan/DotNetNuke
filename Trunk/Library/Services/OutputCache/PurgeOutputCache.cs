@@ -68,7 +68,7 @@ namespace DotNetNuke.Services.OutputCache
             {
                 ScheduleHistoryItem.Succeeded = false; //REQUIRED
 
-                ScheduleHistoryItem.AddLogNote(string.Format("Purging output cache task failed.", exc.ToString())); //OPTIONAL
+                ScheduleHistoryItem.AddLogNote(string.Format("Purging output cache task failed: {0}.", exc.ToString())); //OPTIONAL
 
                 //notification that we have errored
                 Errored(ref exc);

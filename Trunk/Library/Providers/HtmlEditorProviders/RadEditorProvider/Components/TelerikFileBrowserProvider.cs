@@ -96,6 +96,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
                     var virtualNewPath = FileSystemValidation.CombineVirtualPath(virtualPath, directoryName);
 					var newFolderID = DNNFolderCtrl.AddFolder(PortalSettings.PortalId, FileSystemValidation.ToDBPath(virtualNewPath));
 					FileSystemUtils.SetFolderPermissions(PortalSettings.PortalId, newFolderID, FileSystemValidation.ToDBPath(virtualNewPath));
+                    //make sure that the folder is flaged secure if necessary
+                    DNNValidator.OnFolderCreated(virtualNewPath, virtualPath);
 				}
 
 				return returnValue;
@@ -146,6 +148,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 				if (string.IsNullOrEmpty(returnValue))
 				{
+                    //make sure folder name is being updated in database
+                    DNNValidator.OnFolderRenamed(virtualPath, virtualNewPath);
 					//Sync to remove old folder & files        
 					FileSystemUtils.SynchronizeFolder(PortalSettings.PortalId, HttpContext.Current.Request.MapPath(virtualPath), FileSystemValidation.ToDBPath(virtualPath), true, true, true);
 					//Sync to add new folder & files
@@ -373,6 +377,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				}
 
 				returnValue = TelerikContent.StoreFile(file, virtualPath, name, arguments);
+
+                DNNValidator.OnFileCreated(FileSystemValidation.CombineVirtualPath(virtualPath, name), file.ContentLength);
 
 				Services.FileSystem.FileInfo dnnFileInfo = new DotNetNuke.Services.FileSystem.FileInfo();
 				FillFileInfo(file, ref dnnFileInfo);

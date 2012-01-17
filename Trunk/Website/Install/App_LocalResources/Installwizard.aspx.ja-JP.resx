@@ -477,6 +477,6 @@ Windows エクスプローラを使用して、Web サイトのルートフォ�
     <value>「次へ」とは</value>
   </data>
   <data name="InvalidQualifier.Text" xml:space="preserve">
-    <value>Object Qualifier must start with a letter and no more than 50 characters.</value>
+    <value>Object Qualifier must start with a letter and no more than 20 characters.</value>
   </data>
 </root>

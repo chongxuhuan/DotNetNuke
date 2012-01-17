@@ -21,6 +21,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 #endregion
@@ -31,16 +32,17 @@ namespace DotNetNuke.Services.Social.Messaging.Data
     {
         #region Messages CRUD
         
-        void SaveSocialMessage(Message message, int createUpdateUserID);
+        int SaveSocialMessage(Message message, int createUpdateUserID);
         IDataReader GetSocialMessage();
         IDataReader GetSocialMessagesBySender();
         void DeleteSocialMessage(int messageID);
+        IList<Message> GetInbox(int userID, int pageIndex, int pageSize, int totalRecords);
         
         #endregion
 
         #region Message_Recipients CRUD
         
-        void SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserID);
+        int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserID);
         IDataReader GetSocialMessageRecipient();
         IDataReader GetSocialMessageRecipientsByUser();
         IDataReader GetSocialMessageRecipientsByMessage();
@@ -50,7 +52,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region Message_Attachments CRUD
 
-        void SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserID);
+        int SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserID);
         IDataReader GetSocialMessageAttachment();
         IDataReader GetSocialMessageAttachmentsByMessage();
         void DeleteSocialMessageAttachment(int messageAttachmentID);

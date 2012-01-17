@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Xml;
 
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Security.Roles;
 
 namespace DotNetNuke.Services.Social.Messaging
 {
@@ -43,7 +44,9 @@ namespace DotNetNuke.Services.Social.Messaging
         IList<Message> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
 
         //Gets the latest 10 messages.
-        IList<Message> GetRecentMessages(int userID);         
+        IList<Message> GetRecentMessages(int userID);
+
+        Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users);
 
         #endregion
     }

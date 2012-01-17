@@ -160,15 +160,15 @@ namespace DotNetNuke.Common.Utilities
 						//Get the value of the key field from the DataReader
                         if (typeof (TKey).Name == "Int32" && dr[keyField].GetType().Name == "Decimal")
                         {
-                            keyValue = (TKey) Null.SetNull(dr[keyField], keyValue);
+                            keyValue = (TKey)Convert.ChangeType(Null.SetNull(dr[keyField], keyValue), typeof(TKey));
                         }
                         else if (typeof (TKey).Name.ToLower() == "string" && dr[keyField].GetType().Name.ToLower() == "dbnull")
                         {
-                            keyValue = (TKey) Null.SetNull(dr[keyField], "");
+                            keyValue = (TKey)Convert.ChangeType(Null.SetNull(dr[keyField], ""), typeof(TKey));
                         }
                         else
                         {
-                            keyValue = (TKey) Null.SetNull(dr[keyField], keyValue);
+                            keyValue = (TKey)Convert.ChangeType(Null.SetNull(dr[keyField], ""), typeof(TKey));
                         }
                     }
 					//add to dictionary

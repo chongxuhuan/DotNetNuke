@@ -609,6 +609,6 @@ Amb l'Explorador de Windows obriu la carpeta arrel de la web (per defecte C:\Dot
     <value>Configuració de l'usuari Administrador i informació del web</value>
   </data>
   <data name="InvalidQualifier.Text" xml:space="preserve">
-    <value>Object Qualifier must start with a letter and no more than 50 characters.</value>
+    <value>Object Qualifier must start with a letter and no more than 20 characters.</value>
   </data>
 </root>
