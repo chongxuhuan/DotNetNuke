@@ -53,7 +53,6 @@ using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.Web.Client.ClientResourceManagement;
 
-using DataCache = DotNetNuke.UI.Utilities.DataCache;
 using Globals = DotNetNuke.Common.Globals;
 
 #endregion
@@ -325,7 +324,7 @@ namespace DotNetNuke.Framework
             {
                 if (!string.IsNullOrEmpty(PortalSettings.BackgroundFile))
                 {
-                    var fileInfo = FileManager.Instance.GetFile(PortalSettings.PortalId, PortalSettings.BackgroundFile);
+                    var fileInfo = GetBackgroundFileInfo();
                     var url = FileManager.Instance.GetUrl(fileInfo);
 
                     ((HtmlGenericControl)FindControl("Body")).Attributes["style"] = string.Concat("background-image: url('", url, "')");
@@ -583,6 +582,20 @@ namespace DotNetNuke.Framework
                     break;
             }
             return warningMessage;
+        }
+
+        private IFileInfo GetBackgroundFileInfo()
+        {
+            string cacheKey = String.Format(DotNetNuke.Common.Utilities.DataCache.PortalCacheKey, PortalSettings.PortalId, "BackgroundFile");
+            var file = CBO.GetCachedObject<DotNetNuke.Services.FileSystem.FileInfo>(new CacheItemArgs(cacheKey, DotNetNuke.Common.Utilities.DataCache.PortalCacheTimeOut, DotNetNuke.Common.Utilities.DataCache.PortalCachePriority),
+                                                    GetBackgroundFileInfoCallBack);
+
+            return file;
+        }
+
+        private IFileInfo GetBackgroundFileInfoCallBack(CacheItemArgs itemArgs)
+        {
+            return FileManager.Instance.GetFile(PortalSettings.PortalId, PortalSettings.BackgroundFile);
         }
 
         #endregion

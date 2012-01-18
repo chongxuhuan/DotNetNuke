@@ -1747,15 +1747,7 @@ namespace DotNetNuke.Entities.Users
         [Obsolete("Deprecated in DNN 5.1. Not needed any longer for single users due to autohydration")]
         public static UserInfo GetUser(int portalId, int userId, bool isHydrated, bool hydrateRoles)
         {
-            var user = GetUserById(portalId, userId);
-
-            if (hydrateRoles)
-            {
-                var controller = new RoleController();
-                user.Roles = controller.GetRolesByUser(userId, portalId);
-            }
-
-            return user;
+            return GetUserById(portalId, userId);
         }
 
         [Obsolete("Deprecated in DNN 5.1. This function has been replaced by UserController.GetUserByName")]

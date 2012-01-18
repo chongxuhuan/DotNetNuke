@@ -77,7 +77,7 @@ namespace DotNetNuke.Entities.Users
 
             if (isVisible && !isAdminUser)
             {
-                switch (property.Visibility)
+                switch (property.ProfileVisibility.VisibilityMode)
                 {
                     case UserVisibilityMode.FriendsGroups:
                         isVisible = IsMember(accessingUser);

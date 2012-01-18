@@ -48,7 +48,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         private FileManager _fileManager;
         private Mock<IFolderManager> _folderManager;
         private Mock<IFolderPermissionController> _folderPermissionController;
-        private Mock<PortalControllerBase> _portalController;
+        private Mock<IPortalController> _portalController;
         private Mock<IFolderMappingController> _folderMappingController;
         private Mock<IGlobals> _globals;
         private Mock<ICBO> _cbo;
@@ -73,7 +73,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
 
             _folderManager = new Mock<IFolderManager>();
             _folderPermissionController = new Mock<IFolderPermissionController>();
-            _portalController = new Mock<PortalControllerBase>();
+            _portalController = new Mock<IPortalController>();
             _folderMappingController = new Mock<IFolderMappingController>();
             _globals = new Mock<IGlobals>();
             _cbo = new Mock<ICBO>();

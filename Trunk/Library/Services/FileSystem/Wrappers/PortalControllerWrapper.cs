@@ -23,5 +23,5 @@ using DotNetNuke.Entities.Portals;
 
 namespace DotNetNuke.Services.FileSystem
 {
-    internal class PortalControllerWrapper : ComponentBase<PortalControllerBase, PortalController> {}
+    internal class PortalControllerWrapper : ComponentBase<IPortalController, PortalController> {}
 }

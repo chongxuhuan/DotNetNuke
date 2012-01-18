@@ -22,18 +22,21 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Services.FileSystem;
-using DotNetNuke.Services.Localization;
+
 using System.Xml.Serialization;
 
 #endregion
 
+// ReSharper disable CheckNamespace
 namespace DotNetNuke.Entities.Users
+// ReSharper restore CheckNamespace
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
@@ -53,14 +56,11 @@ namespace DotNetNuke.Entities.Users
     [Serializable]
     public class UserProfile
     {
-		#region "Private Constants"
+		#region Private Constants
 
         //Name properties
-        private const string cPrefix = "Prefix";
         private const string cFirstName = "FirstName";
-        private const string cMiddleName = "MiddleName";
         private const string cLastName = "LastName";
-        private const string cSuffix = "Suffix";
 
         //Address Properties
         private const string cUnit = "Unit";
@@ -86,7 +86,9 @@ namespace DotNetNuke.Entities.Users
         private const String cPreferredTimeZone = "PreferredTimeZone";
 
 		#endregion
-		#region "Private Members"
+
+		#region Private Members
+
         private bool _IsDirty;
 
         //collection to store all profile properties.
@@ -94,7 +96,7 @@ namespace DotNetNuke.Entities.Users
 
 		#endregion
 		
-		#region "Public Properties"
+		#region Public Properties
 		
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -288,7 +290,7 @@ namespace DotNetNuke.Entities.Users
                 ProfilePropertyDefinition photoProperty = GetProperty(cPhoto);
                 if ((photoProperty != null))
                 {
-                    if (!string.IsNullOrEmpty(photoProperty.PropertyValue) && photoProperty.Visibility == UserVisibilityMode.AllUsers)
+                    if (!string.IsNullOrEmpty(photoProperty.PropertyValue) && photoProperty.ProfileVisibility.VisibilityMode == UserVisibilityMode.AllUsers)
                     {
                         var fileInfo = FileManager.Instance.GetFile(int.Parse(photoProperty.PropertyValue));
                         if ((fileInfo != null))
@@ -300,7 +302,6 @@ namespace DotNetNuke.Entities.Users
                 return photoURL;
             }
         }
-
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -342,7 +343,7 @@ namespace DotNetNuke.Entities.Users
             }
         }
 
-      [XmlIgnore]
+        [XmlIgnore]
         public TimeZoneInfo PreferredTimeZone
         {
             get
@@ -367,13 +368,7 @@ namespace DotNetNuke.Entities.Users
                 }
 
                 //still we can't find it or it's somehow set to null
-                if (_TimeZone == null)
-                {
-                    _TimeZone = TimeZoneInfo.Local;                    
-                }
-
-                //return timezone
-                return _TimeZone;
+                return _TimeZone ?? (TimeZoneInfo.Local);
             }
             set
             {
@@ -392,14 +387,7 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public ProfilePropertyDefinitionCollection ProfileProperties
         {
-            get
-            {
-                if (_profileProperties == null)
-                {
-                    _profileProperties = new ProfilePropertyDefinitionCollection();
-                }
-                return _profileProperties;
-            }
+            get { return _profileProperties ?? (_profileProperties = new ProfilePropertyDefinitionCollection()); }
         }
 
         /// -----------------------------------------------------------------------------
@@ -501,9 +489,10 @@ namespace DotNetNuke.Entities.Users
                 SetProfileProperty(cWebsite, value);
             }
         }
-		#endregion
+		
+        #endregion
 
-		#region "Public Methods"
+		#region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -625,7 +614,7 @@ namespace DotNetNuke.Entities.Users
 		
 		#endregion
 
-        #region "Obsolete"
+        #region Obsolete
 
         [Obsolete("Deprecated in DNN 6.0. Replaced by PreferredTimeZone.")]
         [Browsable(false)]    
@@ -643,7 +632,7 @@ namespace DotNetNuke.Entities.Users
             }
             set
             {
-                SetProfileProperty(cTimeZone, value.ToString());
+                SetProfileProperty(cTimeZone, value.ToString(CultureInfo.InvariantCulture));
             }
         }
 

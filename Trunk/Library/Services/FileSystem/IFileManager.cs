@@ -25,7 +25,8 @@ using System.IO;
 namespace DotNetNuke.Services.FileSystem
 {
     /// <summary>
-    /// This interface has been created only with testing purposes. Do not implement it in your code as it is subject to change.
+    /// Do not implement.  This interface is meant for reference and unit test purposes only.
+    /// There is no guarantee that this interface will not change.
     /// </summary>
     public interface IFileManager
     {

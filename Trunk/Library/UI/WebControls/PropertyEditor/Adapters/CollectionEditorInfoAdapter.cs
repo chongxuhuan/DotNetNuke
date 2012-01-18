@@ -26,6 +26,7 @@ using System.Reflection;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 
 #endregion
@@ -51,12 +52,10 @@ namespace DotNetNuke.UI.WebControls
         private readonly object DataSource;
         private readonly Hashtable FieldNames;
         private readonly string Name;
-        private string FieldName;
 
         public CollectionEditorInfoAdapter(object dataSource, string name, string fieldName, Hashtable fieldNames)
         {
             DataSource = dataSource;
-            FieldName = fieldName;
             FieldNames = fieldNames;
             Name = name;
         }
@@ -113,31 +112,29 @@ namespace DotNetNuke.UI.WebControls
 
         public bool UpdateVisibility(PropertyEditorEventArgs e)
         {
-            string NameDataField = Convert.ToString(FieldNames["Name"]);
-            string VisibilityDataField = Convert.ToString(FieldNames["Visibility"]);
-            PropertyInfo objProperty;
-            string PropertyName = "";
+            string nameDataField = Convert.ToString(FieldNames["Name"]);
+            string dataField = Convert.ToString(FieldNames["ProfileVisibility"]);
             string name = e.Name;
             object newValue = e.Value;
-            bool _IsDirty = Null.NullBoolean;
+            bool dirty = Null.NullBoolean;
 			
 			//Get the Name Property
-            objProperty = DataSource.GetType().GetProperty(NameDataField);
-            if (objProperty != null)
+            PropertyInfo property = DataSource.GetType().GetProperty(nameDataField);
+            if (property != null)
             {
-                PropertyName = Convert.ToString(objProperty.GetValue(DataSource, null));
+                string propertyName = Convert.ToString(property.GetValue(DataSource, null));
 				//Do we have the item in the IEnumerable Collection being changed
-                PropertyName = PropertyName.Replace(" ", "_");
-                if (PropertyName == name)
+                propertyName = propertyName.Replace(" ", "_");
+                if (propertyName == name)
                 {
 					//Get the Value Property
-                    objProperty = DataSource.GetType().GetProperty(VisibilityDataField);
+                    property = DataSource.GetType().GetProperty(dataField);
 					//Set the Value property to the new value
-                    objProperty.SetValue(DataSource, newValue, null);
-                    _IsDirty = true;
+                    property.SetValue(DataSource, newValue, null);
+                    dirty = true;
                 }
             }
-            return _IsDirty;
+            return dirty;
         }
 
         #endregion
@@ -159,7 +156,7 @@ namespace DotNetNuke.UI.WebControls
             string TypeDataField = Convert.ToString(FieldNames["Type"]);
             string ValidationExpressionDataField = Convert.ToString(FieldNames["ValidationExpression"]);
             string ValueDataField = Convert.ToString(FieldNames["Value"]);
-            string VisibilityDataField = Convert.ToString(FieldNames["Visibility"]);
+            string VisibilityDataField = Convert.ToString(FieldNames["ProfileVisibility"]);
             string MaxLengthDataField = Convert.ToString(FieldNames["Length"]);
 
             var editInfo = new EditorInfo();
@@ -244,13 +241,16 @@ namespace DotNetNuke.UI.WebControls
             editInfo.ControlStyle = new Style();
 
             //Get Visibility Field
-            editInfo.Visibility = UserVisibilityMode.AllUsers;
+            editInfo.ProfileVisibility = new ProfileVisibility
+                                             {
+                                                 VisibilityMode = UserVisibilityMode.AllUsers
+                                             };
             if (!String.IsNullOrEmpty(VisibilityDataField))
             {
                 property = DataSource.GetType().GetProperty(VisibilityDataField);
                 if (!(property == null || (property.GetValue(DataSource, null) == null)))
                 {
-                    editInfo.Visibility = (UserVisibilityMode) property.GetValue(DataSource, null);
+                    editInfo.ProfileVisibility = (ProfileVisibility)property.GetValue(DataSource, null);
                 }
             }
 			

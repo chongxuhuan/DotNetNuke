@@ -25,15 +25,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Web;
-using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 
 namespace DotNetNuke.Entities.Portals
 {
     /// <summary>
-    /// An all virtual base class that can be used to mock PortalController in unit tests 
+    /// Do not implement.  This interface is meant for reference and unit test purposes only.
+    /// There is no guarantee that this interface will not change.
     /// </summary>
-    public class PortalControllerBase
+    public interface IPortalController
     {
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -47,18 +47,18 @@ namespace DotNetNuke.Entities.Portals
         ///     [cnurse]    01/11/2005  created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual void AddPortalAlias(int portalId, string portalAlias)
-        {
-        }
+        void AddPortalAlias(int portalId, string portalAlias);
+
+
 
         /// <summary>
         /// Copies the page template.
         /// </summary>
         /// <param name="templateFile">The template file.</param>
         /// <param name="mappedHomeDirectory">The mapped home directory.</param>
-        public virtual void CopyPageTemplate(string templateFile, string mappedHomeDirectory)
-        {
-        }
+        void CopyPageTemplate(string templateFile, string mappedHomeDirectory);
+
+
 
         /// <summary>
         /// Creates the portal.
@@ -75,12 +75,9 @@ namespace DotNetNuke.Entities.Portals
         /// <param name="childPath">The child path.</param>
         /// <param name="isChildPortal">if set to <c>true</c> means the portal is child portal.</param>
         /// <returns>Portal id.</returns>
-        public virtual int CreatePortal(string portalName, UserInfo adminUser, string description, string keyWords,
-                                        string templatePath, string templateFile, string homeDirectory,
-                                        string portalAlias, string serverPath, string childPath, bool isChildPortal)
-        {
-            return Null.NullInteger;
-        }
+        int CreatePortal(string portalName, UserInfo adminUser, string description, string keyWords, string templatePath, string templateFile, string homeDirectory, string portalAlias,
+                         string serverPath, string childPath, bool isChildPortal);
+
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -112,13 +109,8 @@ namespace DotNetNuke.Entities.Portals
         /// 	[cnurse]	11/08/2004	created (most of this code was moved from SignUp.ascx.vb)
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual int CreatePortal(string portalName, string firstName, string lastName, string username,
-                                        string password, string email, string description, string keyWords,
-                                        string templatePath, string templateFile, string homeDirectory,
-                                        string portalAlias, string serverPath, string childPath, bool isChildPortal)
-        {
-            return Null.NullInteger;
-        }
+        int CreatePortal(string portalName, string firstName, string lastName, string username, string password, string email, string description, string keyWords, string templatePath,
+                         string templateFile, string homeDirectory, string portalAlias, string serverPath, string childPath, bool isChildPortal);
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -133,9 +125,9 @@ namespace DotNetNuke.Entities.Portals
         ///     [cnurse]    24/11/2006  Removal of Modules moved to sproc
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual void DeletePortalInfo(int portalId)
-        {
-        }
+        void DeletePortalInfo(int portalId);
+
+
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -148,20 +140,11 @@ namespace DotNetNuke.Entities.Portals
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual PortalInfo GetPortal(int portalId)
-        {
-            return null;
-        }
+        PortalInfo GetPortal(int portalId);
 
-        public virtual PortalInfo GetPortal(int portalId, string cultureCode)
-        {
-            return null;
-        }
+        PortalInfo GetPortal(int portalId, string cultureCode);
 
-        public virtual List<PortalInfo> GetPortalList(string cultureCode)
-        {
-            return null;
-        }
+        List<PortalInfo> GetPortalList(string cultureCode);
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -173,20 +156,14 @@ namespace DotNetNuke.Entities.Portals
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual ArrayList GetPortals()
-        {
-            return null;
-        }
+        ArrayList GetPortals();
 
         /// <summary>
         /// Gets the portal.
         /// </summary>
         /// <param name="uniqueId">The unique id.</param>
         /// <returns>Portal info.</returns>
-        public virtual PortalInfo GetPortal(Guid uniqueId)
-        {
-            return null;
-        }
+        PortalInfo GetPortal(Guid uniqueId);
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -199,20 +176,14 @@ namespace DotNetNuke.Entities.Portals
         /// 	[VMasanas]	19/04/2006	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual long GetPortalSpaceUsedBytes()
-        {
-            return Null.NullInteger;
-        }
+        long GetPortalSpaceUsedBytes();
 
         /// <summary>
         /// Gets the portal space used bytes.
         /// </summary>
         /// <param name="portalId">The portal id.</param>
         /// <returns>Space used in bytes</returns>
-        public virtual long GetPortalSpaceUsedBytes(int portalId)
-        {
-            return Null.NullInteger;
-        }
+        long GetPortalSpaceUsedBytes(int portalId);
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -227,10 +198,7 @@ namespace DotNetNuke.Entities.Portals
         /// 	[VMasanas]	19/04/2006	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual bool HasSpaceAvailable(int portalId, long fileSizeBytes)
-        {
-            return false;
-        }
+        bool HasSpaceAvailable(int portalId, long fileSizeBytes);
 
         /// <summary>
         ///   Remaps the Special Pages such as Home, Profile, Search
@@ -238,9 +206,7 @@ namespace DotNetNuke.Entities.Portals
         /// </summary>
         /// <remarks>
         /// </remarks>
-        public virtual void MapLocalizedSpecialPages(int portalId, string cultureCode)
-        {
-        }
+        void MapLocalizedSpecialPages(int portalId, string cultureCode);
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -259,10 +225,7 @@ namespace DotNetNuke.Entities.Portals
         /// 	[VMasanas]	27/08/2004	Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual void ParseTemplate(int portalId, string templatePath, string templateFile, int administratorId,
-                                          PortalTemplateModuleAction mergeTabs, bool isNewPortal)
-        {
-        }
+        void ParseTemplate(int portalId, string templatePath, string templateFile, int administratorId, PortalTemplateModuleAction mergeTabs, bool isNewPortal);
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -282,26 +245,20 @@ namespace DotNetNuke.Entities.Portals
         ///     [cnurse]    05/20/2005  moved most of processing to new method in FileSystemUtils
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual void ProcessResourceFile(string portalPath, string templateFile)
-        {
-        }
+        void ProcessResourceFile(string portalPath, string templateFile);
 
         /// <summary>
         /// Updates the portal expiry.
         /// </summary>
         /// <param name="portalId">The portal id.</param>
-        public virtual void UpdatePortalExpiry(int portalId)
-        {
-        }
+        void UpdatePortalExpiry(int portalId);
 
         /// <summary>
         /// Updates the portal expiry.
         /// </summary>
         /// <param name="portalId">The portal id.</param>
         /// <param name="cultureCode">The culture code.</param>
-        public virtual void UpdatePortalExpiry(int portalId, string cultureCode)
-        {
-        }
+        void UpdatePortalExpiry(int portalId, string cultureCode);
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -314,13 +271,18 @@ namespace DotNetNuke.Entities.Portals
         /// 	[cnurse]	10/13/2004	created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual void UpdatePortalInfo(PortalInfo portal)
-        {
-        }
+        void UpdatePortalInfo(PortalInfo portal);
 
-        public virtual PortalSettings LoadPortalSettingsWhenOtherwiseUnavailable(HttpRequestBase request)
-        {
-            return null;
-        }
+        /// <summary>
+        /// Loads the portal settings when not provided by "normal" DNN mechanisms
+        /// </summary>
+        /// <remarks>This method is for very special situations where the normal DNN page lifecycle does not run.
+        /// Unless you know specifically why your are calling this method, you should use PortalController.GetCurrentPortalSettings
+        /// </remarks>
+        /// <param name="request">The current request</param> 
+        /// <returns>PortaSettings</returns>
+        PortalSettings LoadPortalSettingsWhenOtherwiseUnavailable(HttpRequestBase request);
     }
 }
+        
+    

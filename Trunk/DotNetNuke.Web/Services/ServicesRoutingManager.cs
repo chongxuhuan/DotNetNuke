@@ -104,7 +104,7 @@ namespace DotNetNuke.Web.Services
 
         internal ITypeLocator TypeLocator { get; set; }
 
-        internal PortalControllerBase PortalController { get; set; }
+        internal IPortalController PortalController { get; set; }
 
         internal static bool IsValidServiceRouteMapper(Type t)
         {

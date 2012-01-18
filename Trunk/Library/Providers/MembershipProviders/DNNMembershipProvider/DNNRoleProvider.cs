@@ -379,11 +379,9 @@ namespace DotNetNuke.Security.Membership
         /// <returns>A list of UserRoleInfo objects</returns>
         public override IList<UserRoleInfo> GetUserRoles(UserInfo user, bool includePrivate)
         {
-            if (includePrivate)
-            {
-                return CBO.FillCollection<UserRoleInfo>(dataProvider.GetUserRoles(user.PortalID, user.UserID));
-            }
-            return CBO.FillCollection<UserRoleInfo>(dataProvider.GetServices(user.PortalID, user.UserID));
+            return CBO.FillCollection<UserRoleInfo>(includePrivate 
+                    ? dataProvider.GetUserRoles(user.PortalID, user.UserID) 
+                    : dataProvider.GetServices(user.PortalID, user.UserID));
         }
 
         /// -----------------------------------------------------------------------------

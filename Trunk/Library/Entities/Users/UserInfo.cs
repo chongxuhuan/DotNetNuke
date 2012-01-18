@@ -21,15 +21,14 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
-using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.SystemDateTime;
 using DotNetNuke.Services.Tokens;
 using DotNetNuke.UI.WebControls;
@@ -57,13 +56,11 @@ namespace DotNetNuke.Entities.Users
     {
         #region Private Members
 
+        private string _administratorRoleName;
         private string _fullName;
         private UserMembership _membership;
         private UserProfile _profile;
         private UserSocial _social;
-        private string[] _roles;
-        private bool _rolesHydrated = Null.NullBoolean;
-        private string _administratorRoleName;
 
         #endregion
 
@@ -76,7 +73,6 @@ namespace DotNetNuke.Entities.Users
             PortalID = Null.NullInteger;
             IsSuperUser = Null.NullBoolean;
             AffiliateID = Null.NullInteger;
-            _roles = new string[] {};
         }
 
         #endregion
@@ -240,36 +236,11 @@ namespace DotNetNuke.Entities.Users
             set { _profile = value; }
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the Roles for this User
-        /// </summary>
-        /// <history>
-        ///     [cnurse]	02/24/2006	Documented
-        ///     [sleupold]  08/14/2007  auto hydration of roles added
-        /// </history>
-        /// -----------------------------------------------------------------------------
         [Browsable(false)]
         public string[] Roles
         {
-            get
-            {
-                if (!_rolesHydrated)
-                {
-                    if (UserID > Null.NullInteger) //fill
-                    {
-                        var controller = new RoleController();
-                        _roles = controller.GetRolesByUser(UserID, PortalID);
-                        _rolesHydrated = true;
-                    }
-                }
-                return _roles;
-            }
-            set
-            {
-                _roles = value;
-                _rolesHydrated = true;
-            }
+            get { return Social.Roles.Select(r => r.RoleName).ToArray(); }
+            set { }
         }
 
         /// -----------------------------------------------------------------------------
@@ -308,13 +279,6 @@ namespace DotNetNuke.Entities.Users
         [SortOrder(0), MaxLength(100), IsReadOnly(true), Required(true)]
         public string Username { get; set; }
 
-        //public IList<UserRoleInfo> UserRoles
-        //{
-        //    get
-        //    {
-                
-        //    }
-        //}
 
         #region IPropertyAccess Members
 
@@ -480,11 +444,6 @@ namespace DotNetNuke.Entities.Users
 
         #region Public Methods
 
-        public void ClearRoles()
-        {
-            _roles = new string[] {};
-            _rolesHydrated = false;
-        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -508,13 +467,7 @@ namespace DotNetNuke.Entities.Users
             }
             if (Roles != null)
             {
-                foreach (string strRole in Roles)
-                {
-                    if (strRole == role)
-                    {
-                        return true;
-                    }
-                }
+                return Roles.Any(s => s == role);
             }
             return false;
         }
@@ -572,6 +525,9 @@ namespace DotNetNuke.Entities.Users
         #endregion
 
         #region Obsolete
+
+        [Obsolete("Deprecated in DNN 6.2. Roles are no longer stored in a cookie")]
+        public void ClearRoles() { }
 
         [Browsable(false), Obsolete("Deprecated in DNN 5.1. This property has been deprecated in favour of Display Name")]
         public string FullName

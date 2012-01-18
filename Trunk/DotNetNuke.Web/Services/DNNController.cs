@@ -30,7 +30,7 @@ namespace DotNetNuke.Web.Services
 {
     public class DnnController : Controller
     {
-        private PortalControllerBase _portalController;
+        private IPortalController _portalController;
         private AuthenticatorBase _basicAuthenticator;
 
         public DnnController()
@@ -90,6 +90,6 @@ namespace DotNetNuke.Web.Services
         /// Injection point for PortalController
         /// <remarks>Should be used for unit test purposes only</remarks>
         /// </summary>
-        public PortalControllerBase PortalController { set { _portalController = value; } }
+        public IPortalController PortalController { set { _portalController = value; } }
     }
 }

@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 
 #endregion
@@ -92,8 +93,7 @@ namespace DotNetNuke.UI.WebControls
 
         public bool UpdateVisibility(PropertyEditorEventArgs e)
         {
-            bool _IsDirty = Null.NullBoolean;
-            return _IsDirty;
+            return false;
         }
 
         #endregion
@@ -216,7 +216,10 @@ namespace DotNetNuke.UI.WebControls
             }
 			
             //Set Visibility
-            editInfo.Visibility = UserVisibilityMode.AllUsers;
+            editInfo.ProfileVisibility = new ProfileVisibility
+                                             {
+                                                 VisibilityMode = UserVisibilityMode.AllUsers
+                                             };
 
             return editInfo;
         }

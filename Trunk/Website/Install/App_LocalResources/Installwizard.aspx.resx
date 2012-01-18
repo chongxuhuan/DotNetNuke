@@ -405,7 +405,7 @@
   <data name="PermissionsError.Text" xml:space="preserve">
     <value>&lt;img alt="Image showing the security settings for the root folder of the website must be set to Read, Write and Change Control for the ASPNET or NT AUTHORITY/NETWORK SERVICE accounts." src="..\403-3.gif" align="right" hspace="10"/&gt;
 &lt;p&gt;&lt;b&gt;&lt;font color='red'&gt;Your site failed the permissions check.&lt;/font&gt;&lt;/b&gt;&lt;/p&gt;
-Using Windows Explorer, browse to the root folder of the website ( {0} ). Right-click the folder and select Sharing and Security from the popup menu. Select the Security tab. Add the appropriate User Account and set the Permissions.
+Using Windows Explorer, browse to the folders of your website ( {0} ). Right-click the folder and select Sharing and Security from the popup menu. Select the Security tab. Add the appropriate User Account and set the Permissions.
 &lt;br/&gt;&lt;br/&gt;
 &lt;h3&gt;If using Windows 2000 - IIS5&lt;/h3&gt;
 &lt;p&gt;The {Server}\ASPNET User Account must have Read, Write, and Change Control of the virtual root of your website.&lt;/p&gt;

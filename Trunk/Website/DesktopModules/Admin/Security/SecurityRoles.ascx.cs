@@ -715,8 +715,10 @@ namespace DotNetNuke.Modules.Admin.Security
                 var cmdDeleteUserRole = (ImageButton) sender;
                 int roleId = Convert.ToInt32(cmdDeleteUserRole.Attributes["roleId"]);
                 int userId = Convert.ToInt32(cmdDeleteUserRole.Attributes["userId"]);
-                
-                if (!RoleController.DeleteUserRole(roleId, UserController.GetUserById(PortalId, userId), PortalSettings, chkNotify.Checked))
+
+                var roleController = new RoleController();
+                RoleInfo role = roleController.GetRole(roleId, PortalSettings.PortalId);
+                if (!RoleController.DeleteUserRole(UserController.GetUserById(PortalId, userId), role, PortalSettings, chkNotify.Checked))
                 {
                     UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("RoleRemoveError", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
                 }

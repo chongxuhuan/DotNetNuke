@@ -18,7 +18,6 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
 
 using System;
 using System.Data;
@@ -26,7 +25,6 @@ using System.Data;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Security.Roles;
 
-#endregion
 
 namespace DotNetNuke.Entities.Users
 {
@@ -47,110 +45,25 @@ namespace DotNetNuke.Entities.Users
     [Serializable]
     public class UserRoleInfo : RoleInfo
     {
-        private DateTime _EffectiveDate;
-        private string _Email;
-        private DateTime _ExpiryDate;
-        private string _FullName;
-        private bool _IsTrialUsed;
-        private bool _Subscribed;
-        private int _UserID;
-        private int _UserRoleID;
+        #region Public Properties
 
-        public int UserRoleID
-        {
-            get
-            {
-                return _UserRoleID;
-            }
-            set
-            {
-                _UserRoleID = value;
-            }
-        }
+        public int UserRoleID { get; set; }
 
-        public int UserID
-        {
-            get
-            {
-                return _UserID;
-            }
-            set
-            {
-                _UserID = value;
-            }
-        }
+        public int UserID { get; set; }
 
-        public string FullName
-        {
-            get
-            {
-                return _FullName;
-            }
-            set
-            {
-                _FullName = value;
-            }
-        }
+        public string FullName { get; set; }
 
-        public string Email
-        {
-            get
-            {
-                return _Email;
-            }
-            set
-            {
-                _Email = value;
-            }
-        }
+        public string Email { get; set; }
 
-        public DateTime EffectiveDate
-        {
-            get
-            {
-                return _EffectiveDate;
-            }
-            set
-            {
-                _EffectiveDate = value;
-            }
-        }
+        public DateTime EffectiveDate { get; set; }
 
-        public DateTime ExpiryDate
-        {
-            get
-            {
-                return _ExpiryDate;
-            }
-            set
-            {
-                _ExpiryDate = value;
-            }
-        }
+        public DateTime ExpiryDate { get; set; }
 
-        public bool IsTrialUsed
-        {
-            get
-            {
-                return _IsTrialUsed;
-            }
-            set
-            {
-                _IsTrialUsed = value;
-            }
-        }
+        public bool IsTrialUsed { get; set; }
 
-        public bool Subscribed
-        {
-            get
-            {
-                return _Subscribed;
-            }
-            set
-            {
-                _Subscribed = value;
-            }
-        }
+        public bool Subscribed { get; set; }
+
+        #endregion
 
         public override void Fill(IDataReader dr)
         {

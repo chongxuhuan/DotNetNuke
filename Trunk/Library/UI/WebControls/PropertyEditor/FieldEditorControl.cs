@@ -737,7 +737,7 @@ namespace DotNetNuke.UI.WebControls
 			                         ID = ID + "_vis", 
                                      Name = editInfo.Name, 
                                      User = User, 
-                                     Value = editInfo.Visibility
+                                     Value = editInfo.ProfileVisibility
 			                     };
 			    visControl.ControlStyle.CopyFrom(VisibilityStyle);
 				visControl.VisibilityChanged += VisibilityChanged;

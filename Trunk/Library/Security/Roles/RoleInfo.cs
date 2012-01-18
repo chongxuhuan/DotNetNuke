@@ -18,7 +18,6 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
 
 using System;
 using System.Data;
@@ -32,18 +31,9 @@ using DotNetNuke.Entities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 
-#endregion
 
 namespace DotNetNuke.Security.Roles
 {
-    public enum RoleType
-    {
-        Administrator,
-        Subscriber,
-        RegisteredUser,
-        None
-    }
-
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
     /// Namespace:  DotNetNuke.Security.Roles
@@ -60,29 +50,21 @@ namespace DotNetNuke.Security.Roles
     [Serializable]
     public class RoleInfo : BaseEntityInfo, IHydratable, IXmlSerializable
     {
-        #region "Private Members"
-		
-		private bool _AutoAssignment;
-        private string _BillingFrequency = "N";
-        private int _BillingPeriod;
-        private string _Description;
-        private string _IconFile;
-        private bool _IsPublic;
-        private int _PortalID;
-        private string _RSVPCode;
-        private int _RoleGroupID;
-        private int _RoleID = Null.NullInteger;
-        private string _RoleName;
+        #region Private Members
+
         private RoleType _RoleType = RoleType.None;
         private bool _RoleTypeSet = Null.NullBoolean;
-        private float _ServiceFee;
-        private float _TrialFee;
-        private string _TrialFrequency = "N";
-        private int _TrialPeriod;
+
+        public RoleInfo()
+        {
+            TrialFrequency = "N";
+            BillingFrequency = "N";
+            RoleID = Null.NullInteger;
+        }
+
+        #endregion
 		
-		#endregion
-		
-		#region "Public Properties"
+		#region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -91,17 +73,7 @@ namespace DotNetNuke.Security.Roles
         /// <value>An Integer representing the Id of the Role</value>
         /// -----------------------------------------------------------------------------
         [XmlIgnore]
-        public int RoleID
-        {
-            get
-            {
-                return _RoleID;
-            }
-            set
-            {
-                _RoleID = value;
-            }
-        }
+        public int RoleID { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -110,17 +82,7 @@ namespace DotNetNuke.Security.Roles
         /// <value>An Integer representing the Id of the Portal</value>
         /// -----------------------------------------------------------------------------
         [XmlIgnore]
-        public int PortalID
-        {
-            get
-            {
-                return _PortalID;
-            }
-            set
-            {
-                _PortalID = value;
-            }
-        }
+        public int PortalID { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -129,17 +91,7 @@ namespace DotNetNuke.Security.Roles
         /// <value>An Integer representing the Id of the RoleGroup</value>
         /// -----------------------------------------------------------------------------
         [XmlIgnore]
-        public int RoleGroupID
-        {
-            get
-            {
-                return _RoleGroupID;
-            }
-            set
-            {
-                _RoleGroupID = value;
-            }
-        }
+        public int RoleGroupID { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -147,17 +99,7 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>A string representing the name of the role</value>
         /// -----------------------------------------------------------------------------
-        public string RoleName
-        {
-            get
-            {
-                return _RoleName;
-            }
-            set
-            {
-                _RoleName = value;
-            }
-        }
+        public string RoleName { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -196,17 +138,7 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>A string representing the description of the role</value>
         /// -----------------------------------------------------------------------------
-        public string Description
-        {
-            get
-            {
-                return _Description;
-            }
-            set
-            {
-                _Description = value;
-            }
-        }
+        public string Description { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -223,17 +155,7 @@ namespace DotNetNuke.Security.Roles
         /// </ul>
         /// </value>
         /// -----------------------------------------------------------------------------
-        public string BillingFrequency
-        {
-            get
-            {
-                return _BillingFrequency;
-            }
-            set
-            {
-                _BillingFrequency = value;
-            }
-        }
+        public string BillingFrequency { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -241,17 +163,7 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>A single number representing the fee for the role</value>
         /// -----------------------------------------------------------------------------
-        public float ServiceFee
-        {
-            get
-            {
-                return _ServiceFee;
-            }
-            set
-            {
-                _ServiceFee = value;
-            }
-        }
+        public float ServiceFee { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -268,17 +180,7 @@ namespace DotNetNuke.Security.Roles
         /// </ul>
         /// </value>
         /// -----------------------------------------------------------------------------
-        public string TrialFrequency
-        {
-            get
-            {
-                return _TrialFrequency;
-            }
-            set
-            {
-                _TrialFrequency = value;
-            }
-        }
+        public string TrialFrequency { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -286,17 +188,7 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>An integer representing the length of the trial period</value>
         /// -----------------------------------------------------------------------------
-        public int TrialPeriod
-        {
-            get
-            {
-                return _TrialPeriod;
-            }
-            set
-            {
-                _TrialPeriod = value;
-            }
-        }
+        public int TrialPeriod { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -304,17 +196,7 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>An integer representing the length of the billing period</value>
         /// -----------------------------------------------------------------------------
-        public int BillingPeriod
-        {
-            get
-            {
-                return _BillingPeriod;
-            }
-            set
-            {
-                _BillingPeriod = value;
-            }
-        }
+        public int BillingPeriod { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -322,17 +204,7 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>A single number representing the trial fee for the role</value>
         /// -----------------------------------------------------------------------------
-        public float TrialFee
-        {
-            get
-            {
-                return _TrialFee;
-            }
-            set
-            {
-                _TrialFee = value;
-            }
-        }
+        public float TrialFee { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -340,17 +212,7 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>A boolean (True/False)</value>
         /// -----------------------------------------------------------------------------
-        public bool IsPublic
-        {
-            get
-            {
-                return _IsPublic;
-            }
-            set
-            {
-                _IsPublic = value;
-            }
-        }
+        public bool IsPublic { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -358,17 +220,7 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>A boolean (True/False)</value>
         /// -----------------------------------------------------------------------------
-        public bool AutoAssignment
-        {
-            get
-            {
-                return _AutoAssignment;
-            }
-            set
-            {
-                _AutoAssignment = value;
-            }
-        }
+        public bool AutoAssignment { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -376,17 +228,7 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>A string representing the RSVP Code for the role</value>
         /// -----------------------------------------------------------------------------
-        public string RSVPCode
-        {
-            get
-            {
-                return _RSVPCode;
-            }
-            set
-            {
-                _RSVPCode = value;
-            }
-        }
+        public string RSVPCode { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -394,19 +236,9 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>A string representing the Icon File for the role</value>
         /// -----------------------------------------------------------------------------
-        public string IconFile
-        {
-            get
-            {
-                return _IconFile;
-            }
-            set
-            {
-                _IconFile = value;
-            }
-        }
-		
-		#endregion
+        public string IconFile { get; set; }
+
+        #endregion
 
         #region IHydratable Members
 
@@ -496,11 +328,11 @@ namespace DotNetNuke.Security.Roles
                 {
                     break;
                 }
-                else if (reader.NodeType == XmlNodeType.Whitespace)
+                if (reader.NodeType == XmlNodeType.Whitespace)
                 {
                     continue;
                 }
-                else if (reader.NodeType == XmlNodeType.Element)
+                if (reader.NodeType == XmlNodeType.Element)
                 {
                     switch (reader.Name.ToLowerInvariant())
                     {
@@ -597,13 +429,13 @@ namespace DotNetNuke.Security.Roles
             writer.WriteElementString("rolename", RoleName);
             writer.WriteElementString("description", Description);
             writer.WriteElementString("billingfrequency", BillingFrequency);
-            writer.WriteElementString("billingperiod", BillingPeriod.ToString());
+            writer.WriteElementString("billingperiod", BillingPeriod.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("servicefee", ServiceFee.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("trialfrequency", TrialFrequency);
-            writer.WriteElementString("trialperiod", TrialPeriod.ToString());
+            writer.WriteElementString("trialperiod", TrialPeriod.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("trialfee", TrialFee.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("ispublic", IsPublic.ToString().ToLowerInvariant());
-            writer.WriteElementString("autoassignment", AutoAssignment.ToString().ToLowerInvariant());
+            writer.WriteElementString("ispublic", IsPublic.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
+            writer.WriteElementString("autoassignment", AutoAssignment.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
             writer.WriteElementString("rsvpcode", RSVPCode);
             writer.WriteElementString("iconfile", IconFile);
             switch (RoleType)

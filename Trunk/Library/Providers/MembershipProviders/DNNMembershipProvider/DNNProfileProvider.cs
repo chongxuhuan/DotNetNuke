@@ -22,6 +22,7 @@
 
 using System;
 using System.Data;
+using System.Globalization;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -30,15 +31,15 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
-using DotNetNuke.Security;
 using DotNetNuke.Security.Membership.Data;
-using DotNetNuke.Security.Profile;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 
 #endregion
 
+// ReSharper disable CheckNamespace
 namespace DotNetNuke.Security.Profile
+// ReSharper restore CheckNamespace
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
@@ -69,7 +70,7 @@ namespace DotNetNuke.Security.Profile
             {
 				//get the provider configuration based on the type
                 string defaultprovider = Data.DataProvider.Instance().DefaultProviderName;
-                string dataProviderNamespace = "DotNetNuke.Security.Membership.Data";
+                const string dataProviderNamespace = "DotNetNuke.Security.Membership.Data";
                 if (defaultprovider == "SqlDataProvider")
                 {
                     _dataProvider = new SqlDataProvider();
@@ -108,7 +109,7 @@ namespace DotNetNuke.Security.Profile
                     TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(newTimeZone.PropertyValue);
                     if (timeZoneInfo != null)
                     {
-                        oldTimeZone.PropertyValue = timeZoneInfo.BaseUtcOffset.TotalMinutes.ToString();
+                        oldTimeZone.PropertyValue = timeZoneInfo.BaseUtcOffset.TotalMinutes.ToString(CultureInfo.InvariantCulture);
                     }
                 }
             }
@@ -165,7 +166,10 @@ namespace DotNetNuke.Security.Profile
                         if (profProperty != null)
                         {
                             profProperty.PropertyValue = Convert.ToString(dr["PropertyValue"]);
-                            profProperty.Visibility = (UserVisibilityMode)Convert.ToInt32(dr["Visibility"]);
+                            profProperty.ProfileVisibility = new ProfileVisibility(portalId, Convert.ToString(dr["ExtendedVisibility"]))
+                                                                 {
+                                                                     VisibilityMode = (UserVisibilityMode)dr["Visibility"]
+                                                                 };
                         }
                     }
                 }
@@ -209,15 +213,15 @@ namespace DotNetNuke.Security.Profile
             ProfilePropertyDefinitionCollection properties = user.Profile.ProfileProperties;
 
             //Ensure old and new TimeZone properties are in synch
-            ProfilePropertyDefinition newTimeZone = properties["PreferredTimeZone"];
-            ProfilePropertyDefinition oldTimeZone = properties["TimeZone"];
+            var newTimeZone = properties["PreferredTimeZone"];
+            var oldTimeZone = properties["TimeZone"];
             if (oldTimeZone != null && newTimeZone != null)
             {   //preference given to new property, if new is changed then old should be updated as well.
                 if (newTimeZone.IsDirty && !string.IsNullOrEmpty(newTimeZone.PropertyValue))
                 {
-                    TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(newTimeZone.PropertyValue);
+                    var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(newTimeZone.PropertyValue);
                     if (timeZoneInfo != null)
-                        oldTimeZone.PropertyValue = timeZoneInfo.BaseUtcOffset.TotalMinutes.ToString();
+                        oldTimeZone.PropertyValue = timeZoneInfo.BaseUtcOffset.TotalMinutes.ToString(CultureInfo.InvariantCulture);
                 }
                 //however if old is changed, we need to update new as well
                 else if (oldTimeZone.IsDirty)
@@ -234,7 +238,9 @@ namespace DotNetNuke.Security.Profile
                 {
                     var objSecurity = new PortalSecurity();
                     string propertyValue = objSecurity.InputFilter(profProperty.PropertyValue, PortalSecurity.FilterFlag.NoScripting);
-                    _dataProvider.UpdateProfileProperty(Null.NullInteger, user.UserID, profProperty.PropertyDefinitionId, propertyValue, (int) profProperty.Visibility, DateTime.Now);
+                    _dataProvider.UpdateProfileProperty(Null.NullInteger, user.UserID, profProperty.PropertyDefinitionId, 
+                                                propertyValue, (int) profProperty.ProfileVisibility.VisibilityMode, 
+                                                profProperty.ProfileVisibility.ExtendedVisibilityString(), DateTime.Now);
                     var objEventLog = new EventLogController();
                     objEventLog.AddLog(user, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", "USERPROFILE_UPDATED");
                 }

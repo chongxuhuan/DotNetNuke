@@ -404,9 +404,12 @@ namespace DotNetNuke.Security.Membership.Data
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUserProfile"), userId);
         }
 
-        public override void UpdateProfileProperty(int profileId, int userId, int propertyDefinitionID, string propertyValue, int visibility, DateTime lastUpdatedDate)
+        public override void UpdateProfileProperty(int profileId, int userId, int propertyDefinitionID, string propertyValue, int visibility,
+                                                    string extendedVisibility, DateTime lastUpdatedDate)
         {
-            SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("UpdateUserProfileProperty"), GetNull(profileId), userId, propertyDefinitionID, propertyValue, visibility, lastUpdatedDate);
+            SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("UpdateUserProfileProperty"), GetNull(profileId), userId, 
+                                                                        propertyDefinitionID, propertyValue, visibility, 
+                                                                        extendedVisibility, lastUpdatedDate);
         }
 
         //users online

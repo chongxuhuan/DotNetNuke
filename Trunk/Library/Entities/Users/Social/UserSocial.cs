@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Xml.Serialization;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Security.Roles;
 
 #endregion
 
@@ -50,8 +51,10 @@ namespace DotNetNuke.Entities.Users
 
         private IList<Relationship> _relationships;
         //private Dictionary<Relationship, IList<UserRelationship>> _userRelationships;
+        private  IList<UserRoleInfo> _roles;
         private UserInfo _userInfo;
         private RelationshipController _relationshipController;
+        private RoleController _roleController;
 
         #endregion
 
@@ -60,11 +63,11 @@ namespace DotNetNuke.Entities.Users
         public UserSocial(UserInfo userInfo)
         {
             _relationshipController = new RelationshipController();
+            _roleController = new RoleController();
             _userInfo = userInfo;
         }
 
         #endregion
-
 
         #region Public Properties
 
@@ -111,6 +114,23 @@ namespace DotNetNuke.Entities.Users
                 }
 
                 return _relationships;
+            }
+        }
+
+        /// <summary>
+        /// List of Roles/Groups for the User
+        /// </summary>
+        [XmlAttribute]
+        public IList<UserRoleInfo> Roles
+        {
+            get
+            {
+                if (_roles == null)
+                {
+                    _roles = _roleController.GetUserRoles(_userInfo, true);
+                }
+
+                return _roles;
             }
         }
 

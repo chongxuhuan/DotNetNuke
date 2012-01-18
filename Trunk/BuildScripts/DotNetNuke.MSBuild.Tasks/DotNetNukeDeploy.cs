@@ -51,7 +51,7 @@ namespace DotNetNuke.MSBuild.Tasks
 
                 string data = TestUrl(wc, url);
 
-                autoFailed = (data.Contains("Error") || data.Contains("bypasses"));
+                autoFailed = (data.Contains("Error") || data.Contains("error") || data.Contains("bypasses"));
 
                 if (!autoFailed)
                 {
@@ -63,6 +63,8 @@ namespace DotNetNuke.MSBuild.Tasks
                 LogFormat("Message", "-----------------------------");
                 LogFormat("Message", "DNN INSTALL LOGGING INFO");
                 LogFormat("Message", "-----------------------------");
+
+                LogFormat("Error", "Fullsite:" + data);
 
                 if (autoFailed)
                 {

@@ -492,7 +492,8 @@ namespace DotNetNuke.Services.Install
             lstPermissions.Items.Add(permissionItem);
             if (test)
             {
-                permissionsErrorLabel.Text = PermissionsValid ? LocalizeString("PermissionsOk") : LocalizeString("PermissionsError").Replace("{0}", Globals.ApplicationMapPath);
+                var paths = string.Join("; ", (from v in verifiers select v.BasePath).ToArray());
+                permissionsErrorLabel.Text = PermissionsValid ? LocalizeString("PermissionsOk") : LocalizeString("PermissionsError").Replace("{0}", paths);
             }
         }
 
@@ -1739,10 +1740,10 @@ namespace DotNetNuke.Services.Install
                     }
                     break;
                 case 9: //Page 9 - SMTP Settings
-                    //if (installTypeRadioButton.SelectedValue == "Full")
-                    //{
-                    //    SMTPSettingsPanel.Visible = true;
-                    //}
+                    if (installTypeRadioButton.SelectedValue == "Full")
+                    {
+                        SMTPSettingsPanel.Visible = true;
+                    }
 					break;
             }
             

@@ -63,16 +63,30 @@ namespace DotNetNuke.Security.Membership.Data
         public abstract void RestoreUser(int userId, int portalId);
         public abstract void RemoveUser(int userId, int portalId);
         public abstract IDataReader GetAllUsers(int portalID, int pageIndex, int pageSize);
+
+        public abstract IDataReader GetAllUsers(int portalID, int pageIndex, int pageSize, bool includeDeleted,
+                                                bool superUsersOnly);
         public abstract IDataReader GetUnAuthorizedUsers(int portalId);
+        public abstract IDataReader GetUnAuthorizedUsers(int portalId, bool includeDeleted, bool superUsersOnly);
         public abstract IDataReader GetDeletedUsers(int portalId);
         public abstract IDataReader GetUser(int portalId, int userId);
         public abstract IDataReader GetUserByAuthToken(int portalID, string userToken, string authType);
         public abstract IDataReader GetUserByUsername(int portalID, string username);
         public abstract int GetUserCountByPortal(int portalId);
         public abstract IDataReader GetUsersByEmail(int portalID, string email, int pageIndex, int pageSize);
+
+        public abstract IDataReader GetUsersByEmail(int portalID, string email, int pageIndex, int pageSize,
+                                                    bool includeDeleted, bool superUsersOnly);
         public abstract IDataReader GetUsersByProfileProperty(int portalID, string propertyName, string propertyValue, int pageIndex, int pageSize);
+
+        public abstract IDataReader GetUsersByProfileProperty(int portalID, string propertyName, string propertyValue,
+                                                              int pageIndex, int pageSize, bool includeDeleted,
+                                                              bool superUsersOnly);
         public abstract IDataReader GetUsersByRolename(int portalID, string rolename);
         public abstract IDataReader GetUsersByUsername(int portalID, string username, int pageIndex, int pageSize);
+
+        public abstract IDataReader GetUsersByUsername(int portalID, string username, int pageIndex, int pageSize,
+                                                       bool includeDeleted, bool superUsersOnly);
         public abstract IDataReader GetSuperUsers();
         public abstract void UpdateUser(int userId, int portalID, string firstName, string lastName, bool isSuperUser, string email, string displayName, bool updatePassword, bool isApproved, bool refreshRoles, string lastIpAddress, bool isDeleted, int lastModifiedByUserID);
 
@@ -110,7 +124,8 @@ namespace DotNetNuke.Security.Membership.Data
 
         // Profile
         public abstract IDataReader GetUserProfile(int userId);
-        public abstract void UpdateProfileProperty(int profileId, int userId, int propertyDefinitionID, string propertyValue, int visibility, DateTime lastUpdatedDate);
+        public abstract void UpdateProfileProperty(int profileId, int userId, int propertyDefinitionID, string propertyValue, int visibility, 
+                                                    string extendedVisibility, DateTime lastUpdatedDate);
 
         // Users Online
         public abstract void UpdateUsersOnline(Hashtable userList);
@@ -120,33 +135,6 @@ namespace DotNetNuke.Security.Membership.Data
 
         // Legacy
         public abstract IDataReader GetUsers(int portalId);
-        #endregion
-
-        #region "Virtual Methods"
-        public virtual IDataReader GetAllUsers(int portalID, int pageIndex, int pageSize, bool includeDeleted, bool superUsersOnly)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual IDataReader GetUsersByEmail(int portalID, string email, int pageIndex, int pageSize, bool includeDeleted, bool superUsersOnly)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual IDataReader GetUsersByProfileProperty(int portalID, string propertyName, string propertyValue, int pageIndex, int pageSize, bool includeDeleted, bool superUsersOnly)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual IDataReader GetUsersByUsername(int portalID, string username, int pageIndex, int pageSize, bool includeDeleted, bool superUsersOnly)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual IDataReader GetUnAuthorizedUsers(int portalId, bool includeDeleted, bool superUsersOnly)
-        {
-            throw new NotImplementedException();
-        }
 
         #endregion
     }

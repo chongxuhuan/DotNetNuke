@@ -1,6 +1,6 @@
-#region Copyright
+ï»¿#region Copyright
 // 
-// DotNetNuke® - http://www.dotnetnuke.com
+// DotNetNukeï¿½ - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -39,6 +39,17 @@ namespace DotNetNuke.Common.Utilities
     public class FileSystemPermissionVerifier
     {
         private readonly string _basePath;
+
+        /// <summary>
+        /// Base path need to verify permission.
+        /// </summary>
+        public string BasePath
+        {
+            get
+            {
+                return _basePath;
+            }
+        }
 
         public FileSystemPermissionVerifier(string basePath)
         {

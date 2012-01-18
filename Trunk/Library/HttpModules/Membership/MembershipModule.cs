@@ -131,7 +131,6 @@ namespace DotNetNuke.HttpModules.Membership
                         if (role.RSVPCode == request.QueryString["rsvp"])
                         {
                             roleController.UpdateUserRole(portalSettings.PortalId, user.UserID, role.RoleID);
-                            user.ClearRoles();
                         }
                     }
                 }

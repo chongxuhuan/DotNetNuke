@@ -72,7 +72,7 @@ namespace DotNetNuke.UI.WebControls
             ValidationExpressionDataField = "ValidationExpression";
             ValueDataField = "PropertyValue";
             VisibleDataField = "Visible";
-            VisibilityDataField = "Visibility";
+            VisibilityDataField = "ProfileVisibility";
             LengthDataField = "Length";
 
             base.CreateEditor();

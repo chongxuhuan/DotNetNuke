@@ -15,7 +15,7 @@ IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQua
 	BEGIN
 		ALTER TABLE {databaseOwner}{objectQualifier}Tabs
 			DROP CONSTRAINT DF_{objectQualifier}Tabs_Level
-		-- Add new Column
+		-- Drop Column
 		ALTER TABLE {databaseOwner}{objectQualifier}Tabs
 			DROP COLUMN Level
 	END
@@ -26,7 +26,7 @@ GO
 
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Tabs' AND COLUMN_NAME='TabPath')
 	BEGIN
-		-- Add new Column
+		-- Drop Column
 		ALTER TABLE {databaseOwner}{objectQualifier}Tabs
 			DROP COLUMN  TabPath
 	END
@@ -2353,6 +2353,100 @@ AS
 	WHERE  [MessageAttachmentID] = @MessageAttachmentID
 GO
 
+/* Add ExtendedVisibility To UserProfile Table */
+/***********************************************/
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}UserProfile' AND COLUMN_NAME='ExtendedVisibility')
+	BEGIN
+		-- Add Column
+		ALTER TABLE {databaseOwner}{objectQualifier}UserProfile
+			ADD ExtendedVisibility varchar(400) NULL
+	END
+GO
+
+/* Update UpdateUserProfileProperty */
+/************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateUserProfileProperty]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateUserProfileProperty]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}UpdateUserProfileProperty] 
+
+	@ProfileID				int,
+	@UserID					int,
+	@PropertyDefinitionID	int,
+	@PropertyValue			ntext,
+	@Visibility				int,
+	@ExtendedVisibility		varchar(400),
+	@LastUpdatedDate		datetime
+
+AS
+	IF @ProfileID IS NULL OR @ProfileID = -1
+		-- Try the UserID/PropertyDefinitionID to see if the Profile property exists
+		SELECT @ProfileID = ProfileID
+			FROM   {databaseOwner}{objectQualifier}UserProfile
+			WHERE  UserID = @UserID AND PropertyDefinitionID = @PropertyDefinitionID
+	 
+	IF @ProfileID IS NOT NULL
+		-- Update Property
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}UserProfile
+				SET PropertyValue = case when (DATALENGTH(@PropertyValue) > 7500) then NULL else @PropertyValue end,
+					PropertyText = case when (DATALENGTH(@PropertyValue) > 7500) then @PropertyValue else NULL end,
+					Visibility = @Visibility,
+					ExtendedVisibility = @ExtendedVisibility,
+					LastUpdatedDate = @LastUpdatedDate
+				WHERE  ProfileID = @ProfileID
+			SELECT @ProfileID
+		END
+	ELSE
+		-- Insert New Property
+		BEGIN
+			INSERT INTO {databaseOwner}{objectQualifier}UserProfile (
+				UserID,
+				PropertyDefinitionID,
+				PropertyValue,
+				PropertyText,
+				Visibility,
+				ExtendedVisibility,
+				LastUpdatedDate
+			  )
+			VALUES (
+				@UserID,
+				@PropertyDefinitionID,
+				case when (DATALENGTH(@PropertyValue) > 7500) then NULL else @PropertyValue end,
+				case when (DATALENGTH(@PropertyValue) > 7500) then @PropertyValue else NULL end,
+				@Visibility,
+				@ExtendedVisibility,
+				@LastUpdatedDate
+			  )
+
+		SELECT SCOPE_IDENTITY()
+	END
+GO
+
+/* Update GetUserProfile */
+/*************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserProfile]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserProfile]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}GetUserProfile] 
+	@UserID int
+AS
+	SELECT
+		ProfileID,
+		UserID,
+		PropertyDefinitionID,
+		CASE WHEN (PropertyValue Is Null) THEN PropertyText ELSE PropertyValue END AS 'PropertyValue',
+		Visibility,
+		ExtendedVisibility,
+		LastUpdatedDate
+	FROM	{databaseOwner}{objectQualifier}UserProfile
+	WHERE   UserId = @UserID
+GO
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

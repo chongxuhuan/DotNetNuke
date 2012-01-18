@@ -23,7 +23,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Security;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -39,7 +38,7 @@ namespace DotNetNuke.Entities.Portals
     public class PortalGroupController : ComponentBase<IPortalGroupController, PortalGroupController>, IPortalGroupController
     {
         private readonly IDataService _dataService;
-        private readonly PortalControllerBase _portalController;
+        private readonly IPortalController _portalController;
 
         #region Constructors
 
@@ -47,7 +46,7 @@ namespace DotNetNuke.Entities.Portals
         {
         }
 
-        public PortalGroupController(IDataService dataService, PortalControllerBase portalController)
+        public PortalGroupController(IDataService dataService, IPortalController portalController)
         {
             //Argument Contract
             Requires.NotNull("dataService", dataService);
@@ -220,13 +219,13 @@ namespace DotNetNuke.Entities.Portals
                 UserController.CopyUserToPortal(adminUser, portal, false, false);
 
                 //Callback to update progress bar
-                var args = new UserCopiedEventArgs
-                {
-                    TotalUsers = 1,
-                    UserNo = 1,
-                    UserName = adminUser.Username,
-                    PortalName = portal.PortalName
-                };
+                new UserCopiedEventArgs
+                    {
+                        TotalUsers = 1,
+                        UserNo = 1,
+                        UserName = adminUser.Username,
+                        PortalName = portal.PortalName
+                    };
             }
         }
 

@@ -26,16 +26,21 @@
 using System;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Linq;
+using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Entities.Icons;
+using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Localization;
 
 #endregion
 
+// ReSharper disable CheckNamespace
 namespace DotNetNuke.UI.WebControls
+// ReSharper restore CheckNamespace
 {
 
 	/// <summary>
@@ -50,12 +55,10 @@ namespace DotNetNuke.UI.WebControls
 	[ToolboxData("<{0}:VisibilityControl runat=server></{0}:VisibilityControl>")]
 	public class VisibilityControl : WebControl, IPostBackDataHandler, INamingContainer
 	{
-	    private UserVisibilityMode _visibility;
-
-	    protected UserVisibilityMode Visibility
+	    protected ProfileVisibility Visibility
 	    {
-            get { return (UserVisibilityMode) Convert.ToInt32(Value); }
-            set { _visibility = value; }
+            get { return Value as ProfileVisibility; }
+            set { Value = value; }
 	    }
 
 		#region Public Properties
@@ -91,7 +94,7 @@ namespace DotNetNuke.UI.WebControls
 		///     [cnurse]	05/03/2006	created
 		/// </history>
         public object Value { get; set; }
-		
+
 		#endregion
 
 		#region IPostBackDataHandler Members
@@ -107,11 +110,45 @@ namespace DotNetNuke.UI.WebControls
 		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
 			var dataChanged = false;
-			var presentValue = Convert.ToString(Value);
-			var postedValue = postCollection[postDataKey];
-			if (!presentValue.Equals(postedValue))
+            var presentVisibility = Visibility.VisibilityMode;
+            var postedValue = Convert.ToInt32(postCollection[postDataKey]);
+		    var postedVisibility = (UserVisibilityMode) Enum.ToObject(typeof (UserVisibilityMode), postedValue);
+            if (!presentVisibility.Equals(postedVisibility) || postedVisibility == UserVisibilityMode.FriendsGroups)
 			{
-				Value = postedValue;
+                if (postedVisibility == UserVisibilityMode.FriendsGroups)
+                {
+                    var sb = new StringBuilder();
+                    sb.Append("G:");
+                    foreach (var role in User.Social.Roles)
+                    {
+                        if (postCollection[postDataKey + ":group_" + role.RoleID.ToString(CultureInfo.InvariantCulture)] != null)
+                        {
+                            sb.Append(role.RoleID.ToString(CultureInfo.InvariantCulture) + ",");
+                        }
+                    }
+
+                    sb.Append(";R:");
+                    foreach (var relationship in User.Social.Relationships)
+                    {
+                        if (postCollection[postDataKey + ":relationship_" + relationship.RelationshipID.ToString(CultureInfo.InvariantCulture)] != null)
+                        {
+                            sb.Append(relationship.RelationshipID.ToString(CultureInfo.InvariantCulture) + ",");
+                        }
+                    }
+                    
+                    Value = new ProfileVisibility(User.PortalID, sb.ToString())
+                                    {
+                                        VisibilityMode = postedVisibility
+                                    };                    
+                }
+                else
+                {
+                    Value = new ProfileVisibility
+                                    {
+                                        VisibilityMode = postedVisibility
+                                    };
+                }
+
 				dataChanged = true;
 			}
 			return dataChanged;
@@ -127,10 +164,8 @@ namespace DotNetNuke.UI.WebControls
 		public void RaisePostDataChangedEvent()
 		{
 			//Raise the VisibilityChanged Event
-			int intValue = Convert.ToInt32(Value);
-			var args = new PropertyEditorEventArgs(Name);
-			args.Value = Enum.ToObject(typeof (UserVisibilityMode), intValue);
-			OnVisibilityChanged(args);
+		    var args = new PropertyEditorEventArgs(Name) {Value = Value};
+		    OnVisibilityChanged(args);
 		}
 
 		#endregion
@@ -141,7 +176,76 @@ namespace DotNetNuke.UI.WebControls
 		
 		#endregion
 
-		#region Protected Methods
+        #region Private Methods
+
+        private void RenderVisibility(HtmlTextWriter writer, string optionValue, UserVisibilityMode selectedVisibility, string optionText)
+        {
+            //Render Li
+            writer.RenderBeginTag(HtmlTextWriterTag.Li);
+
+            //Render radio button
+            writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
+            writer.AddAttribute(HtmlTextWriterAttribute.Value, optionValue);
+            if ((Visibility.VisibilityMode == selectedVisibility))
+            {
+                writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
+            }
+            writer.RenderBeginTag(HtmlTextWriterTag.Input);
+            writer.Write(optionText);
+            writer.RenderEndTag();
+
+            //Close Li
+            writer.RenderEndTag();
+        }
+
+        private void RenderCheckboxItem(HtmlTextWriter writer, string prefix, string value, string text, bool selected)
+        {
+            //Render Li
+            writer.RenderBeginTag(HtmlTextWriterTag.Li);
+
+            //Render radio button
+            writer.AddAttribute(HtmlTextWriterAttribute.Type, "checkbox");
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID + prefix + value);
+            writer.AddAttribute(HtmlTextWriterAttribute.Value, value);
+            if (selected)
+            {
+                writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
+            }
+
+            writer.RenderBeginTag(HtmlTextWriterTag.Input);
+            writer.Write(text);
+            writer.RenderEndTag();
+
+            //Close Li
+            writer.RenderEndTag();
+
+        }
+
+        private void RenderGroups(HtmlTextWriter writer)
+        {
+            foreach (var group in User.Social.Roles)
+            {
+
+                RenderCheckboxItem(writer, ":group_", group.RoleID.ToString(CultureInfo.InvariantCulture), 
+                                        group.RoleName,
+                                        Visibility.RoleVisibilities.Count(r => r.RoleID == group.RoleID) == 1);
+            }
+        }
+
+        private void RenderRelationships(HtmlTextWriter writer)
+        {
+            foreach (var relationship in User.Social.Relationships)
+            {
+                RenderCheckboxItem(writer, ":relationship_", relationship.RelationshipID.ToString(CultureInfo.InvariantCulture), 
+                                        relationship.Name,
+                                        Visibility.RelationshipVisibilities.Count(r => r.RelationshipID == relationship.RelationshipID) == 1);
+            }
+        }
+
+        #endregion
+
+        #region Protected Methods
 
         protected override void OnPreRender(EventArgs e)
         {
@@ -164,69 +268,6 @@ namespace DotNetNuke.UI.WebControls
 				VisibilityChanged(this, e);
 			}
 		}
-
-        private void RenderVisibility(HtmlTextWriter writer, string optionValue, UserVisibilityMode selectedVisibility, string optionText)
-        {
-            //Render Li
-            writer.RenderBeginTag(HtmlTextWriterTag.Li);
-
-            //Render radio button
-            writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
-            writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID + ":visibility");
-            writer.AddAttribute(HtmlTextWriterAttribute.Value, optionValue);
-            if ((Visibility == selectedVisibility))
-            {
-                writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
-            }
-            writer.RenderBeginTag(HtmlTextWriterTag.Input);
-            writer.Write(optionText);
-            writer.RenderEndTag();
-
-            //Close Li
-            writer.RenderEndTag();
-        }
-
-        private void RenderGroups(HtmlTextWriter writer)
-        {
-            foreach (string group in User.Roles)
-            {
-                //Render Li
-                writer.RenderBeginTag(HtmlTextWriterTag.Li);
-
-                //Render radio button
-                writer.AddAttribute(HtmlTextWriterAttribute.Type, "checkbox");
-                writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID + ":group");
-                writer.AddAttribute(HtmlTextWriterAttribute.Value, group);
-
-                writer.RenderBeginTag(HtmlTextWriterTag.Input);
-                writer.Write(group);
-                writer.RenderEndTag();
-
-                //Close Li
-                writer.RenderEndTag();
-            }
-        }
-
-        private void RenderRelationships(HtmlTextWriter writer)
-        {
-            foreach(Relationship relationship in User.Social.Relationships)
-            {
-                //Render Li
-                writer.RenderBeginTag(HtmlTextWriterTag.Li);
-
-                //Render radio button
-                writer.AddAttribute(HtmlTextWriterAttribute.Type, "checkbox");
-                writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID + ":relationship");
-                writer.AddAttribute(HtmlTextWriterAttribute.Value, relationship.RelationshipID.ToString(CultureInfo.InvariantCulture));
-
-                writer.RenderBeginTag(HtmlTextWriterTag.Input);
-                writer.Write(relationship.Name);
-                writer.RenderEndTag();
-
-                //Close Li
-                writer.RenderEndTag();
-            }
-        }
 
 		/// <summary>
 		/// Render renders the control

@@ -24,6 +24,7 @@ using System;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
@@ -57,7 +58,7 @@ namespace DotNetNuke.UI.Skins.Controls
                 bool logoVisible = false;
                 if (!String.IsNullOrEmpty(PortalSettings.LogoFile))
                 {
-                    var fileInfo = FileManager.Instance.GetFile(PortalSettings.PortalId, PortalSettings.LogoFile);
+                    var fileInfo = GetLogoFileInfo();
                     if (fileInfo != null)
                     {
                         string imageUrl = FileManager.Instance.GetUrl(fileInfo);
@@ -91,6 +92,20 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+        }
+
+        private IFileInfo GetLogoFileInfo()
+        {
+            string cacheKey = String.Format(DataCache.PortalCacheKey, PortalSettings.PortalId, "LogoFile");
+            var file = CBO.GetCachedObject<FileInfo>(new CacheItemArgs(cacheKey, DataCache.PortalCacheTimeOut, DataCache.PortalCachePriority),
+                                                    GetLogoFileInfoCallBack);
+
+            return file;
+        }
+
+        private IFileInfo GetLogoFileInfoCallBack(CacheItemArgs itemArgs)
+        {
+            return FileManager.Instance.GetFile(PortalSettings.PortalId, PortalSettings.LogoFile);
         }
     }
 }

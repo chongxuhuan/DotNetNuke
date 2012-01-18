@@ -20,11 +20,13 @@
 #endregion
 #region Usings
 
+using System;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Lists;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Entities.Profile;
 
 #endregion
 
@@ -79,7 +81,7 @@ namespace DotNetNuke.UI.WebControls
 
         public bool Visible { get; set; }
 
-        public UserVisibilityMode Visibility { get; set; }
+        public ProfileVisibility ProfileVisibility { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -117,5 +119,8 @@ namespace DotNetNuke.UI.WebControls
             }
             return editor;
         }
+
+        [Obsolete("Deprecated in 6.2.  Replace by ProfileVisibility")]
+        public UserVisibilityMode Visibility { get; set; }
     }
 }

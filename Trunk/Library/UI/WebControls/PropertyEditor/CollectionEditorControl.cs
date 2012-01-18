@@ -209,7 +209,7 @@ namespace DotNetNuke.UI.WebControls
             fields.Add("Type", TypeDataField);
             fields.Add("ValidationExpression", ValidationExpressionDataField);
             fields.Add("Value", ValueDataField);
-            fields.Add("Visibility", VisibilityDataField);
+            fields.Add("ProfileVisibility", VisibilityDataField);
             fields.Add("Length", LengthDataField);
 
             return fields;

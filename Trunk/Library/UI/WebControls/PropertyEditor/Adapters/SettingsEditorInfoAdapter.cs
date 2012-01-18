@@ -130,7 +130,7 @@ namespace DotNetNuke.UI.WebControls
 
         public bool UpdateVisibility(PropertyEditorEventArgs e)
         {
-            return Null.NullBoolean;
+            return false;
         }
 
         #endregion
