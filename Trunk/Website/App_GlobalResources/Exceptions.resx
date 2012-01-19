@@ -228,5 +228,7 @@
   <data name="ToListTooBigError.Text" xml:space="preserve">
     <value>To List supplied is too big. Maximum {0}, Actual {1}.</value>
   </data>
-
+  <data name="EmptyToListFoundError.Text" xml:space="preserve">
+    <value>Empty To List found while analyzing User and Roles List.</value>
+  </data>
 </root>

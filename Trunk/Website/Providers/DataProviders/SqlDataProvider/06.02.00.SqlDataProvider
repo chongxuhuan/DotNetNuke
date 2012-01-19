@@ -2180,7 +2180,6 @@ AS
     IF ( @MessageID = -1 ) 
         BEGIN
             INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
-					[RecepientID],
 					[MessageID],
 					[UserID],
 					[Status],	
@@ -2189,8 +2188,7 @@ AS
                     [LastModifiedByUserID],
                     [LastModifiedOnDate]			        												        
                     )
-            VALUES  (       
-					@RecepientID,
+            VALUES  (       					
 					@MessageID,
 					@UserID,
 					@Status,            
@@ -2213,6 +2211,38 @@ AS
         END
         
     SELECT  @RecepientID        
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]    
+    @MessageID int,
+    @RoleID int,
+    @Status tinyint,
+	@CreateUpdateUserID INT    
+AS 
+    INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
+			[MessageID],
+			[UserID],
+			[Status],	
+            [CreatedByUserID],
+            [CreatedOnDate],
+            [LastModifiedByUserID],
+            [LastModifiedOnDate]			        												        
+            )            
+			SELECT 
+			  @MessageID, 	
+			  UserID,
+			  @Status,            
+              @CreateUpdateUserID , -- CreatedBy - int
+              GETDATE() , -- CreatedOn - datetime
+              @CreateUpdateUserID , -- LastModifiedBy - int
+              GETDATE() -- LastModifiedOn - datetime			                                                
+           FROM {databaseOwner}{objectQualifier}vw_UserRoles
+		   WHERE RoleID = @RoleID    		               
+
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipient]') AND type in (N'P', N'PC'))

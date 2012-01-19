@@ -74,6 +74,11 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteScalar<int>("SaveSocialMessageRecipient", messageRecipient.UserID, messageRecipient.Status, createUpdateUserID);
         }
 
+        public void CreateSocialMessageRecipientsForRole(int messageID, int roleID, int status, int createUpdateUserID)
+        {            
+            _provider.ExecuteNonQuery("CreateSocialMessageRecipientsForRole", messageID, roleID, status, createUpdateUserID);
+        }
+
         public IDataReader GetSocialMessageRecipient()
         {
             return _provider.ExecuteReader("GetSocialMessageRecipient");

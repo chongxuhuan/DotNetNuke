@@ -49,13 +49,7 @@ namespace DotNetNuke.Tests.Core.Controllers
 
         private Mock<IDataService> _mockDataService;		
         private MessagingController _messagingController;
-        private Mock<DataProvider> _dataProvider;
-
-        private DataTable _dtRelationshipTypes;
-        private DataTable _dtRelationships;
-        private DataTable _dtUserRelationships;
-        private DataTable _dtUserRelationshipPreferences;		
-
+        private Mock<DataProvider> _dataProvider;   
 
 		#endregion
 
@@ -87,31 +81,39 @@ namespace DotNetNuke.Tests.Core.Controllers
         #region #region Easy Wrapper APIs Tests
 
         [Test]
-        [ExpectedException(typeof(InvalidEnumArgumentException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void MessagingController_CreateMessage_Throws_On_Null_Body_And_Subject()
         {
             //Act, Assert
-            _messagingController.CreateMessage(null, null, null, null);
+            _messagingController.CreateMessage(null, null, null, null, null);
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidEnumArgumentException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void MessagingController_CreateMessage_Throws_On_Null_Roles_And_Users()
         {
             //Act, Assert
-            _messagingController.CreateMessage("subject", "body", null, null);
+            _messagingController.CreateMessage("subject", "body", null, null, null);
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidEnumArgumentException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void MessagingController_CreateMessage_Throws_On_Empty_Roles_And_Users_Lists()
         {
             //Act, Assert
-            _messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo>());
+            _messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo>(), null);
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidEnumArgumentException))]
+        [ExpectedException(typeof(ArgumentException))]
+        public void MessagingController_CreateMessage_Throws_On_Roles_And_Users_With_No_DisplayNames()
+        {
+            //Act, Assert
+            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { new RoleInfo() }, new List<UserInfo> { new UserInfo() }, null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
         public void MessagingController_CreateMessage_Throws_On_Large_Subject()
         {
             //Arrange
@@ -122,11 +124,11 @@ namespace DotNetNuke.Tests.Core.Controllers
             }
 
             //Act, Assert
-            _messagingController.CreateMessage(subject.ToString(), "body", new List<RoleInfo> { new RoleInfo() }, new List<UserInfo> { new UserInfo() });
+            _messagingController.CreateMessage(subject.ToString(), "body", new List<RoleInfo> { new RoleInfo() }, new List<UserInfo> { new UserInfo() }, null);
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidEnumArgumentException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void MessagingController_CreateMessage_Throws_On_Large_To()
         {
             //Arrange
@@ -149,7 +151,63 @@ namespace DotNetNuke.Tests.Core.Controllers
             }
 
             //Act, Assert
-            _messagingController.CreateMessage("subject", "body", roles, users);
+            _messagingController.CreateMessage("subject", "body", roles, users, null);
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Calls_DataService_On_Valid_Message()
+        {   
+            //Arrange
+            var user = new UserInfo {DisplayName = "user1"};
+            var role = new RoleInfo { RoleName = "role1" };           
+
+            //Act
+            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo>{user}, null);
+
+            //Assert
+            _mockDataService.Verify(ds => ds.SaveSocialMessage(It.IsAny<Message>(), It.IsAny<int>()));
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Calls_DataService_On_Passing_Attachments()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1" };
+            var role = new RoleInfo { RoleName = "role1" };
+
+            //Act
+            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int>{1});
+
+            //Assert
+            _mockDataService.Verify(ds => ds.SaveSocialMessageAttachment(It.IsAny<MessageAttachment>(), It.IsAny<int>()));
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Calls_DataService_On_Passing_Roles()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1" };
+            var role = new RoleInfo { RoleName = "role1", RoleID = Constants.Role_RegisteredUsers };
+
+            //Act
+            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.Role_RegisteredUsers });
+
+            //Assert
+            _mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(It.IsAny<int>(), Constants.Role_RegisteredUsers, (int)MessageStatus.Unread ,It.IsAny<int>()));
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Calls_DataService_On_Passing_USers()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1" };
+            var role = new RoleInfo { RoleName = "role1" };
+
+            //Act
+            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.Role_RegisteredUsers });
+
+            //Assert
+            _mockDataService.Verify(ds => ds.SaveSocialMessageRecipient(It.IsAny<MessageRecipient>(),  It.IsAny<int>()));
         }
 
         #endregion

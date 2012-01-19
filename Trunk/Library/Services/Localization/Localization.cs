@@ -114,15 +114,16 @@ namespace DotNetNuke.Services.Localization
     /// </example>
     public class Localization
     {
-        #region "Private Members"
+        #region Private Members
 
         private static string _defaultKeyName = "resourcekey";
-        private static Nullable<Boolean> _showMissingKeys;
         private static readonly ILocaleController _localeController = LocaleController.Instance;
+        private static readonly ILocalizationProvider _localizationProvider = LocalizationProvider.Instance;
+        private static Nullable<Boolean> _showMissingKeys;
 
         #endregion
 
-        #region "Public Shared Properties"
+        #region Public Shared Properties
 
         public static string ApplicationResourceDirectory
         {
@@ -148,6 +149,29 @@ namespace DotNetNuke.Services.Localization
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The KeyName property returns and caches the name of the key attribute used to lookup resources.
+        /// This can be configured by setting ResourceManagerKey property in the web.config file. The default value for this property
+        /// is 'key'.
+        /// </summary>
+        /// -----------------------------------------------------------------------------
+        public static string KeyName
+        {
+            get
+            {
+                return _defaultKeyName;
+            }
+            set
+            {
+                _defaultKeyName = value;
+                if (String.IsNullOrEmpty(_defaultKeyName))
+                {
+                    _defaultKeyName = "resourcekey";
+                }
+            }
+        }
+
         public static string LocalResourceDirectory
         {
             get
@@ -169,6 +193,38 @@ namespace DotNetNuke.Services.Localization
             get
             {
                 return ApplicationResourceDirectory + "/SharedResources.resx";
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The ShowMissingKeys property returns the web.config setting that determines
+        /// whether to render a visual indicator that a key is missing
+        /// is 'key'.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <history>
+        /// 	[cnurse]	11/20/2006	Documented
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public static bool ShowMissingKeys
+        {
+            get
+            {
+                if (_showMissingKeys == null)
+                {
+                    if (Config.GetSetting("ShowMissingKeys") == null)
+                    {
+                        _showMissingKeys = false;
+                    }
+                    else
+                    {
+                        _showMissingKeys = bool.Parse(Config.GetSetting("ShowMissingKeys".ToLower()));
+                    }
+                }
+
+                return _showMissingKeys.Value;
             }
         }
 
@@ -198,19 +254,13 @@ namespace DotNetNuke.Services.Localization
 
         #endregion
 
-
-        #region "Public Properties"
+        #region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// The CurrentCulture returns the current Culture being used
         /// is 'key'.
         /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	10/06/2004	Documented
-        /// </history>
         /// -----------------------------------------------------------------------------
         public string CurrentCulture
         {
@@ -221,6 +271,9 @@ namespace DotNetNuke.Services.Localization
             }
         }
 
+        /// <summary>
+        /// The CurrentUICulture for the Thread
+        /// </summary>
         public string CurrentUICulture
         {
             // _CurrentCulture
@@ -230,297 +283,10 @@ namespace DotNetNuke.Services.Localization
             }
         }
 
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// The KeyName property returns and caches the name of the key attribute used to lookup resources.
-        /// This can be configured by setting ResourceManagerKey property in the web.config file. The default value for this property
-        /// is 'key'.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	10/06/2004	Documented
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static string KeyName
-        {
-            get
-            {
-                return _defaultKeyName;
-            }
-            set
-            {
-                _defaultKeyName = value;
-                if (String.IsNullOrEmpty(_defaultKeyName))
-                {
-                    _defaultKeyName = "resourcekey";
-                }
-            }
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// The ShowMissingKeys property returns the web.config setting that determines
-        /// whether to render a visual indicator that a key is missing
-        /// is 'key'.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	11/20/2006	Documented
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static bool ShowMissingKeys
-        {
-            get
-            {
-                if (_showMissingKeys == null)
-                {
-                    if (Config.GetSetting("ShowMissingKeys") == null)
-                    {
-                        _showMissingKeys = false;
-                    }
-                    else
-                    {
-                        _showMissingKeys =bool.Parse( Config.GetSetting("ShowMissingKeys".ToLower()));
-                    }
-                }
-
-                return _showMissingKeys.Value;
-            }
-        }
-
-        [Obsolete("Deprecated in DNN 6.0. Replaced by SystemTimeZone and use of .NET TimeZoneInfo class")]
-        public static int SystemTimeZoneOffset
-        {
-            get
-            {
-                return -480;
-            }
-        }
-
-        [Obsolete("Deprecated in DNN 6.0. Replaced by SystemTimeZone and use of .NET TimeZoneInfo class")]
-        public static string TimezonesFile
-        {
-            get
-            {
-                return ApplicationResourceDirectory + "/TimeZones.xml";
-            }
-        }
-
         #endregion
 
-        #region "Private Shared Methods"
+        #region Private Shared Methods
 
-        private static object GetResourceFileLookupDictionaryCallback(CacheItemArgs cacheItemArgs)
-        {
-            return new SharedDictionary<string, bool>();
-        }
-
-        private static SharedDictionary<string, bool> GetResourceFileLookupDictionary()
-        {
-            return
-                CBO.GetCachedObject<SharedDictionary<string, bool>>(
-                    new CacheItemArgs(DataCache.ResourceFileLookupDictionaryCacheKey, DataCache.ResourceFileLookupDictionaryTimeOut, DataCache.ResourceFileLookupDictionaryCachePriority),
-                    GetResourceFileLookupDictionaryCallback,
-                    true);
-        }
-
-        private static object GetResourceFileCallBack(CacheItemArgs cacheItemArgs)
-        {
-            string cacheKey = cacheItemArgs.CacheKey;
-            Dictionary<string, string> resources = null;
-
-            //Get resource file lookup to determine if the resource file even exists
-            SharedDictionary<string, bool> resourceFileExistsLookup = GetResourceFileLookupDictionary();
-
-            if (ResourceFileMayExist(resourceFileExistsLookup, cacheKey))
-            {
-                string filePath = null;
-                //check if an absolute reference for the resource file was used
-                if (cacheKey.Contains(":\\") && Path.IsPathRooted(cacheKey))
-                {
-                    //if an absolute reference, check that the file exists
-                    if (File.Exists(cacheKey))
-                    {
-                        filePath = cacheKey;
-                    }
-                }
-
-                //no filepath found from an absolute reference, try and map the path to get the file path
-                if (filePath == null)
-                {
-                    filePath = HostingEnvironment.MapPath(Globals.ApplicationPath + cacheKey);
-                }
-
-                //The file is not in the lookup, or we know it exists as we have found it before
-                if (File.Exists(filePath))
-                {
-                    var doc = new XPathDocument(filePath);
-                    resources = new Dictionary<string, string>();
-                    foreach (XPathNavigator nav in doc.CreateNavigator().Select("root/data"))
-                    {
-                        if (nav.NodeType != XPathNodeType.Comment)
-                        {
-                            resources[nav.GetAttribute("name", string.Empty)] = nav.SelectSingleNode("value").Value;
-                        }
-                    }
-                    cacheItemArgs.CacheDependency = new DNNCacheDependency(filePath);
-
-                    //File exists so add it to lookup with value true, so we are safe to try again
-                    using (resourceFileExistsLookup.GetWriteLock())
-                    {
-                        resourceFileExistsLookup[cacheKey] = true;
-                    }
-                }
-                else
-                {
-                    //File does not exist so add it to lookup with value false, so we don't try again
-                    using (resourceFileExistsLookup.GetWriteLock())
-                    {
-                        resourceFileExistsLookup[cacheKey] = false;
-                    }
-                }
-            }
-            return resources;
-        }
-
-        private static bool ResourceFileMayExist(SharedDictionary<string, bool> resourceFileExistsLookup, string cacheKey)
-        {
-            bool mayExist;
-            using (resourceFileExistsLookup.GetReadLock())
-            {
-                if (!resourceFileExistsLookup.ContainsKey(cacheKey))
-                {
-                    mayExist = true;
-                }
-                else
-                {
-                    mayExist = resourceFileExistsLookup[cacheKey];
-                }
-            }
-            return mayExist;
-        }
-
-        private static Dictionary<string, string> GetResourceFile(string resourceFile)
-        {
-            return CBO.GetCachedObject<Dictionary<string, string>>(new CacheItemArgs(resourceFile, DataCache.ResourceFilesCacheTimeOut, DataCache.ResourceFilesCachePriority),
-                                                                   GetResourceFileCallBack,
-                                                                   true);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetResourceFileName is used to build the resource file name according to the
-        /// language
-        /// </summary>
-        /// <param name="language">The language</param>
-        /// <param name="resourceFileRoot">The resource file root</param>
-        /// <returns>The language specific resource file</returns>
-        /// <history>
-        /// 	[cnurse]	10/06/2004	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static string GetResourceFileName(string resourceFileRoot, string language)
-        {
-            string resourceFile;
-            language = language.ToLower();
-            if (resourceFileRoot != null)
-            {
-                if (language == SystemLocale.ToLower() || String.IsNullOrEmpty(language))
-                {
-                    switch (resourceFileRoot.Substring(resourceFileRoot.Length - 5, 5).ToLower())
-                    {
-                        case ".resx":
-                            resourceFile = resourceFileRoot;
-                            break;
-                        case ".ascx":
-                            resourceFile = resourceFileRoot + ".resx";
-                            break;
-                        case ".aspx":
-                            resourceFile = resourceFileRoot + ".resx";
-                            break;
-                        default:
-                            resourceFile = resourceFileRoot + ".ascx.resx"; //a portal module
-                            break;
-                    }
-                }
-                else
-                {
-                    switch (resourceFileRoot.Substring(resourceFileRoot.Length - 5, 5).ToLower())
-                    {
-                        case ".resx":
-                            resourceFile = resourceFileRoot.Replace(".resx", "." + language + ".resx");
-                            break;
-                        case ".ascx":
-                            resourceFile = resourceFileRoot.Replace(".ascx", ".ascx." + language + ".resx");
-                            break;
-                        case ".aspx":
-                            resourceFile = resourceFileRoot.Replace(".aspx", ".aspx." + language + ".resx");
-                            break;
-                        default:
-                            resourceFile = resourceFileRoot + ".ascx." + language + ".resx";
-                            break;
-                    }
-                }
-            }
-            else
-            {
-                if (language == SystemLocale.ToLower() || String.IsNullOrEmpty(language))
-                {
-                    resourceFile = SharedResourceFile;
-                }
-                else
-                {
-                    resourceFile = SharedResourceFile.Replace(".resx", "." + language + ".resx");
-                }
-            }
-            return resourceFile;
-        }
-
-        private static string GetStringInternal(string key, string userLanguage, string resourceFileRoot, PortalSettings portalSettings, bool disableShowMissngKeys)
-        {
-            //make the default translation property ".Text"
-            if (key.IndexOf(".") < 1)
-            {
-                key += ".Text";
-            }
-            string resourceValue = Null.NullString;
-            bool keyFound = TryGetStringInternal(key, userLanguage, resourceFileRoot, portalSettings, ref resourceValue);
-
-            //If the key can't be found then it doesn't exist in the Localization Resources
-            if (ShowMissingKeys && !disableShowMissngKeys)
-            {
-                if (keyFound)
-                {
-                    resourceValue = "[L]" + resourceValue;
-                }
-                else
-                {
-                    resourceValue = "RESX:" + key;
-                }
-            }
-
-            if (!keyFound)
-            {
-                DnnLog.Warn("Missing localization key. key:{0} resFileRoot:{1} threadCulture:{2} userlan:{3}", key, resourceFileRoot, Thread.CurrentThread.CurrentUICulture, userLanguage);
-            }
-
-            return resourceValue;
-        }
-
-
-        /// <summary>
-        /// Provides localization support for DataControlFields used in DetailsView and GridView controls
-        /// </summary>
-        /// <param name="controlField">The field control to localize</param>
-        /// <param name="resourceFile">The root name of the Resource File where the localized
-        ///   text can be found</param>
-        /// <remarks>
-        /// The header of the DataControlField is localized.
-        /// It also localizes text for following controls: ButtonField, CheckBoxField, CommandField, HyperLinkField, ImageField
-        /// </remarks>
         private static void LocalizeDataControlField(DataControlField controlField, string resourceFile)
         {
             string localizedText;
@@ -616,264 +382,9 @@ namespace DotNetNuke.Services.Localization
             }
         }
 
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// TryGetFromResourceFile is used to get the string from a resource file
-        /// </summary>
-        /// <remarks>This method searches a resource file for the key.  It first checks the
-        /// user's language, then the fallback language and finally the default language.
-        /// </remarks>
-        /// <param name="key">The resource key</param>
-        /// <param name="resourceFile">The resource file to search</param>
-        /// <param name="userLanguage">The user's language</param>
-        /// <param name="fallbackLanguage">The fallback language for the user's language</param>
-        /// <param name="defaultLanguage">The portal's default language</param>
-        /// <param name="portalID">The id of the portal</param>
-        /// <param name="resourceValue">The resulting resource value - returned by reference</param>
-        /// <returns>True if successful, false if not found</returns>
-        /// <history>
-        /// 	[cnurse]	01/30/2008	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static bool TryGetFromResourceFile(string key, string resourceFile, string userLanguage, string fallbackLanguage, string defaultLanguage, int portalID, ref string resourceValue)
-        {
-            //Try the user's language first
-            bool bFound = TryGetFromResourceFile(key, GetResourceFileName(resourceFile, userLanguage), portalID, ref resourceValue);
-
-            if (!bFound && fallbackLanguage != userLanguage)
-            {
-                //Try fallback language next
-                bFound = TryGetFromResourceFile(key, GetResourceFileName(resourceFile, fallbackLanguage), portalID, ref resourceValue);
-            }
-            if (!bFound && !(defaultLanguage == userLanguage || defaultLanguage == fallbackLanguage))
-            {
-                //Try default Language last
-                bFound = TryGetFromResourceFile(key, GetResourceFileName(resourceFile, defaultLanguage), portalID, ref resourceValue);
-            }
-            return bFound;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// TryGetFromResourceFile is used to get the string from a resource file
-        /// </summary>
-        /// <remarks>This method searches a specific language version of the resource file for 
-        /// the key.  It first checks the Portal version, then the Host version and finally
-        /// the Application version</remarks>
-        /// <param name="key">The resource key</param>
-        /// <param name="resourceFile">The resource file to search</param>
-        /// <param name="portalID">The id of the portal</param>
-        /// <param name="resourceValue">The resulting resource value - returned by reference</param>
-        /// <returns>True if successful, false if not found</returns>
-        /// <history>
-        /// 	[cnurse]	01/30/2008	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static bool TryGetFromResourceFile(string key, string resourceFile, int portalID, ref string resourceValue)
-        {
-            //Try Portal Resource File
-            bool bFound = TryGetFromResourceFile(key, resourceFile, portalID, CustomizedLocale.Portal, ref resourceValue);
-            if (!bFound)
-            {
-                //Try Host Resource File
-                bFound = TryGetFromResourceFile(key, resourceFile, portalID, CustomizedLocale.Host, ref resourceValue);
-            }
-            if (!bFound)
-            {
-                //Try Portal Resource File
-                bFound = TryGetFromResourceFile(key, resourceFile, portalID, CustomizedLocale.None, ref resourceValue);
-            }
-            return bFound;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// TryGetFromResourceFile is used to get the string from a specific resource file
-        /// </summary>
-        /// <remarks>This method searches a specific resource file for  the key.</remarks>
-        /// <param name="key">The resource key</param>
-        /// <param name="resourceFile">The resource file to search</param>
-        /// <param name="portalID">The id of the portal</param>
-        /// <param name="resourceValue">The resulting resource value - returned by reference</param>
-        /// <param name="resourceType">An enumerated CustomizedLocale - Application - 0, 
-        /// Host - 1, Portal - 2 - that identifies the file to search</param>
-        /// <returns>True if successful, false if not found</returns>
-        /// <history>
-        /// 	[cnurse]	01/30/2008	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static bool TryGetFromResourceFile(string key, string resourceFile, int portalID, CustomizedLocale resourceType, ref string resourceValue)
-        {
-            Dictionary<string, string> dicResources;
-            bool bFound = Null.NullBoolean;
-            string resourceFileName = resourceFile;
-            switch (resourceType)
-            {
-                case CustomizedLocale.Host:
-                    resourceFileName = resourceFile.Replace(".resx", ".Host.resx");
-                    break;
-                case CustomizedLocale.Portal:
-                    resourceFileName = resourceFile.Replace(".resx", ".Portal-" + portalID + ".resx");
-                    break;
-            }
-
-            if (resourceFileName.StartsWith("desktopmodules", StringComparison.InvariantCultureIgnoreCase) 
-				|| resourceFileName.StartsWith("admin", StringComparison.InvariantCultureIgnoreCase)
-				|| resourceFileName.StartsWith("controls", StringComparison.InvariantCultureIgnoreCase))
-            {
-                resourceFileName = "~/" + resourceFileName;
-            }
-
-            //Local resource files are either named ~/... or <ApplicationPath>/...
-            //The following logic creates a cachekey of /....
-            string cacheKey = resourceFileName.Replace("~/", "/").ToLowerInvariant();
-            if (!string.IsNullOrEmpty(Globals.ApplicationPath))
-            {
-                if (Globals.ApplicationPath != "/portals")
-                {
-                    if (cacheKey.StartsWith(Globals.ApplicationPath))
-                    {
-                        cacheKey = cacheKey.Substring(Globals.ApplicationPath.Length);
-                    }
-                }
-                else
-                {
-                    cacheKey = "~" + cacheKey;
-                    if (cacheKey.StartsWith("~" + Globals.ApplicationPath))
-                    {
-                        cacheKey = cacheKey.Substring(Globals.ApplicationPath.Length + 1);
-                    }
-                }
-            }
-
-            //Get resource file lookup to determine if the resource file even exists
-            SharedDictionary<string, bool> resourceFileExistsLookup = GetResourceFileLookupDictionary();
-
-            if (ResourceFileMayExist(resourceFileExistsLookup, cacheKey))
-            {
-                //File is not in lookup or its value is true so we know it exists
-                dicResources = GetResourceFile(cacheKey);
-                if (dicResources != null)
-                {
-                    bFound = dicResources.TryGetValue(key, out resourceValue);
-                }
-            }
-
-            return bFound;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// TryGetStringInternal is used to get the string from a resource file
-        /// </summary>
-        /// <remarks>This method searches a resource file for the key.  It first checks the
-        /// user's language, then the fallback language and finally the default language.
-        /// </remarks>
-        /// <param name="key">The resource key</param>
-        /// <param name="userLanguage">The user's language</param>
-        /// <param name="resourceFile">The resource file to search</param>
-        /// <param name="portalSettings">The portal settings</param>
-        /// <param name="resourceValue">The resulting resource value - returned by reference</param>
-        /// <returns>True if successful, false if not found</returns>
-        /// <history>
-        /// 	[cnurse]	01/30/2008	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private static bool TryGetStringInternal(string key, string userLanguage, string resourceFile, PortalSettings portalSettings, ref string resourceValue)
-        {
-            string defaultLanguage = Null.NullString;
-            string fallbackLanguage = SystemLocale;
-            int portalId = Null.NullInteger;
-
-            //Get the default language
-            if (portalSettings != null)
-            {
-                defaultLanguage = portalSettings.DefaultLanguage;
-                portalId = portalSettings.PortalId;
-            }
-
-            //Set the userLanguage if not passed in
-            if (string.IsNullOrEmpty(userLanguage))
-            {
-                userLanguage = Thread.CurrentThread.CurrentUICulture.ToString();
-            }
-
-            //Default the userLanguage to the defaultLanguage if not set
-            if (string.IsNullOrEmpty(userLanguage))
-            {
-                userLanguage = defaultLanguage;
-            }
-            Locale userLocale = null;
-            try
-            {
-                //Get Fallback language
-                userLocale = _localeController.GetLocale(userLanguage);
-            }
-            catch (Exception ex)
-            {
-                DnnLog.Error(ex);
-            }
-
-            if (userLocale != null && !string.IsNullOrEmpty(userLocale.Fallback))
-            {
-                fallbackLanguage = userLocale.Fallback;
-            }
-            if (string.IsNullOrEmpty(resourceFile))
-            {
-                resourceFile = SharedResourceFile;
-            }
-
-            //Try the resource file for the key
-            bool bFound = TryGetFromResourceFile(key, resourceFile, userLanguage, fallbackLanguage, defaultLanguage, portalId, ref resourceValue);
-            if (!bFound)
-            {
-                if (SharedResourceFile.ToLowerInvariant() != resourceFile.ToLowerInvariant())
-                {
-                    //try to use a module specific shared resource file
-                    string localSharedFile = resourceFile.Substring(0, resourceFile.LastIndexOf("/") + 1) + LocalSharedResourceFile;
-
-                    if (localSharedFile.ToLowerInvariant() != resourceFile.ToLowerInvariant())
-                    {
-                        bFound = TryGetFromResourceFile(key, localSharedFile, userLanguage, fallbackLanguage, defaultLanguage, portalId, ref resourceValue);
-                    }
-                }
-            }
-            if (!bFound)
-            {
-                if (SharedResourceFile.ToLowerInvariant() != resourceFile.ToLowerInvariant())
-                {
-                    bFound = TryGetFromResourceFile(key, SharedResourceFile, userLanguage, fallbackLanguage, defaultLanguage, portalId, ref resourceValue);
-                }
-            }
-            return bFound;
-        }
-
         #endregion
 
-        #region "Public Methods"
-
-        public string GetFixedCurrency(decimal expression, string culture, int numDigitsAfterDecimal)
-        {
-            string oldCurrentCulture = CurrentUICulture;
-            var newCulture = new CultureInfo(culture);
-            Thread.CurrentThread.CurrentUICulture = newCulture;
-            string currencyStr = expression.ToString(newCulture.NumberFormat.CurrencySymbol);
-            var oldCulture = new CultureInfo(oldCurrentCulture);
-            Thread.CurrentThread.CurrentUICulture = oldCulture;
-            return currencyStr;
-        }
-
-        public string GetFixedDate(DateTime expression, string culture)
-        {
-            string oldCurrentCulture = CurrentUICulture;
-            var newCulture = new CultureInfo(culture);
-            Thread.CurrentThread.CurrentUICulture = newCulture;
-            string dateStr = expression.ToString(newCulture.DateTimeFormat.FullDateTimePattern);
-            var oldCulture = new CultureInfo(oldCurrentCulture);
-            Thread.CurrentThread.CurrentUICulture = oldCulture;
-            return dateStr;
-        }
+        #region Public Methods
 
         public static int ActiveLanguagesByPortalID(int portalID)
         {
@@ -967,6 +478,135 @@ namespace DotNetNuke.Services.Localization
             PortalController.UpdatePortalSetting(portalID, string.Format("DefaultTranslatorRoles-{0}", language.Code), roles);
         }
 
+        /// <summary>
+        /// Converts old TimeZoneOffset to new TimeZoneInfo. 
+        /// </summary>
+        /// <param name="timeZoneOffsetInMinutes">An offset in minutes, e.g. -480 (-8 times 60) for Pasicif Time Zone</param>        
+        /// <returns>TimeZoneInfo is returned if timeZoneOffsetInMinutes is valid, otherwise TimeZoneInfo.Local is returned.</returns>
+        /// <remarks>Initial mapping is based on hard-coded rules. These rules are hard-coded from old standard TimeZones.xml data.
+        /// When offset is not found hard-coded mapping, a lookup is performed in timezones defined in the system. The first found entry is returned.
+        /// When mapping is not found, a default TimeZoneInfo.Local us returned.</remarks>
+        public static TimeZoneInfo ConvertLegacyTimeZoneOffsetToTimeZoneInfo(int timeZoneOffsetInMinutes)
+        {
+            TimeZoneInfo timeZoneInfo = TimeZoneInfo.Local;
+
+            //lookup existing mapping
+            switch (timeZoneOffsetInMinutes)
+            {
+                case -720:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Dateline Standard Time");
+                    break;
+                case -660:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Samoa Standard Time");
+                    break;
+                case -600:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Hawaiian Standard Time");
+                    break;
+                case -540:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time");
+                    break;
+                case -480:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+                    break;
+                case -420:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
+                    break;
+                case -360:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+                    break;
+                case -300:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    break;
+                case -240:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
+                    break;
+                case -210:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Newfoundland Standard Time");
+                    break;
+                case -180:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time");
+                    break;
+                case -120:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Mid-Atlantic Standard Time");
+                    break;
+                case -60:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Cape Verde Standard Time");
+                    break;
+                case 0:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+                    break;
+                case 60:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+                    break;
+                case 120:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("GTB Standard Time");
+                    break;
+                case 180:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time");
+                    break;
+                case 210:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Iran Standard Time");
+                    break;
+                case 240:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Arabian Standard Time");
+                    break;
+                case 270:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Afghanistan Standard Time");
+                    break;
+                case 300:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time");
+                    break;
+                case 330:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                    break;
+                case 345:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Nepal Standard Time");
+                    break;
+                case 360:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Central Asia Standard Time");
+                    break;
+                case 390:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Myanmar Standard Time");
+                    break;
+                case 420:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    break;
+                case 480:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("China Standard Time");
+                    break;
+                case 540:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
+                    break;
+                case 570:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Cen. Australia Standard Time");
+                    break;
+                case 600:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time");
+                    break;
+                case 660:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Magadan Standard Time");
+                    break;
+                case 720:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
+                    break;
+                case 780:
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Tonga Standard Time");
+                    break;
+                default:
+                    foreach (TimeZoneInfo timeZone in TimeZoneInfo.GetSystemTimeZones())
+                    {
+                        if (timeZone.BaseUtcOffset.TotalMinutes == timeZoneOffsetInMinutes)
+                        {
+                            timeZoneInfo = timeZone;
+                            break;
+                        }
+                    }
+                    break;
+            }
+
+            return timeZoneInfo;
+        }
+
         public static void DeleteLanguage(Locale language)
         {
             DataProvider.Instance().DeleteLanguage(language.LanguageId);
@@ -1031,6 +671,7 @@ namespace DotNetNuke.Services.Localization
             return browserCulture;
         }
 
+        #region GetExceptionMessage
 
         public static string GetExceptionMessage(string key, string defaultValue)
         {
@@ -1051,6 +692,30 @@ namespace DotNetNuke.Services.Localization
             return string.Format(String.IsNullOrEmpty(conent) ? defaultValue : GetString(key, ExceptionsResourceFile), @params);
         }
 
+        #endregion
+
+        public string GetFixedCurrency(decimal expression, string culture, int numDigitsAfterDecimal)
+        {
+            string oldCurrentCulture = CurrentUICulture;
+            var newCulture = new CultureInfo(culture);
+            Thread.CurrentThread.CurrentUICulture = newCulture;
+            string currencyStr = expression.ToString(newCulture.NumberFormat.CurrencySymbol);
+            var oldCulture = new CultureInfo(oldCurrentCulture);
+            Thread.CurrentThread.CurrentUICulture = oldCulture;
+            return currencyStr;
+        }
+
+        public string GetFixedDate(DateTime expression, string culture)
+        {
+            string oldCurrentCulture = CurrentUICulture;
+            var newCulture = new CultureInfo(culture);
+            Thread.CurrentThread.CurrentUICulture = newCulture;
+            string dateStr = expression.ToString(newCulture.DateTimeFormat.FullDateTimePattern);
+            var oldCulture = new CultureInfo(oldCurrentCulture);
+            Thread.CurrentThread.CurrentUICulture = oldCulture;
+            return dateStr;
+        }
+
         public static string GetLanguageDisplayMode(int portalId)
         {
             string viewTypePersonalizationKey = "ViewType" + portalId;
@@ -1062,30 +727,40 @@ namespace DotNetNuke.Services.Localization
             return viewType;
         }
 
-        public static string GetResourceFileName(string resourceFileName, string language, string mode, int portalId)
+        public static string GetLocaleName(string code, CultureDropDownTypes displayType)
         {
-            if (!resourceFileName.EndsWith(".resx"))
-            {
-                resourceFileName += ".resx";
-            }
-            if (language != SystemLocale)
-            {
-                resourceFileName = resourceFileName.Substring(0, resourceFileName.Length - 5) + "." + language + ".resx";
-            }
-            if (mode == "Host")
-            {
-                resourceFileName = resourceFileName.Substring(0, resourceFileName.Length - 5) + "." + "Host.resx";
-            }
-            else if (mode == "Portal")
-            {
-                resourceFileName = resourceFileName.Substring(0, resourceFileName.Length - 5) + "." + "Portal-" + portalId + ".resx";
-            }
-            return resourceFileName;
-        }
+            string name;
 
-        public static string GetResourceFile(Control control, string fileName)
-        {
-            return control.TemplateSourceDirectory + "/" + LocalResourceDirectory + "/" + fileName;
+            // Create a CultureInfo class based on culture
+            CultureInfo info = CultureInfo.CreateSpecificCulture(code);
+
+            // Based on the display type desired by the user, select the correct property
+            switch (displayType)
+            {
+                case CultureDropDownTypes.EnglishName:
+                    name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.EnglishName);
+                    break;
+                case CultureDropDownTypes.Lcid:
+                    name = info.LCID.ToString();
+                    break;
+                case CultureDropDownTypes.Name:
+                    name = info.Name;
+                    break;
+                case CultureDropDownTypes.NativeName:
+                    name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.NativeName);
+                    break;
+                case CultureDropDownTypes.TwoLetterIsoCode:
+                    name = info.TwoLetterISOLanguageName;
+                    break;
+                case CultureDropDownTypes.ThreeLetterIsoCode:
+                    name = info.ThreeLetterISOLanguageName;
+                    break;
+                default:
+                    name = info.DisplayName;
+                    break;
+            }
+
+            return name;
         }
 
         public static CultureInfo GetPageLocale(PortalSettings portalSettings)
@@ -1107,16 +782,16 @@ namespace DotNetNuke.Services.Localization
             {
                 try
                 {
-					if (portalSettings.ContentLocalizationEnabled && HttpContext.Current.Request.IsAuthenticated && portalSettings.UserMode == PortalSettings.Mode.Edit)
-					{
-						//use user's prefer locale if user is in edit mode so that the static text will be shown with the user's understand language.
-						preferredLocale = UserController.GetCurrentUserInfo().Profile.PreferredLocale;
-					}
-					else
-					{
-						//Check Cookie or Qs
-						preferredLocale = HttpContext.Current.Request["language"];
-					}
+                    if (portalSettings.ContentLocalizationEnabled && HttpContext.Current.Request.IsAuthenticated && portalSettings.UserMode == PortalSettings.Mode.Edit)
+                    {
+                        //use user's prefer locale if user is in edit mode so that the static text will be shown with the user's understand language.
+                        preferredLocale = UserController.GetCurrentUserInfo().Profile.PreferredLocale;
+                    }
+                    else
+                    {
+                        //Check Cookie or Qs
+                        preferredLocale = HttpContext.Current.Request["language"];
+                    }
 
                     if (!String.IsNullOrEmpty(preferredLocale))
                     {
@@ -1215,9 +890,33 @@ namespace DotNetNuke.Services.Localization
             return pageCulture;
         }
 
-        #endregion
+        public static string GetResourceFileName(string resourceFileName, string language, string mode, int portalId)
+        {
+            if (!resourceFileName.EndsWith(".resx"))
+            {
+                resourceFileName += ".resx";
+            }
+            if (language != SystemLocale)
+            {
+                resourceFileName = resourceFileName.Substring(0, resourceFileName.Length - 5) + "." + language + ".resx";
+            }
+            if (mode == "Host")
+            {
+                resourceFileName = resourceFileName.Substring(0, resourceFileName.Length - 5) + "." + "Host.resx";
+            }
+            else if (mode == "Portal")
+            {
+                resourceFileName = resourceFileName.Substring(0, resourceFileName.Length - 5) + "." + "Portal-" + portalId + ".resx";
+            }
+            return resourceFileName;
+        }
 
-        #region "GetString"
+        public static string GetResourceFile(Control control, string fileName)
+        {
+            return control.TemplateSourceDirectory + "/" + LocalResourceDirectory + "/" + fileName;
+        }
+
+        #region GetString
 
         public static string GetString(string key, Control ctrl)
         {
@@ -1270,15 +969,15 @@ namespace DotNetNuke.Services.Localization
         /// GetString gets the localized string corresponding to the resourcekey
         /// </summary>
         /// <param name="key">The resourcekey to find</param>
-        /// <param name="objPortalSettings">The current portals Portal Settings</param>
+        /// <param name="portalSettings">The current portals Portal Settings</param>
         /// <returns>The localized Text</returns>
         /// <history>
         /// 	[cnurse]	10/06/2004	Documented
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static string GetString(string key, PortalSettings objPortalSettings)
+        public static string GetString(string key, PortalSettings portalSettings)
         {
-            return GetString(key, null, objPortalSettings, null, false);
+            return _localizationProvider.GetString(key, null, null, portalSettings);
         }
 
         /// -----------------------------------------------------------------------------
@@ -1313,7 +1012,7 @@ namespace DotNetNuke.Services.Localization
         /// -----------------------------------------------------------------------------
         public static string GetString(string key, string resourceFileRoot)
         {
-            return GetString(key, resourceFileRoot, PortalController.GetCurrentPortalSettings(), null, false);
+            return _localizationProvider.GetString(key, resourceFileRoot);
         }
 
         /// -----------------------------------------------------------------------------
@@ -1331,7 +1030,7 @@ namespace DotNetNuke.Services.Localization
         /// -----------------------------------------------------------------------------
         public static string GetString(string key, string resourceFileRoot, string language)
         {
-            return GetString(key, resourceFileRoot, PortalController.GetCurrentPortalSettings(), language, false);
+            return _localizationProvider.GetString(key, resourceFileRoot, language);
         }
 
         /// -----------------------------------------------------------------------------
@@ -1361,7 +1060,7 @@ namespace DotNetNuke.Services.Localization
         /// <param name="key">The resourcekey to find</param>
         /// <param name="resourceFileRoot">The Local Resource root</param>
         /// <param name="portalSettings">The current portals Portal Settings</param>
-        /// <param name="userLanguage">A specific language to lookup the string</param>
+        /// <param name="language">A specific language to lookup the string</param>
         /// <param name="disableShowMissingKeys">Disables the show missing keys flag</param>
         /// <returns>The localized Text</returns>
         /// <history>
@@ -1370,14 +1069,14 @@ namespace DotNetNuke.Services.Localization
         ///                             customisations and language versions separately
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static string GetString(string key, string resourceFileRoot, PortalSettings portalSettings, string userLanguage, bool disableShowMissingKeys)
+        public static string GetString(string key, string resourceFileRoot, PortalSettings portalSettings, string language, bool disableShowMissingKeys)
         {
-            return GetStringInternal(key, userLanguage, resourceFileRoot, portalSettings, disableShowMissingKeys);
+            return _localizationProvider.GetString(key, language, resourceFileRoot, portalSettings, disableShowMissingKeys);
         }
 
         #endregion
 
-        #region "GetStringUrl"
+        #region GetStringUrl
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -1392,9 +1091,6 @@ namespace DotNetNuke.Services.Localization
         /// but it disables the ShowMissingKey flag, so even it testing scenarios, the correct string
         /// is returned
         /// </remarks>
-        /// <history>
-        /// 	[vmasanas]	11/21/2006	Added
-        /// </history>
         /// -----------------------------------------------------------------------------
         public static string GetStringUrl(string key, string resourceFileRoot)
         {
@@ -1403,7 +1099,7 @@ namespace DotNetNuke.Services.Localization
 
         #endregion
 
-        #region "Get System Message"
+        #region Get System Message
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -1704,54 +1400,9 @@ namespace DotNetNuke.Services.Localization
             return strMessageValue;
         }
 
-        [Obsolete("Deprecated in DNN 6.0. Replaced by SystemTimeZone and use of .NET TimeZoneInfo class")]
-        public static NameValueCollection GetTimeZones(string language)
-        {
-            language = language.ToLower();
-            string cacheKey = "dotnetnuke-" + language + "-timezones";
-            string translationFile;
-            if (language == SystemLocale.ToLower())
-            {
-                translationFile = TimezonesFile;
-            }
-            else
-            {
-                translationFile = TimezonesFile.Replace(".xml", "." + language + ".xml");
-            }
-            var timeZones = (NameValueCollection)DataCache.GetCache(cacheKey);
-            if (timeZones == null)
-            {
-                string filePath = HttpContext.Current.Server.MapPath(translationFile);
-                timeZones = new NameValueCollection();
-                if (File.Exists(filePath) == false)
-                {
-                    return timeZones;
-                }
-                var dp = new DNNCacheDependency(filePath);
-                try
-                {
-                    var d = new XmlDocument();
-                    d.Load(filePath);
-                    foreach (XmlNode n in d.SelectSingleNode("root").ChildNodes)
-                    {
-                        if (n.NodeType != XmlNodeType.Comment)
-                        {
-                            timeZones.Add(n.Attributes["name"].Value, n.Attributes["key"].Value);
-                        }
-                    }
-                }
-                catch (Exception exc)
-                {
-                    DnnLog.Error(exc);
+        #endregion
 
-                }
-                if (Host.PerformanceSetting != Globals.PerformanceSettings.NoCaching)
-                {
-                    DataCache.SetCache(cacheKey, timeZones, dp);
-                }
-            }
-            return timeZones;
-        }
+        #region LoadCultureDropDownList
 
         /// <summary>
         ///   <para>LoadCultureDropDownList loads a DropDownList with the list of supported cultures
@@ -1780,43 +1431,6 @@ namespace DotNetNuke.Services.Localization
         {
             LoadCultureDropDownList(list, displayType, selectedValue, "", loadHost);
         }
-
-        public static string GetLocaleName(string code, CultureDropDownTypes displayType)
-        {
-            string name;
-
-            // Create a CultureInfo class based on culture
-            CultureInfo info = CultureInfo.CreateSpecificCulture(code);
-
-            // Based on the display type desired by the user, select the correct property
-            switch (displayType)
-            {
-                case CultureDropDownTypes.EnglishName:
-                    name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.EnglishName);
-                    break;
-                case CultureDropDownTypes.Lcid:
-                    name = info.LCID.ToString();
-                    break;
-                case CultureDropDownTypes.Name:
-                    name = info.Name;
-                    break;
-                case CultureDropDownTypes.NativeName:
-                    name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(info.NativeName);
-                    break;
-                case CultureDropDownTypes.TwoLetterIsoCode:
-                    name = info.TwoLetterISOLanguageName;
-                    break;
-                case CultureDropDownTypes.ThreeLetterIsoCode:
-                    name = info.ThreeLetterISOLanguageName;
-                    break;
-                default:
-                    name = info.DisplayName;
-                    break;
-            }
-
-            return name;
-        }
-
 
         /// <summary>
         ///   <para>LoadCultureDropDownList loads a DropDownList with the list of supported cultures
@@ -1877,6 +1491,7 @@ namespace DotNetNuke.Services.Localization
             }
         }
 
+        #endregion
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -2185,7 +1800,7 @@ namespace DotNetNuke.Services.Localization
 
         #endregion
 
-        #region "Obsolete"
+        #region Obsolete
 
         [Obsolete("Deprecated in DNN 5.0. Replaced by GetLocales().")]
         public static LocaleCollection GetEnabledLocales()
@@ -2254,6 +1869,55 @@ namespace DotNetNuke.Services.Localization
             return _localeController.GetLocales(portalID);
         }
 
+        [Obsolete("Deprecated in DNN 6.0. Replaced by SystemTimeZone and use of .NET TimeZoneInfo class")]
+        public static NameValueCollection GetTimeZones(string language)
+        {
+            language = language.ToLower();
+            string cacheKey = "dotnetnuke-" + language + "-timezones";
+            string translationFile;
+            if (language == SystemLocale.ToLower())
+            {
+                translationFile = TimezonesFile;
+            }
+            else
+            {
+                translationFile = TimezonesFile.Replace(".xml", "." + language + ".xml");
+            }
+            var timeZones = (NameValueCollection)DataCache.GetCache(cacheKey);
+            if (timeZones == null)
+            {
+                string filePath = HttpContext.Current.Server.MapPath(translationFile);
+                timeZones = new NameValueCollection();
+                if (File.Exists(filePath) == false)
+                {
+                    return timeZones;
+                }
+                var dp = new DNNCacheDependency(filePath);
+                try
+                {
+                    var d = new XmlDocument();
+                    d.Load(filePath);
+                    foreach (XmlNode n in d.SelectSingleNode("root").ChildNodes)
+                    {
+                        if (n.NodeType != XmlNodeType.Comment)
+                        {
+                            timeZones.Add(n.Attributes["name"].Value, n.Attributes["key"].Value);
+                        }
+                    }
+                }
+                catch (Exception exc)
+                {
+                    DnnLog.Error(exc);
+
+                }
+                if (Host.PerformanceSetting != Globals.PerformanceSettings.NoCaching)
+                {
+                    DataCache.SetCache(cacheKey, timeZones, dp);
+                }
+            }
+            return timeZones;
+        }
+
         [Obsolete("Deprecated in DNN 5.5.  Replcaed by LocaleController.IsEnabled()")]
         public static bool LocaleIsEnabled(Locale locale)
         {
@@ -2267,7 +1931,6 @@ namespace DotNetNuke.Services.Localization
 
             return _localeController.IsEnabled(ref localeCode, _Settings.PortalId);
         }
-
 
         [Obsolete("Deprecated in DNN 5.0. Replaced by LocalizeControlTitle(IModuleControl).")]
         public static string LocalizeControlTitle(string controlTitle, string controlSrc, string Key)
@@ -2294,6 +1957,24 @@ namespace DotNetNuke.Services.Localization
         [Obsolete("Deprecated in DNN 5.0. This does nothing now as the Admin Tabs are treated like any other tab.")]
         public static void LocalizePortalSettings()
         {
+        }
+
+        [Obsolete("Deprecated in DNN 6.0. Replaced by SystemTimeZone and use of .NET TimeZoneInfo class")]
+        public static int SystemTimeZoneOffset
+        {
+            get
+            {
+                return -480;
+            }
+        }
+
+        [Obsolete("Deprecated in DNN 6.0. Replaced by SystemTimeZone and use of .NET TimeZoneInfo class")]
+        public static string TimezonesFile
+        {
+            get
+            {
+                return ApplicationResourceDirectory + "/TimeZones.xml";
+            }
         }
 
         [Obsolete("Deprecated in DNN 5.0. Replaced by Host.EnableBrowserLanguage OR PortalSettings.EnableBrowserLanguage")]
@@ -2338,146 +2019,6 @@ namespace DotNetNuke.Services.Localization
                     item.Selected = true;
                 }
             }
-        }
-
-        /// <summary>
-        /// Converts old TimeZoneOffset to new TimeZoneInfo. 
-        /// </summary>
-        /// <param name="timeZoneOffsetInMinutes">An offset in minutes, e.g. -480 (-8 times 60) for Pasicif Time Zone</param>        
-        /// <returns>TimeZoneInfo is returned if timeZoneOffsetInMinutes is valid, otherwise TimeZoneInfo.Local is returned.</returns>
-        /// <remarks>Initial mapping is based on hard-coded rules. These rules are hard-coded from old standard TimeZones.xml data.
-        /// When offset is not found hard-coded mapping, a lookup is performed in timezones defined in the system. The first found entry is returned.
-        /// When mapping is not found, a default TimeZoneInfo.Local us returned.</remarks>
-        public static TimeZoneInfo ConvertLegacyTimeZoneOffsetToTimeZoneInfo(int timeZoneOffsetInMinutes)
-        {
-            TimeZoneInfo timeZoneInfo = TimeZoneInfo.Local;
-
-            //lookup existing mapping
-            switch (timeZoneOffsetInMinutes)
-            {
-                case -720:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Dateline Standard Time");
-                    break;
-                case -660:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Samoa Standard Time");
-                    break;
-                case -600:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Hawaiian Standard Time");
-                    break;
-                case -540:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time");
-                    break;
-                case -480:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
-                    break;
-                case -420:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
-                    break;
-                case -360:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
-                    break;
-                case -300:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
-                    break;
-                case -240:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time");
-                    break;
-                case -210:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Newfoundland Standard Time");
-                    break;
-                case -180:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time");
-                    break;
-                case -120:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Mid-Atlantic Standard Time");
-                    break;
-                case -60:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Cape Verde Standard Time");
-                    break;
-                case 0:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
-                    break;
-                case 60:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
-                    break;
-                case 120:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("GTB Standard Time");
-                    break;
-                case 180:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time");
-                    break;
-                case 210:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Iran Standard Time");
-                    break;
-                case 240:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Arabian Standard Time");
-                    break;
-                case 270:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Afghanistan Standard Time");
-                    break;
-                case 300:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time");
-                    break;
-                case 330:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
-                    break;
-                case 345:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Nepal Standard Time");
-                    break;
-                case 360:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Central Asia Standard Time");
-                    break;
-                case 390:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Myanmar Standard Time");
-                    break;
-                case 420:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-                    break;
-                case 480:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("China Standard Time");
-                    break;
-                case 540:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
-                    break;
-                case 570:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Cen. Australia Standard Time");
-                    break;
-                case 600:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time");
-                    break;
-                case 660:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Magadan Standard Time");
-                    break;
-                case 720:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
-                    break;
-                case 780:
-                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Tonga Standard Time");
-                    break;
-                default:
-                    foreach (TimeZoneInfo timeZone in TimeZoneInfo.GetSystemTimeZones())
-                    {
-                        if (timeZone.BaseUtcOffset.TotalMinutes == timeZoneOffsetInMinutes)
-                        {
-                            timeZoneInfo = timeZone;
-                            break;
-                        }
-                    }
-                    break;
-            }
-
-            return timeZoneInfo;
-        }
-
-        #endregion
-
-        #region Nested type: CustomizedLocale
-
-        private enum CustomizedLocale
-        {
-            None = 0,
-            Portal = 1,
-            Host = 2
         }
 
         #endregion

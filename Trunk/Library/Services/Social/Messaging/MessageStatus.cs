@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -20,18 +20,36 @@
 #endregion
 #region Usings
 
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke Module Caching Memory Provider")]
-[assembly: AssemblyDescription("DotNetNuke Module Caching Memory Provider")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: ComVisible(false)]
-[assembly: Guid("4fb53b48-4f4f-4259-9f96-0b207a26436c")]
-[assembly: AssemblyVersion("6.2.0.231")]
-[assembly: AssemblyFileVersion("6.2.0.231")]
+namespace DotNetNuke.Services.Social.Messaging
+{
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Services.Social.Messaging
+    /// Enum:       MessageStatus
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The MessageStatus enum describes various Message Statuses. E.g. Read, Unread, Archived.
+    /// </summary>
+    /// -----------------------------------------------------------------------------
+	public enum MessageStatus
+	{
+		/// <summary>
+		/// Message is Unread.
+		/// </summary>
+        Unread = 1,
+
+		/// <summary>
+        /// Message is Read.
+		/// </summary>
+		Read = 2,
+
+		/// <summary>
+        /// Message is Archived (not deleted).
+		/// </summary>
+		Archived = 3
+    }
+}

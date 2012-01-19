@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,20 +18,20 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
 
-using System.Reflection;
-using System.Runtime.InteropServices;
+using DotNetNuke.Entities.Portals;
 
-#endregion
-
-[assembly: AssemblyTitle("DotNetNuke Module Caching Memory Provider")]
-[assembly: AssemblyDescription("DotNetNuke Module Caching Memory Provider")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: ComVisible(false)]
-[assembly: Guid("4fb53b48-4f4f-4259-9f96-0b207a26436c")]
-[assembly: AssemblyVersion("6.2.0.231")]
-[assembly: AssemblyFileVersion("6.2.0.231")]
+namespace DotNetNuke.Services.Localization
+{
+    /// <summary>
+    /// Do not implement.  This interface is only implemented by the DotNetNuke core framework. Outside the framework it should used as a type and for unit test purposes only.
+    /// There is no guarantee that this interface will not change.
+    /// </summary>
+    public interface ILocalizationProvider
+    {
+        string GetString(string key, string resourceFileRoot);
+        string GetString(string key, string resourceFileRoot, string language);
+        string GetString(string key, string resourceFileRoot, string language, PortalSettings portalSettings);
+        string GetString(string key, string resourceFileRoot, string language, PortalSettings portalSettings, bool disableShowMissingKeys);
+    }
+}

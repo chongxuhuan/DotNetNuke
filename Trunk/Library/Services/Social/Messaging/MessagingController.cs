@@ -122,48 +122,78 @@ namespace DotNetNuke.Services.Social.Messaging
             throw new NotImplementedException();
         }
 
-        public Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users)
+        public Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)
         {
             if(string.IsNullOrEmpty(subject) && string.IsNullOrEmpty(body))
             {
-                throw new InvalidEnumArgumentException(Localization.Localization.GetExceptionMessage("SubjectOrBodyRequiredError", "Both Subject and Body cannot be null or empty."));
+                throw new ArgumentException(Localization.Localization.GetExceptionMessage("SubjectOrBodyRequiredError", "Both Subject and Body cannot be null or empty."));
             }
 
-            if ((roles == null && users == null) || (roles.Count == 0 && users.Count == 0))
+            if (roles == null && users == null)
             {
-                throw new InvalidEnumArgumentException(Localization.Localization.GetExceptionMessage("RolesOrUsersRequiredError", "Both Roles and Users cannot be null or empty-lists."));
+                throw new ArgumentException(Localization.Localization.GetExceptionMessage("RolesOrUsersRequiredError", "Both Roles and Users cannot be null or empty-lists."));
             }
 
             if (!string.IsNullOrEmpty(subject) && subject.Length > MESSAGING_MAX_SUBJECT)
             {
-                throw new InvalidEnumArgumentException(Localization.Localization.GetExceptionMessage("SubjectTooBigError", "Subject supplied is too big. Maximum {0}, Actual {1}.", MESSAGING_MAX_SUBJECT, subject.Length));
+                throw new ArgumentException(Localization.Localization.GetExceptionMessage("SubjectTooBigError", "Subject supplied is too big. Maximum {0}, Actual {1}.", MESSAGING_MAX_SUBJECT, subject.Length));
             }
 
             var sbTo = new StringBuilder();
-            foreach(var role in roles)
-            {                
-                sbTo.Append(role.RoleName);
-                sbTo.Append(",");
-            }
-
-            foreach (var user in users)
-            {                
-                sbTo.Append(user.DisplayName);
-                sbTo.Append(",");
-            }
-
-            string to = string.Empty;
-            if (sbTo.Length > 0)
+            if (roles != null)
             {
-                to = sbTo.ToString(0, sbTo.Length - 1);
-                if (to.Length > MESSAGING_MAX_TO)
+                foreach (var role in roles)
+                    if (!string.IsNullOrEmpty(role.RoleName)) sbTo.Append(role.RoleName + ",");                                            
+            }
+
+            if (users != null)
+            {
+                foreach (var user in users)
+                    if (!string.IsNullOrEmpty(user.DisplayName)) sbTo.Append(user.DisplayName + ",");                        
+            }
+            
+            if (sbTo.Length == 0)
+            {
+                throw new ArgumentException(Localization.Localization.GetExceptionMessage("EmptyToListFoundError", "Empty To List found while analyzing User and Roles List."));
+            }
+            
+            if (sbTo.Length > MESSAGING_MAX_TO)
+            {
+                throw new ArgumentException(Localization.Localization.GetExceptionMessage("ToListTooBigError", "To List supplied is too big. Maximum {0}, Actual {1}.", MESSAGING_MAX_TO, sbTo.Length));
+            }
+
+            Message message = new Message { Body = body, Subject = subject, To = sbTo.ToString()};
+
+            message.MessageID = _DataService.SaveSocialMessage(message, UserController.GetCurrentUserInfo().UserID);
+
+            //associate attachments
+            if (fileIDs != null)
+            {
+                foreach (var fileID in fileIDs)
                 {
-                    throw new InvalidEnumArgumentException(Localization.Localization.GetExceptionMessage("ToListTooBigError", "To List supplied is too big. Maximum {0}, Actual {1}.", MESSAGING_MAX_TO, to.Length));
+                    var attachment = new MessageAttachment {FileID = fileID, MessageID = message.MessageID};
+                    _DataService.SaveSocialMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
                 }
             }
 
-            Message message = new Message {Body = body, Subject = subject, To = to};
+            //send message to each Role
+            if (roles != null)
+            {
+                foreach (var role in roles)
+                {
+                    _DataService.CreateSocialMessageRecipientsForRole(message.MessageID, role.RoleID, (int)MessageStatus.Unread, UserController.GetCurrentUserInfo().UserID);
+                }
+            }
 
+            //send message to each User
+            if (users != null)
+            {
+                foreach (var user in users)
+                {
+                    var recipient = new MessageRecipient {MessageID = message.MessageID, UserID = user.UserID, Status = (int)MessageStatus.Unread};
+                    _DataService.SaveSocialMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
+                }
+            }
 
             return message;
         }

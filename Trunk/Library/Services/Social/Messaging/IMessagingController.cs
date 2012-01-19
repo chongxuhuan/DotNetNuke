@@ -46,7 +46,7 @@ namespace DotNetNuke.Services.Social.Messaging
         //Gets the latest 10 messages.
         IList<Message> GetRecentMessages(int userID);
 
-        Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users);
+        Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
 
         #endregion
     }

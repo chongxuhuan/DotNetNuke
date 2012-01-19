@@ -43,6 +43,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         #region Message_Recipients CRUD
         
         int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserID);
+        void CreateSocialMessageRecipientsForRole(int messageID, int roleID, int status, int createUpdateUserID);
         IDataReader GetSocialMessageRecipient();
         IDataReader GetSocialMessageRecipientsByUser();
         IDataReader GetSocialMessageRecipientsByMessage();

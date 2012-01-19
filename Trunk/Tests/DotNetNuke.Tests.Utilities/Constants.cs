@@ -19,6 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 using DotNetNuke.Entities.Content.Taxonomy;
+using DotNetNuke.Entities.Users.Social;
 
 namespace DotNetNuke.Tests.Utilities
 {
@@ -44,6 +45,14 @@ namespace DotNetNuke.Tests.Utilities
 
         #endregion
 
+        #region Role Constants
+
+        public const int Role_Administrators = 0;
+        public const int Role_RegisteredUsers = 1;
+        public const int Role_Subscribers = 2;
+        public const int Role_Translator_EN_US = 3;
+
+        #endregion
 
         #region Portal Constants
 
@@ -287,6 +296,7 @@ namespace DotNetNuke.Tests.Utilities
         #region Social constants
 
         public const int SOCIAL_InValidRelationshipType = 999;
+        public const int SOCIAL_InValidRelationship = 999;
         public const int SOCIAL_FriendRelationshipTypeID = 1;
         public const int SOCIAL_FollowerRelationshipTypeID = 2;
         public const int SOCIAL_FriendRelationshipID = 1;
@@ -294,6 +304,30 @@ namespace DotNetNuke.Tests.Utilities
         public const int SOCIAL_UserRelationshipIDUser10User11 = 3;
         public const int SOCIAL_UserRelationshipIDUser12User13 = 4;
         public const int SOCIAL_PrefereceIDForUser11 = 1;
+
+        public const string SOCIAL_RelationshipTypeName = "TestType";
+        public const string SOCIAL_RelationshipName = "TestName";
+
+        public const string LOCALIZATION_RelationshipType_Deleted_Key = "RelationshipType_Deleted";
+        public const string LOCALIZATION_RelationshipType_Deleted = "Deleted RelationshipType {0} : ID {1}";
+        public const string LOCALIZATION_RelationshipType_Added_Key = "RelationshipType_Added";
+        public const string LOCALIZATION_RelationshipType_Added = "Added RelationshipType {0}";
+        public const string LOCALIZATION_RelationshipType_Updated_Key = "RelationshipType_Updated";
+        public const string LOCALIZATION_RelationshipType_Updated = "Updated RelationshipType {0}";
+
+        public const string LOCALIZATION_Relationship_Deleted_Key = "Relationship_Deleted";
+        public const string LOCALIZATION_Relationship_Deleted = "Deleted Relationship {0} : ID {1}";
+        public const string LOCALIZATION_Relationship_Added_Key = "Relationship_Added";
+        public const string LOCALIZATION_Relationship_Added = "Added Relationship {0}";
+        public const string LOCALIZATION_Relationship_Updated_Key = "Relationship_Updated";
+        public const string LOCALIZATION_Relationship_Updated = "Updated Relationship {0}";
+
+        public const string LOCALIZATION_UserRelationshipPreference_Deleted_Key = "UserRelationshipPreference_Deleted";
+        public const string LOCALIZATION_UserRelationshipPreference_Deleted = "Deleted UserRelationshipPreference ID {0} for User ID {1} and Relationship ID {2}";
+        public const string LOCALIZATION_UserRelationshipPreference_Added_Key = "UserRelationshipPreference_Added";
+        public const string LOCALIZATION_UserRelationshipPreference_Added = "Added UserRelationshipPreference ID {0} for User ID {1} and Relationship ID {2}";
+        public const string LOCALIZATION_UserRelationshipPreference_Updated_Key = "UserRelationshipPreference_Updated";
+        public const string LOCALIZATION_UserRelationshipPreference_Updated = "UpdatedUserRelationshipPreference ID {0} for User ID {1} and Relationship ID {2}";
 
         #endregion
         

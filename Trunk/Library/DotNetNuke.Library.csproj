@@ -200,6 +200,9 @@
     <Compile Include="Entities\Host\ServerController.cs" />
     <Compile Include="Entities\Host\ServerInfo.cs" />
     <Compile Include="Entities\Icons\IconController.cs" />
+    <Compile Include="Services\Localization\ILocalizationProvider.cs" />
+    <Compile Include="Services\Localization\LocalizationProvider.cs" />
+    <Compile Include="Services\Log\EventLog\IEventLogController.cs" />
     <Compile Include="Services\Social\Messaging\MessagingController.cs" />
     <Compile Include="Services\Social\Messaging\Data\DataService.cs" />
     <Compile Include="Services\Social\Messaging\Data\IDataService.cs" />
@@ -550,6 +553,7 @@
     <Compile Include="Services\Mobile\RedirectionController.cs" />
     <Compile Include="Services\Mobile\RedirectionType.cs" />
     <Compile Include="Services\Mobile\TargetType.cs" />
+    <Compile Include="Services\Social\Messaging\MessageStatus.cs" />
     <Compile Include="Services\SystemDateTime\SystemDateTime.cs" />
     <Compile Include="Services\EventQueue\Config\EventQueueConfiguration.cs" />
     <Compile Include="Services\EventQueue\Config\PublishedEvent.cs" />
@@ -703,7 +707,6 @@
     <Compile Include="Services\Log\EventLog\EventLogController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Services\Log\EventLog\EventLogType.cs" />
     <Compile Include="Services\Log\EventLog\ExceptionLogController.cs">
       <SubType>Code</SubType>
     </Compile>
