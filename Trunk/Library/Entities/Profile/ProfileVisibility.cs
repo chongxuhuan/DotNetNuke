@@ -25,6 +25,7 @@ using System.Globalization;
 using System.Text;
 
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Entities.Users.Social;
 using DotNetNuke.Security.Roles;
 
 namespace DotNetNuke.Entities.Profile

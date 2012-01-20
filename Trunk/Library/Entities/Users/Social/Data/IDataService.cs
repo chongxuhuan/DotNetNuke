@@ -18,6 +18,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
@@ -31,70 +32,39 @@ namespace DotNetNuke.Entities.Users.Social.Data
     {
         #region RelationshipType CRUD
 
-        IDataReader GetAllRelationshipTypes();
-
-        IDataReader GetRelationshipType(int relationshipTypeID);
-
         void DeleteRelationshipType(int relationshipTypeID);
-
+        IDataReader GetAllRelationshipTypes();
+        IDataReader GetRelationshipType(int relationshipTypeID);
         int SaveRelationshipType(RelationshipType relationshipType, int createUpdateUserID);
 
         #endregion
 
         #region Relationship CRUD
 
-        IDataReader GetRelationship(int relationshipID);
-
-        IDataReader GetRelationshipsByUserID(int userID);
-
-        IDataReader GetRelationshipsByPortalID(int portalID);
-
         void DeleteRelationship(int relationshipID);
-
-        void DeleteRelationshipByUserID(int userID);
-
-        void DeleteRelationshipByPortalID(int portalID);
-
+        IDataReader GetRelationship(int relationshipID);
+        IDataReader GetRelationshipsByUserID(int userID);
+        IDataReader GetRelationshipsByPortalID(int portalID);
         int SaveRelationship(Relationship relationship, int createUpdateUserID);
 
         #endregion
 
         #region UserRelationship CRUD
 
-        IDataReader GetUserRelationship(int userRelationshipID);
-
-        IDataReader GetUserRelationship(int userID, int relatedUserID, RelationshipDirection relationshipDirection, RelationshipStatus status);
-
-        IDataReader GetUserRelationship(int userID, int relatedUserID, int relationshipID, RelationshipDirection relationshipDirection);
-
-        IDataReader GetUserRelationshipsByInitiatingUserID(int userID);
-
-        IDataReader GetUserRelationshipsByRelatedUserID(int relatedUserID);
-
-        IDataReader GetUserRelationshipsByRelatedUser(int relatedUserID, int relationshipID, RelationshipStatus status);
-
-        IDataReader GetUserRelationshipsByRelationshipID(int relationshipID);
-
         void DeleteUserRelationship(int userRelationshipID);
-
-        void DeleteUserRelationshipByUserID(int userID);
-
-        void DeleteUserRelationshipByRelatedUserID(int relatedUserID);
-
-        void DeleteUserRelationshipByRelationshipID(int relationshipID);
-
+        IDataReader GetUserRelationship(int userRelationshipID);
+        IDataReader GetUserRelationship(int userID, int relatedUserID, int relationshipID, RelationshipDirection relationshipDirection);
+        IDataReader GetUserRelationships(int userID);
+        IDataReader GetUserRelationshipsByRelationshipID(int relationshipID);
         int SaveUserRelationship(UserRelationship userRelationship, int createUpdateUserID);
 
         #endregion
 
         #region UserRelationshipPreference CRUD
 
-        IDataReader GetUserRelationshipPreferenceByID(int preferenceID);
-
-        IDataReader GetUserRelationshipPreference(int userID, int relationshipID);
-
         void DeleteUserRelationshipPreference(int preferenceID);
-
+        IDataReader GetUserRelationshipPreferenceByID(int preferenceID);
+        IDataReader GetUserRelationshipPreference(int userID, int relationshipID);
         int SaveUserRelationshipPreference(UserRelationshipPreference userRelationshipPreference, int createUpdateUserID);
 
         #endregion

@@ -42,23 +42,16 @@ namespace DotNetNuke.Entities.Users
     [Serializable]
     public class UserRelationshipPreference : BaseEntityInfo, IHydratable
     {
-        private int _preferenceID = -1;
+        public UserRelationshipPreference()
+        {
+            PreferenceID = -1;
+        }
 
         /// <summary>
         /// PreferenceID - The primary key
         /// </summary>
         [XmlAttribute]
-        public int PreferenceID
-        {
-            get
-            {
-                return _preferenceID;
-            }
-            set
-            {
-                _preferenceID = value;
-            }
-        }
+        public int PreferenceID { get; set; }
 
         /// <summary>
         /// UserID of the User that owns the relationship
@@ -86,11 +79,11 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                return this.PreferenceID;
+                return PreferenceID;
             }
             set
             {
-                this.PreferenceID = value;
+                PreferenceID = value;
             }
         }
 
@@ -100,10 +93,10 @@ namespace DotNetNuke.Entities.Users
         /// <param name="dr">the data reader.</param>
         public void Fill(IDataReader dr)
         {
-            this.PreferenceID = Convert.ToInt32(dr["PreferenceID"]);
-            this.UserID = Convert.ToInt32(dr["UserID"]);            
-            this.RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
-            this.DefaultResponse = (RelationshipStatus)Convert.ToInt32(dr["DefaultResponse"]);
+            PreferenceID = Convert.ToInt32(dr["PreferenceID"]);
+            UserID = Convert.ToInt32(dr["UserID"]);            
+            RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
+            DefaultResponse = (RelationshipStatus)Convert.ToInt32(dr["DefaultResponse"]);
         }
     }
 }

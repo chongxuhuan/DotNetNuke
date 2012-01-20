@@ -1209,4 +1209,40 @@ Sincerely,
   <data name="//Admin//Lists.String" xml:space="preserve">
     <value>Lists</value>
   </data>
+  <data name="RelationshipType_Added.Text" xml:space="preserve">
+    <value>Added RelationshipType {0}</value>
+  </data>
+  <data name="RelationshipType_Deleted.Text" xml:space="preserve">
+    <value>Deleted RelationshipType {0} : ID {1}</value>
+  </data>
+  <data name="RelationshipType_Updated.Text" xml:space="preserve">
+    <value>Updated RelationshipType {0}</value>
+  </data>
+  <data name="Relationship_Added.Text" xml:space="preserve">
+    <value>Added Relationship {0}</value>
+  </data>
+  <data name="Relationship_Deleted.Text" xml:space="preserve">
+    <value>Deleted Relationship {0} : ID {1}</value>
+  </data>
+  <data name="Relationship_Updated.Text" xml:space="preserve">
+    <value>Updated Relationship {0}</value>
+  </data>
+  <data name="UserRelationshipPreference_Added.Text" xml:space="preserve">
+    <value>Added UserRelationshipPreference ID {0} for User ID {1} and Relationship ID {2}</value>
+  </data>
+  <data name="UserRelationshipPreference_Deleted.Text" xml:space="preserve">
+    <value>Deleted UserRelationshipPreference ID {0} for User ID {1} and Relationship ID {2}</value>
+  </data>
+  <data name="UserRelationshipPreference_Updated.Text" xml:space="preserve">
+    <value>Updated UserRelationshipPreference ID {0} for User ID {1} and Relationship ID {2}</value>
+  </data>
+  <data name="UserRelationship_Added.Text" xml:space="preserve">
+    <value>Added UserRelationship ID {0} for UserID {1}, RelatedUserID {2}</value>
+  </data>
+  <data name="UserRelationship_Deleted.Text" xml:space="preserve">
+    <value>Deleted UserRelationship ID {0} for UserID {1}, RelatedUserID {2}</value>
+  </data>
+  <data name="UserRelationship_Updated.Text" xml:space="preserve">
+    <value>Updated UserRelationship ID {0} for UserID {1}, RelatedUserID {2}</value>
+  </data>
 </root>

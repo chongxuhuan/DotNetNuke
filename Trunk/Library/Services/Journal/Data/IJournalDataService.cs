@@ -1,7 +1,8 @@
-#region Copyright
+﻿#region Copyright
+
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,21 +18,29 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
+
 #endregion
+
 #region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Data;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("A9D062FC-4688-4CD4-BF1D-54DB4DE49C40")]
-[assembly: AssemblyVersion("6.2.0.245")]
+namespace DotNetNuke.Services.Journal {
+    public interface IJournalDataService {
+
+        IDataReader Journal_ListForSummary(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalTypeId, int RowIndex, int MaxRows);
+        IDataReader Journal_ListForProfile(int PortalId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows);
+        IDataReader Journal_ListForGroup(int PortalId, int CurrentUserId, int SocialGroupId, int JournalTypeId, int RowIndex, int MaxRows);
+        void Journal_Delete(int JournalId);
+        IDataReader Journal_Get(int PortalId, int CurrentUserId, int JournalId);
+        int Journal_Save(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalId, int JournalTypeId, string Title, string Summary,
+            string Body, string ItemData, string xml, string ObjectKey, Guid AccessKey);
+        void Journal_UpdateContentItemId(int JournalId, int ContentItemId);
+        void Journal_Like(int JournalId, int UserId, string DisplayName);
+        IDataReader Journal_LikeList(int PortalId, int JournalId);
+
+    }
+}

@@ -29,6 +29,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
+using DotNetNuke.Entities.Users.Social;
 using DotNetNuke.Services.SystemDateTime;
 using DotNetNuke.Services.Tokens;
 using DotNetNuke.UI.WebControls;

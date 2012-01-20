@@ -20,7 +20,9 @@
 #endregion
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Services.Cache;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 
 using Moq;
@@ -98,6 +100,11 @@ namespace DotNetNuke.Tests.Utilities.Mocks
         public static Mock<FolderProvider> CreateFolderProvider(string name)
         {
             return CreateNew<FolderProvider>(name);
+        }
+
+        public static Mock<ILocalizationProvider> CreateLocalizationProvider()
+        {
+            return CreateNew<ILocalizationProvider>(); ;
         }
 
         public static void ResetContainer()

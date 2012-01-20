@@ -1329,29 +1329,6 @@ AS
 	END
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteRelationshipByUserID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationshipByUserID]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationshipByUserID] @UserID INT	
-AS 
-	BEGIN
-		DELETE FROM {databaseOwner}{objectQualifier}Relationships  
-			WHERE UserID = @UserID
-	END
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteRelationshipByPortalID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationshipByPortalID]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteRelationshipByPortalID] @PortalID INT	
-AS 
-	BEGIN
-		DELETE FROM {databaseOwner}{objectQualifier}Relationships  
-			WHERE PortalID = @PortalID
-	END
-GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveRelationship]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveRelationship]
@@ -1437,52 +1414,6 @@ AS
 	ORDER BY UserRelationshipID ASC    
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByUserRelationshipAndStatus]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByUserRelationshipAndStatus]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByUserRelationshipAndStatus] 
-	@UserID INT,	
-	@RelationshipID INT,
-	@Direction INT,
-	@Status INT
-AS 
-	IF ( @Direction = 1 ) --OneWay
-	  BEGIN
-		 SELECT  UserRelationshipID,
-			UserID,
-			RelatedUserID,
-			RelationshipID,            
-			Status,            
-            CreatedByUserID ,
-            CreatedOnDate ,
-            LastModifiedByUserID ,
-            LastModifiedOnDate
-		FROM    {databaseOwner}{objectQualifier}UserRelationships    
-		WHERE UserID = @UserID	
-		AND   RelationshipID = @RelationshipID
-		AND   Status = @Status
-		ORDER BY UserRelationshipID ASC    
-	  END
-	  ELSE IF ( @Direction = 2 ) --TwoWay
-	  BEGIN
-		 SELECT  UserRelationshipID,
-			UserID,
-			RelatedUserID,
-			RelationshipID,            
-			Status,            
-            CreatedByUserID ,
-            CreatedOnDate ,
-            LastModifiedByUserID ,
-            LastModifiedOnDate
-		FROM    {databaseOwner}{objectQualifier}UserRelationships    
-		WHERE (UserID = @UserID OR RelatedUserID = @UserID)	--Check UserId in both the columns
-		AND   RelationshipID = @RelationshipID
-		AND   Status = @Status
-		ORDER BY UserRelationshipID ASC    		  
-	  END       
-GO
-
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByMultipleIDs]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByMultipleIDs]
 GO
@@ -1530,91 +1461,6 @@ AS
 	  END
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByUserID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByUserID]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByUserID] @UserID INT
-AS 
-    SELECT  UserRelationshipID,
-			UserID,
-			RelatedUserID,
-			RelationshipID,            
-			Status,            
-            CreatedByUserID ,
-            CreatedOnDate ,
-            LastModifiedByUserID ,
-            LastModifiedOnDate
-    FROM    {databaseOwner}{objectQualifier}UserRelationships    
-	WHERE UserID = @UserID
-	ORDER BY UserRelationshipID ASC    
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUserID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUserID]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUserID] @RelatedUserID INT
-AS 
-    SELECT  UserRelationshipID,
-			UserID,
-			RelatedUserID,
-			RelationshipID,            
-			Status,            
-            CreatedByUserID ,
-            CreatedOnDate ,
-            LastModifiedByUserID ,
-            LastModifiedOnDate
-    FROM    {databaseOwner}{objectQualifier}UserRelationships    
-	WHERE RelatedUserID = @RelatedUserID
-	ORDER BY UserRelationshipID ASC    
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUser]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUser]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelatedUser] 
-    @RelatedUserID INT,
-    @RelationshipID INT,
-    @Status INT
-AS 
-    SELECT  UserRelationshipID,
-			UserID,
-			RelatedUserID,
-			RelationshipID,            
-			Status,            
-            CreatedByUserID ,
-            CreatedOnDate ,
-            LastModifiedByUserID ,
-            LastModifiedOnDate
-    FROM    {databaseOwner}{objectQualifier}UserRelationships    
-	WHERE RelatedUserID = @RelatedUserID
-	  AND RelationshipID = @RelationshipID
-	  AND Status = @Status
-	ORDER BY UserRelationshipID ASC    
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationshipsByRelationshipID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelationshipID]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationshipsByRelationshipID] @RelationshipID INT
-AS 
-    SELECT  UserRelationshipID,
-			UserID,
-			RelatedUserID,
-			RelationshipID,            
-			Status,            
-            CreatedByUserID ,
-            CreatedOnDate ,
-            LastModifiedByUserID ,
-            LastModifiedOnDate
-    FROM    {databaseOwner}{objectQualifier}UserRelationships    
-	WHERE RelationshipID = @RelationshipID
-	ORDER BY UserRelationshipID ASC    
-GO
-
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteUserRelationship]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationship]
 GO
@@ -1624,42 +1470,6 @@ AS
 	BEGIN
 		DELETE FROM {databaseOwner}{objectQualifier}UserRelationships  
 			WHERE UserRelationshipID = @UserRelationshipID
-	END
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteUserRelationshipByUserID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByUserID]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByUserID] @UserID INT	
-AS 
-	BEGIN
-		DELETE FROM {databaseOwner}{objectQualifier}UserRelationships  
-			WHERE UserID = @UserID
-	END
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelatedUserID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelatedUserID]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelatedUserID] @RelatedUserID INT	
-AS 
-	BEGIN
-		DELETE FROM {databaseOwner}{objectQualifier}UserRelationships  
-			WHERE RelatedUserID = @RelatedUserID
-	END
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelationshipID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelationshipID]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserRelationshipByRelationshipID] @RelationshipID INT	
-AS 
-	BEGIN
-		DELETE FROM {databaseOwner}{objectQualifier}UserRelationships  
-			WHERE RelationshipID = @RelationshipID
 	END
 GO
 
@@ -2188,7 +1998,7 @@ AS
                     [LastModifiedByUserID],
                     [LastModifiedOnDate]			        												        
                     )
-            VALUES  (       					
+            VALUES  (       
 					@MessageID,
 					@UserID,
 					@Status,            
@@ -2212,11 +2022,9 @@ AS
         
     SELECT  @RecepientID        
 GO
-
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]
 GO
-
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]    
     @MessageID int,
     @RoleID int,
@@ -2242,7 +2050,6 @@ AS
               GETDATE() -- LastModifiedOn - datetime			                                                
            FROM {databaseOwner}{objectQualifier}vw_UserRoles
 		   WHERE RoleID = @RoleID    		               
-
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipient]') AND type in (N'P', N'PC'))
@@ -2476,6 +2283,506 @@ AS
 		LastUpdatedDate
 	FROM	{databaseOwner}{objectQualifier}UserProfile
 	WHERE   UserId = @UserID
+GO
+
+/* Journal Items */
+/*************************/
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[FK_{objectQualifier}Journal_JournalTypes]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal] DROP CONSTRAINT [FK_{objectQualifier}Journal_JournalTypes]
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_{objectQualifier}Journal_ProfileId]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal] DROP CONSTRAINT [DF_{objectQualifier}Journal_ProfileId]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_{objectQualifier}Journal_GroupId]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal] DROP CONSTRAINT [DF_{objectQualifier}Journal_GroupId]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_{objectQualifier}JournalTypes_PortalId]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] DROP CONSTRAINT [DF_{objectQualifier}JournalTypes_PortalId]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_{objectQualifier}JournalTypes_IsEnabled]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] DROP CONSTRAINT [DF_{objectQualifier}JournalTypes_IsEnabled]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_{objectQualifier}JournalTypes_AppliesToProfile]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] DROP CONSTRAINT [DF_{objectQualifier}JournalTypes_AppliesToProfile]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_{objectQualifier}JournalTypes_AppliesToGroup]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] DROP CONSTRAINT [DF_{objectQualifier}JournalTypes_AppliesToGroup]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_{objectQualifier}JournalTypes_AppliesToStream]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] DROP CONSTRAINT [DF_{objectQualifier}JournalTypes_AppliesToStream]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_{objectQualifier}JournalTypes_SupportsNotify]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] DROP CONSTRAINT [DF_{objectQualifier}JournalTypes_SupportsNotify]
+END
+GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[FK_{objectQualifier}Journal_Data_Journal]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Data]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Data] DROP CONSTRAINT [FK_{objectQualifier}Journal_Data_Journal]
+GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[FK_{objectQualifier}JournalComments_Journal]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Comments]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Comments] DROP CONSTRAINT [FK_{objectQualifier}JournalComments_Journal]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}Journal]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Access]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}Journal_Access]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Security]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}Journal_Security]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_TypeFilters]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}Journal_TypeFilters]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Types]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}Journal_Types]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Data]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}Journal_Data]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Comments]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}Journal_Comments]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}Journal](
+	[JournalId] [int] IDENTITY(1,1) NOT NULL,
+	[JournalTypeId] [int] NOT NULL,
+	[UserId] [int] NULL,
+	[DateCreated] [datetime] NULL,
+	[DateUpdated] [datetime] NULL,
+	[PortalId] [int] NULL,
+	[ProfileId] [int] NOT NULL,
+	[GroupId] [int] NOT NULL,
+	[Title] [nvarchar](255) NULL,
+	[Summary] [nvarchar](2000) NULL,
+	[ItemData] [nvarchar](2000) NULL,
+	[ImageURL] [nvarchar](255) NULL,
+	[ObjectKey] [nvarchar](255) NULL,
+	[AccessKey] [uniqueidentifier] NULL,
+	[ContentItemId] [int] NULL,
+ CONSTRAINT [PK_{objectQualifier}Journal] PRIMARY KEY CLUSTERED 
+(
+	[JournalId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Access](
+	[JournalTypeId] [int] NOT NULL,
+	[PortalId] [int] NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[AccessKey] [uniqueidentifier] NOT NULL,
+	[IsEnabled] [bit] NOT NULL,
+	[DateCreated] [datetime] NOT NULL
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Security](
+	[JournalId] [int] NOT NULL,
+	[SecurityKey] [nvarchar](50) NOT NULL,
+ CONSTRAINT [IX_{objectQualifier}Journal_Security] UNIQUE NONCLUSTERED 
+(
+	[JournalId] DESC,
+	[SecurityKey] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}Journal_TypeFilters](
+	[PortalId] [int] NOT NULL,
+	[JournalMode] [int] NOT NULL,
+	[JournalTypeId] [int] NOT NULL
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Types](
+	[JournalTypeId] [int] NOT NULL,
+	[JournalType] [nvarchar](25) NULL,
+	[icon] [nvarchar](25) NULL,
+	[PortalId] [int] NOT NULL,
+	[IsEnabled] [bit] NOT NULL,
+	[AppliesToProfile] [bit] NOT NULL,
+	[AppliesToGroup] [bit] NOT NULL,
+	[AppliesToStream] [bit] NOT NULL,
+	[Options] [nvarchar](max) NULL,
+	[SupportsNotify] [bit] NOT NULL,
+ CONSTRAINT [PK_{objectQualifier}JournalTypes] PRIMARY KEY CLUSTERED 
+(
+	[JournalTypeId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Data](
+	[JournalId] [int] NOT NULL,
+	[JournalXML] [xml] NOT NULL
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Comments](
+	[ContentItemID] [int] NULL,
+	[JournalId] [int] NULL
+) ON [PRIMARY]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal]  WITH NOCHECK ADD  CONSTRAINT [FK_{objectQualifier}Journal_JournalTypes] FOREIGN KEY([JournalTypeId])
+REFERENCES {databaseOwner}[{objectQualifier}Journal_Types] ([JournalTypeId])
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal] NOCHECK CONSTRAINT [FK_{objectQualifier}Journal_JournalTypes]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal] ADD  CONSTRAINT [DF_{objectQualifier}Journal_ProfileId]  DEFAULT ((-1)) FOR [ProfileId]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal] ADD  CONSTRAINT [DF_{objectQualifier}Journal_GroupId]  DEFAULT ((-1)) FOR [GroupId]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] ADD  CONSTRAINT [DF_{objectQualifier}JournalTypes_PortalId]  DEFAULT ((-1)) FOR [PortalId]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] ADD  CONSTRAINT [DF_{objectQualifier}JournalTypes_IsEnabled]  DEFAULT ((1)) FOR [IsEnabled]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] ADD  CONSTRAINT [DF_{objectQualifier}JournalTypes_AppliesToProfile]  DEFAULT ((1)) FOR [AppliesToProfile]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] ADD  CONSTRAINT [DF_{objectQualifier}JournalTypes_AppliesToGroup]  DEFAULT ((1)) FOR [AppliesToGroup]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] ADD  CONSTRAINT [DF_{objectQualifier}JournalTypes_AppliesToStream]  DEFAULT ((1)) FOR [AppliesToStream]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] ADD  CONSTRAINT [DF_{objectQualifier}JournalTypes_SupportsNotify]  DEFAULT ((0)) FOR [SupportsNotify]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Data]  WITH NOCHECK ADD  CONSTRAINT [FK_{objectQualifier}Journal_Data_Journal] FOREIGN KEY([JournalId])
+REFERENCES {databaseOwner}[{objectQualifier}Journal] ([JournalId])
+ON DELETE CASCADE
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Data] NOCHECK CONSTRAINT [FK_{objectQualifier}Journal_Data_Journal]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Comments]  WITH NOCHECK ADD  CONSTRAINT [FK_{objectQualifier}JournalComments_Journal] FOREIGN KEY([JournalId])
+REFERENCES {databaseOwner}[{objectQualifier}Journal] ([JournalId])
+ON DELETE CASCADE
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Comments] NOCHECK CONSTRAINT [FK_{objectQualifier}JournalComments_Journal]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_LikeList]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_LikeList]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Like]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_Like]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_ListForProfile]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForProfile]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationships]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationships]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Save]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_Save]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Delete]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_Delete]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_UpdateContentItemId]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_UpdateContentItemId]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_LikeList]
+@PortalId int,
+@JournalId int
+AS
+DECLARE @xdoc xml
+set @xdoc = (SELECT journalxml.query('//likes') 
+				from {databaseOwner}[{objectQualifier}Journal_Data] as jd
+				INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j ON j.JournalId = jd.JournalId
+				 WHERE j.JournalId = @JournalId AND j.PortalId = @PortalId)
+Select u.UserId, u.DisplayName,u.FirstName,u.LastName,u.Email,u.Username 
+	FROM @xdoc.nodes('/likes//u') as e(x) 
+CROSS APPLY {databaseOwner}[{objectQualifier}Users] as u
+WHERE u.UserID = x.value('@uid[1]','int')
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_Like]
+@JournalId int,
+@UserId int,
+@UserName nvarchar(50)
+AS 
+IF NOT EXISTS (SELECT JournalId from {databaseOwner}[{objectQualifier}Journal_Data] WHERE JournalId = @JournalId)
+	BEGIN
+		DECLARE @x xml
+		SET @x = '<items><item /></items>';
+		INSERT INTO {databaseOwner}[{objectQualifier}Journal_Data] 
+			(JournalId, JournalXML)
+			VALUES
+			(@JournalId, @x)
+	END
+IF EXISTS(SELECT j.JournalId 
+			FROM {databaseOwner}{objectQualifier}Journal as j INNER JOIN
+				{databaseOwner}{objectQualifier}Journal_Data as jx ON j.JournalId = jx.JournalId 
+			WHERE j.JournalId = @JournalId 
+				AND 
+				jx.journalxml.exist('/items/likes/u[@uid=sql:variable("@userid")]') = 1)
+BEGIN
+UPDATE {databaseOwner}{objectQualifier}Journal_Data
+SET JournalXML.modify('delete (/items/likes/u[@uid=sql:variable("@UserId")])')
+WHERE JournalId = @JournalId 
+	AND journalxml.exist('/items/likes/u[@uid=sql:variable("@UserId")]') = 1
+END
+ELSE
+	BEGIN
+		BEGIN
+			IF NOT EXISTS(SELECT JournalId FROM {databaseOwner}{objectQualifier}Journal_Data
+							WHERE JournalId = @JournalId 
+									AND
+								journalxml.exist('/items/likes') = 1)
+				BEGIN
+					UPDATE {databaseOwner}{objectQualifier}Journal_Data
+					SET JournalXML.modify('insert <likes /> as last into (/items)[1]') 
+					WHERE JournalId = @JournalId AND journalxml.exist('/items') = 1
+				END
+		END
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}Journal_Data
+			SET JournalXML.modify('insert <u uid="{xs:string(sql:variable("@UserId"))}" un="{xs:string(sql:variable("@UserName"))}" /> as last into (/items/likes)[1]')
+			Where JournalId = @JournalId AND journalxml.exist('/items/likes') = 1
+		END
+	END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForProfile]
+@PortalId int,
+@CurrentUserId int,
+@ProfileId int,
+@RowIndex int,
+@MaxRows int
+AS
+DECLARE @EndRow int
+SET @EndRow = @RowIndex + @MaxRows;
+WITH journalItems  AS
+(
+	SELECT	JournalId,
+			ROW_NUMBER() OVER (ORDER BY JournalId DESC) AS RowNumber
+	FROM	{databaseOwner}{objectQualifier}Journal
+	WHERE PortalId = @PortalId AND ProfileId = @ProfileId
+)
+SELECT	j.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated, j.PortalId,
+			j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey,
+			"JournalOwner" = '<entity><id>' + CAST(p.UserId as nvarchar(150)) + '</id><name>' + p.DisplayName + '</name></entity>',
+			"JournalAuthor" = CASE WHEN ISNULL(a.UserId,-1) >0 THEN '<entity><id>' + CAST(a.UserId as nvarchar(150)) + '</id><name>' + a.DisplayName + '</name></entity>' ELSE '' END,
+			"JournalOwnerId" = ISNULL(j.ProfileId,j.UserId),
+			 jt.Icon, jt.JournalType,
+			"Profile" = CASE WHEN j.ProfileId > 0 THEN '<entity><id>' + CAST(p.UserID as nvarchar(150)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>' ELSE '' END,
+			jd.JournalXML, j.ContentItemId, j.ItemData, RowNumber
+FROM	journalItems as ji INNER JOIN 
+	{databaseOwner}[{objectQualifier}Journal] as j ON j.JournalId = ji.JournalId INNER JOIN
+{databaseOwner}[{objectQualifier}Journal_Types] as jt ON jt.JournalTypeId = j.JournalTypeId LEFT OUTER JOIN
+			{databaseOwner}[{objectQualifier}Journal_Data] as jd on jd.JournalId = j.JournalId LEFT OUTER JOIN
+            {databaseOwner}[{objectQualifier}Users] AS p ON j.ProfileId = p.UserID LEFT OUTER JOIN
+            {databaseOwner}[{objectQualifier}Users] AS a ON j.UserId = a.UserID
+WHERE	RowNumber BETWEEN @RowIndex AND @EndRow
+ORDER BY RowNumber ASC;
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_Get]
+@PortalId int,
+@CurrentUserId int,
+@JournalId int
+AS
+SELECT     j.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated, j.PortalId,
+			j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey,
+			"JournalOwner" = '<entity><id>' + CAST(p.UserId as nvarchar(150)) + '</id><name>' + p.DisplayName + '</name></entity>',
+			"JournalAuthor" = CASE WHEN ISNULL(a.UserId,-1) >0 THEN '<entity><id>' + CAST(a.UserId as nvarchar(150)) + '</id><name>' + a.DisplayName + '</name></entity>' ELSE '' END,
+			"JournalOwnerId" = ISNULL(j.ProfileId,j.UserId),
+			 jt.Icon, jt.JournalType,
+			"Profile" = CASE WHEN j.ProfileId > 0 THEN '<entity><id>' + CAST(p.UserID as nvarchar(150)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>' ELSE '' END,
+			jd.JournalXML, ContentItemId, j.ItemData			
+FROM       	{databaseOwner}[{objectQualifier}Journal] AS j INNER JOIN
+			{databaseOwner}[{objectQualifier}Journal_Types] as jt ON jt.JournalTypeId = j.JournalTypeId LEFT OUTER JOIN
+			{databaseOwner}[{objectQualifier}Journal_Data] as jd on jd.JournalId = j.JournalId LEFT OUTER JOIN
+            {databaseOwner}[{objectQualifier}Users] AS p ON j.ProfileId = p.UserID LEFT OUTER JOIN
+            {databaseOwner}[{objectQualifier}Users] AS a ON j.UserId = a.UserID
+WHERE j.JournalId = @JournalId
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_Save]
+@PortalId int,
+@JournalId int,
+@JournalTypeId int,
+@UserId int,
+@ProfileId int,
+@GroupId int,
+@Title nvarchar(255),
+@Summary nvarchar(2000),
+@ItemData nvarchar(2000),
+@JournalXML xml,
+@ObjectKey nvarchar(255),
+@AccessKey uniqueidentifier
+AS
+INSERT INTO {databaseOwner}[{objectQualifier}Journal]
+	(JournalTypeId, UserId, DateCreated, DateUpdated, PortalId, ProfileId, GroupId,Title,Summary, ObjectKey, AccessKey, ItemData)
+	VALUES
+	(@JournalTypeId, @UserId, GETUTCDATE(), GETUTCDATE(), @PortalId, @ProfileId, @GroupId, @Title, @Summary, @ObjectKey, @AccessKey, @ItemData)
+SET @JournalId = SCOPE_IDENTITY()
+IF @JournalXML IS NOT NULL
+BEGIN
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Data]
+	(JournalId, JournalXML)
+	VALUES
+	(@JournalId, @JournalXML)
+END
+SELECT @JournalId
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_Delete]
+@JournalId int
+AS
+DELETE FROM {databaseOwner}[{objectQualifier}Journal] WHERE JournalId = @JournalId
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_UpdateContentItemId]
+@JournalId int,
+@ContentItemId int
+AS
+UPDATE {databaseOwner}[{objectQualifier}Journal]
+	SET ContentItemId = @ContentItemId
+WHERE JournalId = @JournalId
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(1, 'status', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(2, 'link', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(3, 'photo', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(4, 'file', '', -1, 1, 1, 1, 1, null, 1)
+GO
+/* Add GetInbox Procedure */
+/************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetInbox]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetInbox]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetInbox]
+	@UserID  int,
+	@PageIndex      int,
+	@PageSize       int,
+	@TotalRecords	int
+AS
+BEGIN
+		-- Set the page bounds
+		DECLARE 
+			@PageLowerBound INT, 
+			@PageUpperBound INT, 
+			@RowsToReturn int;
+		exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output;
+WITH inboxItems  AS
+(
+	SELECT	RecepientId,
+			ROW_NUMBER() OVER (ORDER BY RecepientId DESC) AS RowNumber
+	FROM	{databaseOwner}{objectQualifier}Social_Message_Recipients
+	WHERE UserID = @UserID
+)	
+SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
+order by RowNumber ASC
+END
+GO
+
+/* Add UpdateSocialMessageStatus Procedure */
+/************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateSocialMessageStatus]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageStatus]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageStatus]
+	@RecipientID	int,
+	@Status			int
+AS
+BEGIN
+UPDATE {databaseOwner}[{objectQualifier}Social_Message_Recipients] SET Status=@status WHERE RecipientID=@RecipientID
+END
+GO
+
+/* Add GetUserRelationships Procedure */
+/**************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserRelationships]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationships]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserRelationships]
+	@UserID INT
+AS 
+	SELECT  UserRelationshipID,
+			UserID,
+			RelatedUserID,
+			RelationshipID,            
+			Status,            
+			CreatedByUserID ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate
+	FROM    {databaseOwner}{objectQualifier}UserRelationships    		
+	WHERE UserID = @UserID OR RelatedUserID = @UserID
 GO
 
 /************************************************************/

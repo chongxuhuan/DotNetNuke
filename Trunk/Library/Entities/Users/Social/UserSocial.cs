@@ -25,14 +25,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Xml.Serialization;
-using DotNetNuke.Entities.Modules;
+
 using DotNetNuke.Security.Roles;
 
 #endregion
 
-namespace DotNetNuke.Entities.Users
+namespace DotNetNuke.Entities.Users.Social
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
@@ -50,11 +49,11 @@ namespace DotNetNuke.Entities.Users
         #region Private
 
         private IList<Relationship> _relationships;
-        //private Dictionary<Relationship, IList<UserRelationship>> _userRelationships;
+        private IDictionary<Relationship, IList<UserRelationship>> _userRelationships;
         private  IList<UserRoleInfo> _roles;
-        private UserInfo _userInfo;
-        private RelationshipController _relationshipController;
-        private RoleController _roleController;
+        private readonly UserInfo _userInfo;
+        private readonly RelationshipController _relationshipController;
+        private readonly RoleController _roleController;
 
         #endregion
 
@@ -72,27 +71,11 @@ namespace DotNetNuke.Entities.Users
         #region Public Properties
 
         /// <summary>
-        /// List of Friends with UserRelationship Status as Accepted.
+        /// A collection of all the relationships the user is a member of.
         /// </summary>
-        [XmlAttribute]
-        public IList<UserRelationship> Friends
+        public IDictionary<Relationship, IList<UserRelationship>> UserRelationships
         {
-            get
-            {
-                return _relationshipController.GetFriends(_userInfo);
-            }
-        }
-
-        /// <summary>
-        /// List of Followerss with UserRelationship Status as Accepted.
-        /// </summary>
-        [XmlAttribute]
-        public IList<UserRelationship> Followers
-        {
-            get
-            {
-                return _relationshipController.GetFollowers(_userInfo);
-            }
+            get { return _userRelationships ?? (_userRelationships = GetUserRelationships()); }
         }
 
         /// <summary>
@@ -123,18 +106,30 @@ namespace DotNetNuke.Entities.Users
         [XmlAttribute]
         public IList<UserRoleInfo> Roles
         {
-            get
-            {
-                if (_roles == null)
-                {
-                    _roles = _roleController.GetUserRoles(_userInfo, true);
-                }
-
-                return _roles;
-            }
+            get { return _roles ?? (_roles = _roleController.GetUserRoles(_userInfo, true)); }
         }
 
-
         #endregion
+
+        private IDictionary<Relationship, IList<UserRelationship>> GetUserRelationships()
+        {
+            var dictionary = new Dictionary<Relationship, IList<UserRelationship>>();
+
+            foreach (UserRelationship userRelationship in _relationshipController.GetUserRelationships(_userInfo))
+            {
+                Relationship relationship = _relationshipController.GetRelationship(userRelationship.RelationshipID);
+
+                IList<UserRelationship> userRelationshipList;
+                if (!dictionary.TryGetValue(relationship, out userRelationshipList))
+                {
+                    userRelationshipList = new List<UserRelationship>();
+                    dictionary.Add(relationship, userRelationshipList);
+                }
+
+                userRelationshipList.Add(userRelationship);
+            }
+
+            return dictionary;
+        }
     }
 }

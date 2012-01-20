@@ -8,11 +8,13 @@ namespace DotNetNuke.Services.Log.EventLog
     /// </summary>
     public interface IEventLogController
     {
-        void AddLog(PortalSettings portalSettings, int userID, EventLogController.EventLogType logType);
+        void AddLog(string propertyName, string propertyValue, EventLogController.EventLogType logType);
 
         void AddLog(string propertyName, string propertyValue, PortalSettings portalSettings, int userID, EventLogController.EventLogType logType);
 
         void AddLog(string propertyName, string propertyValue, PortalSettings portalSettings, int userID, string logType);
+
+        void AddLog(PortalSettings portalSettings, int userID, EventLogController.EventLogType logType);
 
         void AddLog(LogProperties properties, PortalSettings portalSettings, int userID, string logTypeKey, bool bypassBuffering);
 

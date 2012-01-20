@@ -97,24 +97,22 @@ namespace DotNetNuke.Services.Social.Messaging
 
         public void MarkRead(int messageRecipientID)
         {
-            throw new NotImplementedException();
+            _DataService.UpdateSocialMessageStatus(messageRecipientID,(int)Messaging.MessageStatus.Read);
         }
 
         public void MarkUnRead(int messageRecipientID)
         {
-            throw new NotImplementedException();
+            _DataService.UpdateSocialMessageStatus(messageRecipientID, (int)Messaging.MessageStatus.Unread);
         }
 
         public void MarkArchived(int messageRecipientID)
         {
-            throw new NotImplementedException();
+            _DataService.UpdateSocialMessageStatus(messageRecipientID, (int)Messaging.MessageStatus.Archived);
         }
 
         public IList<Message> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
         {
-           //TODO:
-            // return CBO.FillCollection<Message>(_DataService.GetInbox(userID, pageIndex, pageSize, totalRecords));
-            return null;
+            return _DataService.GetInbox(userID, pageIndex, pageSize, totalRecords);
         }
 
         public IList<Message> GetRecentMessages(int userID)

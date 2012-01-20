@@ -50,6 +50,7 @@ namespace DotNetNuke.Services.Log.EventLog
         private const int WriterLockTimeout = 10000; //milliseconds
         private static readonly ReaderWriterLock LockLog = new ReaderWriterLock();
         private static readonly PortalController portalController = new PortalController();
+
         #region Private Methods
 
         private static void AddLogToFile(LogInfo logInfo)

@@ -99,6 +99,7 @@
     <Compile Include="Mocks\MockComponentProvider.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Library\DotNetNuke.Library.csproj">

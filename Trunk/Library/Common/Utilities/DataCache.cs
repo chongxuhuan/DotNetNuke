@@ -196,17 +196,9 @@ namespace DotNetNuke.Common.Utilities
         public const CacheItemPriority RelationshipTypesCachePriority = CacheItemPriority.Default;
         public const int RelationshipTypesCacheTimeOut = 20;
 
-        public const string RelationshipByUserIDCacheKey = "RelationshipByUserID:{0}";
-        public const CacheItemPriority RelationshipByUserIDCachePriority = CacheItemPriority.BelowNormal;
-        public const int RelationshipByUserIDCacheTimeOut = 10;
-
         public const string RelationshipByPortalIDCacheKey = "RelationshipByPortalID:{0}";
         public const CacheItemPriority RelationshipByPortalIDCachePriority = CacheItemPriority.Default;
         public const int RelationshipByPortalIDCacheTimeOut = 20;
-
-        public const string UserRelationshipByInitiatingUserIDCacheKey = "UserRelationshipByUserID:{0}";
-        public const CacheItemPriority UserRelationshipByInitiatingUserIDCachePriority = CacheItemPriority.BelowNormal;
-        public const int UserRelationshipByInitiatingUserIDCacheTimeOut = 10;
 
         private static string _CachePersistenceEnabled = "";
 

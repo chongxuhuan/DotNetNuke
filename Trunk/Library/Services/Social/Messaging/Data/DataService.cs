@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
 
@@ -61,9 +62,13 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         public IList<Message> GetInbox(int userID, int pageIndex, int pageSize, int totalRecords)
         {
-            throw new NotImplementedException();
+            return CBO.FillCollection<Message>(_provider.ExecuteReader("GetInbox",userID,pageIndex,pageSize,totalRecords));
         }
 
+        public void UpdateSocialMessageStatus(int recipientID, int status)
+        {
+            _provider.ExecuteNonQuery("UpdateSocialMessageStatus", recipientID, status);
+        }
 
         #endregion
 

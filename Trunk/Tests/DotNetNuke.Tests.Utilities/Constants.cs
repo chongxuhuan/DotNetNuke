@@ -297,6 +297,7 @@ namespace DotNetNuke.Tests.Utilities
 
         public const int SOCIAL_InValidRelationshipType = 999;
         public const int SOCIAL_InValidRelationship = 999;
+        public const int SOCIAL_InValidUserRelationship = 999;
         public const int SOCIAL_FriendRelationshipTypeID = 1;
         public const int SOCIAL_FollowerRelationshipTypeID = 2;
         public const int SOCIAL_FriendRelationshipID = 1;
@@ -321,6 +322,14 @@ namespace DotNetNuke.Tests.Utilities
         public const string LOCALIZATION_Relationship_Added = "Added Relationship {0}";
         public const string LOCALIZATION_Relationship_Updated_Key = "Relationship_Updated";
         public const string LOCALIZATION_Relationship_Updated = "Updated Relationship {0}";
+
+        public const string LOCALIZATION_UserRelationship_Deleted_Key = "UserRelationship_Deleted";
+        public const string LOCALIZATION_UserRelationship_Deleted = "Deleted UserRelationship ID {0}, UserID {1}, RelatedUserID {2}";
+        public const string LOCALIZATION_UserRelationship_Added_Key = "UserRelationship_Added";
+        public const string LOCALIZATION_UserRelationship_Added = "Added UserRelationship ID {0}, UserID {1}, RelatedUserID {2}";
+        public const string LOCALIZATION_UserRelationship_Updated_Key = "UserRelationship_Updated";
+        public const string LOCALIZATION_UserRelationship_Updated = "Updated UserRelationship ID {0}, UserID {1}, RelatedUserID {2}";
+
 
         public const string LOCALIZATION_UserRelationshipPreference_Deleted_Key = "UserRelationshipPreference_Deleted";
         public const string LOCALIZATION_UserRelationshipPreference_Deleted = "Deleted UserRelationshipPreference ID {0} for User ID {1} and Relationship ID {2}";

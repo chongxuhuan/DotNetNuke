@@ -32,9 +32,7 @@ namespace DotNetNuke.Entities.Users
         #region Relationship Business APIs
 
         UserRelationship InitiateUserRelationship(UserInfo initiatingUser, UserInfo targetUser, Relationship relationship);
-
-        UserRelationship GetUserRelationship(int userID, int relatedUserID, Relationship relationship, RelationshipStatus status);
-        
+       
         void AcceptUserRelationship(int userRelationshipID);
 
         void RejectUserRelationship(int userRelationshipID);

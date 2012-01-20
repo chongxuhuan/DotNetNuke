@@ -172,17 +172,14 @@ namespace DotNetNuke.Services.Log.EventLog
 
         #region IEventLogController Members
 
-        public void AddLog(PortalSettings portalSettings, int userID, EventLogType logType)
+        public void AddLog(string propertyName, string propertyValue, EventLogType logType)
         {
-            AddLog(new LogProperties(), portalSettings, userID, logType.ToString(), false);
+            AddLog(propertyName, propertyValue, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, logType);
         }
 
         public void AddLog(string propertyName, string propertyValue, PortalSettings portalSettings, int userID, EventLogType logType)
         {
-            var properties = new LogProperties();
-            var logDetailInfo = new LogDetailInfo {PropertyName = propertyName, PropertyValue = propertyValue};
-            properties.Add(logDetailInfo);
-            AddLog(properties, portalSettings, userID, logType.ToString(), false);
+            AddLog(propertyName, propertyValue, portalSettings, userID, logType.ToString());
         }
 
         public void AddLog(string propertyName, string propertyValue, PortalSettings portalSettings, int userID, string logType)
@@ -203,6 +200,11 @@ namespace DotNetNuke.Services.Log.EventLog
                 logInfo.LogPortalName = portalSettings.PortalName;
             }
             AddLog(logInfo);
+        }
+
+        public void AddLog(PortalSettings portalSettings, int userID, EventLogType logType)
+        {
+            AddLog(new LogProperties(), portalSettings, userID, logType.ToString(), false);
         }
 
         public void AddLog(object businessObject, PortalSettings portalSettings, int userID, string userName, EventLogType logType)
