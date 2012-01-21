@@ -24,7 +24,9 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Web;
 
 using DotNetNuke.Common;
@@ -35,6 +37,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Security;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Tokens;
 
 #endregion
@@ -79,11 +82,32 @@ namespace DotNetNuke.Entities.Users
             {
                 switch (property.ProfileVisibility.VisibilityMode)
                 {
-                    case UserVisibilityMode.FriendsGroups:
-                        isVisible = IsMember(accessingUser);
+                    case UserVisibilityMode.FriendsAndGroups:
+                        isVisible = IsUser(accessingUser);
+                        if(!isVisible)
+                        {
+                            //Relationships
+                            foreach (Relationship relationship in property.ProfileVisibility.RelationshipVisibilities)
+                            {
+                                IList<UserRelationship> userRelationships;
+                                if (user.Social.UserRelationships.TryGetValue(relationship.RelationshipID, out userRelationships))
+                                {
+                                    if (userRelationships.Any(userRelationship => accessingUser.UserID == userRelationship.RelatedUserID))
+                                    {
+                                        isVisible = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            //Groups/Roles
+                            if (property.ProfileVisibility.RoleVisibilities.Any(role => accessingUser.IsInRole(role.RoleName)))
+                            {
+                                isVisible = true;
+                            }
+                        }
                         break;
                     case UserVisibilityMode.AllUsers:
-                        // property is visible
+                        // property is visible to everyone so do nothing
                         break;
                     case UserVisibilityMode.MembersOnly:
                         // property visible if accessing user is a member
@@ -91,7 +115,7 @@ namespace DotNetNuke.Entities.Users
                         break;
                     case UserVisibilityMode.AdminOnly:
                         //accessing user not admin user so property is hidden (unless it is the user him/herself)
-                        isVisible = (user.UserID == accessingUser.UserID);
+                        isVisible = IsUser(accessingUser);
                         break;
                 }               
             }
@@ -127,6 +151,11 @@ namespace DotNetNuke.Entities.Users
         private bool IsMember(UserInfo accessingUser)
         {
             return (accessingUser != null && accessingUser.UserID != -1);
+        }
+
+        private bool IsUser(UserInfo accessingUser)
+        {
+            return (accessingUser != null && accessingUser.UserID == user.UserID);
         }
 
         #endregion

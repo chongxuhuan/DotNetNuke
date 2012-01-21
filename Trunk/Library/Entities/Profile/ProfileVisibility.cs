@@ -30,6 +30,7 @@ using DotNetNuke.Security.Roles;
 
 namespace DotNetNuke.Entities.Profile
 {
+    [Serializable]
     public class ProfileVisibility
     {
         public ProfileVisibility()
@@ -88,7 +89,7 @@ namespace DotNetNuke.Entities.Profile
 
         public string ExtendedVisibilityString()
         {
-            if (VisibilityMode == UserVisibilityMode.FriendsGroups)
+            if (VisibilityMode == UserVisibilityMode.FriendsAndGroups)
             {
                 var sb = new StringBuilder();
                 sb.Append("G:");

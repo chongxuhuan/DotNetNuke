@@ -43,8 +43,8 @@ namespace DotNetNuke.Services.Social.Messaging
       
         IList<Message> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
 
-        //Gets the latest 10 messages.
-        IList<Message> GetRecentMessages(int userID);
+        //Gets the latest 10 messages.s
+        IList<Message> GetRecentMessages(int userID, ref int totalRecords);
 
         Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
 

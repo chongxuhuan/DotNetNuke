@@ -703,7 +703,7 @@ namespace DotNetNuke.Entities.Users.Social
 
             IList<UserRelationship> friends;
             var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
-            initiatingUser.Social.UserRelationships.TryGetValue(relationship, out friends);
+            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipID, out friends);
 
             return friends;
         }
@@ -723,7 +723,7 @@ namespace DotNetNuke.Entities.Users.Social
 
             IList<UserRelationship> followers;
             var relationship = GetFollowersRelatioshipByPortal(initiatingUser.PortalID);
-            initiatingUser.Social.UserRelationships.TryGetValue(relationship, out followers);
+            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipID, out followers);
 
             return followers;
         }

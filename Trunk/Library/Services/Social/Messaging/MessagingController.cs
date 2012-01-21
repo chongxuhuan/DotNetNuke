@@ -112,12 +112,15 @@ namespace DotNetNuke.Services.Social.Messaging
 
         public IList<Message> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
         {
-            return _DataService.GetInbox(userID, pageIndex, pageSize, totalRecords);
+            var messages= _DataService.GetInbox(userID, pageIndex, pageSize, totalRecords);
+            totalRecords = messages.Count;
+            return messages;
         }
 
-        public IList<Message> GetRecentMessages(int userID)
+        public IList<Message> GetRecentMessages(int userID, ref int totalRecords)
         {
-            throw new NotImplementedException();
+            var messages = GetInbox(userID, 1, 10, ref totalRecords);
+            return messages;
         }
 
         public Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)

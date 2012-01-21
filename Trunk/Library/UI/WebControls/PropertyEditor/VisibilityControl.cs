@@ -113,9 +113,9 @@ namespace DotNetNuke.UI.WebControls
             var presentVisibility = Visibility.VisibilityMode;
             var postedValue = Convert.ToInt32(postCollection[postDataKey]);
 		    var postedVisibility = (UserVisibilityMode) Enum.ToObject(typeof (UserVisibilityMode), postedValue);
-            if (!presentVisibility.Equals(postedVisibility) || postedVisibility == UserVisibilityMode.FriendsGroups)
+            if (!presentVisibility.Equals(postedVisibility) || postedVisibility == UserVisibilityMode.FriendsAndGroups)
 			{
-                if (postedVisibility == UserVisibilityMode.FriendsGroups)
+                if (postedVisibility == UserVisibilityMode.FriendsAndGroups)
                 {
                     var sb = new StringBuilder();
                     sb.Append("G:");
@@ -304,7 +304,7 @@ namespace DotNetNuke.UI.WebControls
 
             RenderVisibility(writer, "2", UserVisibilityMode.AdminOnly, Localization.GetString("AdminOnly").Trim());
 
-            RenderVisibility(writer, "3", UserVisibilityMode.FriendsGroups, Localization.GetString("FriendsGroups").Trim());
+            RenderVisibility(writer, "3", UserVisibilityMode.FriendsAndGroups, Localization.GetString("FriendsGroups").Trim());
 
             //Render UL for radio Button List
             writer.RenderBeginTag(HtmlTextWriterTag.Ul);

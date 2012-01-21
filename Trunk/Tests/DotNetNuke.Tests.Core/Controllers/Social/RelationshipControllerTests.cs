@@ -647,6 +647,49 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         }
 
         [Test]
+        public void RelationshipController_GetUserRelationships_Returns_List_Of_UserRelationships_For_Valid_User()
+        {
+            //Arrange
+            var mockDataService = new Mock<IDataService>();
+            _dtUserRelationships.Clear();
+            for (int i = 1; i <= 5; i++)
+            {
+                _dtUserRelationships.Rows.Add(i, Constants.USER_ValidId, Constants.USER_TenId,
+                                                Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
+            }
+            mockDataService.Setup(md => md.GetUserRelationships(Constants.USER_ValidId)).Returns(_dtUserRelationships.CreateDataReader());
+            var relationshipController = CreateRelationshipController(mockDataService);
+
+            //Act
+            var user = new UserInfo {UserID = Constants.USER_ValidId};
+            var userRelationships = relationshipController.GetUserRelationships(user);
+
+            //Assert
+            Assert.IsInstanceOf<IList<UserRelationship>>(userRelationships);
+            Assert.AreEqual(5, userRelationships.Count);
+        }
+
+        [Test]
+        public void RelationshipController_GetUserRelationships_Returns_EmptyList_Of_UserRelationships_For_InValid_User()
+        {
+            //Arrange
+            var mockDataService = new Mock<IDataService>();
+            _dtUserRelationships.Clear();
+
+            mockDataService.Setup(md => md.GetUserRelationships(Constants.USER_InValidId)).Returns(_dtUserRelationships.CreateDataReader());
+            var relationshipController = CreateRelationshipController(mockDataService);
+
+            //Act
+            var user = new UserInfo { UserID = Constants.USER_InValidId };
+            var userRelationships = relationshipController.GetUserRelationships(user);
+
+            //Assert
+            Assert.IsInstanceOf<IList<UserRelationship>>(userRelationships);
+            Assert.AreEqual(0, userRelationships.Count);
+        }
+
+
+        [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void RelationshipController_SaveUserRelationship_Throws_On_Null_UserRelationship()
         {

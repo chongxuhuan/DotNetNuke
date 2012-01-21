@@ -49,7 +49,7 @@ namespace DotNetNuke.Entities.Users.Social
         #region Private
 
         private IList<Relationship> _relationships;
-        private IDictionary<Relationship, IList<UserRelationship>> _userRelationships;
+        private IDictionary<int, IList<UserRelationship>> _userRelationships;
         private  IList<UserRoleInfo> _roles;
         private readonly UserInfo _userInfo;
         private readonly RelationshipController _relationshipController;
@@ -73,7 +73,7 @@ namespace DotNetNuke.Entities.Users.Social
         /// <summary>
         /// A collection of all the relationships the user is a member of.
         /// </summary>
-        public IDictionary<Relationship, IList<UserRelationship>> UserRelationships
+        public IDictionary<int, IList<UserRelationship>> UserRelationships
         {
             get { return _userRelationships ?? (_userRelationships = GetUserRelationships()); }
         }
@@ -111,19 +111,19 @@ namespace DotNetNuke.Entities.Users.Social
 
         #endregion
 
-        private IDictionary<Relationship, IList<UserRelationship>> GetUserRelationships()
+        private IDictionary<int, IList<UserRelationship>> GetUserRelationships()
         {
-            var dictionary = new Dictionary<Relationship, IList<UserRelationship>>();
+            var dictionary = new Dictionary<int, IList<UserRelationship>>();
 
             foreach (UserRelationship userRelationship in _relationshipController.GetUserRelationships(_userInfo))
             {
                 Relationship relationship = _relationshipController.GetRelationship(userRelationship.RelationshipID);
 
                 IList<UserRelationship> userRelationshipList;
-                if (!dictionary.TryGetValue(relationship, out userRelationshipList))
+                if (!dictionary.TryGetValue(relationship.RelationshipID, out userRelationshipList))
                 {
                     userRelationshipList = new List<UserRelationship>();
-                    dictionary.Add(relationship, userRelationshipList);
+                    dictionary.Add(relationship.RelationshipID, userRelationshipList);
                 }
 
                 userRelationshipList.Add(userRelationship);
