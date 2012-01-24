@@ -116,7 +116,7 @@ namespace DotNetNuke.Common.Utilities
 
             string relativePath;
 
-            if (physicalPath.StartsWith(rootFolderMapPath))
+            if (physicalPath.StartsWith(rootFolderMapPath, StringComparison.InvariantCultureIgnoreCase))
             {
                 relativePath = physicalPath.Substring(rootFolderMapPath.Length);
 

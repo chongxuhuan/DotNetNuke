@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -17,87 +18,31 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
+
 #endregion
+
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
-using System.Web.Mvc;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 
 namespace DotNetNuke.Web.Services
 {
-    public class DnnAuthorizeAttribute : AuthorizeAttribute
+    public sealed class DnnAuthorizeAttribute : AuthorizeAttributeBase
     {
-        protected string[] UsersSplitBackingField;
-        protected string[] RolesSplitBackingField;
+        private string _roles;
+        private string[] _rolesSplit;
 
-        //this method must be thread-safe
-        protected override bool AuthorizeCore(HttpContextBase httpContext)
+        public string Roles
         {
-            //do not call base implementation
-            if (httpContext == null)
+            get { return _roles; }
+            set
             {
-                throw new ArgumentNullException("httpContext");
-            }
-
-            IPrincipal user = httpContext.User;
-            if (!AllowAnonymous)
-            {
-                if (user == null || !user.Identity.IsAuthenticated)
-                {
-                    return false;
-                }
-            }
-
-            if (UsersSplit.Length > 0 && (user == null || !UsersSplit.Contains(user.Identity.Name, StringComparer.OrdinalIgnoreCase)))
-            {
-                return false;
-            }
-
-
-            if (RequiresHost || RolesSplit.Length > 0)
-            {
-                var userInfo = PortalController.GetCurrentPortalSettings().UserInfo;
-
-                if(RequiresHost && !userInfo.IsSuperUser)
-                {
-                    return false;
-                }
-
-                if (!RolesSplit.Any(userInfo.IsInRole))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        protected string[] RolesSplit
-        {
-            get
-            {
-                if (RolesSplitBackingField == null)
-                {
-                    //no locking don't worry about running this twice in a race
-                    RolesSplitBackingField = SplitString(Roles);
-                }
-                return RolesSplitBackingField;
-            }
-        }
-
-        protected string[] UsersSplit
-        {
-            get
-            {
-                if (UsersSplitBackingField == null)
-                {
-                    //no locking don't worry about running this twice in a race
-                    UsersSplitBackingField = SplitString(Users);
-                }
-                return UsersSplitBackingField;
+                _roles = value;
+                _rolesSplit = SplitString(_roles);
             }
         }
 
@@ -115,6 +60,41 @@ namespace DotNetNuke.Web.Services
         /// </summary>
         public bool AllowAnonymous { get; set; }
 
+        protected override bool AuthorizeCore(HttpContextBase httpContext)
+        {
+            //do not call base implementation
+            if (httpContext == null)
+            {
+                throw new ArgumentNullException("httpContext");
+            }
+
+            IPrincipal user = httpContext.User;
+            if (!AllowAnonymous)
+            {
+                if (user == null || !user.Identity.IsAuthenticated)
+                {
+                    return false;
+                }
+            }
+
+            if (RequiresHost || _rolesSplit.Length > 0)
+            {
+                UserInfo userInfo = PortalController.GetCurrentPortalSettings().UserInfo;
+
+                if (RequiresHost && !userInfo.IsSuperUser)
+                {
+                    return false;
+                }
+
+                if (!_rolesSplit.Any(userInfo.IsInRole))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         protected string[] SplitString(string original)
         {
             if (String.IsNullOrEmpty(original))
@@ -122,10 +102,10 @@ namespace DotNetNuke.Web.Services
                 return new string[0];
             }
 
-            var split = from piece in original.Split(',')
-                        let trimmed = piece.Trim()
-                        where !String.IsNullOrEmpty(trimmed)
-                        select trimmed;
+            IEnumerable<string> split = from piece in original.Split(',')
+                                        let trimmed = piece.Trim()
+                                        where !String.IsNullOrEmpty(trimmed)
+                                        select trimmed;
             return split.ToArray();
         }
     }

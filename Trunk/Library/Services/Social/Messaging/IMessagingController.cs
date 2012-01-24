@@ -48,6 +48,8 @@ namespace DotNetNuke.Services.Social.Messaging
 
         Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
 
+        Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender);
+
         #endregion
     }
 }

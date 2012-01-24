@@ -1987,7 +1987,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
     @Status tinyint,
 	@CreateUpdateUserID INT    
 AS 
-    IF ( @MessageID = -1 ) 
+    IF ( @RecepientID = -1 ) 
         BEGIN
             INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
 					[MessageID],
@@ -2117,7 +2117,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageAttachment]
 AS 
     IF ( @MessageAttachmentID = -1 ) 
         BEGIN
-            INSERT {databaseOwner}{objectQualifier}Social_Message_Attachments(                    
+            INSERT {databaseOwner}{objectQualifier}Social_MessageAttachments(                    
 					[FileID],
 					[MessageID],
 					[UserID],
@@ -2140,7 +2140,7 @@ AS
         END
     ELSE 
         BEGIN
-            UPDATE  {databaseOwner}{objectQualifier}Social_Message_Attachments
+            UPDATE  {databaseOwner}{objectQualifier}Social_MessageAttachments
             SET     [FileID] = @FileID,
 					[MessageID] = @MessageID,
                     LastModifiedByUserID = @CreateUpdateUserID,
@@ -2737,7 +2737,7 @@ WITH inboxItems  AS
 (
 	SELECT	RecepientId,
 			ROW_NUMBER() OVER (ORDER BY RecepientId DESC) AS RowNumber
-	FROM	{databaseOwner}{objectQualifier}Social_Message_Recipients
+	FROM	{databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE UserID = @UserID
 )	
 SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
@@ -2755,7 +2755,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageStatus]
 	@Status			int
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}Social_Message_Recipients] SET Status=@status WHERE RecipientID=@RecipientID
+UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET Status=@status WHERE RecipientID=@RecipientID
 END
 GO
 

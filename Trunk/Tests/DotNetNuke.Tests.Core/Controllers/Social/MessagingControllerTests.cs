@@ -155,59 +155,174 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         [Test]
-        public void MessagingController_CreateMessage_Calls_DataService_On_Valid_Message()
+        [ExpectedException(typeof(ArgumentException))]
+        public void MessagingController_CreateMessage_Throws_On_Null_Sender()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
+            var role = new RoleInfo { RoleName = "role1" };
+
+            //Act
+            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, null, null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void MessagingController_CreateMessage_Throws_On_Negative_SenderID()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
+            var role = new RoleInfo { RoleName = "role1" };
+            var sender = new UserInfo { DisplayName = "user11"};
+
+            //Act
+            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, null, sender);
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Calls_DataService_SaveSocialMessage_On_Valid_Message()
         {   
             //Arrange
-            var user = new UserInfo {DisplayName = "user1"};
-            var role = new RoleInfo { RoleName = "role1" };           
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
+            var role = new RoleInfo { RoleName = "role1" };
+            var sender = new UserInfo { DisplayName = "user11", UserID = Constants.USER_ElevenId };
 
             //Act
-            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo>{user}, null);
+            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, null, sender);
 
             //Assert
-            _mockDataService.Verify(ds => ds.SaveSocialMessage(It.IsAny<Message>(), It.IsAny<int>()));
+            _mockDataService.Verify(ds => ds.SaveSocialMessage(It.Is<Message>(v => v.Subject == "subject"
+                                                                && v.Body == "body"
+                                                                && v.To == "role1,user1"
+                                                                && v.SenderUserID == sender.UserID)
+                                                               , It.IsAny<int>()));
         }
 
         [Test]
-        public void MessagingController_CreateMessage_Calls_DataService_On_Passing_Attachments()
+        public void MessagingController_CreateMessage_Trims_Comma_For_One_User()
         {
             //Arrange
-            var user = new UserInfo { DisplayName = "user1" };
+            var user = new UserInfo { DisplayName = Constants.USER_TenName, UserID = Constants.USER_TenId };
+            var sender = new UserInfo { DisplayName = Constants.USER_ElevenName, UserID = Constants.USER_ElevenId };
+
+            //Act
+            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user }, null, sender);
+
+            //Assert
+            Assert.AreEqual(message.To, Constants.USER_TenName);            
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Trims_Comma_For_Two_Users()
+        {
+            //Arrange
+            var user10 = new UserInfo { DisplayName = Constants.USER_TenName, UserID = Constants.USER_TenId };
+            var user11 = new UserInfo { DisplayName = Constants.USER_ElevenName, UserID = Constants.USER_ElevenId };
+            var sender = new UserInfo { DisplayName = Constants.USER_ElevenName, UserID = Constants.USER_ElevenId };
+
+            //Act
+            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user10, user11 }, null, sender);
+
+            //Assert
+            Assert.AreEqual(message.To, Constants.USER_TenName + "," + Constants.USER_ElevenName);
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Trims_Comma_For_One_Role()
+        {
+            //Arrange
+            var role = new RoleInfo { RoleName = Constants.RoleName_Administrators };
+            var sender = new UserInfo { DisplayName = Constants.USER_ElevenName, UserID = Constants.USER_ElevenId };
+
+            //Act
+            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo>{role}, new List<UserInfo>(), null, sender);
+
+            //Assert
+            Assert.AreEqual(message.To, Constants.RoleName_Administrators);
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Trims_Comma_For_Two_Roles()
+        {
+            //Arrange
+            var role1 = new RoleInfo { RoleName = Constants.RoleName_Administrators };
+            var role2 = new RoleInfo { RoleName = Constants.RoleName_Subscribers };
+            var sender = new UserInfo { DisplayName = Constants.USER_ElevenName, UserID = Constants.USER_ElevenId };
+
+            //Act
+            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role1, role2 }, new List<UserInfo>(), null, sender);
+
+            //Assert
+            Assert.AreEqual(message.To, Constants.RoleName_Administrators + "," + Constants.RoleName_Subscribers);
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Calls_DataService_SaveSocialMessageAttachment_On_Passing_Attachments()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId};
             var role = new RoleInfo { RoleName = "role1" };
 
             //Act
-            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int>{1});
+            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { 1 }, user);
 
             //Assert
-            _mockDataService.Verify(ds => ds.SaveSocialMessageAttachment(It.IsAny<MessageAttachment>(), It.IsAny<int>()));
+            _mockDataService.Verify(ds => ds.SaveSocialMessageAttachment(It.Is<MessageAttachment>(v => v.MessageID == message.MessageID), It.IsAny<int>()));
         }
 
         [Test]
-        public void MessagingController_CreateMessage_Calls_DataService_On_Passing_Roles()
+        public void MessagingController_CreateMessage_Calls_DataService_CreateSocialMessageRecipientsForRole_On_Passing_Roles()
         {
             //Arrange
-            var user = new UserInfo { DisplayName = "user1" };
-            var role = new RoleInfo { RoleName = "role1", RoleID = Constants.Role_RegisteredUsers };
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId};
+            var role = new RoleInfo { RoleName = "role1", RoleID = Constants.RoleID_RegisteredUsers };
 
             //Act
-            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.Role_RegisteredUsers });
+            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
 
             //Assert
-            _mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(It.IsAny<int>(), Constants.Role_RegisteredUsers, (int)MessageStatus.Unread ,It.IsAny<int>()));
+            _mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers, (int)MessageStatus.Unread, It.IsAny<int>()));
         }
 
         [Test]
-        public void MessagingController_CreateMessage_Calls_DataService_On_Passing_USers()
+        public void MessagingController_CreateMessage_Calls_DataService_SaveSocialMessageRecipient_On_Passing_Users()
         {
             //Arrange
-            var user = new UserInfo { DisplayName = "user1" };
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
             var role = new RoleInfo { RoleName = "role1" };
 
             //Act
-            _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.Role_RegisteredUsers });
+            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);         
 
             //Assert
-            _mockDataService.Verify(ds => ds.SaveSocialMessageRecipient(It.IsAny<MessageRecipient>(),  It.IsAny<int>()));
+            _mockDataService.Verify(ds => ds.SaveSocialMessageRecipient(It.Is<MessageRecipient>(v => v.MessageID == message.MessageID && v.UserID == user.UserID), It.IsAny<int>()));            
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Sets_ReplyAll_To_False_On_Passing_Roles()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
+            var role = new RoleInfo { RoleName = "role1", RoleID = Constants.RoleID_RegisteredUsers };
+
+            //Act
+            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
+
+            //Assert
+            Assert.AreEqual(message.ReplyAllAllowed, false);            
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Sets_ReplyAll_To_True_On_Passing_User()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };            
+
+            //Act
+            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
+
+            //Assert
+            Assert.AreEqual(message.ReplyAllAllowed, true);
         }
 
         #endregion

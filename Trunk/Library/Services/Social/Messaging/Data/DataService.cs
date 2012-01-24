@@ -42,7 +42,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         public int SaveSocialMessage(Message message, int createUpdateUserID)
         {
             //need to fix groupmail
-            return _provider.ExecuteScalar<int>("SaveSocialMessage", message.Subject,message.Body,message.ParentMessageID,message.SenderUserID, createUpdateUserID);
+            return _provider.ExecuteScalar<int>("SaveSocialMessage", message.MessageID, message.To, message.Subject, message.Body, message.ParentMessageID, message.ReplyAllAllowed, message.SenderUserID, createUpdateUserID);
         }
 
         public IDataReader GetSocialMessage()
@@ -76,7 +76,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         public int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserID)
         {
-            return _provider.ExecuteScalar<int>("SaveSocialMessageRecipient", messageRecipient.UserID, messageRecipient.Status, createUpdateUserID);
+            return _provider.ExecuteScalar<int>("SaveSocialMessageRecipient", messageRecipient.RecipientID, messageRecipient.MessageID, messageRecipient.UserID, messageRecipient.Status, createUpdateUserID);
         }
 
         public void CreateSocialMessageRecipientsForRole(int messageID, int roleID, int status, int createUpdateUserID)

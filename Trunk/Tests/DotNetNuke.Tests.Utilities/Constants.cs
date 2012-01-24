@@ -41,16 +41,23 @@ namespace DotNetNuke.Tests.Utilities
         public const int USER_InValidId = 42;
         public const int USER_AnonymousUserId = -1;
         public const int USER_TenId = 10;
+        public const string USER_TenName = "user10";
         public const int USER_ElevenId = 11;
+        public const string USER_ElevenName = "user11";
 
         #endregion
 
         #region Role Constants
 
-        public const int Role_Administrators = 0;
-        public const int Role_RegisteredUsers = 1;
-        public const int Role_Subscribers = 2;
-        public const int Role_Translator_EN_US = 3;
+        public const int RoleID_Administrators = 0;
+        public const int RoleID_RegisteredUsers = 1;
+        public const int RoleID_Subscribers = 2;
+        public const int RoleID_Translator_EN_US = 3;
+
+        public const string RoleName_Administrators = "Administrators";
+        public const string RoleName_RegisteredUsers = "RegisteredUsers";
+        public const string RoleName_Subscribers = "Subscribers";
+        public const string RoleName_Translator_EN_US = "ranslator_EN_US";
 
         #endregion
 

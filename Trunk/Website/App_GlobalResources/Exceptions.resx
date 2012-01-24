@@ -231,4 +231,7 @@
   <data name="EmptyToListFoundError.Text" xml:space="preserve">
     <value>Empty To List found while analyzing User and Roles List.</value>
   </data>
+  <data name="SenderRequiredError.Text" xml:space="preserve">
+    <value>Either Sender is null or Sender.UserID is negative.</value>
+  </data>
 </root>

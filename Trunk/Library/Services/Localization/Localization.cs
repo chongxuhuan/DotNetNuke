@@ -1071,7 +1071,7 @@ namespace DotNetNuke.Services.Localization
         /// -----------------------------------------------------------------------------
         public static string GetString(string key, string resourceFileRoot, PortalSettings portalSettings, string language, bool disableShowMissingKeys)
         {
-            return _localizationProvider.GetString(key, language, resourceFileRoot, portalSettings, disableShowMissingKeys);
+            return _localizationProvider.GetString(key, resourceFileRoot, language, portalSettings, disableShowMissingKeys);
         }
 
         #endregion

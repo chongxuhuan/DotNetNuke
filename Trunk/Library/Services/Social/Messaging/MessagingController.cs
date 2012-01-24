@@ -125,6 +125,16 @@ namespace DotNetNuke.Services.Social.Messaging
 
         public Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)
         {
+            return CreateMessage(subject, body, roles, users, fileIDs, UserController.GetCurrentUserInfo());
+        }
+
+        public Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender)
+        {
+            if (sender == null || sender.UserID <= 0)
+            {
+                throw new ArgumentException(Localization.Localization.GetExceptionMessage("SenderRequiredError", "Either Sender is null or Sender.UserID is negative."));
+            }
+
             if(string.IsNullOrEmpty(subject) && string.IsNullOrEmpty(body))
             {
                 throw new ArgumentException(Localization.Localization.GetExceptionMessage("SubjectOrBodyRequiredError", "Both Subject and Body cannot be null or empty."));
@@ -141,10 +151,17 @@ namespace DotNetNuke.Services.Social.Messaging
             }
 
             var sbTo = new StringBuilder();
+            bool replyAllAllowed = true;
             if (roles != null)
             {
                 foreach (var role in roles)
-                    if (!string.IsNullOrEmpty(role.RoleName)) sbTo.Append(role.RoleName + ",");                                            
+                {
+                    if (!string.IsNullOrEmpty(role.RoleName))
+                    {
+                        sbTo.Append(role.RoleName + ",");
+                        replyAllAllowed = false;
+                    }
+                }
             }
 
             if (users != null)
@@ -163,7 +180,7 @@ namespace DotNetNuke.Services.Social.Messaging
                 throw new ArgumentException(Localization.Localization.GetExceptionMessage("ToListTooBigError", "To List supplied is too big. Maximum {0}, Actual {1}.", MESSAGING_MAX_TO, sbTo.Length));
             }
 
-            Message message = new Message { Body = body, Subject = subject, To = sbTo.ToString()};
+            var message = new Message { Body = body, Subject = subject, To = sbTo.ToString(0, sbTo.Length - 1), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID};
 
             message.MessageID = _DataService.SaveSocialMessage(message, UserController.GetCurrentUserInfo().UserID);
 
@@ -191,7 +208,7 @@ namespace DotNetNuke.Services.Social.Messaging
             {
                 foreach (var user in users)
                 {
-                    var recipient = new MessageRecipient {MessageID = message.MessageID, UserID = user.UserID, Status = (int)MessageStatus.Unread};
+                    var recipient = new MessageRecipient {MessageID = message.MessageID, UserID = user.UserID, Status = (int)MessageStatus.Unread, RecipientID = Null.NullInteger};
                     _DataService.SaveSocialMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
                 }
             }
