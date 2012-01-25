@@ -56,6 +56,7 @@ namespace DotNetNuke.Entities.Users.Social.Data
         IDataReader GetUserRelationship(int userID, int relatedUserID, int relationshipID, RelationshipDirection relationshipDirection);
         IDataReader GetUserRelationships(int userID);
         IDataReader GetUserRelationshipsByRelationshipID(int relationshipID);
+        IDataReader GetUsersByFilters(int portalId, int currUserId, int numberOfRecords, int roleId, int relationshipType, string profileProperty, string profilePropertyValue, string sortColumn, bool sortAcending, bool isAdmin);
         int SaveUserRelationship(UserRelationship userRelationship, int createUpdateUserID);
 
         #endregion

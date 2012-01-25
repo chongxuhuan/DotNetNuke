@@ -1685,7 +1685,7 @@ namespace DotNetNuke.Services.FileSystem
                                 }
                             }
                         }
-                        else if (!folderProvider.IsInSync(file))
+                        else if (!folderProvider.IsInSync(file) && file.LastModificationTime != folderProvider.GetLastModificationTime(file))
                         {
                             using (var fileContent = fileManager.GetFileContent(file))
                             {

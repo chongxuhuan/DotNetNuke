@@ -500,8 +500,14 @@ namespace DotNetNuke.Modules.Admin.FileManager
             dgFileList.PageSize = PageSize;
             dgFileList.CurrentPageIndex = PageIndex;
 
-			GetFilesByFolder(PathUtils.Instance.StripFolderPath(DestPath).Replace("\\", "/"));
+            var folderPath = PathUtils.Instance.StripFolderPath(DestPath).Replace("\\", "/");
 
+            if (Host.EnableFileAutoSync)
+            {
+                FolderManager.Instance.Synchronize(FolderPortalID, folderPath, false, true);
+            }
+
+            GetFilesByFolder(folderPath);
             if (dgFileList.PageCount > 1)
             {
                 tblMessagePager.Visible = true;

@@ -844,7 +844,7 @@ namespace DotNetNuke.Services.FileSystem
                 }
             }
 
-            file.SHA1Hash = GetHash(file);
+            file.SHA1Hash = GetHash(fileContent);
 
             return UpdateFile(file);
         }

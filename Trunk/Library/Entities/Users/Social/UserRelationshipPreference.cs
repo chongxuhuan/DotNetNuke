@@ -97,6 +97,9 @@ namespace DotNetNuke.Entities.Users
             UserID = Convert.ToInt32(dr["UserID"]);            
             RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
             DefaultResponse = (RelationshipStatus)Convert.ToInt32(dr["DefaultResponse"]);
+
+            //add audit column data
+            FillInternal(dr);
         }
     }
 }

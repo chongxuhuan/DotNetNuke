@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,20 +18,32 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
+namespace DotNetNuke.Web.Client.Providers
+{
+    using System.Web;
+    using ClientDependency.Core.FileRegistration.Providers;
 
-using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+    public abstract class DnnFileRegistrationProvider : WebFormsFileRegistrationProvider
+    {
+        public override int GetVersion(HttpContextBase http)
+        {
+            var portalHelper = new PortalHelper();
+            var version = portalHelper.GetPortalVersion(http);
+            return version.HasValue ? version.Value : base.GetVersion(http);
+        }
 
-#endregion
-
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("7BB1CA24-7770-42D7-9B89-282BAC5E38E5")]
-[assembly: AssemblyVersion("6.2.0.274")]
+        /// <summary>
+        /// Checks if the composite files option is set for the current portal (DNN site settings).
+        /// If not enabled at the portal level it defers to the core CDF setting (web.config).
+        /// </summary>
+        public override bool EnableCompositeFiles
+        {
+            get
+            {
+                var portalHelper = new PortalHelper();
+                var optionSetForPortal = portalHelper.IsCompositeFilesOptionSetForPortal();
+                return optionSetForPortal.HasValue ? optionSetForPortal.Value : base.EnableCompositeFiles;
+            }
+        }
+    }
+}

@@ -78,6 +78,19 @@ namespace DotNetNuke.Tests.Core.Controllers
 
 		#endregion
 
+        #region Constructor Tests
+
+        [Test]
+        public void MessagingController_Constructor_Throws_On_Null_DataService()
+        {
+            //Arrange            
+
+            //Act, Assert
+            Assert.Throws<ArgumentNullException>(() => new MessagingController(null));
+        }
+
+        #endregion
+
         #region #region Easy Wrapper APIs Tests
 
         [Test]

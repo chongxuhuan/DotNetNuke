@@ -122,6 +122,7 @@
     <Compile Include="Services\Installer\XmlMergeTests.cs" />
     <Compile Include="Services\Mobile\PreviewProfileControllerTests.cs" />
     <Compile Include="Services\Mobile\RedirectionControllerTests.cs" />
+    <Compile Include="Services\Tokens\PropertyAccessTests.cs" />
     <Compile Include="TabCollectionTest.cs" />
     <Compile Include="Services\HtmlUtilsTest.cs" />
     <Compile Include="TestSetup.cs" />

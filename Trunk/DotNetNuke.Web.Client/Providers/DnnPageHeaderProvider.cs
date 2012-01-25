@@ -33,7 +33,7 @@ namespace DotNetNuke.Web.Client.Providers
     /// <summary>
     /// Registers resources at the top of the body on default.aspx
     /// </summary>
-    public class DnnPageHeaderProvider : WebFormsFileRegistrationProvider
+    public class DnnPageHeaderProvider : DnnFileRegistrationProvider
     {
 
         /// <summary>

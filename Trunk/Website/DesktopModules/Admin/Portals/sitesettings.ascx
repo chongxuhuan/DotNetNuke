@@ -142,6 +142,17 @@
 					<asp:Label ID="lblHomeDirectory" runat="server" />
 				</div>
 			</fieldset>        
+            <h2 id="dnnSitePanel-Performance" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Performance")%></a></h2>
+            <fieldset>
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plEnableCompositeFiles" runat="server" ControlName="chkEnableCompositeFiles" />
+                    <asp:CheckBox runat="server" id="chkEnableCompositeFiles" />
+                </div>
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plCdfVersion" runat="server" ControlName="txtCdfVersion" />
+                    <asp:TextBox runat="server" id="txtCdfVersion" />
+                </div>
+            </fieldset>
 			<h2 id="dnnSitePanel-SecuritySettings" class="dnnFormSectionHead"><a href=""><%=LocalizeString("SecuritySettings")%></a></h2>
 			<fieldset class="ssasSecuritySettings">
 				<div class="dnnFormItem">

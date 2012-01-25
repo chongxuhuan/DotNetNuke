@@ -27,7 +27,9 @@ using DotNetNuke.Entities.Users;
 
 #endregion
 
+// ReSharper disable CheckNamespace
 namespace DotNetNuke.Services.Tokens
+// ReSharper restore CheckNamespace
 {
     public class TicksPropertyAccess : IPropertyAccess
     {
@@ -38,11 +40,11 @@ namespace DotNetNuke.Services.Tokens
             switch (propertyName.ToLower())
             {
                 case "now":
-                    return DateTime.Now.Ticks.ToString();
+                    return DateTime.Now.Ticks.ToString(formatProvider);
                 case "today":
-                    return DateTime.Today.Ticks.ToString();
+                    return DateTime.Today.Ticks.ToString(formatProvider);
                 case "ticksperday":
-                    return TimeSpan.TicksPerDay.ToString();
+                    return TimeSpan.TicksPerDay.ToString(formatProvider);
             }
             PropertyNotFound = true;
             return string.Empty;

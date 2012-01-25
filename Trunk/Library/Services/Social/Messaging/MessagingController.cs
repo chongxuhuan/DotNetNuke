@@ -67,6 +67,9 @@ namespace DotNetNuke.Services.Social.Messaging
 
         public MessagingController(IDataService dataService)
         {
+            //Argument Contract
+            Requires.NotNull("dataService", dataService);
+
             _DataService = dataService;
         }
 
@@ -180,7 +183,7 @@ namespace DotNetNuke.Services.Social.Messaging
                 throw new ArgumentException(Localization.Localization.GetExceptionMessage("ToListTooBigError", "To List supplied is too big. Maximum {0}, Actual {1}.", MESSAGING_MAX_TO, sbTo.Length));
             }
 
-            var message = new Message { Body = body, Subject = subject, To = sbTo.ToString(0, sbTo.Length - 1), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID};
+            var message = new Message { Body = body, Subject = subject, To = sbTo.ToString(0, sbTo.Length - 1), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName};
 
             message.MessageID = _DataService.SaveSocialMessage(message, UserController.GetCurrentUserInfo().UserID);
 

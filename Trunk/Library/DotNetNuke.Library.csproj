@@ -348,7 +348,7 @@
     <Compile Include="Entities\Users\Membership\UserMembership.cs" />
     <Compile Include="Entities\Users\Profile\ProfilePropertyAccess.cs" />
     <Compile Include="Entities\Users\Profile\UserProfile.cs" />
-    <Compile Include="Entities\Users\Social\UserRelationshipPrefernce.cs" />
+    <Compile Include="Entities\Users\Social\UserRelationshipPreference.cs" />
     <Compile Include="Entities\Users\Social\Data\DataService.cs" />
     <Compile Include="Entities\Users\Social\Data\IDataService.cs" />
     <Compile Include="Entities\Users\Social\Exceptions\UserRelationshipDoesNotExistException.cs" />

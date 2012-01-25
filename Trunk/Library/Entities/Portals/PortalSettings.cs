@@ -1,7 +1,8 @@
 #region Copyright
+
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,7 +18,9 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
+
 #endregion
+
 #region Usings
 
 using System;
@@ -103,7 +106,8 @@ namespace DotNetNuke.Entities.Portals
         {
         }
 
-        public PortalSettings(int portalID) : this(Null.NullInteger, portalID)
+        public PortalSettings(int portalID)
+            : this(Null.NullInteger, portalID)
         {
         }
 
@@ -122,7 +126,7 @@ namespace DotNetNuke.Entities.Portals
         /// </summary>
         /// <remarks>
         /// </remarks>
-		///	<param name="tabID">The current tab</param>
+        ///	<param name="tabID">The current tab</param>
         ///	<param name="objPortalAliasInfo">The current portal</param>
         /// <history>
         /// 	[cnurse]	10/21/2004	documented
@@ -199,6 +203,22 @@ namespace DotNetNuke.Entities.Portals
         #endregion
 
         #region Public Properties
+
+        public int CdfVersion
+        {
+            get
+            {
+                return PortalController.GetPortalSettingAsInteger("CdfVersion", PortalId, Null.NullInteger);
+            }
+        }
+
+        public bool EnableCompositeFiles
+        {
+            get
+            {
+                return PortalController.GetPortalSettingAsBoolean("EnableCompositeFiles", PortalId, false);
+            }
+        }
 
         public bool ContentLocalizationEnabled
         {
@@ -361,13 +381,13 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
-         /// -----------------------------------------------------------------------------
+        /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets whether to use the popup.
         /// </summary>
         /// <remarks>Defaults to True</remarks>
         /// -----------------------------------------------------------------------------
-       public bool EnablePopUps
+        public bool EnablePopUps
         {
             get
             {
@@ -940,7 +960,7 @@ namespace DotNetNuke.Entities.Portals
             //if tab was found
             if (tabFound)
             {
-				//add tab to breadcrumb collection
+                //add tab to breadcrumb collection
                 breadCrumbs.Insert(0, tab.Clone());
 
                 //get the tab parent
@@ -1056,8 +1076,8 @@ namespace DotNetNuke.Entities.Portals
         /// <returns></returns>
         /// <remarks>
         /// </remarks>
-		///	<param name="portalId">The Portal's id</param>
-		///	<param name="tabId">The current tab's id</param>
+        ///	<param name="portalId">The Portal's id</param>
+        ///	<param name="tabId">The current tab's id</param>
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
@@ -1119,11 +1139,11 @@ namespace DotNetNuke.Entities.Portals
             if (tabId > 0)
             {
                 tab = tabController.GetTab(tabId, portalId, false);
-				if (tab != null)
-				{
-					ActiveTab = tab.Clone();
-					isVerified = true;
-				}
+                if (tab != null)
+                {
+                    ActiveTab = tab.Clone();
+                    isVerified = true;
+                }
             }
 
             return isVerified;
@@ -1257,7 +1277,7 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
-        [Obsolete("Deprecated in DNN 6.0")]        
+        [Obsolete("Deprecated in DNN 6.0")]
         public int TimeZoneOffset
         {
             get

@@ -318,7 +318,7 @@ namespace DotNetNuke.UI.WebControls
 
 		public string ValidationExpression { get; set; }
 
-		#region "Style Properties"
+		#region Style Properties
 
 		/// -----------------------------------------------------------------------------
 		/// <summary>
@@ -734,7 +734,7 @@ namespace DotNetNuke.UI.WebControls
 			{
 			    visControl = new VisibilityControl
 			                     {
-			                         ID = ID + "_vis", 
+			                         ID = "_visibility", 
                                      Name = editInfo.Name, 
                                      User = User, 
                                      Value = editInfo.ProfileVisibility
@@ -745,31 +745,7 @@ namespace DotNetNuke.UI.WebControls
 			return visControl;
 		}
 
-		/// <summary>
-		/// GetOppositeSide finds the opposite side (ie if LabelMode is left it returns right)
-		/// </summary>
-		/// <param name="labelMode">The LabelMode for this control</param>
-		/// <history>
-		///     [cnurse]	05/08/2006	created
-		/// </history>
-		private string GetOppositeSide(LabelMode labelMode)
-		{
-			switch (labelMode)
-			{
-				case LabelMode.Bottom:
-					return "top";
-				case LabelMode.Left:
-					return "right";
-				case LabelMode.Right:
-					return "left";
-				case LabelMode.Top:
-					return "bottom";
-				default:
-					return string.Empty;
-			}
-		}
-
-		#endregion
+	    #endregion
 
 		#region Protected Methods
 
@@ -784,6 +760,8 @@ namespace DotNetNuke.UI.WebControls
 		protected virtual void CreateEditor()
 		{
 			EditorInfo editInfo = EditorInfoAdapter.CreateEditControl();
+
+		    ID = editInfo.Name;
 
 			if (editInfo != null)
 			{

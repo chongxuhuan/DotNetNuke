@@ -167,18 +167,19 @@ namespace DotNetNuke.Entities.Users
             if (currentScope >= Scope.DefaultSettings && user != null && user.Profile != null)
             {
                 var profile = user.Profile;
-                foreach (ProfilePropertyDefinition property in profile.ProfileProperties)
+                var property = profile.ProfileProperties.Cast<ProfilePropertyDefinition>()
+                                                        .SingleOrDefault(p => p.PropertyName.ToLower() == propertyName.ToLower());
+
+                if(property != null)
                 {
-                    if (property.PropertyName.ToLower() == propertyName.ToLower())
+                    if (CheckAccessLevel(property, accessingUser))
                     {
-                        if (CheckAccessLevel(property, accessingUser))
-                        {
-                            return GetRichValue(property, format, formatProvider);
-                        }
-                        propertyNotFound = true;
-                        return PropertyAccess.ContentLocked;
+                        return GetRichValue(property, format, formatProvider);
                     }
                 }
+
+                propertyNotFound = true;
+                return PropertyAccess.ContentLocked;
             }
             propertyNotFound = true;
             return string.Empty;

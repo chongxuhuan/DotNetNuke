@@ -114,6 +114,11 @@ namespace DotNetNuke.Entities.Users.Social.Data
             return _provider.ExecuteReader("GetUserRelationshipsByRelationshipID", relationshipID);
         }
 
+        public IDataReader GetUsersByFilters(int portalId, int currUserId, int numberOfRecords, int roleId, int relationshipType, string profileProperty, string profilePropertyValue, string sortColumn, bool sortAcending, bool isAdmin)
+        {
+            return _provider.ExecuteReader("GetUsersByFilters", portalId, currUserId, numberOfRecords, roleId, relationshipType, profileProperty, profilePropertyValue, sortColumn, sortAcending, isAdmin);
+        }
+
         public int SaveUserRelationship(UserRelationship userRelationship, int createUpdateUserID)
         {
             return _provider.ExecuteScalar<int>("SaveUserRelationship", userRelationship.UserRelationshipID, userRelationship.UserID, userRelationship.RelatedUserID, userRelationship.RelationshipID, userRelationship.Status, createUpdateUserID);

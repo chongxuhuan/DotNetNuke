@@ -70,6 +70,12 @@ namespace DotNetNuke.Services.Social.Messaging
         public string To { get; set; }
 
         /// <summary>
+        /// Message From
+        /// </summary>
+        [XmlAttribute]
+        public string From { get; set; }
+
+        /// <summary>
         /// Message Subject
         /// </summary>
         [XmlAttribute]
@@ -123,6 +129,7 @@ namespace DotNetNuke.Services.Social.Messaging
         {
             this.MessageID = Convert.ToInt32(dr["MessageID"]);
             this.To = Null.SetNullString(dr["To"]);
+            this.From = Null.SetNullString(dr["From"]);
             this.Subject = Null.SetNullString(dr["Subject"]);
             this.Body = Null.SetNullString(dr["Body"]);
             this.ParentMessageID = Convert.ToInt32(dr["ParentMessageID"]);

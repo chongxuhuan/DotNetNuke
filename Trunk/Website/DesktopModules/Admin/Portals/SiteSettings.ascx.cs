@@ -350,6 +350,9 @@ namespace DotNetNuke.Modules.Admin.Portals
             LoadStyleSheet(portal);
 
             ctlAudit.Entity = portal;
+
+            chkEnableCompositeFiles.Checked = Boolean.Parse(PortalController.GetPortalSetting("EnableCompositeFiles", portal.PortalID, "false"));
+            txtCdfVersion.Text = PortalController.GetPortalSetting("CdfVersion", portal.PortalID, "0");
         }
 
         private void BindSkins(PortalInfo portal)
@@ -936,6 +939,9 @@ namespace DotNetNuke.Modules.Admin.Portals
                         refreshPage = (PortalSettings.DefaultAdminSkin == editSkinCombo.SelectedValue) ||
                                         (PortalSettings.DefaultAdminContainer == editContainerCombo.SelectedValue);
                     }
+
+                    PortalController.UpdatePortalSetting(_portalId, "EnableCompositeFiles", chkEnableCompositeFiles.Checked.ToString(), false);
+                    PortalController.UpdatePortalSetting(_portalId, "CdfVersion", txtCdfVersion.Text, false);
                     PortalController.UpdatePortalSetting(_portalId, "EnableSkinWidgets", chkSkinWidgestEnabled.Checked.ToString(), false);
                     PortalController.UpdatePortalSetting(_portalId, "DefaultAdminSkin", editSkinCombo.SelectedValue, false);
                     PortalController.UpdatePortalSetting(_portalId, "DefaultPortalSkin", portalSkinCombo.SelectedValue, false);

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,20 +18,22 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
+namespace DotNetNuke.Web.Client.Providers
+{
+    using System.Web;
 
-using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+    using ClientDependency.Core.CompositeFiles.Providers;
 
-#endregion
-
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("7BB1CA24-7770-42D7-9B89-282BAC5E38E5")]
-[assembly: AssemblyVersion("6.2.0.274")]
+    /// <summary>
+    /// A provider for combining, minifying, compressing and saving composite scripts/css files
+    /// </summary>
+    public class DnnCompositeFileProcessingProvider : CompositeFileProcessingProvider
+    {
+        public override int GetVersion(HttpContextBase http)
+        {
+            var portalHelper = new PortalHelper();
+            var version = portalHelper.GetPortalVersion(http);
+            return version.HasValue ? version.Value : base.GetVersion(http);
+        }
+    }
+}

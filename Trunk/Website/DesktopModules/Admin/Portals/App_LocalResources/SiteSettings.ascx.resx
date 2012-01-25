@@ -651,4 +651,19 @@
   <data name="valExpiryDate.ErrorMessage" xml:space="preserve">
     <value>Invalid expiry date</value>
   </data>
+  <data name="Performance.Text" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="plEnableCompositeFiles.Help" xml:space="preserve">
+    <value>Composite files are combinations of resources (JavaScript and CSS) created to reduce the number of file requests by the browser. This will significantly lower the page loading speed.</value>
+  </data>
+  <data name="plEnableCompositeFiles.Text" xml:space="preserve">
+    <value>Enable Composite Files</value>
+  </data>
+  <data name="plCdfVersion.Help" xml:space="preserve">
+    <value>Version!</value>
+  </data>
+  <data name="plCdfVersion.Text" xml:space="preserve">
+    <value>Version</value>
+  </data>
 </root>

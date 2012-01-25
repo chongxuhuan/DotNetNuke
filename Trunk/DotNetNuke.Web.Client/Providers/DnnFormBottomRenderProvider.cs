@@ -33,7 +33,7 @@ namespace DotNetNuke.Web.Client.Providers
     /// <summary>
     /// Registers resources at the top of the body on default.aspx
     /// </summary>
-    public class DnnFormBottomProvider : WebFormsFileRegistrationProvider
+    public class DnnFormBottomProvider : DnnFileRegistrationProvider
     {
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace DotNetNuke.Web.Client.Providers
                 return string.Empty;
 
             var sb = new StringBuilder();
-
+            
             if (http.IsDebuggingEnabled || !EnableCompositeFiles)
             {
                 foreach (var dependency in jsDependencies)

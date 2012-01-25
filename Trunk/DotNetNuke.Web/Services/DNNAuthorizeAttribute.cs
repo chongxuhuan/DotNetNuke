@@ -34,7 +34,7 @@ namespace DotNetNuke.Web.Services
     public sealed class DnnAuthorizeAttribute : AuthorizeAttributeBase
     {
         private string _roles;
-        private string[] _rolesSplit;
+        private string[] _rolesSplit = new string[0];
 
         public string Roles
         {

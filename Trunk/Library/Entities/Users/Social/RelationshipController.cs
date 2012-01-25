@@ -22,6 +22,7 @@
 #region Usings
 
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 using DotNetNuke.Common;
@@ -743,6 +744,27 @@ namespace DotNetNuke.Entities.Users.Social
 
             var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
             return new List<UserRelationship>();
+        }
+
+        /// <summary>
+        /// GetUsersByFilters -- Gets a filtered list of users along with their profile properties.
+        /// </summary>
+        /// <param name="portalId">PortalID to which the Relationship will belong. Valid value includes Non-Negative number.</param>        
+        /// <param name="currUser">Current user.  Which could be used in conjunction with other parameters to filter the list in terms of relationship to.</param>
+        /// <param name="records">Number of records to return.</param>
+        /// <param name="role">Filter the list of user based on their role.</param>
+        /// <param name="relationshipType">Filter the list of user based on their relationship to the current user [currUser parameter].</param>
+        /// <param name="profileProperty">Filter the list of user based on a particular profile property, to be used in conjunction with the [profilePropertyValue] parameter.</param>
+        /// <param name="profilePropertyValue">Filter the list of user based on a specific value of a particular propfile property, [profileProperty] parameter.</param>
+        /// <param name="sortByColumn">Name of the column to sort the list of user by.</param>
+        /// <param name="sortAscending">Flag for sorting by ascending. If false, sort descending.</param>
+        /// <param name="isAdmin">Flag for determining if the list of users should show results exclusive to admins.</param>
+        /// <returns></returns>
+        public IDataReader GetUsersByFilters(int portalId, UserInfo currUser, int records, UserRoleInfo role, RelationshipType relationshipType, string profileProperty, string profilePropertyValue, string sortByColumn, bool sortAscending, bool isAdmin)
+        {
+            var roleId = role != null ? role.RoleID : -1;
+            var relationshipTypeId = relationshipType != null ? relationshipType.RelationshipTypeID : -1;
+            return _dataService.GetUsersByFilters(portalId, currUser.UserID, records, roleId, relationshipTypeId, profileProperty, profilePropertyValue, sortByColumn, sortAscending, isAdmin);
         }
 
         /// -----------------------------------------------------------------------------

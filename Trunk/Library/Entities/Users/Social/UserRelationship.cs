@@ -114,6 +114,9 @@ namespace DotNetNuke.Entities.Users
             this.RelatedUserID = Convert.ToInt32(dr["RelatedUserID"]);
             this.RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
             this.Status = (RelationshipStatus)Convert.ToInt32(dr["Status"]);
+
+            //add audit column data
+            FillInternal(dr);
         }
     }
 }

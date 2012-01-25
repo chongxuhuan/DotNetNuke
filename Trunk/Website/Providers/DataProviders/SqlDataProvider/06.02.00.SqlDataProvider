@@ -1801,6 +1801,7 @@ BEGIN
 CREATE TABLE {databaseOwner}{objectQualifier}Social_Messages(
 	[MessageID] [int] IDENTITY(1,1) NOT NULL,
 	[To] [nvarchar](2000) NULL,
+	[From] [nvarchar](200) NULL,
 	[Subject] [nvarchar](400) NULL,
 	[Body] [ntext] NULL,
 	[ParentMessageID] [int] NULL,
@@ -1824,7 +1825,7 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_MessageRecipients]') AND type in (N'U'))
 BEGIN
 CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageRecipients(
-	[RecepientID] [int] IDENTITY(1,1) NOT NULL,
+	[RecipientID] [int] IDENTITY(1,1) NOT NULL,
 	[MessageID] [int] NOT NULL,
 	[UserID] [int] NULL,
 	[Status] [tinyint] NULL,
@@ -1834,7 +1835,7 @@ CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageRecipients(
 	[LastModifiedOnDate] [datetime] NULL,
  CONSTRAINT [PK_{objectQualifier}Social_MessageRecipients] PRIMARY KEY CLUSTERED 
 	(
-		[RecepientID] ASC
+		[RecipientID] ASC
 	)
 )
 
@@ -1880,6 +1881,7 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessage]
     @MessageID INT,
 	@To nvarchar(2000),
+	@From nvarchar(200),
     @Subject nvarchar(400),
     @Body ntext,
     @ParentMessageID int,
@@ -1892,6 +1894,7 @@ AS
         BEGIN
             INSERT {databaseOwner}{objectQualifier}Social_Messages(                    
   					[To],
+					[From],					
 					[Subject],
 					[Body],
 					[ParentMessageID],
@@ -1904,7 +1907,8 @@ AS
                     )
             VALUES  (       
      			    @To,
-					@Subject,
+					@From,
+				    @Subject,			
 					@Body,
 					@ParentMessageID,
 					@ReplyAllAllowed,
@@ -1921,7 +1925,8 @@ AS
         BEGIN
             UPDATE  {databaseOwner}{objectQualifier}Social_Messages
             SET     [To] = @To,
-					[SUBJECT] = @Subject,
+					[From] = @From,
+					[Subject] = @Subject,			
 					[Body] = @Body,
 					[ParentMessageID] = @ParentMessageID,
 					[ReplyAllAllowed] = @ReplyAllAllowed,
@@ -1943,7 +1948,7 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessage]
     @MessageID INT
 AS 
-	SELECT [MessageID], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [MessageID], [To], [From], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}[Social_Messages] 
 	WHERE  [MessageID] = @MessageID 
 
@@ -1956,7 +1961,7 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessagesBySender]
     @SenderUserID INT
 AS 
-	SELECT [MessageID], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [MessageID], [To], [From], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}[Social_Messages] 
 	WHERE  [SenderUserID] = @SenderUserID 
 
@@ -1981,13 +1986,13 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
-    @RecepientID int,
+    @RecipientID int,
     @MessageID int,
     @UserID int,
     @Status tinyint,
 	@CreateUpdateUserID INT    
 AS 
-    IF ( @RecepientID = -1 ) 
+    IF ( @RecipientID = -1 ) 
         BEGIN
             INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
 					[MessageID],
@@ -2008,7 +2013,7 @@ AS
                     GETDATE() -- LastModifiedOn - datetime			        
                     )
                     
-            SELECT  @RecepientID = SCOPE_IDENTITY()
+            SELECT  @RecipientID = SCOPE_IDENTITY()
         END
     ELSE 
         BEGIN
@@ -2017,10 +2022,10 @@ AS
 					[UserID] = @UserID,
                     LastModifiedByUserID = @CreateUpdateUserID,
                     LastModifiedOnDate = GETDATE()
-            WHERE   RecepientID = @RecepientID
+            WHERE   RecipientID = @RecipientID
         END
         
-    SELECT  @RecepientID        
+    SELECT  @RecipientID        
 GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]
@@ -2057,11 +2062,11 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipient] 
-    @RecepientID INT
+    @RecipientID INT
 AS 
-	SELECT [RecepientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
-	WHERE  [RecepientID] = @RecepientID 
+	WHERE  [RecipientID] = @RecipientID 
 
 GO
 
@@ -2072,7 +2077,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser] 
     @UserID INT
 AS 
-	SELECT [RecepientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [UserID] = @UserID 
 
@@ -2085,7 +2090,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage] 
     @MessageID INT
 AS 
-	SELECT [RecepientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [MessageID] = @MessageID 
 
@@ -2096,10 +2101,10 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 
 CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocialMessageRecipient] 
-    @RecepientID int
+    @RecipientID int
 AS 
 	DELETE FROM {databaseOwner}{objectQualifier}Social_MessageRecipients
-	WHERE  [RecepientID] = @RecepientID
+	WHERE  [RecipientID] = @RecipientID
 GO
 
 --CRUD for Social_MessageAttachments
@@ -2120,8 +2125,6 @@ AS
             INSERT {databaseOwner}{objectQualifier}Social_MessageAttachments(                    
 					[FileID],
 					[MessageID],
-					[UserID],
-					[Status],		
                     [CreatedByUserID],
                     [CreatedOnDate],
                     [LastModifiedByUserID],
@@ -2735,8 +2738,8 @@ BEGIN
 		exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output;
 WITH inboxItems  AS
 (
-	SELECT	RecepientId,
-			ROW_NUMBER() OVER (ORDER BY RecepientId DESC) AS RowNumber
+	SELECT	RecipientID,
+			ROW_NUMBER() OVER (ORDER BY RecipientID DESC) AS RowNumber
 	FROM	{databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE UserID = @UserID
 )	
@@ -2755,7 +2758,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageStatus]
 	@Status			int
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET Status=@status WHERE RecipientID=@RecipientID
+UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Status]=@Status WHERE RecipientID=@RecipientID
 END
 GO
 
@@ -2782,6 +2785,144 @@ AS
 	WHERE UserID = @UserID OR RelatedUserID = @UserID
 GO
 
-/************************************************************/
-/*****              SqlDataProvider                     *****/
-/************************************************************/
+/* Add GetUsersByFilters Procedure */
+/**************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUsersByFilters]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByFilters]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByFilters]
+	@PortalId INT,
+	@CurrentUserId INT, -- default = -1
+	@NumberOfRecords INT,
+	@FilterByRole INT, -- default = -1
+	@FilterByRelationshipType INT, -- RelationshipTypeID. default = -1
+	@FilterByProfileProperty NVARCHAR(50), -- PropertyName
+	@FilterByProfilePropertyValue NVARCHAR(3750),
+	@SortBy NVARCHAR(100), -- Indicates the column name. Includes one of the following prefixes "User:" or "Profile:". Example 'Profile:LastName'
+	@SortAscending BIT, -- 1 - ASC; 0 - DESC; DEFAULT = 1
+	@IsAdmin BIT
+AS 
+	-- GET PROFILE PROPERTIES
+	CREATE TABLE #ProfileProperties
+	(
+		PropertyName NVARCHAR(50),
+		RowNumber INT
+	)
+	INSERT INTO #ProfileProperties
+		SELECT PropertyName, ROW_NUMBER() OVER(ORDER BY ViewOrder ASC) AS RowNumber
+		FROM {databaseOwner}{objectQualifier}ProfilePropertyDefinition
+		WHERE Deleted = 0 AND PortalID = @PortalId
+
+	DECLARE @PropertyCount INT
+	DECLARE @PropertyIndex INT
+	DECLARE @PropertyName NVARCHAR(50)
+	DECLARE @ProfileProperties NVARCHAR(MAX)
+
+	SELECT @PropertyCount = COUNT(*) FROM #ProfileProperties
+
+	-- SETUP SCRIPT
+	DECLARE @script NVARCHAR(MAX)
+	DECLARE @params NVARCHAR(300)
+
+	SET @params = N'@PortalId INT, @CurrentUserId INT, @FilterByRole INT, @FilterByRelationshipType INT, @FilterByProfilePropertyValue NVARCHAR(3750), @SortBy NVARCHAR(100), @SortAscending BIT, @IsAdmin BIT'
+
+	-- SELECT COLUMNS
+	SET @script = N'
+		SELECT TOP ' + CONVERT(NVARCHAR(20), @NumberOfRecords) + N'
+			U.UserID AS [Member:UserID],
+			U.Username AS [Member:Username],
+			U.FirstName AS [Member:FirstName],
+			U.LastName AS [Member:LastName],
+			U.Email AS [Member:Email],
+			U.DisplayName AS [Member:DisplayName]'
+
+	SET @PropertyIndex = 0
+	SET @ProfileProperties = N''
+
+	-- ADD PROFILE PROPERTIES AS COLUMNS
+	IF @PropertyCount > 0 BEGIN
+		WHILE @PropertyIndex < @PropertyCount BEGIN
+			SELECT @PropertyName = PropertyName
+			FROM #ProfileProperties
+			WHERE RowNumber = @PropertyIndex + 1
+			
+			SET @script = @script + N', UserProperties.[' + @PropertyName + N'] AS [MemberProfile:' + @PropertyName + N']'
+			SET @ProfileProperties = @ProfileProperties + N'[' + @PropertyName + N'],'
+			
+			SET @PropertyIndex = @PropertyIndex + 1
+		END
+		
+		SET @ProfileProperties = LEFT(@ProfileProperties, LEN(@ProfileProperties)-1)
+	END
+
+	-- FROM CLAUSE
+	SET @script = @script + N'
+		FROM [dbo].[dnn_Users] U
+		JOIN [dbo].[dnn_UserPortals] UP ON U.UserID = UP.UserId'
+
+	SET @PropertyIndex = 1
+
+	IF @PropertyCount > 0 BEGIN
+		SET @script = @script + N'
+		JOIN (
+			SELECT *
+			FROM (
+				SELECT
+					UserID,
+					PropertyName,				
+					CASE
+						WHEN Visibility = 0 THEN PropertyValue
+						WHEN Visibility = 1 AND @IsAdmin = 1 THEN PropertyValue
+						WHEN Visibility = 1 AND @IsAdmin = 0 AND @CurrentUserID > 0 THEN PropertyValue
+						WHEN Visibility = 2 AND @IsAdmin = 1 THEN PropertyValue
+						ELSE NULL
+					END AS PropertyValue
+				FROM {databaseOwner}{objectQualifier}UserProfile UPF
+				JOIN {databaseOwner}{objectQualifier}ProfilePropertyDefinition PPD ON UPF.PropertyDefinitionID = PPD.PropertyDefinitionID
+				WHERE [Deleted] = 0 AND [PortalID] = @PortalId
+			) AS SourceTable
+			PIVOT (
+				MIN(PropertyValue) 
+				FOR PropertyName IN (' + @ProfileProperties + N')
+			) AS UserPropertiesPVT
+		) AS UserProperties ON U.UserID = UserProperties.UserID'
+	END
+
+	-- FILTERS
+	IF @FilterByRole <> -1 BEGIN
+		SET @script = @script + N'
+		JOIN {databaseOwner}{objectQualifier}UserRoles UR ON U.UserID = UR.UserID AND UR.RoleID = @FilterByRole'
+	END
+
+	IF @CurrentUserId <> -1 AND @FilterByRelationshipType <> -1  BEGIN
+		SET @script = @script + N'
+		JOIN {databaseOwner}{objectQualifier}Relationships REL ON REL.PortalID = @PortalId AND RelationshipTypeID = @FilterByRelationshipType
+		JOIN {databaseOwner}{objectQualifier}UserRelationships UREL ON
+			REL.RelationshipID = UREL.RelationshipID AND
+			((UREL.UserID = @CurrentUserId AND UREL.RelatedUserID = U.UserID) OR
+			(UREL.UserID = U.UserID AND UREL.RelatedUserID = @CurrentUserId))'
+	END
+
+	-- WHERE CLAUSE
+	SET @script = @script + N'
+		WHERE U.IsDeleted = 0 AND UP.PortalId = @PortalId'
+
+	IF @FilterByProfileProperty IS NOT NULL
+		AND EXISTS(SELECT * FROM #ProfileProperties WHERE PropertyName LIKE @FilterByProfileProperty)
+		AND @FilterByProfileProperty IS NOT NULL BEGIN
+		SET @script = @script + N'
+		AND UserProperties.[' + @FilterByProfileProperty + N'] = @FilterByProfilePropertyValue'
+	END
+
+	-- SORTING
+	IF @SortBy <> '' BEGIN
+		SET @script = @script + N'
+		ORDER BY [' + @SortBy + CASE WHEN @SortAscending = 1 THEN N'] ASC' ELSE N'] DESC' END
+	END
+
+	EXEC sp_executesql @script, @params, @PortalId, @CurrentUserId, @FilterByRole, @FilterByRelationshipType, @FilterByProfilePropertyValue, @SortBy, @SortAscending, @IsAdmin
+
+	DROP TABLE #ProfileProperties
+
+

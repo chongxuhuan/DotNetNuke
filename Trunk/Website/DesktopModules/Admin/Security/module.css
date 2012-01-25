@@ -33,6 +33,11 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 .dnnProfileDetails .dnnFormItem .dnnFormVisibility input[type="radio"]{width:8%;float:none;}
 .dnnProfileDetails .dnnFormItem .dnnFormVisibility input[type="checkbox"]{width:8%;float:none;margin-left:30px;}
 
+.dnnProfileDetails .dnnFormItem .dnnFormVisibility { margin-top: 5px;}
+.dnnProfileDetails .dnnFormItem .dnnFormVisibility > ul { z-index: 200;position: absolute;background-color: white;border: turquoise 1px solid;padding: 5px;width: 200px;}
+.dnnProfileDetails .dnnFormItem .dnnFormVisibility > a { padding-top: 8px;padding-left: 3px;padding-right: 3px;padding-bottom: 3px;margin-top: 3px;}
+.dnnProfileDetails .dnnFormItem .dnnFormVisibility > a.dnnFormActive { border: turquoise 1px solid; }
+
 .dnnProfileDetails .dnnFormItem .dnnFormInput input[type="radio"]{width:8%;float:none;}
 .dnnEditRoleGroups .dnnFormItem input, .dnnEditRoleGroups .dnnFormItem textarea{width:35%;}
 .erAdvancedSettings .dnnFormItem input[type="text"], .dnnManageUsers .dnnFormItem input[type="text"]{width:35%;}

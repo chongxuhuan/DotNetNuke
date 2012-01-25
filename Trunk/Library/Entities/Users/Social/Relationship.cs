@@ -165,6 +165,9 @@ namespace DotNetNuke.Entities.Users
             this.Description = dr["Description"].ToString();
             this.DefaultResponse = (RelationshipStatus)Convert.ToInt32(dr["DefaultResponse"]);
             this.RelationshipTypeID = Convert.ToInt32(dr["RelationshipTypeID"]);
+
+            //add audit column data
+            FillInternal(dr);
         }
     }
 }

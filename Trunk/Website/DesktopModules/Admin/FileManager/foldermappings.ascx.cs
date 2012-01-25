@@ -88,7 +88,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
+            ClientAPI.RegisterClientReference(Page, ClientAPI.ClientNamespaceReferences.dnn);
             cmdCancel.NavigateUrl = Globals.NavigateURL();
             cmdNewMapping.Click += OnNewMappingClick;
 

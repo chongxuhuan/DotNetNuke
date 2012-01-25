@@ -35,6 +35,7 @@ using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.UI.Utilities;
 
 #endregion
 
@@ -252,6 +253,57 @@ namespace DotNetNuke.UI.WebControls
             base.OnPreRender(e);
 
             Page.RegisterRequiresPostBack(this);
+
+            var js = @"
+                (function ($, Sys) {
+                    function setUpProfile() {
+
+                        $('div[name$=""_visibility""] > a').click(function () {
+                            var visibilityMenu = $(this).parent().children(""ul"");
+                            if ($(this).hasClass('dnnFormActive')) {
+                                //show this menu
+                                visibilityMenu.slideUp('slow'); ;
+
+                                $(this).removeClass('dnnFormActive');
+                            }
+                            else {
+                                //hide any menu that is currently open
+                                $('div[name$=""_visibility""] > ul').hide();
+                                $('div[name$=""_visibility""] > a').removeClass('dnnFormActive');
+
+                                //show this menu
+                                visibilityMenu.slideDown('slow', function () {
+                                    showHideOptions(visibilityMenu.find('li > input[name$=""_visibility""]:checked'));
+                                }); ;
+
+                                $(this).addClass('dnnFormActive');
+                            }
+                        });
+
+                        $('input[name$=""_visibility""]').click(function () {
+                            showHideOptions($(this));
+                        });
+
+                        function showHideOptions(visibility) {
+                            var options = visibility.parent().parent().children(""ul"");
+                            if (visibility.val() == ""3"") {
+                                options.slideDown('slow');
+                            } else {
+                                options.slideUp('slow');
+                            }
+                        }
+                    }
+
+                    $(document).ready(function () {
+                        setUpProfile();
+                        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+                            setUpProfile();
+                        });
+                    });
+                } (jQuery, window.Sys));
+            ";
+
+            //Page.ClientScript.RegisterClientScriptBlock(GetType(), "dnnVisibilityControl", js, true);
         }
 
 		/// <summary>
@@ -296,6 +348,7 @@ namespace DotNetNuke.UI.WebControls
             writer.RenderEndTag();
 
             //Render UL for radio Button List
+            writer.AddStyleAttribute(HtmlTextWriterStyle.Display, "none");
             writer.RenderBeginTag(HtmlTextWriterTag.Ul);
 
             RenderVisibility(writer, "0", UserVisibilityMode.AllUsers, Localization.GetString("Public").Trim());
@@ -306,7 +359,8 @@ namespace DotNetNuke.UI.WebControls
 
             RenderVisibility(writer, "3", UserVisibilityMode.FriendsAndGroups, Localization.GetString("FriendsGroups").Trim());
 
-            //Render UL for radio Button List
+            //Render UL for checjk Box List
+            writer.AddStyleAttribute(HtmlTextWriterStyle.Display, "none");
             writer.RenderBeginTag(HtmlTextWriterTag.Ul);
 
 		    RenderRelationships(writer);
