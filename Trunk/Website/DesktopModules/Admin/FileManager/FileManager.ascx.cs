@@ -1367,11 +1367,6 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
                 DisabledButtons = DNNTree.IsDownLevel;
 
-                if(Host.EnableFileAutoSync)
-                {
-                    FolderManager.Instance.Synchronize(FolderPortalID, "", true, true);
-                }
-
                 if (IsHostMenu)
                 {
                     RootFolderName = Localization.GetString("HostRoot", LocalResourceFile);

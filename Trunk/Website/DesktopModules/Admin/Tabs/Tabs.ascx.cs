@@ -18,36 +18,37 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.UI.WebControls;
 using System.Xml;
+
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Data;
-using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.UI.Skins;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.Web.UI;
+
 using Telerik.Web.UI;
+
 using DataCache = DotNetNuke.Common.Utilities.DataCache;
 using Globals = DotNetNuke.Common.Globals;
 
-namespace DotNetNuke.Modules.Admin.Pages
+namespace DesktopModules.Admin.Tabs
 {
 
     public enum Position
@@ -342,7 +343,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                         {
                             editUrl = UrlUtils.PopUpUrl(editUrl, this, PortalSettings, true, false);
                             var script = string.Format("<script type=\"text/javascript\">{0}</script>", editUrl);
-                            ClientAPI.RegisterStartUpScript(this.Page, "EditInPopup", script);
+                            ClientAPI.RegisterStartUpScript(Page, "EditInPopup", script);
                         }
                         else
                         {
@@ -358,7 +359,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                         //keep the parent tab selected
                         if (objTab.ParentId != Null.NullInteger)
                         {
-                            SelectedNode = objTab.ParentId.ToString();
+                            SelectedNode = objTab.ParentId.ToString(CultureInfo.InvariantCulture);
                             ctlPages.FindNodeByValue(SelectedNode).Selected = true;
                             ctlPages.FindNodeByValue(SelectedNode).ExpandParentNodes();
                             BindTab(objTab.ParentId);
@@ -538,7 +539,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 var oTab = new TabInfo { TabName = strLine };
                 if (strLine.StartsWith(">"))
                 {
-                    oTab.Level = strLine.LastIndexOf(">") + 1;
+                    oTab.Level = strLine.LastIndexOf(">", StringComparison.Ordinal) + 1;
                 }
                 else
                 {
@@ -655,7 +656,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 BindTree();
 
                 //keep the tab selected
-                SelectedNode = intTab.ToString();
+                SelectedNode = intTab.ToString(CultureInfo.InvariantCulture);
                 ctlPages.FindNodeByValue(SelectedNode).Selected = true;
                 ctlPages.FindNodeByValue(SelectedNode).ExpandParentNodes();
             }
@@ -683,7 +684,7 @@ namespace DotNetNuke.Modules.Admin.Pages
 
                 pnlDetails.Visible = true;
 
-                SelectedNode = tabId.ToString();
+                SelectedNode = tabId.ToString(CultureInfo.InvariantCulture);
 
                 //Bind TabPermissionsGrid to TabId 
                 dgPermissions.TabID = tab.TabID;
@@ -695,11 +696,11 @@ namespace DotNetNuke.Modules.Admin.Pages
                 txtName.Text = tab.TabName;
                 chkVisible.Checked = tab.IsVisible;
 
-                txtSitemapPriority.Text = tab.SiteMapPriority.ToString();
+                txtSitemapPriority.Text = tab.SiteMapPriority.ToString(CultureInfo.InvariantCulture);
                 txtDescription.Text = tab.Description;
                 txtKeywords.Text = tab.KeyWords;
                 txtMeta.Text = tab.PageHeadText;
-                txtRefresh.Text = tab.RefreshInterval.ToString();
+                txtRefresh.Text = tab.RefreshInterval.ToString(CultureInfo.InvariantCulture);
 
                 drpSkin.SelectedValue = tab.SkinSrc;
                 drpContainer.SelectedValue = tab.ContainerSrc;
@@ -844,14 +845,14 @@ namespace DotNetNuke.Modules.Admin.Pages
         private void AddAttributes(ref RadTreeNode node, TabInfo tab)
         {
             var canView = true;
-            var canEdit = true;
-            var canAdd = true;
-            var canDelete = true;
-            var canHide = true;
-            var canMakeVisible = true;
-            var canEnable = true;
-            var canDisable = true;
-            var canMakeHome = true;
+            bool canEdit;
+            bool canAdd;
+            bool canDelete;
+            bool canHide;
+            bool canMakeVisible;
+            bool canEnable;
+            bool canDisable;
+            bool canMakeHome;
 
             if (node.Attributes["isPortalRoot"] != null && Boolean.Parse(node.Attributes["isPortalRoot"]))
             {
@@ -909,15 +910,15 @@ namespace DotNetNuke.Modules.Admin.Pages
                 }
             }
 
-            node.Attributes.Add("CanView", canView.ToString());
-            node.Attributes.Add("CanEdit", canEdit.ToString());
-            node.Attributes.Add("CanAdd", canAdd.ToString());
-            node.Attributes.Add("CanDelete", canDelete.ToString());
-            node.Attributes.Add("CanHide", canHide.ToString());
-            node.Attributes.Add("CanMakeVisible", canMakeVisible.ToString());
-            node.Attributes.Add("CanEnable", canEnable.ToString());
-            node.Attributes.Add("CanDisable", canDisable.ToString());
-            node.Attributes.Add("CanMakeHome", canMakeHome.ToString());
+            node.Attributes.Add("CanView", canView.ToString(CultureInfo.InvariantCulture));
+            node.Attributes.Add("CanEdit", canEdit.ToString(CultureInfo.InvariantCulture));
+            node.Attributes.Add("CanAdd", canAdd.ToString(CultureInfo.InvariantCulture));
+            node.Attributes.Add("CanDelete", canDelete.ToString(CultureInfo.InvariantCulture));
+            node.Attributes.Add("CanHide", canHide.ToString(CultureInfo.InvariantCulture));
+            node.Attributes.Add("CanMakeVisible", canMakeVisible.ToString(CultureInfo.InvariantCulture));
+            node.Attributes.Add("CanEnable", canEnable.ToString(CultureInfo.InvariantCulture));
+            node.Attributes.Add("CanDisable", canDisable.ToString(CultureInfo.InvariantCulture));
+            node.Attributes.Add("CanMakeHome", canMakeHome.ToString(CultureInfo.InvariantCulture));
 
             node.AllowEdit = canEdit;
         }
@@ -938,7 +939,7 @@ namespace DotNetNuke.Modules.Admin.Pages
             {
                 rootNode.Text = PortalSettings.PortalName;
                 rootNode.ImageUrl = IconPortal;
-                rootNode.Value = Null.NullInteger.ToString();
+                rootNode.Value = Null.NullInteger.ToString(CultureInfo.InvariantCulture);
                 rootNode.Expanded = true;
                 rootNode.AllowEdit = false;
                 rootNode.EnableContextMenu = true;
@@ -953,7 +954,7 @@ namespace DotNetNuke.Modules.Admin.Pages
                 {
                     rootNode.Text = parent.TabName;
                     rootNode.ImageUrl = IconPortal;
-                    rootNode.Value = parent.TabID.ToString();
+                    rootNode.Value = parent.TabID.ToString(CultureInfo.InvariantCulture);
                     rootNode.Expanded = true;
                     rootNode.EnableContextMenu = true;
                     rootNode.PostBack = false;
@@ -970,7 +971,12 @@ namespace DotNetNuke.Modules.Admin.Pages
                         if (tab.ParentId == Convert.ToInt32(strParent))
                         {
                             var node = new RadTreeNode
-                                           {Text = string.Format("{0} {1}", tab.TabName, GetNodeStatusIcon(tab)), Value = tab.TabID.ToString(), AllowEdit = true, ImageUrl = GetNodeIcon(tab)};
+                                           {
+                                               Text = string.Format("{0} {1}", tab.TabName, GetNodeStatusIcon(tab)), 
+                                               Value = tab.TabID.ToString(CultureInfo.InvariantCulture), 
+                                               AllowEdit = true, 
+                                               ImageUrl = GetNodeIcon(tab)
+                                           };
                             AddAttributes(ref node, tab);
 
                             AddChildnodes(node);
@@ -982,7 +988,12 @@ namespace DotNetNuke.Modules.Admin.Pages
                         if (tab.Level == 0)
                         {
                             var node = new RadTreeNode
-                                           {Text = string.Format("{0} {1}", tab.TabName, GetNodeStatusIcon(tab)), Value = tab.TabID.ToString(), AllowEdit = true, ImageUrl = GetNodeIcon(tab)};
+                                           {
+                                               Text = string.Format("{0} {1}", tab.TabName, GetNodeStatusIcon(tab)), 
+                                               Value = tab.TabID.ToString(CultureInfo.InvariantCulture), 
+                                               AllowEdit = true, 
+                                               ImageUrl = GetNodeIcon(tab)
+                                           };
                             AddAttributes(ref node, tab);
 
                             AddChildnodes(node);
@@ -1018,7 +1029,7 @@ namespace DotNetNuke.Modules.Admin.Pages
         private void BindTreeAndShowTab(int tabId)
         {
             BindTree();
-			var node = ctlPages.FindNodeByValue(tabId.ToString());
+			var node = ctlPages.FindNodeByValue(tabId.ToString(CultureInfo.InvariantCulture));
             //rare cases it is null (e.g. when a page is created when page local is not default locale)
             if (node != null)
             {
@@ -1044,7 +1055,13 @@ namespace DotNetNuke.Modules.Admin.Pages
             {
                 if (objTab.ParentId == parentId)
                 {
-                    var node = new RadTreeNode { Text = string.Format("{0} {1}", objTab.TabName, GetNodeStatusIcon(objTab)), Value = objTab.TabID.ToString(), AllowEdit = true, ImageUrl = GetNodeIcon(objTab) };
+                    var node = new RadTreeNode
+                                   {
+                                       Text = string.Format("{0} {1}", objTab.TabName, GetNodeStatusIcon(objTab)), 
+                                       Value = objTab.TabID.ToString(CultureInfo.InvariantCulture), 
+                                       AllowEdit = true, 
+                                       ImageUrl = GetNodeIcon(objTab)
+                                   };
                     AddAttributes(ref node, objTab);
                     //If objTab.HasChildren Then
                     //    node.ExpandMode = TreeNodeExpandMode.ServerSide
@@ -1181,7 +1198,7 @@ namespace DotNetNuke.Modules.Admin.Pages
         private bool MoveTab(TabInfo tab, TabInfo targetTab, Position position)
         {
             //Validate Tab Path
-            if (!IsValidTabPath(tab, Globals.GenerateTabPath((targetTab == null) ? Null.NullInteger : targetTab.TabID, tab.TabName)))
+            if (targetTab == null || !IsValidTabPath(tab, Globals.GenerateTabPath((targetTab == null) ? Null.NullInteger : targetTab.TabID, tab.TabName)))
             {
                 return false;
             }
@@ -1190,16 +1207,10 @@ namespace DotNetNuke.Modules.Admin.Pages
             switch (position)
             {
                 case Position.Above:
-                    if (targetTab != null)
-                    {
-                        tabController.MoveTabBefore(tab, targetTab.TabID);
-                    }
+                    tabController.MoveTabBefore(tab, targetTab.TabID);
                     break;
                 case Position.Below:
-                    if (targetTab != null)
-                    {
-                        tabController.MoveTabAfter(tab, targetTab.TabID);
-                    }
+                    tabController.MoveTabAfter(tab, targetTab.TabID);
                     break;
             }
 
@@ -1237,17 +1248,17 @@ namespace DotNetNuke.Modules.Admin.Pages
 
         private void ShowWarningMessage(string message)
         {
-            UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.YellowWarning);
+            Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.YellowWarning);
         }
 
         private void ShowErrorMessage(string message)
         {
-            UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.RedError);
+            Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.RedError);
         }
 
         private void ShowSuccessMessage(string message)
         {
-            UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.GreenSuccess);
+            Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.GreenSuccess);
         }
 
         private static int GetParentTabId(List<TabInfo> lstTabs, int currentIndex, int parentLevel)

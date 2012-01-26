@@ -35,10 +35,10 @@ namespace DotNetNuke.Services.Social.Messaging
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
     /// Namespace:  DotNetNuke.Entities.Messaging
-    /// Class:      MessageAttachments
+    /// Class:      MessageAttachment
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageAttachments class describes the content attachments associated with a message
+    /// The MessageAttachment class describes the content attachments associated with a message
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]

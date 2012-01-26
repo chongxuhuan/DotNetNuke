@@ -217,7 +217,7 @@
     <value>Disabled</value>
   </data>
   <data name="DisabledHelp.Text" xml:space="preserve">
-    <value>If the page is disabled it is not available to users of the site.  You can use this option to suppress content that you might wish to show at a later time.</value>
+    <value>If the page is disabled it cannot be clicked in any navigation menu.  This option is used to provide place-holders for child menu items.</value>
   </data>
   <data name="SecuritySettings.Text" xml:space="preserve">
     <value>Security Settings</value>

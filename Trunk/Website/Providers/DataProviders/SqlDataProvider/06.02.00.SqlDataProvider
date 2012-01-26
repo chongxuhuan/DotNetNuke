@@ -2724,23 +2724,32 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetInbox]
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetInbox]
-	@UserID  int,
-	@PageIndex      int,
-	@PageSize       int,
-	@TotalRecords	int
+	@UserID       int,
+	@PageIndex    int,
+	@PageSize     int
 AS
 BEGIN
-		-- Set the page bounds
-		DECLARE 
-			@PageLowerBound INT, 
-			@PageUpperBound INT, 
-			@RowsToReturn int;
-		exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output;
+
+--Return total message count
+SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_MessageRecipients WHERE UserID = @UserID
+
+-- Set the page bounds
+DECLARE 
+	@PageLowerBound INT, 
+	@PageUpperBound INT, 
+	@RowsToReturn int;
+	
+exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output;
+
 WITH inboxItems  AS
 (
-	SELECT	RecipientID,
+	SELECT  DISTINCT [RecipientID], [Subject], CAST(BODY as nvarchar(150)) AS Body, [SenderUserID], 
+			[Status], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
+			MessageRecipients.[CreatedByUserID], MessageRecipients.[CreatedOnDate], MessageRecipients.[LastModifiedByUserID], MessageRecipients.[LastModifiedOnDate],
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = MessageRecipients.MessageID) AS AttachmentCount,
 			ROW_NUMBER() OVER (ORDER BY RecipientID DESC) AS RowNumber
-	FROM	{databaseOwner}{objectQualifier}Social_MessageRecipients
+	FROM	{databaseOwner}{objectQualifier}Social_MessageRecipients AS MessageRecipients
+	INNER JOIN {databaseOwner}{objectQualifier}Social_Messages ON MessageRecipients.MessageID = {databaseOwner}{objectQualifier}Social_Messages.MessageID	
 	WHERE UserID = @UserID
 )	
 SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
@@ -2785,6 +2794,7 @@ AS
 	WHERE UserID = @UserID OR RelatedUserID = @UserID
 GO
 
+
 /* Add GetUsersByFilters Procedure */
 /**************************************/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUsersByFilters]') AND type in (N'P', N'PC'))
@@ -2795,6 +2805,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByFilters]
 	@PortalId INT,
 	@CurrentUserId INT, -- default = -1
 	@NumberOfRecords INT,
+	@PageIndex INT, 
 	@FilterByRole INT, -- default = -1
 	@FilterByRelationshipType INT, -- RelationshipTypeID. default = -1
 	@FilterByProfileProperty NVARCHAR(50), -- PropertyName
@@ -2825,18 +2836,27 @@ AS
 	DECLARE @script NVARCHAR(MAX)
 	DECLARE @params NVARCHAR(300)
 
-	SET @params = N'@PortalId INT, @CurrentUserId INT, @FilterByRole INT, @FilterByRelationshipType INT, @FilterByProfilePropertyValue NVARCHAR(3750), @SortBy NVARCHAR(100), @SortAscending BIT, @IsAdmin BIT'
+	SET @params = N'@PortalId INT, @CurrentUserId INT, @NumberOfRecords INT, @PageIndex INT, @FilterByRole INT, @FilterByRelationshipType INT, @FilterByProfilePropertyValue NVARCHAR(3750), @SortBy NVARCHAR(100), @SortAscending BIT, @IsAdmin BIT'
 
-	-- SELECT COLUMNS
-	SET @script = N'
-		SELECT TOP ' + CONVERT(NVARCHAR(20), @NumberOfRecords) + N'
-			U.UserID AS [Member:UserID],
-			U.Username AS [Member:Username],
-			U.FirstName AS [Member:FirstName],
-			U.LastName AS [Member:LastName],
-			U.Email AS [Member:Email],
-			U.DisplayName AS [Member:DisplayName]'
+	SET @script = N'SELECT TOP ' + CONVERT(NVARCHAR(20), @NumberOfRecords) + ' * FROM ( '  
+	
+		-- SORTING
+		SET @script = @script + N' SELECT ROW_NUMBER() OVER '
+			IF @SortBy <> '' BEGIN
+				SET @script = @script + N'(ORDER BY [' + @SortBy + CASE WHEN @SortAscending = 1 THEN N'] ASC) AS SortOrder, ' ELSE N'] DESC) AS SortOrder, ' END
+			END
+			ELSE
+			BEGIN
+				SET @script = @script + N'(ORDER BY [Member:UserID]' + CASE WHEN @SortAscending = 1 THEN N' ASC) AS SortOrder, ' ELSE N' DESC) AS SortOrder, ' END
+			END
 
+	SET @script = @script + N' * FROM ( SELECT 
+											U.UserID AS [Member:UserID],
+											U.Username AS [Member:Username],
+											U.FirstName AS [Member:FirstName],
+											U.LastName AS [Member:LastName],
+											U.Email AS [Member:Email],
+											U.DisplayName AS [Member:DisplayName]'
 	SET @PropertyIndex = 0
 	SET @ProfileProperties = N''
 
@@ -2858,8 +2878,8 @@ AS
 
 	-- FROM CLAUSE
 	SET @script = @script + N'
-		FROM [dbo].[dnn_Users] U
-		JOIN [dbo].[dnn_UserPortals] UP ON U.UserID = UP.UserId'
+		FROM {databaseOwner}{objectQualifier}Users U
+		JOIN {databaseOwner}{objectQualifier}UserPortals UP ON U.UserID = UP.UserId'
 
 	SET @PropertyIndex = 1
 
@@ -2905,8 +2925,8 @@ AS
 	END
 
 	-- WHERE CLAUSE
-	SET @script = @script + N'
-		WHERE U.IsDeleted = 0 AND UP.PortalId = @PortalId'
+	SET @script = @script + N' WHERE ' + 		
+		N' U.IsDeleted = 0 AND UP.PortalId = @PortalId '
 
 	IF @FilterByProfileProperty IS NOT NULL
 		AND EXISTS(SELECT * FROM #ProfileProperties WHERE PropertyName LIKE @FilterByProfileProperty)
@@ -2914,14 +2934,13 @@ AS
 		SET @script = @script + N'
 		AND UserProperties.[' + @FilterByProfileProperty + N'] = @FilterByProfilePropertyValue'
 	END
-
-	-- SORTING
-	IF @SortBy <> '' BEGIN
-		SET @script = @script + N'
-		ORDER BY [' + @SortBy + CASE WHEN @SortAscending = 1 THEN N'] ASC' ELSE N'] DESC' END
-	END
-
-	EXEC sp_executesql @script, @params, @PortalId, @CurrentUserId, @FilterByRole, @FilterByRelationshipType, @FilterByProfilePropertyValue, @SortBy, @SortAscending, @IsAdmin
+	
+	SET @script = @script + N' )AS FilteredUsers ) AS Members '
+	
+	-- OUTER WHERE CLAUSE		
+	SET @script = @script + N' WHERE SortOrder >= (((@PageIndex - 1) * @NumberOfRecords) + 1) '
+		
+	EXEC sp_executesql @script, @params, @PortalId, @CurrentUserId, @NumberOfRecords, @PageIndex, @FilterByRole, @FilterByRelationshipType, @FilterByProfilePropertyValue, @SortBy, @SortAscending, @IsAdmin
 
 	DROP TABLE #ProfileProperties
 

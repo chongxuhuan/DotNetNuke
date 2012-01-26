@@ -36,7 +36,7 @@ namespace DotNetNuke.Entities.Users
     /// -----------------------------------------------------------------------------
     /// <summary>
     /// The UserRelationshipPreference class defines the relationship preference per user
-    /// The user initiating the relationship is UserID. 
+    /// The user initiating the relationship is UserId. 
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
@@ -44,26 +44,26 @@ namespace DotNetNuke.Entities.Users
     {
         public UserRelationshipPreference()
         {
-            PreferenceID = -1;
+            PreferenceId = -1;
         }
 
         /// <summary>
-        /// PreferenceID - The primary key
+        /// PreferenceId - The primary key
         /// </summary>
         [XmlAttribute]
-        public int PreferenceID { get; set; }
+        public int PreferenceId { get; set; }
 
         /// <summary>
-        /// UserID of the User that owns the relationship
+        /// UserId of the User that owns the relationship
         /// </summary>
         [XmlAttribute]
-        public int UserID { get; set; }
+        public int UserId { get; set; }
 
         /// <summary>
         /// The ID of the Relationship to which this Relation belongs to (e.g. Friend List or Coworkers)
         /// </summary>
         [XmlAttribute]
-        public int RelationshipID { get; set; }
+        public int RelationshipId { get; set; }
 
         /// <summary>
         /// Default Relationship Status to be provided to any new Relationship Request
@@ -79,11 +79,11 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                return PreferenceID;
+                return PreferenceId;
             }
             set
             {
-                PreferenceID = value;
+                PreferenceId = value;
             }
         }
 
@@ -93,9 +93,9 @@ namespace DotNetNuke.Entities.Users
         /// <param name="dr">the data reader.</param>
         public void Fill(IDataReader dr)
         {
-            PreferenceID = Convert.ToInt32(dr["PreferenceID"]);
-            UserID = Convert.ToInt32(dr["UserID"]);            
-            RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
+            PreferenceId = Convert.ToInt32(dr["PreferenceID"]);
+            UserId = Convert.ToInt32(dr["UserID"]);            
+            RelationshipId = Convert.ToInt32(dr["RelationshipID"]);
             DefaultResponse = (RelationshipStatus)Convert.ToInt32(dr["DefaultResponse"]);
 
             //add audit column data

@@ -478,7 +478,7 @@ namespace DotNetNuke.UI.WebControls
                         writer.Write(item.Text);
                         break;
                     case ListBoundField.Value:
-                        writer.Write(item.Value);
+                        writer.Write(item.Value.Trim());
                         break;
                 }
                 writer.RenderEndTag();

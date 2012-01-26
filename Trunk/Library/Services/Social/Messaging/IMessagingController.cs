@@ -41,10 +41,10 @@ namespace DotNetNuke.Services.Social.Messaging
         void MarkUnRead(int messageRecipientID);
         void MarkArchived(int messageRecipientID);
       
-        IList<Message> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
+        IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
 
         //Gets the latest 10 messages.s
-        IList<Message> GetRecentMessages(int userID, ref int totalRecords);
+        IList<MessageItem> GetRecentMessages(int userID, ref int totalRecords);
 
         Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
 

@@ -1765,4 +1765,54 @@ corrected with each release. &lt;/p&gt;
         &lt;/ul&gt;
       </value>
     </data>
+  <data name="WhatsNew.06.01.03" xml:space="preserve">
+        <value>
+        &lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+        &lt;ul&gt;
+	        &lt;li&gt;Fixed issue during CE to PE upgrade that caused the Google Analytics module 
+	        to not be shown in the control panel or the Admin page&lt;/li&gt;
+	        &lt;li&gt;Fixed issue in the HTML Template Manager&lt;/li&gt;
+	        &lt;li&gt;Fixed unhandled exception when creating new extensions of type Dashboard Control&lt;/li&gt;
+	        &lt;li&gt;Fixed issue where hidden pages were not being shown in Admin &gt; User Accounts 
+	        &gt; User Settings &gt; User Account Settings &gt; Redirect After&lt;/li&gt;
+	        &lt;li&gt;Fixed issue with non-standard folders in the RadEditor&lt;/li&gt;
+	        &lt;li&gt;Fixed issue where Calendar Popups were not rendering in IE9&lt;/li&gt;
+	        &lt;li&gt;Fixed installation flow when the user did not have the right file and folder permissions to finish the installation&lt;/li&gt;
+	        &lt;li&gt;Fixed issue that was stopping users from logging in because of corrupt data in the Profile table&lt;/li&gt;
+	        &lt;li&gt;Fixed issue in the class ContentController when trying to retrieve the metadata of content items&lt;/li&gt;
+	        &lt;li&gt;Removed deprecated file TimeZoneEditor.ascx.resx&lt;/li&gt;
+	        &lt;li&gt;Fixed issue that caused invalid values to be entered in the UserProfile table&lt;/li&gt;
+	        &lt;li&gt;Fixed issue with folders not being shown when they were created from the HTML Module&lt;/li&gt;
+	        &lt;li&gt;Fixed error logged when marking an item as ready for translation&lt;/li&gt;
+	        &lt;li&gt;Fixed upgrade issue in the files table when upgrading from 5.x.x to 6.x.x.&lt;/li&gt;
+	        &lt;li&gt;Fixed issue when creating module from the Newsletter module&lt;/li&gt;
+	        &lt;li&gt;Fixed UI issue in the Tabs Module where the legend didn&#39;t wrap&lt;/li&gt;
+	        &lt;li&gt;Updated assemblies to Telerik Q3 2011 Ajax&lt;/li&gt;
+	        &lt;li&gt;Included missing key in the GlobalResources.resx file (&quot;//Admin//Lists.text&quot;)&lt;/li&gt;
+	        &lt;li&gt;Fixed issue where language key were missing in the RadEditor&lt;/li&gt;
+	        &lt;li&gt;Implemented work around for a bug in the browser definition files that were causing ASP.NET to not be able to detect certain browsers&lt;/li&gt;
+	        &lt;li&gt;Fixed issue with localization files not being handled correctly by the Telerik DNN Grid&lt;/li&gt;
+	        &lt;li&gt;Fixed issue with large files that were causing a YSOD&lt;/li&gt;
+	        &lt;li&gt;Fixed issue where the modal dialogs were inheriting from the site styles&lt;/li&gt;
+	        &lt;li&gt;Fixed issue in the Cache Provider when using a PE template in a CE site&lt;/li&gt;
+	        &lt;li&gt;Fixed casting issues to support Oracle data provider&lt;/li&gt;
+        &lt;/ul&gt;
+        &lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+        &lt;ul&gt;
+	        &lt;li&gt;Pending&lt;/li&gt;
+        &lt;/ul&gt;
+        &lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+        &lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+        &lt;ul&gt;
+	        &lt;li&gt;Pages Module&lt;/li&gt;
+	        &lt;li&gt;Newsletter Module&lt;/li&gt;
+	        &lt;li&gt;File Manager&lt;/li&gt;
+	        &lt;li&gt;HTML Module&lt;/li&gt;
+        &lt;/ul&gt;
+        &lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+        &lt;ul&gt;
+	        &lt;li&gt;none&lt;/li&gt;
+        &lt;/ul&gt;
+        </value>
+    </data>
 </root>

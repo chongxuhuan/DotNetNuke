@@ -41,21 +41,21 @@ namespace DotNetNuke.Entities.Users
     [Serializable]
     public class RelationshipType : BaseEntityInfo, IHydratable
     {
-        private int _relationshipTypeID = -1;
+        private int _relationshipTypeId = -1;
 
         /// <summary>
-        /// RelationshipID - The primary key
+        /// RelationshipId - The primary key
         /// </summary>
         [XmlAttribute]
-        public int RelationshipTypeID
+        public int RelationshipTypeId
         {
             get
             {
-                return _relationshipTypeID;
+                return _relationshipTypeId;
             }
             set
             {
-                _relationshipTypeID = value;
+                _relationshipTypeId = value;
             }
         }
 
@@ -85,11 +85,11 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                return this.RelationshipTypeID;
+                return this.RelationshipTypeId;
             }
             set
             {
-                this.RelationshipTypeID = value;
+                this.RelationshipTypeId = value;
             }
         }
 
@@ -99,7 +99,7 @@ namespace DotNetNuke.Entities.Users
         /// <param name="dr">the data reader.</param>
         public void Fill(IDataReader dr)
         {
-            this.RelationshipTypeID = Convert.ToInt32(dr["RelationshipTypeID"]);
+            this.RelationshipTypeId = Convert.ToInt32(dr["RelationshipTypeID"]);
             this.Name = dr["Name"].ToString();
             this.Description = dr["Description"].ToString();
             this.Direction = (RelationshipDirection)Convert.ToInt32(dr["Direction"]);

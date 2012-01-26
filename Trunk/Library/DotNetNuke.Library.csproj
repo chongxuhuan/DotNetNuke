@@ -212,6 +212,7 @@
     <Compile Include="Services\Localization\ILocalizationProvider.cs" />
     <Compile Include="Services\Localization\LocalizationProvider.cs" />
     <Compile Include="Services\Log\EventLog\IEventLogController.cs" />
+    <Compile Include="Services\Social\Messaging\MessageItem.cs" />
     <Compile Include="Services\Social\Messaging\MessagingController.cs" />
     <Compile Include="Services\Social\Messaging\Data\DataService.cs" />
     <Compile Include="Services\Social\Messaging\Data\IDataService.cs" />

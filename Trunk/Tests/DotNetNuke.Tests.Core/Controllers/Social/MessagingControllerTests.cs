@@ -49,7 +49,11 @@ namespace DotNetNuke.Tests.Core.Controllers
 
         private Mock<IDataService> _mockDataService;		
         private MessagingController _messagingController;
-        private Mock<DataProvider> _dataProvider;   
+        private Mock<DataProvider> _dataProvider;
+
+        private DataTable _dtMessages;
+        private DataTable _dtMessageAttachment;
+        private DataTable _dtMessageRecipients;
 
 		#endregion
 
@@ -66,7 +70,8 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             _messagingController = new MessagingController(_mockDataService.Object);
 
-			SetupDataProvider();						
+			SetupDataProvider();
+		  //  SetupDataTables();
 		}
 
 
@@ -91,7 +96,7 @@ namespace DotNetNuke.Tests.Core.Controllers
 
         #endregion
 
-        #region #region Easy Wrapper APIs Tests
+        #region Easy Wrapper APIs Tests
 
         [Test]
         [ExpectedException(typeof(ArgumentException))]
@@ -333,15 +338,124 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             //Act
             var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
-
+            
             //Assert
             Assert.AreEqual(message.ReplyAllAllowed, true);
         }
+
+        [Test]
+        public void MessagingController_SetReadMessage_Calls_DataService_UpdateSocialMessageStatus()
+        {
+            //Arrange
+            var messageInstance = CreateValidUnReadMessageRecipient();
+
+            //Act
+           _messagingController.MarkRead(messageInstance.RecipientID);
+
+            //Assert
+           _mockDataService.Verify(ds => ds.UpdateSocialMessageStatus(messageInstance.RecipientID, (int)MessageStatus.Read));
+        }
+
+        [Test]
+        public void MessagingController_SetUnReadMessage_Calls_DataService_UpdateSocialMessageStatus()
+        {
+            //Arrange
+            var messageInstance = CreateValidUnReadMessageRecipient();
+
+            //Act
+            _messagingController.MarkUnRead(messageInstance.RecipientID);
+
+            //Assert
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageStatus(messageInstance.RecipientID, (int)MessageStatus.Unread));                        
+        }
+
+        [Test]
+        public void MessagingController_SetArchivedMessage_Calls_DataService_UpdateSocialMessageStatus()
+        {
+            //Arrange
+            var messageInstance = CreateValidUnReadMessageRecipient();
+
+            //Act
+            _messagingController.MarkArchived(messageInstance.RecipientID);
+
+            //Assert
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageStatus(messageInstance.RecipientID, (int)MessageStatus.Archived));                        
+        }
+             
 
         #endregion
 
 
         #region "Private Methods"
+
+        private static Message CreateValidMessage()
+        {
+            var message = new Message
+            {
+                MessageID = 2,
+                Subject  ="test",
+                Body="body",
+                ParentMessageID = 1,
+                ReplyAllAllowed = false,
+                SenderUserID =1
+            };
+            return message;
+        }
+
+        private static MessageRecipient CreateValidUnReadMessageRecipient()
+        {
+            var messageRecipient = new MessageRecipient
+            {
+                RecipientID  =1,
+                MessageID = 1,
+                UserID = 1,
+                Status = (int)MessageStatus.Unread
+            };
+            return messageRecipient;
+        }
+
+        private void SetupDataTables()
+        {
+            //Messages
+            _dtMessages = new DataTable("Messages");
+            var pkMessagesMessageID = _dtMessages.Columns.Add("MessageID", typeof(int));
+            _dtMessages.Columns.Add("To", typeof(string));
+            _dtMessages.Columns.Add("Subject", typeof(string));
+            _dtMessages.Columns.Add("Body", typeof(string));
+            _dtMessages.Columns.Add("ParentMessageID", typeof(int));
+            _dtMessages.Columns.Add("ReplyAllAllowed", typeof(bool));
+            _dtMessages.Columns.Add("SenderUserID", typeof(int));
+            _dtMessages.Columns.Add("CreatedByUserID", typeof(int));
+            _dtMessages.Columns.Add("CreatedOnDate", typeof(DateTime));
+            _dtMessages.Columns.Add("LastModifiedByUserID", typeof(int));
+            _dtMessages.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+            _dtMessages.PrimaryKey = new[] { pkMessagesMessageID };
+
+          //MessageRecipients
+            _dtMessageRecipients = new DataTable("MessageRecipients");
+            var pkMessagesRecipientID = _dtMessages.Columns.Add("RecipientID", typeof(int));
+            _dtMessageRecipients.Columns.Add("MessageID", typeof(int));
+            _dtMessageRecipients.Columns.Add("UserID", typeof(int));
+            _dtMessageRecipients.Columns.Add("Status", typeof(int));
+            _dtMessageRecipients.Columns.Add("CreatedByUserID", typeof(int));
+            _dtMessageRecipients.Columns.Add("CreatedOnDate", typeof(DateTime));
+            _dtMessageRecipients.Columns.Add("LastModifiedByUserID", typeof(int));
+            _dtMessageRecipients.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+            _dtMessageRecipients.PrimaryKey = new[] { pkMessagesRecipientID };
+
+
+            //MessageAttachments
+            _dtMessageAttachment = new DataTable("MessageAttachments");
+            var pkMessageAttachmentID = _dtMessages.Columns.Add("MessageAttachmentID", typeof(int));
+            _dtMessageAttachment.Columns.Add("MessageID", typeof(int));
+            _dtMessageAttachment.Columns.Add("FileID", typeof(int));
+            _dtMessageAttachment.Columns.Add("CreatedByUserID", typeof(int));
+            _dtMessageAttachment.Columns.Add("CreatedOnDate", typeof(DateTime));
+            _dtMessageAttachment.Columns.Add("LastModifiedByUserID", typeof(int));
+            _dtMessageAttachment.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+            _dtMessageAttachment.PrimaryKey = new[] { pkMessageAttachmentID };
+            
+        }
 
         #endregion
     }

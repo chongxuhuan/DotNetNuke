@@ -88,9 +88,9 @@ namespace DotNetNuke.Entities.Users.Social
             {
                 if (_relationships == null)
                 {
-                    _relationships = _relationshipController.GetRelationshipsByPortalID(_userInfo.PortalID);
+                    _relationships = _relationshipController.GetRelationshipsByPortalId(_userInfo.PortalID);
 
-                    foreach(var r in _relationshipController.GetRelationshipsByUserID(_userInfo.UserID))
+                    foreach(var r in _relationshipController.GetRelationshipsByUserId(_userInfo.UserID))
                     {
                         _relationships.Add(r);
                     }
@@ -117,13 +117,13 @@ namespace DotNetNuke.Entities.Users.Social
 
             foreach (UserRelationship userRelationship in _relationshipController.GetUserRelationships(_userInfo))
             {
-                Relationship relationship = _relationshipController.GetRelationship(userRelationship.RelationshipID);
+                Relationship relationship = _relationshipController.GetRelationship(userRelationship.RelationshipId);
 
                 IList<UserRelationship> userRelationshipList;
-                if (!dictionary.TryGetValue(relationship.RelationshipID, out userRelationshipList))
+                if (!dictionary.TryGetValue(relationship.RelationshipId, out userRelationshipList))
                 {
                     userRelationshipList = new List<UserRelationship>();
-                    dictionary.Add(relationship.RelationshipID, userRelationshipList);
+                    dictionary.Add(relationship.RelationshipId, userRelationshipList);
                 }
 
                 userRelationshipList.Add(userRelationship);

@@ -41,111 +41,111 @@ namespace DotNetNuke.Entities.Users.Social.Data
             return _provider.ExecuteReader("GetAllRelationshipTypes");
         }
 
-        public IDataReader GetRelationshipType(int relationshipTypeID)
+        public IDataReader GetRelationshipType(int relationshipTypeId)
         {
-            return _provider.ExecuteReader("GetRelationshipType", relationshipTypeID);
+            return _provider.ExecuteReader("GetRelationshipType", relationshipTypeId);
         }
 
-        public void DeleteRelationshipType(int relationshipTypeID)
+        public void DeleteRelationshipType(int relationshipTypeId)
         {            
-            _provider.ExecuteNonQuery("DeleteRelationshipType", relationshipTypeID);
+            _provider.ExecuteNonQuery("DeleteRelationshipType", relationshipTypeId);
         }
 
-        public int SaveRelationshipType(RelationshipType relationshipType, int createUpdateUserID)
+        public int SaveRelationshipType(RelationshipType relationshipType, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("SaveRelationshipType", relationshipType.RelationshipTypeID, relationshipType.Direction, relationshipType.Name, relationshipType.Description, createUpdateUserID);
+            return _provider.ExecuteScalar<int>("SaveRelationshipType", relationshipType.RelationshipTypeId, relationshipType.Direction, relationshipType.Name, relationshipType.Description, createUpdateUserId);
         }
 
         #endregion
 
         #region Relationship CRUD
 
-        public void DeleteRelationship(int relationshipID)
+        public void DeleteRelationship(int relationshipId)
         {
-            _provider.ExecuteNonQuery("DeleteRelationship", relationshipID);
+            _provider.ExecuteNonQuery("DeleteRelationship", relationshipId);
         }
 
-        public IDataReader GetRelationship(int relationshipID)
+        public IDataReader GetRelationship(int relationshipId)
         {
-            return _provider.ExecuteReader("GetRelationship", relationshipID);
+            return _provider.ExecuteReader("GetRelationship", relationshipId);
         }
 
-        public IDataReader GetRelationshipsByUserID(int userID)
+        public IDataReader GetRelationshipsByUserId(int userId)
         {
-            return _provider.ExecuteReader("GetRelationshipsByUserID", userID);
+            return _provider.ExecuteReader("GetRelationshipsByUserID", userId);
         }
 
-        public IDataReader GetRelationshipsByPortalID(int portalID)
+        public IDataReader GetRelationshipsByPortalId(int portalId)
         {
-            return _provider.ExecuteReader("GetRelationshipsByPortalID", portalID);
+            return _provider.ExecuteReader("GetRelationshipsByPortalID", portalId);
         }
 
-        public int SaveRelationship(Relationship relationship, int createUpdateUserID)
+        public int SaveRelationship(Relationship relationship, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("SaveRelationship", relationship.RelationshipID, relationship.RelationshipTypeID, relationship.Name, relationship.Description, _provider.GetNull(relationship.UserID), _provider.GetNull(relationship.PortalID), relationship.DefaultResponse, createUpdateUserID);
+            return _provider.ExecuteScalar<int>("SaveRelationship", relationship.RelationshipId, relationship.RelationshipTypeId, relationship.Name, relationship.Description, _provider.GetNull(relationship.UserId), _provider.GetNull(relationship.PortalId), relationship.DefaultResponse, createUpdateUserId);
         }
 
         #endregion
 
         #region UserRelationship CRUD
 
-        public void DeleteUserRelationship(int userRelationshipID)
+        public void DeleteUserRelationship(int userRelationshipId)
         {
-            _provider.ExecuteNonQuery("DeleteUserRelationship", userRelationshipID);
+            _provider.ExecuteNonQuery("DeleteUserRelationship", userRelationshipId);
         }
 
-        public IDataReader GetUserRelationship(int userRelationshipID)
+        public IDataReader GetUserRelationship(int userRelationshipId)
         {
-            return _provider.ExecuteReader("GetUserRelationship", userRelationshipID);
+            return _provider.ExecuteReader("GetUserRelationship", userRelationshipId);
         }
 
-        public IDataReader GetUserRelationship(int userID, int relatedUserID, int relationshipID, RelationshipDirection relationshipDirection)
+        public IDataReader GetUserRelationship(int userId, int relatedUserId, int relationshipId, RelationshipDirection relationshipDirection)
         {
-            return _provider.ExecuteReader("GetUserRelationshipsByMultipleIDs", userID, relatedUserID, relationshipID, relationshipDirection);
+            return _provider.ExecuteReader("GetUserRelationshipsByMultipleIDs", userId, relatedUserId, relationshipId, relationshipDirection);
         }
 
-        public IDataReader GetUserRelationships(int userID)
+        public IDataReader GetUserRelationships(int userId)
         {
-            return _provider.ExecuteReader("GetUserRelationships", userID);
+            return _provider.ExecuteReader("GetUserRelationships", userId);
         }
 
-        public IDataReader GetUserRelationshipsByRelationshipID(int relationshipID)
+        public IDataReader GetUserRelationshipsByRelationshipId(int relationshipId)
         {
-            return _provider.ExecuteReader("GetUserRelationshipsByRelationshipID", relationshipID);
+            return _provider.ExecuteReader("GetUserRelationshipsByRelationshipID", relationshipId);
         }
 
-        public IDataReader GetUsersByFilters(int portalId, int currUserId, int numberOfRecords, int roleId, int relationshipType, string profileProperty, string profilePropertyValue, string sortColumn, bool sortAcending, bool isAdmin)
+        public IDataReader GetUsersByFilters(int portalId, int currUserId, int numberOfRecords, int pageIndex, int roleId, int relationshipType, string profileProperty, string profilePropertyValue, string sortColumn, bool sortAcending, bool isAdmin)
         {
-            return _provider.ExecuteReader("GetUsersByFilters", portalId, currUserId, numberOfRecords, roleId, relationshipType, profileProperty, profilePropertyValue, sortColumn, sortAcending, isAdmin);
+            return _provider.ExecuteReader("GetUsersByFilters", portalId, currUserId, numberOfRecords, pageIndex, roleId, relationshipType, profileProperty, profilePropertyValue, sortColumn, sortAcending, isAdmin);
         }
 
-        public int SaveUserRelationship(UserRelationship userRelationship, int createUpdateUserID)
+        public int SaveUserRelationship(UserRelationship userRelationship, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("SaveUserRelationship", userRelationship.UserRelationshipID, userRelationship.UserID, userRelationship.RelatedUserID, userRelationship.RelationshipID, userRelationship.Status, createUpdateUserID);
+            return _provider.ExecuteScalar<int>("SaveUserRelationship", userRelationship.UserRelationshipId, userRelationship.UserId, userRelationship.RelatedUserId, userRelationship.RelationshipId, userRelationship.Status, createUpdateUserId);
         }
 
         #endregion
 
         #region UserRelationshipPreference CRUD
 
-        public IDataReader GetUserRelationshipPreferenceByID(int preferenceID)
+        public IDataReader GetUserRelationshipPreferenceById(int preferenceId)
         {
-            return _provider.ExecuteReader("GetUserRelationshipPreferenceByID", preferenceID);
+            return _provider.ExecuteReader("GetUserRelationshipPreferenceByID", preferenceId);
         }
 
-        public IDataReader GetUserRelationshipPreference(int userID, int relationshipID)
+        public IDataReader GetUserRelationshipPreference(int userId, int relationshipId)
         {
-            return _provider.ExecuteReader("GetUserRelationshipPreference", userID, relationshipID);
+            return _provider.ExecuteReader("GetUserRelationshipPreference", userId, relationshipId);
         }
 
-        public void DeleteUserRelationshipPreference(int preferenceID)
+        public void DeleteUserRelationshipPreference(int preferenceId)
         {
-            _provider.ExecuteNonQuery("DeleteUserRelationshipPreference", preferenceID);
+            _provider.ExecuteNonQuery("DeleteUserRelationshipPreference", preferenceId);
         }
 
-        public int SaveUserRelationshipPreference(UserRelationshipPreference userRelationshipPreference, int createUpdateUserID)
+        public int SaveUserRelationshipPreference(UserRelationshipPreference userRelationshipPreference, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("SaveUserRelationshipPreference", userRelationshipPreference.PreferenceID, userRelationshipPreference.UserID, userRelationshipPreference.RelationshipID, userRelationshipPreference.DefaultResponse, createUpdateUserID);
+            return _provider.ExecuteScalar<int>("SaveUserRelationshipPreference", userRelationshipPreference.PreferenceId, userRelationshipPreference.UserId, userRelationshipPreference.RelationshipId, userRelationshipPreference.DefaultResponse, createUpdateUserId);
         }
 
         #endregion

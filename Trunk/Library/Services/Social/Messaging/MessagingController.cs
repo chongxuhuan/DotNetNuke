@@ -113,14 +113,14 @@ namespace DotNetNuke.Services.Social.Messaging
             _DataService.UpdateSocialMessageStatus(messageRecipientID, (int)Messaging.MessageStatus.Archived);
         }
 
-        public IList<Message> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
+        public IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
         {
-            var messages= _DataService.GetInbox(userID, pageIndex, pageSize, totalRecords);
+            var messages= _DataService.GetInbox(userID, pageIndex, pageSize, ref totalRecords);
             totalRecords = messages.Count;
             return messages;
         }
 
-        public IList<Message> GetRecentMessages(int userID, ref int totalRecords)
+        public IList<MessageItem> GetRecentMessages(int userID, ref int totalRecords)
         {
             var messages = GetInbox(userID, 1, 10, ref totalRecords);
             return messages;

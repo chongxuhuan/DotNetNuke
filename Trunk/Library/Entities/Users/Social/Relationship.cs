@@ -39,29 +39,29 @@ namespace DotNetNuke.Entities.Users
     /// <summary>
     /// The Relationship class describes the relationships that a user or portal owns.  
     /// A handful of default Portal-Level Relationships will be be present for every portal (e.g. Friends, Followers, Family).  
-    /// Portal-Level Relationship will have a -1 in UserID field.
+    /// Portal-Level Relationship will have a -1 in UserId field.
     /// Any custom User-Level Relationship created by user will also be defined by this class (e.g. My InLaws, Engineering Group).
-    /// User-Relationship will always have an associcated PortalID. User-Level Relationship will always be tied to a specific Portal.    
+    /// User-Relationship will always have an associcated PortalId. User-Level Relationship will always be tied to a specific Portal.    
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
     public class Relationship : BaseEntityInfo, IHydratable
     {
-        private int _relationshipID = -1;
+        private int _relationshipId = -1;
 
         /// <summary>
-        /// RelationshipID - The primary key
+        /// RelationshipId - The primary key
         /// </summary>
         [XmlAttribute]
-        public int RelationshipID
+        public int RelationshipId
         {
             get
             {
-                return _relationshipID;
+                return _relationshipId;
             }
             set
             {
-                _relationshipID = value;
+                _relationshipId = value;
             }
         }
 
@@ -78,22 +78,22 @@ namespace DotNetNuke.Entities.Users
         public string Description { get; set; }
 
         /// <summary>
-        /// UserID of the User that owns the Relationship. A value of -1 indicates that it's a Portal-Level Relationship
+        /// UserId of the User that owns the Relationship. A value of -1 indicates that it's a Portal-Level Relationship
         /// </summary>
         [XmlAttribute]
-        public int UserID { get; set; }
+        public int UserId { get; set; }
 
         /// <summary>
-        /// PortalID of the User that owns the Relationship. A value of -1 in UserID field indicates that it's a Portal-Level Relationship
+        /// PortalId of the User that owns the Relationship. A value of -1 in UserID field indicates that it's a Portal-Level Relationship
         /// </summary>
         [XmlAttribute]
-        public int PortalID { get; set; }
+        public int PortalId { get; set; }
 
         /// <summary>
         /// The ID of the Relationship to which this Relation belongs to (e.g. Friend List or Coworkers)
         /// </summary>
         [XmlAttribute]
-        public int RelationshipTypeID { get; set; }
+        public int RelationshipTypeId { get; set; }
 
         /// <summary>
         /// Default Relationship Status to be provided to any new Relationship Request
@@ -109,7 +109,7 @@ namespace DotNetNuke.Entities.Users
         { 
             get
             {
-                return UserID == Null.NullInteger && PortalID >= 0;
+                return UserId == Null.NullInteger && PortalId >= 0;
             }
         }
 
@@ -121,7 +121,7 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                return UserID == Null.NullInteger && PortalID == Null.NullInteger;
+                return UserId == Null.NullInteger && PortalId == Null.NullInteger;
             }
         }
 
@@ -133,7 +133,7 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                return UserID > 0 && PortalID >= 0;
+                return UserId > 0 && PortalId >= 0;
             }
         }
         /// <summary>
@@ -144,11 +144,11 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                return this.RelationshipID;
+                return this.RelationshipId;
             }
             set
             {
-                this.RelationshipID = value;
+                this.RelationshipId = value;
             }
         }
 
@@ -158,13 +158,13 @@ namespace DotNetNuke.Entities.Users
         /// <param name="dr">the data reader.</param>
         public void Fill(IDataReader dr)
         {
-            this.RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
-            this.UserID = Null.SetNullInteger(dr["UserID"]);
-            this.PortalID = Null.SetNullInteger(dr["PortalID"]);
+            this.RelationshipId = Convert.ToInt32(dr["RelationshipID"]);
+            this.UserId = Null.SetNullInteger(dr["UserID"]);
+            this.PortalId = Null.SetNullInteger(dr["PortalID"]);
             this.Name = dr["Name"].ToString();
             this.Description = dr["Description"].ToString();
             this.DefaultResponse = (RelationshipStatus)Convert.ToInt32(dr["DefaultResponse"]);
-            this.RelationshipTypeID = Convert.ToInt32(dr["RelationshipTypeID"]);
+            this.RelationshipTypeId = Convert.ToInt32(dr["RelationshipTypeID"]);
 
             //add audit column data
             FillInternal(dr);

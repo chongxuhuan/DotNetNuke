@@ -23,10 +23,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Entities.Users.Social;
 using DotNetNuke.Services.Tokens;
 
 #endregion
@@ -120,6 +123,7 @@ namespace DotNetNuke.Web.UI.WebControls
         #region Private Variables
 
         private UserInfo _currentUser;
+        private RelationshipController _relationshipController;
 
         #endregion
 
@@ -130,6 +134,7 @@ namespace DotNetNuke.Web.UI.WebControls
             base.OnInit(e);
             
             _currentUser = UserController.GetCurrentUserInfo();
+            _relationshipController = new RelationshipController();
         }
 
         protected override void Render(HtmlTextWriter writer)
@@ -140,20 +145,31 @@ namespace DotNetNuke.Web.UI.WebControls
 
             var row = 0;
             var rowItem = 0;
+            
+            var users = new DataTable();
+            users.Load(_relationshipController.GetUsersByFilters(0, _currentUser, PageSize, 0, null, null, "", "", "", true, false));
 
-            var users = new List<UserInfo>(); // TODO: Get the list of members
-
-            foreach (var user in users)
+            foreach (DataRow user in users.Rows)
             {
-                if (rowItem == 0)
+               if (rowItem == 0)
                 {
                     writer.Write(string.IsNullOrEmpty(AlternatingRowHeaderTemplate) || row % 2 == 0 ? RowHeaderTemplate : AlternatingRowHeaderTemplate);
                 }
+                
+                var tokenReplace = new TokenReplace();
+                var tokenKeyValues = new Dictionary<string, string>();
+                // Reading data from datarow into a KeyValuePair dictionary for usage in TokenRepalace
+                foreach (DataColumn col in user.Table.Columns.Cast<DataColumn>().Where(col => !tokenKeyValues.ContainsKey(col.ColumnName.Replace("Member:", "").Replace("MemberProfile:", ""))))
+                {
+                    tokenKeyValues.Add(col.ColumnName.Replace("Member:", "").Replace("MemberProfile:", ""), user[col.ColumnName].ToString());
+                }
 
-                var tokenReplace = new TokenReplace { User = user, AccessingUser = _currentUser };
-                writer.Write(tokenReplace.ReplaceEnvironmentTokens(string.IsNullOrEmpty(AlternatingItemTemplate) || row % 2 == 0 ? ItemTemplate : AlternatingItemTemplate));
+                var listItem = string.IsNullOrEmpty(AlternatingItemTemplate) || row%2 == 0 ? ItemTemplate : AlternatingItemTemplate;
+                listItem = tokenReplace.ReplaceEnvironmentTokens(listItem, tokenKeyValues, "Member");
+                listItem = tokenReplace.ReplaceEnvironmentTokens(listItem, tokenKeyValues, "MemberProfile");
+                writer.Write(listItem);
+
                 rowItem++;
-
                 if (rowItem != RowSize) continue;
 
                 writer.Write(string.IsNullOrEmpty(AlternatingRowFooterTemplate) || row % 2 == 0 ? RowFooterTemplate : AlternatingRowFooterTemplate);

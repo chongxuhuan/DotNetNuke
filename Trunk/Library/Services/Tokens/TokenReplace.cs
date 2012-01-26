@@ -342,6 +342,25 @@ namespace DotNetNuke.Services.Tokens
             return ReplaceTokens(strSourceText);
         }
 
+        /// <summary> 
+        /// Replaces tokens in strSourceText parameter with the property values 
+        /// </summary> 
+        /// <param name="strSourceText">String with [Object:Property] tokens</param> 
+        /// <param name="Custom">NameValueList for replacing [custom:name] tokens, where 'custom' is specified in next param and name is either thekey or the index number in the string </param> 
+        /// <param name="CustomCaptions">Token names to be used inside token [custom:name], where 'custom' is one of the values in the string array </param> 
+        /// <returns>string containing replaced values</returns> 
+        /// <history> 
+        /// 01/25/2012 vnguyen created 
+        /// </history> 
+        public string ReplaceEnvironmentTokens(string strSourceText, IDictionary Custom, string[] CustomCaptions)
+        {
+            foreach (var customCaption in CustomCaptions)
+            {
+                PropertySource[customCaption.ToLower()] = new DictionaryPropertyAccess(Custom);    
+            }           
+            return ReplaceTokens(strSourceText);
+        }
+        
         /// <summary>
         /// Replaces tokens in strSourceText parameter with the property values
         /// </summary>

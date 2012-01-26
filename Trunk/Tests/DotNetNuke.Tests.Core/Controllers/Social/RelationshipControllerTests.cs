@@ -122,7 +122,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockDataService);
             var relationshipType = new RelationshipType()
                                        {
-                                           RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID
+                                           RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID
                                        };
 
             //Act
@@ -140,7 +140,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var relationshipType = new RelationshipType()
                                         {
-                                            RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID,
+                                            RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID,
                                             Name = Constants.SOCIAL_RelationshipTypeName
                                         };
 
@@ -161,7 +161,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var cacheKey = CachingProvider.GetCacheKey(DataCache.RelationshipTypesCacheKey);
             var relationshipType = new RelationshipType()
                                         {
-                                            RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID
+                                            RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID
                                         };
 
             //Act
@@ -212,7 +212,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipType = relationshipController.GetRelationshipType(relationshipTypeId);
 
             //Assert
-            Assert.AreEqual(relationshipTypeId, relationshipType.RelationshipTypeID);
+            Assert.AreEqual(relationshipTypeId, relationshipType.RelationshipTypeId);
         }
 
         [Test]
@@ -248,7 +248,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockDataService);
             var relationshipType = new RelationshipType()
                                         {
-                                            RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID
+                                            RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID
                                         };
 
             //Act
@@ -266,7 +266,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var relationshipType = new RelationshipType()
                                         {
-                                            RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID,
+                                            RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID,
                                             Name = Constants.SOCIAL_RelationshipTypeName
                                         };
 
@@ -286,7 +286,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var cacheKey = CachingProvider.GetCacheKey(DataCache.RelationshipTypesCacheKey);
             var relationshipType = new RelationshipType()
                                         {
-                                            RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID
+                                            RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID
                                         };
 
             //Act
@@ -319,7 +319,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockDataService);
             var relationship = new Relationship()
                                         {
-                                            RelationshipID = Constants.SOCIAL_FollowerRelationshipID
+                                            RelationshipId = Constants.SOCIAL_FollowerRelationshipID
                                         };
 
             //Act
@@ -337,7 +337,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var relationship = new Relationship()
                                     {
-                                        RelationshipID = Constants.SOCIAL_FollowerRelationshipID,
+                                        RelationshipId = Constants.SOCIAL_FollowerRelationshipID,
                                         Name = Constants.SOCIAL_RelationshipName
                                     };
 
@@ -358,9 +358,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var cacheKey = CachingProvider.GetCacheKey(string.Format(DataCache.RelationshipByPortalIDCacheKey, portalId));
             var relationship = new Relationship()
                                     {
-                                        RelationshipID = Constants.SOCIAL_FollowerRelationshipID,
-                                        PortalID = portalId,
-                                        UserID = -1
+                                        RelationshipId = Constants.SOCIAL_FollowerRelationshipID,
+                                        PortalId = portalId,
+                                        UserId = -1
                                     };
 
             //Act
@@ -386,7 +386,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationship = relationshipController.GetRelationship(relationshipId);
 
             //Assert
-            Assert.AreEqual(relationshipId, relationship.RelationshipID);
+            Assert.AreEqual(relationshipId, relationship.RelationshipId);
         }
 
         [Test]
@@ -419,11 +419,11 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                             Constants.USER_ValidId, 
                                             RelationshipStatus.None);
             }
-            mockDataService.Setup(md => md.GetRelationshipsByUserID(Constants.USER_ValidId)).Returns(_dtRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetRelationshipsByUserId(Constants.USER_ValidId)).Returns(_dtRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
-            var relationships = relationshipController.GetRelationshipsByUserID(Constants.USER_ValidId);
+            var relationships = relationshipController.GetRelationshipsByUserId(Constants.USER_ValidId);
 
             //Assert
             Assert.IsInstanceOf<IList<Relationship>>(relationships);
@@ -436,11 +436,11 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
             var mockDataService = new Mock<IDataService>();
             _dtRelationships.Clear();
-            mockDataService.Setup(md => md.GetRelationshipsByUserID(Constants.USER_InValidId)).Returns(_dtRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetRelationshipsByUserId(Constants.USER_InValidId)).Returns(_dtRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
-            var relationships = relationshipController.GetRelationshipsByUserID(Constants.USER_InValidId);
+            var relationships = relationshipController.GetRelationshipsByUserId(Constants.USER_InValidId);
 
             //Assert
             Assert.IsInstanceOf<IList<Relationship>>(relationships);
@@ -461,11 +461,11 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                             Constants.USER_Null,
                                             RelationshipStatus.None);
             }
-            mockDataService.Setup(md => md.GetRelationshipsByPortalID(Constants.PORTAL_Zero)).Returns(_dtRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetRelationshipsByPortalId(Constants.PORTAL_Zero)).Returns(_dtRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
-            var relationships = relationshipController.GetRelationshipsByPortalID(Constants.PORTAL_Zero);
+            var relationships = relationshipController.GetRelationshipsByPortalId(Constants.PORTAL_Zero);
 
             //Assert
             Assert.IsInstanceOf<IList<Relationship>>(relationships);
@@ -478,11 +478,11 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
             var mockDataService = new Mock<IDataService>();
             _dtRelationships.Clear();
-            mockDataService.Setup(md => md.GetRelationshipsByPortalID(Constants.PORTAL_Null)).Returns(_dtRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetRelationshipsByPortalId(Constants.PORTAL_Null)).Returns(_dtRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
-            var relationships = relationshipController.GetRelationshipsByPortalID(Constants.PORTAL_Null);
+            var relationships = relationshipController.GetRelationshipsByPortalId(Constants.PORTAL_Null);
 
             //Assert
             Assert.IsInstanceOf<IList<Relationship>>(relationships);
@@ -508,7 +508,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockDataService);
             var relationship = new Relationship
                                         {
-                                            RelationshipID = Constants.SOCIAL_FollowerRelationshipID
+                                            RelationshipId = Constants.SOCIAL_FollowerRelationshipID
                                         };
 
             //Act
@@ -526,7 +526,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var relationship = new Relationship
                                         {
-                                            RelationshipID = Constants.SOCIAL_FollowerRelationshipID,
+                                            RelationshipId = Constants.SOCIAL_FollowerRelationshipID,
                                             Name = Constants.SOCIAL_RelationshipName
                                         };
 
@@ -546,7 +546,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var cacheKey = CachingProvider.GetCacheKey(DataCache.RelationshipTypesCacheKey);
             var relationshipType = new RelationshipType()
             {
-                RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID
+                RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID
             };
 
             //Act
@@ -579,7 +579,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockDataService);
             var userRelationship = new UserRelationship()
                                     {
-                                        UserRelationshipID = Constants.SOCIAL_UserRelationshipIDUser10User11
+                                        UserRelationshipId = Constants.SOCIAL_UserRelationshipIDUser10User11
                                     };
 
             //Act
@@ -597,9 +597,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var userRelationship = new UserRelationship
                                         {
-                                            UserRelationshipID = Constants.SOCIAL_UserRelationshipIDUser10User11,
-                                            UserID = Constants.USER_ElevenId,
-                                            RelatedUserID = Constants.USER_TenId
+                                            UserRelationshipId = Constants.SOCIAL_UserRelationshipIDUser10User11,
+                                            UserId = Constants.USER_ElevenId,
+                                            RelatedUserId = Constants.USER_TenId
                                         };
 
 
@@ -627,7 +627,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var userRelationship = relationshipController.GetUserRelationship(userRelationshipId);
 
             //Assert
-            Assert.AreEqual(userRelationshipId, userRelationship.UserRelationshipID);
+            Assert.AreEqual(userRelationshipId, userRelationship.UserRelationshipId);
         }
 
         [Test]
@@ -708,7 +708,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockDataService);
             var userRelationship = new UserRelationship()
                                             {
-                                                UserRelationshipID = Constants.SOCIAL_UserRelationshipIDUser10User11
+                                                UserRelationshipId = Constants.SOCIAL_UserRelationshipIDUser10User11
                                             };
 
             //Act
@@ -729,9 +729,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = new RelationshipController(mockDataService.Object, mockEventLogController.Object);
             var userRelationship = new UserRelationship
                                             {
-                                                UserRelationshipID = Constants.SOCIAL_UserRelationshipIDUser10User11,
-                                                UserID = Constants.USER_ElevenId,
-                                                RelatedUserID = Constants.USER_TenId
+                                                UserRelationshipId = Constants.SOCIAL_UserRelationshipIDUser10User11,
+                                                UserId = Constants.USER_ElevenId,
+                                                RelatedUserId = Constants.USER_TenId
                                             };
 
 
@@ -766,7 +766,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockDataService);
             var preference = new UserRelationshipPreference()
                                     {
-                                        PreferenceID = Constants.SOCIAL_PrefereceIDForUser11
+                                        PreferenceId = Constants.SOCIAL_PrefereceIDForUser11
                                     };
 
             //Act
@@ -784,9 +784,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var preference = new UserRelationshipPreference()
                                         {
-                                            PreferenceID = Constants.SOCIAL_PrefereceIDForUser11,
-                                            UserID = Constants.USER_ElevenId,
-                                            RelationshipID = Constants.SOCIAL_FriendRelationshipID
+                                            PreferenceId = Constants.SOCIAL_PrefereceIDForUser11,
+                                            UserId = Constants.USER_ElevenId,
+                                            RelationshipId = Constants.SOCIAL_FriendRelationshipID
                                         };
 
             //Act
@@ -802,7 +802,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(ds => ds.GetUserRelationshipPreferenceByID(It.IsAny<int>()))
+            mockDataService.Setup(ds => ds.GetUserRelationshipPreferenceById(It.IsAny<int>()))
                             .Returns(_dtUserRelationshipPreferences.CreateDataReader);
             var relationshipController = CreateRelationshipController(mockDataService);
 
@@ -810,7 +810,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var preference = relationshipController.GetUserRelationshipPreference(Constants.SOCIAL_PrefereceIDForUser11);
 
             //Assert
-            mockDataService.Verify(d => d.GetUserRelationshipPreferenceByID(Constants.SOCIAL_PrefereceIDForUser11));
+            mockDataService.Verify(d => d.GetUserRelationshipPreferenceById(Constants.SOCIAL_PrefereceIDForUser11));
         }
 
         [Test]
@@ -848,9 +848,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = CreateRelationshipController(mockDataService);
             var preference = new UserRelationshipPreference()
                                     {
-                                        PreferenceID = Constants.SOCIAL_PrefereceIDForUser11,
-                                        UserID = Constants.USER_ElevenId,
-                                        RelationshipID = Constants.SOCIAL_FriendRelationshipID
+                                        PreferenceId = Constants.SOCIAL_PrefereceIDForUser11,
+                                        UserId = Constants.USER_ElevenId,
+                                        RelationshipId = Constants.SOCIAL_FriendRelationshipID
                                     };
 
             //Act
@@ -871,9 +871,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var relationshipController = new RelationshipController(mockDataService.Object, mockEventLogController.Object);
             var preference = new UserRelationshipPreference()
                                             {
-                                                PreferenceID = Constants.SOCIAL_PrefereceIDForUser11,
-                                                UserID = Constants.USER_ElevenId,
-                                                RelationshipID = Constants.SOCIAL_FriendRelationshipID
+                                                PreferenceId = Constants.SOCIAL_PrefereceIDForUser11,
+                                                UserId = Constants.USER_ElevenId,
+                                                RelationshipId = Constants.SOCIAL_FriendRelationshipID
                                             };
 
             //Act
@@ -1036,7 +1036,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
             var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
             var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
-            var relationship = new Relationship { RelationshipID = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
+            var relationship = new Relationship { RelationshipId = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
            
             _dtUserRelationships.Rows.Clear();
             _dtUserRelationshipPreferences.Rows.Clear();
@@ -1062,7 +1062,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
             var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
             var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
-            var relationship = new Relationship { RelationshipID = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.None };
+            var relationship = new Relationship { RelationshipId = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.None };
 
             _dtUserRelationships.Rows.Clear();
             _dtUserRelationshipPreferences.Rows.Clear();
@@ -1088,7 +1088,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
             var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
             var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
-            var relationship = new Relationship { RelationshipID = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
+            var relationship = new Relationship { RelationshipId = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
 
             _dtUserRelationships.Rows.Clear();
             _dtUserRelationshipPreferences.Rows.Clear();
@@ -1115,7 +1115,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
             var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
             var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
-            var relationship = new Relationship { RelationshipID = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeID = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
+            var relationship = new Relationship { RelationshipId = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
 
             _dtUserRelationships.Rows.Clear();
             _dtUserRelationshipPreferences.Rows.Clear();
@@ -1410,7 +1410,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(_dtRelationshipTypes.CreateDataReader());
-            mockDataService.Setup(md => md.GetRelationshipsByPortalID(It.IsAny<int>())).Returns(_dtRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetRelationshipsByPortalId(It.IsAny<int>())).Returns(_dtRelationships.CreateDataReader());
             return mockDataService;
         }
 
@@ -1467,6 +1467,10 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _dtRelationshipTypes.Columns.Add("Name", typeof(string));
             _dtRelationshipTypes.Columns.Add("Description", typeof(string));
             _dtRelationshipTypes.Columns.Add("Direction", typeof(int));
+            _dtRelationshipTypes.Columns.Add("CreatedByUserID", typeof(int));
+            _dtRelationshipTypes.Columns.Add("CreatedOnDate", typeof(DateTime));
+            _dtRelationshipTypes.Columns.Add("LastModifiedByUserID", typeof(int));
+            _dtRelationshipTypes.Columns.Add("LastModifiedOnDate", typeof(DateTime));
 
             _dtRelationshipTypes.PrimaryKey = new[] { pkRelationshipTypeID };
 
@@ -1482,6 +1486,10 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _dtRelationships.Columns.Add("PortalID", typeof(int));
             _dtRelationships.Columns.Add("UserID", typeof(int));
             _dtRelationships.Columns.Add("DefaultResponse", typeof(int));
+            _dtRelationships.Columns.Add("CreatedByUserID", typeof(int));
+            _dtRelationships.Columns.Add("CreatedOnDate", typeof(DateTime));
+            _dtRelationships.Columns.Add("LastModifiedByUserID", typeof(int));
+            _dtRelationships.Columns.Add("LastModifiedOnDate", typeof(DateTime));
             _dtRelationships.PrimaryKey = new[] { pkRelationshipID };
 
             //Create default Friend and Social Relationships
@@ -1495,14 +1503,22 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _dtUserRelationships.Columns.Add("RelatedUserID", typeof(int));
             _dtUserRelationships.Columns.Add("RelationshipID", typeof(int));
             _dtUserRelationships.Columns.Add("Status", typeof(int));
+            _dtUserRelationships.Columns.Add("CreatedByUserID", typeof(int));
+            _dtUserRelationships.Columns.Add("CreatedOnDate", typeof(DateTime));
+            _dtUserRelationships.Columns.Add("LastModifiedByUserID", typeof(int));
+            _dtUserRelationships.Columns.Add("LastModifiedOnDate", typeof(DateTime));
             _dtUserRelationships.PrimaryKey = new[] { pkUserRelationshipID };
 
-            //UserRelationships
+            //UserRelationshipPreferences
             _dtUserRelationshipPreferences = new DataTable("UserRelationshipPreferences");
             var pkPreferenceID = _dtUserRelationshipPreferences.Columns.Add("PreferenceID", typeof(int));
             _dtUserRelationshipPreferences.Columns.Add("UserID", typeof(int));
             _dtUserRelationshipPreferences.Columns.Add("RelationshipID", typeof(int));
             _dtUserRelationshipPreferences.Columns.Add("DefaultResponse", typeof(int));
+            _dtUserRelationshipPreferences.Columns.Add("CreatedByUserID", typeof(int));
+            _dtUserRelationshipPreferences.Columns.Add("CreatedOnDate", typeof(DateTime));
+            _dtUserRelationshipPreferences.Columns.Add("LastModifiedByUserID", typeof(int));
+            _dtUserRelationshipPreferences.Columns.Add("LastModifiedOnDate", typeof(DateTime));
             _dtUserRelationshipPreferences.PrimaryKey = new[] { pkPreferenceID };
 
         }

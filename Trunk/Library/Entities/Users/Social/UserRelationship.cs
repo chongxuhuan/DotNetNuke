@@ -36,49 +36,49 @@ namespace DotNetNuke.Entities.Users
     /// -----------------------------------------------------------------------------
     /// <summary>
     /// The UserRelationship class defines the membership of the relationship. 
-    /// The user initiating the relationship is UserID. 
-    /// The target of the relationship is RelatedUserID.  
+    /// The user initiating the relationship is UserId. 
+    /// The target of the relationship is RelatedUserId.  
     /// Status tracks relationship status as Initiated, Approved, Rejected etc.
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
     public class UserRelationship : BaseEntityInfo, IHydratable
     {
-        private int _userRelationshipID = -1;
+        private int _userRelationshipId = -1;
 
         /// <summary>
-        /// UserRelationshipID - The primary key
+        /// UserRelationshipId - The primary key
         /// </summary>
         [XmlAttribute]
-        public int UserRelationshipID
+        public int UserRelationshipId
         {
             get
             {
-                return _userRelationshipID;
+                return _userRelationshipId;
             }
             set
             {
-                _userRelationshipID = value;
+                _userRelationshipId = value;
             }
         }
 
         /// <summary>
-        /// UserID of the User that owns the relationship
+        /// UserId of the User that owns the relationship
         /// </summary>
         [XmlAttribute]
-        public int UserID { get; set; }
+        public int UserId { get; set; }
 
         /// <summary>
-        /// The UserID of the Related User 
+        /// The UserId of the Related User 
         /// </summary>
         [XmlAttribute]
-        public int RelatedUserID { get; set; }
+        public int RelatedUserId { get; set; }
 
         /// <summary>
         /// The ID of the Relationship to which this Relation belongs to (e.g. Friend List or Coworkers)
         /// </summary>
         [XmlAttribute]
-        public int RelationshipID { get; set; }
+        public int RelationshipId { get; set; }
 
         /// <summary>
         /// The Status of the Relationship (e.g. Initiated, Accepted, Rejected)
@@ -95,11 +95,11 @@ namespace DotNetNuke.Entities.Users
         {
             get
             {
-                return this.UserRelationshipID;
+                return this.UserRelationshipId;
             }
             set
             {
-                this.UserRelationshipID = value;
+                this.UserRelationshipId = value;
             }
         }
 
@@ -109,10 +109,10 @@ namespace DotNetNuke.Entities.Users
         /// <param name="dr">the data reader.</param>
         public void Fill(IDataReader dr)
         {
-            this.UserRelationshipID = Convert.ToInt32(dr["UserRelationshipID"]);
-            this.UserID = Convert.ToInt32(dr["UserID"]);
-            this.RelatedUserID = Convert.ToInt32(dr["RelatedUserID"]);
-            this.RelationshipID = Convert.ToInt32(dr["RelationshipID"]);
+            this.UserRelationshipId = Convert.ToInt32(dr["UserRelationshipID"]);
+            this.UserId = Convert.ToInt32(dr["UserID"]);
+            this.RelatedUserId = Convert.ToInt32(dr["RelatedUserID"]);
+            this.RelationshipId = Convert.ToInt32(dr["RelationshipID"]);
             this.Status = (RelationshipStatus)Convert.ToInt32(dr["Status"]);
 
             //add audit column data

@@ -100,7 +100,7 @@ namespace DotNetNuke.Entities.Profile
                 sb.Append(";R:");
                 foreach (var relationship in RelationshipVisibilities)
                 {
-                    sb.Append(relationship.RelationshipID.ToString(CultureInfo.InvariantCulture) + ",");
+                    sb.Append(relationship.RelationshipId.ToString(CultureInfo.InvariantCulture) + ",");
                 }
 
                 return sb.ToString();

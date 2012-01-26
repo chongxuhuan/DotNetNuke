@@ -1205,7 +1205,7 @@ namespace DotNetNuke.Data
 
         public override void MoveTabToParent(int tabId, int parentId, int lastModifiedByUserID)
         {
-            ExecuteNonQuery("MoveTabToParent", tabId, parentId, lastModifiedByUserID);
+            ExecuteNonQuery("MoveTabToParent", tabId, GetNull(parentId), lastModifiedByUserID);
         }
 
         public override void UpdateTab(int tabId, int contentItemId, int portalId, Guid versionGuid, Guid defaultLanguageGuid, Guid localizedVersionGuid, string tabName, bool isVisible,

@@ -152,7 +152,7 @@ a.OtherTabs:active{text-decoration:none;color:#eee;}
 /*.LabelEditOverClass{cursor: pointer;text-decoration: underline overline;}
 */
 .LabelEditTextClass{border:solid 1px red;background-color:transparent;}
-.LabelEditWorkClass{/*background: url(/DotNetNuke/images/dnnanim.gif) no-repeat right;*/border:solid 0px red;background-color:transparent;}
+.LabelEditWorkClass{border:solid 0px red;background-color:transparent;}
 
 /* style for the DNNTextSuggest control select menu */
 .SuggestTextMenu{border:solid 1px black; white-space:nowrap;background:white;}

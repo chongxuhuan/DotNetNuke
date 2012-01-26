@@ -60,9 +60,23 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             _provider.ExecuteNonQuery("DeleteSocialMessage", messageID);
         }
 
-        public IList<Message> GetInbox(int userID, int pageIndex, int pageSize, int totalRecords)
+        public IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
         {
-            return CBO.FillCollection<Message>(_provider.ExecuteReader("GetInbox",userID,pageIndex,pageSize,totalRecords));
+            IDataReader dr = _provider.ExecuteReader("GetInbox", userID, pageIndex, pageSize);
+
+            try
+            {
+                while (dr.Read())
+                {
+                    totalRecords = Convert.ToInt32(dr["TotalRecords"]);
+                }
+                dr.NextResult();
+                return CBO.FillCollection<MessageItem>(dr);
+            }
+            finally
+            {
+                CBO.CloseDataReader(dr, true);
+            }
         }
 
         public void UpdateSocialMessageStatus(int recipientID, int status)

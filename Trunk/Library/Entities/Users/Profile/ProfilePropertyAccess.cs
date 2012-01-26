@@ -90,9 +90,9 @@ namespace DotNetNuke.Entities.Users
                             foreach (Relationship relationship in property.ProfileVisibility.RelationshipVisibilities)
                             {
                                 IList<UserRelationship> userRelationships;
-                                if (user.Social.UserRelationships.TryGetValue(relationship.RelationshipID, out userRelationships))
+                                if (user.Social.UserRelationships.TryGetValue(relationship.RelationshipId, out userRelationships))
                                 {
-                                    if (userRelationships.Any(userRelationship => accessingUser.UserID == userRelationship.RelatedUserID))
+                                    if (userRelationships.Any(userRelationship => accessingUser.UserID == userRelationship.RelatedUserId))
                                     {
                                         isVisible = true;
                                         break;

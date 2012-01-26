@@ -38,79 +38,83 @@ namespace DotNetNuke.Services.Social.Messaging
     /// Class:      MessageRecipient
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageRecipient class is used to store the details of all recipients of a particular message
+    /// The MessageItem class contains combined details of Message and Message Recipient
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageRecipient : BaseEntityInfo, IHydratable
+    public class MessageItem : MessageRecipient, IHydratable
     {
-        private int _recipientID = -1;
-
         /// <summary>
-        /// RecipientID - The primary key
+        /// To list for the message. This information is saved for faster display of To list in the message
         /// </summary>
         [XmlAttribute]
-        public int RecipientID
-        {
-            get
-            {
-                return _recipientID;
-            }
-            set
-            {
-                _recipientID = value;
-            }
-        }
+        public string To { get; set; }
 
         /// <summary>
-        /// The messageID of who sent the message to this recipient
+        /// Message From
         /// </summary>
         [XmlAttribute]
-        public int MessageID { get; set; }
+        public string From { get; set; }
 
         /// <summary>
-        /// The UserID of the user receiving the message
+        /// Message Subject
         /// </summary>
         [XmlAttribute]
-        public int UserID { get; set; }
+        public string Subject { get; set; }
 
         /// <summary>
-        /// The staus of the message i.e. read/unread/archived
+        /// Message body
         /// </summary>
         [XmlAttribute]
-        public int Status { get; set; }
+        public string Body { get; set; }
 
-       
         /// <summary>
-        /// IHydratable.KeyID.
+        /// messageID of the message -allows determination of reply rules and whether a message was sent to multiple recipients
         /// </summary>
-        [XmlIgnore]
-        public int KeyID
-        {
-            get
-            {
-                return this.RecipientID;
-            }
-            set
-            {
-                this.RecipientID = value;
-            }
-        }
+        [XmlAttribute]
+        public int ParentMessageID { get; set; }
+
+        /// <summary>
+        /// ReplyAllAllowed is a bit value to indicate if the reply to the message can be sent to all the recipients or just the sender
+        /// </summary>
+        [XmlAttribute]
+        public bool ReplyAllAllowed { get; set; }
+
+        /// <summary>
+        /// The UserID of the sender of the message
+        /// </summary>
+        [XmlAttribute]
+        public int SenderUserID { get; set; }
+
+        /// <summary>
+        /// RowNumber of the message in a set
+        /// </summary>
+        [XmlAttribute]
+        public int RowNumber { get; set; }
+
+        /// <summary>
+        /// Does the message contain attachments
+        /// </summary>
+        [XmlAttribute]
+        public int AttachmentCount { get; set; }
 
         /// <summary>
         /// Fill the object with data from database.
         /// </summary>
         /// <param name="dr">the data reader.</param>
-        public void Fill(IDataReader dr)
+        public new void Fill(IDataReader dr)
         {
-            this.RecipientID = Convert.ToInt32(dr["RecipientID"]);
-            this.MessageID = Convert.ToInt32(dr["MessageID"]);
-            this.UserID = Convert.ToInt32(dr["UserID"]);
-            this.Status = Convert.ToInt32(dr["Status"]);
-            
-            //add audit column data
-            FillInternal(dr);
-            
+            this.To = Null.SetNullString(dr["To"]);
+            this.From = Null.SetNullString(dr["From"]);
+            this.Subject = Null.SetNullString(dr["Subject"]);
+            this.Body = Null.SetNullString(dr["Body"]);
+            this.ParentMessageID = Convert.ToInt32(dr["ParentMessageID"]);            
+            this.ReplyAllAllowed = Null.SetNullBoolean(dr["ReplyAllAllowed"]);
+            this.SenderUserID = Convert.ToInt32(dr["SenderUserID"]);
+            this.RowNumber = Convert.ToInt32(dr["RowNumber"]);
+            this.AttachmentCount = Convert.ToInt32(dr["AttachmentCount"]);
+
+            base.Fill(dr);            
         }
     }
 }

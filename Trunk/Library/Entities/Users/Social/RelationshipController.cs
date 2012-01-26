@@ -80,10 +80,10 @@ namespace DotNetNuke.Entities.Users.Social
         {
             Requires.NotNull("relationshipType", relationshipType);
 
-            _dataService.DeleteRelationshipType(relationshipType.RelationshipTypeID);
+            _dataService.DeleteRelationshipType(relationshipType.RelationshipTypeId);
 
             //log event
-            var logContent = string.Format(Localization.GetString("RelationshipType_Deleted", Localization.GlobalResourceFile), relationshipType.Name, relationshipType.RelationshipTypeID);
+            var logContent = string.Format(Localization.GetString("RelationshipType_Deleted", Localization.GlobalResourceFile), relationshipType.Name, relationshipType.RelationshipTypeId);
             AddLog(logContent);
 
             //clear cache
@@ -105,13 +105,13 @@ namespace DotNetNuke.Entities.Users.Social
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Get RelationshipType By RelationshipTypeID
+        /// Get RelationshipType By RelationshipTypeId
         /// </summary>        
-        /// <param name="relationshipTypeID">RelationshipTypeID</param>        
+        /// <param name="relationshipTypeId">RelationshipTypeId</param>        
         /// -----------------------------------------------------------------------------
-        public RelationshipType GetRelationshipType(int relationshipTypeID)
+        public RelationshipType GetRelationshipType(int relationshipTypeId)
         {
-            return GetAllRelationshipTypes().FirstOrDefault(r => r.RelationshipTypeID == relationshipTypeID);
+            return GetAllRelationshipTypes().FirstOrDefault(r => r.RelationshipTypeId == relationshipTypeId);
         }
 
         /// -----------------------------------------------------------------------------
@@ -120,7 +120,7 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         /// <param name="relationshipType">RelationshipType object</param>        
         /// <remarks>
-        /// If RelationshipTypeID is -1 (Null.NullIntger), then a new RelationshipType is created, 
+        /// If RelationshipTypeId is -1 (Null.NullIntger), then a new RelationshipType is created, 
         /// else existing RelationshipType is updated
         /// </remarks>
         /// -----------------------------------------------------------------------------
@@ -128,9 +128,9 @@ namespace DotNetNuke.Entities.Users.Social
         {
             Requires.NotNull("relationshipType", relationshipType);
 
-            var localizationKey = (relationshipType.RelationshipTypeID == Null.NullInteger) ? "RelationshipType_Added" : "RelationshipType_Updated";
+            var localizationKey = (relationshipType.RelationshipTypeId == Null.NullInteger) ? "RelationshipType_Added" : "RelationshipType_Updated";
 
-            relationshipType.RelationshipTypeID = _dataService.SaveRelationshipType(relationshipType, UserController.GetCurrentUserInfo().UserID);
+            relationshipType.RelationshipTypeId = _dataService.SaveRelationshipType(relationshipType, UserController.GetCurrentUserInfo().UserID);
 
             //log event
             var logContent = string.Format(Localization.GetString(localizationKey, Localization.GlobalResourceFile), relationshipType.Name);
@@ -154,10 +154,10 @@ namespace DotNetNuke.Entities.Users.Social
         {
             Requires.NotNull("relationship", relationship);
 
-            _dataService.DeleteRelationship(relationship.RelationshipID);
+            _dataService.DeleteRelationship(relationship.RelationshipId);
 
             //log event
-            var logContent = string.Format(Localization.GetString("Relationship_Deleted", Localization.GlobalResourceFile), relationship.Name, relationship.RelationshipID);
+            var logContent = string.Format(Localization.GetString("Relationship_Deleted", Localization.GlobalResourceFile), relationship.Name, relationship.RelationshipId);
             AddLog(logContent);
 
             //clear cache
@@ -166,39 +166,39 @@ namespace DotNetNuke.Entities.Users.Social
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Get Relationship By RelationshipID
+        /// Get Relationship By RelationshipId
         /// </summary>        
-        /// <param name="relationshipID">RelationshipID</param>        
+        /// <param name="relationshipId">RelationshipId</param>        
         /// -----------------------------------------------------------------------------
-        public Relationship GetRelationship(int relationshipID)
+        public Relationship GetRelationship(int relationshipId)
         {
-            return CBO.FillCollection<Relationship>(_dataService.GetRelationship(relationshipID)).FirstOrDefault();
+            return CBO.FillCollection<Relationship>(_dataService.GetRelationship(relationshipId)).FirstOrDefault();
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Get Relationships By UserID
+        /// Get Relationships By UserId
         /// </summary>        
-        /// <param name="userID">UserID</param>        
+        /// <param name="userId">UserId</param>        
         /// -----------------------------------------------------------------------------
-        public IList<Relationship> GetRelationshipsByUserID(int userID)
+        public IList<Relationship> GetRelationshipsByUserId(int userId)
         {
-            return CBO.FillCollection<Relationship>(_dataService.GetRelationshipsByUserID(userID));
+            return CBO.FillCollection<Relationship>(_dataService.GetRelationshipsByUserId(userId));
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Get Relationships By PortalID
+        /// Get Relationships By PortalId
         /// </summary>        
-        /// <param name="portalID">PortalID</param>        
+        /// <param name="portalId">PortalId</param>        
         /// -----------------------------------------------------------------------------
-        public IList<Relationship> GetRelationshipsByPortalID(int portalID)
+        public IList<Relationship> GetRelationshipsByPortalId(int portalId)
         {
-            var cacheArgs = new CacheItemArgs(string.Format(DataCache.RelationshipByPortalIDCacheKey, portalID), 
+            var cacheArgs = new CacheItemArgs(string.Format(DataCache.RelationshipByPortalIDCacheKey, portalId), 
                                                 DataCache.RelationshipByPortalIDCacheTimeOut, 
                                                 DataCache.RelationshipByPortalIDCachePriority, 
-                                                portalID);
-            return CBO.GetCachedObject<IList<Relationship>>(cacheArgs, c => CBO.FillCollection<Relationship>(_dataService.GetRelationshipsByPortalID((int) c.ParamList[0])));            
+                                                portalId);
+            return CBO.GetCachedObject<IList<Relationship>>(cacheArgs, c => CBO.FillCollection<Relationship>(_dataService.GetRelationshipsByPortalId((int) c.ParamList[0])));            
         }
 
         /// -----------------------------------------------------------------------------
@@ -207,7 +207,7 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         /// <param name="relationship">Relationship object</param>        
         /// <remarks>
-        /// If RelationshipID is -1 (Null.NullIntger), then a new Relationship is created, 
+        /// If RelationshipId is -1 (Null.NullIntger), then a new Relationship is created, 
         /// else existing Relationship is updated
         /// </remarks>
         /// -----------------------------------------------------------------------------
@@ -215,9 +215,9 @@ namespace DotNetNuke.Entities.Users.Social
         {
             Requires.NotNull("relationship", relationship);
 
-            var localizationKey = (relationship.RelationshipID == Null.NullInteger) ? "Relationship_Added" : "Relationship_Updated";
+            var localizationKey = (relationship.RelationshipId == Null.NullInteger) ? "Relationship_Added" : "Relationship_Updated";
 
-            relationship.RelationshipID = _dataService.SaveRelationship(relationship, UserController.GetCurrentUserInfo().UserID);
+            relationship.RelationshipId = _dataService.SaveRelationship(relationship, UserController.GetCurrentUserInfo().UserID);
 
             //log event
             var logContent = string.Format(Localization.GetString(localizationKey, Localization.GlobalResourceFile), relationship.Name);
@@ -241,10 +241,10 @@ namespace DotNetNuke.Entities.Users.Social
         {
             Requires.NotNull("userRelationship", userRelationship);
 
-            _dataService.DeleteUserRelationship(userRelationship.UserRelationshipID);
+            _dataService.DeleteUserRelationship(userRelationship.UserRelationshipId);
 
             //log event
-            var logContent = string.Format(Localization.GetString("UserRelationship_Deleted", Localization.GlobalResourceFile), userRelationship.UserRelationshipID, userRelationship.UserID, userRelationship.RelatedUserID);
+            var logContent = string.Format(Localization.GetString("UserRelationship_Deleted", Localization.GlobalResourceFile), userRelationship.UserRelationshipId, userRelationship.UserId, userRelationship.RelatedUserId);
             AddLog(logContent);
 
             //cache clear
@@ -253,13 +253,13 @@ namespace DotNetNuke.Entities.Users.Social
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Get UserRelationship By UserRelationshipID
+        /// Get UserRelationship By UserRelationshipId
         /// </summary>        
-        /// <param name="userRelationshipID">UserRelationshipID</param>        
+        /// <param name="userRelationshipId">UserRelationshipId</param>        
         /// -----------------------------------------------------------------------------
-        public UserRelationship GetUserRelationship(int userRelationshipID)
+        public UserRelationship GetUserRelationship(int userRelationshipId)
         {
-            return CBO.FillObject<UserRelationship>(_dataService.GetUserRelationship(userRelationshipID));
+            return CBO.FillObject<UserRelationship>(_dataService.GetUserRelationship(userRelationshipId));
         }
 
         /// -----------------------------------------------------------------------------
@@ -272,7 +272,7 @@ namespace DotNetNuke.Entities.Users.Social
         /// -----------------------------------------------------------------------------
         public UserRelationship GetUserRelationship(UserInfo user, UserInfo relatedUser, Relationship relationship)
         {
-            return CBO.FillObject<UserRelationship>(_dataService.GetUserRelationship(user.UserID, relatedUser.UserID, relationship.RelationshipID, GetRelationshipType(relationship.RelationshipTypeID).Direction));
+            return CBO.FillObject<UserRelationship>(_dataService.GetUserRelationship(user.UserID, relatedUser.UserID, relationship.RelationshipId, GetRelationshipType(relationship.RelationshipTypeId).Direction));
         }
 
         /// <summary>
@@ -291,7 +291,7 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         /// <param name="userRelationship">UserRelationship object</param>        
         /// <remarks>
-        /// If UserRelationshipID is -1 (Null.NullIntger), then a new UserRelationship is created, 
+        /// If UserRelationshipId is -1 (Null.NullIntger), then a new UserRelationship is created, 
         /// else existing UserRelationship is updated
         /// </remarks>
         /// -----------------------------------------------------------------------------
@@ -299,12 +299,12 @@ namespace DotNetNuke.Entities.Users.Social
         {
             Requires.NotNull("userRelationship", userRelationship);
 
-            var localizationKey = (userRelationship.UserRelationshipID == Null.NullInteger) ? "UserRelationship_Added" : "UserRelationship_Updated";
+            var localizationKey = (userRelationship.UserRelationshipId == Null.NullInteger) ? "UserRelationship_Added" : "UserRelationship_Updated";
 
-            userRelationship.UserRelationshipID = _dataService.SaveUserRelationship(userRelationship, UserController.GetCurrentUserInfo().UserID);
+            userRelationship.UserRelationshipId = _dataService.SaveUserRelationship(userRelationship, UserController.GetCurrentUserInfo().UserID);
 
             //log event            
-            var logContent = string.Format(Localization.GetString(localizationKey, Localization.GlobalResourceFile), userRelationship.UserRelationshipID, userRelationship.UserID, userRelationship.RelatedUserID);
+            var logContent = string.Format(Localization.GetString(localizationKey, Localization.GlobalResourceFile), userRelationship.UserRelationshipId, userRelationship.UserId, userRelationship.RelatedUserId);
             AddLog(logContent);
 
             //cache clear
@@ -325,34 +325,34 @@ namespace DotNetNuke.Entities.Users.Social
         {
             Requires.NotNull("userRelationshipPreference", userRelationshipPreference); 
             
-            _dataService.DeleteUserRelationshipPreference(userRelationshipPreference.PreferenceID);
+            _dataService.DeleteUserRelationshipPreference(userRelationshipPreference.PreferenceId);
 
             //log event
-            var logContent = string.Format(Localization.GetString("UserRelationshipPreference_Deleted", Localization.GlobalResourceFile), userRelationshipPreference.PreferenceID, userRelationshipPreference.UserID, userRelationshipPreference.RelationshipID);
+            var logContent = string.Format(Localization.GetString("UserRelationshipPreference_Deleted", Localization.GlobalResourceFile), userRelationshipPreference.PreferenceId, userRelationshipPreference.UserId, userRelationshipPreference.RelationshipId);
             AddLog(logContent);
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Get UserRelationshipPreference By RelationshipTypeID
+        /// Get UserRelationshipPreference By RelationshipTypeId
         /// </summary>        
-        /// <param name="preferenceID">PreferenceID</param>        
+        /// <param name="preferenceId">PreferenceId</param>        
         /// -----------------------------------------------------------------------------
-        public UserRelationshipPreference GetUserRelationshipPreference(int preferenceID)
+        public UserRelationshipPreference GetUserRelationshipPreference(int preferenceId)
         {
-            return CBO.FillObject<UserRelationshipPreference>(_dataService.GetUserRelationshipPreferenceByID(preferenceID));
+            return CBO.FillObject<UserRelationshipPreference>(_dataService.GetUserRelationshipPreferenceById(preferenceId));
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Get UserRelationshipPreference By UserID and RelationshipID
+        /// Get UserRelationshipPreference By UserId and RelationshipId
         /// </summary>        
-        /// <param name="userID">UserID</param>        
-        /// <param name="relationshipID">RelationshipID</param>        
+        /// <param name="userId">UserId</param>        
+        /// <param name="relationshipId">RelationshipId</param>        
         /// -----------------------------------------------------------------------------
-        public UserRelationshipPreference GetUserRelationshipPreference(int userID, int relationshipID)
+        public UserRelationshipPreference GetUserRelationshipPreference(int userId, int relationshipId)
         {
-            return CBO.FillObject<UserRelationshipPreference>(_dataService.GetUserRelationshipPreference(userID, relationshipID));
+            return CBO.FillObject<UserRelationshipPreference>(_dataService.GetUserRelationshipPreference(userId, relationshipId));
         }
 
         /// -----------------------------------------------------------------------------
@@ -361,7 +361,7 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         /// <param name="userRelationshipPreference">UserRelationshipPreference object</param>        
         /// <remarks>
-        /// If PreferenceID is -1 (Null.NullIntger), then a new UserRelationshipPreference is created, 
+        /// If PreferenceId is -1 (Null.NullIntger), then a new UserRelationshipPreference is created, 
         /// else existing UserRelationshipPreference is updated
         /// </remarks>
         /// -----------------------------------------------------------------------------
@@ -369,12 +369,12 @@ namespace DotNetNuke.Entities.Users.Social
         {
             Requires.NotNull("userRelationshipPreference", userRelationshipPreference);
 
-            var localizationKey = (userRelationshipPreference.PreferenceID == Null.NullInteger) ? "UserRelationshipPreference_Added" : "UserRelationshipPreference_Updated";
+            var localizationKey = (userRelationshipPreference.PreferenceId == Null.NullInteger) ? "UserRelationshipPreference_Added" : "UserRelationshipPreference_Updated";
 
-            userRelationshipPreference.PreferenceID = _dataService.SaveUserRelationshipPreference(userRelationshipPreference, UserController.GetCurrentUserInfo().UserID);
+            userRelationshipPreference.PreferenceId = _dataService.SaveUserRelationshipPreference(userRelationshipPreference, UserController.GetCurrentUserInfo().UserID);
 
             //log event            
-            var logContent = string.Format(Localization.GetString(localizationKey, Localization.GlobalResourceFile), userRelationshipPreference.PreferenceID, userRelationshipPreference.UserID, userRelationshipPreference.RelationshipID);
+            var logContent = string.Format(Localization.GetString(localizationKey, Localization.GlobalResourceFile), userRelationshipPreference.PreferenceId, userRelationshipPreference.UserId, userRelationshipPreference.RelationshipId);
             AddLog(logContent);
         }
 
@@ -410,7 +410,7 @@ namespace DotNetNuke.Entities.Users.Social
             Requires.PropertyNotNegative("initiatingUser", "PortalID", initiatingUser.PortalID);
             Requires.PropertyNotNegative("targetUser", "PortalID", targetUser.PortalID);
 
-            Requires.PropertyNotNegative("relationship", "RelationshipID", relationship.RelationshipID);
+            Requires.PropertyNotNegative("relationship", "RelationshipId", relationship.RelationshipId);
 
             //cannot be same user
             if (initiatingUser.UserID == targetUser.UserID)
@@ -428,7 +428,7 @@ namespace DotNetNuke.Entities.Users.Social
             var existingRelationship = GetUserRelationship(initiatingUser, targetUser, relationship);
             if(existingRelationship != null) 
             {                                    
-                throw new UserRelationshipExistsException(Localization.GetExceptionMessage("UserRelationshipExistsError", "Relationship already exists for Initiating User '{0}' Target User '{1}' RelationshipID '{2}'.", initiatingUser.UserID, targetUser.UserID, relationship.RelationshipID));
+                throw new UserRelationshipExistsException(Localization.GetExceptionMessage("UserRelationshipExistsError", "Relationship already exists for Initiating User '{0}' Target User '{1}' RelationshipID '{2}'.", initiatingUser.UserID, targetUser.UserID, relationship.RelationshipId));
             }
 
             //no existing UserRelationship record found 
@@ -441,7 +441,7 @@ namespace DotNetNuke.Entities.Users.Social
             //TODO - Is this check only applicable for portal or host list
             //if (relationship.IsPortalList || relationship.IsHostList)
             {
-                var preference = GetUserRelationshipPreference(targetUser.UserID, relationship.RelationshipID);
+                var preference = GetUserRelationshipPreference(targetUser.UserID, relationship.RelationshipId);
                 if (preference != null) 
                 {
                     status = preference.DefaultResponse;
@@ -451,7 +451,7 @@ namespace DotNetNuke.Entities.Users.Social
             if(status == RelationshipStatus.None)
                 status = RelationshipStatus.Initiated;
 
-            var userRelationship = new UserRelationship { UserRelationshipID = Null.NullInteger, UserID = initiatingUser.UserID, RelatedUserID = targetUser.UserID, RelationshipID = relationship.RelationshipID, Status = status };
+            var userRelationship = new UserRelationship { UserRelationshipId = Null.NullInteger, UserId = initiatingUser.UserID, RelatedUserId = targetUser.UserID, RelationshipId = relationship.RelationshipId, Status = status };
 
             SaveUserRelationship(userRelationship);
 
@@ -462,84 +462,84 @@ namespace DotNetNuke.Entities.Users.Social
         /// <summary>
         /// Accept an existing UserRelationship Request
         /// </summary>
-        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <param name="userRelationshipId">UserRelationshipId of the UserRelationship</param>        
         /// <remarks>
         /// Method updates the status of the UserRelationship to Accepted.
         /// </remarks>
         /// -----------------------------------------------------------------------------
-        public void AcceptUserRelationship(int userRelationshipID)
+        public void AcceptUserRelationship(int userRelationshipId)
         {
-            ManageUserRelationshipStatus(userRelationshipID, RelationshipStatus.Accepted);
+            ManageUserRelationshipStatus(userRelationshipId, RelationshipStatus.Accepted);
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Reject an existing UserRelationship Request
         /// </summary>
-        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <param name="userRelationshipId">UserRelationshipId of the UserRelationship</param>        
         /// <remarks>
         /// Method updates the status of the UserRelationship to Rejected.
         /// </remarks>
         /// -----------------------------------------------------------------------------
-        public void RejectUserRelationship(int userRelationshipID)
+        public void RejectUserRelationship(int userRelationshipId)
         {
-            ManageUserRelationshipStatus(userRelationshipID, RelationshipStatus.Rejected);
+            ManageUserRelationshipStatus(userRelationshipId, RelationshipStatus.Rejected);
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Report an existing UserRelationship Request
         /// </summary>
-        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <param name="userRelationshipId">UserRelationshipId of the UserRelationship</param>        
         /// <remarks>
         /// Method updates the status of the UserRelationship to Reported.
         /// </remarks>
         /// -----------------------------------------------------------------------------        
-        public void ReportUserRelationship(int userRelationshipID)
+        public void ReportUserRelationship(int userRelationshipId)
         {
-            ManageUserRelationshipStatus(userRelationshipID, RelationshipStatus.Reported);
+            ManageUserRelationshipStatus(userRelationshipId, RelationshipStatus.Reported);
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Ignore an existing UserRelationship Request
         /// </summary>
-        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <param name="userRelationshipId">UserRelationshipId of the UserRelationship</param>        
         /// <remarks>
         /// Method updates the status of the UserRelationship to Ignored.
         /// </remarks>
         /// ----------------------------------------------------------------------------- 
-        public void IgnoreUserRelationship(int userRelationshipID)
+        public void IgnoreUserRelationship(int userRelationshipId)
         {
-            ManageUserRelationshipStatus(userRelationshipID, RelationshipStatus.Ignored);
+            ManageUserRelationshipStatus(userRelationshipId, RelationshipStatus.Ignored);
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Block an existing UserRelationship Request
         /// </summary>
-        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <param name="userRelationshipId">UserRelationshipId of the UserRelationship</param>        
         /// <remarks>
         /// Method updates the status of the UserRelationship to Blocked.
         /// </remarks>
         /// ----------------------------------------------------------------------------- 
-        public void BlockUserRelationship(int userRelationshipID)
+        public void BlockUserRelationship(int userRelationshipId)
         {
-            ManageUserRelationshipStatus(userRelationshipID, RelationshipStatus.Blocked);
+            ManageUserRelationshipStatus(userRelationshipId, RelationshipStatus.Blocked);
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Remove an existing UserRelationship Request
         /// </summary>
-        /// <param name="userRelationshipID">UserRelationshipID of the UserRelationship</param>        
+        /// <param name="userRelationshipId">UserRelationshipId of the UserRelationship</param>        
         /// <remarks>
         /// UserRelationship record is physically removed.
         /// </remarks>
         /// -----------------------------------------------------------------------------  
-        public void RemoveUserRelationship(int userRelationshipID)
+        public void RemoveUserRelationship(int userRelationshipId)
         {
-            var userRelationship = VerifyUserRelationshipExist(userRelationshipID);
+            var userRelationship = VerifyUserRelationshipExist(userRelationshipId);
             if (userRelationship != null)
             {
                 DeleteUserRelationship(userRelationship);
@@ -704,7 +704,7 @@ namespace DotNetNuke.Entities.Users.Social
 
             IList<UserRelationship> friends;
             var relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
-            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipID, out friends);
+            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipId, out friends);
 
             return friends;
         }
@@ -724,7 +724,7 @@ namespace DotNetNuke.Entities.Users.Social
 
             IList<UserRelationship> followers;
             var relationship = GetFollowersRelatioshipByPortal(initiatingUser.PortalID);
-            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipID, out followers);
+            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipId, out followers);
 
             return followers;
         }
@@ -746,25 +746,26 @@ namespace DotNetNuke.Entities.Users.Social
             return new List<UserRelationship>();
         }
 
-        /// <summary>
-        /// GetUsersByFilters -- Gets a filtered list of users along with their profile properties.
-        /// </summary>
-        /// <param name="portalId">PortalID to which the Relationship will belong. Valid value includes Non-Negative number.</param>        
-        /// <param name="currUser">Current user.  Which could be used in conjunction with other parameters to filter the list in terms of relationship to.</param>
-        /// <param name="records">Number of records to return.</param>
-        /// <param name="role">Filter the list of user based on their role.</param>
-        /// <param name="relationshipType">Filter the list of user based on their relationship to the current user [currUser parameter].</param>
-        /// <param name="profileProperty">Filter the list of user based on a particular profile property, to be used in conjunction with the [profilePropertyValue] parameter.</param>
-        /// <param name="profilePropertyValue">Filter the list of user based on a specific value of a particular propfile property, [profileProperty] parameter.</param>
-        /// <param name="sortByColumn">Name of the column to sort the list of user by.</param>
-        /// <param name="sortAscending">Flag for sorting by ascending. If false, sort descending.</param>
-        /// <param name="isAdmin">Flag for determining if the list of users should show results exclusive to admins.</param>
-        /// <returns></returns>
-        public IDataReader GetUsersByFilters(int portalId, UserInfo currUser, int records, UserRoleInfo role, RelationshipType relationshipType, string profileProperty, string profilePropertyValue, string sortByColumn, bool sortAscending, bool isAdmin)
+	    /// <summary>
+	    /// GetUsersByFilters -- Gets a filtered list of users along with their profile properties.
+	    /// </summary>
+	    /// <param name="portalId">PortalId to which the Relationship will belong. Valid value includes Non-Negative number.</param>        
+	    /// <param name="currUser">Current user.  Which could be used in conjunction with other parameters to filter the list in terms of relationship to.</param>
+	    /// <param name="records">Number of records to return.</param>
+	    /// <param name="pageIndex">Page number used in conjunction with the [records] parameter.</param>
+	    /// <param name="role">Filter the list of user based on their role.</param>
+	    /// <param name="relationshipType">Filter the list of user based on their relationship to the current user [currUser parameter].</param>
+	    /// <param name="profileProperty">Filter the list of user based on a particular profile property, to be used in conjunction with the [profilePropertyValue] parameter.</param>
+	    /// <param name="profilePropertyValue">Filter the list of user based on a specific value of a particular propfile property, [profileProperty] parameter.</param>
+	    /// <param name="sortByColumn">Name of the column to sort the list of user by.</param>
+	    /// <param name="sortAscending">Flag for sorting by ascending. If false, sort descending.</param>
+	    /// <param name="isAdmin">Flag for determining if the list of users should show results exclusive to admins.</param>
+	    /// <returns></returns>
+	    public IDataReader GetUsersByFilters(int portalId, UserInfo currUser, int records, int pageIndex, UserRoleInfo role, RelationshipType relationshipType, string profileProperty, string profilePropertyValue, string sortByColumn, bool sortAscending, bool isAdmin)
         {
             var roleId = role != null ? role.RoleID : -1;
-            var relationshipTypeId = relationshipType != null ? relationshipType.RelationshipTypeID : -1;
-            return _dataService.GetUsersByFilters(portalId, currUser.UserID, records, roleId, relationshipTypeId, profileProperty, profilePropertyValue, sortByColumn, sortAscending, isAdmin);
+            var relationshipTypeId = relationshipType != null ? relationshipType.RelationshipTypeId : -1;
+            return _dataService.GetUsersByFilters(portalId, currUser.UserID, records, pageIndex, roleId, relationshipTypeId, profileProperty, profilePropertyValue, sortByColumn, sortAscending, isAdmin);
         }
 
         /// -----------------------------------------------------------------------------
@@ -801,7 +802,7 @@ namespace DotNetNuke.Entities.Users.Social
         /// -----------------------------------------------------------------------------
         public Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus)
         {
-            var relationship = new Relationship { RelationshipID = Null.NullInteger, Name = listName, Description = listDescription, PortalID = owningUser.PortalID, UserID = owningUser.UserID, DefaultResponse = defaultStatus, RelationshipTypeID = (int)DefaultRelationshipTypes.CustomList};
+            var relationship = new Relationship { RelationshipId = Null.NullInteger, Name = listName, Description = listDescription, PortalId = owningUser.PortalID, UserId = owningUser.UserID, DefaultResponse = defaultStatus, RelationshipTypeId = (int)DefaultRelationshipTypes.CustomList};
 
             SaveRelationship(relationship);
 
@@ -812,20 +813,20 @@ namespace DotNetNuke.Entities.Users.Social
         /// <summary>
         /// AddPortalRelationship - Add a new Relationship for a Portal, e.g. Co-workers
         /// </summary>        
-        /// <param name="portalID">PortalID to which the Relationship will belong. Valid value includes Non-Negative number.</param>        
+        /// <param name="portalId">PortalId to which the Relationship will belong. Valid value includes Non-Negative number.</param>        
         /// <param name="listName">Name of the Relationship. It is also called as List Name, e.g. Co-Workers </param> 
         /// <param name="listDescription">Description of the Relationship. It is also called as List Description </param>         
         /// <param name="defaultStatus">DefaultRelationshiStatus of the Relationship when a new UserRelationship is initiated. 
         /// E.g. Accepted, which means automatically accept all UserRelationship request. Default is None, meaning no automatic action.</param> 
-        /// <param name="relationshipTypeID">RelationshipTypeID. A new Relationship requires RelationshipType to be present in the system. </param> 
+        /// <param name="relationshipTypeId">RelationshipTypeID. A new Relationship requires RelationshipType to be present in the system. </param> 
         /// <returns>Relationship object</returns>
         /// <remarks>Each Portal contains default Relationships of Friends and Followers. 
         /// AddPortalRelationship can be used to create addiotional Relationships
         /// </remarks>
         /// -----------------------------------------------------------------------------
-        public Relationship AddPortalRelationship(int portalID, string listName, string listDescription, RelationshipStatus defaultStatus, int relationshipTypeID)
+        public Relationship AddPortalRelationship(int portalId, string listName, string listDescription, RelationshipStatus defaultStatus, int relationshipTypeId)
         {
-            var relationship = new Relationship { RelationshipID = Null.NullInteger, Name = listName, Description = listDescription, PortalID = portalID, UserID = Null.NullInteger, DefaultResponse = defaultStatus, RelationshipTypeID = relationshipTypeID};
+            var relationship = new Relationship { RelationshipId = Null.NullInteger, Name = listName, Description = listDescription, PortalId = portalId, UserId = Null.NullInteger, DefaultResponse = defaultStatus, RelationshipTypeId = relationshipTypeId};
 
             SaveRelationship(relationship);
 
@@ -838,37 +839,37 @@ namespace DotNetNuke.Entities.Users.Social
 
         #region Internal Methods
 
-        internal void CreateDefaultRelationshipsForPortal(int portalID)
+        internal void CreateDefaultRelationshipsForPortal(int portalId)
         {
             //create default Friend Relationship
-            if (GetFriendsRelatioshipByPortal(portalID) == null)
+            if (GetFriendsRelatioshipByPortal(portalId) == null)
             {
                 var friendRelationship = new Relationship
                 {
-                    RelationshipID = Null.NullInteger,
+                    RelationshipId = Null.NullInteger,
                     Name = DefaultRelationshipTypes.Friends.ToString(),
                     Description = DefaultRelationshipTypes.Friends.ToString(),
-                    PortalID = portalID,
-                    UserID = Null.NullInteger,
+                    PortalId = portalId,
+                    UserId = Null.NullInteger,
                     DefaultResponse = RelationshipStatus.None, //default response is None
-                    RelationshipTypeID = (int)DefaultRelationshipTypes.Friends
+                    RelationshipTypeId = (int)DefaultRelationshipTypes.Friends
                 };
                 SaveRelationship(friendRelationship);
             }
 
             //create default Follower Relationship
-            if (GetFollowersRelatioshipByPortal(portalID) == null)
+            if (GetFollowersRelatioshipByPortal(portalId) == null)
             {
 
                 var followerRelationship = new Relationship
                 {
-                    RelationshipID = Null.NullInteger,
+                    RelationshipId = Null.NullInteger,
                     Name = DefaultRelationshipTypes.Followers.ToString(),
                     Description = DefaultRelationshipTypes.Followers.ToString(),
-                    PortalID = portalID,
-                    UserID = Null.NullInteger,
+                    PortalId = portalId,
+                    UserId = Null.NullInteger,
                     DefaultResponse = RelationshipStatus.Accepted, //default response is Accepted
-                    RelationshipTypeID = (int)DefaultRelationshipTypes.Followers
+                    RelationshipTypeId = (int)DefaultRelationshipTypes.Followers
                 };
                 SaveRelationship(followerRelationship);
             }
@@ -885,9 +886,9 @@ namespace DotNetNuke.Entities.Users.Social
 
         private void ClearRelationshipCache(Relationship relationship)
         {
-            if (relationship.UserID == Null.NullInteger)
+            if (relationship.UserId == Null.NullInteger)
             {
-                DataCache.RemoveCache(string.Format(DataCache.RelationshipByPortalIDCacheKey, relationship.PortalID));
+                DataCache.RemoveCache(string.Format(DataCache.RelationshipByPortalIDCacheKey, relationship.PortalId));
             }
 	    }
 
@@ -899,7 +900,7 @@ namespace DotNetNuke.Entities.Users.Social
             if (settings != null)
             {
                 //Get User
-                UserInfo user = UserController.GetUserById(settings.PortalId, userRelationship.UserID);
+                UserInfo user = UserController.GetUserById(settings.PortalId, userRelationship.UserId);
 
                 if (user != null)
                 {
@@ -908,19 +909,19 @@ namespace DotNetNuke.Entities.Users.Social
             }
         }
 
-        private Relationship GetFriendsRelatioshipByPortal(int portalID)
+        private Relationship GetFriendsRelatioshipByPortal(int portalId)
         {
-            return GetRelationshipsByPortalID(portalID).Where(re => re.RelationshipTypeID == (int) DefaultRelationshipTypes.Friends).FirstOrDefault();
+            return GetRelationshipsByPortalId(portalId).Where(re => re.RelationshipTypeId == (int) DefaultRelationshipTypes.Friends).FirstOrDefault();
         }
 
-        private Relationship GetFollowersRelatioshipByPortal(int portalID)
+        private Relationship GetFollowersRelatioshipByPortal(int portalId)
         {
-            return GetRelationshipsByPortalID(portalID).Where(re => re.RelationshipTypeID == (int)DefaultRelationshipTypes.Followers).FirstOrDefault();
+            return GetRelationshipsByPortalId(portalId).Where(re => re.RelationshipTypeId == (int)DefaultRelationshipTypes.Followers).FirstOrDefault();
         }
 
-        private void ManageUserRelationshipStatus(int userRelationshipID, RelationshipStatus newStatus)
+        private void ManageUserRelationshipStatus(int userRelationshipId, RelationshipStatus newStatus)
         {
-            var userRelationship = VerifyUserRelationshipExist(userRelationshipID);
+            var userRelationship = VerifyUserRelationshipExist(userRelationshipId);
             if (userRelationship == null) return;
 
             //TODO - apply business rules - throw exception if newStatus requested is not allowed
@@ -957,12 +958,12 @@ namespace DotNetNuke.Entities.Users.Social
             }
         }
 
-        private UserRelationship VerifyUserRelationshipExist(int userRelationshipID)
+        private UserRelationship VerifyUserRelationshipExist(int userRelationshipId)
         {
-            var userRelationship = GetUserRelationship(userRelationshipID);
+            var userRelationship = GetUserRelationship(userRelationshipId);
             if (userRelationship == null)
             {
-                throw new UserRelationshipDoesNotExistException(Localization.GetExceptionMessage("UserRelationshipDoesNotExistError", "UserRelationshipID '{0}' does not exist.", userRelationshipID));
+                throw new UserRelationshipDoesNotExistException(Localization.GetExceptionMessage("UserRelationshipDoesNotExistError", "UserRelationshipID '{0}' does not exist.", userRelationshipId));
             }
 
             return userRelationship;

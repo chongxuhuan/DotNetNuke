@@ -33,17 +33,17 @@ namespace DotNetNuke.Entities.Users
 
         UserRelationship InitiateUserRelationship(UserInfo initiatingUser, UserInfo targetUser, Relationship relationship);
        
-        void AcceptUserRelationship(int userRelationshipID);
+        void AcceptUserRelationship(int userRelationshipId);
 
-        void RejectUserRelationship(int userRelationshipID);
+        void RejectUserRelationship(int userRelationshipId);
 
-        void IgnoreUserRelationship(int userRelationshipID);
+        void IgnoreUserRelationship(int userRelationshipId);
 
-        void ReportUserRelationship(int userRelationshipID);
+        void ReportUserRelationship(int userRelationshipId);
 
-        void BlockUserRelationship(int userRelationshipID);
+        void BlockUserRelationship(int userRelationshipId);
 
-        void RemoveUserRelationship(int userRelationshipID);
+        void RemoveUserRelationship(int userRelationshipId);
                       
         #endregion
 
@@ -65,7 +65,7 @@ namespace DotNetNuke.Entities.Users
 
         Relationship AddUserList(string listName, string listDescription);
         Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus);
-        Relationship AddPortalRelationship(int portalID, string listName, string listDescription, RelationshipStatus defaultStatus, int relationshipTypeID);
+        Relationship AddPortalRelationship(int portalId, string listName, string listDescription, RelationshipStatus defaultStatus, int relationshipTypeId);
 
         #endregion
     }

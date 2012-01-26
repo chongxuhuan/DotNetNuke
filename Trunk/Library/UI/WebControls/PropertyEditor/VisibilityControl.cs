@@ -131,9 +131,9 @@ namespace DotNetNuke.UI.WebControls
                     sb.Append(";R:");
                     foreach (var relationship in User.Social.Relationships)
                     {
-                        if (postCollection[postDataKey + ":relationship_" + relationship.RelationshipID.ToString(CultureInfo.InvariantCulture)] != null)
+                        if (postCollection[postDataKey + ":relationship_" + relationship.RelationshipId.ToString(CultureInfo.InvariantCulture)] != null)
                         {
-                            sb.Append(relationship.RelationshipID.ToString(CultureInfo.InvariantCulture) + ",");
+                            sb.Append(relationship.RelationshipId.ToString(CultureInfo.InvariantCulture) + ",");
                         }
                     }
                     
@@ -238,9 +238,9 @@ namespace DotNetNuke.UI.WebControls
         {
             foreach (var relationship in User.Social.Relationships)
             {
-                RenderCheckboxItem(writer, ":relationship_", relationship.RelationshipID.ToString(CultureInfo.InvariantCulture), 
+                RenderCheckboxItem(writer, ":relationship_", relationship.RelationshipId.ToString(CultureInfo.InvariantCulture), 
                                         relationship.Name,
-                                        Visibility.RelationshipVisibilities.Count(r => r.RelationshipID == relationship.RelationshipID) == 1);
+                                        Visibility.RelationshipVisibilities.Count(r => r.RelationshipId == relationship.RelationshipId) == 1);
             }
         }
 

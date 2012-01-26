@@ -36,7 +36,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         IDataReader GetSocialMessage();
         IDataReader GetSocialMessagesBySender();
         void DeleteSocialMessage(int messageID);
-        IList<Message> GetInbox(int userID, int pageIndex, int pageSize, int totalRecords);
+        IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
         void UpdateSocialMessageStatus(int recipientID, int status);
         
         #endregion

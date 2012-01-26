@@ -32,41 +32,41 @@ namespace DotNetNuke.Entities.Users.Social.Data
     {
         #region RelationshipType CRUD
 
-        void DeleteRelationshipType(int relationshipTypeID);
+        void DeleteRelationshipType(int relationshipTypeId);
         IDataReader GetAllRelationshipTypes();
-        IDataReader GetRelationshipType(int relationshipTypeID);
-        int SaveRelationshipType(RelationshipType relationshipType, int createUpdateUserID);
+        IDataReader GetRelationshipType(int relationshipTypeId);
+        int SaveRelationshipType(RelationshipType relationshipType, int createUpdateUserId);
 
         #endregion
 
         #region Relationship CRUD
 
-        void DeleteRelationship(int relationshipID);
-        IDataReader GetRelationship(int relationshipID);
-        IDataReader GetRelationshipsByUserID(int userID);
-        IDataReader GetRelationshipsByPortalID(int portalID);
-        int SaveRelationship(Relationship relationship, int createUpdateUserID);
+        void DeleteRelationship(int relationshipId);
+        IDataReader GetRelationship(int relationshipId);
+        IDataReader GetRelationshipsByUserId(int userId);
+        IDataReader GetRelationshipsByPortalId(int portalId);
+        int SaveRelationship(Relationship relationship, int createUpdateUserId);
 
         #endregion
 
         #region UserRelationship CRUD
 
-        void DeleteUserRelationship(int userRelationshipID);
-        IDataReader GetUserRelationship(int userRelationshipID);
-        IDataReader GetUserRelationship(int userID, int relatedUserID, int relationshipID, RelationshipDirection relationshipDirection);
-        IDataReader GetUserRelationships(int userID);
-        IDataReader GetUserRelationshipsByRelationshipID(int relationshipID);
-        IDataReader GetUsersByFilters(int portalId, int currUserId, int numberOfRecords, int roleId, int relationshipType, string profileProperty, string profilePropertyValue, string sortColumn, bool sortAcending, bool isAdmin);
-        int SaveUserRelationship(UserRelationship userRelationship, int createUpdateUserID);
+        void DeleteUserRelationship(int userRelationshipId);
+        IDataReader GetUserRelationship(int userRelationshipId);
+        IDataReader GetUserRelationship(int userId, int relatedUserId, int relationshipId, RelationshipDirection relationshipDirection);
+        IDataReader GetUserRelationships(int userId);
+        IDataReader GetUserRelationshipsByRelationshipId(int relationshipId);
+        IDataReader GetUsersByFilters(int portalId, int currUserId, int numberOfRecords, int pageIndex, int roleId, int relationshipType, string profileProperty, string profilePropertyValue, string sortColumn, bool sortAcending, bool isAdmin);
+        int SaveUserRelationship(UserRelationship userRelationship, int createUpdateUserId);
 
         #endregion
 
         #region UserRelationshipPreference CRUD
 
-        void DeleteUserRelationshipPreference(int preferenceID);
-        IDataReader GetUserRelationshipPreferenceByID(int preferenceID);
-        IDataReader GetUserRelationshipPreference(int userID, int relationshipID);
-        int SaveUserRelationshipPreference(UserRelationshipPreference userRelationshipPreference, int createUpdateUserID);
+        void DeleteUserRelationshipPreference(int preferenceId);
+        IDataReader GetUserRelationshipPreferenceById(int preferenceId);
+        IDataReader GetUserRelationshipPreference(int userId, int relationshipId);
+        int SaveUserRelationshipPreference(UserRelationshipPreference userRelationshipPreference, int createUpdateUserId);
 
         #endregion
     }
