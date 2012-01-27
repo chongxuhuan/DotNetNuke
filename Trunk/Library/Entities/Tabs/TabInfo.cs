@@ -53,6 +53,8 @@ namespace DotNetNuke.Entities.Tabs
     [Serializable]
     public class TabInfo : ContentItem, IPropertyAccess
     {
+        #region Private Members
+
         private string _administratorRoles;
         private string _authorizedRoles;
         private TabInfo _defaultLanguageTab;
@@ -68,6 +70,8 @@ namespace DotNetNuke.Entities.Tabs
         private string _iconFileRaw;
         private string _iconFileLarge;
         private string _iconFileLargeRaw;
+
+        #endregion
 
         #region Constructors
 
@@ -440,6 +444,28 @@ namespace DotNetNuke.Entities.Tabs
             }
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Key ID
+        /// </summary>
+        /// <returns>An Integer</returns>
+        /// <history>
+        /// 	[cnurse]	01/15/2008   Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        [XmlIgnore]
+        public override int KeyID
+        {
+            get
+            {
+                return TabID;
+            }
+            set
+            {
+                TabID = value;
+            }
+        }
+
         [XmlIgnore]
         public string LocalizedTabName
         {
@@ -541,28 +567,6 @@ namespace DotNetNuke.Entities.Tabs
         }
 
         #endregion
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets and sets the Key ID
-        /// </summary>
-        /// <returns>An Integer</returns>
-        /// <history>
-        /// 	[cnurse]	01/15/2008   Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        [XmlIgnore]
-        public override int KeyID
-        {
-            get
-            {
-                return TabID;
-            }
-            set
-            {
-                TabID = value;
-            }
-        }
 
         #region IPropertyAccess Members
 

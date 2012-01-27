@@ -994,7 +994,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var stream = new MemoryStream(bytes);
 
             _mockFileManager.Setup(mfm => mfm.IsImageFile(_fileInfo.Object)).Returns(false);
-            _mockFileManager.Setup(mfm => mfm.GetHash(_fileInfo.Object)).Returns(Constants.FOLDER_UnmodifiedFileHash);
+            _mockFileManager.Setup(mfm => mfm.GetHash(stream)).Returns(Constants.FOLDER_UnmodifiedFileHash);
 
             _mockFileManager.Object.UpdateFile(_fileInfo.Object, stream);
 

@@ -115,9 +115,12 @@ namespace DotNetNuke.Services.Social.Messaging
 
         public IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
         {
-            var messages= _DataService.GetInbox(userID, pageIndex, pageSize, ref totalRecords);
-            totalRecords = messages.Count;
-            return messages;
+            return _DataService.GetInbox(userID, pageIndex, pageSize, ref totalRecords);
+        }
+
+        public IList<Message> GetSentbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
+        {
+            return _DataService.GetSentbox(userID, pageIndex, pageSize, ref totalRecords);
         }
 
         public IList<MessageItem> GetRecentMessages(int userID, ref int totalRecords)

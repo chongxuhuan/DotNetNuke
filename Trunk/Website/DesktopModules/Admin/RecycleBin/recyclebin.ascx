@@ -1,7 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.RecycleBin.RecycleBin" CodeFile="RecycleBin.ascx.cs" %>
-<%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-<%@ Register TagPrefix="dnn" TagName="HelpButton" Src="~/controls/HelpButtonControl.ascx" %>
-<%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
+<%@ Control Language="C#" AutoEventWireup="false" Inherits="DesktopModules.Admin.RecycleBin.RecycleBin" CodeFile="RecycleBin.ascx.cs" %>
 <div class="dnnForm dnnRecycleBin dnnClear" id="dnnRecycleBin">
     <ul class="dnnAdminTabNav dnnClear">
 		<li><a href="#rbTabs"><%=LocalizeString("Tabs")%></a></li>
@@ -16,7 +13,11 @@
     <div class="rbTabs dnnClear" id="rbTabs">
         <div class="rbtContent dnnClear">
             <fieldset>
-                <div class="dnnFormItem"><asp:ListBox ID="lstTabs" runat="server" Width="450px" Rows="14" DataTextField="TabName" DataValueField="TabId" SelectionMode="Multiple" /></div>
+                <div class="dnnFormItem">
+                    <asp:ListBox ID="tabsListBox" runat="server" Width="450px" Rows="14" 
+                            DataTextField="IndentedTabName" DataValueField="TabId" 
+                            SelectionMode="Multiple" />
+                </div>
                 <div runat="server" id="divTabButtons">
                     <ul class="dnnActions">
                         <li><asp:LinkButton ID="cmdRestoreTab" runat="server" resourcekey="cmdRestoreTab" CssClass="dnnSecondaryAction cmdRestoreTab" /></li>
@@ -29,7 +30,7 @@
     <div class="rbModules dnnClear" id="rbModules">
         <div class="rbmContent dnnClear">
             <fieldset>
-                <div class="dnnFormItem"><asp:ListBox ID="lstModules" runat="server" Width="450px" Rows="14" SelectionMode="Multiple" /></div>
+                <div class="dnnFormItem"><asp:ListBox ID="modulesListBox" runat="server" Width="450px" Rows="14" SelectionMode="Multiple" /></div>
                 <div id="divModuleButtons" runat="server">
                     <ul class="dnnActions">
                         <li><asp:LinkButton ID="cmdRestoreModule" runat="server" resourcekey="cmdRestoreModule" CssClass="dnnSecondaryAction" /></li>

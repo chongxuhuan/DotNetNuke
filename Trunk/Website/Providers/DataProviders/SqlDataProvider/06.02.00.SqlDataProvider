@@ -2745,7 +2745,9 @@ WITH inboxItems  AS
 (
 	SELECT  DISTINCT [RecipientID], [Subject], CAST(BODY as nvarchar(150)) AS Body, [SenderUserID], 
 			[Status], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
-			MessageRecipients.[CreatedByUserID], MessageRecipients.[CreatedOnDate], MessageRecipients.[LastModifiedByUserID], MessageRecipients.[LastModifiedOnDate],
+			MessageRecipients.[MessageID],	
+			MessageRecipients.[CreatedByUserID], MessageRecipients.[CreatedOnDate], 
+			MessageRecipients.[LastModifiedByUserID], MessageRecipients.[LastModifiedOnDate],
 			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = MessageRecipients.MessageID) AS AttachmentCount,
 			ROW_NUMBER() OVER (ORDER BY RecipientID DESC) AS RowNumber
 	FROM	{databaseOwner}{objectQualifier}Social_MessageRecipients AS MessageRecipients
@@ -2756,6 +2758,44 @@ SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperB
 order by RowNumber ASC
 END
 GO
+
+/* Add GetSentbox Procedure */
+/************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSentbox]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSentbox]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSentbox]
+	@SenderUserID int,
+	@PageIndex    int,
+	@PageSize     int
+AS
+BEGIN
+
+--Return total message count
+SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_Messages WHERE SenderUserID = @SenderUserID
+
+-- Set the page bounds
+DECLARE 
+	@PageLowerBound INT, 
+	@PageUpperBound INT, 
+	@RowsToReturn int;
+	
+exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output;
+
+WITH inboxItems  AS
+(
+	SELECT [MessageID], [To], [From], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID],
+           [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate],
+		   (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = SocialMessages.MessageID) AS AttachmentCount,
+		   ROW_NUMBER() OVER (ORDER BY MessageID DESC) AS RowNumber                  
+    FROM	{databaseOwner}{objectQualifier}Social_Messages AS SocialMessages  	        
+   	WHERE   SenderUserID = @SenderUserID	
+)	
+SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
+order by RowNumber ASC
+END
+GO
+
 
 /* Add UpdateSocialMessageStatus Procedure */
 /************************************/

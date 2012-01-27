@@ -79,6 +79,27 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             }
         }
 
+        public IList<Message> GetSentbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
+        {
+            IDataReader dr = _provider.ExecuteReader("GetSentbox", userID, pageIndex, pageSize);
+
+            try
+            {
+                while (dr.Read())
+                {
+                    totalRecords = Convert.ToInt32(dr["TotalRecords"]);
+                }
+                dr.NextResult();
+                return CBO.FillCollection<Message>(dr);
+            }
+            finally
+            {
+                CBO.CloseDataReader(dr, true);
+            }
+        }
+
+
+
         public void UpdateSocialMessageStatus(int recipientID, int status)
         {
             _provider.ExecuteNonQuery("UpdateSocialMessageStatus", recipientID, status);

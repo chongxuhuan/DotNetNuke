@@ -50,8 +50,8 @@ namespace DotNetNuke.HttpModules.Services
             {
                 var response = context.Response;
                 response.ClearContent();
+                response.ClearHeaders();
                 response.StatusCode = 401;
-                response.Headers.Remove("Location"); 
                 response.AppendHeader("WWW-Authenticate", "Basic realm=\"DNNAPI\"");
             }
         }

@@ -18,27 +18,30 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web.UI.WebControls;
+
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Framework;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
+using DotNetNuke.UI.Skins;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
-using DotNetNuke.Web.Client.ClientResourceManagement;
 
 using Globals = DotNetNuke.Common.Globals;
 
 #endregion
 
-namespace DotNetNuke.Modules.Admin.RecycleBin
+namespace DesktopModules.Admin.RecycleBin
 {
 
 	/// <summary>
@@ -52,182 +55,158 @@ namespace DotNetNuke.Modules.Admin.RecycleBin
 	///                       and localisation
 	/// </history>
 	public partial class RecycleBin : PortalModuleBase
-	{
+    {
+        #region Protected Properties
 
-		#region Private Methods
+        protected List<TabInfo> DeletedTabs { get; private set; }
 
-		/// <summary>
-		/// Loads deleted tabs and modules into the lists 
-		/// </summary>
-		/// <remarks>
-		/// </remarks>
-		/// <history>
-		/// 	[VMasanas]	18/08/2004	
-		///   [VMasanas]  20/08/2004  Update display information for deleted modules to:
-		///               ModuleFriendlyName: ModuleTitle - Tab: TabName
-		/// </history>
-		private void BindData()
+        protected List<ModuleInfo> DeletedModules { get; private set; }
+
+        #endregion
+
+        #region Private Methods
+
+		private void BindData(bool refresh)
 		{
-			var objModules = new ModuleController();
-			var objTabs = new TabController();
-			TabInfo objTab;
-			ModuleInfo objModule;
-			int intModule;
+            if (refresh)
+            {
+                LoadData();
+            }
 
-			lstModules.Items.Clear();
-			lstTabs.Items.Clear();
+			var tabController = new TabController();
 
-			var currentLocale = LocaleController.Instance.GetCurrentLocale(PortalId);
+            modulesListBox.Items.Clear();
+            tabsListBox.Items.Clear();
 
-			var arrDeletedTabs = new ArrayList();
-			TabCollection tabsList;
-			if (modeButtonList.SelectedValue == "ALL")
-			{
-				tabsList = objTabs.GetTabsByPortal(PortalId);
-			}
-			else
-			{
-				tabsList = objTabs.GetTabsByPortal(PortalId).WithCulture(currentLocale.Code, true);
-			}
+            foreach (ModuleInfo module in DeletedModules)
+            {
+                if (String.IsNullOrEmpty(module.ModuleTitle))
+                {
+                    module.ModuleTitle = module.DesktopModule.FriendlyName;
+                }
 
-			foreach (var tab in tabsList.Values)
-			{
-				if (tab.IsDeleted)
-				{
-					arrDeletedTabs.Add(tab);
-				}
-			}
+                var locale = LocaleController.Instance.GetLocale(module.CultureCode);
 
-			var arrModules = objModules.GetModules(PortalId);
-			for (intModule = 0; intModule <= arrModules.Count - 1; intModule++)
-			{
-				objModule = (ModuleInfo) arrModules[intModule];
-				if (objModule.IsDeleted && (modeButtonList.SelectedValue == "ALL" || objModule.CultureCode == currentLocale.Code))
-				{
-					if (String.IsNullOrEmpty(objModule.ModuleTitle))
-					{
-						objModule.ModuleTitle = objModule.DesktopModule.FriendlyName;
-					}
-					var locale = LocaleController.Instance.GetLocale(objModule.CultureCode);
-					if (locale != null)
-					{
-						objTab = objTabs.GetTabByCulture(objModule.TabID, PortalId, locale);
-					}
-					else
-					{
-						objTab = objTabs.GetTab(objModule.TabID, PortalId, false);
-					}
+                TabInfo tab = locale != null
+                                ? tabController.GetTabByCulture(module.TabID, PortalId, locale)
+                                : tabController.GetTab(module.TabID, PortalId, false);
 
-					if (objTab == null)
-					{
-						lstModules.Items.Add(new ListItem(objModule.ModuleTitle, objModule.TabID + "-" + objModule.ModuleID));
-					}
-					else if (objTab.TabID == objModule.TabID)
-					{
-						lstModules.Items.Add(new ListItem(objTab.TabName + " - " + objModule.ModuleTitle, objModule.TabID + "-" + objModule.ModuleID));
-					}
-				}
-			}
-			lstTabs.DataSource = arrDeletedTabs;
-			lstTabs.DataBind();
+                if (tab == null)
+                {
+                    modulesListBox.Items.Add(new ListItem(module.ModuleTitle, module.TabID + "-" + module.ModuleID));
+                }
+                else if (tab.TabID == module.TabID)
+                {
+                    modulesListBox.Items.Add(new ListItem(tab.TabName + " - " + module.ModuleTitle, module.TabID + "-" + module.ModuleID));
+                }
+            }
 
-			cmdRestoreTab.Enabled = (arrDeletedTabs.Count > 0);
-			cmdDeleteTab.Enabled = (arrDeletedTabs.Count > 0);
+            tabsListBox.DataSource = DeletedTabs;
+            tabsListBox.DataBind();
 
-			cmdRestoreModule.Enabled = (lstModules.Items.Count > 0);
-			cmdDeleteModule.Enabled = (lstModules.Items.Count > 0);
+            cmdRestoreTab.Enabled = (DeletedTabs.Count > 0);
+            cmdDeleteTab.Enabled = (DeletedTabs.Count > 0);
 
-			cmdEmpty.Enabled = arrDeletedTabs.Count > 0 || lstModules.Items.Count > 0;
+            cmdRestoreModule.Enabled = (modulesListBox.Items.Count > 0);
+            cmdDeleteModule.Enabled = (modulesListBox.Items.Count > 0);
+
+            cmdEmpty.Enabled = DeletedTabs.Count > 0 || modulesListBox.Items.Count > 0;
 		}
 
-		/// <summary>
-		/// Deletes a module
-		/// </summary>
-		/// <param name="intModuleId">ModuleId of the module to be deleted</param>
-		/// <remarks>
-		/// Adds a log entry for the action to the EvenLog
-		/// </remarks>
-		/// <history>
-		/// 	[VMasanas]	18/08/2004	Created
-		/// </history>
-		private void DeleteModule(int intModuleId)
-		{
-			var objEventLog = new EventLogController();
+        private void DeleteModule(ModuleInfo module)
+        {
+            var eventLogController = new EventLogController();
+            var moduleController = new ModuleController();
+            
+            //hard-delete Tab Module Instance
+            moduleController.DeleteTabModule(module.TabID, module.ModuleID, false);
+            eventLogController.AddLog(module, PortalSettings, UserId, "", EventLogController.EventLogType.MODULE_DELETED);
+        }
 
-			//delete module
-			var objModules = new ModuleController();
-			var objModule = objModules.GetModule(intModuleId, Null.NullInteger, false);
-			if (objModule != null)
-			{
-				//hard-delete Tab Module INstance
-				objModules.DeleteTabModule(objModule.TabID, objModule.ModuleID, false);
-				objEventLog.AddLog(objModule, PortalSettings, UserId, "", EventLogController.EventLogType.MODULE_DELETED);
-			}
-		}
-
-		/// <summary>
-		/// Deletes a tab
-		/// </summary>
-		/// <param name="objTab">The tab to be deleted</param>
-		/// <remarks>
-		/// Adds a log entry for the action to the EventLog
-		/// </remarks>
-		/// <history>
-		/// 	[VMasanas]	18/08/2004	Created
-		///                 19/09/2004  Remove skin deassignment. BLL takes care of this.
-		///                 30/09/2004  Change logic so log is only added when tab is actually deleted
-		///                 28/02/2005  Remove modules when deleting pages
-		/// </history>
-		private void DeleteTab(TabInfo objTab, bool deleteDescendants)
+	    private void DeleteTab(TabInfo tab, bool deleteDescendants)
 		{
-			var objEventLog = new EventLogController();
-			var objTabs = new TabController();
-			var objModules = new ModuleController();
+			var eventLogController = new EventLogController();
+			var tabController = new TabController();
+			var moduleController = new ModuleController();
 
 			//get tab modules before deleting page
-			var dicTabModules = objModules.GetTabModules(objTab.TabID);
+			var tabModules = moduleController.GetTabModules(tab.TabID);
 
 			//hard delete the tab
-			objTabs.DeleteTab(objTab.TabID, objTab.PortalID, deleteDescendants);
+			tabController.DeleteTab(tab.TabID, tab.PortalID, deleteDescendants);
 			
 			//delete modules that do not have other instances
-			foreach (var kvp in dicTabModules)
+			foreach (var kvp in tabModules)
 			{
 				//check if all modules instances have been deleted
-				var objDelModule = objModules.GetModule(kvp.Value.ModuleID, Null.NullInteger, false);
-				if (objDelModule == null || objDelModule.TabID == Null.NullInteger)
+				var delModule = moduleController.GetModule(kvp.Value.ModuleID, Null.NullInteger, false);
+				if (delModule == null || delModule.TabID == Null.NullInteger)
 				{
-					objModules.DeleteModule(kvp.Value.ModuleID);
+					moduleController.DeleteModule(kvp.Value.ModuleID);
 				}
 			}
-			objEventLog.AddLog(objTab, PortalSettings, UserId, "", EventLogController.EventLogType.TAB_DELETED);
+			eventLogController.AddLog(tab, PortalSettings, UserId, "", EventLogController.EventLogType.TAB_DELETED);
 		}
 
-		private bool RestoreTab(TabInfo objTab)
+        private void LoadData()
+        {
+            var moduleController = new ModuleController();
+            var tabController = new TabController();
+            var currentLocale = LocaleController.Instance.GetCurrentLocale(PortalId);
+
+            TabCollection tabsList = modeButtonList.SelectedValue == "ALL"
+                             ? tabController.GetTabsByPortal(PortalId)
+                             : tabController.GetTabsByPortal(PortalId).WithCulture(currentLocale.Code, true);
+
+            DeletedTabs = tabsList.Values.Where(tab => tab.IsDeleted)
+                                            .OrderBy(tab => tab.TabPath)
+                                            .ToList();
+
+            DeletedModules = moduleController.GetModules(PortalId)
+                                                .Cast<ModuleInfo>()
+                                                .Where(module => module.IsDeleted && (modeButtonList.SelectedValue == "ALL" || module.CultureCode == currentLocale.Code))
+                                                .ToList();
+        }
+
+        private void RestoreModule(int moduleId, int tabId)
+        {
+            var eventLogController = new EventLogController();
+            var moduleController = new ModuleController();
+
+            // restore module
+            var module = moduleController.GetModule(moduleId, tabId, false);
+            if ((module != null))
+            {
+                moduleController.RestoreModule(module);
+                eventLogController.AddLog(module, PortalSettings, UserId, "", EventLogController.EventLogType.MODULE_RESTORED);
+            }
+        }
+
+        private bool RestoreTab(TabInfo tab)
 		{
 			var success = true;
 
-			if (objTab != null)
+			if (tab != null)
 			{
-				if (!Null.IsNull(objTab.ParentId) && lstTabs.Items.FindByValue(objTab.ParentId.ToString()) != null)
+				if (!Null.IsNull(tab.ParentId) && tabsListBox.Items.FindByValue(tab.ParentId.ToString(CultureInfo.InvariantCulture)) != null)
 				{
-					UI.Skins.Skin.AddModuleMessage(this,
-												   string.Format(Localization.GetString("ChildTab.ErrorMessage", LocalResourceFile), objTab.TabName),
+					Skin.AddModuleMessage(this,
+												   string.Format(Localization.GetString("ChildTab.ErrorMessage", LocalResourceFile), tab.TabName),
 												   ModuleMessage.ModuleMessageType.YellowWarning);
 					success = false;
 				}
 				else
 				{
 				    var tabController = new TabController();
-                    tabController.RestoreTab(objTab, PortalSettings);
+                    tabController.RestoreTab(tab, PortalSettings);
 
 					//restore modules in this tab
-					lstModules.Items.Cast<ListItem>().ToList().ForEach(i =>
+					modulesListBox.Items.Cast<ListItem>().ToList().ForEach(i =>
 					                                                   	{
 																			var values = i.Value.Split('-');
 																			var tabId = int.Parse(values[0]);
 																			var moduleId = int.Parse(values[1]);
-																			if(tabId == objTab.TabID)
+																			if(tabId == tab.TabID)
 																			{
 																				RestoreModule(moduleId, tabId);
 																			}
@@ -237,49 +216,32 @@ namespace DotNetNuke.Modules.Admin.RecycleBin
 			return success;
 		}
 
-		private void RestoreModule(int moduleId, int tabId)
-		{
-			var objEventLog = new EventLogController();
-			var objModules = new ModuleController();
-
-			// restore module
-			var objModule = objModules.GetModule(moduleId, tabId, false);
-			if ((objModule != null))
-			{
-				objModules.RestoreModule(objModule);
-				objEventLog.AddLog(objModule, PortalSettings, UserId, "", EventLogController.EventLogType.MODULE_RESTORED);
-			}
-		}
-
 		#endregion
 
 		#region Event Handlers
 
-		/// <summary>
-		/// Page_Load runs when the control is loaded
-		/// </summary>
-		/// <param name="e"></param>
-		/// <remarks>
-		/// </remarks>
-		/// <history>
-		/// 	[VMasanas]	18/08/2004	Add confirmation for Empty Recycle Bin button
-		/// 	[cnurse]	15/09/2004	Localized Confirm text
-		/// </history>
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            jQuery.RequestDnnPluginsRegistration();
+
+            cmdDeleteModule.Click += OnModuleDeleteClick;
+            cmdDeleteTab.Click += OnTabDeleteClick;
+            cmdEmpty.Click += OnEmptyBinClick;
+            cmdRestoreModule.Click += OnModuleRestoreClick;
+            cmdRestoreTab.Click += OnTabRestoreClick;
+            modeButtonList.SelectedIndexChanged += OnModeIndexChanged;
+        }
+
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 
-			jQuery.RequestDnnPluginsRegistration();
-
-			cmdDeleteModule.Click += OnModuleDeleteClick;
-			cmdDeleteTab.Click += OnTabDeleteClick;
-			cmdEmpty.Click += OnEmptyBinClick;
-			cmdRestoreModule.Click += OnModuleRestoreClick;
-			cmdRestoreTab.Click += OnTabRestoreClick;
-			modeButtonList.SelectedIndexChanged += OnModeIndexChanged;
-
 			var resourceFileRoot = TemplateSourceDirectory + "/" + Localization.LocalResourceDirectory + "/" + ID;
-			//If this is the first visit to the page
+
+            LoadData();
+
 			if ((Page.IsPostBack == false))
 			{
 				if (PortalSettings.ContentLocalizationEnabled)
@@ -298,185 +260,101 @@ namespace DotNetNuke.Modules.Admin.RecycleBin
 				}
 				modeButtonList.SelectedValue = mode.ToUpperInvariant() == "SINGLE" ? "SINGLE" : "ALL";
 
-				BindData();
-			}
-		}
+                BindData(false);
+            }
 
-		/// <summary>
-		/// Deletes selected modules in the listbox
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// <remarks>
-		/// </remarks>
-		/// <history>
-		/// 	[VMasanas]	18/08/2004	Added support for multiselect listbox
-		/// </history>
-		protected void OnModuleDeleteClick(Object sender, EventArgs e)
-		{
-			var objEventLog = new EventLogController();
-			var objModules = new ModuleController();
+        }
 
-			foreach (ListItem item in lstModules.Items)
-			{
-				if (item.Selected)
-				{
-					var values = item.Value.Split('-');
-					var tabId = int.Parse(values[0]);
-					var moduleId = int.Parse(values[1]);
-
-					//delete module
-					var objModule = objModules.GetModule(moduleId, tabId, false);
-					if (objModule != null)
-					{
-						//hard-delete Tab Module Instance
-						objModules.DeleteTabModule(tabId, moduleId, false);
-						objEventLog.AddLog(objModule, PortalSettings, UserId, "", EventLogController.EventLogType.MODULE_DELETED);
-					}
-				}
-			}
-			BindData();
-		}
-
-		/// <summary>
-		///   Deletes selected tabs in the listbox
-		/// </summary>
-		/// <param name = "sender"></param>
-		/// <param name = "e"></param>
-		/// <remarks>
-		///   Parent tabs will not be deleted. To delete a parent tab all child tabs need to be deleted before.
-		///   Reloads data to refresh deleted modules and tabs listboxes
-		/// </remarks>
-		/// <history>
-		///   [VMasanas]	18/08/2004	Added support for multiselect listbox
-		/// </history>
-		protected void OnTabDeleteClick(Object sender, EventArgs e)
-		{
-			foreach (ListItem item in lstTabs.Items)
-			{
-				if (item.Selected)
-				{
-					var intTabId = int.Parse(item.Value);
-					var objTabs = new TabController();
-					var objTab = objTabs.GetTab(intTabId, PortalId, false);
-					if (objTab != null)
-					{
-						if (objTab.HasChildren)
-						{
-							UI.Skins.Skin.AddModuleMessage(this,
-														   string.Format(Localization.GetString("ParentTab.ErrorMessage", LocalResourceFile), objTab.TabName),
-														   ModuleMessage.ModuleMessageType.YellowWarning);
-						}
-						else
-						{
-							DeleteTab(objTab, false);
-						}
-					}
-				}
-			}
-			BindData();
-		}
-
-		/// <summary>
-		/// Permanently removes all deleted tabs and modules
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// <remarks>
-		/// Parent tabs will not be deleted. To delete a parent tab all child tabs need to be deleted before.
-		/// </remarks>
-		/// <history>
-		/// 	[VMasanas]	18/08/2004	Created
-		/// </history>
 		protected void OnEmptyBinClick(Object sender, EventArgs e)
 		{
-			var objEventLog = new EventLogController();
+            foreach(var module in DeletedModules)
+            {
+                DeleteModule(module);
+            }
 
-			foreach (ListItem item in lstModules.Items)
-			{
-				var objModules = new ModuleController();
-				var values = item.Value.Split('-');
-				var tabId = int.Parse(values[0]);
-				var moduleId = int.Parse(values[1]);
+            //Delete tabs starting with the deepest children
+            foreach(var tab in DeletedTabs.OrderByDescending(t => t.Level))
+            {
+                DeleteTab(tab, true);
+            }
 
-				//delete module
-				var objModule = objModules.GetModule(moduleId, tabId, false);
-				if (objModule != null)
-				{
-					//hard-delete Tab Module Instance
-					objModules.DeleteTabModule(tabId, moduleId, false);
-					objEventLog.AddLog(objModule, PortalSettings, UserId, "", EventLogController.EventLogType.MODULE_DELETED);
-				}
-			}
-			foreach (ListItem item in lstTabs.Items)
-			{
-				var intTabId = int.Parse(item.Value);
-				var objTabs = new TabController();
-				var objTab = objTabs.GetTab(intTabId, PortalId, false);
-				if (objTab != null)
-				{
-					DeleteTab(objTab, true);
-				}
-			}
-			BindData();
+			BindData(true);
 		}
 
-		/// <summary>
-		///   Restores selected modules in the listbox
-		/// </summary>
-		/// <param name = "sender"></param>
-		/// <param name = "e"></param>
-		/// <remarks>
-		///   Adds a log entry for each restored module to the EventLog
-		/// </remarks>
-		/// <history>
-		///   [VMasanas]	18/08/2004	Added support for multiselect listbox
-		/// </history>
-		protected void OnModuleRestoreClick(Object sender, EventArgs e)
+        protected void OnModeIndexChanged(object sender, EventArgs e)
+        {
+            BindData(true);
+        }
+
+        protected void OnModuleDeleteClick(Object sender, EventArgs e)
+        {
+            foreach (ListItem item in modulesListBox.Items)
+            {
+                if (item.Selected)
+                {
+                    var values = item.Value.Split('-');
+                    var module = DeletedModules.SingleOrDefault(m => m.ModuleID == int.Parse(values[1])
+                                                                    && m.TabID == int.Parse(values[0]));
+                    if (module != null)
+                    {
+                        DeleteModule(module);
+                    }
+                }
+            }
+
+            BindData(true);
+        }
+
+        protected void OnModuleRestoreClick(Object sender, EventArgs e)
 		{
-			foreach (ListItem item in lstModules.Items)
+			foreach (ListItem item in modulesListBox.Items)
 			{
 				if (item.Selected)
 				{
 					var values = item.Value.Split('-');
-					var tabId = int.Parse(values[0]);
-					var moduleId = int.Parse(values[1]);
 
-					// restore module
-					RestoreModule(moduleId, tabId);
+                    // restore module
+                    RestoreModule(int.Parse(values[1]), int.Parse(values[0]));
 				}
 			}
 
-			BindData();
+			BindData(true);
 		}
 
-		/// <summary>
-		///   Restores selected tabs in the listbox
-		/// </summary>
-		/// <param name = "sender"></param>
-		/// <param name = "e"></param>
-		/// <remarks>
-		///   Adds a log entry for each restored tab to the EventLog
-		///   Redirects to same page after restoring so the menu can be refreshed with restored tabs.
-		///   This will not restore deleted modules for selected tabs, only the tabs are restored.
-		/// </remarks>
-		/// <history>
-		///   [VMasanas]	18/08/2004	Added support for multiselect listbox
-		///   30/09/2004  Child tabs cannot be restored until their parent is restored first.
-		///   Change logic so log is only added when tab is actually restored
-		/// </history>
-		protected void OnTabRestoreClick(Object sender, EventArgs e)
+        protected void OnTabDeleteClick(Object sender, EventArgs e)
+        {
+            foreach (ListItem item in tabsListBox.Items)
+            {
+                if (item.Selected)
+                {
+                    var tab = DeletedTabs.SingleOrDefault(t => t.TabID == int.Parse(item.Value));
+                    if (tab != null)
+                    {
+                        if (tab.HasChildren)
+                        {
+                            Skin.AddModuleMessage(this, String.Format(Localization.GetString("ParentTab.ErrorMessage", LocalResourceFile), tab.TabName), ModuleMessage.ModuleMessageType.YellowWarning);
+                        }
+                        else
+                        {
+                            DeleteTab(tab, false);
+                        }
+                    }
+                }
+            }
+            BindData(true);
+        }
+
+        protected void OnTabRestoreClick(Object sender, EventArgs e)
 		{
 			var errors = false;
 
-			foreach (ListItem item in lstTabs.Items)
+			foreach (ListItem item in tabsListBox.Items)
 			{
 				if (item.Selected)
 				{
-					var objTabs = new TabController();
-					var objTab = objTabs.GetTab(int.Parse(item.Value), PortalId, false);
+                    var tab = DeletedTabs.SingleOrDefault(t => t.TabID == int.Parse(item.Value));
 
-					if (!RestoreTab(objTab))
+                    if (!RestoreTab(tab))
 					{
 						errors = true;
 					}
@@ -488,15 +366,10 @@ namespace DotNetNuke.Modules.Admin.RecycleBin
 			}
 			else
 			{
-				BindData();
+				BindData(true);
 			}
 		}
 
-		protected void OnModeIndexChanged(object sender, EventArgs e)
-		{
-			BindData();
-		}
-		
 		#endregion
 	}
 }

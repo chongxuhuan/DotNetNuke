@@ -42,6 +42,7 @@ namespace DotNetNuke.Services.Social.Messaging
         void MarkArchived(int messageRecipientID);
       
         IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
+        IList<Message> GetSentbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
 
         //Gets the latest 10 messages.s
         IList<MessageItem> GetRecentMessages(int userID, ref int totalRecords);
