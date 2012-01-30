@@ -33,8 +33,6 @@ namespace DotNetNuke.Tests.Core.HttpModules
         public void FlagSetCauses401AndResponseClearedAndLocationHeaderRemoved()
         {
             var response = new Mock<HttpResponseBase>();
-            var headers = new NameValueCollection {{"Location", "redirected.aspx"}};
-            response.Setup(x => x.Headers).Returns(headers);
             
             var items = new Dictionary<string, object> { { "DnnReal401", true } };
             var context = new Mock<HttpContextBase>();
@@ -45,7 +43,7 @@ namespace DotNetNuke.Tests.Core.HttpModules
 
             response.VerifySet(x => x.StatusCode=401);
             response.Verify(x => x.ClearContent());
-            Assert.AreEqual(0, headers.Count);  
+            response.Verify(x => x.ClearHeaders());
         }
 
         [Test]
