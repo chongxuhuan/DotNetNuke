@@ -202,6 +202,7 @@
     <Compile Include="Entities\Host\ServerController.cs" />
     <Compile Include="Entities\Host\ServerInfo.cs" />
     <Compile Include="Entities\Icons\IconController.cs" />
+    <Compile Include="Services\Journal\CommentInfo.cs" />
     <Compile Include="Services\Journal\Content.cs" />
     <Compile Include="Services\Journal\Data\IJournalDataService.cs" />
     <Compile Include="Services\Journal\Data\JournalDataService.cs" />
@@ -209,6 +210,7 @@
     <Compile Include="Services\Journal\JournalController.cs" />
     <Compile Include="Services\Journal\JournalEntity.cs" />
     <Compile Include="Services\Journal\JournalItem.cs" />
+    <Compile Include="Services\Journal\JournalTypeInfo.cs" />
     <Compile Include="Services\Localization\ILocalizationProvider.cs" />
     <Compile Include="Services\Localization\LocalizationProvider.cs" />
     <Compile Include="Services\Log\EventLog\IEventLogController.cs" />

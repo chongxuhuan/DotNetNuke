@@ -172,12 +172,12 @@ namespace DotNetNuke.Framework
                 if (String.IsNullOrEmpty(ObjectProviderName))
                 {
 					//dynamically create the typename from the constants ( this enables private assemblies to share the same configuration as the base provider ) 
-                    TypeName = ObjectNamespace + "." + objProviderConfiguration.DefaultProvider + ", " + ObjectAssemblyName + "." + objProviderConfiguration.DefaultProvider;
+                    TypeName = ObjectNamespace + "." + objProviderConfiguration.DefaultProvider + ", " + ObjectAssemblyName;
                 }
                 else
                 {
 					//dynamically create the typename from the constants ( this enables private assemblies to share the same configuration as the base provider ) 
-                    TypeName = ObjectNamespace + "." + ObjectProviderName + ", " + ObjectAssemblyName + "." + ObjectProviderName;
+                    TypeName = ObjectNamespace + "." + ObjectProviderName + ", " + ObjectAssemblyName;
                 }
             }
             else

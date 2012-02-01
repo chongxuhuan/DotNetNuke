@@ -23,6 +23,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -82,7 +83,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
     ///     [cnurse]        12/2/2004   Database Synchronization added
     /// </history>
     /// -----------------------------------------------------------------------------
-    public partial class FileManager : PortalModuleBase, IActionable
+    public partial class FileManager : PortalModuleBase, IActionable, IClientAPICallbackEventHandler
     {
 		#region "Private Members"
 
@@ -1358,6 +1359,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
 
             try
             {
+                ClientAPI.RegisterClientVariable(Page, "__dnn_postBack", ClientAPI.GetCallbackEventReference(this, "\"[DATA]\"", "success", "this", "error"), true);
 				//FileManager requires at a bare minimum the dnn namespace, so regardless of wheter the ClientAPI is disabled of not we 
                 //need to register it.
                 ClientAPI.RegisterClientReference(Page, ClientAPI.ClientNamespaceReferences.dnn);
@@ -2453,6 +2455,42 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 }
                 return Actions;
             }
+        }
+
+        public string RaiseClientAPICallbackEvent(string eventArgument)
+        {
+            if(string.IsNullOrEmpty(eventArgument))
+            {
+                return string.Empty;
+            }
+
+            var args = eventArgument.Split(new string[] {ClientAPI.COLUMN_DELIMITER}, StringSplitOptions.None);
+            var parameters = new NameValueCollection(args.Length - 1);
+            if(args.Length > 1 && (args.Length - 1) % 2 == 0)
+            {
+                for(var i = 1; i < args.Length; i += 2)
+                {
+                    parameters.Add(args[i], args[i + 1]);
+                }
+            }
+
+            switch (args[0].ToLowerInvariant())
+            {
+                case "getfiles":
+                    var files = string.Empty;
+                    var folder = FolderManager.Instance.GetFolder(FolderPortalID, 
+                        UnMaskPath(parameters["folder"]).Replace(RootFolderPath, "").Replace("\\", "/"));
+                    if (folder != null)
+                    {
+                        files = String.Join(";", 
+                            (from f in FolderManager.Instance.GetFiles(folder) select f.FileName).ToArray());
+                    }
+
+                    return string.Format("{0}(\"{1}\", \"{2}\")", parameters["callback"], parameters["folder"].Replace("\\", "\\\\"), files);
+                    break;
+            }
+
+            return string.Empty;
         }
     }
 }

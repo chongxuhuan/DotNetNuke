@@ -18,9 +18,11 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-using System.Collections.Generic;
-using System.Collections.Specialized;
+
+using System.Text.RegularExpressions;
 using System.Web;
+using DotNetNuke.HttpModules.Services;
+using DotNetNuke.HttpModules.Services.Internal;
 using Moq;
 using NUnit.Framework;
 
@@ -30,58 +32,128 @@ namespace DotNetNuke.Tests.Core.HttpModules
     public class ServicesModuleTests
     {
         [Test]
-        public void FlagSetCauses401AndResponseClearedAndLocationHeaderRemoved()
+        public void DoA401CausesStatusCode401()
         {
+            //Arrange
             var response = new Mock<HttpResponseBase>();
-            
-            var items = new Dictionary<string, object> { { "DnnReal401", true } };
-            var context = new Mock<HttpContextBase>();
-            context.Setup(x => x.Response).Returns(response.Object);
-            context.Setup(x => x.Items).Returns(items);
+            response.SetupProperty(x => x.StatusCode);
+            var context = new Mock<IServicesContext>();
+            context.Setup(x => x.DoA401).Returns(true);
+            context.Setup(x => x.BaseContext.Response).Returns(response.Object);
 
-            DotNetNuke.HttpModules.Services.ServicesModule.CheckForReal401(context.Object);
+            //Act
+            ServicesModule.CheckForReal401(context.Object);
 
-            response.VerifySet(x => x.StatusCode=401);
+            //Assert
+            Assert.AreEqual(401, response.Object.StatusCode);
+        }
+
+        [Test]
+        public void DoA401ClearsContent()
+        {
+            //Arrange
+            var response = new Mock<HttpResponseBase>();
+            var context = new Mock<IServicesContext>();
+            context.Setup(x => x.DoA401).Returns(true);
+            context.Setup(x => x.BaseContext.Response).Returns(response.Object);
+
+            //Act
+            ServicesModule.CheckForReal401(context.Object);
+
+            //Assert
             response.Verify(x => x.ClearContent());
+        }
+
+        [Test]
+        public void DoA401ClearsHeaders()
+        {
+            //Arrange
+            var response = new Mock<HttpResponseBase>();
+            var context = new Mock<IServicesContext>();
+            context.Setup(x => x.DoA401).Returns(true);
+            context.Setup(x => x.BaseContext.Response).Returns(response.Object);
+
+            //Act
+            ServicesModule.CheckForReal401(context.Object);
+
+            //Assert
             response.Verify(x => x.ClearHeaders());
         }
 
         [Test]
-        public void FlagClearCausesNothing()
+        public void NoDoA401DoesNothing()
         {
+            //Arrange
             var response = new Mock<HttpResponseBase>();
-            var headers = new NameValueCollection { { "Location", "redirected.aspx" } };
-            response.Setup(x => x.Headers).Returns(headers);
+            var context = new Mock<IServicesContext>();
+            context.Setup(x => x.DoA401).Returns(false);
+            context.Setup(x => x.BaseContext.Response).Returns(response.Object);
 
-            var items = new Dictionary<string, object> { { "DnnReal401", false } };
-            var context = new Mock<HttpContextBase>();
-            context.Setup(x => x.Response).Returns(response.Object);
-            context.Setup(x => x.Items).Returns(items);
+            //Act
+            ServicesModule.CheckForReal401(context.Object);
 
-            DotNetNuke.HttpModules.Services.ServicesModule.CheckForReal401(context.Object);
-
+            //Assert
             response.Verify(x => x.StatusCode, Times.Never());
             response.Verify(x => x.ClearContent(), Times.Never());
-            Assert.AreEqual(1, headers.Count);  
+            response.Verify(x => x.AppendHeader(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+            response.Verify(x => x.AddHeader(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+            response.Verify(x => x.Headers, Times.Never());
         }
 
         [Test]
-        public void FlagAbsentCausesNothing()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void IsStaleSetsStaleNonceIndicator(bool stale)
         {
+            //Arrange
             var response = new Mock<HttpResponseBase>();
-            var headers = new NameValueCollection { { "Location", "redirected.aspx" } };
-            response.Setup(x => x.Headers).Returns(headers);
+            var context = new Mock<IServicesContext>();
+            context.Setup(x => x.DoA401).Returns(true);
+            context.Setup(x => x.IsStale).Returns(stale);
+            context.Setup(x => x.SupportBasicAuth).Returns(false); //avoid basic auth header
+            context.Setup(x => x.SupportDigestAuth).Returns(true);
+            context.Setup(x => x.BaseContext.Response).Returns(response.Object);
 
-            var items = new Dictionary<string, object>(); //don't insert the flag at all { { "DnnReal401", false } };
-            var context = new Mock<HttpContextBase>();
-            context.Setup(x => x.Response).Returns(response.Object);
-            context.Setup(x => x.Items).Returns(items);
+            //Act
+            ServicesModule.CheckForReal401(context.Object);
 
-            DotNetNuke.HttpModules.Services.ServicesModule.CheckForReal401(context.Object);
+            //Assert
+            var regex = string.Format("^Digest.*, stale={0}.*", stale);
+            response.Verify(x => x.AppendHeader("WWW-Authenticate", It.IsRegex(regex, RegexOptions.IgnoreCase)));
+        }
 
-            response.Verify(x => x.StatusCode, Times.Never());
-            response.Verify(x => x.ClearContent(), Times.Never());
-            Assert.AreEqual(1, headers.Count);
+        [Test]
+        public void SupportsBasicAddsBasicHeader()
+        {
+            //Arrange
+            var response = new Mock<HttpResponseBase>();
+            var context = new Mock<IServicesContext>();
+            context.Setup(x => x.DoA401).Returns(true);
+            context.Setup(x => x.SupportBasicAuth).Returns(true);
+            context.Setup(x => x.BaseContext.Response).Returns(response.Object);
+
+            //Act
+            ServicesModule.CheckForReal401(context.Object);
+
+            //Assert
+            response.Verify(x => x.AppendHeader("WWW-Authenticate", It.IsRegex("^Basic.*", RegexOptions.IgnoreCase)));
+        }
+
+        [Test]
+        public void SupportsDigestAddsDigestHeader()
+        {
+            //Arrange
+            var response = new Mock<HttpResponseBase>();
+            var context = new Mock<IServicesContext>();
+            context.Setup(x => x.DoA401).Returns(true);
+            context.Setup(x => x.SupportDigestAuth).Returns(true);
+            context.Setup(x => x.BaseContext.Response).Returns(response.Object);
+
+            //Act
+            ServicesModule.CheckForReal401(context.Object);
+
+            //Assert
+            response.Verify(x => x.AppendHeader("WWW-Authenticate", It.IsRegex("^Digest.*", RegexOptions.IgnoreCase)));
         }
     }
 }

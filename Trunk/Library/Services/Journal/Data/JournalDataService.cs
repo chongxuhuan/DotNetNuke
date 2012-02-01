@@ -71,7 +71,43 @@ namespace DotNetNuke.Services.Journal {
             
             return JournalId;
         }
-        
+
+        public void Journal_Comment_Delete(int JournalId, int CommentId) {
+             provider.ExecuteNonQuery("Journal_Comment_Delete", JournalId, CommentId);
+        }
+        public int Journal_Comment_Save(int JournalId, int CommentId,int UserId, string Comment, string xml) {
+            CommentId = (int)provider.ExecuteScalar("Journal_Comment_Save",JournalId, CommentId, UserId, Comment, xml);
+            return CommentId;
+        }
+        public IDataReader Journal_Comment_List(int JournalId) {
+            return provider.ExecuteReader("Journal_Comment_List", JournalId);
+        }
+        public IDataReader Journal_Comment_Get(int CommentId) {
+            return provider.ExecuteReader("Journal_Comment_Get", CommentId);
+        }
+        public IDataReader Journal_Comment_ListByJournalIds(string JournalIds) {
+            return provider.ExecuteReader("Journal_Comment_ListByJournalIds", JournalIds);
+        }
+        public void Journal_Comment_Like(int JournalId, int CommentId, int UserId, string DisplayName) {
+            provider.ExecuteNonQuery("Journal_Comment_Like", JournalId, CommentId, UserId, DisplayName);
+        }
+        public IDataReader Journal_Comment_LikeList(int PortalId, int JournalId, int CommentId) {
+            return provider.ExecuteReader("Journal_Comment_LikeList", PortalId, JournalId, CommentId);
+        }
+
+        public IDataReader Journal_Types_List(int PortalId) {
+            return provider.ExecuteReader("Journal_Types_List", PortalId);
+        }
+        public IDataReader Journal_Types_Get(int JournalTypeId) {
+            return provider.ExecuteReader("Journal_Types_Get", JournalTypeId);
+        }
+        public void Journal_Types_Delete(int JournalTypeId, int PortalId) {
+            provider.ExecuteNonQuery("Journal_Types_Delete", JournalTypeId, PortalId);
+        }
+        public int Journal_Types_Save(int JournalTypeId, string JournalType, string icon, int PortalId, bool IsEnabled, bool AppliesToProfile, bool AppliesToGroup, bool AppliesToStream, string Options, bool SupportsNotify) {
+            JournalTypeId = (int)provider.ExecuteScalar("Journal_Types_Save", JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify);
+            return JournalTypeId;
+        }
         #endregion
     }
 }

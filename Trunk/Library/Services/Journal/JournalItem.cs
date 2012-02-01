@@ -61,6 +61,7 @@ namespace DotNetNuke.Services.Journal {
         public JournalEntity JournalAuthor { get; set; }
         public string TimeFrame { get; set; }
         public bool CurrentUserLikes { get; set; }
+        public string JournalType { get; set; }
         /// <summary>
         /// Gets or sets the key ID.
         /// </summary>
@@ -109,6 +110,7 @@ namespace DotNetNuke.Services.Journal {
             }
             ContentItemId = Null.SetNullInteger(dr["ContentItemId"]);
             JournalAuthor = new JournalEntity(dr["JournalAuthor"].ToString());
+            JournalType = Null.SetNullString(dr["JournalType"]);
     
             
                         

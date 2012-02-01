@@ -26,6 +26,7 @@ var m_sLocaleCopySelectedFilesTo = '<%=ClientAPI.GetSafeJSString(Localization.Ge
 var m_sLocaleUnzipSelectedFilesTo = '<%=ClientAPI.GetSafeJSString(Localization.GetString("UnzipSelectedFilesTo", LocalResourceFile))%>';
 var m_sLocaleSelectAll = '<%=ClientAPI.GetSafeJSString(Localization.GetString("SelectAll", LocalResourceFile))%>';
 var m_sLocaleUnSelectAll = '<%=ClientAPI.GetSafeJSString(Localization.GetString("UnSelectAll", LocalResourceFile))%>';
+var m_sLocaleConflictFiles = '<%=ClientAPI.GetSafeJSString(Localization.GetString("ConflictFiles", LocalResourceFile))%>';
 
 /* Localization Vars */
 var m_bAllFilesChecked;
@@ -103,7 +104,12 @@ function clearErrorMessage() {
     dnn.setVar('ErrorMessage', '');
 }
 
-function confirmMoveFiles(strDestFolder) {
+function confirmMoveFiles(strDestFolder, destFiles) {
+    if(typeof destFiles === "undefined") {
+        dnn.callPostBack("GetFiles", "folder=" + strDestFolder.replace("\\", "\\\\"), "callback=confirmMoveFiles");
+        return;
+    }
+    
     hideDataGrid();
 
     if (getMoveStatus() == 'move') {
@@ -116,13 +122,50 @@ function confirmMoveFiles(strDestFolder) {
         var strConfirmTitle = m_sLocaleUnzipSelectedFilesTo;
     }
 
+    //check conflict files
+    var conflictFiles = "";
+    if(destFiles != "") {
+        var moveFiles = getMoveFiles().split(';');
+        var checkFiles = destFiles.split(';');
+        for(var i = 0; i < checkFiles.length; i++) {
+            for(var j = 0; j < moveFiles.length; j++) {
+                if (moveFiles[j].toLowerCase() == checkFiles[i].toLowerCase()) {
+                    if(conflictFiles == "") {
+                        conflictFiles += "<tr><td>" + m_sLocaleConflictFiles + "</td></tr>";
+                    }
+                    conflictFiles += "<tr><td><input type=\"checkbox\" name=\"conflictFiles\" value=\"" + moveFiles[j] + "\">" + moveFiles[j];
+                    break;
+                }
+            }
+        }
+    }
+
     var strConfirmMessage = '<table cellspacing="0" cellpadding="0"><tr><td class="NormalBold">' + getProperPath(strDestFolder) + '</td></tr>';
     strConfirmMessage += '<tr><td height="15">&nbsp;</td><tr>';
+    strConfirmMessage += conflictFiles;
     strConfirmMessage += '<tr><td align="center">';
-    strConfirmMessage += '<INPUT id="btnMoveOK" style="width:82px;" Class="NormalBold" onclick="__doPostBack(\'' + m_sUCPrefixName + 'lnkMoveFiles' + '\', \'\');" type="button" value="' + m_sLocaleOk + '">&nbsp;&nbsp;&nbsp;&nbsp;';
+    strConfirmMessage += '<INPUT id="btnMoveOK" style="width:82px;" Class="NormalBold" onclick="doMoveFiles()" type="button" value="' + m_sLocaleOk + '">&nbsp;&nbsp;&nbsp;&nbsp;';
     strConfirmMessage += '<INPUT id="btnNoConfirmMove" style="width:82px;" Class="NormalBold" onclick="hideDataGrid();" type="button" value="' + m_sLocaleCancel + '">';
     strConfirmMessage += '</td></tr></table>';
     showErrorMessage(strConfirmTitle, strConfirmMessage);
+}
+
+function doMoveFiles() {
+    var conflictFiles = document.getElementsByTagName("input");
+    var moveFiles = getMoveFiles().split(';');
+    for (var i = 0; i < conflictFiles.length; i++ ) {
+        if(conflictFiles[i].type == "checkbox" && conflictFiles[i].name == "conflictFiles" && !conflictFiles[i].checked) {
+            var fileName = conflictFiles[i].value;
+            for(var j = 0; j < moveFiles.length; j++) {
+                if(moveFiles[j] == fileName) {
+                    moveFiles.splice(j, 1);
+                    break;
+                }
+            }
+        }
+    }
+    setMoveFiles(moveFiles.join(";"));
+    __doPostBack(m_sUCPrefixName + 'lnkMoveFiles', "");
 }
 
 function copyCheckedFiles() {
@@ -413,6 +456,14 @@ function checkAllFiles(bChecked) {
 			}
 		}
 	}
+}
+
+function success(result, ctx) {
+    eval(result);
+}
+
+function error(result, ctx) {
+    
 }
 
 /* handle ajax request */

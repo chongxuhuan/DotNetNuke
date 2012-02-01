@@ -47,16 +47,10 @@ namespace DotNetNuke.Services.Journal {
                 System.Xml.XmlDocument xDoc = new XmlDocument();
                 XmlElement xnode = xDoc.CreateElement("items");
                 XmlElement xnode2 = xDoc.CreateElement("item");
-                XmlAttribute xattrib = xDoc.CreateAttribute("itemkey");
-                xattrib.Value = "1234";
-                xnode2.Attributes.Append(xattrib);
-
                 xnode2.AppendChild(CreateElement(xDoc, "id", "-1"));
                 xnode2.AppendChild(CreateCDataElement(xDoc, "body", objJournalItem.Body));
-                xnode2.AppendChild(CreateElement(xDoc, "likes", string.Empty));
                 xnode.AppendChild(xnode2);
                 xDoc.AppendChild(xnode);
-
                 XmlDeclaration xDec = xDoc.CreateXmlDeclaration("1.0", null, null);
                 xDec.Encoding = "UTF-16";
                 xDec.Standalone = "yes";
@@ -64,7 +58,6 @@ namespace DotNetNuke.Services.Journal {
                 xDoc.InsertBefore(xDec, root);
                 objJournalItem.JournalXML = xDoc;
                 xml = objJournalItem.JournalXML.OuterXml;
-               
             }
             string journalData = string.Empty;
             journalData = objJournalItem.ItemData.ToJson();
@@ -104,9 +97,70 @@ namespace DotNetNuke.Services.Journal {
             }
             return list;
         }
+
+    #endregion
+        #region Journal Types
+        public JournalTypeInfo JournalTypeGet(int JournalTypeId) {
+            return (JournalTypeInfo)CBO.FillObject(_DataService.Journal_Types_Get(JournalTypeId), typeof(JournalTypeInfo));
+        }
+        public void JournalTypeDelete(int JournalTypeId, int PortalId) {
+            _DataService.Journal_Types_Delete(JournalTypeId, PortalId);
+        }
+        public List<JournalTypeInfo> JournalTypeList(int PortalId) {
+            return CBO.FillCollection<JournalTypeInfo>(_DataService.Journal_Types_List(PortalId));
+        }
+        public JournalTypeInfo JournalTypeSave(JournalTypeInfo objJournalType) {
+            objJournalType.JournalTypeId = _DataService.Journal_Types_Save(objJournalType.JournalTypeId, objJournalType.JournalType, objJournalType.icon,
+                objJournalType.PortalId, objJournalType.IsEnabled, objJournalType.AppliesToProfile, objJournalType.AppliesToGroup, objJournalType.AppliesToStream,
+                objJournalType.Options, objJournalType.SupportsNotify);
+                return JournalTypeGet(objJournalType.JournalTypeId);
+        }
         #endregion
-        
-       
+        #region Comments
+        public CommentInfo CommentSave(CommentInfo objCommentInfo) {
+            JournalDataService jds = new JournalDataService();
+
+            string xml = null;
+            if (objCommentInfo.CommentXML != null) {
+                xml = objCommentInfo.CommentXML.OuterXml;
+            }
+
+            objCommentInfo.CommentId = jds.Journal_Comment_Save(objCommentInfo.JournalId, objCommentInfo.CommentId, objCommentInfo.UserId, objCommentInfo.Comment, xml);
+            objCommentInfo = CommentGet(objCommentInfo.CommentId);
+            return objCommentInfo;
+        }
+        public void CommentDelete(int JournalId, int CommentId) {
+            JournalDataService jds = new JournalDataService();
+            jds.Journal_Comment_Delete(JournalId, CommentId);
+        }
+        public List<CommentInfo> CommentList(int JournalId) {
+            return CBO.FillCollection<CommentInfo>(_DataService.Journal_Comment_List(JournalId));
+        }
+        public List<CommentInfo> CommentListByJournalIds(string JournalIds) {
+            return CBO.FillCollection<CommentInfo>(_DataService.Journal_Comment_ListByJournalIds(JournalIds));
+        }
+        public void CommentLike(int JournalId, int CommentId, int UserId, string DisplayName) {
+            JournalDataService jds = new JournalDataService();
+            jds.Journal_Comment_Like(JournalId, CommentId, UserId, DisplayName);
+
+        }
+        public List<object> Journal_Comment_LikeList(int PortalId, int JournalId, int CommentId) {
+            JournalDataService jds = new JournalDataService();
+            List<object> list = new List<object>();
+            using (IDataReader dr = jds.Journal_Comment_LikeList(PortalId, JournalId, CommentId)) {
+                while (dr.Read()) {
+                    list.Add(new { userId = dr["UserId"].ToString(), name = dr["DisplayName"].ToString() });
+                }
+                dr.Close();
+            }
+            return list;
+        }
+        public CommentInfo CommentGet(int CommentId) {
+            return (CommentInfo)CBO.FillObject(_DataService.Journal_Comment_Get(CommentId), typeof(CommentInfo));
+        }
+        #endregion
+
+
         private XmlElement CreateElement(XmlDocument xDoc, string name, string value) {
             XmlElement xnode = xDoc.CreateElement(name);
             XmlText xtext = xDoc.CreateTextNode(value);

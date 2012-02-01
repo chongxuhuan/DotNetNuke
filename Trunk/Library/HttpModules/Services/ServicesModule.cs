@@ -19,7 +19,10 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 using System;
+using System.Globalization;
+using System.Text;
 using System.Web;
+using DotNetNuke.HttpModules.Services.Internal;
 
 namespace DotNetNuke.HttpModules.Services
 {
@@ -35,25 +38,49 @@ namespace DotNetNuke.HttpModules.Services
             var app = sender as HttpApplication;
             if(app != null)
             {
-                CheckForReal401(new HttpContextWrapper(app.Context));
+                CheckForReal401(new ServicesContextWrapper(app.Context));
             }
         }
 
-        internal static void CheckForReal401(HttpContextBase context)
+        internal static void CheckForReal401(IServicesContext context)
         {
             if(context == null)
             {
                 throw new ArgumentNullException("context");
             }
 
-            if ((bool?)context.Items["DnnReal401"] ?? false)
+            if (context.DoA401)
             {
-                var response = context.Response;
+                var response = context.BaseContext.Response;
                 response.ClearContent();
                 response.ClearHeaders();
                 response.StatusCode = 401;
-                response.AppendHeader("WWW-Authenticate", "Basic realm=\"DNNAPI\"");
+
+                if (context.SupportBasicAuth)
+                {
+                    response.AppendHeader("WWW-Authenticate", "Basic realm=\"DNNAPI\"");
+                }
+
+                if (context.SupportDigestAuth)
+                {
+                    var stale = context.IsStale.ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
+                    var value = string.Format("Digest realm=\"DNNAPI\", nonce=\"{0}\",  opaque=\"0000000000000000\", stale={1}, algorithm=MD5, qop=\"auth\"", CreateNewNonce(), stale);
+                    response.AppendHeader("WWW-Authenticate", value);
+                }
             }
+        }
+
+        //This nonce must be compatible with DotNetNuke.Web.Service.DigestAuthentication expectataions
+        private static string CreateNewNonce()
+        {
+            DateTime nonceTime = DateTime.Now + TimeSpan.FromMinutes(1);
+            string expireStr = nonceTime.ToString("G");
+
+            byte[] expireBytes = Encoding.Default.GetBytes(expireStr);
+            string nonce = Convert.ToBase64String(expireBytes);
+
+            nonce = nonce.TrimEnd(new[] { '=' });
+            return nonce;
         }
 
         public void Dispose()

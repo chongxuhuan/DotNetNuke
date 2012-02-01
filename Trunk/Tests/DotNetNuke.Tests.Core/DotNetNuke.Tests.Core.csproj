@@ -109,6 +109,7 @@
     <Compile Include="CBOTest.cs" />
     <Compile Include="Controllers\Social\MessagingControllerTests.cs" />
     <Compile Include="Controllers\Social\RelationshipControllerTests.cs" />
+    <Compile Include="HttpModules\ServiceAuthContextTests.cs" />
     <Compile Include="Providers\Folder\DatabaseFolderProviderTests.cs" />
     <Compile Include="Providers\Folder\FileManagerTests.cs" />
     <Compile Include="Providers\Folder\FolderManagerTests.cs" />

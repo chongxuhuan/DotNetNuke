@@ -32,12 +32,14 @@ namespace DotNetNuke.Web.Services
     {
         private IPortalController _portalController;
         private AuthenticatorBase _basicAuthenticator;
+        private AuthenticatorBase _digestAuthenticator;
 
         public DnnController()
         {
             ActionInvoker = new DnnControllerActionInvoker();
             DefaultAuthLevel = ServiceAuthLevel.Host;
             _basicAuthenticator = new BasicAuthenticator();
+            _digestAuthenticator = new DigetstAuthenticator();
             _portalController = new PortalController();
         }
 
@@ -55,6 +57,12 @@ namespace DotNetNuke.Web.Services
             {
                 _basicAuthenticator.TryToAuthenticate(context, portalId);
             }
+
+            if (!context.Request.IsAuthenticated)
+            {
+                _digestAuthenticator.TryToAuthenticate(context, portalId);
+            }
+
             MembershipModule.AuthenticateRequest(context, true /*allowUnknownExtension*/);
         }
 
@@ -85,6 +93,12 @@ namespace DotNetNuke.Web.Services
         /// <remarks>Should be used for unit test purposes only</remarks> 
         /// </summary>
         public AuthenticatorBase BasicAuthenticator { set { _basicAuthenticator = value; } }
+
+        /// <summary>
+        /// Injection point for BasicAuth Authenticator
+        /// <remarks>Should be used for unit test purposes only</remarks> 
+        /// </summary>
+        public AuthenticatorBase DigestAuthenticator { set { _digestAuthenticator = value; } }
 
         /// <summary>
         /// Injection point for PortalController

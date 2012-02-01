@@ -77,16 +77,17 @@ namespace DotNetNuke.Web.Services
                 }
             }
 
-            if (RequiresHost || _rolesSplit.Length > 0)
+            if (RequiresHost)
             {
-                UserInfo userInfo = PortalController.GetCurrentPortalSettings().UserInfo;
-
-                if (RequiresHost && !userInfo.IsSuperUser)
+                if (!CurrentUser.IsSuperUser)
                 {
                     return false;
                 }
+            }
 
-                if (!_rolesSplit.Any(userInfo.IsInRole))
+            if(_rolesSplit.Any())
+            {
+                if (!_rolesSplit.Any(CurrentUser.IsInRole))
                 {
                     return false;
                 }
@@ -95,7 +96,12 @@ namespace DotNetNuke.Web.Services
             return true;
         }
 
-        protected string[] SplitString(string original)
+        private static UserInfo CurrentUser
+        {
+            get { return PortalController.GetCurrentPortalSettings().UserInfo; }
+        }
+
+        private string[] SplitString(string original)
         {
             if (String.IsNullOrEmpty(original))
             {

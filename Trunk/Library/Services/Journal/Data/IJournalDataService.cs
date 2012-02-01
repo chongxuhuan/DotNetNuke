@@ -42,5 +42,17 @@ namespace DotNetNuke.Services.Journal {
         void Journal_Like(int JournalId, int UserId, string DisplayName);
         IDataReader Journal_LikeList(int PortalId, int JournalId);
 
+        void Journal_Comment_Delete(int JournalId, int CommentId);
+        int Journal_Comment_Save(int JournalId, int CommentId, int UserId, string Comment, string xml);
+        IDataReader Journal_Comment_List(int JournalId);
+        IDataReader Journal_Comment_Get(int CommentId);
+        IDataReader Journal_Comment_ListByJournalIds(string JournalIds);
+        void Journal_Comment_Like(int JournalId, int CommentId, int UserId, string DisplayName);
+        IDataReader Journal_Comment_LikeList(int PortalId, int JournalId, int CommentId);
+        IDataReader Journal_Types_List(int PortalId);
+        IDataReader Journal_Types_Get(int JournalTypeId);
+        void Journal_Types_Delete(int JournalTypeId, int PortalId);
+        int Journal_Types_Save(int JournalTypeId, string JournalType, string icon, int PortalId, bool IsEnabled, bool AppliesToProfile, bool AppliesToGroup, bool AppliesToStream, string Options, bool SupportsNotify);
+
     }
 }

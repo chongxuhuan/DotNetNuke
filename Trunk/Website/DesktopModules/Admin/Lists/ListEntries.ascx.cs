@@ -828,8 +828,6 @@ namespace DotNetNuke.Common.Lists
 						{
 							entry.SortOrder = 0;
 						}
-						//save the list as system list when its edited by host user.
-						entry.SystemList = ListPortalID == Null.NullInteger;
 
 						if (listController.AddListEntry(entry) == Null.NullInteger) //entry already found in database
 						{
@@ -857,8 +855,7 @@ namespace DotNetNuke.Common.Lists
 						{
 							entry.SortOrder = 0;
 						}
-						//save the list as system list when its edited by host user.
-						entry.SystemList = ListPortalID == Null.NullInteger;
+
 						if (listController.AddListEntry(entry) == Null.NullInteger) //entry already found in database
 						{
 							UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("ItemAlreadyPresent", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);

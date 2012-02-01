@@ -25,12 +25,10 @@ namespace DotNetNuke.Web.Services
             }
 
             var status = UserLoginStatus.LOGIN_FAILURE;
-            UserController.ValidateUser(portalId, credentials.UserName, credentials.Password, "DNN", "", "a portal", context.Request.UserHostAddress, ref status);
+            string ipAddress = context.Request.UserHostAddress;
+            var user = UserController.ValidateUser(portalId, credentials.UserName, credentials.Password, "DNN", "", "a portal", ipAddress ?? "", ref status);
 
-            if (status == UserLoginStatus.LOGIN_SUCCESS || 
-                status == UserLoginStatus.LOGIN_SUPERUSER ||
-                status == UserLoginStatus.LOGIN_INSECUREHOSTPASSWORD ||
-                status == UserLoginStatus.LOGIN_INSECUREADMINPASSWORD)
+            if(user != null)
             {
                 context.User = new GenericPrincipal(new GenericIdentity(credentials.UserName, AuthType), null);
             }

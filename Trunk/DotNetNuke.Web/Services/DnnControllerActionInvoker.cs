@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using DotNetNuke.HttpModules.Services.Internal;
 
 namespace DotNetNuke.Web.Services
 {
@@ -67,7 +68,8 @@ namespace DotNetNuke.Web.Services
 
             if(context.Result != null && context.Result is HttpUnauthorizedResult)
             {
-                controllerContext.HttpContext.Items["DnnReal401"] = true;
+                var sac = new ServicesContextWrapper(controllerContext.HttpContext);
+                sac.DoA401 = true;
             }
 
             return context;

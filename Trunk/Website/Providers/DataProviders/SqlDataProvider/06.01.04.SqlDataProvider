@@ -1,0 +1,34 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/* Issue 19679: Fix GetListEntries Procedure */
+/********************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetListEntries]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}GetListEntries
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}GetListEntries
+	@ListName nvarchar(50),
+	@ParentKey nvarchar(150),
+	@PortalID int
+AS
+SELECT *
+	FROM {databaseOwner}{objectQualifier}vw_Lists
+	WHERE (ListName = @ListName OR @ListName='')
+		AND (ParentKey = @ParentKey OR @ParentKey = '')
+		AND (PortalID = @PortalID OR PortalID = -1 OR @PortalID IS NULL or SystemList=1)
+	ORDER BY [Level], ListName, SortOrder, Text
+GO
+
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/
