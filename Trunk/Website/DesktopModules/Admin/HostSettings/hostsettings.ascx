@@ -409,6 +409,7 @@
                 <a href="#" class="">
                     <%=LocalizeString("Compression")%></a></h2>
             <fieldset>
+                <div class="dnnFormMessage dnnFormValidationSummary"><%=LocalizeString("DeprecateGzip")%></div>
 				<div class="dnnFormItem">
                     <dnn:Label ID="plCompression" ControlName="cboCompression" runat="server" />
                     <asp:DropDownList ID="cboCompression" runat="server">

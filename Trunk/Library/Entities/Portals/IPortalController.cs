@@ -272,16 +272,6 @@ namespace DotNetNuke.Entities.Portals
         /// </history>
         /// -----------------------------------------------------------------------------
         void UpdatePortalInfo(PortalInfo portal);
-
-        /// <summary>
-        /// Loads the portal settings when not provided by "normal" DNN mechanisms
-        /// </summary>
-        /// <remarks>This method is for very special situations where the normal DNN page lifecycle does not run.
-        /// Unless you know specifically why your are calling this method, you should use PortalController.GetCurrentPortalSettings
-        /// </remarks>
-        /// <param name="request">The current request</param> 
-        /// <returns>PortaSettings</returns>
-        PortalSettings LoadPortalSettingsWhenOtherwiseUnavailable(HttpRequestBase request);
     }
 }
         

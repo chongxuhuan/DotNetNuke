@@ -349,7 +349,7 @@ namespace DotNetNuke.UI.Skins.Controls
                         {
                             selectCulture.CssClass = CssClass;
                         }
-                        Localization.LoadCultureDropDownList(selectCulture, CultureDropDownTypes.NativeName, ((PageBase) Page).PageCulture.Name);
+                        Localization.LoadCultureDropDownList(selectCulture, CultureDropDownTypes.NativeName, CurrentCulture);
 
                         //only show language selector if more than one language
                         if (selectCulture.Items.Count <= 1)

@@ -39,8 +39,8 @@ namespace DotNetNuke.Services.Journal {
         private readonly DataProvider provider = DataProvider.Instance();
 
         #region IJournalDataService Members
-        public IDataReader Journal_ListForSummary(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalTypeId, int RowIndex, int MaxRows) {
-            return provider.ExecuteReader("Journal_ListForSummary", PortalId, CurrentUserId, ProfileId, GroupId, JournalTypeId, RowIndex, MaxRows);
+        public IDataReader Journal_ListForSummary(int PortalId, int CurrentUserId, int RowIndex, int MaxRows) {
+            return provider.ExecuteReader("Journal_ListForSummary", PortalId, CurrentUserId, RowIndex, MaxRows);
         }
         public IDataReader Journal_ListForProfile(int PortalId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows) {
             return provider.ExecuteReader("Journal_ListForProfile", PortalId, CurrentUserId, ProfileId, RowIndex, MaxRows);
@@ -64,10 +64,10 @@ namespace DotNetNuke.Services.Journal {
             return provider.ExecuteReader("Journal_Get", PortalId, CurrentUserId, JournalId);
         }
         public int Journal_Save(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalId, int JournalTypeId, string Title,
-                string Summary, string Body, string ItemData, string xml, string ObjectKey, Guid AccessKey) {  
+                string Summary, string Body, string ItemData, string xml, string ObjectKey, Guid AccessKey, string SecuritySet) {  
             
             JournalId = (int)provider.ExecuteScalar("Journal_Save", PortalId, JournalId, JournalTypeId, CurrentUserId, ProfileId, 
-                    GroupId, Title, Summary, ItemData, xml, ObjectKey, AccessKey);
+                    GroupId, Title, Summary, ItemData, xml, ObjectKey, AccessKey, SecuritySet);
             
             return JournalId;
         }

@@ -37,6 +37,9 @@ namespace DotNetNuke.Services.Journal {
         public List<JournalItem> ListForProfile(int PortalId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows) {
             return CBO.FillCollection<JournalItem>(_DataService.Journal_ListForProfile(PortalId, CurrentUserId, ProfileId, RowIndex, MaxRows));
         }
+        public List<JournalItem> ListForSummary(int PortalId, int CurrentUserId, int RowIndex, int MaxRows) {
+            return CBO.FillCollection<JournalItem>(_DataService.Journal_ListForSummary(PortalId, CurrentUserId, RowIndex, MaxRows));
+        }
         public JournalItem Journal_Get(int PortalId, int CurrentUserId, int JournalId) {
             return (JournalItem)CBO.FillObject(_DataService.Journal_Get(PortalId, CurrentUserId, JournalId), typeof(JournalItem));
         }
@@ -61,8 +64,29 @@ namespace DotNetNuke.Services.Journal {
             }
             string journalData = string.Empty;
             journalData = objJournalItem.ItemData.ToJson();
+            if (String.IsNullOrEmpty(objJournalItem.SecuritySet)) {
+                objJournalItem.SecuritySet = "E,";
+            } else if(!objJournalItem.SecuritySet.EndsWith(",")) {
+                objJournalItem.SecuritySet += ",";
+               
+            }
+            if (objJournalItem.SecuritySet == "F,") {
+                objJournalItem.SecuritySet = "F" + objJournalItem.UserId.ToString() + ",";
+                objJournalItem.SecuritySet += "P" + objJournalItem.ProfileId.ToString() + ",";
+            }
+            if (objJournalItem.SecuritySet == "U,") {
+                objJournalItem.SecuritySet += "U" + objJournalItem.UserId.ToString() + ",";
+            }
+            if (objJournalItem.ProfileId > 0 && objJournalItem.UserId != objJournalItem.ProfileId) {
+                objJournalItem.SecuritySet += "P" + objJournalItem.ProfileId.ToString() + ",";
+                objJournalItem.SecuritySet += "U" + objJournalItem.UserId.ToString() + ",";
+            }
+            if (!objJournalItem.SecuritySet.Contains("U" + objJournalItem.UserId.ToString())) {
+                objJournalItem.SecuritySet += "U" + objJournalItem.UserId.ToString() + ",";
+            }
             objJournalItem.JournalId = jds.Journal_Save(objJournalItem.PortalId, objJournalItem.UserId, objJournalItem.ProfileId, objJournalItem.SocialGroupId,
-                    objJournalItem.JournalId, objJournalItem.JournalTypeId, objJournalItem.Title, objJournalItem.Summary, objJournalItem.Body, journalData, xml, objJournalItem.ObjectKey, objJournalItem.AccessKey);
+                    objJournalItem.JournalId, objJournalItem.JournalTypeId, objJournalItem.Title, objJournalItem.Summary, objJournalItem.Body, journalData, xml, 
+                    objJournalItem.ObjectKey, objJournalItem.AccessKey, objJournalItem.SecuritySet);
 
             objJournalItem = Journal_Get(objJournalItem.PortalId, objJournalItem.UserId, objJournalItem.JournalId);
             Content cnt = new Content();

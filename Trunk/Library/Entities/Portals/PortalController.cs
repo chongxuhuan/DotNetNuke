@@ -1048,24 +1048,7 @@ namespace DotNetNuke.Entities.Portals
 
         #endregion
 
-	    /// <summary>
-        /// Loads the portal settings when not provided by "normal" DNN mechanisms
-        /// </summary>
-        /// <remarks>This method is for very special situations where the normal DNN page lifecycle does not run.
-        /// Unless you know specifically why your are calling this method, you should use PortalController.GetCurrentPortalSettings
-        /// </remarks>
-        /// <param name="request">The current request</param> 
-        /// <returns>PortaSettings</returns>
-        public PortalSettings LoadPortalSettingsWhenOtherwiseUnavailable(HttpRequestBase request)
-        {
-            var domainName = Globals.GetDomainName(request);
-            var alias = PortalAliasController.GetPortalAliasInfo(domainName);
-
-            return new PortalSettings(-1, alias);
-        }
-
-
-        /// -----------------------------------------------------------------------------
+	    /// -----------------------------------------------------------------------------
         /// <summary>
         /// Creates a new portal alias
         /// </summary>

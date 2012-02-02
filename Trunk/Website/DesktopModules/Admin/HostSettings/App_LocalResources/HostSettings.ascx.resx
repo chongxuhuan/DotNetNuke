@@ -882,4 +882,7 @@
   <data name="PreviewNoSelectionMessage.Text" xml:space="preserve">
     <value>Please select a skin and/or container to preview.</value>
   </data>
+  <data name="DeprecateGzip.Text" xml:space="preserve">
+    <value>DotNetNuke's GZip compression is getting deprecated and removed in 6.2.0. We recommend using IIS compression to increase performance on your server.</value>
+  </data>
 </root>

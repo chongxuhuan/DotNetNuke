@@ -22,7 +22,10 @@
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using DotNetNuke.Common;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.HttpModules.Membership;
 
@@ -30,7 +33,6 @@ namespace DotNetNuke.Web.Services
 {
     public class DnnController : Controller
     {
-        private IPortalController _portalController;
         private AuthenticatorBase _basicAuthenticator;
         private AuthenticatorBase _digestAuthenticator;
 
@@ -40,7 +42,6 @@ namespace DotNetNuke.Web.Services
             DefaultAuthLevel = ServiceAuthLevel.Host;
             _basicAuthenticator = new BasicAuthenticator();
             _digestAuthenticator = new DigetstAuthenticator();
-            _portalController = new PortalController();
         }
 
         protected override void Initialize(RequestContext requestContext)
@@ -68,15 +69,38 @@ namespace DotNetNuke.Web.Services
 
         protected virtual PortalSettings LoadPortalSettings(HttpContextBase context)
         {
-            var portalSettings = _portalController.LoadPortalSettingsWhenOtherwiseUnavailable(context.Request);
+            var domainName = Globals.GetDomainName(context.Request);
+            var alias = PortalAliasController.GetPortalAliasInfo(domainName);
+
+            int tabId = context.FindTabId();
+
+            if(tabId != Null.NullInteger)
+            {
+                if(!TabIsInPortal(tabId, alias.PortalID))
+                {
+                    //todo localize error message
+                    throw new HttpException(400, "Specified tab is not in this portal");
+                }
+            }
+            
+            var portalSettings = new PortalSettings(tabId, alias);
+            
             context.Items["PortalSettings"] = portalSettings;
             return portalSettings;
+        }
+
+        private bool TabIsInPortal(int tabId, int portalId)
+        {
+            var tc = new TabController();
+            var tab = tc.GetTab(tabId, portalId, /*ignoreCache*/ false);
+
+            return tab != null;
         }
 
         /// <summary>
         /// PortalSettings for the current portal
         /// </summary>
-        public PortalSettings PortalSettings{get { return Entities.Portals.PortalController.GetCurrentPortalSettings(); }}
+        public PortalSettings PortalSettings{get { return PortalController.GetCurrentPortalSettings(); }}
 
         /// <summary>
         /// UserInfo for the current user
@@ -99,11 +123,5 @@ namespace DotNetNuke.Web.Services
         /// <remarks>Should be used for unit test purposes only</remarks> 
         /// </summary>
         public AuthenticatorBase DigestAuthenticator { set { _digestAuthenticator = value; } }
-
-        /// <summary>
-        /// Injection point for PortalController
-        /// <remarks>Should be used for unit test purposes only</remarks>
-        /// </summary>
-        public IPortalController PortalController { set { _portalController = value; } }
     }
 }

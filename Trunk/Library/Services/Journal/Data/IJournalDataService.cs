@@ -31,13 +31,13 @@ using System.Data;
 namespace DotNetNuke.Services.Journal {
     public interface IJournalDataService {
 
-        IDataReader Journal_ListForSummary(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalTypeId, int RowIndex, int MaxRows);
+        IDataReader Journal_ListForSummary(int PortalId, int CurrentUserId, int RowIndex, int MaxRows);
         IDataReader Journal_ListForProfile(int PortalId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows);
         IDataReader Journal_ListForGroup(int PortalId, int CurrentUserId, int SocialGroupId, int JournalTypeId, int RowIndex, int MaxRows);
         void Journal_Delete(int JournalId);
         IDataReader Journal_Get(int PortalId, int CurrentUserId, int JournalId);
         int Journal_Save(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalId, int JournalTypeId, string Title, string Summary,
-            string Body, string ItemData, string xml, string ObjectKey, Guid AccessKey);
+            string Body, string ItemData, string xml, string ObjectKey, Guid AccessKey, string SecuritySet);
         void Journal_UpdateContentItemId(int JournalId, int ContentItemId);
         void Journal_Like(int JournalId, int UserId, string DisplayName);
         IDataReader Journal_LikeList(int PortalId, int JournalId);

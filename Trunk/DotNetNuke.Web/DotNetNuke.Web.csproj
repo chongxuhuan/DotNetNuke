@@ -126,6 +126,7 @@
     <Compile Include="Services\DNNController.cs" />
     <Compile Include="Services\DnnControllerActionInvoker.cs" />
     <Compile Include="Services\DnnModuleAuthorizeAttribute.cs" />
+    <Compile Include="Services\HttpContextExtensions.cs" />
     <Compile Include="Services\IAssembly.cs" />
     <Compile Include="Services\IAssemblyLocator.cs" />
     <Compile Include="Services\IServiceRouteMapper.cs" />
