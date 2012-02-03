@@ -6,19 +6,30 @@ namespace DotNetNuke.Web.Services
 {
     public static class HttpContextExtensions
     {
+        private const string ModuleIdKey = "ModuleId";
         private const string TabIdKey = "TabId";
 
         public static int FindTabId(this HttpContextBase context)
         {
-            string value = context.Request.Headers[TabIdKey];
+            return FindInt(context, TabIdKey);
+        }
 
-            if(String.IsNullOrEmpty(value))
+        public static int FindModuleId(this HttpContextBase context)
+        {
+            return FindInt(context, ModuleIdKey);
+        }
+
+        private static int FindInt(HttpContextBase context, string key)
+        {
+            string value = context.Request.Headers[key];
+
+            if (String.IsNullOrEmpty(value))
             {
-                value = context.Request.Params[TabIdKey];
+                value = context.Request.Params[key];
             }
 
             int id;
-            if(Int32.TryParse(value, out id))
+            if (Int32.TryParse(value, out id))
             {
                 return id;
             }

@@ -43,6 +43,37 @@ namespace DotNetNuke.Services.Journal {
         public JournalItem Journal_Get(int PortalId, int CurrentUserId, int JournalId) {
             return (JournalItem)CBO.FillObject(_DataService.Journal_Get(PortalId, CurrentUserId, JournalId), typeof(JournalItem));
         }
+        public JournalItem CreateStatus(int PortalId, int TabId, int UserId, string Text, string SecuritySet) {
+            var ji = new Services.Journal.JournalItem() {
+                JournalId = -1,
+                JournalTypeId = 1,
+                PortalId =PortalId,
+                UserId = UserId,
+                SocialGroupId = -1,
+                ProfileId = UserId,
+                Summary = Text,
+                SecuritySet = SecuritySet
+            };
+            return Journal_Save(ji, TabId);
+        }
+        public JournalItem CreateLink(int PortalId, int TabId, int UserId, string Text, string Url, string Title, string Description, string ImageUrl, string SecuritySet) {
+            var ji = new Services.Journal.JournalItem() {
+                JournalId = -1,
+                JournalTypeId = 2,
+                PortalId = PortalId,
+                UserId = UserId,
+                SocialGroupId = -1,
+                ProfileId = UserId,
+                Summary = Text,
+                SecuritySet = SecuritySet
+            };
+            ji.ItemData = new ItemData();
+            ji.ItemData.Url = Url;
+            ji.ItemData.Title = Title;
+            ji.ItemData.Description = Description;
+            ji.ItemData.ImageUrl = ImageUrl;
+            return Journal_Save(ji, TabId);
+        }
         public JournalItem Journal_Save(JournalItem objJournalItem, int TabId) {
             JournalDataService jds = new JournalDataService();
             string xml = null;

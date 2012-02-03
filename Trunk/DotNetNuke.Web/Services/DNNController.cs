@@ -24,6 +24,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
@@ -81,6 +82,22 @@ namespace DotNetNuke.Web.Services
                     //todo localize error message
                     throw new HttpException(400, "Specified tab is not in this portal");
                 }
+
+                int moduleId = context.FindModuleId();
+
+                if(moduleId != Null.NullInteger)
+                {
+                    var module = new ModuleController().GetModule(moduleId, tabId);
+                    if (module != null)
+                    {
+                        CurrentModule = module;
+                    }
+                    else
+                    {
+                        //todo localize error message
+                        throw new HttpException(400, "Specified tab module does not exist");
+                    }
+                }
             }
             
             var portalSettings = new PortalSettings(tabId, alias);
@@ -106,6 +123,12 @@ namespace DotNetNuke.Web.Services
         /// UserInfo for the current user
         /// </summary>
         public UserInfo UserInfo { get {return PortalSettings.UserInfo;}}
+
+        /// <summary>
+        /// ModuleInfo for the current module
+        /// <remarks>Will be null unless a valid pair of module and tab ids were provided in the request</remarks>
+        /// </summary>
+        public ModuleInfo CurrentModule { get; private set; }
 
         /// <summary>
         /// Default Authorization level required to call access the methods of this controller

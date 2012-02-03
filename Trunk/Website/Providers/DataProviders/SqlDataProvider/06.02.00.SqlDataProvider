@@ -1828,7 +1828,8 @@ CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageRecipients(
 	[RecipientID] [int] IDENTITY(1,1) NOT NULL,
 	[MessageID] [int] NOT NULL,
 	[UserID] [int] NULL,
-	[Status] [tinyint] NULL,
+	[Read] [bit] NULL,
+	[Archived] [bit] NULL,
 	[CreatedByUserID] [int] NULL,
 	[CreatedOnDate] [datetime] NULL,
 	[LastModifiedByUserID] [int] NULL,
@@ -1989,7 +1990,8 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
     @RecipientID int,
     @MessageID int,
     @UserID int,
-    @Status tinyint,
+    @Read bit,
+	@Archived bit,  
 	@CreateUpdateUserID INT    
 AS 
     IF ( @RecipientID = -1 ) 
@@ -1997,7 +1999,8 @@ AS
             INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
 					[MessageID],
 					[UserID],
-					[Status],	
+					[Read],	
+					[Archived],				
                     [CreatedByUserID],
                     [CreatedOnDate],
                     [LastModifiedByUserID],
@@ -2006,7 +2009,8 @@ AS
             VALUES  (       
 					@MessageID,
 					@UserID,
-					@Status,            
+					@Read,            
+					@Archived,            			
                     @CreateUpdateUserID , -- CreatedBy - int
                     GETDATE() , -- CreatedOn - datetime
                     @CreateUpdateUserID , -- LastModifiedBy - int
@@ -2020,6 +2024,8 @@ AS
             UPDATE  {databaseOwner}{objectQualifier}Social_MessageRecipients
             SET     [MessageID] = @MessageID,
 					[UserID] = @UserID,
+					[Read] = @Read,
+					[Archived] = @Archived,					
                     LastModifiedByUserID = @CreateUpdateUserID,
                     LastModifiedOnDate = GETDATE()
             WHERE   RecipientID = @RecipientID
@@ -2032,14 +2038,14 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]    
     @MessageID int,
-    @RoleID int,
-    @Status tinyint,
+    @RoleID int,    
 	@CreateUpdateUserID INT    
 AS 
     INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
 			[MessageID],
 			[UserID],
-			[Status],	
+			[Read],	
+			[Archived],		
             [CreatedByUserID],
             [CreatedOnDate],
             [LastModifiedByUserID],
@@ -2048,7 +2054,8 @@ AS
 			SELECT 
 			  @MessageID, 	
 			  UserID,
-			  @Status,            
+			  0,            
+			  0, 	  
               @CreateUpdateUserID , -- CreatedBy - int
               GETDATE() , -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
@@ -2064,7 +2071,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipient] 
     @RecipientID INT
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [RecipientID] = @RecipientID 
 
@@ -2077,7 +2084,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser] 
     @UserID INT
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [UserID] = @UserID 
 
@@ -2090,7 +2097,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage] 
     @MessageID INT
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Status], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [MessageID] = @MessageID 
 
@@ -3345,6 +3352,8 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_Delete]
 @JournalId int
 AS
+DELETE FROM {databaseOwner}[{objectQualifier}Journal_Security] WHERE JournalId = @JournalId
+DELETE FROM {databaseOwner}[{objectQualifier}Journal_Comments] WHERE JournalId = @JournalId
 DELETE FROM {databaseOwner}[{objectQualifier}Journal] WHERE JournalId = @JournalId
 
 GO
@@ -3479,6 +3488,8 @@ INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
 	VALUES
 	(4, 'file', '', -1, 1, 1, 1, 1, null, 1)
 GO
+
+
 /* Add GetInbox Procedure */
 /************************************/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetInbox]') AND type in (N'P', N'PC'))
@@ -3505,7 +3516,7 @@ exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @Pag
 WITH inboxItems  AS
 (
 	SELECT  DISTINCT [RecipientID], [Subject], CAST(BODY as nvarchar(150)) AS Body, [SenderUserID], 
-			[Status], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
+			[Read], [Archived], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
 			MessageRecipients.[MessageID],	
 			MessageRecipients.[CreatedByUserID], MessageRecipients.[CreatedOnDate], 
 			MessageRecipients.[LastModifiedByUserID], MessageRecipients.[LastModifiedOnDate],
@@ -3558,17 +3569,31 @@ END
 GO
 
 
-/* Add UpdateSocialMessageStatus Procedure */
-/************************************/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateSocialMessageStatus]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageStatus]
+/* Add UpdateSocialMessageReadStatus Procedure */
+/***********************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]
 GO
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageStatus]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]
 	@RecipientID	int,
-	@Status			int
+	@Read			bit
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Status]=@Status WHERE RecipientID=@RecipientID
+UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Read]=@Read WHERE RecipientID=@RecipientID
+END
+GO
+
+/* Add UpdateSocialMessageArchivedStatus Procedure */
+/***************************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]
+	@RecipientID	int,
+	@Archived			bit
+AS
+BEGIN
+UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Archived]=@Archived WHERE RecipientID=@RecipientID
 END
 GO
 
@@ -3595,154 +3620,362 @@ AS
 	WHERE UserID = @UserID OR RelatedUserID = @UserID
 GO
 
+/* Update UserProfile Table */
+/****************************/
 
-/* Add GetUsersByFilters Procedure */
-/**************************************/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUsersByFilters]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByFilters]
+ALTER TABLE {databaseOwner}[{objectQualifier}UserProfile]
+ALTER COLUMN PropertyText nvarchar(max)
+
+/* Add Profile View */
+/********************/
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}vw_Profile]') and OBJECTPROPERTY(id, N'IsView') = 1)
+	DROP VIEW {databaseOwner}[{objectQualifier}vw_Profile]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUsersByFilters]
-	@PortalId INT,
-	@CurrentUserId INT, -- default = -1
-	@NumberOfRecords INT,
-	@PageIndex INT, 
-	@FilterByRole INT, -- default = -1
-	@FilterByRelationshipType INT, -- RelationshipTypeID. default = -1
-	@FilterByProfileProperty NVARCHAR(50), -- PropertyName
-	@FilterByProfilePropertyValue NVARCHAR(3750),
-	@SortBy NVARCHAR(100), -- Indicates the column name. Includes one of the following prefixes "User:" or "Profile:". Example 'Profile:LastName'
-	@SortAscending BIT, -- 1 - ASC; 0 - DESC; DEFAULT = 1
-	@IsAdmin BIT
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_Profile]
+AS
+SELECT     
+	U.UserID, 
+	P.PortalId, 
+	U.Username, 
+	U.DisplayName, 
+	U.Email, 
+	U.IsSuperUser, 
+	PD.PropertyName, 
+	P.IsDeleted, 
+	CASE WHEN PropertyText IS NULL THEN PropertyValue ELSE PropertyText END AS PropertyValue
+FROM  {databaseOwner}{objectQualifier}UserProfile AS UP 
+	INNER JOIN {databaseOwner}{objectQualifier}ProfilePropertyDefinition AS PD ON PD.PropertyDefinitionID = UP.PropertyDefinitionID 
+	INNER JOIN {databaseOwner}{objectQualifier}Users AS U ON UP.UserID = U.UserID 
+	INNER JOIN {databaseOwner}{objectQualifier}UserPortals AS P ON U.UserID = P.UserId AND PD.PortalID = P.PortalId
+
+GO
+
+
+/* Add GetProfileFieldSql Function */
+/***********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetProfileFieldSql]') AND type in (N'FN', N'TF'))
+	DROP FUNCTION {databaseOwner}[{objectQualifier}GetProfileFieldSql]
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}GetProfileFieldSql]
+(
+	@PortalID int,
+	@TemplateSql nvarchar(max)
+)
+RETURNS nvarchar(max)
+AS
+	BEGIN
+		DECLARE @sql nvarchar(max)
+		SELECT @sql = COALESCE(@sql + ',','') + '[' + PropertyName + ']' + @TemplateSql
+		FROM {objectQualifier}ProfilePropertyDefinition 
+		WHERE PortalID = @PortalID 
+			AND Deleted = 0
+		RETURN(@sql) 
+	END
+GO
+
+/* Add GetSortSql Function */
+/***************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSortSql]') AND type in (N'FN', N'TF'))
+	DROP FUNCTION {databaseOwner}[{objectQualifier}GetSortSql]
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}GetSortSql]
+(
+	@SortBy nvarchar(100),
+	@SortAscending BIT,
+	@Default nvarchar(100)
+)
+RETURNS nvarchar(max)
+AS
+	BEGIN
+		DECLARE @sortSql nvarchar(max)
+		SET @sortSql = ''
+		IF @SortBy = ''
+			SET @SortBy = @Default
+		SET @sortSql = N'ORDER BY [' + @SortBy + CASE WHEN @SortAscending = 1 THEN N'] ASC' ELSE N'] DESC' END
+		
+		RETURN(@sortSql)
+	END	
+GO
+
+/* Add ConvertListToTable Function */
+/***********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ConvertListToTable]') AND type in (N'FN', N'TF', N'IF'))
+	DROP FUNCTION {databaseOwner}[{objectQualifier}ConvertListToTable]
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}ConvertListToTable]
+(  
+	@Delimiter	nvarchar(5), 
+    @List		nvarchar(max)
+) 
+RETURNS @TableOfValues TABLE 
+(  
+	RowNumber	smallint IDENTITY(1,1), 
+    RowValue	nvarchar(50) 
+) 
 AS 
-	-- GET PROFILE PROPERTIES
-	CREATE TABLE #ProfileProperties
-	(
-		PropertyName NVARCHAR(50),
-		RowNumber INT
-	)
-	INSERT INTO #ProfileProperties
-		SELECT PropertyName, ROW_NUMBER() OVER(ORDER BY ViewOrder ASC) AS RowNumber
-		FROM {databaseOwner}{objectQualifier}ProfilePropertyDefinition
-		WHERE Deleted = 0 AND PortalID = @PortalId
+   BEGIN
+      DECLARE @LenString int 
+ 
+      WHILE len( @List ) > 0 
+         BEGIN 
+         
+            SELECT @LenString = 
+               (CASE charindex( @Delimiter, @List ) 
+                   WHEN 0 THEN len( @List ) 
+                   ELSE ( charindex( @Delimiter, @List ) -1 )
+                END
+               ) 
+                                
+            INSERT INTO @TableOfValues 
+               SELECT substring( @List, 1, @LenString )
+                
+            SELECT @List = 
+               (CASE ( len( @List ) - @LenString ) 
+                   WHEN 0 THEN '' 
+                   ELSE right( @List, len( @List ) - @LenString - 1 ) 
+                END
+               ) 
+         END
+      RETURN 
+   END 
+GO
 
-	DECLARE @PropertyCount INT
-	DECLARE @PropertyIndex INT
-	DECLARE @PropertyName NVARCHAR(50)
-	DECLARE @ProfileProperties NVARCHAR(MAX)
+/* Add GetUsersByPropertyName Function */
+/***************************************/
 
-	SELECT @PropertyCount = COUNT(*) FROM #ProfileProperties
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUsersByPropertyName]') AND type in (N'FN', N'TF', N'IF'))
+	DROP FUNCTION {databaseOwner}[{objectQualifier}GetUsersByPropertyName]
+GO
 
-	-- SETUP SCRIPT
-	DECLARE @script NVARCHAR(MAX)
-	DECLARE @params NVARCHAR(300)
+CREATE FUNCTION {databaseOwner}[{objectQualifier}GetUsersByPropertyName]
+(
+	@PropertyName nvarchar(100),
+	@PropertyValue nvarchar(max),
+	@PortalID int
+)
+RETURNS TABLE
+AS
+	RETURN
+		SELECT *
+			FROM {objectQualifier}vw_Profile
+			WHERE PropertyName = @PropertyName 
+				AND PropertyValue LIKE @PropertyValue
+				AND PortalID = @PortalID
 
-	SET @params = N'@PortalId INT, @CurrentUserId INT, @NumberOfRecords INT, @PageIndex INT, @FilterByRole INT, @FilterByRelationshipType INT, @FilterByProfilePropertyValue NVARCHAR(3750), @SortBy NVARCHAR(100), @SortAscending BIT, @IsAdmin BIT'
+GO
 
-	SET @script = N'SELECT TOP ' + CONVERT(NVARCHAR(20), @NumberOfRecords) + ' * FROM ( '  
+/* Add GetUsersAdvancedSearch Procedure */
+/****************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUsersAdvancedSearch]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUsersAdvancedSearch]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUsersAdvancedSearch]
+(
+	@PortalID int,					-- portal
+	@PageSize int,					-- page size
+	@PageIndex int,					-- 0 based page index
+	@SortBy nvarchar(100),			-- sort field
+	@SortAscending bit,				-- sort flag indicating whether sort is asc or desc
+	@PropertyNames nvarchar(max),	-- list of property names to filter
+	@PropertyValues nvarchar(max),	-- list of property values to filter
+	@DisplayName nvarchar(128)	    -- filter by display name
+)
+AS
+	-- Set up Top XX
+	DECLARE @topSql nvarchar(20)
+	SET @topSql = CONVERT(nvarchar(20), @PageSize)
 	
-		-- SORTING
-		SET @script = @script + N' SELECT ROW_NUMBER() OVER '
-			IF @SortBy <> '' BEGIN
-				SET @script = @script + N'(ORDER BY [' + @SortBy + CASE WHEN @SortAscending = 1 THEN N'] ASC) AS SortOrder, ' ELSE N'] DESC) AS SortOrder, ' END
-			END
-			ELSE
-			BEGIN
-				SET @script = @script + N'(ORDER BY [Member:UserID]' + CASE WHEN @SortAscending = 1 THEN N' ASC) AS SortOrder, ' ELSE N' DESC) AS SortOrder, ' END
-			END
+	--Set up Count
+	DECLARE @minRowNumberSql nvarchar(20)
+	SET @minRowNumberSql =  CONVERT(nvarchar(20), ((@PageIndex * @PageSize) + 1))
+	
+	-- Set up Sort
+	DECLARE @sortSql nvarchar(1000)
+	SET @sortSql = {databaseOwner}{objectQualifier}GetSortSql(@SortBy, @SortAscending, 'UserID')
 
-	SET @script = @script + N' * FROM ( SELECT 
-											U.UserID AS [Member:UserID],
-											U.Username AS [Member:Username],
-											U.FirstName AS [Member:FirstName],
-											U.LastName AS [Member:LastName],
-											U.Email AS [Member:Email],
-											U.DisplayName AS [Member:DisplayName]'
-	SET @PropertyIndex = 0
-	SET @ProfileProperties = N''
+	-- Setup Pivot Field List
+	DECLARE @pivotSql nvarchar(max)
+	SELECT @pivotSql = {databaseOwner}{objectQualifier}GetProfileFieldSql(@PortalID, '')
 
-	-- ADD PROFILE PROPERTIES AS COLUMNS
-	IF @PropertyCount > 0 BEGIN
-		WHILE @PropertyIndex < @PropertyCount BEGIN
-			SELECT @PropertyName = PropertyName
-			FROM #ProfileProperties
-			WHERE RowNumber = @PropertyIndex + 1
-			
-			SET @script = @script + N', UserProperties.[' + @PropertyName + N'] AS [MemberProfile:' + @PropertyName + N']'
-			SET @ProfileProperties = @ProfileProperties + N'[' + @PropertyName + N'],'
-			
-			SET @PropertyIndex = @PropertyIndex + 1
+	-- Setup FieldName Field List for temporary table
+	DECLARE @fieldNames nvarchar(max)
+	SELECT @fieldNames = {databaseOwner}{objectQualifier}GetProfileFieldSql(@PortalID, ' nvarchar(max)')
+	
+	-- Setup Profile Field Joins
+	DECLARE @joinSql nvarchar(max)
+
+	
+	IF @PropertyNames IS NULL OR @PropertyNames = ''
+		SET @joinSql = ''
+	ELSE
+		BEGIN
+			;WITH CTE_PropertyNames(RowNumber, RowValue)
+			AS
+			(
+				SELECT * FROM {objectQualifier}ConvertListToTable(',', @PropertyNames)
+			),
+			CTE_PropertyValues(RowNumber, RowValue)
+			AS
+			(
+				SELECT * FROM {objectQualifier}ConvertListToTable(',', @PropertyValues)
+			)
+			SELECT @joinSql = COALESCE(@joinSql + ' ','') + 'INNER JOIN {objectQualifier}GetUsersByPropertyName(''' + N.RowValue + ''', ''' + V.RowValue +''', + ' + CONVERT(nvarchar(20), @PortalID) + ') AS U'+ N.RowValue +' ON U.UserID = U'+ N.RowValue +'.UserID '
+			FROM CTE_PropertyNames AS N
+				INNER JOIN CTE_PropertyValues AS V ON N.RowNumber = V.RowNumber
 		END
-		
-		SET @ProfileProperties = LEFT(@ProfileProperties, LEN(@ProfileProperties)-1)
-	END
-
-	-- FROM CLAUSE
-	SET @script = @script + N'
-		FROM {databaseOwner}{objectQualifier}Users U
-		JOIN {databaseOwner}{objectQualifier}UserPortals UP ON U.UserID = UP.UserId'
-
-	SET @PropertyIndex = 1
-
-	IF @PropertyCount > 0 BEGIN
-		SET @script = @script + N'
-		JOIN (
-			SELECT *
-			FROM (
-				SELECT
-					UserID,
-					PropertyName,				
-					CASE
-						WHEN Visibility = 0 THEN PropertyValue
-						WHEN Visibility = 1 AND @IsAdmin = 1 THEN PropertyValue
-						WHEN Visibility = 1 AND @IsAdmin = 0 AND @CurrentUserID > 0 THEN PropertyValue
-						WHEN Visibility = 2 AND @IsAdmin = 1 THEN PropertyValue
-						ELSE NULL
-					END AS PropertyValue
-				FROM {databaseOwner}{objectQualifier}UserProfile UPF
-				JOIN {databaseOwner}{objectQualifier}ProfilePropertyDefinition PPD ON UPF.PropertyDefinitionID = PPD.PropertyDefinitionID
-				WHERE [Deleted] = 0 AND [PortalID] = @PortalId
-			) AS SourceTable
-			PIVOT (
-				MIN(PropertyValue) 
-				FOR PropertyName IN (' + @ProfileProperties + N')
-			) AS UserPropertiesPVT
-		) AS UserProperties ON U.UserID = UserProperties.UserID'
-	END
-
-	-- FILTERS
-	IF @FilterByRole <> -1 BEGIN
-		SET @script = @script + N'
-		JOIN {databaseOwner}{objectQualifier}UserRoles UR ON U.UserID = UR.UserID AND UR.RoleID = @FilterByRole'
-	END
-
-	IF @CurrentUserId <> -1 AND @FilterByRelationshipType <> -1  BEGIN
-		SET @script = @script + N'
-		JOIN {databaseOwner}{objectQualifier}Relationships REL ON REL.PortalID = @PortalId AND RelationshipTypeID = @FilterByRelationshipType
-		JOIN {databaseOwner}{objectQualifier}UserRelationships UREL ON
-			REL.RelationshipID = UREL.RelationshipID AND
-			((UREL.UserID = @CurrentUserId AND UREL.RelatedUserID = U.UserID) OR
-			(UREL.UserID = U.UserID AND UREL.RelatedUserID = @CurrentUserId))'
-	END
-
-	-- WHERE CLAUSE
-	SET @script = @script + N' WHERE ' + 		
-		N' U.IsDeleted = 0 AND UP.PortalId = @PortalId '
-
-	IF @FilterByProfileProperty IS NOT NULL
-		AND EXISTS(SELECT * FROM #ProfileProperties WHERE PropertyName LIKE @FilterByProfileProperty)
-		AND @FilterByProfileProperty IS NOT NULL BEGIN
-		SET @script = @script + N'
-		AND UserProperties.[' + @FilterByProfileProperty + N'] = @FilterByProfilePropertyValue'
-	END
 	
-	SET @script = @script + N' )AS FilteredUsers ) AS Members '
+			
+	DECLARE @sql nvarchar(max)
+	SELECT @sql=
+				'
+					DECLARE @pivotedUsers TABLE
+					(
+						RowNumber int,
+						UserID int,
+						Username nvarchar(100),
+						Email nvarchar(256),
+						DisplayName nvarchar(128),
+						IsSuperUser bit,
+						' + @fieldNames + '
+					);
+					
+					WITH TempUsers
+					AS
+					(
+						SELECT 	U.UserID,
+								U.Username ,
+								U.Email,
+								U.DisplayName,
+								U.IsSuperUser,
+								U.PropertyName,
+								U.PropertyValue
+							FROM {objectQualifier}vw_Profile AS U '
+							+ @joinSql +	
+							'WHERE U.PortalID = ' + CONVERT(nvarchar(20), @PortalID) + '
+								AND U.DisplayName LIKE ''' + @DisplayName + '''
+								AND U.IsDeleted = 0
+					)
+					
+					INSERT INTO @pivotedUsers
+						SELECT
+							ROW_NUMBER() OVER(' + @sortSql + ') AS RowNumber,
+							*
+							FROM TempUsers
+						PIVOT 
+						(
+							MAX(PropertyValue) for PropertyName in (' + @pivotSql + ')
+						) as pivotTable
+						
+					SELECT TOP ' + @topSql + ' * FROM @pivotedUsers
+					WHERE RowNumber >= ' + @minRowNumberSql + '
+				'
+	EXEC(@sql)
+GO
+
+/* Add GetUsersBasicSearch Procedure */
+/*************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUsersBasicSearch]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUsersBasicSearch]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUsersBasicSearch]
+(
+	@PortalID int,					-- portal
+	@PageSize int,					-- page size
+	@PageIndex int,					-- 0 based page index
+	@SortBy nvarchar(100),			-- sort field
+	@SortAscending bit,				-- sort flag indicating whether sort is asc or desc
+	@DisplayName nvarchar(128)	    -- filter by display name
+)
+AS
+	-- Set up Top XX
+	DECLARE @topSql nvarchar(20)
+	SET @topSql = CONVERT(nvarchar(20), @PageSize)
 	
-	-- OUTER WHERE CLAUSE		
-	SET @script = @script + N' WHERE SortOrder >= (((@PageIndex - 1) * @NumberOfRecords) + 1) '
-		
-	EXEC sp_executesql @script, @params, @PortalId, @CurrentUserId, @NumberOfRecords, @PageIndex, @FilterByRole, @FilterByRelationshipType, @FilterByProfilePropertyValue, @SortBy, @SortAscending, @IsAdmin
+	--Set up Count
+	DECLARE @minRowNumberSql nvarchar(20)
+	SET @minRowNumberSql =  CONVERT(nvarchar(20), ((@PageIndex * @PageSize) + 1))
+	
+	-- Set up Sort
+	DECLARE @sortSql nvarchar(1000)
+	SET @sortSql = {databaseOwner}{objectQualifier}GetSortSql(@SortBy, @SortAscending, 'UserID')
 
-	DROP TABLE #ProfileProperties
+	-- Setup Pivot Field List
+	DECLARE @pivotSql nvarchar(max)
+	SELECT @pivotSql = {databaseOwner}{objectQualifier}GetProfileFieldSql(@PortalID, '')
 
+	-- Setup FieldName Field List for temporary table
+	DECLARE @fieldNames nvarchar(max)
+	SELECT @fieldNames = {databaseOwner}{objectQualifier}GetProfileFieldSql(@PortalID, ' nvarchar(max)')
+	
+	DECLARE @sql nvarchar(max)
+	SELECT @sql=
+				'
+					DECLARE @pivotedUsers TABLE
+					(
+						RowNumber int,
+						UserID int,
+						Username nvarchar(100),
+						Email nvarchar(256),
+						DisplayName nvarchar(128),
+						IsSuperUser bit,
+						' + @fieldNames + '
+					);
 
+					WITH TempUsers
+					AS
+					(
+						SELECT TOP ' + @topSql + ' * FROM (
+							SELECT 	
+									ROW_NUMBER() OVER(' + @sortSql + ') AS RowNumber,
+									U.UserID,
+									U.Username ,
+									U.Email,
+									U.DisplayName,
+									U.IsSuperUser
+								FROM {objectQualifier}vw_Users AS U
+								WHERE U.PortalID = ' + CONVERT(nvarchar(20), @PortalID) + '
+									AND U.DisplayName LIKE ''' + @DisplayName + '''
+									AND U.IsDeleted = 0
+							) AS U
+						WHERE RowNumber >= ' + @minRowNumberSql + ' 
+					),
+					TempUsersWithProfile
+					AS
+					(
+						SELECT 
+							U.RowNumber,
+							U.UserID,
+							U.Username ,
+							U.Email,
+							U.DisplayName,
+							U.IsSuperUser,
+							P.PropertyName,
+							P.PropertyValue
+						FROM TempUsers U
+							INNER JOIN {objectQualifier}vw_Profile P ON P.UserID = U.UserID
+					)
+										
+					SELECT  * FROM TempUsersWithProfile
+					PIVOT 
+					(
+						MAX(PropertyValue) for PropertyName in (' + @pivotSql + ')
+					) as pivotTable
+				'
+	EXEC(@sql)
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

@@ -98,19 +98,24 @@ namespace DotNetNuke.Services.Social.Messaging
 
         #region Easy Wrapper APIs
 
-        public void MarkRead(int messageRecipientID)
+        public void MarkRead(int messageRecipientId, int userId)
         {
-            _DataService.UpdateSocialMessageStatus(messageRecipientID,(int)Messaging.MessageStatus.Read);
+            _DataService.UpdateSocialMessageReadStatus(messageRecipientId, userId, true);
         }
 
-        public void MarkUnRead(int messageRecipientID)
+        public void MarkUnRead(int messageRecipientId, int userId)
         {
-            _DataService.UpdateSocialMessageStatus(messageRecipientID, (int)Messaging.MessageStatus.Unread);
+            _DataService.UpdateSocialMessageReadStatus(messageRecipientId, userId, false);
         }
 
-        public void MarkArchived(int messageRecipientID)
+        public void MarkArchived(int messageRecipientId, int userId)
         {
-            _DataService.UpdateSocialMessageStatus(messageRecipientID, (int)Messaging.MessageStatus.Archived);
+            _DataService.UpdateSocialMessageArchivedStatus(messageRecipientId, userId, true);
+        }
+
+        public void MarkUnArchived(int messageRecipientId, int userId)
+        {
+            _DataService.UpdateSocialMessageArchivedStatus(messageRecipientId, userId, false);
         }
 
         public IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
@@ -205,7 +210,7 @@ namespace DotNetNuke.Services.Social.Messaging
             {
                 foreach (var role in roles)
                 {
-                    _DataService.CreateSocialMessageRecipientsForRole(message.MessageID, role.RoleID, (int)MessageStatus.Unread, UserController.GetCurrentUserInfo().UserID);
+                    _DataService.CreateSocialMessageRecipientsForRole(message.MessageID, role.RoleID, UserController.GetCurrentUserInfo().UserID);
                 }
             }
 
@@ -214,7 +219,7 @@ namespace DotNetNuke.Services.Social.Messaging
             {
                 foreach (var user in users)
                 {
-                    var recipient = new MessageRecipient {MessageID = message.MessageID, UserID = user.UserID, Status = (int)MessageStatus.Unread, RecipientID = Null.NullInteger};
+                    var recipient = new MessageRecipient {MessageID = message.MessageID, UserID = user.UserID, Read = false, RecipientID = Null.NullInteger};
                     _DataService.SaveSocialMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
                 }
             }

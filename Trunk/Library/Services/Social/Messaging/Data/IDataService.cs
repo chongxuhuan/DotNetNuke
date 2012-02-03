@@ -32,30 +32,31 @@ namespace DotNetNuke.Services.Social.Messaging.Data
     {
         #region Messages CRUD
         
-        int SaveSocialMessage(Message message, int createUpdateUserID);
+        int SaveSocialMessage(Message message, int createUpdateUserId);
         IDataReader GetSocialMessage();
         IDataReader GetSocialMessagesBySender();
-        void DeleteSocialMessage(int messageID);
-        IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
-        IList<Message> GetSentbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
-        void UpdateSocialMessageStatus(int recipientID, int status);
+        void DeleteSocialMessage(int messageId);
+        IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
+        IList<Message> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
+        void UpdateSocialMessageReadStatus(int recipientId, int userId, bool read);
+        void UpdateSocialMessageArchivedStatus(int recipientId, int userId, bool archived);
         
         #endregion
 
         #region Message_Recipients CRUD
         
-        int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserID);
-        void CreateSocialMessageRecipientsForRole(int messageID, int roleID, int status, int createUpdateUserID);
+        int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId);
+        void CreateSocialMessageRecipientsForRole(int messageId, int roleId, int createUpdateUserId);
         IDataReader GetSocialMessageRecipient();
         IDataReader GetSocialMessageRecipientsByUser();
         IDataReader GetSocialMessageRecipientsByMessage();
-        void DeleteSocialMessageRecipient(int messageRecipientID);
+        void DeleteSocialMessageRecipient(int messageRecipientId);
 
         #endregion
 
         #region Message_Attachments CRUD
 
-        int SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserID);
+        int SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserId);
         IDataReader GetSocialMessageAttachment();
         IDataReader GetSocialMessageAttachmentsByMessage();
         void DeleteSocialMessageAttachment(int messageAttachmentID);

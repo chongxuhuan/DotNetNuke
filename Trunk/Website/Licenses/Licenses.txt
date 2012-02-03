@@ -148,3 +148,9 @@ Client Dependency Framework
 Combining, compressing & minifying JavaScript and CSS files
 License Type: Microsoft Public License (Ms-PL)
 License Link: http://clientdependency.codeplex.com/license
+
+
+Knockout Javascript library
+Used throughout UI
+License Type: MIT
+License Link: http://knockoutjs.com/

@@ -299,7 +299,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
 
             //Assert
-            _mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers, (int)MessageStatus.Unread, It.IsAny<int>()));
+            _mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers, It.IsAny<int>()));
         }
 
         [Test]
@@ -344,44 +344,60 @@ namespace DotNetNuke.Tests.Core.Controllers
         }
 
         [Test]
-        public void MessagingController_SetReadMessage_Calls_DataService_UpdateSocialMessageStatus()
+        public void MessagingController_SetReadMessage_Calls_DataService_UpdateSocialMessageReadStatus()
         {
             //Arrange
             var messageInstance = CreateValidUnReadMessageRecipient();
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };    
 
             //Act
-           _messagingController.MarkRead(messageInstance.RecipientID);
+           _messagingController.MarkRead(messageInstance.RecipientID, user.UserID);
 
             //Assert
-           _mockDataService.Verify(ds => ds.UpdateSocialMessageStatus(messageInstance.RecipientID, (int)MessageStatus.Read));
+           _mockDataService.Verify(ds => ds.UpdateSocialMessageReadStatus(messageInstance.RecipientID, user.UserID, true));
         }
 
         [Test]
-        public void MessagingController_SetUnReadMessage_Calls_DataService_UpdateSocialMessageStatus()
+        public void MessagingController_SetUnReadMessage_Calls_DataService_UpdateSocialMessageReadStatus()
         {
             //Arrange
             var messageInstance = CreateValidUnReadMessageRecipient();
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId }; 
 
             //Act
-            _messagingController.MarkUnRead(messageInstance.RecipientID);
+            _messagingController.MarkUnRead(messageInstance.RecipientID, user.UserID);
 
             //Assert
-            _mockDataService.Verify(ds => ds.UpdateSocialMessageStatus(messageInstance.RecipientID, (int)MessageStatus.Unread));                        
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageReadStatus(messageInstance.RecipientID, user.UserID, false));                        
         }
 
         [Test]
-        public void MessagingController_SetArchivedMessage_Calls_DataService_UpdateSocialMessageStatus()
+        public void MessagingController_SetArchivedMessage_Calls_DataService_UpdateSocialMessageArchivedStatus()
         {
             //Arrange
             var messageInstance = CreateValidUnReadMessageRecipient();
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId }; 
 
             //Act
-            _messagingController.MarkArchived(messageInstance.RecipientID);
+            _messagingController.MarkArchived(messageInstance.RecipientID, user.UserID);
 
             //Assert
-            _mockDataService.Verify(ds => ds.UpdateSocialMessageStatus(messageInstance.RecipientID, (int)MessageStatus.Archived));                        
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.RecipientID, user.UserID, true));                       
         }
-             
+
+        [Test]
+        public void MessagingController_SetUnArchivedMessage_Calls_DataService_UpdateSocialMessageArchivedStatus()
+        {
+            //Arrange
+            var messageInstance = CreateValidUnReadMessageRecipient();
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
+
+            //Act
+            _messagingController.MarkUnArchived(messageInstance.RecipientID, user.UserID);
+
+            //Assert
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.RecipientID, user.UserID, false));
+        }   
 
         #endregion
 
@@ -409,7 +425,8 @@ namespace DotNetNuke.Tests.Core.Controllers
                 RecipientID  =1,
                 MessageID = 1,
                 UserID = 1,
-                Status = (int)MessageStatus.Unread
+                Read = false,
+                Archived = false
             };
             return messageRecipient;
         }

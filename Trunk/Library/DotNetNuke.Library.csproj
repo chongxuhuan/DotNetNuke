@@ -565,7 +565,6 @@
     <Compile Include="Services\Mobile\RedirectionController.cs" />
     <Compile Include="Services\Mobile\RedirectionType.cs" />
     <Compile Include="Services\Mobile\TargetType.cs" />
-    <Compile Include="Services\Social\Messaging\MessageStatus.cs" />
     <Compile Include="Services\SystemDateTime\SystemDateTime.cs" />
     <Compile Include="Services\EventQueue\Config\EventQueueConfiguration.cs" />
     <Compile Include="Services\EventQueue\Config\PublishedEvent.cs" />

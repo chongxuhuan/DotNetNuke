@@ -75,11 +75,17 @@ namespace DotNetNuke.Services.Social.Messaging
         public int UserID { get; set; }
 
         /// <summary>
-        /// The staus of the message i.e. read/unread/archived
+        /// Is Message read. True: Yes, False: No.
         /// </summary>
         [XmlAttribute]
-        public int Status { get; set; }
+        public bool Read { get; set; }
 
+
+        /// <summary>
+        /// Is Message archived. True: Yes, False: No.
+        /// </summary>
+        [XmlAttribute]
+        public bool Archived { get; set; }
        
         /// <summary>
         /// IHydratable.KeyID.
@@ -106,7 +112,8 @@ namespace DotNetNuke.Services.Social.Messaging
             this.RecipientID = Convert.ToInt32(dr["RecipientID"]);
             this.MessageID = Convert.ToInt32(dr["MessageID"]);
             this.UserID = Convert.ToInt32(dr["UserID"]);
-            this.Status = Convert.ToInt32(dr["Status"]);
+            this.Archived = Null.SetNullBoolean(dr["Archived"]);
+            this.Read = Null.SetNullBoolean(dr["Read"]);
             
             //add audit column data
             FillInternal(dr);

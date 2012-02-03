@@ -39,10 +39,10 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region Messages CRUD
 
-        public int SaveSocialMessage(Message message, int createUpdateUserID)
+        public int SaveSocialMessage(Message message, int createUpdateUserId)
         {
             //need to fix groupmail
-            return _provider.ExecuteScalar<int>("SaveSocialMessage", message.MessageID, message.To, message.From, message.Subject, message.Body, message.ParentMessageID, message.ReplyAllAllowed, message.SenderUserID, createUpdateUserID);
+            return _provider.ExecuteScalar<int>("SaveSocialMessage", message.MessageID, message.To, message.From, message.Subject, message.Body, message.ParentMessageID, message.ReplyAllAllowed, message.SenderUserID, createUpdateUserId);
         }
 
         public IDataReader GetSocialMessage()
@@ -55,14 +55,14 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteReader("GetSocialMessagesBySender");
         }
 
-        public void DeleteSocialMessage(int messageID)
+        public void DeleteSocialMessage(int messageId)
         {
-            _provider.ExecuteNonQuery("DeleteSocialMessage", messageID);
+            _provider.ExecuteNonQuery("DeleteSocialMessage", messageId);
         }
 
-        public IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
+        public IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
         {
-            IDataReader dr = _provider.ExecuteReader("GetInbox", userID, pageIndex, pageSize);
+            IDataReader dr = _provider.ExecuteReader("GetInbox", userId, pageIndex, pageSize);
 
             try
             {
@@ -79,9 +79,9 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             }
         }
 
-        public IList<Message> GetSentbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
+        public IList<Message> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
         {
-            IDataReader dr = _provider.ExecuteReader("GetSentbox", userID, pageIndex, pageSize);
+            IDataReader dr = _provider.ExecuteReader("GetSentbox", userId, pageIndex, pageSize);
 
             try
             {
@@ -98,25 +98,29 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             }
         }
 
-
-
-        public void UpdateSocialMessageStatus(int recipientID, int status)
+        public void UpdateSocialMessageReadStatus(int recipientId, int userId, bool read)
         {
-            _provider.ExecuteNonQuery("UpdateSocialMessageStatus", recipientID, status);
+            _provider.ExecuteNonQuery("UpdateSocialMessageReadStatus", recipientId, userId, read);
         }
+
+        public void UpdateSocialMessageArchivedStatus(int recipientId, int userId, bool archived)
+        {
+            _provider.ExecuteNonQuery("UpdateSocialMessageArchivedStatus", recipientId, userId, archived);
+        }
+
 
         #endregion
 
         #region Message_Recipients CRUD
 
-        public int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserID)
+        public int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("SaveSocialMessageRecipient", messageRecipient.RecipientID, messageRecipient.MessageID, messageRecipient.UserID, messageRecipient.Status, createUpdateUserID);
+            return _provider.ExecuteScalar<int>("SaveSocialMessageRecipient", messageRecipient.RecipientID, messageRecipient.MessageID, messageRecipient.UserID, messageRecipient.Read, messageRecipient.Archived, createUpdateUserId);
         }
 
-        public void CreateSocialMessageRecipientsForRole(int messageID, int roleID, int status, int createUpdateUserID)
-        {            
-            _provider.ExecuteNonQuery("CreateSocialMessageRecipientsForRole", messageID, roleID, status, createUpdateUserID);
+        public void CreateSocialMessageRecipientsForRole(int messageId, int roleId, int createUpdateUserId)
+        {
+            _provider.ExecuteNonQuery("CreateSocialMessageRecipientsForRole", messageId, roleId, createUpdateUserId);
         }
 
         public IDataReader GetSocialMessageRecipient()
@@ -134,18 +138,18 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteReader("GetSocialMessageRecipientsByMessage");
         }
 
-        public void DeleteSocialMessageRecipient(int messageRecipientID)
+        public void DeleteSocialMessageRecipient(int messageRecipientId)
         {
-            _provider.ExecuteNonQuery("DeleteSocialMessageRecipient", messageRecipientID);
+            _provider.ExecuteNonQuery("DeleteSocialMessageRecipient", messageRecipientId);
         }
 
         #endregion
 
         #region Message_Attachments CRUD
 
-        public int SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserID)
+        public int SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("SaveSocialMessageAttachment", messageAttachment.MessageID, messageAttachment.FileID,createUpdateUserID);
+            return _provider.ExecuteScalar<int>("SaveSocialMessageAttachment", messageAttachment.MessageID, messageAttachment.FileID,createUpdateUserId);
         }
 
         public IDataReader GetSocialMessageAttachment()
