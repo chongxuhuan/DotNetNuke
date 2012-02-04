@@ -272,7 +272,8 @@ div.SearchIcon img{margin-top:3px;}
 		border-color:#bcb691;border-width:1px;margin:0;width:auto;font-family:Helvetica, Arial, Verdana, sans-serif;}
 			.dnnFormItem input[type=checkbox], .dnnFormItem input[type=radio], .dnnFormItem input[type=file], .dnnFormItem input[type=button], 
 			.dnnFormItem input.rcbInput{width:auto;border:none;-moz-border-radius:0;border-radius:0;background:none;padding:0;-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none;}
-			.dnnFormItem select{width:auto;padding:0;}
+			.dnnFormItem select{width:auto;background:#FFFFF5;border-radius:3px;border:1px #BCB691 solid;margin:0 0 3px 0;padding:4px;}
+                .dnnForm select.dnnFormRequired{border-left:5px solid #FF0000;}
 			.dnnFormItem input[type="text"], .dnnFormItem textarea{min-width:35%;}
 			.dnnFormItem textarea{min-height:80px;}
 			.dnnAddress input[type="checkbox"]{margin:0 5px}
@@ -412,7 +413,7 @@ div.SearchIcon img{margin-top:3px;}
 				.dnnFormPopup .ui-dialog-content, #iPopUp .ui-dialog-content{position:relative;border:0;padding:0px;background:#fff;overflow:auto;zoom:1;}
 					.dnnFormPopup .ui-dialog-buttonpane {text-align:left;border-width:1px 0 0 0;background-image:none;margin:.5em 0 0 0;padding:.3em 1em .5em .4em;}
 					.dnnFormPopup .ui-dialog-buttonpane .ui-dialog-buttonset {float:right;}
-					.dnnFormPopup .ui-dialog-buttonpane button {margin:.5em .4em .5em 0.8em;cursor:pointer;padding:0.5em 1em;}
+					.dnnFormPopup .ui-dialog-buttonpane button {margin:.5em .4em .5em 0.8em;cursor:pointer;padding:0.5em 1em;border:none;outline:none;}
 				.dnnFormPopup .ui-resizable-se{width:14px;height:14px;float:right;background:url(../../images/modal-resize-icn.png) no-repeat bottom;height:24px;width:24px;}
 	
 	.dnnFormPopup .dnnDialog {padding:10px;}

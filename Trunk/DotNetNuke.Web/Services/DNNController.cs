@@ -90,7 +90,7 @@ namespace DotNetNuke.Web.Services
                     var module = new ModuleController().GetModule(moduleId, tabId);
                     if (module != null)
                     {
-                        CurrentModule = module;
+                        ActiveModule = module;
                     }
                     else
                     {
@@ -128,7 +128,7 @@ namespace DotNetNuke.Web.Services
         /// ModuleInfo for the current module
         /// <remarks>Will be null unless a valid pair of module and tab ids were provided in the request</remarks>
         /// </summary>
-        public ModuleInfo CurrentModule { get; private set; }
+        public ModuleInfo ActiveModule { get; private set; }
 
         /// <summary>
         /// Default Authorization level required to call access the methods of this controller

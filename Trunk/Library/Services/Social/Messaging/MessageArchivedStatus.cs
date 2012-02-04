@@ -1,6 +1,6 @@
 #region Copyright
 // 
-// DotNetNukeÂ® - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -21,18 +21,35 @@
 #region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Data;
+using System.Xml.Serialization;
+
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities;
+using DotNetNuke.Entities.Modules;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: ComVisible(false)]
-[assembly: Guid("a4fb04bb-7ce8-40ed-bad5-218f7687443c")]
-[assembly: AssemblyVersion("6.2.0.374")]
+namespace DotNetNuke.Services.Social.Messaging
+{
+    /// <summary>
+    /// Archived Status of a Message
+    /// </summary>
+    public enum MessageArchivedStatus
+    {
+        /// <summary>
+        /// Archived Message Status
+        /// </summary>
+        Archived = 1,
+
+        /// <summary>
+        /// UnArchived Message Status
+        /// </summary>
+        UnArchived = 0,
+
+        /// <summary>
+        /// Any Message Status - Both Archived and UnArchived
+        /// </summary>
+        Any = -1
+    }
+}

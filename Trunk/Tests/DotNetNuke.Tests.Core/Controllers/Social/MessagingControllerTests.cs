@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Text;
 
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Users;
@@ -71,7 +72,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _messagingController = new MessagingController(_mockDataService.Object);
 
 			SetupDataProvider();
-		  //  SetupDataTables();
+		    SetupDataTables();
 		}
 
 
@@ -204,16 +205,46 @@ namespace DotNetNuke.Tests.Core.Controllers
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
             var role = new RoleInfo { RoleName = "role1" };
             var sender = new UserInfo { DisplayName = "user11", UserID = Constants.USER_ElevenId };
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            _dtMessageRecipients.Clear();
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, null, sender);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, null, sender);
 
             //Assert
-            _mockDataService.Verify(ds => ds.SaveSocialMessage(It.Is<Message>(v => v.Subject == "subject"
+            mockDataService.Verify(ds => ds.SaveSocialMessage(It.Is<Message>(v => v.Subject == "subject"
                                                                 && v.Body == "body"
                                                                 && v.To == "role1,user1"
                                                                 && v.SenderUserID == sender.UserID)
                                                                , It.IsAny<int>()));
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_For_CommonUser_Calls_DataService_SaveSocialMessageRecipient_Then_CreateSocialMessageRecipientsForRole()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
+            var role = new RoleInfo { RoleName = "role1" };
+            var sender = new UserInfo { DisplayName = "user11", UserID = Constants.USER_ElevenId };
+            
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            _dtMessageRecipients.Clear();
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
+
+            //this pattern is based on: http://dpwhelan.com/blog/software-development/moq-sequences/
+            var callingSequence = 0;
+
+            //Arrange for Assert
+            mockDataService.Setup(ds => ds.CreateSocialMessageRecipientsForRole(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>())).Callback(() => Assert.That(callingSequence++, Is.EqualTo(0)));
+            mockDataService.Setup(ds => ds.SaveSocialMessageRecipient(It.IsAny<MessageRecipient>(), It.IsAny<int>())).Callback(() => Assert.That(callingSequence++, Is.EqualTo(1)));            
+
+            //Act
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, null, sender);
         }
 
         [Test]
@@ -222,9 +253,14 @@ namespace DotNetNuke.Tests.Core.Controllers
             //Arrange
             var user = new UserInfo { DisplayName = Constants.USER_TenName, UserID = Constants.USER_TenId };
             var sender = new UserInfo { DisplayName = Constants.USER_ElevenName, UserID = Constants.USER_ElevenId };
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            _dtMessageRecipients.Clear();
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user }, null, sender);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user }, null, sender);
 
             //Assert
             Assert.AreEqual(message.To, Constants.USER_TenName);            
@@ -237,9 +273,19 @@ namespace DotNetNuke.Tests.Core.Controllers
             var user10 = new UserInfo { DisplayName = Constants.USER_TenName, UserID = Constants.USER_TenId };
             var user11 = new UserInfo { DisplayName = Constants.USER_ElevenName, UserID = Constants.USER_ElevenId };
             var sender = new UserInfo { DisplayName = Constants.USER_ElevenName, UserID = Constants.USER_ElevenId };
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            _dtMessageRecipients.Clear();
+            var recipientId = 0;
+            //_dtMessageRecipients.Rows.Add(Constants.SocialMessaging_RecipientId_2, Constants.USER_Null, Constants.SocialMessaging_UnReadMessage, Constants.SocialMessaging_UnArchivedMessage);
+
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>()))                 
+                .Callback(() => _dtMessageRecipients.Rows.Add(recipientId++, Constants.USER_Null, Constants.SocialMessaging_UnReadMessage, Constants.SocialMessaging_UnArchivedMessage))
+                .Returns(() => _dtMessageRecipients.CreateDataReader());            
 
             //Act
-            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user10, user11 }, null, sender);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user10, user11 }, null, sender);
 
             //Assert
             Assert.AreEqual(message.To, Constants.USER_TenName + "," + Constants.USER_ElevenName);
@@ -280,26 +326,57 @@ namespace DotNetNuke.Tests.Core.Controllers
             //Arrange
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId};
             var role = new RoleInfo { RoleName = "role1" };
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            _dtMessageRecipients.Clear();
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
+
 
             //Act
-            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { 1 }, user);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { 1 }, user);
 
             //Assert
-            _mockDataService.Verify(ds => ds.SaveSocialMessageAttachment(It.Is<MessageAttachment>(v => v.MessageID == message.MessageID), It.IsAny<int>()));
+            mockDataService.Verify(ds => ds.SaveSocialMessageAttachment(It.Is<MessageAttachment>(v => v.MessageID == message.MessageID), It.IsAny<int>()));
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Calls_DataService_CreateSocialMessageRecipientsForRole_On_Passing_Role()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId};
+            var role = new RoleInfo { RoleName = "role1", RoleID = Constants.RoleID_RegisteredUsers };
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            _dtMessageRecipients.Clear();
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
+
+            //Act
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
+
+            //Assert
+            mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers.ToString(), It.IsAny<int>()));
         }
 
         [Test]
         public void MessagingController_CreateMessage_Calls_DataService_CreateSocialMessageRecipientsForRole_On_Passing_Roles()
         {
             //Arrange
-            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId};
-            var role = new RoleInfo { RoleName = "role1", RoleID = Constants.RoleID_RegisteredUsers };
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
+            var role1 = new RoleInfo { RoleName = "role1", RoleID = Constants.RoleID_RegisteredUsers };
+            var role2 = new RoleInfo { RoleName = "role2", RoleID = Constants.RoleID_Administrators };
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            _dtMessageRecipients.Clear();
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role1, role2 }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
 
             //Assert
-            _mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers, It.IsAny<int>()));
+            mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers + "," + Constants.RoleID_Administrators, It.IsAny<int>()));
         }
 
         [Test]
@@ -308,12 +385,18 @@ namespace DotNetNuke.Tests.Core.Controllers
             //Arrange
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
             var role = new RoleInfo { RoleName = "role1" };
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            _dtMessageRecipients.Clear();
+            
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);         
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, null, user);         
 
             //Assert
-            _mockDataService.Verify(ds => ds.SaveSocialMessageRecipient(It.Is<MessageRecipient>(v => v.MessageID == message.MessageID && v.UserID == user.UserID), It.IsAny<int>()));            
+            mockDataService.Verify(ds => ds.SaveSocialMessageRecipient(It.Is<MessageRecipient>(v => v.MessageID == message.MessageID && v.UserID == user.UserID), It.IsAny<int>()));            
         }
 
         [Test]
@@ -322,9 +405,14 @@ namespace DotNetNuke.Tests.Core.Controllers
             //Arrange
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
             var role = new RoleInfo { RoleName = "role1", RoleID = Constants.RoleID_RegisteredUsers };
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            _dtMessageRecipients.Clear();
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
 
             //Assert
             Assert.AreEqual(message.ReplyAllAllowed, false);            
@@ -334,10 +422,15 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void MessagingController_CreateMessage_Sets_ReplyAll_To_True_On_Passing_User()
         {
             //Arrange
-            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };            
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            _dtMessageRecipients.Clear();
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = _messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
             
             //Assert
             Assert.AreEqual(message.ReplyAllAllowed, true);
@@ -448,22 +541,23 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtMessages.Columns.Add("LastModifiedOnDate", typeof(DateTime));
             _dtMessages.PrimaryKey = new[] { pkMessagesMessageID };
 
-          //MessageRecipients
+            //MessageRecipients
             _dtMessageRecipients = new DataTable("MessageRecipients");
-            var pkMessagesRecipientID = _dtMessages.Columns.Add("RecipientID", typeof(int));
+            var pkMessageRecipientID = _dtMessageRecipients.Columns.Add("RecipientID", typeof(int));
             _dtMessageRecipients.Columns.Add("MessageID", typeof(int));
             _dtMessageRecipients.Columns.Add("UserID", typeof(int));
-            _dtMessageRecipients.Columns.Add("Status", typeof(int));
+            _dtMessageRecipients.Columns.Add("Read", typeof(bool));
+            _dtMessageRecipients.Columns.Add("Archived", typeof(bool));
             _dtMessageRecipients.Columns.Add("CreatedByUserID", typeof(int));
             _dtMessageRecipients.Columns.Add("CreatedOnDate", typeof(DateTime));
             _dtMessageRecipients.Columns.Add("LastModifiedByUserID", typeof(int));
             _dtMessageRecipients.Columns.Add("LastModifiedOnDate", typeof(DateTime));
-            _dtMessageRecipients.PrimaryKey = new[] { pkMessagesRecipientID };
+            _dtMessageRecipients.PrimaryKey = new[] { pkMessageRecipientID };
 
 
             //MessageAttachments
             _dtMessageAttachment = new DataTable("MessageAttachments");
-            var pkMessageAttachmentID = _dtMessages.Columns.Add("MessageAttachmentID", typeof(int));
+            var pkMessageAttachmentID = _dtMessageAttachment.Columns.Add("MessageAttachmentID", typeof(int));
             _dtMessageAttachment.Columns.Add("MessageID", typeof(int));
             _dtMessageAttachment.Columns.Add("FileID", typeof(int));
             _dtMessageAttachment.Columns.Add("CreatedByUserID", typeof(int));

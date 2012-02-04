@@ -36,7 +36,8 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         IDataReader GetSocialMessage();
         IDataReader GetSocialMessagesBySender();
         void DeleteSocialMessage(int messageId);
-        IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
+
+        IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
         IList<Message> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
         void UpdateSocialMessageReadStatus(int recipientId, int userId, bool read);
         void UpdateSocialMessageArchivedStatus(int recipientId, int userId, bool archived);
@@ -46,10 +47,11 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         #region Message_Recipients CRUD
         
         int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId);
-        void CreateSocialMessageRecipientsForRole(int messageId, int roleId, int createUpdateUserId);
-        IDataReader GetSocialMessageRecipient();
-        IDataReader GetSocialMessageRecipientsByUser();
-        IDataReader GetSocialMessageRecipientsByMessage();
+        void CreateSocialMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId);
+        IDataReader GetSocialMessageRecipient(int messageRecipientId);
+        IDataReader GetSocialMessageRecipientsByUser(int userId);
+        IDataReader GetSocialMessageRecipientsByMessage(int messageId);
+        IDataReader GetSocialMessageRecipientByMessageAndUser(int messageId, int userId);
         void DeleteSocialMessageRecipient(int messageRecipientId);
 
         #endregion

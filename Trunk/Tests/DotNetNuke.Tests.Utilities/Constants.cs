@@ -346,7 +346,18 @@ namespace DotNetNuke.Tests.Utilities
         public const string LOCALIZATION_UserRelationshipPreference_Updated = "UpdatedUserRelationshipPreference ID {0} for User ID {1} and Relationship ID {2}";
 
         #endregion
-        
+
+        #region SocialMessaging constants
+
+        public const bool SocialMessaging_ReadMessage = true;
+        public const bool SocialMessaging_UnReadMessage = false;
+        public const bool SocialMessaging_ArchivedMessage = true;
+        public const bool SocialMessaging_UnArchivedMessage = false;
+        public const int SocialMessaging_RecipientId_1 = 1;
+        public const int SocialMessaging_RecipientId_2 = 2;
+
+        #endregion
+
         public const int TAB_ValidId = 10;
         public const int MODULE_ValidId = 100;
     }

@@ -16,7 +16,7 @@
             <dnn:Label ID="plEnabled" runat="server" ControlName="chkEnabled" />
             <asp:CheckBox ID="chkEnabled" runat="server" />
         </div>
-        <div class="dnnFormItem">
+        <div class="dnnFormItem timeMeasurement">
             <dnn:Label ID="plTimeLapse" runat="server" ControlName="txtTimeLapse" />
             <asp:TextBox ID="txtTimeLapse" runat="server" MaxLength="10" />
             <asp:DropDownList ID="ddlTimeLapseMeasurement" runat="server">
@@ -26,7 +26,7 @@
                 <asp:ListItem resourcekey="Days" Value="d" />
             </asp:DropDownList>
         </div>
-        <div class="dnnFormItem">
+        <div class="dnnFormItem timeMeasurement">
             <dnn:Label ID="plRetryTimeLapse" runat="server" ControlName="txtRetryTimeLapse" />
             <asp:TextBox ID="txtRetryTimeLapse" runat="server" MaxLength="10" />
             <asp:DropDownList ID="ddlRetryTimeLapseMeasurement" runat="server">

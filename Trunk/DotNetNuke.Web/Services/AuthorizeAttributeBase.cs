@@ -7,7 +7,8 @@ namespace DotNetNuke.Web.Services
     /// <summary>
     /// A base class for authorize attributes
     /// <remarks>
-    /// This is copy/paste from the ASP.Net MVC AuthorizeAttribute.  The code to deal with the cache and set the result should be common to all AuthorizationFilters</remarks>
+    /// This is based on the ASP.Net MVC AuthorizeAttribute, with an enhancemtn to pass AuthorizationContext to AuthorizeCore.
+    /// The code to deal with the cache and set the result should be common to all AuthorizationFilters</remarks>
     /// </summary>
     public abstract class AuthorizeAttributeBase : FilterAttribute, IAuthorizationFilter
     {
@@ -20,7 +21,7 @@ namespace DotNetNuke.Web.Services
                 throw new ArgumentNullException("filterContext");
             }
 
-            if (AuthorizeCore(filterContext.HttpContext))
+            if (AuthorizeCore(filterContext))
             {
                 // ** IMPORTANT **
                 // Since we're performing authorization at the action level, the authorization code runs
@@ -32,7 +33,7 @@ namespace DotNetNuke.Web.Services
 
                 HttpCachePolicyBase cachePolicy = filterContext.HttpContext.Response.Cache;
                 cachePolicy.SetProxyMaxAge(new TimeSpan(0));
-                cachePolicy.AddValidationCallback(CacheValidateHandler, null /* data */);
+                cachePolicy.AddValidationCallback(CacheValidateHandler, filterContext);
             }
             else
             {
@@ -45,20 +46,20 @@ namespace DotNetNuke.Web.Services
 
         private void CacheValidateHandler(HttpContext context, object data, ref HttpValidationStatus validationStatus)
         {
-            validationStatus = OnCacheAuthorization(new HttpContextWrapper(context));
+            validationStatus = OnCacheAuthorization((AuthorizationContext)data);
         }
 
-        private HttpValidationStatus OnCacheAuthorization(HttpContextBase httpContext)
+        private HttpValidationStatus OnCacheAuthorization(AuthorizationContext context)
         {
-            if (httpContext == null)
+            if (context == null)
             {
-                throw new ArgumentNullException("httpContext");
+                throw new ArgumentNullException("context");
             }
 
-            bool isAuthorized = AuthorizeCore(httpContext);
+            bool isAuthorized = AuthorizeCore(context);
             return (isAuthorized) ? HttpValidationStatus.Valid : HttpValidationStatus.IgnoreThisRequest;
         }
 
-        protected abstract bool AuthorizeCore(HttpContextBase httpContext);
+        protected abstract bool AuthorizeCore(AuthorizationContext context);
     }
 }

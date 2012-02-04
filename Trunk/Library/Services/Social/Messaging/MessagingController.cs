@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 using DotNetNuke.Common;
@@ -50,13 +51,19 @@ namespace DotNetNuke.Services.Social.Messaging
     {
         #region constants
 
-        internal const int MESSAGING_MAX_TO = 2000;
-        internal const int MESSAGING_MAX_SUBJECT = 400;
+        internal const int ConstMaxTo = 2000;
+        internal const int ConstMaxSubject = 400;
+        internal const int ConstDefaultPageIndex = 0;
+        internal const int ConstDefaultPageSize = 10;
+        internal const string ConstSortColumnDate = "CreatedOnDate";
+        internal const string ConstSortColumnFrom = "From";
+        internal const string ConstSortColumnSubject = "Subject";
+        internal const bool ConstAscending = true;        
 
         #endregion
 
 
-        private readonly IDataService _DataService;
+        private readonly IDataService _dataService;
 
         #region "Constructors"
 
@@ -70,7 +77,7 @@ namespace DotNetNuke.Services.Social.Messaging
             //Argument Contract
             Requires.NotNull("dataService", dataService);
 
-            _DataService = dataService;
+            _dataService = dataService;
         }
 
         #endregion
@@ -94,45 +101,59 @@ namespace DotNetNuke.Services.Social.Messaging
 
         #region Public Methods
 
+        #region Messaging Business APIs
 
+        public MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId)
+        {
+            return CBO.FillObject<MessageRecipient>(_dataService.GetSocialMessageRecipientByMessageAndUser(messageRecipientId, userId));
+        }
+
+        #endregion
 
         #region Easy Wrapper APIs
 
         public void MarkRead(int messageRecipientId, int userId)
         {
-            _DataService.UpdateSocialMessageReadStatus(messageRecipientId, userId, true);
+            _dataService.UpdateSocialMessageReadStatus(messageRecipientId, userId, true);
         }
 
         public void MarkUnRead(int messageRecipientId, int userId)
         {
-            _DataService.UpdateSocialMessageReadStatus(messageRecipientId, userId, false);
+            _dataService.UpdateSocialMessageReadStatus(messageRecipientId, userId, false);
         }
 
         public void MarkArchived(int messageRecipientId, int userId)
         {
-            _DataService.UpdateSocialMessageArchivedStatus(messageRecipientId, userId, true);
+            _dataService.UpdateSocialMessageArchivedStatus(messageRecipientId, userId, true);
         }
 
         public void MarkUnArchived(int messageRecipientId, int userId)
         {
-            _DataService.UpdateSocialMessageArchivedStatus(messageRecipientId, userId, false);
+            _dataService.UpdateSocialMessageArchivedStatus(messageRecipientId, userId, false);
         }
 
-        public IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
+        public IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
         {
-            return _DataService.GetInbox(userID, pageIndex, pageSize, ref totalRecords);
+            return _dataService.GetInbox(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, readStatus, archivedStatus);
         }
 
-        public IList<Message> GetSentbox(int userID, int pageIndex, int pageSize, ref int totalRecords)
+        public IList<Message> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
         {
-            return _DataService.GetSentbox(userID, pageIndex, pageSize, ref totalRecords);
+            return _dataService.GetSentbox(userId, pageIndex, pageSize, ref totalRecords);
         }
 
-        public IList<MessageItem> GetRecentMessages(int userID, ref int totalRecords)
+        public IList<MessageItem> GetRecentMessages(int userId, ref int totalRecords)
         {
-            var messages = GetInbox(userID, 1, 10, ref totalRecords);
+            var messages = GetInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
             return messages;
         }
+
+        public IList<MessageItem> GetArchivedMessages(int userId, ref int totalRecords)
+        {
+            var messages = GetInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived);
+            return messages;
+        }
+
 
         public Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)
         {
@@ -156,29 +177,25 @@ namespace DotNetNuke.Services.Social.Messaging
                 throw new ArgumentException(Localization.Localization.GetExceptionMessage("RolesOrUsersRequiredError", "Both Roles and Users cannot be null or empty-lists."));
             }
 
-            if (!string.IsNullOrEmpty(subject) && subject.Length > MESSAGING_MAX_SUBJECT)
+            if (!string.IsNullOrEmpty(subject) && subject.Length > ConstMaxSubject)
             {
-                throw new ArgumentException(Localization.Localization.GetExceptionMessage("SubjectTooBigError", "Subject supplied is too big. Maximum {0}, Actual {1}.", MESSAGING_MAX_SUBJECT, subject.Length));
+                throw new ArgumentException(Localization.Localization.GetExceptionMessage("SubjectTooBigError", "Subject supplied is too big. Maximum {0}, Actual {1}.", ConstMaxSubject, subject.Length));
             }
 
             var sbTo = new StringBuilder();
             bool replyAllAllowed = true;
             if (roles != null)
             {
-                foreach (var role in roles)
+                foreach (var role in roles.Where(role => !string.IsNullOrEmpty(role.RoleName)))
                 {
-                    if (!string.IsNullOrEmpty(role.RoleName))
-                    {
-                        sbTo.Append(role.RoleName + ",");
-                        replyAllAllowed = false;
-                    }
+                    sbTo.Append(role.RoleName + ",");
+                    replyAllAllowed = false;
                 }
             }
 
             if (users != null)
             {
-                foreach (var user in users)
-                    if (!string.IsNullOrEmpty(user.DisplayName)) sbTo.Append(user.DisplayName + ",");                        
+                foreach (var user in users.Where(user => !string.IsNullOrEmpty(user.DisplayName))) sbTo.Append(user.DisplayName + ",");                        
             }
             
             if (sbTo.Length == 0)
@@ -186,41 +203,42 @@ namespace DotNetNuke.Services.Social.Messaging
                 throw new ArgumentException(Localization.Localization.GetExceptionMessage("EmptyToListFoundError", "Empty To List found while analyzing User and Roles List."));
             }
             
-            if (sbTo.Length > MESSAGING_MAX_TO)
+            if (sbTo.Length > ConstMaxTo)
             {
-                throw new ArgumentException(Localization.Localization.GetExceptionMessage("ToListTooBigError", "To List supplied is too big. Maximum {0}, Actual {1}.", MESSAGING_MAX_TO, sbTo.Length));
+                throw new ArgumentException(Localization.Localization.GetExceptionMessage("ToListTooBigError", "To List supplied is too big. Maximum {0}, Actual {1}.", ConstMaxTo, sbTo.Length));
             }
 
-            var message = new Message { Body = body, Subject = subject, To = sbTo.ToString(0, sbTo.Length - 1), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName};
+            var message = new Message { Body = body, Subject = subject, To = sbTo.ToString().Trim(','), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName};
 
-            message.MessageID = _DataService.SaveSocialMessage(message, UserController.GetCurrentUserInfo().UserID);
+            message.MessageID = _dataService.SaveSocialMessage(message, UserController.GetCurrentUserInfo().UserID);
 
             //associate attachments
             if (fileIDs != null)
             {
-                foreach (var fileID in fileIDs)
+                foreach (var attachment in fileIDs.Select(fileId => new MessageAttachment {FileID = fileId, MessageID = message.MessageID}))
                 {
-                    var attachment = new MessageAttachment {FileID = fileID, MessageID = message.MessageID};
-                    _DataService.SaveSocialMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
+                    _dataService.SaveSocialMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
                 }
             }
 
-            //send message to each Role
+            //send message to Roles
             if (roles != null)
             {
-                foreach (var role in roles)
-                {
-                    _DataService.CreateSocialMessageRecipientsForRole(message.MessageID, role.RoleID, UserController.GetCurrentUserInfo().UserID);
-                }
+                var roleIds = string.Empty;
+                roleIds = roles
+                    .Select(r => r.RoleID)
+                    .Aggregate(roleIds, (current, roleId) => current + (roleId + ","))
+                    .Trim(',');
+
+                _dataService.CreateSocialMessageRecipientsForRole(message.MessageID, roleIds, UserController.GetCurrentUserInfo().UserID);
             }
 
-            //send message to each User
+            //send message to each User - this should be called after CreateSocialMessageRecipientsForRole.
             if (users != null)
             {
-                foreach (var user in users)
+                foreach (var recipient in from user in users where GetSocialMessageRecipient(message.MessageID, user.UserID) == null select new MessageRecipient {MessageID = message.MessageID, UserID = user.UserID, Read = false, RecipientID = Null.NullInteger})
                 {
-                    var recipient = new MessageRecipient {MessageID = message.MessageID, UserID = user.UserID, Read = false, RecipientID = Null.NullInteger};
-                    _DataService.SaveSocialMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
+                    _dataService.SaveSocialMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
                 }
             }
 

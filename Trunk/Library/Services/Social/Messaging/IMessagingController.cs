@@ -32,6 +32,7 @@ namespace DotNetNuke.Services.Social.Messaging
     {
         #region Messaging Business APIs
 
+        MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId);
                       
         #endregion
 
@@ -41,12 +42,12 @@ namespace DotNetNuke.Services.Social.Messaging
         void MarkUnRead(int messageRecipientId, int userId);
         void MarkArchived(int messageRecipientId, int userId);
         void MarkUnArchived(int messageRecipientId, int userId);
-      
-        IList<MessageItem> GetInbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
-        IList<Message> GetSentbox(int userID, int pageIndex, int pageSize, ref int totalRecords);
+
+        IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
+        IList<Message> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
 
         //Gets the latest 10 messages.s
-        IList<MessageItem> GetRecentMessages(int userID, ref int totalRecords);
+        IList<MessageItem> GetRecentMessages(int userId, ref int totalRecords);
 
         Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
 

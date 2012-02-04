@@ -1,7 +1,4 @@
-using System;
-using System.Web;
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities.Modules;
+using System.Web.Mvc;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 
@@ -11,58 +8,25 @@ namespace DotNetNuke.Web.Services
     {
         public DnnModuleAuthorizeAttribute()
         {
-            ModuleIdKey = "ModuleId";
+            AccessLevel = SecurityAccessLevel.Host;
         }
 
-        //todo is SAL appropriate some values don't really fit
-        public SecurityAccessLevel Requires { get; set; }
-        public string ModuleIdKey { get; set; }
+        public string PermissionKey { get; set; }
+        public SecurityAccessLevel AccessLevel { get; set; }
 
         // This method must be thread-safe since it is called by the caching module.
-
-        // This method must be thread-safe since it is called by the caching module.
-        protected override bool AuthorizeCore(HttpContextBase httpContext)
+        protected override bool AuthorizeCore(AuthorizationContext context)
         {
-            if (Requires == SecurityAccessLevel.Anonymous)
+            //by using ActiveModule the request must specify both moduleid and tabid
+            //it is possible to validate permissions when only moduleid is included
+            //but is it a desirable thing to do?
+            var controller = context.Controller as DnnController;
+            if (controller != null && controller.ActiveModule != null)
             {
-                return true;
-            }
-
-            int moduleId = FindModuleId(httpContext.Request);
-            if (moduleId > Null.NullInteger)
-            {
-                ModuleInfo module = new ModuleController().GetModule(moduleId);
-                return ModulePermissionController.HasModuleAccess(Requires, "EDIT", module);
+                return ModulePermissionController.HasModuleAccess(AccessLevel, PermissionKey, controller.ActiveModule);
             }
 
             return false;
-        }
-
-        private int FindModuleId(HttpRequestBase request)
-        {
-            string value = request.QueryString[ModuleIdKey];
-
-            if (String.IsNullOrEmpty(value))
-            {
-                value = request.Headers[ModuleIdKey];
-            }
-
-            if (String.IsNullOrEmpty(value))
-            {
-                HttpCookie cookie = request.Cookies[ModuleIdKey];
-                if (cookie != null)
-                {
-                    value = cookie.Value;
-                }
-            }
-
-            int id;
-            if (Int32.TryParse(value, out id))
-            {
-                return id;
-            }
-
-            return Null.NullInteger;
         }
     }
 }

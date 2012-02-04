@@ -214,6 +214,8 @@
     <Compile Include="Services\Localization\ILocalizationProvider.cs" />
     <Compile Include="Services\Localization\LocalizationProvider.cs" />
     <Compile Include="Services\Log\EventLog\IEventLogController.cs" />
+    <Compile Include="Services\Social\Messaging\MessageArchivedStatus.cs" />
+    <Compile Include="Services\Social\Messaging\MessageReadStatus.cs" />
     <Compile Include="Services\Social\Messaging\MessageItem.cs" />
     <Compile Include="Services\Social\Messaging\MessagingController.cs" />
     <Compile Include="Services\Social\Messaging\Data\DataService.cs" />

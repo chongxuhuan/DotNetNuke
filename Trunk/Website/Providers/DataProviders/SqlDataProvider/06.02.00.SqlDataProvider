@@ -2037,10 +2037,18 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]    
-    @MessageID int,
-    @RoleID int,    
-	@CreateUpdateUserID INT    
+    @MessageID int,         -- message id
+    @RoleIDs nvarchar(max), -- comma separated list of RoleIds
+	@CreateUpdateUserID INT -- create / update user id   
 AS 
+    DECLARE @currentdate AS DATETIME = GETDATE()
+    
+    ;WITH CTE_Roles(RowNumber, RowValue)
+    AS
+    (
+	SELECT * FROM dnn_ConvertListToTable(',', @RoleIDs)
+    )
+      
     INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
 			[MessageID],
 			[UserID],
@@ -2051,17 +2059,17 @@ AS
             [LastModifiedByUserID],
             [LastModifiedOnDate]			        												        
             )            
-			SELECT 
+			SELECT DISTINCT
 			  @MessageID, 	
 			  UserID,
 			  0,            
 			  0, 	  
               @CreateUpdateUserID , -- CreatedBy - int
-              GETDATE() , -- CreatedOn - datetime
+              @currentdate , -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
-              GETDATE() -- LastModifiedOn - datetime			                                                
-           FROM {databaseOwner}{objectQualifier}vw_UserRoles
-		   WHERE RoleID = @RoleID    		               
+              @currentdate -- LastModifiedOn - datetime			                                                
+           FROM {databaseOwner}{objectQualifier}vw_UserRoles ur
+           INNER JOIN CTE_Roles cr ON ur.RoleID = cr.RowValue      		   	   		   
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipient]') AND type in (N'P', N'PC'))
@@ -2095,11 +2103,26 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage] 
-    @MessageID INT
+    @MessageID INT    
+AS 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
+	WHERE  [MessageID] = @MessageID 	 
+
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessageAndUser]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessageAndUser]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessageAndUser] 
+    @MessageID INT,
+    @UserID INT  
 AS 
 	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [MessageID] = @MessageID 
+	 AND   [UserID] = @UserID 
 
 GO
 
@@ -3496,9 +3519,13 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetInbox]
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetInbox]
-	@UserID       int,
-	@PageIndex    int,
-	@PageSize     int
+	@UserID          int,
+	@PageIndex       int,
+	@PageSize        int,
+	@SortField       nvarchar(25) = 'CreatedOnDate',
+	@SortAscending   bit = 0, 		
+	@Read            bit = 0,
+	@Archived        bit = 0	
 AS
 BEGIN
 
@@ -3517,14 +3544,23 @@ WITH inboxItems  AS
 (
 	SELECT  DISTINCT [RecipientID], [Subject], CAST(BODY as nvarchar(150)) AS Body, [SenderUserID], 
 			[Read], [Archived], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
-			MessageRecipients.[MessageID],	
-			MessageRecipients.[CreatedByUserID], MessageRecipients.[CreatedOnDate], 
-			MessageRecipients.[LastModifiedByUserID], MessageRecipients.[LastModifiedOnDate],
-			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = MessageRecipients.MessageID) AS AttachmentCount,
-			ROW_NUMBER() OVER (ORDER BY RecipientID DESC) AS RowNumber
-	FROM	{databaseOwner}{objectQualifier}Social_MessageRecipients AS MessageRecipients
-	INNER JOIN {databaseOwner}{objectQualifier}Social_Messages ON MessageRecipients.MessageID = {databaseOwner}{objectQualifier}Social_Messages.MessageID	
+			mr.[MessageID],	
+			mr.[CreatedByUserID], mr.[CreatedOnDate], 
+			mr.[LastModifiedByUserID], mr.[LastModifiedOnDate],
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = mr.MessageID) AS AttachmentCount,
+			ROW_NUMBER() OVER(ORDER BY 
+				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN mr.[CreatedOnDate] END ASC,
+				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN mr.[CreatedOnDate] END DESC,
+				 CASE WHEN @SortField = 'From' AND @SortAscending = 1 THEN [From] END ASC,
+				 CASE WHEN @SortField = 'From' AND @SortAscending = 0 THEN [From] END DESC,
+				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
+				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
+				) AS RowNumber
+	FROM	{databaseOwner}{objectQualifier}Social_MessageRecipients AS mr
+	INNER JOIN {databaseOwner}{objectQualifier}Social_Messages ON mr.MessageID = {databaseOwner}{objectQualifier}Social_Messages.MessageID	
 	WHERE UserID = @UserID
+	AND ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
+	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))	
 )	
 SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
 order by RowNumber ASC
@@ -3635,21 +3671,13 @@ GO
 
 CREATE VIEW {databaseOwner}[{objectQualifier}vw_Profile]
 AS
-SELECT     
-	U.UserID, 
-	P.PortalId, 
-	U.Username, 
-	U.DisplayName, 
-	U.Email, 
-	U.IsSuperUser, 
-	PD.PropertyName, 
-	P.IsDeleted, 
-	CASE WHEN PropertyText IS NULL THEN PropertyValue ELSE PropertyText END AS PropertyValue
-FROM  {databaseOwner}{objectQualifier}UserProfile AS UP 
-	INNER JOIN {databaseOwner}{objectQualifier}ProfilePropertyDefinition AS PD ON PD.PropertyDefinitionID = UP.PropertyDefinitionID 
-	INNER JOIN {databaseOwner}{objectQualifier}Users AS U ON UP.UserID = U.UserID 
-	INNER JOIN {databaseOwner}{objectQualifier}UserPortals AS P ON U.UserID = P.UserId AND PD.PortalID = P.PortalId
-
+	SELECT     
+		UP.UserID, 
+		PD.PortalId, 
+		PD.PropertyName, 
+		CASE WHEN PropertyText IS NULL THEN PropertyValue ELSE PropertyText END AS PropertyValue
+	FROM  {databaseOwner}{objectQualifier}UserProfile AS UP 
+		INNER JOIN {databaseOwner}{objectQualifier}ProfilePropertyDefinition AS PD ON PD.PropertyDefinitionID = UP.PropertyDefinitionID 
 GO
 
 
@@ -3940,6 +3968,7 @@ AS
 							SELECT 	
 									ROW_NUMBER() OVER(' + @sortSql + ') AS RowNumber,
 									U.UserID,
+									U.PortalID,
 									U.Username ,
 									U.Email,
 									U.DisplayName,
@@ -3965,6 +3994,7 @@ AS
 							P.PropertyValue
 						FROM TempUsers U
 							INNER JOIN {objectQualifier}vw_Profile P ON P.UserID = U.UserID
+								AND P.PortalId = U.PortalId	
 					)
 										
 					SELECT  * FROM TempUsersWithProfile

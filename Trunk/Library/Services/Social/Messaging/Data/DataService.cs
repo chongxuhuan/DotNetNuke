@@ -60,9 +60,18 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             _provider.ExecuteNonQuery("DeleteSocialMessage", messageId);
         }
 
-        public IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
+        public IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
         {
-            IDataReader dr = _provider.ExecuteReader("GetInbox", userId, pageIndex, pageSize);
+            object read = null;
+            object archived = null;
+
+            if (readStatus == MessageReadStatus.Read) read = true;
+            else if (readStatus == MessageReadStatus.UnRead) read = false;
+
+            if (archivedStatus == MessageArchivedStatus.Archived) archived = true;
+            else if (archivedStatus == MessageArchivedStatus.UnArchived) archived = false;
+
+            IDataReader dr = _provider.ExecuteReader("GetInbox", userId, pageIndex, pageSize, sortColumn, sortAscending, read, archived);
 
             try
             {
@@ -118,24 +127,29 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteScalar<int>("SaveSocialMessageRecipient", messageRecipient.RecipientID, messageRecipient.MessageID, messageRecipient.UserID, messageRecipient.Read, messageRecipient.Archived, createUpdateUserId);
         }
 
-        public void CreateSocialMessageRecipientsForRole(int messageId, int roleId, int createUpdateUserId)
+        public void CreateSocialMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId)
         {
-            _provider.ExecuteNonQuery("CreateSocialMessageRecipientsForRole", messageId, roleId, createUpdateUserId);
+            _provider.ExecuteNonQuery("CreateSocialMessageRecipientsForRole", messageId, roleIds, createUpdateUserId);
         }
 
-        public IDataReader GetSocialMessageRecipient()
+        public IDataReader GetSocialMessageRecipient(int messageRecipientId)
         {
-            return _provider.ExecuteReader("GetSocialMessageRecipient");
+            return _provider.ExecuteReader("GetSocialMessageRecipient", messageRecipientId);
         }
 
-        public IDataReader GetSocialMessageRecipientsByUser()
+        public IDataReader GetSocialMessageRecipientsByUser(int userId)
         {
-            return _provider.ExecuteReader("GetSocialMessageRecipientsByUser");
+            return _provider.ExecuteReader("GetSocialMessageRecipientsByUser", userId);
         }
 
-        public IDataReader GetSocialMessageRecipientsByMessage()
+        public IDataReader GetSocialMessageRecipientsByMessage(int messageId)
         {
-            return _provider.ExecuteReader("GetSocialMessageRecipientsByMessage");
+            return _provider.ExecuteReader("GetSocialMessageRecipientsByMessage", messageId);
+        }
+
+        public IDataReader GetSocialMessageRecipientByMessageAndUser(int messageId, int userId)
+        {
+            return _provider.ExecuteReader("GetSocialMessageRecipientsByMessageAndUser", messageId, userId);
         }
 
         public void DeleteSocialMessageRecipient(int messageRecipientId)

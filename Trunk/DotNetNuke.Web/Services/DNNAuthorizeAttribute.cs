@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
-using System.Web;
+using System.Web.Mvc;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 
@@ -60,15 +60,15 @@ namespace DotNetNuke.Web.Services
         /// </summary>
         public bool AllowAnonymous { get; set; }
 
-        protected override bool AuthorizeCore(HttpContextBase httpContext)
+        protected override bool AuthorizeCore(AuthorizationContext context)
         {
             //do not call base implementation
-            if (httpContext == null)
+            if (context == null)
             {
-                throw new ArgumentNullException("httpContext");
+                throw new ArgumentNullException("context");
             }
 
-            IPrincipal user = httpContext.User;
+            IPrincipal user = context.HttpContext.User;
             if (!AllowAnonymous)
             {
                 if (user == null || !user.Identity.IsAuthenticated)
