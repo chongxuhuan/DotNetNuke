@@ -11,7 +11,7 @@
 
                     if (typeof (parentTop.$find) != "undefined") {
                         if (location.href.indexOf('popUp') == -1 || windowTop.location.href.indexOf("popUp") > -1) {
-                            
+
                             var popup = windowTop.$("#iPopUp");
                             var refresh = popup.dialog("option", "refresh");
                             var closingUrl = popup.dialog("option", "closingUrl");
@@ -64,40 +64,41 @@
         .width(width - 11)
         .height(height - 11);
 
-            var $dnnToggleMax = $('<a href="#" class="dnnToggleMax"><span>Max</span></a>');
-            $('.ui-dialog-title').after($dnnToggleMax);
-            $dnnToggleMax.click(function (e) {
-                e.preventDefault();
+            if ($('.ui-dialog-title').next("a.dnnToggleMax").length === 0) {
+                var $dnnToggleMax = $('<a href="#" class="dnnToggleMax"><span>Max</span></a>');
+                $('.ui-dialog-title').after($dnnToggleMax);
+                $dnnToggleMax.click(function (e) {
+                    e.preventDefault();
 
-                var $window = $(window),
-                $this = $(this),
-                newHeight,
-                newWidth,
-                newPosition;
+                    var $window = $(window),
+                        $this = $(this),
+                        newHeight,
+                        newWidth,
+                        newPosition;
 
-                if ($modal.data('isMaximized')) {
-                    newHeight = $modal.data('height');
-                    newWidth = $modal.data('width');
-                    newPosition = $modal.data('position');
-                    $modal.data('isMaximized', false);
-                }
-                else {
-                    $modal.data('height', $modal.dialog("option", "minHeight"))
-                        .data('width', $modal.dialog("option", "minWidth"))
-                        .data('position', $modal.dialog("option", "position"));
+                    if ($modal.data('isMaximized')) {
+                        newHeight = $modal.data('height');
+                        newWidth = $modal.data('width');
+                        newPosition = $modal.data('position');
+                        $modal.data('isMaximized', false);
+                    } else {
+                        $modal.data('height', $modal.dialog("option", "minHeight"))
+                            .data('width', $modal.dialog("option", "minWidth"))
+                            .data('position', $modal.dialog("option", "position"));
 
-                    newHeight = $window.height() - 11;
-                    newWidth = $window.width() - 11;
-                    newPosition = [0, 0];
-                    $modal.data('isMaximized', true);
-                }
+                        newHeight = $window.height() - 11;
+                        newWidth = $window.width() - 11;
+                        newPosition = [0, 0];
+                        $modal.data('isMaximized', true);
+                    }
 
-                $this.toggleClass('ui-dialog-titlebar-max');
-                $modal.dialog({ height: newHeight, width: newWidth });
-                $modal.dialog({ position: 'center' });
+                    $this.toggleClass('ui-dialog-titlebar-max');
+                    $modal.dialog({ height: newHeight, width: newWidth });
+                    $modal.dialog({ position: 'center' });
 
-            });
-
+                });
+            };
+            
             var showLoading = function () {
                 var loading = $("<div class=\"dnnLoading\"></div>");
                 loading.css({
