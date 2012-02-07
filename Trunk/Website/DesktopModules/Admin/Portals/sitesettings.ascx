@@ -202,7 +202,7 @@
 				</div>
 				<div class="dnnFormItem">
 					<dnn:Label ID="plPayPalSandboxEnabled" runat="server" ControlName="chkPayPalSandboxEnabled" />
-					<asp:CheckBox ID="chkPayPalSandboxEnabled" runat="server" />
+					<asp:CheckBox ID="chkPayPalSandboxEnabled" runat="server" AutoPostBack="True" />
 				</div>
 			</fieldset>
 			<h2 id="dnnSitePanel-Usability" class="dnnFormSectionHead"><a href=""><%=LocalizeString("Usability")%></a></h2>

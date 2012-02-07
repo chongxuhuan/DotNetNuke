@@ -567,6 +567,7 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             jQuery.RequestDnnPluginsRegistration();
 
+            chkPayPalSandboxEnabled.CheckedChanged += OnChkPayPalSandboxChanged;
             ctlDesktopModules.LocalResourceFile = LocalResourceFile;
         }
 
@@ -1062,6 +1063,11 @@ namespace DotNetNuke.Modules.Admin.Portals
         {
             var aliases = new PortalAliasController().GetPortalAliasArrayByPortalID(_portalId);
             BindDefaultAlias(aliases);
+        }
+
+        protected void OnChkPayPalSandboxChanged(object sender, EventArgs e)
+        {
+            processorLink.NavigateUrl = chkPayPalSandboxEnabled.Checked ? "https://developer.paypal.com" : Globals.AddHTTP(processorCombo.SelectedItem.Value);
         }
 
         #endregion

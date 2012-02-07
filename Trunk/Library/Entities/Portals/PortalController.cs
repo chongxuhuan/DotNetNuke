@@ -96,9 +96,9 @@ namespace DotNetNuke.Entities.Portals
             FolderPermissionController.SaveFolderPermissions((FolderInfo)folder);
         }
 
-        private static void CreateDefaultPortalRoles(int portalId, int administratorId, int administratorRoleId, int registeredRoleId, int subscriberRoleId)
+        private static void CreateDefaultPortalRoles(int portalId, int administratorId, int administratorRoleId, int registeredRoleId, int subscriberRoleId, int unverifiedRoleId)
         {
-            RoleController controller = new RoleController();
+            var controller = new RoleController();
 
             //create required roles if not already created
             if (administratorRoleId == -1)
@@ -113,9 +113,14 @@ namespace DotNetNuke.Entities.Portals
             {
                 subscriberRoleId = CreateRole(portalId, "Subscribers", "A public role for portal subscriptions", 0, 0, "M", 0, 0, "N", true, true);
             }
+            if (unverifiedRoleId == -1)
+            {
+                unverifiedRoleId = CreateRole(portalId, "Unverified Users", "Unverified Users", 0, 0, "M", 0, 0, "N", false, false);
+            }
             controller.AddUserRole(portalId, administratorId, administratorRoleId, Null.NullDate, Null.NullDate);
             controller.AddUserRole(portalId, administratorId, registeredRoleId, Null.NullDate, Null.NullDate);
             controller.AddUserRole(portalId, administratorId, subscriberRoleId, Null.NullDate, Null.NullDate);
+            controller.AddUserRole(portalId, administratorId, unverifiedRoleId, Null.NullDate, Null.NullDate);
         }
 
         private static string CreateProfileDefinitions(int portalId, string templatePath, string templateFile)
@@ -688,19 +693,20 @@ namespace DotNetNuke.Entities.Portals
 
         private void ParseRoleGroups(XPathNavigator nav, int portalID, int administratorId)
         {
-            int administratorRoleId = -1;
-            int registeredRoleId = -1;
-            int subscriberRoleId = -1;
-            RoleController controller = new RoleController();
+            var administratorRoleId = -1;
+            var registeredRoleId = -1;
+            var subscriberRoleId = -1;
+            var unverifiedRoleId = -1;
+
             foreach (XPathNavigator roleGroupNav in nav.Select("rolegroup"))
             {
-                RoleGroupInfo roleGroup = CBO.DeserializeObject<RoleGroupInfo>(new StringReader(roleGroupNav.OuterXml));
+                var roleGroup = CBO.DeserializeObject<RoleGroupInfo>(new StringReader(roleGroupNav.OuterXml));
                 if (roleGroup.RoleGroupName != "GlobalRoles")
                 {
                     roleGroup.PortalID = portalID;
                     CreateRoleGroup(roleGroup);
                 }
-                foreach (RoleInfo role in roleGroup.Roles.Values)
+                foreach (var role in roleGroup.Roles.Values)
                 {
                     role.PortalID = portalID;
                     role.RoleGroupID = roleGroup.RoleGroupID;
@@ -718,14 +724,16 @@ namespace DotNetNuke.Entities.Portals
                         case RoleType.None:
                             CreateRole(role);
                             break;
+                        case RoleType.UnverifiedUser:
+                            unverifiedRoleId = CreateRole(role);
+                            break;
                     }
                 }
             }
-            CreateDefaultPortalRoles(portalID, administratorId, administratorRoleId, registeredRoleId, subscriberRoleId);
+            CreateDefaultPortalRoles(portalID, administratorId, administratorRoleId, registeredRoleId, subscriberRoleId, unverifiedRoleId);
 
             //update portal setup
-            PortalInfo objportal;
-            objportal = GetPortal(portalID);
+            var objportal = GetPortal(portalID);
             UpdatePortalSetup(portalID,
                               administratorId,
                               administratorRoleId,
@@ -742,13 +750,14 @@ namespace DotNetNuke.Entities.Portals
 
         private void ParseRoles(XPathNavigator nav, int portalID, int administratorId)
         {
-            int administratorRoleId = -1;
-            int registeredRoleId = -1;
-            int subscriberRoleId = -1;
-            RoleController controller = new RoleController();
+            var administratorRoleId = -1;
+            var registeredRoleId = -1;
+            var subscriberRoleId = -1;
+            var unverifiedRoleId = -1;
+
             foreach (XPathNavigator roleNav in nav.Select("role"))
             {
-                RoleInfo role = CBO.DeserializeObject<RoleInfo>(new StringReader(roleNav.OuterXml));
+                var role = CBO.DeserializeObject<RoleInfo>(new StringReader(roleNav.OuterXml));
                 role.PortalID = portalID;
                 role.RoleGroupID = Null.NullInteger;
                 switch (role.RoleType)
@@ -765,15 +774,17 @@ namespace DotNetNuke.Entities.Portals
                     case RoleType.None:
                         CreateRole(role);
                         break;
+                    case RoleType.UnverifiedUser:
+                        unverifiedRoleId = CreateRole(role);
+                        break;
                 }
             }
 
             //create required roles if not already created
-            CreateDefaultPortalRoles(portalID, administratorId, administratorRoleId, registeredRoleId, subscriberRoleId);
+            CreateDefaultPortalRoles(portalID, administratorId, administratorRoleId, registeredRoleId, subscriberRoleId, unverifiedRoleId);
 
             //update portal setup
-            PortalInfo objportal;
-            objportal = GetPortal(portalID);
+            var objportal = GetPortal(portalID);
             UpdatePortalSetup(portalID,
                               administratorId,
                               administratorRoleId,

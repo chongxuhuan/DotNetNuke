@@ -199,6 +199,7 @@ namespace DotNetNuke.Services.Cache
         {
             RemoveCacheKey(DataCache.HostSettingsCacheKey, clearRuntime);
             RemoveCacheKey(DataCache.SecureHostSettingsCacheKey, clearRuntime);
+            RemoveCacheKey(DataCache.UnSecureHostSettingsCacheKey, clearRuntime);
             RemoveCacheKey(DataCache.PortalAliasCacheKey, clearRuntime);
             RemoveCacheKey("CSS", clearRuntime);
             RemoveCacheKey("StyleSheets", clearRuntime);

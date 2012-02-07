@@ -1840,7 +1840,7 @@ CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageRecipients(
 	)
 )
 
-CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Social_MessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}Social_MessageRecipients] ([UserID] ASC, [CreatedOnDate] DESC)		
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Social_MessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}Social_MessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC)		
 
 ALTER TABLE {databaseOwner}[{objectQualifier}Social_MessageRecipients]  
 	ADD CONSTRAINT [FK_{objectQualifier}Social_MessageRecipients_{objectQualifier}Social_Messages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}Social_Messages] ([MessageID]) ON DELETE CASCADE
@@ -2046,7 +2046,7 @@ AS
     ;WITH CTE_Roles(RowNumber, RowValue)
     AS
     (
-	SELECT * FROM dnn_ConvertListToTable(',', @RoleIDs)
+	SELECT * FROM {objectQualifier}ConvertListToTable(',', @RoleIDs)
     )
       
     INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
@@ -3530,17 +3530,20 @@ AS
 BEGIN
 
 --Return total message count
-SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_MessageRecipients WHERE UserID = @UserID
+SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_MessageRecipients 
+	WHERE UserID = @UserID
+	AND ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
+	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))	
+
 
 -- Set the page bounds
 DECLARE 
-	@PageLowerBound INT, 
-	@PageUpperBound INT, 
-	@RowsToReturn int;
-	
-exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output;
+	@PageLowerBound INT, @PageUpperBound INT;
 
-WITH inboxItems  AS
+SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
+SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize	
+
+;WITH inboxItems  AS
 (
 	SELECT  DISTINCT [RecipientID], [Subject], CAST(BODY as nvarchar(150)) AS Body, [SenderUserID], 
 			[Read], [Archived], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
@@ -3815,8 +3818,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUsersAdvancedSearch]
 	@SortBy nvarchar(100),			-- sort field
 	@SortAscending bit,				-- sort flag indicating whether sort is asc or desc
 	@PropertyNames nvarchar(max),	-- list of property names to filter
-	@PropertyValues nvarchar(max),	-- list of property values to filter
-	@DisplayName nvarchar(128)	    -- filter by display name
+	@PropertyValues nvarchar(max)	-- list of property values to filter
 )
 AS
 	-- Set up Top XX
@@ -3839,13 +3841,11 @@ AS
 	DECLARE @fieldNames nvarchar(max)
 	SELECT @fieldNames = {databaseOwner}{objectQualifier}GetProfileFieldSql(@PortalID, ' nvarchar(max)')
 	
-	-- Setup Profile Field Joins
+	-- Setup Profile Field Joins and Where claus
 	DECLARE @joinSql nvarchar(max)
-
+	DECLARE @whereSql nvarchar(max)
 	
-	IF @PropertyNames IS NULL OR @PropertyNames = ''
-		SET @joinSql = ''
-	ELSE
+	IF @PropertyNames IS NOT NULL AND @PropertyNames <> ''
 		BEGIN
 			;WITH CTE_PropertyNames(RowNumber, RowValue)
 			AS
@@ -3860,6 +3860,22 @@ AS
 			SELECT @joinSql = COALESCE(@joinSql + ' ','') + 'INNER JOIN {objectQualifier}GetUsersByPropertyName(''' + N.RowValue + ''', ''' + V.RowValue +''', + ' + CONVERT(nvarchar(20), @PortalID) + ') AS U'+ N.RowValue +' ON U.UserID = U'+ N.RowValue +'.UserID '
 			FROM CTE_PropertyNames AS N
 				INNER JOIN CTE_PropertyValues AS V ON N.RowNumber = V.RowNumber
+			WHERE N.RowValue NOT IN ('DisplayName', 'Email', 'Username')
+				
+			;WITH CTE_PropertyNames(RowNumber, RowValue)
+			AS
+			(
+				SELECT * FROM {objectQualifier}ConvertListToTable(',', @PropertyNames)
+			),
+			CTE_PropertyValues(RowNumber, RowValue)
+			AS
+			(
+				SELECT * FROM {objectQualifier}ConvertListToTable(',', @PropertyValues)
+			)
+			SELECT @whereSql = COALESCE(@whereSql + ' ','') + 'AND U.' + N.RowValue + ' LIKE ''' + V.RowValue + ''' ' 
+			FROM CTE_PropertyNames AS N
+				INNER JOIN CTE_PropertyValues AS V ON N.RowNumber = V.RowNumber
+			WHERE N.RowValue IN ('DisplayName', 'Email', 'Username')
 		END
 	
 			
@@ -3870,28 +3886,56 @@ AS
 					(
 						RowNumber int,
 						UserID int,
+						PortalID int,
 						Username nvarchar(100),
 						Email nvarchar(256),
 						DisplayName nvarchar(128),
 						IsSuperUser bit,
+						IsDeleted bit,
+						AffiliateID int,
+						UpdatePassword bit,
+						Authorised bit,
+						CreateDate datetime,
+						LastActivityDate datetime,
+						LastLockoutDate datetime,
+						LastLoginDate datetime,
+						LastPasswordChangedDate datetime,
+						IsLockedOut bit,
+						PasswordQuestion nvarchar(256),
+						IsApproved bit,
 						' + @fieldNames + '
 					);
 					
 					WITH TempUsers
 					AS
 					(
-						SELECT 	U.UserID,
-								U.Username ,
-								U.Email,
-								U.DisplayName,
-								U.IsSuperUser,
-								U.PropertyName,
-								U.PropertyValue
-							FROM {objectQualifier}vw_Profile AS U '
-							+ @joinSql +	
-							'WHERE U.PortalID = ' + CONVERT(nvarchar(20), @PortalID) + '
-								AND U.DisplayName LIKE ''' + @DisplayName + '''
-								AND U.IsDeleted = 0
+						SELECT 
+							U.UserID,
+							U.PortalID,
+							U.Username,
+							U.Email,
+							U.DisplayName,
+							U.IsSuperUser,
+							U.IsDeleted,
+							U.AffiliateID,
+							U.UpdatePassword,
+							U.Authorised,
+							U.CreateDate,
+							U.LastActivityDate,
+							U.LastLockoutDate,
+							U.LastLoginDate,
+							U.LastPasswordChangedDate,
+							U.IsLockedOut,
+							U.PasswordQuestion,
+							U.IsApproved,
+							P.PropertyName,
+							P.PropertyValue
+						FROM {objectQualifier}vw_Users AS U 
+							INNER JOIN {objectQualifier}vw_Profile AS P ON U.UserID = P.UserID '
+						+ @joinSql +	
+						'WHERE U.PortalID = ' + CONVERT(nvarchar(20), @PortalID) + ' ' 
+						+ @whereSql + 
+							'AND U.IsDeleted = 0
 					)
 					
 					INSERT INTO @pivotedUsers
@@ -3905,9 +3949,54 @@ AS
 						) as pivotTable
 						
 					SELECT TOP ' + @topSql + ' * FROM @pivotedUsers
-					WHERE RowNumber >= ' + @minRowNumberSql + '
-				'
+					WHERE RowNumber >= ' + @minRowNumberSql			
+	
+	PRINT(@sql)
 	EXEC(@sql)
+GO
+
+/* Update Users View */
+/*********************/
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}vw_Users]') and OBJECTPROPERTY(id, N'IsView') = 1)
+	DROP VIEW {databaseOwner}[{objectQualifier}vw_Users]
+GO
+
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_Users]
+AS
+	SELECT DISTINCT TOP (100) PERCENT 
+		U.UserID, 
+		(CASE WHEN IsSuperUser = 1 THEN NULL ELSE UP.PortalId END) AS PortalId, 
+		U.Username, 
+		U.FirstName, 
+		U.LastName,
+		U.DisplayName, 
+		U.IsSuperUser, 
+		U.Email, 
+		U.AffiliateId, 
+		U.UpdatePassword, 
+		UP.Authorised, 
+		(CASE WHEN UP.PortalId IS NULL THEN U.IsDeleted ELSE UP.IsDeleted END) AS IsDeleted, 
+		UP.RefreshRoles, 
+		U.LastIPAddress, 
+		U.CreatedByUserID, 
+		U.CreatedOnDate, 
+		U.LastModifiedByUserID, 
+		U.LastModifiedOnDate, 
+		dbo.aspnet_Membership.CreateDate, 
+		dbo.aspnet_Users.LastActivityDate, 
+		dbo.aspnet_Membership.LastLockoutDate, 
+		dbo.aspnet_Membership.LastLoginDate, 
+		dbo.aspnet_Membership.LastPasswordChangedDate, 
+		dbo.aspnet_Membership.IsLockedOut, 
+		dbo.aspnet_Membership.PasswordQuestion, 
+		dbo.aspnet_Membership.IsApproved
+	FROM  {databaseOwner}{objectQualifier}UserPortals AS UP 
+		RIGHT OUTER JOIN {databaseOwner}{objectQualifier}Users AS U 
+		INNER JOIN dbo.aspnet_Membership 
+		INNER JOIN dbo.aspnet_Users ON dbo.aspnet_Membership.UserId = dbo.aspnet_Users.UserId 
+			ON U.Username = dbo.aspnet_Users.UserName
+			ON UP.UserId = U.UserID
 GO
 
 /* Add GetUsersBasicSearch Procedure */
@@ -3924,7 +4013,8 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUsersBasicSearch]
 	@PageIndex int,					-- 0 based page index
 	@SortBy nvarchar(100),			-- sort field
 	@SortAscending bit,				-- sort flag indicating whether sort is asc or desc
-	@DisplayName nvarchar(128)	    -- filter by display name
+	@PropertyName nvarchar(256),    -- property to filter by (username, diaplayname, email)
+	@PropertyValue nvarchar(256)	-- value of property
 )
 AS
 	-- Set up Top XX
@@ -3954,10 +4044,23 @@ AS
 					(
 						RowNumber int,
 						UserID int,
+						PortalID int,
 						Username nvarchar(100),
 						Email nvarchar(256),
 						DisplayName nvarchar(128),
 						IsSuperUser bit,
+						IsDeleted bit,
+						AffiliateID int,
+						UpdatePassword bit,
+						Authorised bit,
+						CreateDate datetime,
+						LastActivityDate datetime,
+						LastLockoutDate datetime,
+						LastLoginDate datetime,
+						LastPasswordChangedDate datetime,
+						IsLockedOut bit,
+						PasswordQuestion nvarchar(256),
+						IsApproved bit,
 						' + @fieldNames + '
 					);
 
@@ -3966,18 +4069,30 @@ AS
 					(
 						SELECT TOP ' + @topSql + ' * FROM (
 							SELECT 	
-									ROW_NUMBER() OVER(' + @sortSql + ') AS RowNumber,
-									U.UserID,
-									U.PortalID,
-									U.Username ,
-									U.Email,
-									U.DisplayName,
-									U.IsSuperUser
+								ROW_NUMBER() OVER(' + @sortSql + ') AS RowNumber,
+								U.UserID,
+								U.PortalID,
+								U.Username,
+								U.Email,
+								U.DisplayName,
+								U.IsSuperUser,
+								U.IsDeleted,
+								U.AffiliateID,
+								U.UpdatePassword,
+								U.Authorised,
+								U.CreateDate,
+								U.LastActivityDate,
+								U.LastLockoutDate,
+								U.LastLoginDate,
+								U.LastPasswordChangedDate,
+								U.IsLockedOut,
+								U.PasswordQuestion,
+								U.IsApproved
 								FROM {objectQualifier}vw_Users AS U
-								WHERE U.PortalID = ' + CONVERT(nvarchar(20), @PortalID) + '
-									AND U.DisplayName LIKE ''' + @DisplayName + '''
-									AND U.IsDeleted = 0
-							) AS U
+							WHERE U.PortalID = ' + CONVERT(nvarchar(20), @PortalID) + '
+								AND U.' + @PropertyName + ' LIKE ''' + @PropertyValue + '''
+								AND U.IsDeleted = 0
+						) AS U
 						WHERE RowNumber >= ' + @minRowNumberSql + ' 
 					),
 					TempUsersWithProfile
@@ -3986,10 +4101,23 @@ AS
 						SELECT 
 							U.RowNumber,
 							U.UserID,
-							U.Username ,
+							U.PortalID,
+							U.Username,
 							U.Email,
 							U.DisplayName,
 							U.IsSuperUser,
+							U.IsDeleted,
+							U.AffiliateID,
+							U.UpdatePassword,
+							U.Authorised,
+							U.CreateDate,
+							U.LastActivityDate,
+							U.LastLockoutDate,
+							U.LastLoginDate,
+							U.LastPasswordChangedDate,
+							U.IsLockedOut,
+							U.PasswordQuestion,
+							U.IsApproved,
 							P.PropertyName,
 							P.PropertyValue
 						FROM TempUsers U
@@ -4004,6 +4132,34 @@ AS
 					) as pivotTable
 				'
 	EXEC(@sql)
+GO
+
+/* Insert Unverified Users Role in existing portals  */
+/*****************************************************/
+
+IF (SELECT COUNT(PortalID) FROM {databaseOwner}[{objectQualifier}Portals]) > 0 BEGIN
+	DECLARE @PortalID int
+	
+	DECLARE portal_cursor CURSOR FOR
+	SELECT PortalID FROM {databaseOwner}[{objectQualifier}Portals]
+
+	OPEN portal_cursor
+
+	FETCH NEXT FROM portal_cursor INTO @PortalID
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		IF NOT EXISTS(SELECT RoleID FROM {databaseOwner}[{objectQualifier}Roles] WHERE PortalID = @PortalID AND RoleName = 'Unverified Users')
+		BEGIN
+			EXECUTE {databaseOwner}[{objectQualifier}AddRole] @PortalID, NULL, 'Unverified Users', 'Unverified Users', 0, 0, 'M', 0, 0, 'N', 0, 0, '', '', -1
+		END
+
+		FETCH NEXT FROM portal_cursor INTO @PortalID
+	END
+	
+	CLOSE portal_cursor
+	DEALLOCATE portal_cursor
+END
 GO
 
 /************************************************************/

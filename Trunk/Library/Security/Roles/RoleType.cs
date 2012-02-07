@@ -7,6 +7,7 @@ namespace DotNetNuke.Security.Roles
         Administrator,
         Subscriber,
         RegisteredUser,
-        None
+        None,
+        UnverifiedUser
     }
 }

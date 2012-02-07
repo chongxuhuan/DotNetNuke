@@ -19,6 +19,8 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -47,10 +49,10 @@ namespace DotNetNuke.Web.Services
 
         protected override void Initialize(RequestContext requestContext)
         {
-            var portalSettings = LoadPortalSettings(requestContext.HttpContext);
-            AuthenticateRequest(requestContext.HttpContext, portalSettings.PortalId);
-
             base.Initialize(requestContext);
+
+            LoadDnnContext(requestContext.HttpContext);
+            AuthenticateRequest(requestContext.HttpContext, PortalSettings.PortalId);
         }
 
         protected virtual void AuthenticateRequest(HttpContextBase context, int portalId)
@@ -68,16 +70,26 @@ namespace DotNetNuke.Web.Services
             MembershipModule.AuthenticateRequest(context, true /*allowUnknownExtension*/);
         }
 
-        protected virtual PortalSettings LoadPortalSettings(HttpContextBase context)
+        protected virtual void LoadDnnContext(HttpContextBase context)
         {
             var domainName = Globals.GetDomainName(context.Request);
             var alias = PortalAliasController.GetPortalAliasInfo(domainName);
 
-            int tabId = context.FindTabId();
+            int tabId;
+            VaidateTabAndModuleContext(context, alias.PortalID, out tabId);
 
-            if(tabId != Null.NullInteger)
+            var portalSettings = new PortalSettings(tabId, alias);
+            
+            context.Items["PortalSettings"] = portalSettings;
+        }
+
+        private void VaidateTabAndModuleContext(HttpContextBase context, int portalId, out int tabId)
+        {
+            tabId = context.FindTabId();
+
+            if (tabId != Null.NullInteger)
             {
-                if(!TabIsInPortal(tabId, alias.PortalID))
+                if (!TabIsInPortal(tabId, portalId))
                 {
                     //todo localize error message
                     throw new HttpException(400, "Specified tab is not in this portal");
@@ -85,7 +97,7 @@ namespace DotNetNuke.Web.Services
 
                 int moduleId = context.FindModuleId();
 
-                if(moduleId != Null.NullInteger)
+                if (moduleId != Null.NullInteger)
                 {
                     var module = new ModuleController().GetModule(moduleId, tabId);
                     if (module != null)
@@ -99,11 +111,20 @@ namespace DotNetNuke.Web.Services
                     }
                 }
             }
-            
-            var portalSettings = new PortalSettings(tabId, alias);
-            
-            context.Items["PortalSettings"] = portalSettings;
-            return portalSettings;
+
+            if (SupportedModuleNames.Any())
+            {
+                if (ActiveModule == null || NotASupportedModule(SupportedModuleNames))
+                {
+                    //todo localize error message
+                    throw new HttpException(400, "Specified module is not one of the RequiredModules");
+                }
+            }
+        }
+
+        private bool NotASupportedModule(IEnumerable<string> modules)
+        {
+            return modules.All(x => x != ActiveModule.DesktopModule.ModuleName);
         }
 
         private bool TabIsInPortal(int tabId, int portalId)
@@ -115,9 +136,26 @@ namespace DotNetNuke.Web.Services
         }
 
         /// <summary>
+        /// This controller will only process requests from the specified module names
+        /// <remarks>override to specify a module name</remarks>
+        /// </summary>
+        public virtual IEnumerable<string> SupportedModuleNames { get { return new string[0]; }}
+
+        /// <summary>
         /// PortalSettings for the current portal
         /// </summary>
-        public PortalSettings PortalSettings{get { return PortalController.GetCurrentPortalSettings(); }}
+        public PortalSettings PortalSettings
+        {
+            get
+            {
+                //avoid untestable static method PortalController.GetCurrentPortalSettings();
+                if (ControllerContext.HttpContext != null)
+                {
+                    return (PortalSettings) ControllerContext.HttpContext.Items["PortalSettings"];
+                }
+                return null;
+            }
+        }
 
         /// <summary>
         /// UserInfo for the current user

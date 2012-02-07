@@ -223,7 +223,7 @@ namespace DotNetNuke.Modules.Admin.Languages
             if (providerNavigator != null)
             {
                 string providerPath = providerNavigator.GetAttribute("providerPath", "");
-                CreatePackage(Package, providerPackage.PackageID, providerPath.Substring(2, providerPath.Length - 3).Replace("/", "\\"), fileName, createZip);
+                CreatePackage(Package, providerPackage.PackageID, providerPath.Substring(2, providerPath.Length - 2).Replace("/", "\\"), fileName, createZip);
             }
         }
 
