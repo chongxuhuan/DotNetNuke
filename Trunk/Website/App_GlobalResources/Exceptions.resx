@@ -234,4 +234,7 @@
   <data name="SenderRequiredError.Text" xml:space="preserve">
     <value>Either Sender is null or Sender.UserID is negative.</value>
   </data>
+  <data name="OnlyHostOrAdminCanSendToRoleError.Text" xml:space="preserve">
+    <value>Only SuperUsers and Site Administrators can send message to Role.</value>
+  </data>
 </root>

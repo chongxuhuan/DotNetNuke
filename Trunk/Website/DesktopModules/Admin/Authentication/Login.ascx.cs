@@ -1005,6 +1005,16 @@ namespace DotNetNuke.Modules.Admin.Authentication
 				case UserLoginStatus.LOGIN_USERNOTAPPROVED:
 					switch (e.Message)
 					{
+                        case "UnverifiedUser":
+                            if (e.User != null)
+                            {
+                                //First update the profile (if any properties have been passed)
+                                AuthenticationType = e.AuthenticationType;
+                                ProfileProperties = e.Profile;
+                                UpdateProfile(e.User, true);
+                                ValidateUser(e.User, false);
+                            }
+					        break;
 						case "EnterCode":
 							AddModuleMessage(e.Message, ModuleMessage.ModuleMessageType.YellowWarning, true);
 							break;

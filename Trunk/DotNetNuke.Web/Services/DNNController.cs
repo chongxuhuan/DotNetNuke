@@ -111,20 +111,6 @@ namespace DotNetNuke.Web.Services
                     }
                 }
             }
-
-            if (SupportedModuleNames.Any())
-            {
-                if (ActiveModule == null || NotASupportedModule(SupportedModuleNames))
-                {
-                    //todo localize error message
-                    throw new HttpException(400, "Specified module is not one of the RequiredModules");
-                }
-            }
-        }
-
-        private bool NotASupportedModule(IEnumerable<string> modules)
-        {
-            return modules.All(x => x != ActiveModule.DesktopModule.ModuleName);
         }
 
         private bool TabIsInPortal(int tabId, int portalId)
@@ -134,12 +120,6 @@ namespace DotNetNuke.Web.Services
 
             return tab != null;
         }
-
-        /// <summary>
-        /// This controller will only process requests from the specified module names
-        /// <remarks>override to specify a module name</remarks>
-        /// </summary>
-        public virtual IEnumerable<string> SupportedModuleNames { get { return new string[0]; }}
 
         /// <summary>
         /// PortalSettings for the current portal

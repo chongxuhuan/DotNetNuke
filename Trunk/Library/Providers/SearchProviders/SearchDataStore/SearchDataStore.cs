@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Text.RegularExpressions;
+using System.Web;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
@@ -112,16 +113,17 @@ namespace DotNetNuke.Services.Search
             {
                 if (CanIndexWord(strWord, language, settings))
                 {
+                    var encodedWord = HttpUtility.HtmlEncode(strWord);
                     intWord = intWord + 1;
-                    if (IndexWords.ContainsKey(strWord) == false)
+                    if (IndexWords.ContainsKey(encodedWord) == false)
                     {
-                        IndexWords.Add(strWord, 0);
-                        IndexPositions.Add(strWord, new List<int>());
+                        IndexWords.Add(encodedWord, 0);
+                        IndexPositions.Add(encodedWord, new List<int>());
                     }
                     //track number of occurrences of word in content
-                    IndexWords[strWord] = IndexWords[strWord] + 1;
+                    IndexWords[encodedWord] = IndexWords[encodedWord] + 1;
                     //track positions of word in content
-                    IndexPositions[strWord].Add(intWord);
+                    IndexPositions[encodedWord].Add(intWord);
                 }
             }
 			

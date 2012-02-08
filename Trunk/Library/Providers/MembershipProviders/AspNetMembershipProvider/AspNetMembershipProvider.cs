@@ -517,9 +517,11 @@ namespace DotNetNuke.Security.Membership
 			DataCache.RemoveCache(GetCacheKey(user.Username));
         }
 
-        private static UserLoginStatus ValidateLogin(string username, string authType, UserInfo user, UserLoginStatus loginStatus, string password, ref bool bValid)
+        private static UserLoginStatus ValidateLogin(string username, string authType, UserInfo user, UserLoginStatus loginStatus, string password, ref bool bValid, int portalId)
         {
-            if (loginStatus != UserLoginStatus.LOGIN_USERLOCKEDOUT && loginStatus != UserLoginStatus.LOGIN_USERNOTAPPROVED)
+            var portalController = new PortalController();
+            if (loginStatus != UserLoginStatus.LOGIN_USERLOCKEDOUT && (loginStatus != UserLoginStatus.LOGIN_USERNOTAPPROVED || 
+                portalController.GetPortal(portalId).UserRegistration == (int)Globals.PortalRegistrationType.VerifiedRegistration))
             {
                 if (authType == "DNN")
                 {
@@ -1353,7 +1355,7 @@ namespace DotNetNuke.Security.Membership
 				
                 //Verify User Credentials
                 bool bValid = false;
-                loginStatus = ValidateLogin(username, authType, user, loginStatus, password, ref bValid);
+                loginStatus = ValidateLogin(username, authType, user, loginStatus, password, ref bValid, portalId);
                 if (!bValid)
                 {
 					//Clear the user object

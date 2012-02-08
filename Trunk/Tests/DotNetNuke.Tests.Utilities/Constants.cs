@@ -43,7 +43,17 @@ namespace DotNetNuke.Tests.Utilities
         public const int USER_TenId = 10;
         public const string USER_TenName = "user10";
         public const int USER_ElevenId = 11;
-        public const string USER_ElevenName = "user11";
+        public const string USER_ElevenName = "user11";        
+        public const int UserID_Host = 1;
+        public const int UserID_Admin = 2;
+        public const int UserID_User12 = 12;
+        public const string UserName_Admin = "admin";
+        public const string UserName_Host = "host";
+        public const string UserName_User12 = "user12";
+        public const string UserDisplayName_Host = "SuperUser Account";
+        public const string UserDisplayName_Admin = "Administrator Account";
+        public const string UserDisplayName_User12 = "User 12";
+        
 
         #endregion
 

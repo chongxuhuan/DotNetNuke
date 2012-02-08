@@ -75,7 +75,7 @@
 					<nodes>
             <node path="/configuration/dotnetnuke/htmlEditor/providers/add[@name='DotNetNuke.RadEditorProvider']" action="remove" />
 						<node path="/configuration/dotnetnuke/htmlEditor/providers" action="update" key="name" collision="overwrite">
-							<add name="RadEditorProvider"
+							<add name="DNNRadEditorProvider"
 								type="DotNetNuke.Providers.RadEditorProvider.EditorProvider, DotNetNuke.RadEditorProvider"
 								providerPath="~/DesktopModules/Admin/RadEditorProvider" />
 						</node>
@@ -92,7 +92,7 @@
 			<uninstall>
 				<configuration>
 					<nodes>
-						<node path="/configuration/dotnetnuke/htmlEditor/providers/add[@name='RadEditorProvider']" action="remove" />
+						<node path="/configuration/dotnetnuke/htmlEditor/providers/add[@name='DNNRadEditorProvider']" action="remove" />
 					</nodes>
 				</configuration>
 			</uninstall>

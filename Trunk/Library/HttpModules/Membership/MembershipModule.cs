@@ -21,7 +21,11 @@
 #region Usings
 
 using System;
+using System.Linq;
 using System.Web;
+
+using DotNetNuke.Application;
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
@@ -30,6 +34,8 @@ using DotNetNuke.Security;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Personalization;
+using DotNetNuke.UI.Skins.Controls;
+using DotNetNuke.UI.Skins.EventListeners;
 
 #endregion
 
@@ -64,6 +70,12 @@ namespace DotNetNuke.HttpModules.Membership
             AuthenticateRequest(new HttpContextWrapper(application.Context), false);
         }
 
+        public static void OnUnverifiedUserSkinInit(object sender, SkinEventArgs e)
+        {
+            var strMessage = Localization.GetString("UnverifiedUser");
+            UI.Skins.Skin.AddPageMessage(e.Skin, "", strMessage, ModuleMessage.ModuleMessageType.YellowWarning);
+        }
+
         public static void AuthenticateRequest(HttpContextBase context, bool allowUnknownExtensinons)
         {
             HttpRequestBase request = context.Request;
@@ -90,6 +102,8 @@ namespace DotNetNuke.HttpModules.Membership
             //Obtain PortalSettings from Current Context
             PortalSettings portalSettings = PortalController.GetCurrentPortalSettings();
 
+            var unverifiedUserSkinEventListener = DotNetNukeContext.Current.SkinEventListeners.SingleOrDefault(s => s.EventType == SkinEventType.OnSkinInit && s.SkinEvent == OnUnverifiedUserSkinInit);
+
             if (request.IsAuthenticated && portalSettings != null)
             {
                 var roleController = new RoleController();
@@ -97,7 +111,7 @@ namespace DotNetNuke.HttpModules.Membership
 
                 //authenticate user and set last login ( this is necessary for users who have a permanent Auth cookie set ) 
                 if (user == null || user.IsDeleted || user.Membership.LockedOut
-                    || user.Membership.Approved == false
+                    || (!user.Membership.Approved && portalSettings.UserRegistration != (int)Globals.PortalRegistrationType.VerifiedRegistration)
                     || user.Username.ToLower() != context.User.Identity.Name.ToLower())
                 {
                     var portalSecurity = new PortalSecurity();
@@ -112,6 +126,18 @@ namespace DotNetNuke.HttpModules.Membership
                     //Redirect browser back to home page
                     response.Redirect(request.RawUrl, true);
                     return;
+                }
+
+                if (!user.IsSuperUser && user.IsInRole("Unverified Users"))
+                {
+                    if (unverifiedUserSkinEventListener == null)
+                    {
+                        DotNetNukeContext.Current.SkinEventListeners.Add(new SkinEventListener(SkinEventType.OnSkinInit, OnUnverifiedUserSkinInit));
+                    }
+                }
+                else if (unverifiedUserSkinEventListener != null)
+                {
+                    DotNetNukeContext.Current.SkinEventListeners.Remove(unverifiedUserSkinEventListener);
                 }
 
                 //if users LastActivityDate is outside of the UsersOnlineTimeWindow then record user activity
@@ -145,6 +171,11 @@ namespace DotNetNuke.HttpModules.Membership
                 //Localization.SetLanguage also updates the user profile, so this needs to go after the profile is loaded
                 Localization.SetLanguage(user.Profile.PreferredLocale);
             }
+            else if (unverifiedUserSkinEventListener != null)
+            {
+                DotNetNukeContext.Current.SkinEventListeners.Remove(unverifiedUserSkinEventListener);
+            }
+
             if (context.Items["UserInfo"] == null)
             {
                 context.Items.Add("UserInfo", new UserInfo());

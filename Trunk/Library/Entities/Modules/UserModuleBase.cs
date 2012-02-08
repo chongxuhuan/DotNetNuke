@@ -209,12 +209,7 @@ namespace DotNetNuke.Entities.Modules
         {
             get
             {
-                bool _IsRegister = false;
-                if (!IsAdmin && !IsUser)
-                {
-                    _IsRegister = true;
-                }
-                return _IsRegister;
+                return !IsAdmin && !IsUser;
             }
         }
 
@@ -230,12 +225,7 @@ namespace DotNetNuke.Entities.Modules
         {
             get
             {
-                bool _IsUser = false;
-                if (Request.IsAuthenticated)
-                {
-                    _IsUser = (User.UserID == UserInfo.UserID);
-                }
-                return _IsUser;
+                return Request.IsAuthenticated && (User.UserID == UserInfo.UserID);
             }
         }
 
@@ -251,14 +241,7 @@ namespace DotNetNuke.Entities.Modules
         {
             get
             {
-                if (IsHostTab)
-                {
-                    return Null.NullInteger;
-                }
-                else
-                {
-                    return PortalId;
-                }
+                return IsHostTab ? Null.NullInteger : PortalId;
             }
         }
 
@@ -274,18 +257,7 @@ namespace DotNetNuke.Entities.Modules
         {
             get
             {
-                if (_User == null)
-                {
-                    if (AddUser)
-                    {
-                        _User = InitialiseUser();
-                    }
-                    else
-                    {
-                        _User = UserController.GetUserById(UserPortalID, UserId);
-                    }
-                }
-                return _User;
+                return _User ?? (_User = AddUser ? InitialiseUser() : UserController.GetUserById(UserPortalID, UserId));
             }
             set
             {

@@ -29,9 +29,12 @@ using System.Text;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.ComponentModel;
+using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Portals.Internal;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Social.Messaging.Data;
 
 #endregion
@@ -64,11 +67,11 @@ namespace DotNetNuke.Services.Social.Messaging
 
 
         private readonly IDataService _dataService;
+        private readonly IEventLogController _eventLogController;
 
-        #region "Constructors"
+        #region Constructors
 
-        public MessagingController()
-            : this(GetDataService())
+        public MessagingController() : this(DataService.Instance)
         {
         }
 
@@ -77,23 +80,7 @@ namespace DotNetNuke.Services.Social.Messaging
             //Argument Contract
             Requires.NotNull("dataService", dataService);
 
-            _dataService = dataService;
-        }
-
-        #endregion
-
-        #region Private Shared Methods
-
-        private static IDataService GetDataService()
-        {
-            var ds = ComponentFactory.GetComponent<IDataService>();
-
-            if (ds == null)
-            {
-                ds = new DataService();
-                ComponentFactory.RegisterComponentInstance<IDataService>(ds);
-            }
-            return ds;
+            _dataService = dataService;            
         }
 
         #endregion
@@ -164,22 +151,30 @@ namespace DotNetNuke.Services.Social.Messaging
         {
             if (sender == null || sender.UserID <= 0)
             {
-                throw new ArgumentException(Localization.Localization.GetExceptionMessage("SenderRequiredError", "Either Sender is null or Sender.UserID is negative."));
+                throw new ArgumentException(Localization.Localization.GetString("SenderRequiredError", Localization.Localization.ExceptionsResourceFile));                
             }
 
             if(string.IsNullOrEmpty(subject) && string.IsNullOrEmpty(body))
             {
-                throw new ArgumentException(Localization.Localization.GetExceptionMessage("SubjectOrBodyRequiredError", "Both Subject and Body cannot be null or empty."));
+                throw new ArgumentException(Localization.Localization.GetString("SubjectOrBodyRequiredError", Localization.Localization.ExceptionsResourceFile));                                
             }
 
             if (roles == null && users == null)
             {
-                throw new ArgumentException(Localization.Localization.GetExceptionMessage("RolesOrUsersRequiredError", "Both Roles and Users cannot be null or empty-lists."));
+                throw new ArgumentException(Localization.Localization.GetString("RolesOrUsersRequiredError", Localization.Localization.ExceptionsResourceFile));                                                
             }
 
             if (!string.IsNullOrEmpty(subject) && subject.Length > ConstMaxSubject)
             {
-                throw new ArgumentException(Localization.Localization.GetExceptionMessage("SubjectTooBigError", "Subject supplied is too big. Maximum {0}, Actual {1}.", ConstMaxSubject, subject.Length));
+                throw new ArgumentException(string.Format(Localization.Localization.GetString("SubjectTooBigError", Localization.Localization.ExceptionsResourceFile), ConstMaxSubject, subject.Length));
+            }
+
+            if (roles != null && roles.Count > 0)
+            {
+                if (!sender.IsSuperUser && !sender.IsInRole(PortalSettingsWrapper.Instance.AdministratorRoleName))
+                {
+                    throw new ArgumentException(Localization.Localization.GetString("OnlyHostOrAdminCanSendToRoleError", Localization.Localization.ExceptionsResourceFile));                                                    
+                }
             }
 
             var sbTo = new StringBuilder();
@@ -200,12 +195,12 @@ namespace DotNetNuke.Services.Social.Messaging
             
             if (sbTo.Length == 0)
             {
-                throw new ArgumentException(Localization.Localization.GetExceptionMessage("EmptyToListFoundError", "Empty To List found while analyzing User and Roles List."));
+                throw new ArgumentException(Localization.Localization.GetString("EmptyToListFoundError", Localization.Localization.GlobalResourceFile));                                                                
             }
             
             if (sbTo.Length > ConstMaxTo)
-            {
-                throw new ArgumentException(Localization.Localization.GetExceptionMessage("ToListTooBigError", "To List supplied is too big. Maximum {0}, Actual {1}.", ConstMaxTo, sbTo.Length));
+            {                
+                throw new ArgumentException(string.Format(Localization.Localization.GetString("ToListTooBigError", Localization.Localization.GlobalResourceFile), ConstMaxTo, sbTo.Length));
             }
 
             var message = new Message { Body = body, Subject = subject, To = sbTo.ToString().Trim(','), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName};

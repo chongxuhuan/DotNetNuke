@@ -21,6 +21,7 @@
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
@@ -105,6 +106,11 @@ namespace DotNetNuke.Tests.Utilities.Mocks
         public static Mock<ILocalizationProvider> CreateLocalizationProvider()
         {
             return CreateNew<ILocalizationProvider>(); ;
+        }
+
+        public static Mock<RoleProvider> CreateRoleProvider()
+        {
+            return CreateNew<RoleProvider>();
         }
 
         public static void ResetContainer()

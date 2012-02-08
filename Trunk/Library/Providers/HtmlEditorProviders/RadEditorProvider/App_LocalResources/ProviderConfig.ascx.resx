@@ -534,6 +534,6 @@ You must set the CustomLinks tool in your toolbar configuratioon in order to mak
     <value>HTML Editor Manager</value>
   </data>
   <data name="NotCurrentProvider.Text" xml:space="preserve">
-    <value>RadEditorProvider is not default html editor provider now, any changes will not apply to current editor provider. If you want to make configuration take effect please update default provider to 'RadEditorProvider' in left drop down list.</value>
+    <value>RadEditorProvider is not default html editor provider now, any changes will not apply to current editor provider. If you want to make configuration take effect please update default provider to 'DNNRadEditorProvider' in left drop down list.</value>
   </data>
 </root>

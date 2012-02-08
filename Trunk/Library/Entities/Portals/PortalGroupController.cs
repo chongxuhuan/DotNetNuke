@@ -30,6 +30,7 @@ using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Portals.Data;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Security.Roles;
 
 #endregion
 
@@ -183,9 +184,6 @@ namespace DotNetNuke.Entities.Portals
             Requires.PropertyNotNegative("portalGroup", "PortalGroupId", portalGroup.PortalGroupId);
             Requires.PropertyNotNegative("portalGroup", "MasterPortalId", portalGroup.MasterPortalId);
 
-            //Get admin user before we remove portal from Group
-            var adminUser = UserController.GetUserById(portal.PortalID, portal.AdministratorId);
-
             //Remove portal from group
             portal.PortalGroupID = -1;
             _portalController.UpdatePortalInfo(portal);
@@ -215,17 +213,29 @@ namespace DotNetNuke.Entities.Portals
             }
             else
             {
-                //Copy Administrator to portal
-                UserController.CopyUserToPortal(adminUser, portal, false, false);
+                //Get admin users
+                var roleController = new RoleController();
+                var adminUsers = roleController.GetUsersByRoleName(Null.NullInteger, portal.AdministratorRoleName)
+                    .Cast<UserInfo>()
+                    .Where(u => roleController.GetUserRole(portal.PortalID, u.UserID, portal.AdministratorRoleId) != null);
 
-                //Callback to update progress bar
-                new UserCopiedEventArgs
+                var userNo = 0;
+                foreach (var user in adminUsers)
+                {
+                    //Copy Administrator to portal
+                    UserController.CopyUserToPortal(user, portal, false, false);
+
+                    //Callback to update progress bar
+                    var args = new UserCopiedEventArgs
                     {
                         TotalUsers = 1,
-                        UserNo = 1,
-                        UserName = adminUser.Username,
+                        UserNo = ++userNo,
+                        UserName = user.Username,
                         PortalName = portal.PortalName
                     };
+
+                    callback(args);
+                }
             }
         }
 

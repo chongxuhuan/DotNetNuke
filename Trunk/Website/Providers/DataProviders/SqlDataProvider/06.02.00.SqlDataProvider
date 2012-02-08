@@ -2043,11 +2043,18 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsF
 AS 
     DECLARE @currentdate AS DATETIME = GETDATE()
     
-    ;WITH CTE_Roles(RowNumber, RowValue)
+    ;WITH CTE_RoleIDs(RowNumber, RowValue)
     AS
     (
 	SELECT * FROM {objectQualifier}ConvertListToTable(',', @RoleIDs)
-    )
+    ),
+	CTE_DistinctUserIDs(UserID)
+    AS
+    (
+  		SELECT DISTINCT UserID 
+	    FROM {databaseOwner}{objectQualifier}vw_UserRoles ur
+        INNER JOIN CTE_RoleIDs cr ON ur.RoleID = cr.RowValue    
+    )        
       
     INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
 			[MessageID],
@@ -2059,7 +2066,7 @@ AS
             [LastModifiedByUserID],
             [LastModifiedOnDate]			        												        
             )            
-			SELECT DISTINCT
+			SELECT
 			  @MessageID, 	
 			  UserID,
 			  0,            
@@ -2068,8 +2075,7 @@ AS
               @currentdate , -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
               @currentdate -- LastModifiedOn - datetime			                                                
-           FROM {databaseOwner}{objectQualifier}vw_UserRoles ur
-           INNER JOIN CTE_Roles cr ON ur.RoleID = cr.RowValue      		   	   		   
+           FROM CTE_DistinctUserIDs           
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipient]') AND type in (N'P', N'PC'))
@@ -3950,8 +3956,6 @@ AS
 						
 					SELECT TOP ' + @topSql + ' * FROM @pivotedUsers
 					WHERE RowNumber >= ' + @minRowNumberSql			
-	
-	PRINT(@sql)
 	EXEC(@sql)
 GO
 

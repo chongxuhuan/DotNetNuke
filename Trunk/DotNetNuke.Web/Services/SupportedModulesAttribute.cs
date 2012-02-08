@@ -1,6 +1,6 @@
 #region Copyright
 // 
-// DotNetNukeÂ® - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -18,20 +18,41 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
-
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Linq;
+using System.Web.Mvc;
 
-#endregion
+namespace DotNetNuke.Web.Services
+{
+    public sealed class SupportedModulesAttribute : AuthorizeAttributeBase
+    {
+        private readonly string[] _supportedModules;
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("34127f21-2826-4b3b-bb87-78d6c9ef729f")]
-[assembly: AssemblyVersion("6.2.0.407")]
+        public SupportedModulesAttribute(string supportedModules)
+        {
+            _supportedModules = supportedModules.Split(new[] { ',' });
+        }
+
+        protected override bool AuthorizeCore(AuthorizationContext context)
+        {
+            var controller = (DnnController) context.Controller;
+
+            if(controller == null || controller.ActiveModule == null)
+            {
+                return false;
+            }
+
+            return ModuleIsSupported(controller);
+        }
+
+        private bool ModuleIsSupported(DnnController controller)
+        {
+            if(!_supportedModules.Any())
+            {
+                return true;
+            }
+
+            return _supportedModules.Contains(controller.ActiveModule.DesktopModule.ModuleName);
+        }
+    }
+}

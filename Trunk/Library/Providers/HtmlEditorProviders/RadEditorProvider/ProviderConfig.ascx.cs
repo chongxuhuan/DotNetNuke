@@ -51,7 +51,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 		private const string htmlEditorNode = "/configuration/dotnetnuke/htmlEditor";
 		private const string spellCheckRootNodeIIS6 = "/configuration/system.web";
 		private const string spellCheckRootNodeIIS7 = "/configuration/system.webServer";
-		private const string radEditorProviderName = "RadEditorProvider";
+		private const string radEditorProviderName = "DNNRadEditorProvider";
 
 		private XmlDocument _dnnConfig;
 		private List<ConfigInfo> _defaultconfig;

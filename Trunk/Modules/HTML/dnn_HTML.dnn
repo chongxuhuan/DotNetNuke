@@ -97,7 +97,7 @@
           <desktopModule>
             <moduleName>DNN_HTML</moduleName>
             <foldername>HTML</foldername>
-            <businessControllerClass>DotNetNuke.Modules.Html.HtmlTextController</businessControllerClass>
+            <businessControllerClass>DotNetNuke.Modules.Html.HtmlTextController, DotNetNuke.Modules.Html</businessControllerClass>
             <moduleDefinitions>
               <moduleDefinition>
                 <friendlyName>Text/HTML</friendlyName>

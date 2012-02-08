@@ -202,6 +202,8 @@
     <Compile Include="Entities\Host\ServerController.cs" />
     <Compile Include="Entities\Host\ServerInfo.cs" />
     <Compile Include="Entities\Icons\IconController.cs" />
+    <Compile Include="Services\FileSystem\Wrappers\PortalSettingsWrapper.cs" />
+    <Compile Include="Services\FileSystem\Wrappers\IPortalSettings.cs" />
     <Compile Include="Services\Journal\CommentInfo.cs" />
     <Compile Include="Services\Journal\Content.cs" />
     <Compile Include="Services\Journal\Data\IJournalDataService.cs" />

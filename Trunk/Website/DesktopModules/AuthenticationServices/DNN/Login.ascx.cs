@@ -21,6 +21,7 @@
 #region Usings
 
 using System;
+using System.Net;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
@@ -169,24 +170,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
 				var message = Null.NullString;
 				if (loginStatus == UserLoginStatus.LOGIN_USERNOTAPPROVED)
 				{
-					//Check if its the first time logging in to a verified site
-					if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
-					{
-						if (!divVerify.Visible)
-						{
-							//Display Verification Rows so User can enter verification code
-							divVerify.Visible = true;
-							message = "EnterCode";
-						}
-						else
-						{
-							message = !String.IsNullOrEmpty(txtVerification.Text) ? "InvalidCode" : "EnterCode";
-						}
-					}
-					else
-					{
-						message = "UserNotAuthorized";
-					}
+				    message = "UserNotAuthorized";
 				}
 				else
 				{
