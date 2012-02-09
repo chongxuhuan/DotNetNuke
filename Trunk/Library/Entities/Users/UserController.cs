@@ -406,6 +406,24 @@ namespace DotNetNuke.Entities.Users
 
         #region Public Methods
 
+
+        /// <summary>
+        /// ApproveUser removes the Unverified Users role from the user and adds the auto assigned roles.
+        /// </summary>
+        /// <param name="user">The user to update.</param>
+        public static void ApproveUser(UserInfo user)
+        {
+            Requires.NotNull("user", user);
+
+            var settings = PortalController.GetCurrentPortalSettings();
+            var roleController = new RoleController();
+            var role = roleController.GetRoleByName(settings.PortalId, "Unverified Users");
+
+            RoleController.DeleteUserRole(user, role, settings, false);
+
+            AutoAssignUsersToRoles(user, settings.PortalId);
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// ChangePassword attempts to change the users password

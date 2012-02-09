@@ -357,7 +357,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 cmdAdd.Text = Localization.GetString("AddRole.Text", LocalResourceFile);
                 grdUserRoles.DataKeyField = "RoleId";
                 grdUserRoles.Columns[1].Visible = false;
-                grdUserRoles.DataSource = objRoleController.GetUserRoles(User, false);
+                grdUserRoles.DataSource = objRoleController.GetUserRolesByUsername(PortalId, User.Username, Null.NullString);
                 grdUserRoles.DataBind();
             }
         }

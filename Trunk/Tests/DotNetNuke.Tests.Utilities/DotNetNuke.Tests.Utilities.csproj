@@ -96,6 +96,7 @@
     <Compile Include="FileAssert.cs" />
     <Compile Include="IISManager.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="MailAssert.cs" />
     <Compile Include="Mocks\MockComponentProvider.cs">
       <SubType>Code</SubType>
     </Compile>

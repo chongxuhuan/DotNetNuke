@@ -202,6 +202,10 @@
     <Compile Include="Entities\Host\ServerController.cs" />
     <Compile Include="Entities\Host\ServerInfo.cs" />
     <Compile Include="Entities\Icons\IconController.cs" />
+    <Compile Include="Entities\Modules\IModuleController.cs" />
+    <Compile Include="Entities\Modules\TestableModuleController.cs" />
+    <Compile Include="Entities\Tabs\ITabController.cs" />
+    <Compile Include="Entities\Tabs\TestableTabController.cs" />
     <Compile Include="Services\FileSystem\Wrappers\PortalSettingsWrapper.cs" />
     <Compile Include="Services\FileSystem\Wrappers\IPortalSettings.cs" />
     <Compile Include="Services\Journal\CommentInfo.cs" />

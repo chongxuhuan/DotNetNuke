@@ -1,7 +1,7 @@
 #region Copyright
 // 
-// DotNetNukeÂ® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// DotNetNuke® - http://www.dotnetnuke.com
+// Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -18,21 +18,25 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
-
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
 
-#endregion
+using DotNetNuke.ComponentModel;
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: ComVisible(false)]
-[assembly: Guid("a4fb04bb-7ce8-40ed-bad5-218f7687443c")]
-[assembly: AssemblyVersion("6.2.0.429")]
+namespace DotNetNuke.Entities.Modules.Internal
+{
+    public class TestableModuleController : ComponentBase<IModuleController, TestableModuleController>, IModuleController
+    {
+        readonly ModuleController _legacyController = new ModuleController();
+
+        /// <summary>
+        /// Gets the module.
+        /// </summary>
+        /// <param name="moduleId">The module ID.</param>
+        /// <param name="tabId">The tab ID.</param>
+        /// <returns>module info</returns>
+        public ModuleInfo GetModule(int moduleId, int tabId)
+        {
+            return _legacyController.GetModule(moduleId, tabId);
+        }
+    }
+}

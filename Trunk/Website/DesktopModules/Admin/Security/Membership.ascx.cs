@@ -24,6 +24,7 @@ using System;
 
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Web.UI.WebControls;
 
 #endregion
@@ -236,6 +237,12 @@ namespace DotNetNuke.Modules.Admin.Users
 
             //Update User
             UserController.UpdateUser(PortalId, User);
+
+            //Update User Roles if needed
+            if (!User.IsSuperUser && User.IsInRole("Unverified Users") && PortalSettings.UserRegistration == (int)Common.Globals.PortalRegistrationType.VerifiedRegistration)
+            {
+                UserController.ApproveUser(User);
+            }
 
             OnMembershipAuthorized(EventArgs.Empty);
         }

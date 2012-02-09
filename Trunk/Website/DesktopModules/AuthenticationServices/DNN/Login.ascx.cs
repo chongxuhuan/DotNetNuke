@@ -121,9 +121,15 @@ namespace DotNetNuke.Modules.Admin.Authentication
 						{
 							if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
 							{
-								//Display Verification Rows 
-								divVerify.Visible = true;
-								txtVerification.Text = Request.QueryString["verificationcode"];
+                                //TODO: Automatically verify user
+                                //TODO: If verification works
+                                //TODO:     If request is authenticated, redirect to home (and display message?)
+                                //TODO:     Else stay here and let the user to login
+                                //TODO: Else display message??
+								
+                                ////Display Verification Rows 
+                                //divVerify.Visible = true;
+                                //txtVerification.Text = Request.QueryString["verificationcode"];
 							}
 						}
 					}

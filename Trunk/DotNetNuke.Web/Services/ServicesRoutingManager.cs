@@ -33,7 +33,8 @@ namespace DotNetNuke.Web.Services
         private readonly RouteCollection _routes;
         private IList<string> _prefixes;
 
-        internal ServicesRoutingManager() : this(RouteTable.Routes) {}
+        //todo don't really want this public
+        public ServicesRoutingManager() : this(RouteTable.Routes) {}
 
         internal ServicesRoutingManager(RouteCollection routes)
         {
@@ -42,7 +43,8 @@ namespace DotNetNuke.Web.Services
             PortalController = new PortalController();
         }
 
-        internal void RegisterRoutes()
+        //todo don't really want this public
+        public void RegisterRoutes()
         {
             _routes.Clear();
             LocateServicesAndMapRoutes();

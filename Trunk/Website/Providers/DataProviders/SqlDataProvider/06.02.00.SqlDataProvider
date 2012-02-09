@@ -3878,7 +3878,7 @@ AS
 			(
 				SELECT * FROM {objectQualifier}ConvertListToTable(',', @PropertyValues)
 			)
-			SELECT @whereSql = COALESCE(@whereSql + ' ','') + 'AND U.' + N.RowValue + ' LIKE ''' + V.RowValue + ''' ' 
+			SELECT @whereSql = COALESCE(@whereSql + ' ','') + 'AND U.' + N.RowValue + ' LIKE ''%' + V.RowValue + '%'' ' 
 			FROM CTE_PropertyNames AS N
 				INNER JOIN CTE_PropertyValues AS V ON N.RowNumber = V.RowNumber
 			WHERE N.RowValue IN ('DisplayName', 'Email', 'Username')
@@ -4094,7 +4094,7 @@ AS
 								U.IsApproved
 								FROM {objectQualifier}vw_Users AS U
 							WHERE U.PortalID = ' + CONVERT(nvarchar(20), @PortalID) + '
-								AND U.' + @PropertyName + ' LIKE ''' + @PropertyValue + '''
+								AND U.' + @PropertyName + ' LIKE ''%' + @PropertyValue + '%''
 								AND U.IsDeleted = 0
 						) AS U
 						WHERE RowNumber >= ' + @minRowNumberSql + ' 

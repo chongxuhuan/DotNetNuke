@@ -23,7 +23,9 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting;
 using System.Threading;
 using System.Web;
 using System.Web.Hosting;
@@ -165,26 +167,26 @@ namespace DotNetNuke.Common
         private static string InitializeApp(HttpApplication app)
         {
             DnnLog.MethodEntry();
-            HttpServerUtility Server = app.Server;
-            HttpRequest Request = app.Request;
+            HttpRequest request = app.Request;
             string redirect = Null.NullString;
 
-            DnnLog.Trace("Request " + Request.Url.LocalPath);
+            DnnLog.Trace("Request " + request.Url.LocalPath);
 
             //Don't process some of the AppStart methods if we are installing
-            if (!Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx")
-                && !Request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
-                && !Request.Url.LocalPath.ToLower().EndsWith("install.aspx"))
+            if (!request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx")
+                && !request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
+                && !request.Url.LocalPath.ToLower().EndsWith("install.aspx"))
             {
                 //Check whether the current App Version is the same as the DB Version
                 redirect = CheckVersion(app);
                 if (string.IsNullOrEmpty(redirect))
                 {
                     DnnLog.Info("Application Initializing");
+
                     //Cache Mapped Directory(s)
                     CacheMappedDirectory();
                     //Set globals
-                    Globals.IISAppName = Request.ServerVariables["APPL_MD_PATH"];
+                    Globals.IISAppName = request.ServerVariables["APPL_MD_PATH"];
                     Globals.OperatingSystemVersion = Environment.OSVersion.Version;
                     Globals.NETFrameworkVersion = GetNETFrameworkVersion();
                     Globals.DatabaseEngineVersion = GetDatabaseEngineVersion();
@@ -197,6 +199,8 @@ namespace DotNetNuke.Common
                     LogStart();
                     //Process any messages in the EventQueue for the Application_Start event
                     EventQueueController.ProcessMessages("Application_Start");
+
+                    RegisterServiceRoutes();
 
                     //Set Flag so we can determine the first Page Request after Application Start
                     app.Context.Items.Add("FirstRequest", true);
@@ -212,6 +216,25 @@ namespace DotNetNuke.Common
                 Globals.NETFrameworkVersion = GetNETFrameworkVersion();
             }
             return redirect;
+        }
+
+        private static void RegisterServiceRoutes()
+        {
+            const string unableToRegisterServiceRoutes = "Unable to register service routes";
+
+            try
+            {
+                //new ServicesRoutingManager().RegisterRoutes();
+                var instance = Activator.CreateInstance("DotNetNuke.Web",
+                                                                 "DotNetNuke.Web.Services.ServicesRoutingManager");
+
+                var method = instance.Unwrap().GetType().GetMethod("RegisterRoutes");
+                method.Invoke(instance.Unwrap(), new object[0]);
+            }
+            catch (Exception e)
+            {
+                DnnLog.Error(unableToRegisterServiceRoutes, e);
+            }
         }
 
         private static Version GetNETFrameworkVersion()

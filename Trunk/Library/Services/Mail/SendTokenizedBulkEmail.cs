@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
@@ -277,10 +278,10 @@ namespace DotNetNuke.Services.Mail
             var parameters = new ArrayList
                                  {
                                      startedAt,
-                                     numRecipients.ToString(),
-                                     numMessages >= 0 ? numMessages.ToString() : "***",
-                                     DateTime.Now.ToString(),
-                                     numErrors > 0 ? numErrors.ToString() : "",
+                                     numRecipients.ToString(CultureInfo.InvariantCulture),
+                                     numMessages >= 0 ? numMessages.ToString(CultureInfo.InvariantCulture) : "***",
+                                     DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                                     numErrors > 0 ? numErrors.ToString(CultureInfo.InvariantCulture) : "",
                                      mailErrors != string.Empty ? mailErrors : _noError,
                                      ReportRecipients ? recipientList : ""
                                  };
@@ -328,7 +329,7 @@ namespace DotNetNuke.Services.Mail
                 }
                 else
                 {
-                    key = user.UserID.ToString();
+                    key = user.UserID.ToString(CultureInfo.InvariantCulture);
                 }
                 if (key != string.Empty && !keyList.Contains(key))
                 {
@@ -475,7 +476,7 @@ namespace DotNetNuke.Services.Mail
                     body = "<Base Href='" + PortalAlias + "'>" + body;
                 }
                 string subject = Subject;
-                string startedAt = DateTime.Now.ToString();
+                string startedAt = DateTime.Now.ToString(CultureInfo.InvariantCulture);
 
                 bool replaceTokens = !SuppressTokenReplace && (_tokenReplace.ContainsTokens(Subject) || _tokenReplace.ContainsTokens(_body));
                 bool individualSubj = false;

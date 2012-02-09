@@ -511,6 +511,8 @@ namespace DotNetNuke.Entities.Modules
 				//send notification to portal administrator of new user registration
                 strMessage += Mail.SendMail(newUser, MessageType.UserRegistrationAdmin, PortalSettings);
 
+                var loginStatus = UserLoginStatus.LOGIN_FAILURE;
+
                 //complete registration
                 switch (PortalSettings.UserRegistration)
                 {
@@ -526,19 +528,11 @@ namespace DotNetNuke.Entities.Modules
                         break;
                     case (int) Globals.PortalRegistrationType.PublicRegistration:
                         Mail.SendMail(newUser, MessageType.UserRegistrationPublic, PortalSettings);
-
-                        UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
                         UserController.UserLogin(PortalSettings.PortalId, newUser.Username, newUser.Membership.Password, "", PortalSettings.PortalName, "", ref loginStatus, false);
                         break;
                     case (int) Globals.PortalRegistrationType.VerifiedRegistration:
-                        strMessage += Mail.SendMail(newUser, MessageType.UserRegistrationVerified, PortalSettings);
-
-                        //show a message that an email has been send with the registration details
-                        if (string.IsNullOrEmpty(strMessage))
-                        {
-                            strMessage += string.Format(Localization.GetString("VerifiedConfirmationMessage", Localization.SharedResourceFile), newUser.Email);
-                            message = ModuleMessage.ModuleMessageType.GreenSuccess;
-                        }
+                        Mail.SendMail(newUser, MessageType.UserRegistrationVerified, PortalSettings);
+                        UserController.UserLogin(PortalSettings.PortalId, newUser.Username, newUser.Membership.Password, "", PortalSettings.PortalName, "", ref loginStatus, false);
                         break;
                 }
                 //affiliate

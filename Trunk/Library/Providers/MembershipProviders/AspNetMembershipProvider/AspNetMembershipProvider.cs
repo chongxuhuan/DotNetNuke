@@ -521,7 +521,7 @@ namespace DotNetNuke.Security.Membership
         {
             var portalController = new PortalController();
             if (loginStatus != UserLoginStatus.LOGIN_USERLOCKEDOUT && (loginStatus != UserLoginStatus.LOGIN_USERNOTAPPROVED || 
-                portalController.GetPortal(portalId).UserRegistration == (int)Globals.PortalRegistrationType.VerifiedRegistration))
+                (user.IsInRole("Unverified Users") && portalController.GetPortal(portalId).UserRegistration == (int)Globals.PortalRegistrationType.VerifiedRegistration)))
             {
                 if (authType == "DNN")
                 {

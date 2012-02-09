@@ -19,16 +19,16 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Modules.Internal;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Entities.Tabs.Internal;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.HttpModules.Membership;
 
@@ -83,7 +83,7 @@ namespace DotNetNuke.Web.Services
             context.Items["PortalSettings"] = portalSettings;
         }
 
-        private void VaidateTabAndModuleContext(HttpContextBase context, int portalId, out int tabId)
+        protected void VaidateTabAndModuleContext(HttpContextBase context, int portalId, out int tabId)
         {
             tabId = context.FindTabId();
 
@@ -99,7 +99,7 @@ namespace DotNetNuke.Web.Services
 
                 if (moduleId != Null.NullInteger)
                 {
-                    var module = new ModuleController().GetModule(moduleId, tabId);
+                    var module = TestableModuleController.Instance.GetModule(moduleId, tabId);
                     if (module != null)
                     {
                         ActiveModule = module;
@@ -115,8 +115,7 @@ namespace DotNetNuke.Web.Services
 
         private bool TabIsInPortal(int tabId, int portalId)
         {
-            var tc = new TabController();
-            var tab = tc.GetTab(tabId, portalId, /*ignoreCache*/ false);
+            var tab = TestableTabController.Instance.GetTab(tabId, portalId, /*ignoreCache*/ false);
 
             return tab != null;
         }

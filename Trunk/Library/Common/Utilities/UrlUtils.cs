@@ -188,8 +188,8 @@ namespace DotNetNuke.Common.Utilities
             //create a the querystring for use on a Response.Redirect
             if (responseRedirect)
             {
-                popUpScriptFormat = "{0}{1}{2}popUp=true";
-                popUpUrl = String.Format(popUpScriptFormat, popUpUrl, delimiter, onClickEvent.ToString().ToLower());
+                popUpScriptFormat = "{0}{1}popUp=true";
+                popUpUrl = String.Format(popUpScriptFormat, popUpUrl, delimiter);
             }
             else
             {

@@ -121,6 +121,7 @@
     <Compile Include="HttpModules\ServicesModuleTests.cs" />
     <Compile Include="Services\ClientCapability\FacebookRequestControllerTests.cs" />
     <Compile Include="Services\Installer\XmlMergeTests.cs" />
+    <Compile Include="Services\Mail\MailTests.cs" />
     <Compile Include="Services\Mobile\PreviewProfileControllerTests.cs" />
     <Compile Include="Services\Mobile\RedirectionControllerTests.cs" />
     <Compile Include="Services\Tokens\PropertyAccessTests.cs" />

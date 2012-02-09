@@ -1020,7 +1020,10 @@ namespace DotNetNuke.Services.FileSystem
                     FolderMappingID = folderInfo.FolderMappingID
                 };
 
-                result.Add(item.FolderPath, item);
+                if (!result.ContainsKey(item.FolderPath))
+                {
+                    result.Add(item.FolderPath, item);
+                }
 
                 foreach (var subfolder in GetFolders(folderInfo))
                 {

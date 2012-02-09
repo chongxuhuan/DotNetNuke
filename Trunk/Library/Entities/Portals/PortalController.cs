@@ -115,12 +115,11 @@ namespace DotNetNuke.Entities.Portals
             }
             if (unverifiedRoleId == -1)
             {
-                unverifiedRoleId = CreateRole(portalId, "Unverified Users", "Unverified Users", 0, 0, "M", 0, 0, "N", false, false);
+                CreateRole(portalId, "Unverified Users", "Unverified Users", 0, 0, "M", 0, 0, "N", false, false);
             }
             controller.AddUserRole(portalId, administratorId, administratorRoleId, Null.NullDate, Null.NullDate);
             controller.AddUserRole(portalId, administratorId, registeredRoleId, Null.NullDate, Null.NullDate);
             controller.AddUserRole(portalId, administratorId, subscriberRoleId, Null.NullDate, Null.NullDate);
-            controller.AddUserRole(portalId, administratorId, unverifiedRoleId, Null.NullDate, Null.NullDate);
         }
 
         private static string CreateProfileDefinitions(int portalId, string templatePath, string templateFile)

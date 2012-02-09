@@ -126,6 +126,10 @@ namespace DotNetNuke.Security.Roles
                     {
                         _RoleType = RoleType.Subscriber;
                     }
+                    else if (RoleName == "Unverified Users")
+                    {
+                        _RoleType = RoleType.UnverifiedUser;
+                    }
                     _RoleTypeSet = true;
                 }
                 return _RoleType;
@@ -400,6 +404,9 @@ namespace DotNetNuke.Security.Roles
                                 case "subscriberrole":
                                     _RoleType = RoleType.Subscriber;
                                     break;
+                                case "unverifiedrole":
+                                    _RoleType = RoleType.UnverifiedUser;
+                                    break;
                                 default:
                                     _RoleType = RoleType.None;
                                     break;
@@ -448,6 +455,9 @@ namespace DotNetNuke.Security.Roles
                     break;
                 case RoleType.Subscriber:
                     writer.WriteElementString("roletype", "subscriberrole");
+                    break;
+                case RoleType.UnverifiedUser:
+                    writer.WriteElementString("roletype", "unverifiedrole");
                     break;
                 case RoleType.None:
                     writer.WriteElementString("roletype", "none");
