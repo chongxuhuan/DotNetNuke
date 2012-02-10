@@ -46,6 +46,10 @@
                     <dnn:label id="plAllTabs" runat="server" controlname="chkAllTabs" />
                     <asp:CheckBox ID="chkAllTabs" runat="server" AutoPostBack="true" />
                 </div>
+                <div class="dnnFormItem" id="rowSearchOnce" runat="server">
+                    <dnn:label id="plSearchOnce" runat="server" controlname="chkSearchOnce" />
+                    <asp:CheckBox ID="chkSearchOnce" runat="server" />
+                </div>
                 <div class="dnnFormItem" id="trnewPages" runat="server">
                     <dnn:label id="plNewTabs" runat="server" controlname="chkNewTabs" />
                     <asp:CheckBox ID="chkNewTabs" runat="server" />

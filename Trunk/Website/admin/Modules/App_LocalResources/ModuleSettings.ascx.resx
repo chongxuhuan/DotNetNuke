@@ -438,4 +438,10 @@
   <data name="ControlTitle_settings.Text" xml:space="preserve">
     <value>{0} Settings</value>
   </data>
+  <data name="plSearchOnce.Help" xml:space="preserve">
+    <value>Select whether to show all pages in search result which include this module.</value>
+  </data>
+  <data name="plSearchOnce.Text" xml:space="preserve">
+    <value>Only Display Search Results Once</value>
+  </data>
 </root>

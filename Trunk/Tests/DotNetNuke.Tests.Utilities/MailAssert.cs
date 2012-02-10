@@ -107,6 +107,8 @@ namespace DotNetNuke.Tests.Utilities
 
         #endregion
 
+        #region Public Methods
+
         public static void Base64EncodedContentLineContains(string expectedValue, string toAddress, string findByText)
         {
             var contentLine = ConvertEmailContentFromBase64ToUnicode(GetEmailFileName(toAddress, findByText));
@@ -154,5 +156,6 @@ namespace DotNetNuke.Tests.Utilities
             Assert.IsTrue(toLine.Contains(expectedValue));
         }
 
+        #endregion
     }
 }

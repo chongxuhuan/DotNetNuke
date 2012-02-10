@@ -226,7 +226,7 @@
     <value>Fetch List of Extensions</value>
   </data>
   <data name="PurchasedHelp.Text" xml:space="preserve">
-    <value>Here you can view the extensions you have purchased from SnowCovered, and optionally download and deploy them to your site.  You will need to provide your SnowCovered credentials to view your purchases.</value>
+    <value>Here you can view the extensions you have purchased from the Store, and optionally download and deploy them to your site.  You will need to provide your Store credentials to view your purchases.</value>
   </data>
   <data name="PurchasedTitle.Text" xml:space="preserve">
     <value>Purchased Extensions</value>

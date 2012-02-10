@@ -149,6 +149,8 @@ namespace DotNetNuke.Modules.Admin.Modules
                 rowTab.Visible = cboTab.Items.Count != 1;
                 chkAllTabs.Checked = Module.AllTabs;
                 trnewPages.Visible = chkAllTabs.Checked;
+                rowSearchOnce.Visible = chkAllTabs.Checked;
+                chkSearchOnce.Checked = Settings["searchonce"] != null ? bool.Parse(Settings["searchonce"].ToString()) : false;
                 cboVisibility.SelectedIndex = (int)Module.Visibility;
                 chkAdminBorder.Checked = Settings["hideadminborder"] != null ? bool.Parse(Settings["hideadminborder"].ToString()) : false;
 
@@ -434,6 +436,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                         chkNewTabs.Enabled = false;
                         chkDefault.Enabled = false;
                         chkAllModules.Enabled = false;
+                        chkSearchOnce.Enabled = false;
                         cboTab.Enabled = false;
                     }
                     if (_moduleId != -1)
@@ -445,6 +448,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                     {
                         cboVisibility.SelectedIndex = 0; //maximized
                         chkAllTabs.Checked = false;
+                        chkSearchOnce.Checked = false;
                         cmdDelete.Visible = false;
                     }
                     cmdUpdate.Visible = ModulePermissionController.HasModulePermission(Module.ModulePermissions, "EDIT,MANAGE") || TabPermissionController.CanAddContentToPage();
@@ -480,6 +484,7 @@ namespace DotNetNuke.Modules.Admin.Modules
         protected void OnAllTabsCheckChanged(object sender, EventArgs e)
         {
             trnewPages.Visible = chkAllTabs.Checked;
+            rowSearchOnce.Visible = chkAllTabs.Checked;
         }
 
         /// <summary>
@@ -551,6 +556,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                 {
                     var objModules = new ModuleController();
                     var allTabsChanged = false;
+                    var searchOnceChanged = false;
 
                     //tab administrators can only manage their own tab
                     if (!TabPermissionController.CanAdminPage())
@@ -559,6 +565,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                         chkNewTabs.Enabled = false;
                         chkDefault.Enabled = false;
                         chkAllModules.Enabled = false;
+                        chkSearchOnce.Enabled = false;
                         cboTab.Enabled = false;
                     }
                     Module.ModuleID = _moduleId;
@@ -583,6 +590,14 @@ namespace DotNetNuke.Modules.Admin.Modules
                     }
                     Module.AllTabs = chkAllTabs.Checked;
                     objModules.UpdateTabModuleSetting(Module.TabModuleID, "hideadminborder", chkAdminBorder.Checked.ToString());
+                    
+                    //check whether searchonce value is changed
+                    var searchOnce = Settings.ContainsKey("searchonce") ? Convert.ToBoolean(Settings["searchonce"]) : false;
+                    if(searchOnce != chkSearchOnce.Checked)
+                    {
+                        searchOnceChanged = true;
+                    }
+                    objModules.UpdateTabModuleSetting(Module.TabModuleID, "searchonce", chkSearchOnce.Checked.ToString());
                     switch (Int32.Parse(cboVisibility.SelectedItem.Value))
                     {
                         case 0:
@@ -701,7 +716,18 @@ namespace DotNetNuke.Modules.Admin.Modules
                             {
                                 foreach (var destinationTab in listTabs)
                                 {
-                                    objModules.CopyModule(Module, destinationTab, Null.NullString, true);
+                                    var module = objModules.GetModule(_moduleId, destinationTab.TabID);
+                                    if(module != null)
+                                    {
+                                        if(module.IsDeleted)
+                                        {
+                                            objModules.RestoreModule(module);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        objModules.CopyModule(Module, destinationTab, Null.NullString, true);
+                                    }
                                 }
                             }
                         }
@@ -709,6 +735,27 @@ namespace DotNetNuke.Modules.Admin.Modules
                         {
                             objModules.DeleteAllModules(_moduleId, TabId, listTabs);
                         }
+                    }
+
+                    //if searchonce is changed, then should update all other tabmodules to update the setting value.
+                    if(searchOnceChanged)
+                    {
+                        objModules.GetAllTabsModulesByModuleID(_moduleId)
+                            .Cast<ModuleInfo>()
+                            .Where(t => t.TabID != TabId)
+                            .ToList()
+                            .ForEach(tm =>
+                                        {
+                                            if (chkSearchOnce.Checked)
+                                            {
+                                                objModules.UpdateTabModuleSetting(tm.TabModuleID, "DisableSearch", "true");
+                                            }
+                                            else
+                                            {
+                                                objModules.DeleteTabModuleSetting(tm.TabModuleID, "DisableSearch");
+                                            }
+                                        });
+
                     }
 
                     //Navigate back to admin page

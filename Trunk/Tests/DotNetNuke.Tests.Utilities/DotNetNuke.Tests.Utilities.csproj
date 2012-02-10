@@ -76,6 +76,7 @@
       <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -97,6 +98,7 @@
     <Compile Include="IISManager.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="MailAssert.cs" />
+    <Compile Include="MailManager.cs" />
     <Compile Include="Mocks\MockComponentProvider.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -106,6 +108,10 @@
     <ProjectReference Include="..\..\Library\DotNetNuke.Library.csproj">
       <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
       <Name>DotNetNuke.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DotNetNuke.Tests.UI.WatiN.Utilities\DotNetNuke.Tests.UI.WatiN.Utilities.csproj">
+      <Project>{E4EC4EE4-A94F-4A6D-AC46-C16CDA35CD40}</Project>
+      <Name>DotNetNuke.Tests.UI.WatiN.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

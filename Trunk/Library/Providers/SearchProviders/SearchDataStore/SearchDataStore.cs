@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -507,6 +508,12 @@ namespace DotNetNuke.Services.Search
 
                 //Get the Module's SearchItems to compare
                 moduleItems = SearchItems.ModuleItems(kvp.Key);
+                
+                //remove deleted indexed items
+                var moduleItemList = moduleItems.Cast<SearchItemInfo>().ToList();
+                indexedItems.Values
+                    .Where(i => moduleItemList.All(s => s.SearchKey != i.SearchKey))
+                    .ToList().ForEach(i => SearchDataStoreController.DeleteSearchItem(i.SearchItemId));
 
                 //As we will be potentially removing items from the collection iterate backwards
                 for (int iSearch = moduleItems.Count - 1; iSearch >= 0; iSearch += -1)
