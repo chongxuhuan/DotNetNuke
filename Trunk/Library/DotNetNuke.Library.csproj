@@ -102,6 +102,10 @@
     <Reference Include="System.Web.Extensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Components\Mvc\bin\System.Web.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="Telerik.Web.UI, Version=2010.2.713.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
@@ -124,6 +128,7 @@
     <Compile Include="Common\Globals.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Common\HttpContextSource.cs" />
     <Compile Include="Common\Initialize.cs" />
     <Compile Include="Common\Lists\EntryInfo.cs" />
     <Compile Include="Common\Lists\ListController.cs" />
@@ -179,6 +184,7 @@
     <Compile Include="ComponentModel\ComponentLifeStyleType.cs" />
     <Compile Include="ComponentModel\ComponentType.cs" />
     <Compile Include="ComponentModel\ComponentTypeCollection.cs" />
+    <Compile Include="ComponentModel\ControllerBase.cs" />
     <Compile Include="ComponentModel\IComponentBuilder.cs" />
     <Compile Include="ComponentModel\IComponentInstaller.cs" />
     <Compile Include="ComponentModel\IContainer.cs" />
@@ -203,11 +209,19 @@
     <Compile Include="Entities\Host\ServerInfo.cs" />
     <Compile Include="Entities\Icons\IconController.cs" />
     <Compile Include="Entities\Modules\IModuleController.cs" />
+    <Compile Include="Entities\Modules\ModuleControllerImpl.cs" />
     <Compile Include="Entities\Modules\TestableModuleController.cs" />
+    <Compile Include="Entities\Portals\IPortalSettings.cs" />
+    <Compile Include="Entities\Portals\TestablePortalSettings.cs" />
     <Compile Include="Entities\Tabs\ITabController.cs" />
+    <Compile Include="Entities\Tabs\TabControllerImpl.cs" />
     <Compile Include="Entities\Tabs\TestableTabController.cs" />
-    <Compile Include="Services\FileSystem\Wrappers\PortalSettingsWrapper.cs" />
-    <Compile Include="Services\FileSystem\Wrappers\IPortalSettings.cs" />
+    <Compile Include="Entities\Users\Exceptions\InvalidVerificationCodeException.cs" />
+    <Compile Include="Entities\Users\Exceptions\UserAlreadyVerifiedException.cs" />
+    <Compile Include="Entities\Users\Exceptions\UserDoesNotExistException.cs" />
+    <Compile Include="Framework\IServicesFramework.cs" />
+    <Compile Include="Framework\ServicesFramework.cs" />
+    <Compile Include="Framework\ServicesFrameworkImpl.cs" />
     <Compile Include="Services\Journal\CommentInfo.cs" />
     <Compile Include="Services\Journal\Content.cs" />
     <Compile Include="Services\Journal\Data\IJournalDataService.cs" />

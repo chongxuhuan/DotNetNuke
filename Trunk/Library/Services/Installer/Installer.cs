@@ -34,6 +34,7 @@ using DotNetNuke.Services.Installer.Log;
 using DotNetNuke.Services.Installer.Packages;
 using DotNetNuke.Services.Installer.Writers;
 using DotNetNuke.Services.Log.EventLog;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 #endregion
 
@@ -500,6 +501,9 @@ namespace DotNetNuke.Services.Installer
 			
             //log installation event
             LogInstallEvent("Package", "Install");
+
+            //Update the version of the client resources - so the cache is cleared
+            ClientResourceManager.UpdateVersion();
 
             //Clear Host Cache
             DataCache.ClearHostCache(true);

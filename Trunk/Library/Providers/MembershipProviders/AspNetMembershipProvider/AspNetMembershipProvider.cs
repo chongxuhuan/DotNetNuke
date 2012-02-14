@@ -519,9 +519,7 @@ namespace DotNetNuke.Security.Membership
 
         private static UserLoginStatus ValidateLogin(string username, string authType, UserInfo user, UserLoginStatus loginStatus, string password, ref bool bValid, int portalId)
         {
-            var portalController = new PortalController();
-            if (loginStatus != UserLoginStatus.LOGIN_USERLOCKEDOUT && (loginStatus != UserLoginStatus.LOGIN_USERNOTAPPROVED || 
-                (user.IsInRole("Unverified Users") && portalController.GetPortal(portalId).UserRegistration == (int)Globals.PortalRegistrationType.VerifiedRegistration)))
+            if (loginStatus != UserLoginStatus.LOGIN_USERLOCKEDOUT && (loginStatus != UserLoginStatus.LOGIN_USERNOTAPPROVED || user.IsInRole("Unverified Users")))
             {
                 if (authType == "DNN")
                 {
@@ -1339,13 +1337,10 @@ namespace DotNetNuke.Security.Membership
                 if (user.Membership.Approved == false && user.IsSuperUser == false)
                 {
 					//Check Verification code
-                    if (verificationCode == (portalId + "-" + user.UserID))
+                    var ps = new PortalSecurity();
+                    if (verificationCode == ps.EncryptString(portalId + "-" + user.UserID, Config.GetDecryptionkey()))
                     {
-						//Approve User
-                        user.Membership.Approved = true;
-
-                        //Persist to Data Store
-                        UpdateUser(user);
+                        UserController.ApproveUser(user);
                     }
                     else
                     {

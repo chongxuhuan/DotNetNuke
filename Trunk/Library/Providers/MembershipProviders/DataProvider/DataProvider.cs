@@ -52,7 +52,8 @@ namespace DotNetNuke.Security.Membership.Data
             return ComponentFactory.GetComponent<DataProvider>();
         }
 
-        #region "Abstract Methods"
+        #region Abstract Methods
+
         // Login/Security
         public abstract IDataReader UserLogin(string username, string password);
         public abstract IDataReader GetAuthRoles(int portalId, int moduleId);

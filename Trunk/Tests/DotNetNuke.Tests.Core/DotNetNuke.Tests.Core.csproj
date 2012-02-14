@@ -109,6 +109,7 @@
     <Compile Include="CBOTest.cs" />
     <Compile Include="Controllers\Social\MessagingControllerTests.cs" />
     <Compile Include="Controllers\Social\RelationshipControllerTests.cs" />
+    <Compile Include="Framework\ServicesFrameworkTests.cs" />
     <Compile Include="HttpModules\ServiceAuthContextTests.cs" />
     <Compile Include="Providers\Folder\DatabaseFolderProviderTests.cs" />
     <Compile Include="Providers\Folder\FileManagerTests.cs" />
@@ -177,6 +178,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

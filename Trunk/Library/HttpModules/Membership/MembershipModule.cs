@@ -111,7 +111,7 @@ namespace DotNetNuke.HttpModules.Membership
 
                 //authenticate user and set last login ( this is necessary for users who have a permanent Auth cookie set ) 
                 if (user == null || user.IsDeleted || user.Membership.LockedOut
-                    || (!user.Membership.Approved && (portalSettings.UserRegistration != (int)Globals.PortalRegistrationType.VerifiedRegistration) || !user.IsInRole("Unverified Users"))
+                    || (!user.Membership.Approved && !user.IsInRole("Unverified Users"))
                     || user.Username.ToLower() != context.User.Identity.Name.ToLower())
                 {
                     var portalSecurity = new PortalSecurity();

@@ -28,6 +28,8 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Services.Authentication;
+using DotNetNuke.Services.Localization;
+using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
 
 using Globals = DotNetNuke.Common.Globals;
@@ -107,6 +109,44 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			cmdLogin.Click += OnLoginClick;
 
 			ClientAPI.RegisterKeyCapture(Parent, cmdLogin, 13);
+
+            if (!IsPostBack)
+            {
+                var verificationCode = Request.QueryString["verificationcode"];
+                if (!string.IsNullOrEmpty(verificationCode))
+                {
+                    if (PortalSettings.UserRegistration == (int)Globals.PortalRegistrationType.VerifiedRegistration)
+                    {
+                        if (Request.IsAuthenticated)
+                        {
+                            Controls.Clear();
+                        }
+
+                        try
+                        {
+                            UserController.VerifyUser(verificationCode);
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("VerificationSuccess", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
+                        }
+                        catch (UserAlreadyVerifiedException)
+                        {
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("UserAlreadyVerified", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
+                        }
+                        catch (InvalidVerificationCodeException)
+                        {
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("InvalidVerificationCode", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                        }
+                        catch (UserDoesNotExistException)
+                        {
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("UserDoesNotExist", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                        }
+                        catch (Exception)
+                        {
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("InvalidVerificationCode", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                        }
+                    }
+                }
+            }
+
 			if (!Request.IsAuthenticated)
 			{
 				if (Page.IsPostBack == false)
@@ -116,21 +156,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 						if (Request.QueryString["username"] != null)
 						{
 							txtUsername.Text = Request.QueryString["username"];
-						}
-						if (Request.QueryString["verificationcode"] != null)
-						{
-							if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
-							{
-                                //TODO: Automatically verify user
-                                //TODO: If verification works
-                                //TODO:     If request is authenticated, redirect to home (and display message?)
-                                //TODO:     Else stay here and let the user to login
-                                //TODO: Else display message??
-								
-                                ////Display Verification Rows 
-                                //divVerify.Visible = true;
-                                //txtVerification.Text = Request.QueryString["verificationcode"];
-							}
 						}
 					}
 					catch (Exception ex)
@@ -168,10 +193,10 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// </history>
 		private void OnLoginClick(object sender, EventArgs e)
 		{
-			if ((UseCaptcha && ctlCaptcha.IsValid) || (!UseCaptcha))
+			if ((UseCaptcha && ctlCaptcha.IsValid) || !UseCaptcha)
 			{
 				var loginStatus = UserLoginStatus.LOGIN_FAILURE;
-				var objUser = UserController.ValidateUser(PortalId, txtUsername.Text, txtPassword.Text, "DNN", txtVerification.Text, PortalSettings.PortalName, IPAddress, ref loginStatus);
+				var objUser = UserController.ValidateUser(PortalId, txtUsername.Text, txtPassword.Text, "DNN", string.Empty, PortalSettings.PortalName, IPAddress, ref loginStatus);
 				var authenticated = Null.NullBoolean;
 				var message = Null.NullString;
 				if (loginStatus == UserLoginStatus.LOGIN_USERNOTAPPROVED)

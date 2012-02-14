@@ -10,10 +10,6 @@
         <asp:label id="plPassword" AssociatedControlID="txtPassword" runat="server" resourcekey="Password" CssClass="dnnFormLabel" />
         <asp:textbox id="txtPassword" textmode="Password" runat="server" />
     </div>
-    <div class="dnnFormItem" id="divVerify" runat="server" visible="false">
-        <asp:label id="plVerification" AssociatedControlID="txtVerification" resourcekey="plVerification" runat="server" CssClass="dnnFormLabel"/>
-        <asp:textbox id="txtVerification" runat="server" />
-    </div>
     <div class="dnnFormItem" id="divCaptcha1" runat="server" visible="false">
         <asp:label id="plCaptcha" AssociatedControlID="ctlCaptcha" runat="server" resourcekey="Captcha" CssClass="dnnFormLabel" />
     </div>

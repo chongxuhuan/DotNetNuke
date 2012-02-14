@@ -64,7 +64,11 @@ namespace DotNetNuke.MSBuild.Tasks
                 LogFormat("Message", "DNN INSTALL LOGGING INFO");
                 LogFormat("Message", "-----------------------------");
 
-                LogFormat("Error", "Fullsite:" + data);
+                LogFormat("Message", "log output to:" + Directory.GetCurrentDirectory());
+                using (var file = new StreamWriter(Directory.GetCurrentDirectory() + "\\installLog.html"))
+                {
+                        file.WriteLine(data);
+                }
 
                 if (autoFailed)
                 {

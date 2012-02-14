@@ -18,6 +18,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
@@ -25,19 +26,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
+using System.Linq;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
+using DotNetNuke.Security.Membership;
 using DotNetNuke.Security.Membership.Data;
 using DotNetNuke.Security.Roles;
-using DotNetNuke.Services.Exceptions;
 
 #endregion
 
+// ReSharper disable CheckNamespace
 namespace DotNetNuke.Security.Membership
+// ReSharper restore CheckNamespace
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
@@ -65,7 +70,7 @@ namespace DotNetNuke.Security.Membership
             {
 				//get the provider configuration based on the type
                 string defaultprovider = DotNetNuke.Data.DataProvider.Instance().DefaultProviderName;
-                string dataProviderNamespace = "DotNetNuke.Security.Membership.Data";
+                const string dataProviderNamespace = "DotNetNuke.Security.Membership.Data";
                 if (defaultprovider == "SqlDataProvider")
                 {
                     dataProvider = new SqlDataProvider();
@@ -117,7 +122,7 @@ namespace DotNetNuke.Security.Membership
                                                          role.RoleName,
                                                          role.Description,
                                                          role.ServiceFee,
-                                                         role.BillingPeriod.ToString(),
+                                                         role.BillingPeriod.ToString(CultureInfo.InvariantCulture),
                                                          role.BillingFrequency,
                                                          role.TrialFee,
                                                          role.TrialPeriod,
@@ -198,13 +203,10 @@ namespace DotNetNuke.Security.Membership
         public override string[] GetRoleNames(int portalId)
         {
             string[] roles = {};
-            string strRoles = "";
             ArrayList arrRoles = GetRoles(portalId);
-            foreach (RoleInfo role in arrRoles)
-            {
-                strRoles += role.RoleName + "|";
-            }
-            if (strRoles.IndexOf("|") > 0)
+            var strRoles = arrRoles.Cast<RoleInfo>()
+                                    .Aggregate("", (current, role) => current + (role.RoleName + "|"));
+            if (strRoles.IndexOf("|", StringComparison.Ordinal) > 0)
             {
                 roles = strRoles.Substring(0, strRoles.Length - 1).Split('|');
             }
@@ -239,7 +241,7 @@ namespace DotNetNuke.Security.Membership
             {
                 CBO.CloseDataReader(dr, true);
             }
-            if (strRoles.IndexOf("|") > 0)
+            if (strRoles.IndexOf("|", StringComparison.Ordinal) > 0)
             {
                 roles = strRoles.Substring(0, strRoles.Length - 1).Split('|');
             }
@@ -259,15 +261,9 @@ namespace DotNetNuke.Security.Membership
         /// -----------------------------------------------------------------------------
         public override ArrayList GetRoles(int portalId)
         {
-            ArrayList arrRoles;
-            if (portalId == Null.NullInteger)
-            {
-                arrRoles = CBO.FillCollection(dataProvider.GetRoles(), typeof (RoleInfo));
-            }
-            else
-            {
-                arrRoles = CBO.FillCollection(dataProvider.GetPortalRoles(portalId), typeof (RoleInfo));
-            }
+            var arrRoles = CBO.FillCollection(portalId == Null.NullInteger 
+                                        ? dataProvider.GetRoles() 
+                                        : dataProvider.GetPortalRoles(portalId), typeof (RoleInfo));
             return arrRoles;
         }
 
@@ -304,7 +300,7 @@ namespace DotNetNuke.Security.Membership
                                     role.RoleGroupID,
                                     role.Description,
                                     role.ServiceFee,
-                                    role.BillingPeriod.ToString(),
+                                    role.BillingPeriod.ToString(CultureInfo.InvariantCulture),
                                     role.BillingFrequency,
                                     role.TrialFee,
                                     role.TrialPeriod,

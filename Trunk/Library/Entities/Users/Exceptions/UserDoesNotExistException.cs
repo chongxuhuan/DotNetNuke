@@ -18,20 +18,32 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 using System;
+using System.Runtime.Serialization;
 
-using DotNetNuke.Common;
-using DotNetNuke.ComponentModel;
-using DotNetNuke.Entities.Portals;
-
-
-namespace DotNetNuke.Entities.Portals.Internal
+namespace DotNetNuke.Entities.Users
 {
-    internal class PortalSettingsWrapper : ComponentBase<IPortalSettings, PortalSettingsWrapper>, IPortalSettings
+    [Serializable]
+    public class UserDoesNotExistException : Exception
     {
-        public string AdministratorRoleName
+        public UserDoesNotExistException()
         {
-            get { return PortalSettings.Current.AdministratorRoleName; }
+        }
+
+        public UserDoesNotExistException(string message)
+            : base(message)
+        {
+        }
+
+        public UserDoesNotExistException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+
+        public UserDoesNotExistException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
         }
     }
 }

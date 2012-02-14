@@ -701,6 +701,15 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			ShowPanel();
 		}
 
+        private bool UserNeedsVerification()
+        {
+            var userInfo = UserController.GetCurrentUserInfo();
+
+            return !userInfo.IsSuperUser && userInfo.IsInRole("Unverified Users") &&
+                PortalSettings.UserRegistration == (int)Globals.PortalRegistrationType.VerifiedRegistration &&
+                !string.IsNullOrEmpty(Request.QueryString["verificationcode"]);
+        }
+
 #endregion
 
 #region Event Handlers
@@ -798,9 +807,16 @@ namespace DotNetNuke.Modules.Admin.Authentication
 					DnnLog.Error(ex);
 				}
 			}
-			if (!Request.IsAuthenticated)
+			if (!Request.IsAuthenticated || UserNeedsVerification())
 			{
 				ShowPanel();
+
+                if (Request.IsAuthenticated)
+                {
+                    chkCookie.Visible = false;
+                    liRegister.Visible = false;
+                    liPassword.Visible = false;
+                }
 			}
 			else //user is already authenticated
 			{
@@ -860,7 +876,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			}
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// cmdAssociate_Click runs when the associate button is clicked
 		/// </summary>
 		/// <remarks>

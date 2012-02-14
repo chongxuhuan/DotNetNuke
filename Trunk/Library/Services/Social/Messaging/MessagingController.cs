@@ -29,6 +29,7 @@ using System.Text;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Services.Localization;
@@ -50,7 +51,7 @@ namespace DotNetNuke.Services.Social.Messaging
     /// <history>
     /// </history>
     /// -----------------------------------------------------------------------------
-    public class MessagingController : IMessagingController
+    public class MessagingController : ComponentBase<IMessagingController, MessagingController>, IMessagingController
     {
         #region constants
 
@@ -95,6 +96,30 @@ namespace DotNetNuke.Services.Social.Messaging
             return CBO.FillObject<MessageRecipient>(_dataService.GetSocialMessageRecipientByMessageAndUser(messageRecipientId, userId));
         }
 
+        ///<summary> How long a user needs to wait before user is allowed sending the next message</summary>
+        ///<returns>Time in seconds. Returns zero if user has never sent a message</returns>
+        /// <param name="sender">Sender's UserInfo</param>
+        /// <param name="portalId">PortalId</param>
+        public int WaitTimeForNextMessage(UserInfo sender, int portalId)
+        {
+            int waitTime = 0;
+            var interval =  PortalController.GetPortalSettingAsInteger("MessageThrottleInterval", portalId, Null.NullInteger);
+            if (interval > 0 && (!IsAdminOrHost(sender)))
+            {
+                int totalRecords = 0;
+                waitTime = DateTime.Now.Subtract(GetSentbox(sender.UserID, 0, 1, ref totalRecords).First().CreatedOnDate).Seconds;
+                //var messages = GetSentbox(sender.UserID, 0, 1, ref totalRecords);
+                //if(messages != null )
+                {
+                    waitTime = DateTime.Now.Subtract(GetSentbox(sender.UserID, 0, 1, ref totalRecords).First().CreatedOnDate).Seconds;
+                }
+
+            }
+
+            return waitTime;
+        }
+
+
         #endregion
 
         #region Easy Wrapper APIs
@@ -131,13 +156,23 @@ namespace DotNetNuke.Services.Social.Messaging
 
         public IList<MessageItem> GetRecentMessages(int userId, ref int totalRecords)
         {
-            var messages = GetInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
+            return GetRecentMessages(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords);
+        }
+
+        public IList<MessageItem> GetRecentMessages(int userId, int pageIndex, int pageSize, ref int totalRecords)
+        {
+            return GetRecentMessages(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
+        }
+
+        public IList<MessageItem> GetRecentMessages(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
+        {
+            var messages = GetInbox(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
             return messages;
         }
 
-        public IList<MessageItem> GetArchivedMessages(int userId, ref int totalRecords)
+        public IList<MessageItem> GetArchivedMessages(int userId, int pageIndex, int pageSize, ref int totalRecords)
         {
-            var messages = GetInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived);
+            var messages = GetInbox(userId, pageIndex, pageSize, ref totalRecords, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived);
             return messages;
         }
 
@@ -171,7 +206,7 @@ namespace DotNetNuke.Services.Social.Messaging
 
             if (roles != null && roles.Count > 0)
             {
-                if (!sender.IsSuperUser && !sender.IsInRole(PortalSettingsWrapper.Instance.AdministratorRoleName))
+                if (!IsAdminOrHost(sender))
                 {
                     throw new ArgumentException(Localization.Localization.GetString("OnlyHostOrAdminCanSendToRoleError", Localization.Localization.ExceptionsResourceFile));                                                    
                 }
@@ -238,6 +273,15 @@ namespace DotNetNuke.Services.Social.Messaging
             }
 
             return message;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private bool IsAdminOrHost(UserInfo userInfo)
+        {
+            return userInfo.IsSuperUser || userInfo.IsInRole(TestablePortalSettings.Instance.AdministratorRoleName);
         }
 
         #endregion

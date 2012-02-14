@@ -18,10 +18,32 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-namespace DotNetNuke.Entities.Portals.Internal
+
+using System;
+using System.Runtime.Serialization;
+
+namespace DotNetNuke.Entities.Users
 {
-    internal interface IPortalSettings
+    [Serializable]
+    public class UserAlreadyVerifiedException : Exception
     {
-        string AdministratorRoleName { get; }
+        public UserAlreadyVerifiedException()
+        {
+        }
+
+        public UserAlreadyVerifiedException(string message)
+            : base(message)
+        {
+        }
+
+        public UserAlreadyVerifiedException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+
+        public UserAlreadyVerifiedException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
     }
 }

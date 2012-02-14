@@ -2382,7 +2382,8 @@ namespace DotNetNuke.Entities.Portals
             objEventLog.AddLog(settingName, settingValue, GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.PORTAL_SETTING_UPDATED);
             if (clearCache)
             {
-                DataCache.ClearHostCache(true);
+                DataCache.ClearPortalCache(portalID, false);
+                DataCache.RemoveCache(DataCache.PortalDictionaryCacheKey);
             }
         }
 
@@ -2526,9 +2527,9 @@ namespace DotNetNuke.Entities.Portals
 
         #endregion
 
-        #region "Obsolete Methods"
+        #region Obsolete Methods
 
-        [Obsolete("This function has been replaced by GetPortalSpaceUsedBytes")]
+        [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by GetPortalSpaceUsedBytes")]
         public int GetPortalSpaceUsed(int portalId)
         {
             int size = 0;
@@ -2546,7 +2547,7 @@ namespace DotNetNuke.Entities.Portals
             return size;
         }
 
-        [Obsolete("This function has been replaced by TabController.DeserializePanes")]
+        [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by TabController.DeserializePanes")]
         public void ParsePanes(XmlNode nodePanes, int portalId, int TabId, PortalTemplateModuleAction mergeTabs, Hashtable hModules)
         {
             TabController.DeserializePanes(nodePanes, portalId, TabId, mergeTabs, hModules);

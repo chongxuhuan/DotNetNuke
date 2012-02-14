@@ -79,7 +79,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _messagingController = new MessagingController(_mockDataService.Object);            
 
             _portalSettingsWrapper = new Mock<IPortalSettings>();
-            PortalSettingsWrapper.RegisterInstance(_portalSettingsWrapper.Object);
+            TestablePortalSettings.RegisterInstance(_portalSettingsWrapper.Object);
 
 			SetupDataProvider();
             SetupRoleProvider();

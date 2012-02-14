@@ -51,6 +51,17 @@ namespace DotNetNuke.Security.Roles
     /// -----------------------------------------------------------------------------
     public class RoleController
     {
+        #region Private Nested Type: UserRoleActions
+
+        private enum UserRoleActions
+        {
+            add = 0,
+            update = 1,
+            delete = 2
+        }
+
+        #endregion
+
 		#region Private Shared Members
 		
         private static readonly string[] UserRoleActionsCaption = {"ASSIGNMENT", "UPDATE", "UNASSIGNMENT"};
@@ -113,9 +124,7 @@ namespace DotNetNuke.Security.Roles
         private static void SendNotification(UserInfo objUser, RoleInfo objRole, PortalSettings PortalSettings, UserRoleActions Action)
         {
             var objRoles = new RoleController();
-            var Custom = new ArrayList();
-            Custom.Add(objRole.RoleName);
-            Custom.Add(objRole.Description);
+            var Custom = new ArrayList {objRole.RoleName, objRole.Description};
             switch (Action)
             {
                 case UserRoleActions.add:
@@ -127,38 +136,33 @@ namespace DotNetNuke.Security.Roles
                     }
                     var ci = new CultureInfo(preferredLocale);
                     UserRoleInfo objUserRole = objRoles.GetUserRole(PortalSettings.PortalId, objUser.UserID, objRole.RoleID);
-                    if (Null.IsNull(objUserRole.EffectiveDate))
-                    {
-                        Custom.Add(DateTime.Today.ToString("g", ci));
-                    }
-                    else
-                    {
-                        Custom.Add(objUserRole.EffectiveDate.ToString("g", ci));
-                    }
-                    if (Null.IsNull(objUserRole.ExpiryDate))
-                    {
-                        Custom.Add("-");
-                    }
-                    else
-                    {
-                        Custom.Add(objUserRole.ExpiryDate.ToString("g", ci));
-                    }
+                    Custom.Add(Null.IsNull(objUserRole.EffectiveDate)
+                                   ? DateTime.Today.ToString("g", ci)
+                                   : objUserRole.EffectiveDate.ToString("g", ci));
+                    Custom.Add(Null.IsNull(objUserRole.ExpiryDate) ? "-" : objUserRole.ExpiryDate.ToString("g", ci));
                     break;
                 case UserRoleActions.delete:
                     Custom.Add("");
                     break;
             }
-            var _message = new Message();
-            _message.FromUserID = PortalSettings.AdministratorId;
-            _message.ToUserID = objUser.UserID;
-            _message.Subject = Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings, "EMAIL_ROLE_" + UserRoleActionsCaption[(int)Action] + "_SUBJECT", objUser);
-            _message.Body = Localization.GetSystemMessage(objUser.Profile.PreferredLocale,
-                                                          PortalSettings,
-                                                          "EMAIL_ROLE_" + UserRoleActionsCaption[(int)Action] + "_BODY",
-                                                          objUser,
-                                                          Localization.GlobalResourceFile,
-                                                          Custom);
-            _message.Status = MessageStatusType.Unread;
+            var _message = new Message
+                               {
+                                   FromUserID = PortalSettings.AdministratorId,
+                                   ToUserID = objUser.UserID,
+                                   Subject =
+                                       Localization.GetSystemMessage(objUser.Profile.PreferredLocale, PortalSettings,
+                                                                     "EMAIL_ROLE_" +
+                                                                     UserRoleActionsCaption[(int) Action] +
+                                                                     "_SUBJECT", objUser),
+                                   Body = Localization.GetSystemMessage(objUser.Profile.PreferredLocale,
+                                                                        PortalSettings,
+                                                                        "EMAIL_ROLE_" +
+                                                                        UserRoleActionsCaption[(int) Action] + "_BODY",
+                                                                        objUser,
+                                                                        Localization.GlobalResourceFile,
+                                                                        Custom),
+                                   Status = MessageStatusType.Unread
+                               };
 
             //_messagingController.SaveMessage(_message);
             Mail.SendEmail(PortalSettings.Email, objUser.Email, _message.Subject, _message.Body);
@@ -212,7 +216,7 @@ namespace DotNetNuke.Security.Roles
             {
                 provider.DeleteRole(PortalId, ref objRole);
                 var objEventLog = new EventLogController();
-                objEventLog.AddLog("RoleID", RoleId.ToString(), PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.ROLE_DELETED);
+                objEventLog.AddLog("RoleID", RoleId.ToString(CultureInfo.InvariantCulture), PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.ROLE_DELETED);
             }
         }
 
@@ -379,19 +383,19 @@ namespace DotNetNuke.Security.Roles
         /// <summary>
         /// Adds a User to a Role
         /// </summary>
-        /// <param name="PortalID">The Id of the Portal</param>
+        /// <param name="portalId">The Id of the Portal</param>
         /// <param name="userId">The Id of the User</param>
         /// <param name="roleId">The Id of the Role</param>
-        /// <param name="ExpiryDate">The expiry Date of the Role membership</param>
+        /// <param name="expiryDate">The expiry Date of the Role membership</param>
         /// <history>
         /// 	[cnurse]	05/24/2005	Documented
         ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
         ///     [cnurse]    05/12/2006  Now calls new overload with EffectiveDate = Now()
         /// </history>
         /// -----------------------------------------------------------------------------
-        public void AddUserRole(int PortalID, int userId, int roleId, DateTime ExpiryDate)
+        public void AddUserRole(int portalId, int userId, int roleId, DateTime expiryDate)
         {
-            AddUserRole(PortalID, userId, roleId, Null.NullDate, ExpiryDate);
+            AddUserRole(portalId, userId, roleId, Null.NullDate, expiryDate);
         }
 
         /// -----------------------------------------------------------------------------
@@ -446,22 +450,22 @@ namespace DotNetNuke.Security.Roles
         /// <param name="user">The user to assign</param>
         /// <param name="role">The role to add</param>
         /// <param name="portalSettings">The PortalSettings of the Portal</param>
-        /// <param name="effDate">The expiry Date of the Role membership</param>
-        /// <param name="expDate">The expiry Date of the Role membership</param>
+        /// <param name="effectiveDate">The expiry Date of the Role membership</param>
+        /// <param name="expiryDate">The expiry Date of the Role membership</param>
         /// <param name="userId">The Id of the User assigning the role</param>
         /// <param name="notifyUser">A flag that indicates whether the user should be notified</param>
         /// <history>
         ///     [cnurse]    10/17/2007  Created  (Refactored code from Security Roles user control)
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static void AddUserRole(UserInfo user, RoleInfo role, PortalSettings portalSettings, DateTime effDate, DateTime expDate, int userId, bool notifyUser)
+        public static void AddUserRole(UserInfo user, RoleInfo role, PortalSettings portalSettings, DateTime effectiveDate, DateTime expiryDate, int userId, bool notifyUser)
         {
             var roleController = new RoleController();
             UserRoleInfo userRole = roleController.GetUserRole(portalSettings.PortalId, user.UserID, role.RoleID);
             var eventLogController = new EventLogController();
 
             //update assignment
-            roleController.AddUserRole(portalSettings.PortalId, user.UserID, role.RoleID, effDate, expDate);
+            roleController.AddUserRole(portalSettings.PortalId, user.UserID, role.RoleID, effectiveDate, expiryDate);
 
             UserController.UpdateUser(portalSettings.PortalId, user);
             if (userRole == null)
@@ -479,7 +483,7 @@ namespace DotNetNuke.Security.Roles
                 eventLogController.AddLog("Role", role.RoleName, portalSettings, userId, EventLogController.EventLogType.USER_ROLE_UPDATED);
                 if (notifyUser)
                 {
-                    userRole = roleController.GetUserRole(portalSettings.PortalId, user.UserID, role.RoleID);
+                    roleController.GetUserRole(portalSettings.PortalId, user.UserID, role.RoleID);
                     SendNotification(user, role, portalSettings, UserRoleActions.update);
                 }
             }
@@ -645,8 +649,7 @@ namespace DotNetNuke.Security.Roles
         public void UpdateUserRole(int portalId, int userId, int roleId, bool cancel)
         {
             UserInfo user = UserController.GetUserById(portalId, userId);
-            UserRoleInfo userRole;
-            userRole = GetUserRole(portalId, userId, roleId);
+            UserRoleInfo userRole = GetUserRole(portalId, userId, roleId);
             var eventLogController = new EventLogController();
             if (cancel)
             {
@@ -662,7 +665,7 @@ namespace DotNetNuke.Security.Roles
 					//Delete Role
                     DeleteUserRoleInternal(portalId, userId, roleId);
                     eventLogController.AddLog("UserId",
-                                       userId.ToString(),
+                                       userId.ToString(CultureInfo.InvariantCulture),
                                        PortalController.GetCurrentPortalSettings(),
                                        UserController.GetCurrentUserInfo().UserID,
                                        EventLogController.EventLogType.USER_ROLE_DELETED);
@@ -671,7 +674,6 @@ namespace DotNetNuke.Security.Roles
             else
             {
                 int UserRoleId = -1;
-                RoleInfo role;
                 DateTime ExpiryDate = DateTime.Now;
                 DateTime EffectiveDate = Null.NullDate;
                 bool IsTrialUsed = false;
@@ -684,7 +686,7 @@ namespace DotNetNuke.Security.Roles
                     ExpiryDate = userRole.ExpiryDate;
                     IsTrialUsed = userRole.IsTrialUsed;
                 }
-                role = GetRole(roleId, portalId);
+                RoleInfo role = GetRole(roleId, portalId);
                 if (role != null)
                 {
                     if (IsTrialUsed == false && role.TrialFrequency != "N")
@@ -869,9 +871,11 @@ namespace DotNetNuke.Security.Roles
             }
 			
             //Serialize Global Roles
-            var globalRoleGroup = new RoleGroupInfo(Null.NullInteger, portalID, true);
-            globalRoleGroup.RoleGroupName = "GlobalRoles";
-            globalRoleGroup.Description = "A dummy role group that represents the Global roles";
+            var globalRoleGroup = new RoleGroupInfo(Null.NullInteger, portalID, true)
+                                      {
+                                          RoleGroupName = "GlobalRoles",
+                                          Description = "A dummy role group that represents the Global roles"
+                                      };
             CBO.SerializeObject(globalRoleGroup, writer);
             writer.WriteEndElement();
         }
@@ -1011,15 +1015,5 @@ namespace DotNetNuke.Security.Roles
 
         #endregion
 
-        #region Nested type: UserRoleActions
-
-        private enum UserRoleActions
-        {
-            add = 0,
-            update = 1,
-            delete = 2
-        }
-
-        #endregion
-    }
+     }
 }

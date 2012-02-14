@@ -39,26 +39,26 @@ namespace DotNetNuke.Services.Cache.FileBasedCachingProvider
         internal static string CachingDirectory = "Cache\\";
 
 		#region "Abstract Method Implementation"
-        public override void Insert(string Key, object Value, DNNCacheDependency Dependency, DateTime AbsoluteExpiration, TimeSpan SlidingExpiration, CacheItemPriority Priority,
-                                    CacheItemRemovedCallback OnRemoveCallback)
+        public override void Insert(string cacheKey, object itemToCache, DNNCacheDependency dependency, DateTime absoluteExpiration, TimeSpan slidingExpiration, CacheItemPriority priority,
+                                    CacheItemRemovedCallback onRemoveCallback)
         {
 			//initialize cache dependency
-            DNNCacheDependency d = Dependency;
+            DNNCacheDependency d = dependency;
 
             //if web farm is enabled
             if (IsWebFarm())
             {
                 //get hashed file name
                 var f = new string[1];
-                f[0] = GetFileName(Key);
+                f[0] = GetFileName(cacheKey);
                 //create a cache file for item
-                CreateCacheFile(f[0], Key);
+                CreateCacheFile(f[0], cacheKey);
                 //create a cache dependency on the cache file
-                d = new DNNCacheDependency(f, null, Dependency);
+                d = new DNNCacheDependency(f, null, dependency);
             }
 			
             //Call base class method to add obect to cache
-            base.Insert(Key, Value, d, AbsoluteExpiration, SlidingExpiration, Priority, OnRemoveCallback);
+            base.Insert(cacheKey, itemToCache, d, absoluteExpiration, slidingExpiration, priority, onRemoveCallback);
         }
 
         public override bool IsWebFarm()

@@ -1450,6 +1450,6 @@
     <value>Delete</value>
   </data>
   <data name="UnverifiedUser.Text" xml:space="preserve">
-    <value>You are using an unverified account. Please, verify your account by clicking on the link contained in the verification email we've already sent to you or enter the verification code in the account settings.</value>
+    <value>You are using an unverified account. Please, verify your account by clicking on the link contained in the verification email we've already sent to you.</value>
   </data>
 </root>

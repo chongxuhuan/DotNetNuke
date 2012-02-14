@@ -30,6 +30,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users.Social;
+using DotNetNuke.Security;
 using DotNetNuke.Services.SystemDateTime;
 using DotNetNuke.Services.Tokens;
 using DotNetNuke.UI.WebControls;
@@ -321,7 +322,8 @@ namespace DotNetNuke.Entities.Users
                         propertyNotFound = true;
                         return PropertyAccess.ContentLocked;
                     }
-                    return PortalID + "-" + UserID;
+                    var ps = new PortalSecurity();
+                    return ps.EncryptString(PortalID + "-" + UserID, Config.GetDecryptionkey());
                 case "affiliateid":
                     if (internScope < Scope.SystemMessages)
                     {

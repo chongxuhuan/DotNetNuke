@@ -33,7 +33,6 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.Web.Client.ClientResourceManagement;
 
 #endregion
 
@@ -59,14 +58,14 @@ namespace DotNetNuke.Services.Cache
 	/// </example>
     public abstract class CachingProvider
     {
-		#region "Private Members"
-		
-        private static System.Web.Caching.Cache _objCache;
+		#region Private Members
+
+        private static System.Web.Caching.Cache _cache;
         private const string CachePrefix = "DNN_";
 		
 		#endregion
 
-		#region "Protected Properties"
+		#region Protected Properties
 
 		/// <summary>
 		/// Gets the default cache provider.
@@ -76,17 +75,13 @@ namespace DotNetNuke.Services.Cache
         {
             get
             {
-                if (_objCache == null)
-                {
-                    _objCache = HttpRuntime.Cache;
-                }
-                return _objCache;
+                return _cache ?? (_cache = HttpRuntime.Cache);
             }
         }
 		
 		#endregion
 
-		#region "Shared/Static Methods"
+		#region Shared/Static Methods
 
 		/// <summary>
 		/// Cleans the cache key by remove cache key prefix.
@@ -129,7 +124,7 @@ namespace DotNetNuke.Services.Cache
 		
 	#endregion
 
-	    #region "Private Methods"
+	    #region Private Methods
 	
         private void ClearCacheInternal(string prefix, bool clearRuntime)
         {
@@ -149,20 +144,6 @@ namespace DotNetNuke.Services.Cache
                     }
                 }
             }
-            if (prefix == "DNN_")
-            {
-                //First check if we are upgrading/installing
-                if (HttpContext.Current == null 
-                        || HttpContext.Current.Request.Url.LocalPath.ToLower().EndsWith("install.aspx")
-                        || HttpContext.Current.Request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
-                        || HttpContext.Current.Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
-                {
-                    return;
-                }                 
-                //Invalidate the client resources
-                ClientResourceManager.UpdateVersion();
-            }
-
         }
 
         private void ClearCacheKeysByPortalInternal(int portalId, bool clearRuntime)
@@ -321,7 +302,7 @@ namespace DotNetNuke.Services.Cache
 		
 		#endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
 		/// <summary>
 		/// Clears the cache internal.
@@ -363,15 +344,15 @@ namespace DotNetNuke.Services.Cache
 		/// <summary>
 		/// Removes the internal.
 		/// </summary>
-		/// <param name="CacheKey">The cache key.</param>
-        protected void RemoveInternal(string CacheKey)
+		/// <param name="cacheKey">The cache key.</param>
+        protected void RemoveInternal(string cacheKey)
         {
 			//attempt remove from private dictionary
-            DataCache.RemoveFromPrivateDictionary(CacheKey);
+            DataCache.RemoveFromPrivateDictionary(cacheKey);
             //remove item from memory
-            if (Cache[CacheKey] != null)
+            if (Cache[cacheKey] != null)
             {
-                Cache.Remove(CacheKey);
+                Cache.Remove(cacheKey);
             }
         }
 
@@ -393,72 +374,64 @@ namespace DotNetNuke.Services.Cache
 		/// <summary>
 		/// Gets the item.
 		/// </summary>
-		/// <param name="CacheKey">The cache key.</param>
+		/// <param name="cacheKey">The cache key.</param>
 		/// <returns>cache content</returns>
-        public virtual object GetItem(string CacheKey)
+        public virtual object GetItem(string cacheKey)
         {
-            return Cache[CacheKey];
+            return Cache[cacheKey];
         }
 
 		/// <summary>
 		/// Inserts the specified cache key.
 		/// </summary>
-		/// <param name="CacheKey">The cache key.</param>
-		/// <param name="objObject">The object.</param>
-        public virtual void Insert(string CacheKey, object objObject)
+		/// <param name="cacheKey">The cache key.</param>
+		/// <param name="itemToCache">The object.</param>
+        public virtual void Insert(string cacheKey, object itemToCache)
         {
-            DNNCacheDependency objDependency = null;
-            Insert(CacheKey, objObject, objDependency, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, null);
+            Insert(cacheKey, itemToCache, null as DNNCacheDependency, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, null);
         }
 
 		/// <summary>
 		/// Inserts the specified cache key.
 		/// </summary>
-		/// <param name="CacheKey">The cache key.</param>
-		/// <param name="objObject">The object.</param>
-		/// <param name="objDependency">The dependency.</param>
-        public virtual void Insert(string CacheKey, object objObject, DNNCacheDependency objDependency)
+		/// <param name="cacheKey">The cache key.</param>
+		/// <param name="itemToCache">The object.</param>
+		/// <param name="dependency">The dependency.</param>
+        public virtual void Insert(string cacheKey, object itemToCache, DNNCacheDependency dependency)
         {
-            Insert(CacheKey, objObject, objDependency, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, null);
+            Insert(cacheKey, itemToCache, dependency, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, null);
         }
 
 		/// <summary>
 		/// Inserts the specified cache key.
 		/// </summary>
-		/// <param name="CacheKey">The cache key.</param>
-		/// <param name="objObject">The object.</param>
-		/// <param name="objDependency">The dependency.</param>
-		/// <param name="AbsoluteExpiration">The absolute expiration.</param>
-		/// <param name="SlidingExpiration">The sliding expiration.</param>
-        public virtual void Insert(string CacheKey, object objObject, DNNCacheDependency objDependency, DateTime AbsoluteExpiration, TimeSpan SlidingExpiration)
+		/// <param name="cacheKey">The cache key.</param>
+		/// <param name="itemToCache">The object.</param>
+		/// <param name="dependency">The dependency.</param>
+		/// <param name="absoluteExpiration">The absolute expiration.</param>
+		/// <param name="slidingExpiration">The sliding expiration.</param>
+        public virtual void Insert(string cacheKey, object itemToCache, DNNCacheDependency dependency, DateTime absoluteExpiration, TimeSpan slidingExpiration)
         {
-            Insert(CacheKey, objObject, objDependency, AbsoluteExpiration, SlidingExpiration, CacheItemPriority.Default, null);
+            Insert(cacheKey, itemToCache, dependency, absoluteExpiration, slidingExpiration, CacheItemPriority.Default, null);
         }
 
 		/// <summary>
 		/// Inserts the specified cache key.
 		/// </summary>
-		/// <param name="CacheKey">The cache key.</param>
-		/// <param name="Value">The value.</param>
-		/// <param name="objDependency">The dependency.</param>
-		/// <param name="AbsoluteExpiration">The absolute expiration.</param>
-		/// <param name="SlidingExpiration">The sliding expiration.</param>
-		/// <param name="Priority">The priority.</param>
-		/// <param name="OnRemoveCallback">The on remove callback.</param>
-        public virtual void Insert(string CacheKey, object Value, DNNCacheDependency objDependency, DateTime AbsoluteExpiration, TimeSpan SlidingExpiration, CacheItemPriority Priority,
-                                   CacheItemRemovedCallback OnRemoveCallback)
-        {
-            if (objDependency == null)
-            {
-                Cache.Insert(CacheKey, Value, null, AbsoluteExpiration, SlidingExpiration, Priority, OnRemoveCallback);
-            }
-            else
-            {
-                Cache.Insert(CacheKey, Value, objDependency.SystemCacheDependency, AbsoluteExpiration, SlidingExpiration, Priority, OnRemoveCallback);
-            }
-        }
+		/// <param name="cacheKey">The cache key.</param>
+		/// <param name="itemToCache">The value.</param>
+		/// <param name="dependency">The dependency.</param>
+		/// <param name="absoluteExpiration">The absolute expiration.</param>
+		/// <param name="slidingExpiration">The sliding expiration.</param>
+		/// <param name="priority">The priority.</param>
+		/// <param name="onRemoveCallback">The on remove callback.</param>
+        public virtual void Insert(string cacheKey, object itemToCache, DNNCacheDependency dependency, DateTime absoluteExpiration, TimeSpan slidingExpiration, CacheItemPriority priority,
+                                   CacheItemRemovedCallback onRemoveCallback)
+		{
+		    Cache.Insert(cacheKey, itemToCache, dependency == null ? null : dependency.SystemCacheDependency, absoluteExpiration, slidingExpiration, priority, onRemoveCallback);
+		}
 
-		/// <summary>
+	    /// <summary>
 		/// Determines whether is web farm.
 		/// </summary>
 		/// <returns>
@@ -509,45 +482,45 @@ namespace DotNetNuke.Services.Cache
         }
 
         [Obsolete("Deprecated in DNN 5.1 - Cache Persistence is not supported")]
-        public virtual void Insert(string CacheKey, object objObject, bool PersistAppRestart)
+        public virtual void Insert(string cacheKey, object itemToCache, bool PersistAppRestart)
         {
-            Insert(CacheKey, objObject);
+            Insert(cacheKey, itemToCache);
         }
 
         [Obsolete("Deprecated in DNN 5.1 - Cache Persistence is not supported")]
-        public virtual void Insert(string CacheKey, object objObject, System.Web.Caching.CacheDependency objDependency, bool PersistAppRestart)
+        public virtual void Insert(string cacheKey, object itemToCache, CacheDependency objDependency, bool PersistAppRestart)
         {
-            Insert(CacheKey, objObject, new DNNCacheDependency(objDependency), System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, null);
+            Insert(cacheKey, itemToCache, new DNNCacheDependency(objDependency), System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, null);
         }
 
         [Obsolete("Deprecated in DNN 5.1 - Cache Persistence is not supported")]
-        public virtual void Insert(string CacheKey, object objObject, System.Web.Caching.CacheDependency objDependency, DateTime AbsoluteExpiration, System.TimeSpan SlidingExpiration, bool PersistAppRestart)
+        public virtual void Insert(string cacheKey, object itemToCache, CacheDependency objDependency, DateTime absoluteExpiration, TimeSpan slidingExpiration, bool PersistAppRestart)
         {
-            Insert(CacheKey, objObject, new DNNCacheDependency(objDependency), AbsoluteExpiration, SlidingExpiration, CacheItemPriority.Default, null);
+            Insert(cacheKey, itemToCache, new DNNCacheDependency(objDependency), absoluteExpiration, slidingExpiration, CacheItemPriority.Default, null);
         }
 
         [Obsolete("Deprecated in DNN 5.1 - Cache Persistence is not supported")]
-        public virtual void Insert(string Key, object Value, System.Web.Caching.CacheDependency objDependency, DateTime AbsoluteExpiration, System.TimeSpan SlidingExpiration, CacheItemPriority Priority, CacheItemRemovedCallback OnRemoveCallback, bool PersistAppRestart)
+        public virtual void Insert(string Key, object itemToCache, CacheDependency objDependency, DateTime absoluteExpiration, TimeSpan slidingExpiration, CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback, bool PersistAppRestart)
         {
-            Insert(Key, Value, new DNNCacheDependency(objDependency), AbsoluteExpiration, SlidingExpiration, Priority, OnRemoveCallback);
+            Insert(Key, itemToCache, new DNNCacheDependency(objDependency), absoluteExpiration, slidingExpiration, priority, onRemoveCallback);
         }
 
         [Obsolete("Deprecated in DNN 5.1 - Use new overload that uses a DNNCacheDependency")]
-        public virtual void Insert(string CacheKey, object objObject, CacheDependency objDependency)
+        public virtual void Insert(string cacheKey, object itemToCache, CacheDependency objDependency)
         {
-            Insert(CacheKey, objObject, new DNNCacheDependency(objDependency), System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, null);
+            Insert(cacheKey, itemToCache, new DNNCacheDependency(objDependency), System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, CacheItemPriority.Default, null);
         }
 
         [Obsolete("Deprecated in DNN 5.1 - Use new overload that uses a DNNCacheDependency")]
-        public virtual void Insert(string CacheKey, object objObject, CacheDependency objDependency, DateTime AbsoluteExpiration, System.TimeSpan SlidingExpiration)
+        public virtual void Insert(string cacheKey, object itemToCache, CacheDependency objDependency, DateTime absoluteExpiration, TimeSpan slidingExpiration)
         {
-            Insert(CacheKey, objObject, new DNNCacheDependency(objDependency), AbsoluteExpiration, SlidingExpiration, CacheItemPriority.Default, null);
+            Insert(cacheKey, itemToCache, new DNNCacheDependency(objDependency), absoluteExpiration, slidingExpiration, CacheItemPriority.Default, null);
         }
 
         [Obsolete("Deprecated in DNN 5.1 - Use new overload that uses a DNNCacheDependency")]
-        public virtual void Insert(string CacheKey, object Value, CacheDependency objDependency, DateTime AbsoluteExpiration, System.TimeSpan SlidingExpiration, CacheItemPriority Priority, CacheItemRemovedCallback OnRemoveCallback)
+        public virtual void Insert(string cacheKey, object itemToCache, CacheDependency objDependency, DateTime absoluteExpiration, TimeSpan slidingExpiration, CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback)
         {
-            Insert(CacheKey, Value, new DNNCacheDependency(objDependency), AbsoluteExpiration, SlidingExpiration, Priority, OnRemoveCallback);
+            Insert(cacheKey, itemToCache, new DNNCacheDependency(objDependency), absoluteExpiration, slidingExpiration, priority, onRemoveCallback);
         }
 
         [Obsolete("Deprecated in DNN 5.1.1 - Cache Persistence is not supported")]
@@ -555,7 +528,6 @@ namespace DotNetNuke.Services.Cache
         {
             Remove(CacheKey);
         }
-
 
         #endregion
     }

@@ -33,8 +33,7 @@ namespace DotNetNuke.Entities.Tabs.Internal
         /// </summary>
         /// <param name="tabId">The tab id.</param>
         /// <param name="portalId">The portal id.</param>
-        /// <param name="ignoreCache">if set to <c>true</c> will get tab info directly from database.</param>
         /// <returns>tab info.</returns>
-        TabInfo GetTab(int tabId, int portalId, bool ignoreCache);
+        TabInfo GetTab(int tabId, int portalId);
     }
 }

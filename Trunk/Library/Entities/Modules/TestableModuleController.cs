@@ -24,19 +24,11 @@ using DotNetNuke.ComponentModel;
 
 namespace DotNetNuke.Entities.Modules.Internal
 {
-    public class TestableModuleController : ComponentBase<IModuleController, TestableModuleController>, IModuleController
+    public class TestableModuleController : ControllerBase<IModuleController, TestableModuleController>
     {
-        readonly ModuleController _legacyController = new ModuleController();
-
-        /// <summary>
-        /// Gets the module.
-        /// </summary>
-        /// <param name="moduleId">The module ID.</param>
-        /// <param name="tabId">The tab ID.</param>
-        /// <returns>module info</returns>
-        public ModuleInfo GetModule(int moduleId, int tabId)
+        protected override Func<IModuleController> GetFactory()
         {
-            return _legacyController.GetModule(moduleId, tabId);
+            return () => new ModuleControllerImpl();
         }
     }
 }

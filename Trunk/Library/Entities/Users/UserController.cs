@@ -1582,6 +1582,58 @@ namespace DotNetNuke.Entities.Users
             return validStatus;
         }
 
+        /// <summary>
+        /// Tries to validate a verification code sent after a user is registered in a portal configured to use a verified registration.
+        /// </summary>
+        /// <param name="verificationCode">The verification code.</param>
+        /// <returns>An null string if the verification code has been validated and the user has been approved. An error message otherwise.</returns>
+        /// <exception cref="DotNetNuke.Entities.Users.UserAlreadyVerifiedException">Thrown when provided verification code has been already used.</exception>
+        /// <exception cref="DotNetNuke.Entities.Users.InvalidVerificationCodeException">Thrown when the provided verification code is invalid.</exception>
+        /// <exception cref="DotNetNuke.Entities.Users.UserDoesNotExistException">Thrown when the user does not exist.</exception>
+        public static void VerifyUser(string verificationCode)
+        {
+            Requires.NotNullOrEmpty("verificationCode", verificationCode);
+
+            var portalSecurity = new PortalSecurity();
+            var decryptString = portalSecurity.DecryptString(verificationCode, Config.GetDecryptionkey());
+            var strings = decryptString.Split('-');
+            
+            if (strings.Length != 2)
+            {
+                throw new InvalidVerificationCodeException();
+            }
+
+            int portalId;
+            int userId;
+
+            if (!int.TryParse(strings[0], out portalId) || !int.TryParse(strings[1], out userId))
+            {
+                throw new InvalidVerificationCodeException();
+            }
+
+            var user = GetUserById(int.Parse(strings[0]), int.Parse(strings[1]));
+            
+            if (user == null)
+            {
+                throw new UserDoesNotExistException();
+            }
+            
+            if (user.Membership.Approved)
+            {
+                throw new UserAlreadyVerifiedException();
+            }
+
+            if (!user.IsInRole("Unverified Users"))
+            {
+                // A Registered User that has been unapproved has managed to get a valid verification code
+                throw new InvalidVerificationCodeException();
+            }
+
+            user.Membership.Approved = true;
+            UpdateUser(portalId, user);
+            ApproveUser(user);
+        }
+
         #endregion
 
         #region "Obsoleted Methods, retained for Binary Compatability"

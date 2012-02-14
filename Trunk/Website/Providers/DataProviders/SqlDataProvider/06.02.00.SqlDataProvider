@@ -3543,8 +3543,7 @@ SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_Mess
 
 
 -- Set the page bounds
-DECLARE 
-	@PageLowerBound INT, @PageUpperBound INT;
+DECLARE @PageLowerBound INT, @PageUpperBound INT;
 
 SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
 SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize	
@@ -3592,14 +3591,12 @@ BEGIN
 SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_Messages WHERE SenderUserID = @SenderUserID
 
 -- Set the page bounds
-DECLARE 
-	@PageLowerBound INT, 
-	@PageUpperBound INT, 
-	@RowsToReturn int;
-	
-exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output;
+DECLARE @PageLowerBound INT, @PageUpperBound INT;
 
-WITH inboxItems  AS
+SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
+SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize	
+
+;WITH sentboxItems  AS
 (
 	SELECT [MessageID], [To], [From], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID],
            [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate],
@@ -3608,7 +3605,7 @@ WITH inboxItems  AS
     FROM	{databaseOwner}{objectQualifier}Social_Messages AS SocialMessages  	        
    	WHERE   SenderUserID = @SenderUserID	
 )	
-SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
+SELECT * from sentboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
 order by RowNumber ASC
 END
 GO
@@ -3621,10 +3618,11 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]
 	@RecipientID	int,
+	@UserID         int,
 	@Read			bit
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Read]=@Read WHERE RecipientID=@RecipientID
+UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Read]=@Read WHERE RecipientID=@RecipientID AND UserID = @UserID
 END
 GO
 
@@ -3635,10 +3633,11 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]
 	@RecipientID	int,
-	@Archived			bit
+	@UserID	        int,
+	@Archived		bit
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Archived]=@Archived WHERE RecipientID=@RecipientID
+UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Archived]=@Archived WHERE RecipientID=@RecipientID AND UserID = @UserID
 END
 GO
 
@@ -3863,7 +3862,7 @@ AS
 			(
 				SELECT * FROM {objectQualifier}ConvertListToTable(',', @PropertyValues)
 			)
-			SELECT @joinSql = COALESCE(@joinSql + ' ','') + 'INNER JOIN {objectQualifier}GetUsersByPropertyName(''' + N.RowValue + ''', ''' + V.RowValue +''', + ' + CONVERT(nvarchar(20), @PortalID) + ') AS U'+ N.RowValue +' ON U.UserID = U'+ N.RowValue +'.UserID '
+			SELECT @joinSql = COALESCE(@joinSql + ' ','') + 'INNER JOIN {objectQualifier}GetUsersByPropertyName(''' + N.RowValue + ''', ''' + V.RowValue +''', ' + CONVERT(nvarchar(20), @PortalID) + ') AS U'+ N.RowValue +' ON U.UserID = U'+ N.RowValue +'.UserID '
 			FROM CTE_PropertyNames AS N
 				INNER JOIN CTE_PropertyValues AS V ON N.RowNumber = V.RowNumber
 			WHERE N.RowValue NOT IN ('DisplayName', 'Email', 'Username')

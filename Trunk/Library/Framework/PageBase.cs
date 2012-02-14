@@ -265,6 +265,11 @@ namespace DotNetNuke.Framework
             {
                 jQuery.RegisterHoverIntent(Page);
             }
+
+            if(ServicesFramework.Instance.IsAjaxAntiForgerySupportRequired)
+            {
+                ServicesFramework.Instance.RegisterAjaxAntiForgery(Page);
+            }
         }
 
         protected override void Render(HtmlTextWriter writer)

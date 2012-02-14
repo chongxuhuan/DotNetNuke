@@ -19,10 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using DotNetNuke.Tests.Utilities;
 
 using NUnit.Framework;
 
@@ -31,11 +28,22 @@ namespace DotNetNuke.Tests.Core.Services.Mail
     [TestFixture]
     public class MailTests
     {
-        [Test]
-        public void Mail_SendMail_Sends_Mail()
-        {
+        //[SetUp]
+        //public void SetUp()
+        //{
+        //}
+
+        //[TearDown]
+        //public void TearDown()
+        //{
+
+        //}
+
+        //[Test]
+        //public void Mail_SendMail_Sends_Mail()
+        //{
 
             
-        }
+        //}
     }
 }

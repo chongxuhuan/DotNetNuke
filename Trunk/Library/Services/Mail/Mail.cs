@@ -175,6 +175,44 @@ namespace DotNetNuke.Services.Mail
             return Regex.Match(Email, pattern).Success;
         }
 
+        public static void SendEmail(string fromAddress, string toAddress, string subject, string body)
+        {
+            SendEmail(fromAddress, fromAddress, toAddress, subject, body);
+        }
+
+        public static void SendEmail(string fromAddress, string senderAddress, string toAddress, string subject, string body)
+        {
+            if ((string.IsNullOrEmpty(Host.SMTPServer)))
+            {
+                return;
+            }
+
+            var emailMessage = new MailMessage(fromAddress, toAddress) { Sender = new MailAddress(senderAddress) };
+
+            SendMailInternal(emailMessage, subject, body, MailPriority.Normal,
+                                    HtmlUtils.IsHtml(body) ? MailFormat.Html : MailFormat.Text,
+                                    Encoding.UTF8, new List<Attachment>(),
+                                    Host.SMTPServer, Host.SMTPAuthentication, Host.SMTPUsername,
+                                    Host.SMTPPassword, Host.EnableSMTPSSL);
+        }
+
+        public static string SendEmail(string fromAddress, string senderAddress, string toAddress, string subject, string body, List<Attachment> attachments)
+        {
+            if ((string.IsNullOrEmpty(Host.SMTPServer)))
+            {
+                return "SMTP Server not configured";
+            }
+
+            var emailMessage = new MailMessage(fromAddress, toAddress) { Sender = new MailAddress(senderAddress) };
+
+            return SendMailInternal(emailMessage, subject, body, MailPriority.Normal,
+                                    HtmlUtils.IsHtml(body) ? MailFormat.Html : MailFormat.Text,
+                                    Encoding.UTF8, attachments,
+                                    Host.SMTPServer, Host.SMTPAuthentication, Host.SMTPUsername,
+                                    Host.SMTPPassword, Host.EnableSMTPSSL);
+
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// <summary>Send an email notification</summary>
@@ -428,45 +466,6 @@ namespace DotNetNuke.Services.Mail
 
             return SendMailInternal(mailMessage, subject, body, priority, bodyFormat, bodyEncoding,
                 attachments, smtpServer, smtpAuthentication, smtpUsername,smtpPassword, smtpEnableSSL);
-        }
-
-        public static void SendEmail(string fromAddress, string toAddress, string subject, string body)
-        {
-            SendEmail(fromAddress, fromAddress, toAddress, subject, body);
-        }
-
-        public static void SendEmail(string fromAddress, string senderAddress, string toAddress, string subject, string body)
-        {
-            if ((string.IsNullOrEmpty(Host.SMTPServer)))
-            {
-                return;
-            }
-
-            var emailMessage = new MailMessage(fromAddress, toAddress) { Sender = new MailAddress(senderAddress) };
-
-            SendMailInternal(emailMessage, subject, body, MailPriority.Normal,
-                                    HtmlUtils.IsHtml(body) ? MailFormat.Html : MailFormat.Text,
-                                    Encoding.UTF8, new List<Attachment>(),
-                                    Host.SMTPServer, Host.SMTPAuthentication, Host.SMTPUsername,
-                                    Host.SMTPPassword, Host.EnableSMTPSSL);
-        }
-
-        public static string SendEmail(string fromAddress, string senderAddress, string toAddress, string subject, string body, List<Attachment> attachments)
-        {
-            if ((string.IsNullOrEmpty(Host.SMTPServer)))
-            {
-                return "SMTP Server not configured";
-            }
-
-            var emailMessage = new MailMessage(fromAddress, toAddress)
-                                   {Sender = new MailAddress(senderAddress)};
-
-            return SendMailInternal(emailMessage, subject, body, MailPriority.Normal, 
-                                    HtmlUtils.IsHtml(body)? MailFormat.Html : MailFormat.Text,
-                                    Encoding.UTF8, attachments, 
-                                    Host.SMTPServer, Host.SMTPAuthentication, Host.SMTPUsername,
-                                    Host.SMTPPassword, Host.EnableSMTPSSL);
-
         }
 
         #endregion

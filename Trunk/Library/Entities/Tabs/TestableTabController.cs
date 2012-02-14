@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
@@ -17,27 +18,19 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-#endregion
-using System;
 
+#endregion
+
+using System;
 using DotNetNuke.ComponentModel;
 
 namespace DotNetNuke.Entities.Tabs.Internal
 {
-    public class TestableTabController : ComponentBase<ITabController, TestableTabController>, ITabController
+    public class TestableTabController : ControllerBase<ITabController, TestableTabController>
     {
-        readonly TabController _legacyController = new TabController();
-
-        /// <summary>
-        /// Gets the tab.
-        /// </summary>
-        /// <param name="tabId">The tab id.</param>
-        /// <param name="portalId">The portal id.</param>
-        /// <param name="ignoreCache">if set to <c>true</c> will get tab info directly from database.</param>
-        /// <returns>tab info.</returns>
-        public TabInfo GetTab(int tabId, int portalId, bool ignoreCache)
+        protected override Func<ITabController> GetFactory()
         {
-            return _legacyController.GetTab(tabId, portalId, ignoreCache);
+            return () => new TabControllerImpl();
         }
     }
 }

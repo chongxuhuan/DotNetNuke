@@ -18,6 +18,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
@@ -117,7 +118,6 @@ namespace DotNetNuke.Security.Roles
 
             return new ArrayList(GetUserRoles(user, includePrivate).ToArray());
         }
-
 
         [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by GetUserRoles overload that returns IList")]
         public virtual ArrayList GetUserRolesByRoleName(int portalId, string roleName)

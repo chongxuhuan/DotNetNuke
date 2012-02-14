@@ -21,13 +21,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Xml;
 
 using DotNetNuke.Entities.Users;
 
 namespace DotNetNuke.Entities.Users
 {
-    internal interface IRelationshipController
+    public interface IRelationshipController
     {             
         #region Relationship Business APIs
 

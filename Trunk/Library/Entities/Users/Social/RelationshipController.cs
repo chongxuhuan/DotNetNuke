@@ -27,6 +27,7 @@ using System.Linq;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users.Social.Data;
 using DotNetNuke.Services.Localization;
@@ -39,7 +40,7 @@ namespace DotNetNuke.Entities.Users.Social
 	/// <summary>
 	/// Business Layer to manage Relationships. Also contains CRUD methods.
 	/// </summary>
-    public class RelationshipController : IRelationshipController
+    public class RelationshipController : ComponentBase<IRelationshipController, RelationshipController>, IRelationshipController
     {
         #region Private Members
 

@@ -115,7 +115,7 @@ namespace DotNetNuke.Web.Services
 
         private bool TabIsInPortal(int tabId, int portalId)
         {
-            var tab = TestableTabController.Instance.GetTab(tabId, portalId, /*ignoreCache*/ false);
+            var tab = TestableTabController.Instance.GetTab(tabId, portalId);
 
             return tab != null;
         }

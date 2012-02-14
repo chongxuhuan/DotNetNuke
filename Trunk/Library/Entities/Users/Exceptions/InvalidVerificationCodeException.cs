@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,20 +18,32 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
-#endregion
+namespace DotNetNuke.Entities.Users
+{
+    [Serializable]
+    public class InvalidVerificationCodeException : Exception
+    {
+        public InvalidVerificationCodeException()
+        {
+        }
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("7B0C0F19-01F5-47F9-A90D-9752B7BBB5AD")]
-[assembly: AssemblyVersion("6.2.0.477")]
+        public InvalidVerificationCodeException(string message)
+            : base(message)
+        {
+        }
+
+        public InvalidVerificationCodeException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+
+        public InvalidVerificationCodeException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+    }
+}
