@@ -30,6 +30,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 
@@ -100,7 +101,7 @@ namespace DotNetNuke.Modules.Admin.Security
         private void Subscribe(int roleID, bool cancel)
         {
             var objRoles = new RoleController();
-            RoleInfo objRole = objRoles.GetRole(roleID, PortalSettings.PortalId);
+            RoleInfo objRole = TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == roleID);
 
             if (objRole.IsPublic && objRole.ServiceFee == 0.0)
             {
@@ -125,7 +126,7 @@ namespace DotNetNuke.Modules.Admin.Security
         private void UseTrial(int roleID)
         {
             var objRoles = new RoleController();
-            RoleInfo objRole = objRoles.GetRole(roleID, PortalSettings.PortalId);
+            RoleInfo objRole = TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == roleID); ;
 
             if (objRole.IsPublic && objRole.TrialFee == 0.0)
             {
@@ -334,9 +335,8 @@ namespace DotNetNuke.Modules.Admin.Security
 
         protected bool ShowSubscribe(int roleID)
         {
-            var objRoles = new RoleController();
             bool showSubscribe = Null.NullBoolean;
-            RoleInfo objRole = objRoles.GetRole(roleID, PortalSettings.PortalId);
+            RoleInfo objRole = TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == roleID); ;
             if (objRole.IsPublic)
             {
                 var objPortals = new PortalController();
@@ -357,7 +357,7 @@ namespace DotNetNuke.Modules.Admin.Security
         {
             var objRoles = new RoleController();
             bool showTrial = Null.NullBoolean;
-            RoleInfo objRole = objRoles.GetRole(roleID, PortalSettings.PortalId);
+            RoleInfo objRole = TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == roleID); ;
             if (objRole.TrialFrequency == "N" || (objRole.IsPublic && objRole.ServiceFee == 0.0))
             {
                 showTrial = Null.NullBoolean;
@@ -476,10 +476,9 @@ namespace DotNetNuke.Modules.Admin.Security
             {
 				//Get the roles from the Database
                 var objRoles = new RoleController();
-                ArrayList arrRoles = objRoles.GetPortalRoles(PortalSettings.PortalId);
 
                 //Parse the roles
-                foreach (RoleInfo objRole in arrRoles)
+                foreach (RoleInfo objRole in TestableRoleController.Instance.GetRoles(PortalSettings.PortalId))
                 {
                     if (objRole.RSVPCode == code)
                     {

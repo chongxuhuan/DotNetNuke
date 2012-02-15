@@ -113,23 +113,7 @@ namespace DotNetNuke.Security.Roles
             {
                 if (!_RoleTypeSet)
                 {
-                    PortalInfo objPortal = new PortalController().GetPortal(PortalID);
-                    if (RoleID == objPortal.AdministratorRoleId)
-                    {
-                        _RoleType = RoleType.Administrator;
-                    }
-                    else if (RoleID == objPortal.RegisteredRoleId)
-                    {
-                        _RoleType = RoleType.RegisteredUser;
-                    }
-                    else if (RoleName == "Subscribers")
-                    {
-                        _RoleType = RoleType.Subscriber;
-                    }
-                    else if (RoleName == "Unverified Users")
-                    {
-                        _RoleType = RoleType.UnverifiedUser;
-                    }
+                    GetRoleType();
                     _RoleTypeSet = true;
                 }
                 return _RoleType;
@@ -241,6 +225,31 @@ namespace DotNetNuke.Security.Roles
         /// <value>A string representing the Icon File for the role</value>
         /// -----------------------------------------------------------------------------
         public string IconFile { get; set; }
+
+        #endregion
+
+        #region Private Methods
+
+        private void GetRoleType()
+        {
+            PortalInfo portal = new PortalController().GetPortal(PortalID);
+            if (RoleID == portal.AdministratorRoleId)
+            {
+                _RoleType = RoleType.Administrator;
+            }
+            else if (RoleID == portal.RegisteredRoleId)
+            {
+                _RoleType = RoleType.RegisteredUser;
+            }
+            else if (RoleName == "Subscribers")
+            {
+                _RoleType = RoleType.Subscriber;
+            }
+            else if (RoleName == "Unverified Users")
+            {
+                _RoleType = RoleType.UnverifiedUser;
+            }
+        }
 
         #endregion
 

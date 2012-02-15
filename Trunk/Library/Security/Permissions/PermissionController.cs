@@ -32,6 +32,7 @@ using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Log.EventLog;
 
 #endregion
@@ -200,7 +201,7 @@ namespace DotNetNuke.Security.Permissions
                             RoleID = Convert.ToInt32(Globals.glbRoleUnauthUser);
                             break;
                         default:
-                            RoleInfo _role = new RoleController().GetRoleByName(portalId, permission.RoleName);
+                            RoleInfo _role = TestableRoleController.Instance.GetRole(portalId, r => r.RoleName == permission.RoleName);
                             if ((_role != null))
                             {
                                 RoleID = _role.RoleID;

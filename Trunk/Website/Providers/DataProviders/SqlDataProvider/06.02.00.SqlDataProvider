@@ -2041,7 +2041,8 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsF
     @RoleIDs nvarchar(max), -- comma separated list of RoleIds
 	@CreateUpdateUserID INT -- create / update user id   
 AS 
-    DECLARE @currentdate AS DATETIME = GETDATE()
+    DECLARE @currentdate DATETIME
+    SET @currentdate = GETDATE()  
     
     ;WITH CTE_RoleIDs(RowNumber, RowValue)
     AS

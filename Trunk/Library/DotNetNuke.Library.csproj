@@ -222,6 +222,9 @@
     <Compile Include="Framework\IServicesFramework.cs" />
     <Compile Include="Framework\ServicesFramework.cs" />
     <Compile Include="Framework\ServicesFrameworkImpl.cs" />
+    <Compile Include="Security\Roles\Internal\IRoleController.cs" />
+    <Compile Include="Security\Roles\Internal\RoleControllerImpl.cs" />
+    <Compile Include="Security\Roles\Internal\TestableRoleController.cs" />
     <Compile Include="Services\Journal\CommentInfo.cs" />
     <Compile Include="Services\Journal\Content.cs" />
     <Compile Include="Services\Journal\Data\IJournalDataService.cs" />
@@ -234,6 +237,9 @@
     <Compile Include="Services\Localization\ILocalizationProvider.cs" />
     <Compile Include="Services\Localization\LocalizationProvider.cs" />
     <Compile Include="Services\Log\EventLog\IEventLogController.cs" />
+    <Compile Include="Services\Social\Messaging\Exceptions\AttachmentsNotAllowedException.cs" />
+    <Compile Include="Services\Social\Messaging\Exceptions\RecipientLimitExceeded.cs" />
+    <Compile Include="Services\Social\Messaging\Exceptions\ThrottlingIntervalNotMetException.cs" />
     <Compile Include="Services\Social\Messaging\MessageArchivedStatus.cs" />
     <Compile Include="Services\Social\Messaging\MessageReadStatus.cs" />
     <Compile Include="Services\Social\Messaging\MessageItem.cs" />

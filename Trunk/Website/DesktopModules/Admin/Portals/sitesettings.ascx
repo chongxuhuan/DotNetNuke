@@ -281,6 +281,31 @@
 						<asp:TextBox ID="txtSTDURL" runat="server" />
 					</div>
 				</fieldset>
+				<h2 id="dnnSitePanel-MessagingSettings" class="dnnFormSectionHead"><a href=""><%=LocalizeString("MessagingSettings")%></a></h2>
+				<fieldset>
+				    <div class="dnnFormItem">
+					    <dnn:Label ID="plMsgThrottlingInterval" runat="server" ControlName="cboMsgThrottlingInterval" />
+					    <asp:DropDownList ID="cboMsgThrottlingInterval" runat="server" DataTextField="Key" DataValueField="Value" />					    
+				    </div>
+				    <div class="dnnFormItem">
+					    <dnn:Label ID="plMsgRecipientLimit" runat="server" ControlName="cboMsgRecipientLimit" />
+					    <asp:DropDownList ID="cboMsgRecipientLimit" runat="server" DataTextField="Key" DataValueField="Value" />					    
+				    </div>
+				    <div class="dnnFormItem">
+					    <dnn:Label ID="plMsgProfanityFilters" runat="server" ControlName="optMsgProfanityFilters" />
+					    <asp:radiobuttonlist id="optMsgProfanityFilters" runat="server" RepeatDirection="Horizontal" CssClass="dnnFormRadioButtons">
+						    <asp:listitem value="YES" resourcekey="MsgProfanityFiltersYes" />
+						    <asp:listitem value="NO" resourcekey="MsgProfanityFiltersNo" />
+					    </asp:radiobuttonlist>
+				    </div>
+				    <div class="dnnFormItem">
+					    <dnn:Label ID="plMsgAllowAttachments" runat="server" ControlName="optMsgAllowAttachments" />
+					    <asp:radiobuttonlist id="optMsgAllowAttachments" runat="server" RepeatDirection="Horizontal" CssClass="dnnFormRadioButtons">
+						    <asp:listitem value="YES" resourcekey="MsgAllowAttachmentsYes" />
+						    <asp:listitem value="NO" resourcekey="MsgAllowAttachmentsNo" />
+					    </asp:radiobuttonlist>
+				    </div>
+				</fieldset>
 				<h2 id="dnnSitePanel-HostSettings" class="dnnFormSectionHead"><a href=""><%=LocalizeString("HostSettings")%></a></h2>
 				<fieldset>
 					<div class="dnnFormItem">

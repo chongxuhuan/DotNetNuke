@@ -45,16 +45,25 @@ namespace DotNetNuke.Security.Roles
 		
 		#endregion
 
-		#region Abstract Methods
+        #region Role Methods
 
-        //Roles
-        public abstract bool CreateRole(int portalId, ref RoleInfo role);
+        public virtual bool CreateRole(RoleInfo role)
+        {
+            #pragma warning disable 612,618
 
-        public abstract void DeleteRole(int portalId, ref RoleInfo role);
+            return CreateRole(-1, ref role);
 
-        public abstract RoleInfo GetRole(int portalId, int roleId);
+            #pragma warning restore 612,618
+        }
 
-        public abstract RoleInfo GetRole(int portalId, string roleName);
+        public virtual void DeleteRole(RoleInfo role)
+        {
+            #pragma warning disable 612,618
+
+            DeleteRole(-1, ref role);
+
+            #pragma warning restore 612,618
+        }
 
         public abstract string[] GetRoleNames(int portalId);
 
@@ -62,9 +71,11 @@ namespace DotNetNuke.Security.Roles
 
         public abstract ArrayList GetRoles(int portalId);
 
-        public abstract ArrayList GetRolesByGroup(int portalId, int roleGroupId);
-
         public abstract void UpdateRole(RoleInfo role);
+
+        #endregion
+
+        #region RoleGroup Methods
 
         //Role Groups
         public abstract int CreateRoleGroup(RoleGroupInfo roleGroup);
@@ -77,7 +88,10 @@ namespace DotNetNuke.Security.Roles
 
         public abstract void UpdateRoleGroup(RoleGroupInfo roleGroup);
 
-        //User Roles
+        #endregion
+
+        #region UserRole Methods
+
         public abstract bool AddUserToRole(int portalId, UserInfo user, UserRoleInfo userRole);
 
         public abstract UserRoleInfo GetUserRole(int PortalId, int UserId, int RoleId);
@@ -90,9 +104,7 @@ namespace DotNetNuke.Security.Roles
 
         public abstract void UpdateUserRole(UserRoleInfo userRole);
 
-		#endregion
-
-        #region Virtual Methods
+        #endregion
 
         public virtual RoleGroupInfo GetRoleGroupByName(int PortalID, string RoleGroupName)
         {
@@ -106,9 +118,37 @@ namespace DotNetNuke.Security.Roles
 #pragma warning restore 612,618
         }
 
-        #endregion
-
         #region Obsolete Methods
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by overload which takes a single RoleInfo object")]
+        public virtual bool CreateRole(int portalId, ref RoleInfo role)
+        {
+            return CreateRole(role);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by overload which takes a single RoleInfo object")]
+        public virtual void DeleteRole(int portalId, ref RoleInfo role)
+        {
+            DeleteRole(role);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Roles are cached in the business layer")]
+        public virtual RoleInfo GetRole(int portalId, int roleId)
+        {
+            return GetRoles(portalId).Cast<RoleInfo>().SingleOrDefault(r => r.RoleID == roleId);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Roles are cached in the business layer")]
+        public virtual RoleInfo GetRole(int portalId, string roleName)
+        {
+            return GetRoles(portalId).Cast<RoleInfo>().SingleOrDefault(r => r.RoleName == roleName);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Roles are cached in the business layer")]
+        public virtual ArrayList GetRolesByGroup(int portalId, int roleGroupId)
+        {
+            return new ArrayList(GetRoles(portalId).Cast<RoleInfo>().Where(r => r.RoleGroupID == roleGroupId).ToArray());
+        }
 
         [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by overload that returns IList")]
         public virtual ArrayList GetUserRoles(int PortalId, int UserId, bool includePrivate)

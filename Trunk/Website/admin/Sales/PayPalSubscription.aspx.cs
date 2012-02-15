@@ -31,6 +31,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 
 #endregion
@@ -99,8 +100,7 @@ namespace DotNetNuke.Modules.Admin.Sales
                     else
                     {
                         strPayPalURL += "cmd=_ext-enter";
-                        var objRoles = new RoleController();
-                        RoleInfo objRole = objRoles.GetRole(intRoleId, PortalSettings.PortalId);
+                        RoleInfo objRole = TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == intRoleId);
                         if (objRole.RoleID != -1)
                         {
                             int intTrialPeriod = 1;

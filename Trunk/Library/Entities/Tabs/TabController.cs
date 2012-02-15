@@ -40,6 +40,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
@@ -166,7 +167,6 @@ namespace DotNetNuke.Entities.Tabs
         private static void DeserializeTabPermissions(XmlNodeList nodeTabPermissions, TabInfo tab, bool isAdminTemplate)
         {
             var permissionController = new PermissionController();
-            var roleController = new RoleController();
             int permissionID = 0;
             foreach (XmlNode tabPermissionNode in nodeTabPermissions)
             {
@@ -193,7 +193,7 @@ namespace DotNetNuke.Entities.Tabs
                     default:
                         var portalController = new PortalController();
                         var portal = portalController.GetPortal(tab.PortalID);
-                        var role = roleController.GetRoleByName(portal.PortalID, roleName);
+                        var role = TestableRoleController.Instance.GetRole(portal.PortalID, r => r.RoleName == roleName);
                         if (role != null)
                         {
                             roleID = role.RoleID;
@@ -1992,7 +1992,7 @@ namespace DotNetNuke.Entities.Tabs
                 {
                     var translatePermisison = (PermissionInfo)permissionsList[0];
                     string roleName = translatorRole;
-                    RoleInfo role = new RoleController().GetRoleByName(localizedTab.PortalID, roleName);
+                    RoleInfo role = TestableRoleController.Instance.GetRole(localizedTab.PortalID, r => r.RoleName == roleName);
                     if (role != null)
                     {
                         TabPermissionInfo perm = localizedTab.TabPermissions.Where(tp => tp.RoleID == role.RoleID && tp.PermissionKey == "EDIT").SingleOrDefault();

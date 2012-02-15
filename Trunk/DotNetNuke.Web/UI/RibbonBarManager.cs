@@ -37,6 +37,7 @@ using DotNetNuke.Instrumentation;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 
@@ -452,7 +453,6 @@ namespace DotNetNuke.Web.UI
         private static void DeserializeTabPermissions(XmlNodeList nodeTabPermissions, TabInfo tab)
         {
             var permissionController = new PermissionController();
-            var roleController = new RoleController();
             foreach (XmlNode xmlTabPermission in nodeTabPermissions)
             {
                 var permissionKey = XmlUtils.GetNodeValue(xmlTabPermission.CreateNavigator(), "permissionkey");
@@ -474,7 +474,7 @@ namespace DotNetNuke.Web.UI
                     default:
                         var portalController = new PortalController();
                         var portal = portalController.GetPortal(tab.PortalID);
-                        var role = roleController.GetRoleByName(portal.PortalID, roleName);
+                        var role = TestableRoleController.Instance.GetRole(portal.PortalID, r => r.RoleName == roleName);
                         if (role != null)
                         {
                             roleId = role.RoleID;

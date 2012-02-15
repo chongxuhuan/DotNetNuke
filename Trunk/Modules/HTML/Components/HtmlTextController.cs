@@ -36,6 +36,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Mail;
 using DotNetNuke.Services.Messaging;
@@ -145,7 +146,8 @@ namespace DotNetNuke.Modules.Html
                     {
                         if (Null.IsNull(permission.UserID))
                         {
-                            RoleInfo objRole = new RoleController().GetRole(permission.RoleID, objHtmlText.PortalID);
+                            int roleId = permission.RoleID;
+                            RoleInfo objRole = TestableRoleController.Instance.GetRole(objHtmlText.PortalID, r => r.RoleID == roleId);
                             if ((objRole != null))
                             {
                                 foreach (UserRoleInfo objUserRole in objRoles.GetUserRoles(objHtmlText.PortalID, null, objRole.RoleName))

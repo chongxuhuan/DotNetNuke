@@ -18,16 +18,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
-using System.Collections;
 using System.Xml;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
-using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 
 #endregion
 
@@ -64,9 +64,7 @@ namespace DotNetNuke.Modules.Dashboard.Components.Portals
             {
                 if (_Roles < 0)
                 {
-                    var controller = new RoleController();
-                    ArrayList portalRoles = controller.GetPortalRoles(PortalID);
-                    _Roles = portalRoles.Count;
+                    _Roles = TestableRoleController.Instance.GetRoles(PortalID).Count;
                 }
                 return _Roles;
             }

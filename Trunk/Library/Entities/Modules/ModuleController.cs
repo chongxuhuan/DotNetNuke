@@ -45,6 +45,7 @@ using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
@@ -124,7 +125,7 @@ namespace DotNetNuke.Entities.Modules
             if (permission != null && perm == null)
             {
                 var modulePermission = new ModulePermissionInfo(permission);
-                var role = new RoleController().GetRoleByName(portalId, roleName);
+                var role = TestableRoleController.Instance.GetRole(portalId, r => r.RoleName == roleName);
                 if (role != null)
                 {
                     modulePermission.RoleID = role.RoleID;
@@ -458,7 +459,6 @@ namespace DotNetNuke.Entities.Modules
 
         private static void DeserializeModulePermissions(XmlNodeList nodeModulePermissions, int portalId, ModuleInfo module)
         {
-            var roleController = new RoleController();
             var permissionController = new PermissionController();
             PermissionInfo permission;
             ArrayList permissions;
@@ -477,7 +477,7 @@ namespace DotNetNuke.Entities.Modules
                         roleID = Convert.ToInt32(Globals.glbRoleUnauthUser);
                         break;
                     default:
-                        var role = roleController.GetRoleByName(portalId, roleName);
+                        var role = TestableRoleController.Instance.GetRole(portalId, r => r.RoleName == roleName);
                         if (role != null)
                         {
                             roleID = role.RoleID;

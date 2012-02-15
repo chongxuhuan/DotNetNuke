@@ -34,11 +34,20 @@ namespace DotNetNuke.Services.Social.Messaging
 
         MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId);
 
-        ///<summary> How long a user needs to wait before user is allowed sending the next message</summary>
+        ///<summary>How long a user needs to wait before user is allowed sending the next message</summary>
         ///<returns>Time in seconds. Returns zero if user has never sent a message</returns>
-        /// <param name="sender">Sender's UserInfo</param>
-        /// <param name="portalId">PortalId</param>
-        int WaitTimeForNextMessage(UserInfo sender, int portalId);
+        /// <param name="sender">Sender's UserInfo</param>        
+        int WaitTimeForNextMessage(UserInfo sender);
+
+        ///<summary>Are attachments allowed</summary>        
+        ///<returns>True or False</returns>
+        /// <param name="portalId">Portal Id</param>        
+        bool AttachmentsAllowed(int portalId);
+
+        ///<summary>Maximum number of Recipients allowed</summary>        
+        ///<returns>Count. Message to a Role is considered a single Recipient. Each User in the To list is counted as one User each.</returns>
+        /// <param name="portalId">Portal Id</param>        
+        int RecipientLimit(int portalId);
 
         #endregion
 

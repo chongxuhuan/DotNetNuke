@@ -31,6 +31,7 @@ using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 
 #endregion
 
@@ -645,7 +646,7 @@ namespace DotNetNuke.Entities.Portals
                 if (_administratorRoleName == Null.NullString && AdministratorRoleId > Null.NullInteger)
                 {
 					//Get Role Name
-                    RoleInfo adminRole = new RoleController().GetRole(AdministratorRoleId, PortalID);
+                    RoleInfo adminRole = TestableRoleController.Instance.GetRole(PortalID, r => r.RoleID == AdministratorRoleId);
                     if (adminRole != null)
                     {
                         _administratorRoleName = adminRole.RoleName;
@@ -713,7 +714,7 @@ namespace DotNetNuke.Entities.Portals
                 if (_registeredRoleName == Null.NullString && RegisteredRoleId > Null.NullInteger)
                 {
 					//Get Role Name
-                    RoleInfo regUsersRole = new RoleController().GetRole(RegisteredRoleId, PortalID);
+                    RoleInfo regUsersRole = TestableRoleController.Instance.GetRole(PortalID, r => r.RoleID == RegisteredRoleId);
                     if (regUsersRole != null)
                     {
                         _registeredRoleName = regUsersRole.RoleName;

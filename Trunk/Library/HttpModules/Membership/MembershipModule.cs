@@ -25,7 +25,6 @@ using System.Linq;
 using System.Web;
 
 using DotNetNuke.Application;
-using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
@@ -36,6 +35,7 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Personalization;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Skins.EventListeners;
+using DotNetNuke.Security.Roles.Internal;
 
 #endregion
 
@@ -152,7 +152,7 @@ namespace DotNetNuke.HttpModules.Membership
                 //check for RSVP code
                 if (request.QueryString["rsvp"] != null && !string.IsNullOrEmpty(request.QueryString["rsvp"]))
                 {
-                    foreach (RoleInfo role in roleController.GetPortalRoles(portalSettings.PortalId))
+                    foreach (var role in TestableRoleController.Instance.GetRoles(portalSettings.PortalId))
                     {
                         if (role.RSVPCode == request.QueryString["rsvp"])
                         {

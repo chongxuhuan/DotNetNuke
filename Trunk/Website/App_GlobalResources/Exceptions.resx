@@ -216,25 +216,34 @@
   <data name="UserRelationshipDoesNotExistError.Text" xml:space="preserve">
     <value>UserRelationshipID '{0}' does not exist.</value>
   </data>
-  <data name="SubjectOrBodyRequiredError.Text" xml:space="preserve">
+  <data name="MsgSubjectOrBodyRequiredError.Text" xml:space="preserve">
     <value>Both Subject and Body cannot be null or empty.</value>
   </data>
-  <data name="RolesOrUsersRequiredError.Text" xml:space="preserve">
+  <data name="MsgRolesOrUsersRequiredError.Text" xml:space="preserve">
     <value>Both Roles and Users cannot be null or empty-lists.</value>
   </data>
-  <data name="SubjectTooBigError.Text" xml:space="preserve">
+  <data name="MsgSubjectTooBigError.Text" xml:space="preserve">
     <value>Subject supplied is too big. Maximum {0}, Actual {1}.</value>
   </data>
-  <data name="ToListTooBigError.Text" xml:space="preserve">
+  <data name="MsgToListTooBigError.Text" xml:space="preserve">
     <value>To List supplied is too big. Maximum {0}, Actual {1}.</value>
   </data>
-  <data name="EmptyToListFoundError.Text" xml:space="preserve">
+  <data name="MsgEmptyToListFoundError.Text" xml:space="preserve">
     <value>Empty To List found while analyzing User and Roles List.</value>
   </data>
-  <data name="SenderRequiredError.Text" xml:space="preserve">
+  <data name="MsgSenderRequiredError.Text" xml:space="preserve">
     <value>Either Sender is null or Sender.UserID is negative.</value>
   </data>
-  <data name="OnlyHostOrAdminCanSendToRoleError.Text" xml:space="preserve">
+  <data name="MsgOnlyHostOrAdminCanSendToRoleError.Text" xml:space="preserve">
     <value>Only SuperUsers and Site Administrators can send message to Role.</value>
+  </data>
+  <data name="MsgThrottlingIntervalNotMet.Text" xml:space="preserve">
+    <value>Message cannot be sent as Minimum Interval between two messages by the same user is not.</value>
+  </data>
+  <data name="MsgAttachmentsNotAllowed.Text" xml:space="preserve">
+    <value>Attachments are not allowed.</value>
+  </data>
+  <data name="MsgRecipientLimitExceeded.Text" xml:space="preserve">
+    <value>Maximum Recipient Limit Reached. Remove Recipients from To List.</value>
   </data>
 </root>

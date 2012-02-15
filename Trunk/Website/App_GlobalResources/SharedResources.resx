@@ -339,6 +339,9 @@
   <data name="FileError.Text" xml:space="preserve">
     <value>Error processing file</value>
   </data>
+  <data name="FileAccess.Error" xml:space="preserve">
+    <value>You do not have sufficient permissions to access this file.</value>
+  </data>
   <data name="EndZip.Text" xml:space="preserve">
     <value>End processing zip file</value>
   </data>

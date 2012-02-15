@@ -666,4 +666,43 @@
   <data name="plCdfVersion.Text" xml:space="preserve">
     <value>Version</value>
   </data>
+  <data name="MessagingSettings.Text" xml:space="preserve">
+    <value>Messaging Settings</value>
+  </data>
+  <data name="plMsgThrottlingInterval.Text" xml:space="preserve">
+    <value>Throttling Interval:</value>
+  </data>
+  <data name="plMsgThrottlingInterval.Help" xml:space="preserve">
+    <value>Number of seconds after which a User can send the next message. Zero indicates no restrictions. Not applies to Site Administrators or Host</value>
+  </data>
+  <data name="plMsgRecipientLimit.Text" xml:space="preserve">
+    <value>Recipient Limit:</value>
+  </data>
+  <data name="plMsgRecipientLimit.Help" xml:space="preserve">
+    <value>Maximum number of Recipients allowed in To field. Message to a Role is considered as a single Recipient .</value>
+  </data>
+  <data name="plMsgProfanityFilters.Text" xml:space="preserve">
+    <value>Enable Profanity Filters:</value>
+  </data>
+  <data name="plMsgProfanityFilters.Help" xml:space="preserve">
+    <value>Enabling of this setting automatically converts Profane (inappropriate) words into something equivalent. The list is managed at Host->List->ProfanityFilters or at Admin->List->ProfanityFilters.</value>
+  </data>
+  <data name="MsgProfanityFiltersYes.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="MsgProfanityFiltersNo.Text" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="plMsgAllowAttachments.Text" xml:space="preserve">
+    <value>Allow Attachments:</value>
+  </data>
+  <data name="plMsgAllowAttachments.Help" xml:space="preserve">
+    <value>Select if attachments are allowed or not.</value>
+  </data>
+  <data name="MsgAllowAttachmentsYes.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="MsgAllowAttachmentsNo.Text" xml:space="preserve">
+    <value>No</value>
+  </data>  
 </root>

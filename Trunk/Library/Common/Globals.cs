@@ -57,6 +57,7 @@ using DotNetNuke.Instrumentation;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
@@ -3489,13 +3490,12 @@ namespace DotNetNuke.Common
         /// <returns>Role Name</returns>
         public static string GetRoleName(int RoleID)
         {
-            if (Convert.ToString(RoleID) == glbRoleAllUsers)
+            switch (Convert.ToString(RoleID))
             {
-                return "All Users";
-            }
-            else if (Convert.ToString(RoleID) == glbRoleUnauthUser)
-            {
-                return "Unauthenticated Users";
+                case glbRoleAllUsers:
+                    return "All Users";
+                case glbRoleUnauthUser:
+                    return "Unauthenticated Users";
             }
             Hashtable htRoles = null;
             if (Host.PerformanceSetting != PerformanceSettings.NoCaching)
@@ -3504,16 +3504,13 @@ namespace DotNetNuke.Common
             }
             if (htRoles == null)
             {
-                var objRoleController = new RoleController();
-                ArrayList arrRoles;
-                arrRoles = objRoleController.GetRoles();
+                var roles = TestableRoleController.Instance.GetRoles(Null.NullInteger);
                 htRoles = new Hashtable();
                 int i;
-                for (i = 0; i <= arrRoles.Count - 1; i++)
+                for (i = 0; i <= roles.Count - 1; i++)
                 {
-                    RoleInfo objRole;
-                    objRole = (RoleInfo)arrRoles[i];
-                    htRoles.Add(objRole.RoleID, objRole.RoleName);
+                    RoleInfo role = roles[i];
+                    htRoles.Add(role.RoleID, role.RoleName);
                 }
                 if (Host.PerformanceSetting != PerformanceSettings.NoCaching)
                 {

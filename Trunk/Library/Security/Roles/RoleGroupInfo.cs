@@ -30,6 +30,7 @@ using System.Xml.Serialization;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Security.Roles.Internal;
 
 #endregion
 
@@ -252,11 +253,11 @@ namespace DotNetNuke.Security.Roles
                 {
                     break;
                 }
-                else if (reader.NodeType == XmlNodeType.Whitespace)
+                if (reader.NodeType == XmlNodeType.Whitespace)
                 {
                     continue;
                 }
-                else if (reader.NodeType == XmlNodeType.Element)
+                if (reader.NodeType == XmlNodeType.Element)
                 {
                     switch (reader.Name.ToLowerInvariant())
                     {
@@ -319,7 +320,7 @@ namespace DotNetNuke.Security.Roles
         private void GetRoles()
         {
             _Roles = new Dictionary<string, RoleInfo>();
-            foreach (RoleInfo role in new RoleController().GetRolesByGroup(PortalID, RoleGroupID))
+            foreach (var role in TestableRoleController.Instance.GetRoles(PortalID, r => r.RoleGroupID == RoleGroupID))
             {
                 _Roles[role.RoleName] = role;
             }

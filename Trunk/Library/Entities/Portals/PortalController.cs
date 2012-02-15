@@ -46,6 +46,7 @@ using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
@@ -198,14 +199,13 @@ namespace DotNetNuke.Entities.Portals
         private static int CreateRole(RoleInfo role)
         {
             RoleInfo objRoleInfo;
-            RoleController objRoleController = new RoleController();
             int roleId = Null.NullInteger;
 
             //First check if the role exists
-            objRoleInfo = objRoleController.GetRoleByName(role.PortalID, role.RoleName);
+            objRoleInfo = TestableRoleController.Instance.GetRole(role.PortalID, r => r.RoleName == role.RoleName);
             if (objRoleInfo == null)
             {
-                roleId = objRoleController.AddRole(role);
+                roleId = TestableRoleController.Instance.AddRole(role);
             }
             else
             {
@@ -364,7 +364,6 @@ namespace DotNetNuke.Entities.Portals
         private static void ParseFolderPermissions(XmlNodeList nodeFolderPermissions, int PortalId, FolderInfo folder)
         {
             PermissionController objPermissionController = new PermissionController();
-            RoleController objRoleController = new RoleController();
             int PermissionID = 0;
 
             //Clear the current folder permissions
@@ -390,7 +389,7 @@ namespace DotNetNuke.Entities.Portals
                         RoleID = Convert.ToInt32(Globals.glbRoleUnauthUser);
                         break;
                     default:
-                        RoleInfo objRole = objRoleController.GetRoleByName(PortalId, RoleName);
+                        RoleInfo objRole = TestableRoleController.Instance.GetRole(PortalId, r => r.RoleName == RoleName);
                         if (objRole != null)
                         {
                             RoleID = objRole.RoleID;
@@ -513,7 +512,7 @@ namespace DotNetNuke.Entities.Portals
                             string rolename = XmlUtils.GetNodeValue(permissionNav, "rolename");
                             if (!string.IsNullOrEmpty(rolename))
                             {
-                                RoleInfo role = new RoleController().GetRoleByName(portalID, rolename);
+                                RoleInfo role = TestableRoleController.Instance.GetRole(portalID, r => r.RoleName == rolename);
                                 if (role != null)
                                 {
                                     desktopModulePermission.RoleID = role.RoleID;

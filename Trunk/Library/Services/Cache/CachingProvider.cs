@@ -248,6 +248,8 @@ namespace DotNetNuke.Services.Cache
             ClearCacheKeysByPortalInternal(portalId, clearRuntime);
             ClearDesktopModuleCacheInternal(portalId, clearRuntime);
             ClearTabCacheInternal(portalId, clearRuntime);
+
+            RemoveCacheKey(String.Format(DataCache.RolesCacheKey, portalId), clearRuntime);
         }
 
         private void ClearTabCacheInternal(int portalId, bool clearRuntime)

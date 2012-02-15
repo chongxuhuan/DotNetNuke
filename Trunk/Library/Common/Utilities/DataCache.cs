@@ -200,6 +200,10 @@ namespace DotNetNuke.Common.Utilities
         public const CacheItemPriority RelationshipByPortalIDCachePriority = CacheItemPriority.Default;
         public const int RelationshipByPortalIDCacheTimeOut = 20;
 
+        public const string RolesCacheKey = "Roles:{0}";
+        public const CacheItemPriority RolesCachePriority = CacheItemPriority.Default;
+        public const int RolesCacheTimeOut = 20;
+
         private static string _CachePersistenceEnabled = "";
 
         private static readonly ReaderWriterLock dictionaryLock = new ReaderWriterLock();

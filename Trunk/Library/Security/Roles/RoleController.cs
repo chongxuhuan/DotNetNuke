@@ -29,7 +29,7 @@ using System.Xml;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
-using DotNetNuke.Instrumentation;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Mail;
@@ -71,28 +71,6 @@ namespace DotNetNuke.Security.Roles
         #endregion
 		
 		#region Private Methods
-
-        private void AutoAssignUsers(RoleInfo objRoleInfo)
-        {
-            if (objRoleInfo.AutoAssignment)
-            {
-                //loop through users for portal and add to role
-                ArrayList arrUsers = UserController.GetUsers(objRoleInfo.PortalID);
-                foreach (UserInfo objUser in arrUsers)
-                {
-                    try
-                    {
-                        AddUserRole(objRoleInfo.PortalID, objUser.UserID, objRoleInfo.RoleID, Null.NullDate, Null.NullDate);
-                    }
-                    catch (Exception exc)
-                    {
-                        //user already belongs to role
-                        DnnLog.Error(exc);
-
-                    }
-                }
-            }
-        }
 
         private static bool DeleteUserRoleInternal(int portalId, int userId, int roleId)
         {
@@ -174,105 +152,6 @@ namespace DotNetNuke.Security.Roles
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// This overload adds a role and optionally adds the info to the AspNet Roles
-        /// </summary>
-        /// <param name="roleInfo">The Role to Add</param>
-        /// <returns>The Id of the new role</returns>
-        /// <history>
-        /// 	[cnurse]	05/23/2005	Documented
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public int AddRole(RoleInfo roleInfo)
-        {
-            var roleId = -1;
-            var success = provider.CreateRole(roleInfo.PortalID, ref roleInfo);
-            if (success)
-            {
-                var eventLogController = new EventLogController();
-                eventLogController.AddLog(roleInfo, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.ROLE_CREATED);
-                AutoAssignUsers(roleInfo);
-                roleId = roleInfo.RoleID;
-            }
-
-            return roleId;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Delete a Role
-        /// </summary>
-        /// <param name="RoleId">The Id of the Role to delete</param>
-        /// <param name="PortalId">The Id of the Portal</param>
-        /// <history>
-        /// 	[cnurse]	05/24/2005	Documented
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public void DeleteRole(int RoleId, int PortalId)
-        {
-            RoleInfo objRole = GetRole(RoleId, PortalId);
-            if (objRole != null)
-            {
-                provider.DeleteRole(PortalId, ref objRole);
-                var objEventLog = new EventLogController();
-                objEventLog.AddLog("RoleID", RoleId.ToString(CultureInfo.InvariantCulture), PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.ROLE_DELETED);
-            }
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Get a list of roles for the Portal
-        /// </summary>
-        /// <param name="PortalId">The Id of the Portal</param>
-        /// <returns>An ArrayList of RoleInfo objects</returns>
-        /// <history>
-        /// 	[cnurse]	05/24/2005	Documented
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public ArrayList GetPortalRoles(int PortalId)
-        {
-            return provider.GetRoles(PortalId);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Fetch a single Role
-        /// </summary>
-        /// <param name="RoleID">The Id of the Role</param>
-        /// <param name="PortalID">The Id of the Portal</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        /// <history>
-        /// 	[cnurse]	05/24/2005	Documented
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public RoleInfo GetRole(int RoleID, int PortalID)
-        {
-            return provider.GetRole(PortalID, RoleID);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Obtains a role given the role name
-        /// </summary>
-        /// <param name="PortalId">Portal indentifier</param>
-        /// <param name="RoleName">Name of the role to be found</param>
-        /// <returns>A RoleInfo object is the role is found</returns>
-        /// <history>
-        /// 	[VMasanas]	27/08/2004	Created
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public RoleInfo GetRoleByName(int PortalId, string RoleName)
-        {
-            return provider.GetRole(PortalId, RoleName);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
         /// Returns an array of rolenames for a Portal
         /// </summary>
 		/// <param name="portalId">The Id of the Portal</param>
@@ -285,38 +164,6 @@ namespace DotNetNuke.Security.Roles
         public string[] GetRoleNames(int portalId)
         {
 			return provider.GetRoleNames(portalId);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets an ArrayList of Roles
-        /// </summary>
-        /// <returns>An ArrayList of Roles</returns>
-        /// <history>
-        /// 	[cnurse]	05/24/2005	Documented
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public ArrayList GetRoles()
-        {
-            return provider.GetRoles(Null.NullInteger);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Get the roles for a Role Group
-        /// </summary>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="roleGroupId">Id of the Role Group (If -1 all roles for the portal are
-        /// retrieved).</param>
-        /// <returns>An ArrayList of RoleInfo objects</returns>
-        /// <history>
-        ///     [cnurse]	01/03/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public ArrayList GetRolesByGroup(int portalId, int roleGroupId)
-        {
-            return provider.GetRolesByGroup(portalId, roleGroupId);
         }
 
         /// -----------------------------------------------------------------------------
@@ -350,29 +197,11 @@ namespace DotNetNuke.Security.Roles
         {
             //Serialize Global Roles
             writer.WriteStartElement("roles");
-            foreach (RoleInfo objRole in new RoleController().GetRolesByGroup(portalId, Null.NullInteger))
+            foreach (RoleInfo role in TestableRoleController.Instance.GetRoles(portalId, r => r.RoleGroupID == Null.NullInteger))
             {
-                CBO.SerializeObject(objRole, writer);
+                CBO.SerializeObject(role, writer);
             }
             writer.WriteEndElement();
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Persists a role to the Data Store
-        /// </summary>
-        /// <param name="objRoleInfo">The role to persist</param>
-        /// <history>
-        /// 	[cnurse]	05/24/2005	Documented
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public void UpdateRole(RoleInfo objRoleInfo)
-        {
-            provider.UpdateRole(objRoleInfo);
-            var objEventLog = new EventLogController();
-            objEventLog.AddLog(objRoleInfo, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.ROLE_UPDATED);
-            AutoAssignUsers(objRoleInfo);
         }
 
         #endregion
@@ -546,21 +375,21 @@ namespace DotNetNuke.Security.Roles
         /// Removes a User from a Role
         /// </summary>
         /// <param name="objUser">The user to remove</param>
-        /// <param name="objRole">The role to remove the use from</param>
-        /// <param name="PortalSettings">The PortalSettings of the Portal</param>
+        /// <param name="role">The role to remove the use from</param>
+        /// <param name="portalSettings">The PortalSettings of the Portal</param>
         /// <param name="notifyUser">A flag that indicates whether the user should be notified</param>
         /// <history>
         ///     [cnurse]    10/17/2007  Created  (Refactored code from Security Roles user control)
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static bool DeleteUserRole(UserInfo objUser, RoleInfo objRole, PortalSettings PortalSettings, bool notifyUser)
+        public static bool DeleteUserRole(UserInfo objUser, RoleInfo role, PortalSettings portalSettings, bool notifyUser)
         {
-            bool canDelete = DeleteUserRoleInternal(PortalSettings.PortalId, objUser.UserID, objRole.RoleID);
+            bool canDelete = DeleteUserRoleInternal(portalSettings.PortalId, objUser.UserID, role.RoleID);
             if (canDelete)
             {
                 if (notifyUser)
                 {
-                    SendNotification(objUser, objRole, PortalSettings, UserRoleActions.delete);
+                    SendNotification(objUser, role, portalSettings, UserRoleActions.delete);
                 }
             }
             return canDelete;
@@ -686,7 +515,7 @@ namespace DotNetNuke.Security.Roles
                     ExpiryDate = userRole.ExpiryDate;
                     IsTrialUsed = userRole.IsTrialUsed;
                 }
-                RoleInfo role = GetRole(roleId, portalId);
+                RoleInfo role = TestableRoleController.Instance.GetRole(portalId, r => r.RoleID == roleId);
                 if (role != null)
                 {
                     if (IsTrialUsed == false && role.TrialFrequency != "N")
@@ -736,7 +565,7 @@ namespace DotNetNuke.Security.Roles
                             break;
                     }
                 }
-                if (UserRoleId != -1)
+                if (UserRoleId != -1 && userRole != null)
                 {
                     userRole.ExpiryDate = ExpiryDate;
                     provider.UpdateUserRole(userRole);
@@ -901,10 +730,9 @@ namespace DotNetNuke.Security.Roles
             objEventLog.AddLog(roleGroup, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.USER_ROLE_UPDATED);
             if (includeRoles)
             {
-                var controller = new RoleController();
                 foreach (RoleInfo role in roleGroup.Roles.Values)
                 {
-                    controller.UpdateRole(role);
+                    TestableRoleController.Instance.UpdateRole(role);
                     objEventLog.AddLog(role, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.ROLE_UPDATED);
                 }
             }
@@ -914,37 +742,82 @@ namespace DotNetNuke.Security.Roles
 
         #region Obsoleted Methods, retained for Binary Compatability
 
+        [Obsolete("Deprecated in DotNetNuke 6.2. This function has been replaced by TestableRoleController.Instance.AddRole(role)")]
+        public int AddRole(RoleInfo role)
+        {
+            return TestableRoleController.Instance.AddRole(role);
+        }
+
         [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by AddRole(objRoleInfo)")]
-        public int AddRole(RoleInfo roleInfo, bool SynchronizationMode)
+        public int AddRole(RoleInfo role, bool synchronizationMode)
         {
-            return AddRole(roleInfo);
+            return TestableRoleController.Instance.AddRole(role);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.AddRole(role)")]
+        public void DeleteRole(int roleId, int portalId)
+        {
+            RoleInfo role = TestableRoleController.Instance.GetRole(portalId, r => r.RoleID == roleId);
+            if (role != null)
+            {
+                TestableRoleController.Instance.DeleteRole(role);
+            }
         }
 
         [Obsolete("Deprecated in DotNetNuke 6.2.")]
-        public static bool DeleteUserRole(int userId, RoleInfo objRole, PortalSettings PortalSettings, bool notifyUser)
+        public static bool DeleteUserRole(int userId, RoleInfo role, PortalSettings portalSettings, bool notifyUser)
         {
-            UserInfo objUser = UserController.GetUserById(PortalSettings.PortalId, userId);
-            return DeleteUserRole(objUser, objRole, PortalSettings, notifyUser);
+            UserInfo objUser = UserController.GetUserById(portalSettings.PortalId, userId);
+            return DeleteUserRole(objUser, role, portalSettings, notifyUser);
         }
 
         [Obsolete("Deprecated in DotNetNuke 6.2.")]
-        public static bool DeleteUserRole(int roleId, UserInfo objUser, PortalSettings PortalSettings, bool notifyUser)
+        public static bool DeleteUserRole(int roleId, UserInfo user, PortalSettings portalSettings, bool notifyUser)
         {
-            var objRoleController = new RoleController();
-            RoleInfo objRole = objRoleController.GetRole(roleId, PortalSettings.PortalId);
-            return DeleteUserRole(objUser, objRole, PortalSettings, notifyUser);
+            RoleInfo role = TestableRoleController.Instance.GetRole(portalSettings.PortalId, r => r.RoleID == roleId);
+            return DeleteUserRole(user, role, portalSettings, notifyUser);
         }
 
         [Obsolete("Deprecated in DotNetNuke 6.2.")]
-        public bool DeleteUserRole(int PortalId, int UserId, int RoleId)
+        public bool DeleteUserRole(int portalId, int userId, int roleId)
         {
-            return DeleteUserRoleInternal(PortalId, UserId, RoleId);
+            return DeleteUserRoleInternal(portalId, userId, roleId);
         }
 
         [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by GetPortalRoles(PortalId)")]
-        public ArrayList GetPortalRoles(int PortalId, bool SynchronizeRoles)
+        public ArrayList GetPortalRoles(int portalId, bool synchronizeRoles)
         {
-            return GetPortalRoles(PortalId);
+            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId).ToArray());
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRoles(portalId, predicate)")]
+        public ArrayList GetPortalRoles(int portalId)
+        {
+            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId).ToArray());
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRole(portalId, predicate)")]
+        public RoleInfo GetRole(int roleId, int portalId)
+        {
+            return TestableRoleController.Instance.GetRole(portalId, r => r.RoleID == roleId);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRole(portalId, predicate)")]
+        public RoleInfo GetRoleByName(int portalId, string roleName)
+        {
+            return TestableRoleController.Instance.GetRoles(portalId).SingleOrDefault(r => r.RoleName == roleName);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRoles(portalId, predicate)")]
+        public ArrayList GetRoles()
+        {
+            return new ArrayList(TestableRoleController.Instance.GetRoles(Null.NullInteger).ToArray());
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRoles(portalId, predicate)")]
+        public ArrayList GetRolesByGroup(int portalId, int roleGroupId)
+        {
+            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId, r => r.RoleGroupID == roleGroupId).ToArray());
         }
 
         [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by GetRolesByUser")]
@@ -999,6 +872,12 @@ namespace DotNetNuke.Security.Roles
         public ArrayList GetUsersInRole(int PortalID, string RoleName)
         {
             return provider.GetUserRolesByRoleName(PortalID, RoleName);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2. This function has been replaced by TestableRoleController.Instance.UpdateRole(role)")]
+        public void UpdateRole(RoleInfo role)
+        {
+            TestableRoleController.Instance.UpdateRole(role);
         }
 
         [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by UpdateUserRole")]

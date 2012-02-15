@@ -42,6 +42,7 @@ using DotNetNuke.Security;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
@@ -122,7 +123,7 @@ namespace DotNetNuke.Entities.Users
         {
             var roleController = new RoleController();
 
-            foreach (RoleInfo role in roleController.GetPortalRoles(portalId))
+            foreach (var role in TestableRoleController.Instance.GetRoles(portalId))
             {
                 if (role.AutoAssignment)
                 {
@@ -143,7 +144,7 @@ namespace DotNetNuke.Entities.Users
                 {
                     if (!user.Membership.Approved && portal.UserRegistration == (int)Globals.PortalRegistrationType.VerifiedRegistration)
                     {
-                        var role = roleController.GetRoleByName(portal.PortalID, "Unverified Users");
+                        var role = TestableRoleController.Instance.GetRole(portal.PortalID, r => r.RoleName == "Unverified Users");
                         roleController.AddUserRole(portal.PortalID, user.UserID, role.RoleID, Null.NullDate, Null.NullDate);
                     }
                     else
@@ -156,7 +157,7 @@ namespace DotNetNuke.Entities.Users
             {
                 if (!user.Membership.Approved && thisPortal.UserRegistration == (int)Globals.PortalRegistrationType.VerifiedRegistration)
                 {
-                    var role = roleController.GetRoleByName(portalId, "Unverified Users");
+                    var role = TestableRoleController.Instance.GetRole(portalId, r => r.RoleName == "Unverified Users");
                     roleController.AddUserRole(portalId, user.UserID, role.RoleID, Null.NullDate, Null.NullDate);
                 }
                 else
@@ -416,8 +417,7 @@ namespace DotNetNuke.Entities.Users
             Requires.NotNull("user", user);
 
             var settings = PortalController.GetCurrentPortalSettings();
-            var roleController = new RoleController();
-            var role = roleController.GetRoleByName(settings.PortalId, "Unverified Users");
+            var role = TestableRoleController.Instance.GetRole(settings.PortalId, r => r.RoleName == "Unverified Users");
 
             RoleController.DeleteUserRole(user, role, settings, false);
 

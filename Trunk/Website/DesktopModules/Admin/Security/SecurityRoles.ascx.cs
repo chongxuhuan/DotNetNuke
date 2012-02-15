@@ -34,6 +34,7 @@ using DotNetNuke.Instrumentation;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Skins.Controls;
@@ -116,14 +117,13 @@ namespace DotNetNuke.Modules.Admin.Security
             {
                 if (_Role == null)
                 {
-                    var objRoleController = new RoleController();
                     if (RoleId != Null.NullInteger)
                     {
-                        _Role = objRoleController.GetRole(RoleId, PortalId);
+                        _Role = TestableRoleController.Instance.GetRole(PortalId, r => r.RoleID == RoleId); ;
                     }
                     else if (cboRoles.SelectedItem != null)
                     {
-                        _Role = objRoleController.GetRole(Convert.ToInt32(cboRoles.SelectedItem.Value), PortalId);
+                        _Role = TestableRoleController.Instance.GetRole(PortalId, r => r.RoleID == Convert.ToInt32(cboRoles.SelectedItem.Value));
                     }
                 }
                 return _Role;
@@ -238,33 +238,31 @@ namespace DotNetNuke.Modules.Admin.Security
         /// -----------------------------------------------------------------------------
         private void BindData()
         {
-            var objRoles = new RoleController();
-
             //bind all portal roles to dropdownlist
             if (RoleId == Null.NullInteger)
             {
                 if (cboRoles.Items.Count == 0)
                 {
-                    ArrayList arrRoles = objRoles.GetPortalRoles(PortalId);
+                    var roles = TestableRoleController.Instance.GetRoles(PortalId);
 
                     //Remove access to Admin Role if use is not a member of the role
                     int roleIndex = Null.NullInteger;
-                    foreach (RoleInfo tmpRole in arrRoles)
+                    foreach (RoleInfo tmpRole in roles)
                     {
                         if (tmpRole.RoleName == PortalSettings.AdministratorRoleName)
                         {
                             if (!PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
                             {
-                                roleIndex = arrRoles.IndexOf(tmpRole);
+                                roleIndex = roles.IndexOf(tmpRole);
                             }
                         }
                         break;
                     }
                     if (roleIndex > Null.NullInteger)
                     {
-                        arrRoles.RemoveAt(roleIndex);
+                        roles.RemoveAt(roleIndex);
                     }
-                    cboRoles.DataSource = arrRoles;
+                    cboRoles.DataSource = roles;
                     cboRoles.DataBind();
                 }
             }
@@ -357,7 +355,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 cmdAdd.Text = Localization.GetString("AddRole.Text", LocalResourceFile);
                 grdUserRoles.DataKeyField = "RoleId";
                 grdUserRoles.Columns[1].Visible = false;
-                grdUserRoles.DataSource = objRoleController.GetUserRolesByUsername(PortalId, User.Username, Null.NullString);
+                grdUserRoles.DataSource = objRoleController.GetUserRoles(PortalId, User.Username, Null.NullString);
                 grdUserRoles.DataBind();
             }
         }
@@ -396,7 +394,7 @@ namespace DotNetNuke.Modules.Admin.Security
             }
             else //new role assignment
             {
-                RoleInfo objRole = objRoles.GetRole(RoleId, PortalId);
+                RoleInfo objRole = TestableRoleController.Instance.GetRole(PortalId, r => r.RoleID == RoleId);
 
                 if (objRole.BillingPeriod > 0)
                 {
@@ -717,7 +715,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 int userId = Convert.ToInt32(cmdDeleteUserRole.Attributes["userId"]);
 
                 var roleController = new RoleController();
-                RoleInfo role = roleController.GetRole(roleId, PortalSettings.PortalId);
+                RoleInfo role = TestableRoleController.Instance.GetRole(PortalId, r => r.RoleID == roleId);
                 if (!RoleController.DeleteUserRole(UserController.GetUserById(PortalId, userId), role, PortalSettings, chkNotify.Checked))
                 {
                     UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("RoleRemoveError", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);

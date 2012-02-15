@@ -30,6 +30,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Localization;
 
@@ -60,12 +61,12 @@ namespace DotNetNuke.Services.FileSystem
             int ModuleId = -1;
             try
             {
-				//get TabId
+                //get TabId
                 if (context.Request.QueryString["tabid"] != null)
                 {
                     Int32.TryParse(context.Request.QueryString["tabid"], out TabId);
                 }
-				
+
                 //get ModuleId
                 if (context.Request.QueryString["mid"] != null)
                 {
@@ -74,10 +75,10 @@ namespace DotNetNuke.Services.FileSystem
             }
             catch (Exception)
             {
-				//The TabId or ModuleId are incorrectly formatted (potential DOS)
+                //The TabId or ModuleId are incorrectly formatted (potential DOS)
                 Exceptions.Exceptions.ProcessHttpException(context.Request);
             }
-			
+
             //get Language
             string Language = _portalSettings.DefaultLanguage;
             if (context.Request.QueryString["language"] != null)
@@ -96,7 +97,7 @@ namespace DotNetNuke.Services.FileSystem
                 Thread.CurrentThread.CurrentUICulture = new CultureInfo(Language);
                 Localization.Localization.SetLanguage(Language);
             }
-			
+
             //get the URL
             string URL = "";
             bool blnClientCache = true;
@@ -127,7 +128,7 @@ namespace DotNetNuke.Services.FileSystem
                 {
                     URL = Globals.LinkClick(URL, TabId, ModuleId, false);
                 }
-				
+
                 if (UrlType == TabType.File && URL.ToLowerInvariant().StartsWith("fileid=") == false)
                 {
                     //to handle legacy scenarios before the introduction of the FileServerHandler
@@ -140,8 +141,8 @@ namespace DotNetNuke.Services.FileSystem
 
                     URL = "FileID=" + file.FileId;
                 }
-				
-				//get optional parameters
+
+                //get optional parameters
                 if (context.Request.QueryString["clientcache"] != null)
                 {
                     blnClientCache = bool.Parse(context.Request.QueryString["clientcache"]);
@@ -151,9 +152,9 @@ namespace DotNetNuke.Services.FileSystem
                     blnForceDownload = bool.Parse(context.Request.QueryString["forcedownload"]);
                 }
                 var contentDisposition = blnForceDownload ? ContentDisposition.Attachment : ContentDisposition.Inline;
-                
-				//clear the current response
-				context.Response.Clear();
+
+                //clear the current response
+                context.Response.Clear();
                 var fileManager = FileManager.Instance;
                 try
                 {
@@ -168,7 +169,7 @@ namespace DotNetNuke.Services.FileSystem
                                 {
                                     var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
                                     var directUrl = fileManager.GetUrl(file);
-                                    if(directUrl.Contains("LinkClick") || (blnForceDownload && folderMapping.FolderProviderType == "StandardFolderProvider"))
+                                    if (directUrl.Contains("LinkClick") || (blnForceDownload && folderMapping.FolderProviderType == "StandardFolderProvider"))
                                     {
                                         fileManager.WriteFileToResponse(file, contentDisposition);
                                         download = true;
@@ -178,10 +179,21 @@ namespace DotNetNuke.Services.FileSystem
                                         context.Response.Redirect(directUrl, /*endResponse*/ true);
                                     }
                                 }
-								catch (Exception ex)
-								{
-									DnnLog.Error(ex);
-								}
+                                catch (PermissionsNotMetException)
+                                {
+                                    if (context.Request.IsAuthenticated)
+                                    {
+                                        context.Response.Redirect(Globals.AccessDeniedURL(Localization.Localization.GetString("FileAccess.Error")), true);
+                                    }
+                                    else
+                                    {
+                                        context.Response.Redirect(Globals.AccessDeniedURL(), true);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    DnnLog.Error(ex);
+                                }
                             }
 
                             if (!download)

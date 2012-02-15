@@ -1031,16 +1031,16 @@ namespace DotNetNuke.UI.UserControls
                         cboTabs.Items.Clear();
 
                         PortalSettings _settings = PortalController.GetCurrentPortalSettings();
-                        int excludeTabId = Null.NullInteger;
-                        if (!IncludeActiveTab)
-                        {
-                            excludeTabId = _settings.ActiveTab.TabID;
-                        }
-                        cboTabs.DataSource = TabController.GetPortalTabs(_settings.PortalId, excludeTabId, !Required, "none available", true, false, false, true, false);
+                        cboTabs.DataSource = TabController.GetPortalTabs(_settings.PortalId, Null.NullInteger, !Required, "none available", true, false, false, true, false);
                         cboTabs.DataBind();
                         if (cboTabs.Items.FindByValue(_Url) != null)
                         {
                             cboTabs.Items.FindByValue(_Url).Selected = true;
+                        }
+
+                        if (!IncludeActiveTab && cboTabs.Items.FindByValue(_settings.ActiveTab.TabID.ToString()) != null)
+                        {
+                            cboTabs.Items.FindByValue(_settings.ActiveTab.TabID.ToString()).Attributes.Add("disabled", "disabled");
                         }
                         break;
                     case "F": //file

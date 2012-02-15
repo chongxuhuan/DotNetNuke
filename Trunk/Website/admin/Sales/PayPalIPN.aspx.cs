@@ -32,6 +32,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Framework;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Log.EventLog;
 
@@ -201,7 +202,7 @@ namespace DotNetNuke.Modules.Admin.Sales
                     else
                     {
 						//user subscription
-                        RoleInfo objRoleInfo = objRoles.GetRole(intRoleID, intPortalID);
+                        RoleInfo objRoleInfo = TestableRoleController.Instance.GetRole(intPortalID, r => r.RoleID == intRoleID);
                         float rolePrice = objRoleInfo.ServiceFee;
                         float trialPrice = objRoleInfo.TrialFee;
                         if ((rolePrice.ToString() == dblAmount.ToString() || trialPrice.ToString() == dblAmount.ToString()) && (HttpUtility.UrlDecode(strPayPalID.ToLower()) == strProcessorID))

@@ -44,6 +44,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Tokens;
@@ -459,9 +460,8 @@ namespace DotNetNuke.Services.Localization
         public static void AddTranslatorRole(int portalID, Locale language)
         {
             //Create new Translator Role
-            var roleController = new RoleController();
             string roleName = string.Format("Translator ({0})", language.Code);
-            RoleInfo role = roleController.GetRoleByName(portalID, roleName);
+            RoleInfo role = TestableRoleController.Instance.GetRole(portalID, r => r.RoleName == roleName);
 
             if (role == null)
             {
@@ -470,7 +470,7 @@ namespace DotNetNuke.Services.Localization
                 role.PortalID = portalID;
                 role.RoleName = roleName;
                 role.Description = string.Format("A role for {0} translators", language.EnglishName);
-                roleController.AddRole(role);
+                TestableRoleController.Instance.AddRole(role);
             }
 
             string roles = string.Format("Administrators;{0}", string.Format("Translator ({0})", language.Code));
@@ -1675,13 +1675,12 @@ namespace DotNetNuke.Services.Localization
             if (language != null)
             {
                 //Get Translator Role
-                var roleController = new RoleController();
                 string roleName = string.Format("Translator ({0})", language.Code);
-                RoleInfo role = roleController.GetRoleByName(portalID, roleName);
+                RoleInfo role = TestableRoleController.Instance.GetRole(portalID, r => r.RoleName == roleName);
 
                 if (role != null)
                 {
-                    roleController.DeleteRole(role.RoleID, portalID);
+                    TestableRoleController.Instance.DeleteRole(role);
                 }
             }
 

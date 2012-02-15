@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,20 +18,32 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
-#endregion
+namespace DotNetNuke.Services.Social.Messaging.Exceptions
+{
+    [Serializable]
+    public class RecipientLimitExceeded : Exception
+    {
+        public RecipientLimitExceeded()
+        {
+        }
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("B72D6750-8AA1-4E49-8897-DF117A680F48")]
-[assembly: AssemblyVersion("6.2.0.498")]
+        public RecipientLimitExceeded(string message)
+            : base(message)
+        {
+        }
+
+        public RecipientLimitExceeded(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+
+        public RecipientLimitExceeded(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+    }
+}

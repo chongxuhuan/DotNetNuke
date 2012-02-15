@@ -222,6 +222,28 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         }
 
+        private void BindMessaging(PortalInfo portal)
+        {
+            var throttlingIntervals = new Dictionary<int, int>
+                               {
+                                   { 0, 0 }, { 1, 1 },  { 2, 2 },  { 3, 3 },  { 4, 4 },  { 5, 5 },  { 6, 6 },  { 7, 7 },  { 8, 8 },  { 9, 9 }, { 10, 10 }
+                               };
+
+            cboMsgThrottlingInterval.DataSource = throttlingIntervals;
+            cboMsgThrottlingInterval.DataBind(PortalController.GetPortalSettingAsInteger("MessagingThrottlingInterval", portal.PortalID, 0).ToString());
+
+            var recipientLimits = new Dictionary<int, int>
+                               {
+                                   { 1, 1 }, { 5, 5 },  { 10, 10 },  { 15, 15 },  { 25, 25 },  { 50, 50 },  { 75, 75 },  { 100, 100 }
+                               };
+
+            cboMsgRecipientLimit.DataSource = recipientLimits;
+            cboMsgRecipientLimit.DataBind(PortalController.GetPortalSettingAsInteger("MessagingRecipientLimit", portal.PortalID, 5).ToString());
+
+            optMsgAllowAttachments.Select(PortalController.GetPortalSetting("MessagingAllowAttachments", portal.PortalID, "NO"), false);
+            optMsgProfanityFilters.Select(PortalController.GetPortalSetting("MessagingProfanityFilters", portal.PortalID, "NO"), false);
+        }
+
         private void BindPages(PortalInfo portal, string activeLanguage)
         {
             //Set up special page lists
@@ -327,6 +349,8 @@ namespace DotNetNuke.Modules.Admin.Portals
             BindPaymentProcessor(portal);
 
             BindUsability(portal);
+
+            BindMessaging(portal);
 
             var roleController = new RoleController();
             cboAdministratorId.DataSource = roleController.GetUserRoles(portalId, null, portal.AdministratorRoleName);
@@ -954,6 +978,11 @@ namespace DotNetNuke.Modules.Admin.Portals
                     PortalController.UpdatePortalSetting(_portalId, "ControlPanelMode", optControlPanelMode.SelectedItem.Value, false);
                     PortalController.UpdatePortalSetting(_portalId, "ControlPanelVisibility", optControlPanelVisibility.SelectedItem.Value, false);
                     PortalController.UpdatePortalSetting(_portalId, "ControlPanelSecurity", optControlPanelSecurity.SelectedItem.Value, false);
+
+                    PortalController.UpdatePortalSetting(_portalId, "MessagingThrottlingInterval", cboMsgThrottlingInterval.SelectedItem.Value, false);
+                    PortalController.UpdatePortalSetting(_portalId, "MessagingRecipientLimit", cboMsgRecipientLimit.SelectedItem.Value, false);
+                    PortalController.UpdatePortalSetting(_portalId, "MessagingAllowAttachments", optMsgAllowAttachments.SelectedItem.Value, false);
+                    PortalController.UpdatePortalSetting(_portalId, "MessagingProfanityFilters", optMsgProfanityFilters.SelectedItem.Value, false);
 
                     PortalController.UpdatePortalSetting(_portalId, "paypalsandbox", chkPayPalSandboxEnabled.Checked.ToString(), false);
                     PortalController.UpdatePortalSetting(_portalId, "paypalsubscriptionreturn", txtPayPalReturnURL.Text, false);

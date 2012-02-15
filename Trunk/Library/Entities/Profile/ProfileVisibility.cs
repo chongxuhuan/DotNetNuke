@@ -27,6 +27,7 @@ using System.Text;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Social;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 
 namespace DotNetNuke.Entities.Profile
 {
@@ -43,7 +44,6 @@ namespace DotNetNuke.Entities.Profile
         {
             if (!String.IsNullOrEmpty(extendedVisibility))
             {
-                var roleController = new RoleController();
                 var relationshipController = new RelationshipController();
 
                 var lists = extendedVisibility.Split(';');
@@ -53,7 +53,8 @@ namespace DotNetNuke.Entities.Profile
                     var roles = lists[0].Substring(2).TrimEnd(',').Split(',');
                     foreach (var role in roles)
                     {
-                        RoleInfo userRole = roleController.GetRole(Int32.Parse(role), portalId);
+                        int roleId = Int32.Parse(role);
+                        RoleInfo userRole = TestableRoleController.Instance.GetRole(portalId, r => r.RoleID == roleId);
                         RoleVisibilities.Add(userRole);
                     }
                 }

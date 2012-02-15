@@ -37,6 +37,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Social.Messaging.Data;
+using DotNetNuke.Services.Social.Messaging.Exceptions;
 
 #endregion
 
@@ -98,12 +99,11 @@ namespace DotNetNuke.Services.Social.Messaging
 
         ///<summary> How long a user needs to wait before user is allowed sending the next message</summary>
         ///<returns>Time in seconds. Returns zero if user has never sent a message</returns>
-        /// <param name="sender">Sender's UserInfo</param>
-        /// <param name="portalId">PortalId</param>
-        public int WaitTimeForNextMessage(UserInfo sender, int portalId)
+        /// <param name="sender">Sender's UserInfo</param>        
+        public int WaitTimeForNextMessage(UserInfo sender)
         {
             int waitTime = 0;
-            var interval =  PortalController.GetPortalSettingAsInteger("MessageThrottleInterval", portalId, Null.NullInteger);
+            var interval = PortalController.GetPortalSettingAsInteger("MessagingThrottlingInterval", sender.PortalID, Null.NullInteger);
             if (interval > 0 && (!IsAdminOrHost(sender)))
             {
                 int totalRecords = 0;
@@ -186,29 +186,29 @@ namespace DotNetNuke.Services.Social.Messaging
         {
             if (sender == null || sender.UserID <= 0)
             {
-                throw new ArgumentException(Localization.Localization.GetString("SenderRequiredError", Localization.Localization.ExceptionsResourceFile));                
+                throw new ArgumentException(Localization.Localization.GetString("MsgSenderRequiredError", Localization.Localization.ExceptionsResourceFile));                
             }
 
             if(string.IsNullOrEmpty(subject) && string.IsNullOrEmpty(body))
             {
-                throw new ArgumentException(Localization.Localization.GetString("SubjectOrBodyRequiredError", Localization.Localization.ExceptionsResourceFile));                                
+                throw new ArgumentException(Localization.Localization.GetString("MsgSubjectOrBodyRequiredError", Localization.Localization.ExceptionsResourceFile));                                
             }
 
             if (roles == null && users == null)
             {
-                throw new ArgumentException(Localization.Localization.GetString("RolesOrUsersRequiredError", Localization.Localization.ExceptionsResourceFile));                                                
+                throw new ArgumentException(Localization.Localization.GetString("MsgRolesOrUsersRequiredError", Localization.Localization.ExceptionsResourceFile));                                                
             }
 
             if (!string.IsNullOrEmpty(subject) && subject.Length > ConstMaxSubject)
             {
-                throw new ArgumentException(string.Format(Localization.Localization.GetString("SubjectTooBigError", Localization.Localization.ExceptionsResourceFile), ConstMaxSubject, subject.Length));
+                throw new ArgumentException(string.Format(Localization.Localization.GetString("MsgSubjectTooBigError", Localization.Localization.ExceptionsResourceFile), ConstMaxSubject, subject.Length));
             }
 
             if (roles != null && roles.Count > 0)
             {
                 if (!IsAdminOrHost(sender))
                 {
-                    throw new ArgumentException(Localization.Localization.GetString("OnlyHostOrAdminCanSendToRoleError", Localization.Localization.ExceptionsResourceFile));                                                    
+                    throw new ArgumentException(Localization.Localization.GetString("MsgOnlyHostOrAdminCanSendToRoleError", Localization.Localization.ExceptionsResourceFile));                                                    
                 }
             }
 
@@ -230,12 +230,33 @@ namespace DotNetNuke.Services.Social.Messaging
             
             if (sbTo.Length == 0)
             {
-                throw new ArgumentException(Localization.Localization.GetString("EmptyToListFoundError", Localization.Localization.GlobalResourceFile));                                                                
+                throw new ArgumentException(Localization.Localization.GetString("MsgEmptyToListFoundError", Localization.Localization.ExceptionsResourceFile));                                                                
             }
             
             if (sbTo.Length > ConstMaxTo)
-            {                
-                throw new ArgumentException(string.Format(Localization.Localization.GetString("ToListTooBigError", Localization.Localization.GlobalResourceFile), ConstMaxTo, sbTo.Length));
+            {
+                throw new ArgumentException(string.Format(Localization.Localization.GetString("MsgToListTooBigError", Localization.Localization.ExceptionsResourceFile), ConstMaxTo, sbTo.Length));
+            }
+
+            //Cannot send message if within ThrottlingInterval
+            if (WaitTimeForNextMessage(sender) > 0)            
+            {
+                throw new ThrottlingIntervalNotMetException(Localization.Localization.GetString("MsgThrottlingIntervalNotMet", Localization.Localization.ExceptionsResourceFile));
+            }
+
+            //Cannot have attachments if it's not enabled
+            if (fileIDs != null && !AttachmentsAllowed(sender.PortalID))
+            {
+                throw new ThrottlingIntervalNotMetException(Localization.Localization.GetString("MsgAttachmentsNotAllowed", Localization.Localization.ExceptionsResourceFile));
+            }
+
+            //Cannot exceed RecipientLimit
+            var recipientCount = 0;
+            if (users != null) recipientCount += users.Count;
+            if (roles != null) recipientCount += roles.Count;
+            if(recipientCount > RecipientLimit(sender.PortalID))
+            {
+                throw new ThrottlingIntervalNotMetException(Localization.Localization.GetString("MsgRecipientLimitExceeded", Localization.Localization.ExceptionsResourceFile));
             }
 
             var message = new Message { Body = body, Subject = subject, To = sbTo.ToString().Trim(','), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName};
@@ -273,6 +294,22 @@ namespace DotNetNuke.Services.Social.Messaging
             }
 
             return message;
+        }
+
+        ///<summary>Are attachments allowed</summary>        
+        ///<returns>True or False</returns>
+        /// <param name="portalId">Portal Id</param>               
+        public bool AttachmentsAllowed(int portalId)
+        {
+            return PortalController.GetPortalSetting("MessagingAllowAttachments", portalId, "YES") == "YES";
+        }
+
+        ///<summary>Maximum number of Recipients allowed</summary>        
+        ///<returns>Count. Message to a Role is considered a single Recipient. Each User in the To list is counted as one User each.</returns>
+        /// <param name="portalId">Portal Id</param>        
+        public int RecipientLimit(int portalId)
+        {
+            return PortalController.GetPortalSettingAsInteger("MessagingRecipientLimit", portalId, 5);
         }
 
         #endregion

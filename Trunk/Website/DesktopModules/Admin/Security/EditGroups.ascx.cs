@@ -24,6 +24,7 @@ using System;
 
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Skins.Controls;
@@ -84,7 +85,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 if (Page.IsPostBack == false)
                 {
                     ClientAPI.AddButtonConfirm(cmdDelete, Localization.GetString("DeleteItem"));
-                    var objRoles = new RoleController();
+
                     if (RoleGroupID != -1)
                     {
                         RoleGroupInfo objRoleGroupInfo = RoleController.GetRoleGroup(PortalId, RoleGroupID);
@@ -94,7 +95,7 @@ namespace DotNetNuke.Modules.Admin.Security
                             txtDescription.Text = objRoleGroupInfo.Description;
 
                             //Check if Group has any roles assigned
-                            int roleCount = objRoles.GetRolesByGroup(PortalId, RoleGroupID).Count;
+                            int roleCount = TestableRoleController.Instance.GetRoles(PortalId, r => r.RoleGroupID == RoleGroupID).Count;
 
                             if (roleCount > 0)
                             {

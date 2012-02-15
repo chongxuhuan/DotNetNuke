@@ -38,6 +38,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Messaging.Data;
 using DotNetNuke.Services.Tokens;
 
@@ -431,11 +432,12 @@ namespace DotNetNuke.Services.Mail
             var keyList = new List<string>();
             var roleController = new RoleController();
             
-            foreach (string strRolename in _addressedRoles)
+            foreach (string roleName in _addressedRoles)
             {
-                var roleInfo = roleController.GetRoleByName(_portalSettings.PortalId, strRolename);
+                string role = roleName;
+                var roleInfo = TestableRoleController.Instance.GetRole(_portalSettings.PortalId, r => r.RoleName == role);
 
-                foreach (UserInfo objUser in roleController.GetUsersByRoleName(_portalSettings.PortalId, strRolename))
+                foreach (UserInfo objUser in roleController.GetUsersByRoleName(_portalSettings.PortalId, roleName))
                 {
                     UserInfo user = objUser;
                     ProfileController.GetUserProfile(ref user);

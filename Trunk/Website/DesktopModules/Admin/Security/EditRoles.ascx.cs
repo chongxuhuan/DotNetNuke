@@ -30,6 +30,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Framework;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Skins.Controls;
@@ -173,8 +174,6 @@ namespace DotNetNuke.Modules.Admin.Security
                 {
                     cmdCancel.NavigateUrl = Globals.NavigateURL();
 
-                    var objUser = new RoleController();
-
                     var ctlList = new ListController();
                     var colFrequencies = ctlList.GetListEntryInfoItems("Frequency", "");
 
@@ -195,7 +194,7 @@ namespace DotNetNuke.Modules.Admin.Security
                         txtRoleName.Visible = false;
                         valRoleName.Enabled = false;
 
-                        var objRoleInfo = objUser.GetRole(_roleID, PortalSettings.PortalId);
+                        var objRoleInfo = TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == _roleID);
                         if (objRoleInfo != null)
                         {
                             lblRoleName.Text = objRoleInfo.RoleName;
@@ -329,28 +328,30 @@ namespace DotNetNuke.Modules.Admin.Security
                         intTrialPeriod = int.Parse(txtTrialPeriod.Text);
                         strTrialFrequency = cboTrialFrequency.SelectedItem.Value;
                     }
-                    var objRoleController = new RoleController();
-                    var objRoleInfo = new RoleInfo();
-                    objRoleInfo.PortalID = PortalId;
-                    objRoleInfo.RoleID = _roleID;
-                    objRoleInfo.RoleGroupID = int.Parse(cboRoleGroups.SelectedValue);
-                    objRoleInfo.RoleName = txtRoleName.Text;
-                    objRoleInfo.Description = txtDescription.Text;
-                    objRoleInfo.ServiceFee = sglServiceFee;
-                    objRoleInfo.BillingPeriod = intBillingPeriod;
-                    objRoleInfo.BillingFrequency = strBillingFrequency;
-                    objRoleInfo.TrialFee = sglTrialFee;
-                    objRoleInfo.TrialPeriod = intTrialPeriod;
-                    objRoleInfo.TrialFrequency = strTrialFrequency;
-                    objRoleInfo.IsPublic = chkIsPublic.Checked;
-                    objRoleInfo.AutoAssignment = chkAutoAssignment.Checked;
-                    objRoleInfo.RSVPCode = txtRSVPCode.Text;
-                    objRoleInfo.IconFile = ctlIcon.Url;
+
+                    var role = new RoleInfo
+                                   {
+                                       PortalID = PortalId,
+                                       RoleID = _roleID,
+                                       RoleGroupID = int.Parse(cboRoleGroups.SelectedValue),
+                                       RoleName = txtRoleName.Text,
+                                       Description = txtDescription.Text,
+                                       ServiceFee = sglServiceFee,
+                                       BillingPeriod = intBillingPeriod,
+                                       BillingFrequency = strBillingFrequency,
+                                       TrialFee = sglTrialFee,
+                                       TrialPeriod = intTrialPeriod,
+                                       TrialFrequency = strTrialFrequency,
+                                       IsPublic = chkIsPublic.Checked,
+                                       AutoAssignment = chkAutoAssignment.Checked,
+                                       RSVPCode = txtRSVPCode.Text,
+                                       IconFile = ctlIcon.Url
+                                   };
                     if (_roleID == -1)
                     {
-                        if (objRoleController.GetRoleByName(PortalId, objRoleInfo.RoleName) == null)
+                        if (TestableRoleController.Instance.GetRole(PortalId, r => r.RoleName == role.RoleName) == null)
                         {
-                            objRoleController.AddRole(objRoleInfo);
+                            TestableRoleController.Instance.AddRole(role);
                         }
                         else
                         {
@@ -360,7 +361,7 @@ namespace DotNetNuke.Modules.Admin.Security
                     }
                     else
                     {
-                        objRoleController.UpdateRole(objRoleInfo);
+                        TestableRoleController.Instance.UpdateRole(role);
                     }
 					
                     //Clear Roles Cache
@@ -390,9 +391,9 @@ namespace DotNetNuke.Modules.Admin.Security
         {
             try
             {
-                var objUser = new RoleController();
+                var role = TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == _roleID);
 
-                objUser.DeleteRole(_roleID, PortalSettings.PortalId);
+                TestableRoleController.Instance.DeleteRole(role);
               
                 //Clear Roles Cache
                 DataCache.RemoveCache("GetRoles");

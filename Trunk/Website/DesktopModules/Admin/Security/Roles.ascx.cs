@@ -31,6 +31,7 @@ using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Framework;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
@@ -123,11 +124,10 @@ namespace DotNetNuke.Modules.Admin.Security
         /// -----------------------------------------------------------------------------
         private void BindData()
         {
-            //Get the portal's roles from the database
-            var objRoles = new RoleController();
-
-            var arrRoles = _roleGroupId < -1 ? objRoles.GetPortalRoles(PortalId) : objRoles.GetRolesByGroup(PortalId, _roleGroupId);
-            grdRoles.DataSource = arrRoles;
+            var roles = _roleGroupId < -1 
+                                ? TestableRoleController.Instance.GetRoles(PortalId) 
+                                : TestableRoleController.Instance.GetRoles(PortalId, r => r.RoleGroupID == _roleGroupId);
+            grdRoles.DataSource = roles;
 
             if (_roleGroupId < 0)
             {
@@ -138,7 +138,7 @@ namespace DotNetNuke.Modules.Admin.Security
             {
                 lnkEditGroup.Visible = true;
                 lnkEditGroup.NavigateUrl = EditUrl("RoleGroupId", _roleGroupId.ToString(), "EditGroup");
-                cmdDelete.Visible = arrRoles.Count == 0;
+                cmdDelete.Visible = roles.Count == 0;
             }
             Localization.LocalizeDataGrid(ref grdRoles, LocalResourceFile);
 

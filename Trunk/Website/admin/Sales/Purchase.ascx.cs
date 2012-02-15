@@ -18,6 +18,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
@@ -31,6 +32,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 
 #endregion
@@ -70,10 +72,9 @@ namespace DotNetNuke.Modules.Admin.Sales
                 }
                 if (Page.IsPostBack == false)
                 {
-                    var objRoles = new RoleController();
                     if (RoleID != -1)
                     {
-                        RoleInfo objRole = objRoles.GetRole(RoleID, PortalSettings.PortalId);
+                        RoleInfo objRole = TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == RoleID);
 
                         if (objRole.RoleID != -1)
                         {

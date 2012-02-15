@@ -22,18 +22,24 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using DotNetNuke.Common;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Localization;
 
 #endregion
 
+// ReSharper disable CheckNamespace
 namespace DotNetNuke.UI.WebControls
+// ReSharper restore CheckNamespace
 {
 
 	public class RolesSelectionGrid : Control, INamingContainer
@@ -42,8 +48,8 @@ namespace DotNetNuke.UI.WebControls
 		#region Private Members
 
 		private readonly DataTable _dtRoleSelections = new DataTable();
-		private ArrayList _roles;
-		private ArrayList _selectedRoles;
+		private IList<RoleInfo> _roles;
+        private IList<string> _selectedRoles;
 		private DropDownList cboRoleGroups;
 		private DataGrid dgRoleSelection;
 		private Label lblGroups;
@@ -158,11 +164,11 @@ namespace DotNetNuke.UI.WebControls
 			get
 			{
 				UpdateRoleSelections();
-				return (CurrentRoleSelection);
+				return (new ArrayList(CurrentRoleSelection.ToArray()));
 			}
 			set
 			{
-				CurrentRoleSelection = value;
+				CurrentRoleSelection = value.Cast<string>().ToList();
 			}
 		}
 
@@ -178,16 +184,13 @@ namespace DotNetNuke.UI.WebControls
 		{
 			get
 			{
-				if (ViewState["ShowUnauthenticatedUsers"] == null)
+			    if (ViewState["ShowUnauthenticatedUsers"] == null)
 				{
 					return false;
 				}
-				else
-				{
-					return Convert.ToBoolean(ViewState["ShowUnauthenticatedUsers"]);
-				}
+			    return Convert.ToBoolean(ViewState["ShowUnauthenticatedUsers"]);
 			}
-			set
+		    set
 			{
 				ViewState["ShowUnauthenticatedUsers"] = value;
 			}
@@ -200,16 +203,13 @@ namespace DotNetNuke.UI.WebControls
 		{
 			get
 			{
-				if (ViewState["ShowAllUsers"] == null)
+			    if (ViewState["ShowAllUsers"] == null)
 				{
 					return false;
 				}
-				else
-				{
-					return Convert.ToBoolean(ViewState["ShowAllUsers"]);
-				}
+			    return Convert.ToBoolean(ViewState["ShowAllUsers"]);
 			}
-			set
+		    set
 			{
 				ViewState["ShowAllUsers"] = value;
 			}
@@ -227,29 +227,13 @@ namespace DotNetNuke.UI.WebControls
 			}
 		}
 
-		private ArrayList Roles
+        private IList<string> CurrentRoleSelection
 		{
 			get
 			{
-				return _roles;
+			    return _selectedRoles ?? (_selectedRoles = new List<string>());
 			}
-			set
-			{
-				_roles = value;
-			}
-		}
-
-		private ArrayList CurrentRoleSelection
-		{
-			get
-			{
-				if (_selectedRoles == null)
-				{
-					_selectedRoles = new ArrayList();
-				}
-				return _selectedRoles;
-			}
-			set
+            set
 			{
 				_selectedRoles = value;
 			}
@@ -277,10 +261,8 @@ namespace DotNetNuke.UI.WebControls
 			dtRolesSelection.Columns.Clear();
 			dtRolesSelection.Rows.Clear();
 
-			DataColumn col;
-
-			//Add Roles Column
-			col = new DataColumn("RoleId", typeof (string));
+		    //Add Roles Column
+			var col = new DataColumn("RoleId", typeof (string));
 			dtRolesSelection.Columns.Add(col);
 
 			//Add Roles Column
@@ -294,11 +276,10 @@ namespace DotNetNuke.UI.WebControls
 			GetRoles();
 
 			UpdateRoleSelections();
-			DataRow row;
-			for (int i = 0; i <= Roles.Count - 1; i++)
+		    for (int i = 0; i <= _roles.Count - 1; i++)
 			{
-				var role = (RoleInfo) Roles[i];
-				row = dtRolesSelection.NewRow();
+				var role = _roles[i];
+				DataRow row = dtRolesSelection.NewRow();
 				row["RoleId"] = role.RoleID;
 				row["RoleName"] = Localization.LocalizeRole(role.RoleName);
 				row["Selected"] = GetSelection(role.RoleName);
@@ -311,54 +292,37 @@ namespace DotNetNuke.UI.WebControls
 
 		private bool GetSelection(string roleName)
 		{
-			foreach (string r in CurrentRoleSelection)
-			{
-				if (r == roleName)
-				{
-					return true;
-				}
-			}
-			return false;
+		    return CurrentRoleSelection.Any(r => r == roleName);
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Gets the roles from the Database and loads them into the Roles property
 		/// </summary>
 		private void GetRoles()
 		{
-			var objRoleController = new RoleController();
-			int RoleGroupId = -2;
+			var roleController = new RoleController();
+			int roleGroupId = -2;
 			if ((cboRoleGroups != null) && (cboRoleGroups.SelectedValue != null))
 			{
-				RoleGroupId = int.Parse(cboRoleGroups.SelectedValue);
+				roleGroupId = int.Parse(cboRoleGroups.SelectedValue);
 			}
-			if (RoleGroupId > -2)
+
+			_roles = roleGroupId > -2 
+                    ? TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.RoleGroupID == roleGroupId)
+                    : TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId);
+
+			if (roleGroupId < 0)
 			{
-				_roles = objRoleController.GetRolesByGroup(PortalController.GetCurrentPortalSettings().PortalId, RoleGroupId);
-			}
-			else
-			{
-				_roles = objRoleController.GetPortalRoles(PortalController.GetCurrentPortalSettings().PortalId);
-			}
-			if (RoleGroupId < 0)
-			{
-				var r = new RoleInfo();
 				if (ShowUnauthenticatedUsers)
 				{
-					r.RoleID = int.Parse(Globals.glbRoleUnauthUser);
-					r.RoleName = Globals.glbRoleUnauthUserName;
-					_roles.Add(r);
+                    _roles.Add(new RoleInfo { RoleID = int.Parse(Globals.glbRoleUnauthUser), RoleName = Globals.glbRoleUnauthUserName });
 				}
 				if (ShowAllUsers)
 				{
-					r = new RoleInfo();
-					r.RoleID = int.Parse(Globals.glbRoleAllUsers);
-					r.RoleName = Globals.glbRoleAllUsersName;
-					_roles.Add(r);
+                    _roles.Add(new RoleInfo { RoleID = int.Parse(Globals.glbRoleAllUsers), RoleName = Globals.glbRoleAllUsersName });
 				}
 			}
-			_roles.Reverse();
-			_roles.Sort(new RoleComparer());
+			_roles = _roles.OrderBy(r => r.RoleName).ToList();
 		}
 
 		/// <summary>
@@ -367,21 +331,14 @@ namespace DotNetNuke.UI.WebControls
 		private void SetUpRolesGrid()
 		{
 			dgRoleSelection.Columns.Clear();
-			var textCol = new BoundColumn();
-			textCol.HeaderText = "&nbsp;";
-			textCol.DataField = "RoleName";
-			textCol.ItemStyle.Width = Unit.Parse("150px");
+		    var textCol = new BoundColumn {HeaderText = "&nbsp;", DataField = "RoleName"};
+		    textCol.ItemStyle.Width = Unit.Parse("150px");
 			dgRoleSelection.Columns.Add(textCol);
-			var idCol = new BoundColumn();
-			idCol.HeaderText = "";
-			idCol.DataField = "roleid";
-			idCol.Visible = false;
-			dgRoleSelection.Columns.Add(idCol);
-			TemplateColumn checkCol;
-			checkCol = new TemplateColumn();
-			var columnTemplate = new CheckBoxColumnTemplate();
-			columnTemplate.DataField = "Selected";
-			checkCol.ItemTemplate = columnTemplate;
+		    var idCol = new BoundColumn {HeaderText = "", DataField = "roleid", Visible = false};
+		    dgRoleSelection.Columns.Add(idCol);
+		    var checkCol = new TemplateColumn();
+		    var columnTemplate = new CheckBoxColumnTemplate {DataField = "Selected"};
+		    checkCol.ItemTemplate = columnTemplate;
 			checkCol.HeaderText = Localization.GetString("SelectedRole");
 			checkCol.ItemStyle.HorizontalAlign = HorizontalAlign.Center;
 			checkCol.HeaderStyle.Wrap = true;
@@ -390,7 +347,7 @@ namespace DotNetNuke.UI.WebControls
 
 		#endregion
 
-		#region "Protected Methods"
+		#region Protected Methods
 
 		/// <summary>
 		/// Load the ViewState
@@ -412,15 +369,10 @@ namespace DotNetNuke.UI.WebControls
 				//Load TabPermissions
 				if (myState[1] != null)
 				{
-					string state = Convert.ToString(myState[1]);
-					if (state != string.Empty)
-					{
-						CurrentRoleSelection = new ArrayList(state.Split(new[] {"##"}, StringSplitOptions.None));
-					}
-					else
-					{
-						CurrentRoleSelection = new ArrayList();
-					}
+				    string state = Convert.ToString(myState[1]);
+				    CurrentRoleSelection = state != string.Empty 
+                                        ? new List<string>(state.Split(new[] {"##"}, StringSplitOptions.None)) 
+                                        : new List<string>();
 				}
 			}
 		}
@@ -458,40 +410,33 @@ namespace DotNetNuke.UI.WebControls
 		/// </summary>
 		protected override void CreateChildControls()
 		{
-			pnlRoleSlections = new Panel();
-			pnlRoleSlections.CssClass = "dnnRolesGrid";
+		    pnlRoleSlections = new Panel {CssClass = "dnnRolesGrid"};
 
-			//Optionally Add Role Group Filter
+		    //Optionally Add Role Group Filter
 			PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
 			ArrayList arrGroups = RoleController.GetRoleGroups(_portalSettings.PortalId);
 			if (arrGroups.Count > 0)
 			{
-				lblGroups = new Label();
-				lblGroups.Text = Localization.GetString("RoleGroupFilter");
-				pnlRoleSlections.Controls.Add(lblGroups);
+			    lblGroups = new Label {Text = Localization.GetString("RoleGroupFilter")};
+			    pnlRoleSlections.Controls.Add(lblGroups);
 
 				pnlRoleSlections.Controls.Add(new LiteralControl("&nbsp;&nbsp;"));
 
-				cboRoleGroups = new DropDownList();
-				cboRoleGroups.AutoPostBack = true;
+			    cboRoleGroups = new DropDownList {AutoPostBack = true};
 
-				cboRoleGroups.Items.Add(new ListItem(Localization.GetString("AllRoles"), "-2"));
-				var liItem = new ListItem(Localization.GetString("GlobalRoles"), "-1");
-				liItem.Selected = true;
-				cboRoleGroups.Items.Add(liItem);
+			    cboRoleGroups.Items.Add(new ListItem(Localization.GetString("AllRoles"), "-2"));
+			    var liItem = new ListItem(Localization.GetString("GlobalRoles"), "-1") {Selected = true};
+			    cboRoleGroups.Items.Add(liItem);
 				foreach (RoleGroupInfo roleGroup in arrGroups)
 				{
-					cboRoleGroups.Items.Add(new ListItem(roleGroup.RoleGroupName, roleGroup.RoleGroupID.ToString()));
+					cboRoleGroups.Items.Add(new ListItem(roleGroup.RoleGroupName, roleGroup.RoleGroupID.ToString(CultureInfo.InvariantCulture)));
 				}
 				pnlRoleSlections.Controls.Add(cboRoleGroups);
 
 				pnlRoleSlections.Controls.Add(new LiteralControl("<br/><br/>"));
 			}
-			dgRoleSelection = new DataGrid();
-			dgRoleSelection.AutoGenerateColumns = false;
-			dgRoleSelection.CellSpacing = 0;
-			dgRoleSelection.GridLines = GridLines.None;
-			dgRoleSelection.FooterStyle.CssClass = "dnnGridFooter";
+		    dgRoleSelection = new DataGrid {AutoGenerateColumns = false, CellSpacing = 0, GridLines = GridLines.None};
+		    dgRoleSelection.FooterStyle.CssClass = "dnnGridFooter";
 			dgRoleSelection.HeaderStyle.CssClass = "dnnGridHeader";
 			dgRoleSelection.ItemStyle.CssClass = "dnnGridItem";
 			dgRoleSelection.AlternatingItemStyle.CssClass = "dnnGridAltItem";
@@ -561,8 +506,8 @@ namespace DotNetNuke.UI.WebControls
 			{
 				foreach (DataGridItem dgi in dgRoleSelection.Items)
 				{
-					int i = 2;
-					if (dgi.Cells[i].Controls.Count > 0)
+				    const int i = 2;
+				    if (dgi.Cells[i].Controls.Count > 0)
 					{
 						var cb = (CheckBox) dgi.Cells[i].Controls[0];
 						UpdateSelection(dgi.Cells[0].Text, cb.Checked);
@@ -571,21 +516,6 @@ namespace DotNetNuke.UI.WebControls
 			}
 		}
 
-		#endregion
-
-		#region Event Handlers
-
-		/// <summary>
-		/// RoleGroupsSelectedIndexChanged runs when the Role Group is changed
-		/// </summary>
-		/// <history>
-		///     [cnurse]    01/06/2006  Documented
-		/// </history>
-		private void RoleGroupsSelectedIndexChanged(object sender, EventArgs e)
-		{
-			UpdateSelections();
-		}
-		
 		#endregion
 
 	}

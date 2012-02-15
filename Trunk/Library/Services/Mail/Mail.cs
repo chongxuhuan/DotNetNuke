@@ -83,9 +83,9 @@ namespace DotNetNuke.Services.Mail
             var smtpClient = new SmtpClient();
 
             var smtpHostParts = smtpServer.Split(':');
+            smtpClient.Host = smtpHostParts[0];
             if (smtpHostParts.Length > 1)
             {
-                smtpClient.Host = smtpHostParts[0];
                 smtpClient.Port = Convert.ToInt32(smtpHostParts[1]);
             }
             

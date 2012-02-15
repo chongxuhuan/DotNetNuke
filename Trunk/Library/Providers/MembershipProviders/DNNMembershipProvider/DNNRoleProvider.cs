@@ -34,7 +34,6 @@ using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
-using DotNetNuke.Security.Membership;
 using DotNetNuke.Security.Membership.Data;
 using DotNetNuke.Security.Roles;
 
@@ -104,7 +103,6 @@ namespace DotNetNuke.Security.Membership
         /// </summary>
         /// <remarks>
         /// </remarks>
-        /// <param name="portalId">Id of the portal</param>
         /// <param name="role">The role to persist to the Data Store.</param>
         /// <returns>A Boolean indicating success or failure.</returns>
         /// <history>
@@ -112,7 +110,7 @@ namespace DotNetNuke.Security.Membership
         ///     [jlucarino]	02/23/2006	added CreatedByUserID parameter
         /// </history>
         /// -----------------------------------------------------------------------------
-        public override bool CreateRole(int portalId, ref RoleInfo role)
+        public override bool CreateRole(RoleInfo role)
         {
             try
             {
@@ -145,49 +143,14 @@ namespace DotNetNuke.Security.Membership
         /// <summary>
         /// DeleteRole deletes a Role from the Data Store
         /// </summary>
-        /// <param name="portalId">Id of the portal</param>
         /// <param name="role">The role to delete from the Data Store.</param>
         /// <history>
         ///     [cnurse]	03/28/2006	created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public override void DeleteRole(int portalId, ref RoleInfo role)
+        public override void DeleteRole(RoleInfo role)
         {
             dataProvider.DeleteRole(role.RoleID);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetRole gets a role from the Data Store
-        /// </summary>
-        /// <remarks>This overload gets the role by its ID</remarks>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="roleId">The Id of the role to retrieve.</param>
-        /// <returns>A RoleInfo object</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override RoleInfo GetRole(int portalId, int roleId)
-        {
-            return CBO.FillObject<RoleInfo>(dataProvider.GetRole(roleId, portalId));
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetRole gets a role from the Data Store
-        /// </summary>
-        /// <remarks>This overload gets the role by its name</remarks>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="roleName">The name of the role to retrieve.</param>
-        /// <returns>A RoleInfo object</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override RoleInfo GetRole(int portalId, string roleName)
-        {
-            return CBO.FillObject<RoleInfo>(dataProvider.GetRoleByName(portalId, roleName));
         }
 
         /// -----------------------------------------------------------------------------
@@ -265,23 +228,6 @@ namespace DotNetNuke.Security.Membership
                                         ? dataProvider.GetRoles() 
                                         : dataProvider.GetPortalRoles(portalId), typeof (RoleInfo));
             return arrRoles;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Get the roles for a Role Group
-        /// </summary>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="roleGroupId">Id of the Role Group (If -1 all roles for the portal are
-        /// retrieved).</param>
-        /// <returns>An ArrayList of RoleInfo objects</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override ArrayList GetRolesByGroup(int portalId, int roleGroupId)
-        {
-            return CBO.FillCollection(dataProvider.GetRolesByGroup(roleGroupId, portalId), typeof (RoleInfo));
         }
 
         /// -----------------------------------------------------------------------------

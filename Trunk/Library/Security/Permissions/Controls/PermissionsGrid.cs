@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -32,6 +33,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.WebControls.Internal;
 
@@ -497,26 +499,24 @@ namespace DotNetNuke.Security.Permissions.Controls
         /// </history>
         private void GetRoles()
         {
-            var objRoleController = new RoleController();
-            int RoleGroupId = -2;
+            var roleController = new RoleController();
+            int roleGroupId = -2;
             if ((cboRoleGroups != null) && (cboRoleGroups.SelectedValue != null))
             {
-                RoleGroupId = int.Parse(cboRoleGroups.SelectedValue);
+                roleGroupId = int.Parse(cboRoleGroups.SelectedValue);
             }
-            if (RoleGroupId > -2)
+            if (roleGroupId > -2)
             {
-                Roles = objRoleController.GetRolesByGroup(PortalController.GetCurrentPortalSettings().PortalId, RoleGroupId);
+                Roles = new ArrayList(TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.RoleGroupID == roleGroupId).ToArray());
             }
             else
             {
-                Roles = objRoleController.GetPortalRoles(PortalController.GetCurrentPortalSettings().PortalId);
+                Roles = new ArrayList(TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId).ToArray());
             }
-            if (RoleGroupId < 0)
+            if (roleGroupId < 0)
             {
-                var r = new RoleInfo { RoleID = int.Parse(Globals.glbRoleUnauthUser), RoleName = Globals.glbRoleUnauthUserName };
-                Roles.Add(r);
-                r = new RoleInfo { RoleID = int.Parse(Globals.glbRoleAllUsers), RoleName = Globals.glbRoleAllUsersName };
-                Roles.Add(r);
+                Roles.Add(new RoleInfo { RoleID = int.Parse(Globals.glbRoleUnauthUser), RoleName = Globals.glbRoleUnauthUserName });
+                Roles.Add(new RoleInfo { RoleID = int.Parse(Globals.glbRoleAllUsers), RoleName = Globals.glbRoleAllUsersName });
             }
             Roles.Reverse();
             Roles.Sort(new RoleComparer());
@@ -738,6 +738,7 @@ namespace DotNetNuke.Security.Permissions.Controls
             }
 
             rolePermissionsGrid = new DataGrid { AutoGenerateColumns = false, CellSpacing = 0, CellPadding = 2, GridLines = GridLines.None };
+            rolePermissionsGrid.CssClass = "dnnPermissionsGrid";
             rolePermissionsGrid.FooterStyle.CssClass = "dnnGridFooter";
             rolePermissionsGrid.HeaderStyle.CssClass = "dnnGridHeader";
             rolePermissionsGrid.ItemStyle.CssClass = "dnnGridItem";
