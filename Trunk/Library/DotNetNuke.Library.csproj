@@ -225,6 +225,7 @@
     <Compile Include="Security\Roles\Internal\IRoleController.cs" />
     <Compile Include="Security\Roles\Internal\RoleControllerImpl.cs" />
     <Compile Include="Security\Roles\Internal\TestableRoleController.cs" />
+    <Compile Include="Security\Roles\RoleStatus.cs" />
     <Compile Include="Services\Journal\CommentInfo.cs" />
     <Compile Include="Services\Journal\Content.cs" />
     <Compile Include="Services\Journal\Data\IJournalDataService.cs" />

@@ -22,6 +22,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 #endregion
@@ -56,7 +57,7 @@ namespace DotNetNuke.Entities.Users.Social.Data
         IDataReader GetUserRelationship(int userId, int relatedUserId, int relationshipId, RelationshipDirection relationshipDirection);
         IDataReader GetUserRelationships(int userId);
         IDataReader GetUserRelationshipsByRelationshipId(int relationshipId);
-        IDataReader GetUsersByFilters(int portalId, int currUserId, int numberOfRecords, int pageIndex, int roleId, int relationshipType, string profileProperty, string profilePropertyValue, string sortColumn, bool sortAcending, bool isAdmin);
+        IDataReader GetUsersAdvancedSearch(int portalId, int numberOfRecords, int pageIndex, string sortColumn, bool sortAscending, string propertyNames, string propertyValues);
         int SaveUserRelationship(UserRelationship userRelationship, int createUpdateUserId);
 
         #endregion

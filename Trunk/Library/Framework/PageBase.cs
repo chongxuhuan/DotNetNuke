@@ -270,6 +270,10 @@ namespace DotNetNuke.Framework
             {
                 ServicesFramework.Instance.RegisterAjaxAntiForgery(Page);
             }
+            if (ServicesFramework.Instance.IsAjaxScriptSupportRequired)
+            {
+                ServicesFramework.Instance.RegisterAjaxScript(Page);
+            }
         }
 
         protected override void Render(HtmlTextWriter writer)

@@ -1,6 +1,8 @@
 using System;
 using System.Web;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Modules.Internal;
 
 namespace DotNetNuke.Web.Services
 {
@@ -17,6 +19,19 @@ namespace DotNetNuke.Web.Services
         public static int FindModuleId(this HttpContextBase context)
         {
             return FindInt(context, ModuleIdKey);
+        }
+
+        public static ModuleInfo FindModuleInfo(this HttpContextBase context)
+        {
+            var tabId = context.FindTabId();
+            var moduleId = context.FindModuleId();
+
+            if (moduleId != Null.NullInteger && tabId != Null.NullInteger)
+            {
+                return TestableModuleController.Instance.GetModule(moduleId, tabId);
+            }
+
+            return null;  
         }
 
         private static int FindInt(HttpContextBase context, string key)

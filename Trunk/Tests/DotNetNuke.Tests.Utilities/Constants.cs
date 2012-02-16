@@ -80,6 +80,19 @@ namespace DotNetNuke.Tests.Utilities
 
         #endregion
 
+        #region PortalSettings Constants
+
+        public const string PORTALSETTING_MessagingAllowAttachments_Name = "MessagingAllowAttachments";
+        public const string PORTALSETTING_MessagingAllowAttachments_Value_YES = "YES";
+        public const string PORTALSETTING_MessagingAllowAttachments_Value_NO = "NO";
+
+        #endregion
+
+        #region Culture Constants
+
+        public const string CULTURE_EN_US = "en-US";
+        #endregion
+
         #region PortalGroup Constants
 
         public const int PORTALGROUP_ValidPortalGroupId = 1;
@@ -365,6 +378,7 @@ namespace DotNetNuke.Tests.Utilities
         public const bool SocialMessaging_UnArchivedMessage = false;
         public const int SocialMessaging_RecipientId_1 = 1;
         public const int SocialMessaging_RecipientId_2 = 2;
+        public const int SocialMessaging_MessageId_1 = 1;
 
         #endregion
 

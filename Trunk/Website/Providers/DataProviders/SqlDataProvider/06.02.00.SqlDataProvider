@@ -4166,6 +4166,217 @@ IF (SELECT COUNT(PortalID) FROM {databaseOwner}[{objectQualifier}Portals]) > 0 B
 END
 GO
 
+/* Add new Columns To Roles Table */
+/************************************/
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Roles' AND COLUMN_NAME='Status')
+	BEGIN
+		ALTER TABLE {databaseOwner}{objectQualifier}Roles
+			ADD [Status] int NOT NULL CONSTRAINT DF_{objectQualifier}Roles_Status DEFAULT (1)
+	END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Roles' AND COLUMN_NAME='IsSecurityRole')
+	BEGIN
+		ALTER TABLE {databaseOwner}{objectQualifier}Roles
+			ADD IsSecurityRole bit NOT NULL CONSTRAINT DF_{objectQualifier}Roles_IsSecurityRole DEFAULT 1
+	END
+GO
+
+/* Update GetRoles Procedure */
+/*****************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRoles]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRoles]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRoles]
+AS 
+	SELECT 
+		R.*,
+		(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}UserRoles U WHERE U.RoleID = R.RoleID) AS UserCount
+	FROM   {databaseOwner}{objectQualifier}Roles AS R
+
+GO
+
+/* Update GetPortalRoles Procedure */
+/***********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetPortalRoles]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetPortalRoles]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPortalRoles]
+	@PortalId     int
+
+AS
+	SELECT R.RoleId,
+		   R.PortalId,
+		   R.RoleGroupId,
+		   R.RoleName,
+		   R.Description,
+		   R.ServiceFee,
+		   case when convert(int,R.ServiceFee) <> 0 then R.BillingPeriod else null end AS BillingPeriod,
+		   case when convert(int,R.ServiceFee) <> 0 then L1.Text else '' end AS BillingFrequency,
+		   R.TrialFee,
+		   case when R.TrialFrequency <> 'N' then R.TrialPeriod else null end AS TrialPeriod,
+		   case when R.TrialFrequency <> 'N' then L2.Text else '' end AS TrialFrequency,
+		   R.IsPublic,
+		   R.AutoAssignment,
+		   R.RSVPCode,
+		   R.IconFile,
+		   R.Status,
+		   R.IsSecurityRole,
+		   (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}UserRoles U WHERE U.RoleID = R.RoleID) AS UserCount,
+		   R.CreatedByUserID,
+		   R.CreatedOnDate,
+		   R.LastModifiedByUserID,
+		   R.LastModifiedOnDate
+	FROM {databaseOwner}{objectQualifier}Roles R
+	LEFT OUTER JOIN {databaseOwner}{objectQualifier}Lists L1 ON R.BillingFrequency = L1.Value AND L1.ListName='Frequency'
+	LEFT OUTER JOIN {databaseOwner}{objectQualifier}Lists L2 ON R.TrialFrequency = L2.Value AND L2.ListName='Frequency'
+	WHERE  ( R.PortalId = @PortalId OR R.PortalId is null )
+	ORDER BY R.RoleName
+GO
+
+/* Drop GetRole Procedure */
+/**************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRole]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRole]
+GO
+
+/* Drop GetRoleByName Procedure */
+/********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRoleByName]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRoleByName]
+GO
+
+/* Drop GetRolesByGroup Procedure */
+/**********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRolesByGroup]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRolesByGroup]
+GO
+
+/* Update DeleteUserPortal Procedure */
+/*************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteUserPortal]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserPortal]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserPortal]
+	@UserID		int,
+	@PortalID   int
+AS
+	IF @PortalID IS NULL
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}Users
+				SET
+					IsDeleted = 1
+				WHERE  UserId = @UserID
+		END
+	ELSE
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}UserPortals
+				SET
+					IsDeleted = 1
+				WHERE  UserId = @UserID
+					AND PortalId = @PortalID
+					
+			DELETE
+				FROM {databaseOwner}{objectQualifier}UserRoles
+				WHERE  UserID = @UserID
+		END
+GO
+
+
+/* Add RoleSettings Table */
+/**************************/
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RoleSettings]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}RoleSettings]
+		(
+			[RoleSettingID] [int] IDENTITY(1,1) NOT NULL,
+			[RoleID] [int] NOT NULL,
+			[SettingName] [nvarchar](50) NOT NULL,
+			[SettingValue] [nvarchar](2000) NOT NULL,
+			[CreatedByUserID] [int] NOT NULL,
+			[CreatedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}RoleSettings_CreatedOnDate]  DEFAULT (getdate()) NOT NULL ,
+			[LastModifiedByUserID] [int] NOT NULL,
+			[LastModifiedOnDate] [datetime] CONSTRAINT [DF_{objectQualifier}RoleSettings_LastModifiedOnDate]  DEFAULT (getdate()) NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}RoleSettings] PRIMARY KEY CLUSTERED ( [RoleSettingID] ASC )
+		)		
+	END
+GO
+
+/* Add GetRoleSettings Procedure */
+/*********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRoleSettings]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRoleSettings]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRoleSettings]
+	@RoleId     int
+
+AS
+	SELECT *
+	FROM {databaseOwner}{objectQualifier}RoleSettings
+	WHERE  RoleID = @RoleId
+GO
+
+/* Add UpdateRoleSetting Procedure */
+/***********************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateRoleSetting]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateRoleSetting]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateRoleSetting]
+	@RoleID				int,
+	@SettingName		nvarchar(5),
+	@SettingValue		nvarchar(2000),
+	@UserID				int
+
+AS
+	IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}RoleSettings WHERE RoleID = @RoleID AND SettingName = @SettingName) > 0
+		--Update
+		UPDATE  {databaseOwner}{objectQualifier}RoleSettings
+			SET SettingValue = @SettingValue,
+				[LastModifiedByUserID]=@UserID,
+				[LastModifiedOnDate]=getdate()
+		WHERE RoleID = @RoleID
+			AND SettingName = @SettingName
+			
+	ELSE
+		--Add
+		INSERT INTO {databaseOwner}{objectQualifier}RoleSettings 
+		( 
+			RoleID, 
+			SettingName, 
+			SettingValue, 
+			CreatedByUserID, 
+			CreatedOnDate, 
+			LastModifiedByUserID, 
+			LastModifiedOnDate
+		) 
+		VALUES 
+		( 
+			@RoleID, 
+			@SettingName,
+			@SettingValue ,
+			@UserID ,
+			getdate() ,
+			@UserID,
+			getdate()
+		)
+
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

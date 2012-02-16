@@ -715,25 +715,15 @@ namespace DotNetNuke.Security.Membership
         /// -----------------------------------------------------------------------------
         public override bool DeleteUser(UserInfo user)
         {
-            bool retValue = true;
-            IDataReader dr = null;
+            var retValue = true;
             try
             {
-                dr = _dataProvider.GetRolesByUser(user.UserID, user.PortalID);
-                while (dr.Read())
-                {
-                    _dataProvider.DeleteUserRole(user.UserID, Convert.ToInt32(dr["RoleId"]));
-                }
                 _dataProvider.DeleteUserPortal(user.UserID, user.PortalID);
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
                 retValue = false;
-            }
-            finally
-            {
-                CBO.CloseDataReader(dr, true);
             }
             return retValue;
         }

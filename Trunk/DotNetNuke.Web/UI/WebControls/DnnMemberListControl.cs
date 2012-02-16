@@ -42,7 +42,46 @@ namespace DotNetNuke.Web.UI.WebControls
     [ToolboxData("<{0}:DnnMemberListControl runat=\"server\"></{0}:DnnMemberListControl>")]
     public class DnnMemberListControl : WebControl
     {
+        #region Private Variables
+
+        private UserInfo _currentUser;
+        private RelationshipController _relationshipController;
+
+        #endregion
+
         #region Properties
+
+        #region Layout Properties
+
+        /// <summary>
+        /// Gets or sets the template for displaying the header section of a DnnMemberListControl object.
+        /// </summary>
+        [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
+        public string HeaderTemplate { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the template for the row header.
+        /// </summary>
+        [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
+        public string RowHeaderTemplate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the template for displaying an item in a DnnMemberListControl object.
+        /// </summary>
+        [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
+        public string ItemTemplate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the template for the row footer.
+        /// </summary>
+        [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
+        public string RowFooterTemplate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the template for displaying the alternating row headers in a DnnMemberListControl object.
+        /// </summary>
+        [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
+        public string AlternatingRowHeaderTemplate { get; set; }
 
         /// <summary>
         /// Gets or sets the template for displaying the alternating items in a DnnMemberListControl object.
@@ -57,37 +96,15 @@ namespace DotNetNuke.Web.UI.WebControls
         public string AlternatingRowFooterTemplate { get; set; }
 
         /// <summary>
-        /// Gets or sets the template for displaying the alternating row headers in a DnnMemberListControl object.
-        /// </summary>
-        [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
-        public string AlternatingRowHeaderTemplate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the collection of filters to apply when getting the list of members.
-        /// </summary>
-        /// <remarks>
-        /// Posible keys are: RoleID, RelationshipType, UserID, Profile:PropertyName, FirstName, LastName, DisplayName, Username, Email.
-        /// </remarks>
-        public IDictionary<string, IList<object>> Filters { get; set; }
-
-        /// <summary>
         /// Gets or sets the template for displaying the footer section of a DnnMemberListControl object.
         /// </summary>
         [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
         public string FooterTemplate { get; set; }
 
-        /// <summary>
-        /// Gets or sets the template for displaying the header section of a DnnMemberListControl object.
-        /// </summary>
-        [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
-        public string HeaderTemplate { get; set; }
+        #endregion
 
-        /// <summary>
-        /// Gets or sets the template for displaying an item in a DnnMemberListControl object.
-        /// </summary>
-        [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
-        public string ItemTemplate { get; set; }
-
+        #region Filter Properties
+        
         /// <summary>
         /// Gets or sets the index of the currently displayed page.
         /// </summary>
@@ -99,34 +116,37 @@ namespace DotNetNuke.Web.UI.WebControls
         /// </summary>
         [DefaultValue(10)]
         public int PageSize { get; set; }
-
-        /// <summary>
-        /// Gets or sets the template for the row footer.
-        /// </summary>
-        [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
-        public string RowFooterTemplate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the template for the row header.
-        /// </summary>
-        [DefaultValue(""), PersistenceMode(PersistenceMode.InnerProperty)]
-        public string RowHeaderTemplate { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the number of items displayed on each row.
         /// </summary>
         [DefaultValue(1)]
         public int RowSize { get; set; }
+        
+        /// <summary>
+        /// Sets the property value to sort by.
+        /// </summary>
+        [DefaultValue("UserId")]
+        public string SortBy { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sort direction
+        /// </summary>
+        [DefaultValue(true)]
+        public bool SortAscending { get; set; }
+
+        /// <summary>
+        /// Gets or sets the collection of filters to apply when getting the list of members.
+        /// </summary>
+        /// <remarks>
+        /// Posible keys are: RoleId, RelationshipTypeId, UserId, Profile:PropertyName, FirstName, LastName, DisplayName, Username, Email.
+        /// </remarks>
+        public IDictionary<string, string> Filters { get; set; }
 
         #endregion
-
-        #region Private Variables
-
-        private UserInfo _currentUser;
-        private RelationshipController _relationshipController;
-
+        
         #endregion
-
+        
         #region Event Handlers
 
         protected override void OnInit(EventArgs e)
@@ -143,38 +163,54 @@ namespace DotNetNuke.Web.UI.WebControls
 
             writer.Write(HeaderTemplate);
 
-            var row = 0;
-            var rowItem = 0;
+            // Filters
+            if (Filters == null) Filters = new Dictionary<string, string>();
+            var additionalFilters = new Dictionary<string, string>();
+            additionalFilters.Add("Records", PageSize.ToString());
+            additionalFilters.Add("PageIndex", PageIndex.ToString());
+            additionalFilters.Add("Rowsize", RowSize.ToString());
+            additionalFilters.Add("SortBy", SortBy);
+            additionalFilters.Add("SortAscending", SortAscending.ToString());
+
+            // Currently Not Used by the SPROC
+            var userInfo = Filters.ContainsKey("UserId") && Filters["UserId"] != null ? new UserInfo() { UserID = int.Parse(Filters["UserId"]) } : new UserInfo() { PortalID = _currentUser.PortalID };
+            var role = Filters.ContainsKey("RoleId") && Filters["RoleId"] != null ? new UserRoleInfo() { RoleID = int.Parse(Filters["RoleId"]) } : null;
+            var relationship = Filters.ContainsKey("RelationshipTypeId") && Filters["RelationshipTypeId"] != null ? new RelationshipType() { RelationshipTypeId = int.Parse(Filters["RelationshipTypeId"]) } : null;
             
-            var users = new DataTable();
-            users.Load(_relationshipController.GetUsersByFilters(0, _currentUser, PageSize, 0, null, null, "", "", "", true, false));
-
-            foreach (DataRow user in users.Rows)
+            foreach (var filter in Filters.Where(filter => !additionalFilters.ContainsKey(filter.Key)))
             {
-               if (rowItem == 0)
+                additionalFilters.Add(filter.Key, filter.Value);
+            }
+
+            var row = 0;
+            var users = new DataTable();
+
+            users.Load(_relationshipController.GetUsersAdvancedSearch(userInfo, role, relationship, Filters, additionalFilters));
+
+            if (users.Rows.Count > 0)
+            {
+                foreach (DataRow user in users.Rows)
                 {
-                    writer.Write(string.IsNullOrEmpty(AlternatingRowHeaderTemplate) || row % 2 == 0 ? RowHeaderTemplate : AlternatingRowHeaderTemplate);
+                    //Row Header
+                    writer.Write(string.IsNullOrEmpty(AlternatingRowHeaderTemplate) || row%2 == 0 ? RowHeaderTemplate : AlternatingRowHeaderTemplate);
+
+                    var tokenReplace = new TokenReplace();
+                    var tokenKeyValues = new Dictionary<string, string>();
+
+                    foreach (var col in user.Table.Columns.Cast<DataColumn>().Where(col => !tokenKeyValues.ContainsKey(col.ColumnName)))
+                    {
+                        tokenKeyValues.Add(col.ColumnName, user[col.ColumnName].ToString());
+                    }
+
+                    var listItem = string.IsNullOrEmpty(AlternatingItemTemplate) || row%2 == 0 ? ItemTemplate : AlternatingItemTemplate;
+                    listItem = tokenReplace.ReplaceEnvironmentTokens(listItem, tokenKeyValues, "Member");
+                    writer.Write(listItem);
+
+                    //Row Footer
+                    writer.Write(string.IsNullOrEmpty(AlternatingRowFooterTemplate) || row%2 == 0 ? RowFooterTemplate : AlternatingRowFooterTemplate);
+
+                    row++;
                 }
-                
-                var tokenReplace = new TokenReplace();
-                var tokenKeyValues = new Dictionary<string, string>();
-                // Reading data from datarow into a KeyValuePair dictionary for usage in TokenRepalace
-                foreach (DataColumn col in user.Table.Columns.Cast<DataColumn>().Where(col => !tokenKeyValues.ContainsKey(col.ColumnName.Replace("Member:", "").Replace("MemberProfile:", ""))))
-                {
-                    tokenKeyValues.Add(col.ColumnName.Replace("Member:", "").Replace("MemberProfile:", ""), user[col.ColumnName].ToString());
-                }
-
-                var listItem = string.IsNullOrEmpty(AlternatingItemTemplate) || row%2 == 0 ? ItemTemplate : AlternatingItemTemplate;
-                listItem = tokenReplace.ReplaceEnvironmentTokens(listItem, tokenKeyValues, "Member");
-                listItem = tokenReplace.ReplaceEnvironmentTokens(listItem, tokenKeyValues, "MemberProfile");
-                writer.Write(listItem);
-
-                rowItem++;
-                if (rowItem != RowSize) continue;
-
-                writer.Write(string.IsNullOrEmpty(AlternatingRowFooterTemplate) || row % 2 == 0 ? RowFooterTemplate : AlternatingRowFooterTemplate);
-                rowItem = 0;
-                row++;
             }
 
             writer.Write(FooterTemplate);

@@ -18,13 +18,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
@@ -34,14 +37,11 @@ using DotNetNuke.Security.Roles;
 using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
 using DotNetNuke.UI.WebControls;
-
-using Globals = DotNetNuke.Common.Globals;
 
 #endregion
 
-namespace DotNetNuke.Modules.Admin.Security
+namespace DesktopModules.Admin.Security
 {
 
 	/// -----------------------------------------------------------------------------
@@ -71,38 +71,22 @@ namespace DotNetNuke.Modules.Admin.Security
         {
             get
             {
-                var Actions = new ModuleActionCollection();
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString(ModuleActionType.AddContent, LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "add.gif",
-							EditUrl("RoleGroupID", Request.QueryString["RoleGroupID"]),
-                            false,
-                            SecurityAccessLevel.Edit,
-                            true,
-                            false);
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString("AddGroup.Action", LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "add.gif",
-                            EditUrl("EditGroup"),
-                            false,
-                            SecurityAccessLevel.Edit,
-                            true,
-                            false);
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString("UserSettings.Action", LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "settings.gif",
-                            EditUrl("UserSettings"),
-                            false,
-                            SecurityAccessLevel.Edit,
-                            true,
-                            false);
-                return Actions;
+                var actions = new ModuleActionCollection
+                                  {
+                                      {
+                                          GetNextActionID(), Localization.GetString(ModuleActionType.AddContent, LocalResourceFile), ModuleActionType.AddContent, "", "add.gif",
+                                          EditUrl("RoleGroupID", Request.QueryString["RoleGroupID"]), false, SecurityAccessLevel.Edit, true, false
+                                          },
+                                      {
+                                          GetNextActionID(), Localization.GetString("AddGroup.Action", LocalResourceFile), ModuleActionType.AddContent, "", "add.gif", EditUrl("EditGroup"), false,
+                                          SecurityAccessLevel.Edit, true, false
+                                          },
+                                      {
+                                          GetNextActionID(), Localization.GetString("UserSettings.Action", LocalResourceFile), ModuleActionType.AddContent, "", "settings.gif", EditUrl("UserSettings"),
+                                          false, SecurityAccessLevel.Edit, true, false
+                                          }
+                                  };
+                return actions;
             }
         }
 
@@ -137,7 +121,7 @@ namespace DotNetNuke.Modules.Admin.Security
             else
             {
                 lnkEditGroup.Visible = true;
-                lnkEditGroup.NavigateUrl = EditUrl("RoleGroupId", _roleGroupId.ToString(), "EditGroup");
+                lnkEditGroup.NavigateUrl = EditUrl("RoleGroupId", _roleGroupId.ToString(CultureInfo.InvariantCulture), "EditGroup");
                 cmdDelete.Visible = roles.Count == 0;
             }
             Localization.LocalizeDataGrid(ref grdRoles, LocalResourceFile);
@@ -174,7 +158,7 @@ namespace DotNetNuke.Modules.Admin.Security
 
                 foreach (RoleGroupInfo roleGroup in arrGroups)
                 {
-                    liItem = new ListItem(roleGroup.RoleGroupName, roleGroup.RoleGroupID.ToString());
+                    liItem = new ListItem(roleGroup.RoleGroupName, roleGroup.RoleGroupID.ToString(CultureInfo.InvariantCulture));
                     if (_roleGroupId == roleGroup.RoleGroupID)
                     {
                         liItem.Selected = true;
@@ -213,7 +197,7 @@ namespace DotNetNuke.Modules.Admin.Security
             {
                 if (period != Null.NullInteger)
                 {
-                    formatPeriod = period.ToString();
+                    formatPeriod = period.ToString(CultureInfo.InvariantCulture);
                 }
             }
             catch (Exception exc) //Module failed to load

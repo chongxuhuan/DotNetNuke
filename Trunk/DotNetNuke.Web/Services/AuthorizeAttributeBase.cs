@@ -21,7 +21,7 @@ namespace DotNetNuke.Web.Services
                 throw new ArgumentNullException("filterContext");
             }
 
-            if (AuthorizeCore(filterContext))
+            if (AuthorizeCore(filterContext.HttpContext))
             {
                 // ** IMPORTANT **
                 // Since we're performing authorization at the action level, the authorization code runs
@@ -33,7 +33,7 @@ namespace DotNetNuke.Web.Services
 
                 HttpCachePolicyBase cachePolicy = filterContext.HttpContext.Response.Cache;
                 cachePolicy.SetProxyMaxAge(new TimeSpan(0));
-                cachePolicy.AddValidationCallback(CacheValidateHandler, filterContext);
+                cachePolicy.AddValidationCallback(CacheValidateHandler, null);
             }
             else
             {
@@ -46,10 +46,10 @@ namespace DotNetNuke.Web.Services
 
         private void CacheValidateHandler(HttpContext context, object data, ref HttpValidationStatus validationStatus)
         {
-            validationStatus = OnCacheAuthorization((AuthorizationContext)data);
+            validationStatus = OnCacheAuthorization(new HttpContextWrapper(context));
         }
 
-        private HttpValidationStatus OnCacheAuthorization(AuthorizationContext context)
+        private HttpValidationStatus OnCacheAuthorization(HttpContextBase context)
         {
             if (context == null)
             {
@@ -60,6 +60,6 @@ namespace DotNetNuke.Web.Services
             return (isAuthorized) ? HttpValidationStatus.Valid : HttpValidationStatus.IgnoreThisRequest;
         }
 
-        protected abstract bool AuthorizeCore(AuthorizationContext context);
+        protected abstract bool AuthorizeCore(HttpContextBase context);
     }
 }

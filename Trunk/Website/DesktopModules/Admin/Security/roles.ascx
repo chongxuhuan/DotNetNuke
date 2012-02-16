@@ -1,4 +1,4 @@
-<%@ Control Inherits="DotNetNuke.Modules.Admin.Security.Roles" Language="C#" AutoEventWireup="false" CodeFile="Roles.ascx.cs" %>
+<%@ Control Inherits="DesktopModules.Admin.Security.Roles" Language="C#" AutoEventWireup="false" CodeFile="Roles.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
@@ -24,10 +24,8 @@
 		<columns>
 			<dnn:imagecommandcolumn commandname="Edit" IconKey="Edit" editmode="URL" keyfield="RoleID" />
 			<dnn:imagecommandcolumn commandname="UserRoles" IconKey="Users" editmode="URL" keyfield="RoleID" />
-			<asp:boundcolumn DataField="RoleName" HeaderText="Name">
-			</asp:boundcolumn>
-			<asp:boundcolumn DataField="Description" HeaderText="Description">
-			</asp:boundcolumn>
+		    <asp:boundcolumn DataField="RoleName" HeaderText="Name" />
+		    <asp:boundcolumn DataField="Description" HeaderText="Description" />
 			<asp:templatecolumn HeaderText="Fee">
 				<itemtemplate>
 					<asp:label runat="server" Text='<%#FormatPrice((float)DataBinder.Eval(Container.DataItem, "ServiceFee")) %>' ID="Label1" />
@@ -50,18 +48,19 @@
 				</ItemTemplate>
 			</asp:templatecolumn>
 			<asp:boundcolumn DataField="TrialFrequency" HeaderText="Period" />
-			<asp:templatecolumn HeaderText="Public">
+			<asp:templatecolumn HeaderText="Public" ItemStyle-HorizontalAlign="Center">
 				<itemtemplate>
 					<dnn:DnnImage Runat="server" ID="imgApproved" IconKey="Checked" Visible='<%# DataBinder.Eval(Container.DataItem,"IsPublic") %>' />
 					<dnn:DnnImage Runat="server" ID="imgNotApproved" IconKey="Unchecked" Visible='<%# !(bool)DataBinder.Eval(Container.DataItem,"IsPublic")%>' />
 				</ItemTemplate>
 			</asp:templatecolumn>
-			<asp:templatecolumn HeaderText="Auto">
+			<asp:templatecolumn HeaderText="Auto" ItemStyle-HorizontalAlign="Center">
 				<itemtemplate>
 					<dnn:Dnnimage Runat="server" ID="Image1" IconKey="Checked" Visible='<%# DataBinder.Eval(Container.DataItem,"AutoAssignment") %>' />
 					<dnn:Dnnimage Runat="server" ID="Image2" IconKey="Unchecked" Visible='<%# !(bool)DataBinder.Eval(Container.DataItem,"AutoAssignment") %>' />
 				</ItemTemplate>
 			</asp:templatecolumn>
+		    <asp:boundcolumn DataField="UserCount" HeaderText="UserCount" ItemStyle-HorizontalAlign="Center" />
 		</columns>
 	</asp:datagrid>
 </div>

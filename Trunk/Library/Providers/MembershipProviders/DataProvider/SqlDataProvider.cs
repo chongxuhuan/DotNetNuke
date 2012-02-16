@@ -241,36 +241,6 @@ namespace DotNetNuke.Security.Membership.Data
         }
 
         //Roles
-        public override IDataReader GetRolesByUser(int userId, int portalId)
-        {
-            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRolesByUser"), userId, portalId);
-        }
-
-        public override IDataReader GetPortalRoles(int portalId)
-        {
-            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetPortalRoles"), portalId);
-        }
-
-        public override IDataReader GetRoles()
-        {
-            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRoles"));
-        }
-
-        public override IDataReader GetRole(int roleId, int portalId)
-        {
-            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRole"), roleId, portalId);
-        }
-
-        public override IDataReader GetRoleByName(int portalId, string roleName)
-        {
-            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRoleByName"), portalId, roleName);
-        }
-
-        public override IDataReader GetRolesByGroup(int roleGroupId, int portalId)
-        {
-            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRolesByGroup"), GetNull(roleGroupId), portalId);
-        }
-
         public override int AddRole(int portalId, int roleGroupId, string roleName, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,
                                     string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int createdByUserID)
         {
@@ -299,6 +269,21 @@ namespace DotNetNuke.Security.Membership.Data
             SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("DeleteRole"), roleId);
         }
 
+        public override IDataReader GetPortalRoles(int portalId)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetPortalRoles"), portalId);
+        }
+
+        public override IDataReader GetRoles()
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRoles"));
+        }
+
+        public override IDataReader GetRoleSettings(int roleId)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRoleSettings"));
+        }
+
         public override void UpdateRole(int roleId, int roleGroupId, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,
                                         string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int lastModifiedByUserID)
         {
@@ -317,6 +302,16 @@ namespace DotNetNuke.Security.Membership.Data
                                       autoAssignment,
                                       rsvpCode,
                                       iconFile,
+                                      lastModifiedByUserID);
+        }
+
+        public override void UpdateRoleSetting(int roleId, string settingName, string settingValue, int lastModifiedByUserID)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                                      GetFullyQualifiedName("UpdateRoleSetting"),
+                                      roleId,
+                                      settingName,
+                                      settingValue,
                                       lastModifiedByUserID);
         }
 

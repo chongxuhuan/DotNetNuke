@@ -146,7 +146,7 @@ namespace DotNetNuke.Entities.Tabs
             }
 
             //Add AllTabs Modules
-            if (includeAllTabsModules)
+            if (includeAllTabsModules && tab.PortalID != Null.NullInteger)
             {
                 AddAllTabsModules(tab);
             }

@@ -21,7 +21,9 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
@@ -114,9 +116,9 @@ namespace DotNetNuke.Entities.Users.Social.Data
             return _provider.ExecuteReader("GetUserRelationshipsByRelationshipID", relationshipId);
         }
 
-        public IDataReader GetUsersByFilters(int portalId, int currUserId, int numberOfRecords, int pageIndex, int roleId, int relationshipType, string profileProperty, string profilePropertyValue, string sortColumn, bool sortAcending, bool isAdmin)
+        public IDataReader GetUsersAdvancedSearch(int portalId, int numberOfRecords, int pageIndex, string sortColumn, bool sortAscending, string propertyNames, string propertyValues)
         {
-            return _provider.ExecuteReader("GetUsersByFilters", portalId, currUserId, numberOfRecords, pageIndex, roleId, relationshipType, profileProperty, profilePropertyValue, sortColumn, sortAcending, isAdmin);
+            return _provider.ExecuteReader("GetUsersAdvancedSearch", portalId, numberOfRecords, pageIndex, sortColumn, sortAscending, propertyNames, propertyValues);
         }
 
         public int SaveUserRelationship(UserRelationship userRelationship, int createUpdateUserId)

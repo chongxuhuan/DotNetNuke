@@ -447,7 +447,6 @@ namespace DotNetNuke.Entities.Users
 
         #region Public Methods
 
-
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// IsInRole determines whether the user is in the role passed

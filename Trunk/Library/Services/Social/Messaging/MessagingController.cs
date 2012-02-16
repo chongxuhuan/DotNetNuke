@@ -247,7 +247,7 @@ namespace DotNetNuke.Services.Social.Messaging
             //Cannot have attachments if it's not enabled
             if (fileIDs != null && !AttachmentsAllowed(sender.PortalID))
             {
-                throw new ThrottlingIntervalNotMetException(Localization.Localization.GetString("MsgAttachmentsNotAllowed", Localization.Localization.ExceptionsResourceFile));
+                throw new AttachmentsNotAllowed(Localization.Localization.GetString("MsgAttachmentsNotAllowed", Localization.Localization.ExceptionsResourceFile));
             }
 
             //Cannot exceed RecipientLimit
@@ -256,7 +256,7 @@ namespace DotNetNuke.Services.Social.Messaging
             if (roles != null) recipientCount += roles.Count;
             if(recipientCount > RecipientLimit(sender.PortalID))
             {
-                throw new ThrottlingIntervalNotMetException(Localization.Localization.GetString("MsgRecipientLimitExceeded", Localization.Localization.ExceptionsResourceFile));
+                throw new RecipientLimitExceeded(Localization.Localization.GetString("MsgRecipientLimitExceeded", Localization.Localization.ExceptionsResourceFile));
             }
 
             var message = new Message { Body = body, Subject = subject, To = sbTo.ToString().Trim(','), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName};
@@ -266,7 +266,7 @@ namespace DotNetNuke.Services.Social.Messaging
             //associate attachments
             if (fileIDs != null)
             {
-                foreach (var attachment in fileIDs.Select(fileId => new MessageAttachment {FileID = fileId, MessageID = message.MessageID}))
+                foreach (var attachment in fileIDs.Select(fileId => new MessageAttachment {MessageAttachmentID = Null.NullInteger, FileID = fileId, MessageID = message.MessageID}))
                 {
                     _dataService.SaveSocialMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
                 }
@@ -295,6 +295,37 @@ namespace DotNetNuke.Services.Social.Messaging
 
             return message;
         }
+
+        public Message ReplyMessage(int parentMessageId, string body, IList<int> fileIDs)
+        {
+            return ReplyMessage(parentMessageId, body, fileIDs, UserController.GetCurrentUserInfo());
+        }
+
+
+        public Message ReplyMessage(int parentMessageId, string body, IList<int> fileIDs, UserInfo sender)
+        {
+            if (sender == null || sender.UserID <= 0)
+            {
+                throw new ArgumentException(Localization.Localization.GetString("MsgSenderRequiredError", Localization.Localization.ExceptionsResourceFile));
+            }
+
+            if (string.IsNullOrEmpty(body))
+            {
+                throw new ArgumentException(Localization.Localization.GetString("MsgBodyRequiredError", Localization.Localization.ExceptionsResourceFile));
+            }
+
+            //Cannot have attachments if it's not enabled
+            if (fileIDs != null && !AttachmentsAllowed(sender.PortalID))
+            {
+                throw new AttachmentsNotAllowed(Localization.Localization.GetString("MsgAttachmentsNotAllowed", Localization.Localization.ExceptionsResourceFile));
+            }
+            
+            //call ReplyMessage
+
+
+            return null;
+        }
+
 
         ///<summary>Are attachments allowed</summary>        
         ///<returns>True or False</returns>

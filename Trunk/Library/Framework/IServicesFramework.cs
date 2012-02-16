@@ -42,5 +42,22 @@ namespace DotNetNuke.Framework
         /// <param name="page">The page</param>
         /// <remarks>Typically only called by the DNN framework.</remarks>
         void RegisterAjaxAntiForgery(Page page);
+
+        /// <summary>
+        /// True if the ajax scripts are required on this request
+        /// </summary>
+        bool IsAjaxScriptSupportRequired { get; }
+
+        /// <summary>
+        /// Will cause ajax scripts to be included in the current page
+        /// </summary>
+        void RequestAjaxScriptSupport();
+
+        /// <summary>
+        /// Register the ajax scripts in this page
+        /// </summary>
+        /// <param name="page">The page</param>
+        /// <remarks>Typically only called by the DNN framework.</remarks>
+        void RegisterAjaxScript(Page page);
     }
 }

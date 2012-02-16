@@ -105,10 +105,6 @@ namespace DotNetNuke.Security.Membership
         /// </remarks>
         /// <param name="role">The role to persist to the Data Store.</param>
         /// <returns>A Boolean indicating success or failure.</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        ///     [jlucarino]	02/23/2006	added CreatedByUserID parameter
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override bool CreateRole(RoleInfo role)
         {
@@ -144,71 +140,10 @@ namespace DotNetNuke.Security.Membership
         /// DeleteRole deletes a Role from the Data Store
         /// </summary>
         /// <param name="role">The role to delete from the Data Store.</param>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override void DeleteRole(RoleInfo role)
         {
             dataProvider.DeleteRole(role.RoleID);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetRoleNames gets an array of roles for a portal
-        /// </summary>
-        /// <param name="portalId">Id of the portal</param>
-        /// <returns>A RoleInfo object</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override string[] GetRoleNames(int portalId)
-        {
-            string[] roles = {};
-            ArrayList arrRoles = GetRoles(portalId);
-            var strRoles = arrRoles.Cast<RoleInfo>()
-                                    .Aggregate("", (current, role) => current + (role.RoleName + "|"));
-            if (strRoles.IndexOf("|", StringComparison.Ordinal) > 0)
-            {
-                roles = strRoles.Substring(0, strRoles.Length - 1).Split('|');
-            }
-            return roles;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetRoleNames gets an array of roles
-        /// </summary>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="userId">The Id of the user whose roles are required. (If -1 then all
-        /// rolenames in a portal are retrieved.</param>
-        /// <returns>A RoleInfo object</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public override string[] GetRoleNames(int portalId, int userId)
-        {
-            string[] roles = {};
-            string strRoles = "";
-            IDataReader dr = dataProvider.GetRolesByUser(userId, portalId);
-            try
-            {
-                while (dr.Read())
-                {
-                    strRoles += Convert.ToString(dr["RoleName"]) + "|";
-                }
-            }
-            finally
-            {
-                CBO.CloseDataReader(dr, true);
-            }
-            if (strRoles.IndexOf("|", StringComparison.Ordinal) > 0)
-            {
-                roles = strRoles.Substring(0, strRoles.Length - 1).Split('|');
-            }
-            return roles;
         }
 
         /// -----------------------------------------------------------------------------
@@ -218,9 +153,6 @@ namespace DotNetNuke.Security.Membership
         /// <param name="portalId">Id of the portal (If -1 all roles for all portals are 
         /// retrieved.</param>
         /// <returns>An ArrayList of RoleInfo objects</returns>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override ArrayList GetRoles(int portalId)
         {
@@ -230,15 +162,16 @@ namespace DotNetNuke.Security.Membership
             return arrRoles;
         }
 
+        public override IDictionary<string, string> GetRoleSettings(int roleId)
+        {
+            return CBO.FillDictionary<string, string>("SettingName", dataProvider.GetRoleSettings(roleId));
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Update a role
         /// </summary>
         /// <param name="role">The role to update</param>
-        /// <history>
-        ///     [cnurse]	03/28/2006	created
-        ///     [jlucarino]	02/23/2006	added LastModifiedByUserID parameter
-        /// </history>
         /// -----------------------------------------------------------------------------
         public override void UpdateRole(RoleInfo role)
         {
@@ -256,6 +189,20 @@ namespace DotNetNuke.Security.Membership
                                     role.RSVPCode,
                                     role.IconFile,
                                     UserController.GetCurrentUserInfo().UserID);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Update the role settings for a role
+        /// </summary>
+        /// <param name="role">The role to update</param>
+        /// -----------------------------------------------------------------------------
+        public override void UpdateRoleSettings(RoleInfo role)
+        {
+            foreach (var setting in role.Settings)
+            {
+                dataProvider.UpdateRoleSetting(role.RoleID, setting.Key, setting.Value, UserController.GetCurrentUserInfo().UserID);
+            }
         }
 
 		#endregion

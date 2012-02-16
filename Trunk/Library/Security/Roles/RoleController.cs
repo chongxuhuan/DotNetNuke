@@ -148,64 +148,6 @@ namespace DotNetNuke.Security.Roles
 
         #endregion
 
-        #region RoleInfo Methods
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Returns an array of rolenames for a Portal
-        /// </summary>
-		/// <param name="portalId">The Id of the Portal</param>
-        /// <returns>A String Array of Role Names</returns>
-        /// <history>
-        /// 	[cnurse]	05/24/2005	Documented
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public string[] GetRoleNames(int portalId)
-        {
-			return provider.GetRoleNames(portalId);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Gets a List of Roles for a given User
-        /// </summary>
-        /// <param name="UserId">The Id of the User</param>
-        /// <param name="PortalId">The Id of the Portal</param>
-        /// <returns>A String Array of Role Names</returns>
-        /// <history>
-        /// 	[cnurse]	05/24/2005	Documented
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public string[] GetRolesByUser(int UserId, int PortalId)
-        {
-            return provider.GetRoleNames(PortalId, UserId);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Serializes the roles
-        /// </summary>
-        /// <param name="writer">An XmlWriter</param>
-        /// <param name="portalId">The Id of the Portal</param>
-        /// <history>
-        /// 	[cnurse]	03/17/2008  Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static void SerializeRoles(XmlWriter writer, int portalId)
-        {
-            //Serialize Global Roles
-            writer.WriteStartElement("roles");
-            foreach (RoleInfo role in TestableRoleController.Instance.GetRoles(portalId, r => r.RoleGroupID == Null.NullInteger))
-            {
-                CBO.SerializeObject(role, writer);
-            }
-            writer.WriteEndElement();
-        }
-
-        #endregion
-
         #region UserRoleInfo Methods
 
         /// -----------------------------------------------------------------------------
@@ -808,6 +750,19 @@ namespace DotNetNuke.Security.Roles
             return TestableRoleController.Instance.GetRoles(portalId).SingleOrDefault(r => r.RoleName == roleName);
         }
 
+        [Obsolete("Deprecated in DotNetNuke 6.2.")]
+        public string[] GetRoleNames(int portalId)
+        {
+            string[] roles = { };
+            var roleList = TestableRoleController.Instance.GetRoles(portalId);
+            var strRoles = roleList.Aggregate("", (current, role) => current + (role.RoleName + "|"));
+            if (strRoles.IndexOf("|", StringComparison.Ordinal) > 0)
+            {
+                roles = strRoles.Substring(0, strRoles.Length - 1).Split('|');
+            }
+            return roles;
+        }
+
         [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRoles(portalId, predicate)")]
         public ArrayList GetRoles()
         {
@@ -824,6 +779,12 @@ namespace DotNetNuke.Security.Roles
         public string[] GetPortalRolesByUser(int UserId, int PortalId)
         {
             return GetRolesByUser(UserId, PortalId);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2.")]
+        public string[] GetRolesByUser(int UserId, int PortalId)
+        {
+            return UserController.GetUserById(PortalId, UserId).Roles;
         }
 
         [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by GetUserRoles")]
@@ -872,6 +833,18 @@ namespace DotNetNuke.Security.Roles
         public ArrayList GetUsersInRole(int PortalID, string RoleName)
         {
             return provider.GetUserRolesByRoleName(PortalID, RoleName);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2.")]
+        public static void SerializeRoles(XmlWriter writer, int portalId)
+        {
+            //Serialize Global Roles
+            writer.WriteStartElement("roles");
+            foreach (RoleInfo role in TestableRoleController.Instance.GetRoles(portalId, r => r.RoleGroupID == Null.NullInteger))
+            {
+                CBO.SerializeObject(role, writer);
+            }
+            writer.WriteEndElement();
         }
 
         [Obsolete("Deprecated in DotNetNuke 6.2. This function has been replaced by TestableRoleController.Instance.UpdateRole(role)")]

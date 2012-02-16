@@ -219,6 +219,9 @@
   <data name="MsgSubjectOrBodyRequiredError.Text" xml:space="preserve">
     <value>Both Subject and Body cannot be null or empty.</value>
   </data>
+  <data name="MsgBodyRequiredError.Text" xml:space="preserve">
+    <value>Body cannot be null or empty.</value>
+  </data>
   <data name="MsgRolesOrUsersRequiredError.Text" xml:space="preserve">
     <value>Both Roles and Users cannot be null or empty-lists.</value>
   </data>

@@ -28,6 +28,7 @@ using System.Linq;
 
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Security.Roles.Internal;
 
 #endregion
 
@@ -65,13 +66,19 @@ namespace DotNetNuke.Security.Roles
             #pragma warning restore 612,618
         }
 
-        public abstract string[] GetRoleNames(int portalId);
-
-        public abstract string[] GetRoleNames(int portalId, int userId);
-
         public abstract ArrayList GetRoles(int portalId);
 
+        public virtual IDictionary<string, string> GetRoleSettings(int roleId)
+        {
+           return new Dictionary<string, string>(); 
+        }
+
         public abstract void UpdateRole(RoleInfo role);
+
+        public virtual void UpdateRoleSettings(RoleInfo role)
+        {
+            
+        }
 
         #endregion
 
@@ -142,6 +149,25 @@ namespace DotNetNuke.Security.Roles
         public virtual RoleInfo GetRole(int portalId, string roleName)
         {
             return GetRoles(portalId).Cast<RoleInfo>().SingleOrDefault(r => r.RoleName == roleName);
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2.")]
+        public virtual string[] GetRoleNames(int portalId)
+        {
+            string[] roles = { };
+            var roleList = TestableRoleController.Instance.GetRoles(portalId);
+            var strRoles = roleList.Aggregate("", (current, role) => current + (role.RoleName + "|"));
+            if (strRoles.IndexOf("|", StringComparison.Ordinal) > 0)
+            {
+                roles = strRoles.Substring(0, strRoles.Length - 1).Split('|');
+            }
+            return roles;
+        }
+
+        [Obsolete("Deprecated in DotNetNuke 6.2.")]
+        public virtual string[] GetRoleNames(int portalId, int userId)
+        {
+            return UserController.GetUserById(portalId, userId).Roles;
         }
 
         [Obsolete("Deprecated in DotNetNuke 6.2. Roles are cached in the business layer")]

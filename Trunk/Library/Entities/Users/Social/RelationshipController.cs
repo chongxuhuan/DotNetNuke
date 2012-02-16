@@ -748,25 +748,32 @@ namespace DotNetNuke.Entities.Users.Social
         }
 
 	    /// <summary>
-	    /// GetUsersByFilters -- Gets a filtered list of users along with their profile properties.
+	    /// GetUsersAdvancedSearch -- Gets a filtered list of users along with their profile properties.
 	    /// </summary>
-	    /// <param name="portalId">PortalId to which the Relationship will belong. Valid value includes Non-Negative number.</param>        
-	    /// <param name="currUser">Current user.  Which could be used in conjunction with other parameters to filter the list in terms of relationship to.</param>
-	    /// <param name="records">Number of records to return.</param>
-	    /// <param name="pageIndex">Page number used in conjunction with the [records] parameter.</param>
+	    /// <param name="user"> User which could be used in conjunction with other parameters to filter the list in terms of relationship to.</param>
 	    /// <param name="role">Filter the list of user based on their role.</param>
 	    /// <param name="relationshipType">Filter the list of user based on their relationship to the current user [currUser parameter].</param>
-	    /// <param name="profileProperty">Filter the list of user based on a particular profile property, to be used in conjunction with the [profilePropertyValue] parameter.</param>
-	    /// <param name="profilePropertyValue">Filter the list of user based on a specific value of a particular propfile property, [profileProperty] parameter.</param>
-	    /// <param name="sortByColumn">Name of the column to sort the list of user by.</param>
-	    /// <param name="sortAscending">Flag for sorting by ascending. If false, sort descending.</param>
-	    /// <param name="isAdmin">Flag for determining if the list of users should show results exclusive to admins.</param>
+	    /// <param name="propertyNamesValues"> A collection of Key Value pairs of property names and values to filter upon.</param>
+	    /// <param name="additionalParameters"> A collection of Key Value pairs of more fields to filter upon</param>
 	    /// <returns></returns>
-	    public IDataReader GetUsersByFilters(int portalId, UserInfo currUser, int records, int pageIndex, UserRoleInfo role, RelationshipType relationshipType, string profileProperty, string profilePropertyValue, string sortByColumn, bool sortAscending, bool isAdmin)
+	    public IDataReader GetUsersAdvancedSearch(UserInfo user, UserRoleInfo role, RelationshipType relationshipType, IDictionary<string, string> propertyNamesValues, Dictionary<string, string> additionalParameters)
         {
-            var roleId = role != null ? role.RoleID : -1;
-            var relationshipTypeId = relationshipType != null ? relationshipType.RelationshipTypeId : -1;
-            return _dataService.GetUsersByFilters(portalId, currUser.UserID, records, pageIndex, roleId, relationshipTypeId, profileProperty, profilePropertyValue, sortByColumn, sortAscending, isAdmin);
+            if (additionalParameters == null) additionalParameters = new Dictionary<string, string>();
+
+            var portalId = additionalParameters.ContainsKey("PortalId") && additionalParameters["PortalId"] != null ? int.Parse(additionalParameters["PortalId"].ToString()) : user.PortalID;
+            var pageIndex = additionalParameters.ContainsKey("PageIndex") && additionalParameters["PageIndex"] != null ? int.Parse(additionalParameters["PageIndex"].ToString()) : 1;
+            var records = additionalParameters.ContainsKey("Records") && additionalParameters["Records"] != null ? int.Parse(additionalParameters["Records"].ToString()) : 1;
+            var sortByColumn = additionalParameters.ContainsKey("SortBy") && additionalParameters["SortBy"] != null ? additionalParameters["SortBy"].ToString() : string.Empty;
+            var sortAscending = additionalParameters.ContainsKey("SortAscending") && additionalParameters["SortAscending"] != null ? bool.Parse(additionalParameters["SortAscending"].ToString()) : true;
+            var propertyNamesFilter = propertyNamesValues.Aggregate("", (current, property) => current + "," + property.Key);
+            var propertyValuesFilter = propertyNamesValues.Aggregate("", (current, property) => current + "," + property.Value);
+
+            // Currently not applicable
+            //var isAdmin = additionalParameters.ContainsKey("IsAdmin") && additionalParameters["IsAdmin"] != null ? bool.Parse(additionalParameters["IsAdmin"].ToString()) : true;
+            //var roleId = role != null ? role.RoleID : -1;
+            //var relationshipTypeId = relationshipType != null ? relationshipType.RelationshipTypeId : -1;
+
+            return _dataService.GetUsersAdvancedSearch(portalId, records, pageIndex, sortByColumn, sortAscending, propertyNamesFilter, propertyValuesFilter);//, displayName);
         }
 
         /// -----------------------------------------------------------------------------

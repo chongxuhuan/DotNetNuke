@@ -16,26 +16,31 @@
 // // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // // DEALINGS IN THE SOFTWARE.
 
+using System.Globalization;
 using System.IO;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.UI;
 using DotNetNuke.Common;
+using DotNetNuke.Entities.Portals;
+using DotNetNuke.UI.Utilities;
+using DotNetNuke.Web.Client.ClientResourceManagement;
 
 namespace DotNetNuke.Framework
 {
     internal class ServicesFrameworkImpl : IServicesFramework
     {
-        private const string Key = "dnnAntiForgeryRequested";
+        private const string AntiForgeryKey = "dnnAntiForgeryRequested";
+        private const string ScriptKey = "dnnSFAjaxScriptRequested";
 
         public void RequestAjaxAntiForgerySupport()
         {
-            HttpContextSource.Current.Items[Key] = true;
+            SetKey(AntiForgeryKey);
         }
 
         public bool IsAjaxAntiForgerySupportRequired
         {
-            get { return HttpContextSource.Current.Items.Contains(Key); }
+            get { return CheckKey(AntiForgeryKey); }
         }
 
         public void RegisterAjaxAntiForgery(Page page)
@@ -47,6 +52,47 @@ namespace DotNetNuke.Framework
             {
                 ctl.Controls.Add(new LiteralControl(field.ToHtmlString()));
             }
+        }
+
+        /// <summary>
+        /// True if the ajax scripts are required on this request
+        /// </summary>
+        public bool IsAjaxScriptSupportRequired
+        {
+            get{ return CheckKey(ScriptKey); }
+        }
+
+        /// <summary>
+        /// Will cause ajax scripts to be included in the current page
+        /// </summary>
+        public void RequestAjaxScriptSupport()
+        {
+            SetKey(ScriptKey);
+        }
+
+        /// <summary>
+        /// Register the ajax scripts in this page
+        /// </summary>
+        /// <param name="page">The page</param>
+        /// <remarks>Typically only called by the DNN framework.</remarks>
+        public void RegisterAjaxScript(Page page)
+        {
+            var path = Common.Globals.ApplicationPath;
+            path = path.EndsWith("/") ? path : path + "/";
+            ClientAPI.RegisterClientVariable(page, "sf_siteRoot", path, /*overwrite*/ true);
+            ClientAPI.RegisterClientVariable(page, "sf_tabId", PortalSettings.Current.ActiveTab.TabID.ToString(CultureInfo.InvariantCulture), /*overwrite*/ true);
+
+            ClientResourceManager.RegisterScript(page, "~/js/dnn.servicesframework.js");
+        }
+
+        private static void SetKey(string key)
+        {
+            HttpContextSource.Current.Items[key] = true;
+        }
+
+        private static bool CheckKey(string antiForgeryKey)
+        {
+            return HttpContextSource.Current.Items.Contains(antiForgeryKey);
         }
 
         private static HtmlHelper CreateHtmlHelper()

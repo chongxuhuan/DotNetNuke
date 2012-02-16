@@ -92,16 +92,15 @@ namespace DotNetNuke.Security.Membership.Data
         public abstract void UpdateUser(int userId, int portalID, string firstName, string lastName, bool isSuperUser, string email, string displayName, bool updatePassword, bool isApproved, bool refreshRoles, string lastIpAddress, bool isDeleted, int lastModifiedByUserID);
 
         // Roles
-        public abstract IDataReader GetPortalRoles(int portalId);
-        public abstract IDataReader GetRoles();
-        public abstract IDataReader GetRole(int roleID, int portalID);
-        public abstract IDataReader GetRoleByName(int portalId, string roleName);
         public abstract int AddRole(int portalId, int roleGroupId, string roleName, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,
                                     string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int createdByUserID);
         public abstract void DeleteRole(int roleId);
+        public abstract IDataReader GetPortalRoles(int portalId);
+        public abstract IDataReader GetRoles();
+        public abstract IDataReader GetRoleSettings(int roleId);
         public abstract void UpdateRole(int roleId, int roleGroupId, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,
                                         string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int lastModifiedByUserID);
-        public abstract IDataReader GetRolesByUser(int userId, int portalId);
+        public abstract void UpdateRoleSetting(int roleId, string settingName, string settingValue, int lastModifiedByUserID);
 
         // RoleGroups
         public abstract int AddRoleGroup(int portalId, string groupName, string description, int createdByUserID);
@@ -109,7 +108,6 @@ namespace DotNetNuke.Security.Membership.Data
         public abstract IDataReader GetRoleGroup(int portalId, int roleGroupId);
         public abstract IDataReader GetRoleGroupByName(int portalID, string roleGroupName);
         public abstract IDataReader GetRoleGroups(int portalId);
-        public abstract IDataReader GetRolesByGroup(int roleGroupId, int portalId);
         public abstract void UpdateRoleGroup(int roleGroupId, string groupName, string description, int lastModifiedByUserID);
 
         // User Roles

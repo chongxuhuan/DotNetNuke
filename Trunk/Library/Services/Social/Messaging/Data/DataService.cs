@@ -163,7 +163,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         public int SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("SaveSocialMessageAttachment", messageAttachment.MessageID, messageAttachment.FileID,createUpdateUserId);
+            return _provider.ExecuteScalar<int>("SaveSocialMessageAttachment", messageAttachment.MessageAttachmentID, messageAttachment.MessageID, messageAttachment.FileID, createUpdateUserId);
         }
 
         public IDataReader GetSocialMessageAttachment()

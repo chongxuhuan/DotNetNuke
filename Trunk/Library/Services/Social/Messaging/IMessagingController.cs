@@ -72,6 +72,10 @@ namespace DotNetNuke.Services.Social.Messaging
 
         Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender);
 
+        Message ReplyMessage(int parentMessageId, string body, IList<int> fileIDs);
+
+        Message ReplyMessage(int parentMessageId, string body, IList<int> fileIDs, UserInfo sender);
+
         #endregion
     }
 }

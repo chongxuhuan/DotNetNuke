@@ -85,13 +85,6 @@ namespace DotNetNuke.Security.Roles.Internal
 
         #region IRoleController Implementation
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// This overload adds a role and optionally adds the info to the AspNet Roles
-        /// </summary>
-        /// <param name="role">The Role to Add</param>
-        /// <returns>The Id of the new role</returns>
-        /// -----------------------------------------------------------------------------
         public int AddRole(RoleInfo role)
         {
             Requires.NotNull("role", role);
@@ -109,12 +102,6 @@ namespace DotNetNuke.Security.Roles.Internal
             return roleId;
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Deletes a role
-        /// </summary>
-        /// <param name="role">The Role to delete</param>
-        /// -----------------------------------------------------------------------------
         public void DeleteRole(RoleInfo role)
         {
             Requires.NotNull("role", role);
@@ -125,26 +112,11 @@ namespace DotNetNuke.Security.Roles.Internal
             ClearRoleCache(role.PortalID);
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Fetch a single role based on a predicate
-        /// </summary>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="predicate">The predicate (criteria) required</param>
-        /// <returns>A RoleInfo object</returns>
-        /// -----------------------------------------------------------------------------
         public RoleInfo GetRole(int portalId, Func<RoleInfo, bool> predicate)
         {
             return GetRoles(portalId).Where(predicate).SingleOrDefault();
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Obtains a list of roles from the cache (or for the database if the cache has expired)
-        /// </summary>
-        /// <param name="portalId">The id of the portal</param>
-        /// <returns>The list of roles</returns>
-        /// -----------------------------------------------------------------------------
         public IList<RoleInfo> GetRoles(int portalId)
         {
             var cacheKey = String.Format(DataCache.RolesCacheKey, portalId);
@@ -156,32 +128,16 @@ namespace DotNetNuke.Security.Roles.Internal
                                                             });
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Get the roles based on a predicate
-        /// </summary>
-        /// <param name="portalId">Id of the portal</param>
-        /// <param name="predicate">The predicate (criteria) required</param>
-        /// <returns>A List of RoleInfo objects</returns>
-        /// <history>
-        ///     [cnurse]	01/03/2006	created
-        /// </history>
-        /// -----------------------------------------------------------------------------
         public IList<RoleInfo> GetRoles(int portalId, Func<RoleInfo, bool> predicate)
         {
             return GetRoles(portalId).Where(predicate).ToList();
         }
 
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Persists a role to the Data Store
-        /// </summary>
-        /// <param name="role">The role to persist</param>
-        /// <history>
-        /// 	[cnurse]	05/24/2005	Documented
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
-        /// -----------------------------------------------------------------------------
+        public IDictionary<string, string> GetRoleSettings(int roleId)
+        {
+            return provider.GetRoleSettings(roleId);
+        }
+
         public void UpdateRole(RoleInfo role)
         {
             Requires.NotNull("role", role);
@@ -191,6 +147,16 @@ namespace DotNetNuke.Security.Roles.Internal
             AutoAssignUsers(role);
 
             ClearRoleCache(role.PortalID);
+        }
+
+        public void UpdateRoleSettings(RoleInfo role, bool clearCache)
+        {
+            provider.UpdateRoleSettings(role);
+
+            if (clearCache)
+            {
+                ClearRoleCache(role.PortalID);
+            }
         }
 
         #endregion

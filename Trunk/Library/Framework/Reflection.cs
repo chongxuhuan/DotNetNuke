@@ -162,6 +162,28 @@ namespace DotNetNuke.Framework
         /// -----------------------------------------------------------------------------
         public static object CreateObject(string ObjectProviderType, string ObjectProviderName, string ObjectNamespace, string ObjectAssemblyName, bool UseCache)
         {
+            return CreateObject(ObjectProviderType, ObjectProviderName, ObjectNamespace, ObjectAssemblyName, UseCache, true);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Creates an object
+        /// </summary>
+        /// <param name="ObjectProviderType">The type of Object to create (data/navigation)</param>
+        /// <param name="ObjectProviderName">The name of the Provider</param>
+        /// <param name="ObjectNamespace">The namespace of the object to create.</param>
+        /// <param name="ObjectAssemblyName">The assembly of the object to create.</param>
+        /// <param name="UseCache">Caching switch</param>
+        /// <param name="fixAssemblyName">Whether append provider name as part of the assembly name.</param>
+        /// <returns>The created Object</returns>
+        /// <remarks>Overload for creating an object from a Provider including NameSpace, 
+        /// AssemblyName and ProviderName</remarks>
+        /// <history>
+        /// 	[benz]	    2/16/2012	Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public static object CreateObject(string ObjectProviderType, string ObjectProviderName, string ObjectNamespace, string ObjectAssemblyName, bool UseCache, bool fixAssemblyName)
+        {
             string TypeName = "";
 
             //get the provider configuration based on the type
@@ -172,12 +194,12 @@ namespace DotNetNuke.Framework
                 if (String.IsNullOrEmpty(ObjectProviderName))
                 {
 					//dynamically create the typename from the constants ( this enables private assemblies to share the same configuration as the base provider ) 
-                    TypeName = ObjectNamespace + "." + objProviderConfiguration.DefaultProvider + ", " + ObjectAssemblyName;
+                    TypeName = ObjectNamespace + "." + objProviderConfiguration.DefaultProvider + ", " + ObjectAssemblyName + (fixAssemblyName ? "." + objProviderConfiguration.DefaultProvider : string.Empty);
                 }
                 else
                 {
 					//dynamically create the typename from the constants ( this enables private assemblies to share the same configuration as the base provider ) 
-                    TypeName = ObjectNamespace + "." + ObjectProviderName + ", " + ObjectAssemblyName;
+                    TypeName = ObjectNamespace + "." + ObjectProviderName + ", " + ObjectAssemblyName + (fixAssemblyName ? "." + ObjectProviderName : string.Empty);
                 }
             }
             else

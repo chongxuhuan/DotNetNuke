@@ -20,7 +20,8 @@
 #endregion
 using System;
 using System.Linq;
-using System.Web.Mvc;
+using System.Web;
+using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Web.Services
 {
@@ -33,26 +34,21 @@ namespace DotNetNuke.Web.Services
             _supportedModules = supportedModules.Split(new[] { ',' });
         }
 
-        protected override bool AuthorizeCore(AuthorizationContext context)
+        protected override bool AuthorizeCore(HttpContextBase context)
         {
-            var controller = (DnnController) context.Controller;
+            var module = context.FindModuleInfo();
 
-            if(controller == null || controller.ActiveModule == null)
+            if(module != null)
             {
-                return false;
+                return ModuleIsSupported(module);
             }
 
-            return ModuleIsSupported(controller);
+            return false;
         }
 
-        private bool ModuleIsSupported(DnnController controller)
+        private bool ModuleIsSupported(ModuleInfo module)
         {
-            if(!_supportedModules.Any())
-            {
-                return true;
-            }
-
-            return _supportedModules.Contains(controller.ActiveModule.DesktopModule.ModuleName);
+            return _supportedModules.Contains(module.DesktopModule.ModuleName);
         }
     }
 }
