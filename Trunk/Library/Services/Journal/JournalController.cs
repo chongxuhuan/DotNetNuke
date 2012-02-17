@@ -8,6 +8,8 @@ using System.Xml;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Common.Utilities;
 using System.Data;
+using DotNetNuke.Security;
+using System.Web;
 
 namespace DotNetNuke.Services.Journal {
     public class JournalController {
@@ -77,6 +79,17 @@ namespace DotNetNuke.Services.Journal {
         public JournalItem Journal_Save(JournalItem objJournalItem, int TabId) {
             JournalDataService jds = new JournalDataService();
             string xml = null;
+            PortalSecurity portalSecurity = new PortalSecurity();
+            if (!String.IsNullOrEmpty(objJournalItem.Title)) {
+                objJournalItem.Title = portalSecurity.InputFilter(objJournalItem.Title, PortalSecurity.FilterFlag.NoMarkup);
+            }
+            if (!String.IsNullOrEmpty(objJournalItem.Summary)) {
+                objJournalItem.Summary = HttpUtility.HtmlDecode(portalSecurity.InputFilter(objJournalItem.Summary, PortalSecurity.FilterFlag.NoScripting));
+            }
+            if (!String.IsNullOrEmpty(objJournalItem.Body)) {
+                objJournalItem.Body = HttpUtility.HtmlDecode(portalSecurity.InputFilter(objJournalItem.Body, PortalSecurity.FilterFlag.NoScripting));
+            }
+
             if (!String.IsNullOrEmpty(objJournalItem.Body)) {
                 System.Xml.XmlDocument xDoc = new XmlDocument();
                 XmlElement xnode = xDoc.CreateElement("items");
@@ -94,7 +107,25 @@ namespace DotNetNuke.Services.Journal {
                 xml = objJournalItem.JournalXML.OuterXml;
             }
             string journalData = string.Empty;
+            if (objJournalItem.ItemData != null) {
+                if (!String.IsNullOrEmpty(objJournalItem.ItemData.Title)) {
+                    objJournalItem.ItemData.Title = portalSecurity.InputFilter(objJournalItem.ItemData.Title, PortalSecurity.FilterFlag.NoMarkup);
+                }
+                if (!String.IsNullOrEmpty(objJournalItem.ItemData.Description)) {
+                    objJournalItem.ItemData.Description = HttpUtility.HtmlDecode(portalSecurity.InputFilter(objJournalItem.ItemData.Description, PortalSecurity.FilterFlag.NoScripting));
+                }
+                if (!String.IsNullOrEmpty(objJournalItem.ItemData.Url)) {
+                    objJournalItem.ItemData.Url = portalSecurity.InputFilter(objJournalItem.ItemData.Url, PortalSecurity.FilterFlag.NoScripting);
+                }
+                if (!String.IsNullOrEmpty(objJournalItem.ItemData.ImageUrl)) {
+                    objJournalItem.ItemData.ImageUrl = portalSecurity.InputFilter(objJournalItem.ItemData.ImageUrl, PortalSecurity.FilterFlag.NoScripting);
+                }
+
+            }
             journalData = objJournalItem.ItemData.ToJson();
+            if (journalData == "null") {
+                journalData = null;
+            }
             if (String.IsNullOrEmpty(objJournalItem.SecuritySet)) {
                 objJournalItem.SecuritySet = "E,";
             } else if(!objJournalItem.SecuritySet.EndsWith(",")) {
@@ -174,7 +205,16 @@ namespace DotNetNuke.Services.Journal {
         #region Comments
         public CommentInfo CommentSave(CommentInfo objCommentInfo) {
             JournalDataService jds = new JournalDataService();
+            PortalSecurity portalSecurity = new PortalSecurity();
+            if (!String.IsNullOrEmpty(objCommentInfo.Comment)) {
+                objCommentInfo.Comment = HttpUtility.HtmlDecode(portalSecurity.InputFilter(objCommentInfo.Comment, PortalSecurity.FilterFlag.NoScripting));
+            }
+            //TODO: enable once the profanity filter is working properly.
+            //objCommentInfo.Comment = portalSecurity.Remove(objCommentInfo.Comment, DotNetNuke.Security.PortalSecurity.ConfigType.ListController, "ProfanityFilter", DotNetNuke.Security.PortalSecurity.FilterScope.PortalList);
 
+            if (objCommentInfo.Comment.Length > 2000) {
+                objCommentInfo.Comment = objCommentInfo.Comment.Substring(0, 1999);
+            }
             string xml = null;
             if (objCommentInfo.CommentXML != null) {
                 xml = objCommentInfo.CommentXML.OuterXml;

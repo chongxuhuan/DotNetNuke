@@ -20,8 +20,7 @@
 #endregion
 
 using System;
-
-using DotNetNuke.ComponentModel;
+using DotNetNuke.Framework;
 
 namespace DotNetNuke.Security.Roles.Internal
 {

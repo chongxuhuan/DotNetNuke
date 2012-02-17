@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
@@ -17,18 +18,19 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
+
 #endregion
+
 using System;
+using DotNetNuke.Framework;
 
-using DotNetNuke.ComponentModel;
-
-namespace DotNetNuke.Entities.Modules.Internal
+namespace DotNetNuke.Entities.Tabs.Internal
 {
-    public class TestableModuleController : ControllerBase<IModuleController, TestableModuleController>
+    public class TestableTabController : ControllerBase<ITabController, TestableTabController>
     {
-        protected override Func<IModuleController> GetFactory()
+        protected override Func<ITabController> GetFactory()
         {
-            return () => new ModuleControllerImpl();
+            return () => new TabControllerImpl();
         }
     }
 }

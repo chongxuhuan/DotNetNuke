@@ -326,25 +326,25 @@ namespace DotNetNuke.Security.Roles
             RSVPCode = Null.SetNullString(dr["RSVPCode"]);
             IconFile = Null.SetNullString(dr["IconFile"]);
 
-            IsSecurityRole = Null.SetNullBoolean(dr["IsSecurityRole"]);
-
-            var status = Null.SetNullInteger(dr["Status"]);
-            switch(status)
-            {
-                case -1:
-                    Status = RoleStatus.Pending;
-                    break;
-                case 0:
-                    Status = RoleStatus.Disabled;
-                    break;
-                default:
-                    Status = RoleStatus.Approved;
-                    break;
-            }
-
-            //UserCount will not be present if called before 6.2 Upgrade has been executed
+            //New properties may not be present if called before 6.2 Upgrade has been executed
             try
             {
+                IsSecurityRole = Null.SetNullBoolean(dr["IsSecurityRole"]);
+
+                var status = Null.SetNullInteger(dr["Status"]);
+                switch (status)
+                {
+                    case -1:
+                        Status = RoleStatus.Pending;
+                        break;
+                    case 0:
+                        Status = RoleStatus.Disabled;
+                        break;
+                    default:
+                        Status = RoleStatus.Approved;
+                        break;
+                }
+
                 UserCount = Null.SetNullInteger(dr["UserCount"]);
             }
             catch (IndexOutOfRangeException)

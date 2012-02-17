@@ -53,18 +53,18 @@ namespace DotNetNuke.Security.Roles.Internal
 
         }
 
-        private void AutoAssignUsers(RoleInfo objRoleInfo)
+        private void AutoAssignUsers(RoleInfo role)
         {
-            if (objRoleInfo.AutoAssignment)
+            if (role.AutoAssignment)
             {
                 //loop through users for portal and add to role
-                var arrUsers = UserController.GetUsers(objRoleInfo.PortalID);
+                var arrUsers = UserController.GetUsers(role.PortalID);
                 foreach (UserInfo objUser in arrUsers)
                 {
                     try
                     {
                         var legacyRoleController = new RoleController();
-                        legacyRoleController.AddUserRole(objRoleInfo.PortalID, objUser.UserID, objRoleInfo.RoleID, Null.NullDate, Null.NullDate);
+                        legacyRoleController.AddUserRole(role.PortalID, objUser.UserID, role.RoleID, Null.NullDate, Null.NullDate);
                     }
                     catch (Exception exc)
                     {

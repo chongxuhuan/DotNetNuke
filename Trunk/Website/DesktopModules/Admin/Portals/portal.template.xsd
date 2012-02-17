@@ -424,6 +424,8 @@
       </xs:enumeration>
       <xs:enumeration value="subscriberrole">
       </xs:enumeration>
+      <xs:enumeration value="unverifiedrole">
+      </xs:enumeration>
       <xs:enumeration value="none">
       </xs:enumeration>
     </xs:restriction>

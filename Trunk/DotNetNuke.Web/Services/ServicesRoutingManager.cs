@@ -170,6 +170,8 @@ namespace DotNetNuke.Web.Services
 
         private IEnumerable<string> GetRoutePrefixes()
         {
+            return new string[] {""};
+            
             if(_prefixes == null)
             {
                 List<int> segmentCounts = CountSegmentsInPortalAliases();

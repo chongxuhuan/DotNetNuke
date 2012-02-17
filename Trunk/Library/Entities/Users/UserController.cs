@@ -130,6 +130,9 @@ namespace DotNetNuke.Entities.Users
                     roleController.AddUserRole(portalId, user.UserID, role.RoleID, Null.NullDate, Null.NullDate);
                 }
             }
+
+            //Clear the roles cache - so the usercount is correct
+            DataCache.RemoveCache(String.Format(DataCache.RolesCacheKey, portalId));
         }
 
         private static void AutoAssignUsersToRoles(UserInfo user, int portalId)

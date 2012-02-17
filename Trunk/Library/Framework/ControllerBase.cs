@@ -17,7 +17,7 @@
 // // DEALINGS IN THE SOFTWARE.
 using System;
 
-namespace DotNetNuke.ComponentModel
+namespace DotNetNuke.Framework
 {
     /// <summary>
     /// Provides a readily testable way to manage a Singleton
@@ -63,7 +63,7 @@ namespace DotNetNuke.ComponentModel
         /// </summary>
         /// <remarks>Intended for unit testing purposes, the instance must be registered before the snigleton is accessed</remarks>
         /// <param name="instance"></param>
-        public static void RegisterInstance(TContract instance)
+        public static void SetTestableInstance(TContract instance)
         {
             _instance = instance;
             _isInitialized = true;
