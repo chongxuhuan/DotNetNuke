@@ -102,23 +102,19 @@ namespace DotNetNuke.Services.Social.Messaging
         /// <param name="sender">Sender's UserInfo</param>        
         public int WaitTimeForNextMessage(UserInfo sender)
         {
-            int waitTime = 0;
+            var waitTime = 0;
             var interval = PortalController.GetPortalSettingAsInteger("MessagingThrottlingInterval", sender.PortalID, Null.NullInteger);
-            if (interval > 0 && (!IsAdminOrHost(sender)))
+            if (interval > 0 && !IsAdminOrHost(sender))
             {
-                int totalRecords = 0;
-                waitTime = DateTime.Now.Subtract(GetSentbox(sender.UserID, 0, 1, ref totalRecords).First().CreatedOnDate).Seconds;
-                //var messages = GetSentbox(sender.UserID, 0, 1, ref totalRecords);
-                //if(messages != null )
+                var totalRecords = 0;
+                var messages = GetSentbox(sender.UserID, 0, 1, ref totalRecords);
+                if (totalRecords > 0)
                 {
-                    waitTime = DateTime.Now.Subtract(GetSentbox(sender.UserID, 0, 1, ref totalRecords).First().CreatedOnDate).Seconds;
+                    waitTime = interval - DateTime.Now.Subtract(messages.First().CreatedOnDate).Seconds;
                 }
-
             }
-
-            return waitTime;
+            return waitTime < 0 ? 0 : waitTime;
         }
-
 
         #endregion
 
@@ -296,13 +292,13 @@ namespace DotNetNuke.Services.Social.Messaging
             return message;
         }
 
-        public Message ReplyMessage(int parentMessageId, string body, IList<int> fileIDs)
+        public int ReplyMessage(int parentMessageId, string body, IList<int> fileIDs)
         {
             return ReplyMessage(parentMessageId, body, fileIDs, UserController.GetCurrentUserInfo());
         }
 
 
-        public Message ReplyMessage(int parentMessageId, string body, IList<int> fileIDs, UserInfo sender)
+        public int ReplyMessage(int parentMessageId, string body, IList<int> fileIDs, UserInfo sender)
         {
             if (sender == null || sender.UserID <= 0)
             {
@@ -321,9 +317,22 @@ namespace DotNetNuke.Services.Social.Messaging
             }
             
             //call ReplyMessage
+            var messageId = _dataService.CreateMessageReply(parentMessageId, body, sender.UserID, UserController.GetCurrentUserInfo().UserID);
+            if (messageId == -1) //Parent message was not found or Recipient was not found in the message
+            {
+                throw new MessageOrRecipientNotFound(Localization.Localization.GetString("MsgMessageOrRecipientNotFound", Localization.Localization.ExceptionsResourceFile));
+            }
 
+            //associate attachments
+            if (fileIDs != null)
+            {
+                foreach (var attachment in fileIDs.Select(fileId => new MessageAttachment { MessageAttachmentID = Null.NullInteger, FileID = fileId, MessageID = messageId }))
+                {
+                    _dataService.SaveSocialMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
+                }
+            }
 
-            return null;
+            return messageId;
         }
 
 

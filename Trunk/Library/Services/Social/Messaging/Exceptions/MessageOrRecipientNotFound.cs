@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,21 +18,32 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
-#endregion
+namespace DotNetNuke.Services.Social.Messaging.Exceptions
+{
+    [Serializable]
+    public class MessageOrRecipientNotFound : Exception
+    {
+        public MessageOrRecipientNotFound()
+        {
+        }
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: ComVisible(false)]
-[assembly: Guid("8A4D396B-2282-4668-AC18-33AD0C75CD42")]
-[assembly: AssemblyVersion("6.2.0.556")]
+        public MessageOrRecipientNotFound(string message)
+            : base(message)
+        {
+        }
+
+        public MessageOrRecipientNotFound(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+
+        public MessageOrRecipientNotFound(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+    }
+}

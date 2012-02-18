@@ -173,7 +173,7 @@ namespace DotNetNuke.Web.UI.WebControls
             additionalFilters.Add("SortAscending", SortAscending.ToString());
 
             // Currently Not Used by the SPROC
-            var userInfo = Filters.ContainsKey("UserId") && Filters["UserId"] != null ? new UserInfo() { UserID = int.Parse(Filters["UserId"]) } : new UserInfo() { PortalID = _currentUser.PortalID };
+            var filterUser = Filters.ContainsKey("UserId") && Filters["UserId"] != null ? new UserInfo() { UserID = int.Parse(Filters["UserId"]) } : new UserInfo() { PortalID = _currentUser.PortalID };
             var role = Filters.ContainsKey("RoleId") && Filters["RoleId"] != null ? new UserRoleInfo() { RoleID = int.Parse(Filters["RoleId"]) } : null;
             var relationship = Filters.ContainsKey("RelationshipTypeId") && Filters["RelationshipTypeId"] != null ? new RelationshipType() { RelationshipTypeId = int.Parse(Filters["RelationshipTypeId"]) } : null;
             
@@ -185,7 +185,7 @@ namespace DotNetNuke.Web.UI.WebControls
             var row = 0;
             var users = new DataTable();
 
-            users.Load(_relationshipController.GetUsersAdvancedSearch(userInfo, role, relationship, Filters, additionalFilters));
+            users.Load(_relationshipController.GetUsersAdvancedSearch(_currentUser, filterUser, role, relationship, Filters, additionalFilters));
 
             if (users.Rows.Count > 0)
             {

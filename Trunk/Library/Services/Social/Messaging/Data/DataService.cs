@@ -60,6 +60,11 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             _provider.ExecuteNonQuery("DeleteSocialMessage", messageId);
         }
 
+        public int CreateMessageReply(int parentMessageId, string body, int senderUserId, int createUpdateUserId)
+        {
+            return _provider.ExecuteScalar<int>("CreateSocialMessageReply", parentMessageId, body, senderUserId, createUpdateUserId);
+        }
+
         public IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
         {
             object read = null;

@@ -41,6 +41,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         IList<Message> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
         void UpdateSocialMessageReadStatus(int recipientId, int userId, bool read);
         void UpdateSocialMessageArchivedStatus(int recipientId, int userId, bool archived);
+        int CreateMessageReply(int parentMessageId, string body, int senderUserId, int createUpdateUserId);
         
         #endregion
 

@@ -246,6 +246,9 @@
   <data name="MsgAttachmentsNotAllowed.Text" xml:space="preserve">
     <value>Attachments are not allowed.</value>
   </data>
+  <data name="MsgMessageOrRecipientNotFound.Text" xml:space="preserve">
+    <value>Either Message is not found or Recipient is not present for the Message.</value>
+  </data>
   <data name="MsgRecipientLimitExceeded.Text" xml:space="preserve">
     <value>Maximum Recipient Limit Reached. Remove Recipients from To List.</value>
   </data>

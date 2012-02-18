@@ -239,6 +239,7 @@
     <Compile Include="Services\Localization\LocalizationProvider.cs" />
     <Compile Include="Services\Log\EventLog\IEventLogController.cs" />
     <Compile Include="Services\Social\Messaging\Exceptions\AttachmentsNotAllowedException.cs" />
+    <Compile Include="Services\Social\Messaging\Exceptions\MessageOrRecipientNotFound.cs" />
     <Compile Include="Services\Social\Messaging\Exceptions\RecipientLimitExceeded.cs" />
     <Compile Include="Services\Social\Messaging\Exceptions\ThrottlingIntervalNotMetException.cs" />
     <Compile Include="Services\Social\Messaging\MessageArchivedStatus.cs" />

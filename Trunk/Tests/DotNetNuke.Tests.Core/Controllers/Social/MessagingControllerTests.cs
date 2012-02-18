@@ -30,8 +30,10 @@ using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Social.Messaging.Data;
 using DotNetNuke.Services.Social.Messaging;
+using DotNetNuke.Services.Social.Messaging.Exceptions;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
@@ -54,10 +56,12 @@ namespace DotNetNuke.Tests.Core.Controllers
         private Mock<DataProvider> _dataProvider;
         private Mock<IPortalSettings> _portalSettingsWrapper;
         private Mock<RoleProvider> _mockRoleProvider;
+	    private Mock<CachingProvider> _mockCacheProvider;
 
         private DataTable _dtMessages;
         private DataTable _dtMessageAttachment;
         private DataTable _dtMessageRecipients;
+        private DataTable _dtPortalSettings;
         private UserInfo _adminUserInfo;
         private UserInfo _hostUserInfo;
         private UserInfo _user12UserInfo;
@@ -73,7 +77,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockDataService = new Mock<IDataService>();
             _dataProvider = MockComponentProvider.CreateDataProvider();
 		    _mockRoleProvider = MockComponentProvider.CreateRoleProvider();
-			MockComponentProvider.CreateDataCacheProvider();
+            _mockCacheProvider = MockComponentProvider.CreateDataCacheProvider();
 			MockComponentProvider.CreateEventLogController();
 
             _messagingController = new MessagingController(_mockDataService.Object);            
@@ -133,6 +137,8 @@ namespace DotNetNuke.Tests.Core.Controllers
         #endregion
 
         #region Easy Wrapper APIs Tests
+
+        #region CreateMessageTests
 
         [Test]
         [ExpectedException(typeof(ArgumentException))]
@@ -248,8 +254,33 @@ namespace DotNetNuke.Tests.Core.Controllers
             mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, _user12UserInfo);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _user12UserInfo);
         }
+
+        //[Test]
+        [ExpectedException(typeof(AttachmentsNotAllowed))]
+        public void MessagingController_CreateMessage_Thorws_On_Passing_Attachments_When_Its_Not_Enabled()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = Constants.USER_ElevenName, UserID = Constants.USER_ElevenId };            
+
+            var mockDataService = new Mock<IDataService>();
+            var messagingController = new MessagingController(mockDataService.Object);
+
+            //disable caching
+            _mockCacheProvider.Setup(mc => mc.GetItem(It.IsAny<string>())).Returns(null);
+
+            _dtPortalSettings.Clear();
+            _dtPortalSettings.Rows.Add(Constants.PORTALSETTING_MessagingAllowAttachments_Name, Constants.PORTALSETTING_MessagingAllowAttachments_Value_NO, Constants.CULTURE_EN_US);
+            _dataProvider.Setup(d => d.GetPortalSettings(It.IsAny<int>(), It.IsAny<string>())).Returns(_dtPortalSettings.CreateDataReader());
+
+            _dtMessageRecipients.Clear();
+            mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
+
+            //Act
+            var message = messagingController.CreateMessage("subject", "body", null, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _user12UserInfo);
+        }
+
 
         [Test]
         public void MessagingController_CreateMessage_Calls_DataService_SaveSocialMessage_On_Valid_Message()
@@ -383,7 +414,7 @@ namespace DotNetNuke.Tests.Core.Controllers
 
 
             //Act
-            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { 1 }, _adminUserInfo);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
             mockDataService.Verify(ds => ds.SaveSocialMessageAttachment(It.Is<MessageAttachment>(v => v.MessageID == message.MessageID), It.IsAny<int>()));
@@ -403,7 +434,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, _adminUserInfo);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
             mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers.ToString(), It.IsAny<int>()));
@@ -423,7 +454,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, _hostUserInfo);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _hostUserInfo);
 
             //Assert
             mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers.ToString(), It.IsAny<int>()));
@@ -443,7 +474,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role1, role2 }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, _adminUserInfo);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role1, role2 }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
             mockDataService.Verify(ds => ds.CreateSocialMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers + "," + Constants.RoleID_Administrators, It.IsAny<int>()));
@@ -482,7 +513,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, _adminUserInfo);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
             Assert.AreEqual(message.ReplyAllAllowed, false);            
@@ -500,11 +531,77 @@ namespace DotNetNuke.Tests.Core.Controllers
             mockDataService.Setup(md => md.GetSocialMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user }, new List<int> { Constants.RoleID_RegisteredUsers }, user);
+            var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo>(), new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, user);
             
             //Assert
             Assert.AreEqual(message.ReplyAllAllowed, true);
         }
+
+        #endregion
+
+        #region ReplyMessageTests
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void MessagingController_ReplyMessage_Throws_On_Null_Sender()
+        {
+            //Arrange
+
+            //Act
+            _messagingController.ReplyMessage(Constants.SocialMessaging_MessageId_1, "body", null, null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void MessagingController_ReplyMessage_Throws_On_Negative_SenderID()
+        {
+            //Arrange
+            var sender = new UserInfo { DisplayName = "user11" };
+
+            //Act            
+            _messagingController.ReplyMessage(Constants.SocialMessaging_MessageId_1, "body", null, sender);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void MessagingController_ReplyMessage_Throws_On_Null_Subject()
+        {
+            //Arrange
+            var sender = new UserInfo { DisplayName = "user11", UserID = Constants.USER_TenId };
+
+            //Act, Assert
+            _messagingController.ReplyMessage(Constants.SocialMessaging_MessageId_1, null, null, sender);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void MessagingController_ReplyMessage_Throws_On_Empty_Subject()
+        {
+            //Arrange
+            var sender = new UserInfo { DisplayName = "user11", UserID = Constants.USER_TenId };
+
+            //Act, Assert
+            _messagingController.ReplyMessage(Constants.SocialMessaging_MessageId_1, "", null, sender);
+        }
+
+        [Test]
+        [ExpectedException(typeof(AttachmentsNotAllowed))]
+        public void MessagingController_ReplyMessage_Throws_On_Passing_Attachments_When_Its_Not_Enabled()
+        {
+            //Arrange                        
+            var sender = new UserInfo { DisplayName = "user11", UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
+            
+            _dtPortalSettings.Clear();
+            _dtPortalSettings.Rows.Add(Constants.PORTALSETTING_MessagingAllowAttachments_Name, Constants.PORTALSETTING_MessagingAllowAttachments_Value_NO, Constants.CULTURE_EN_US);
+            _dataProvider.Setup(d => d.GetPortalSettings(It.IsAny<int>(), It.IsAny<string>())).Returns(_dtPortalSettings.CreateDataReader());
+
+            //Act, Assert
+            _messagingController.ReplyMessage(Constants.SocialMessaging_MessageId_1, "body", new List<int> { Constants.FOLDER_ValidFileId }, sender);
+        }
+
+        #endregion
+
+        #region Setting Message Status Tests
 
         [Test]
         public void MessagingController_SetReadMessage_Calls_DataService_UpdateSocialMessageReadStatus()
@@ -562,6 +659,9 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.RecipientID, user.UserID, false));
         }   
 
+        #endregion
+
+        
         #endregion
 
 
@@ -636,6 +736,15 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtMessageAttachment.Columns.Add("LastModifiedOnDate", typeof(DateTime));
             _dtMessageAttachment.PrimaryKey = new[] { pkMessageAttachmentID };
             
+             //Portal Settings
+            _dtPortalSettings = new DataTable("PortalSettings");    
+            _dtPortalSettings.Columns.Add("SettingName", typeof(string));
+            _dtPortalSettings.Columns.Add("SettingValue", typeof(string));
+            _dtPortalSettings.Columns.Add("CultureCode", typeof(string));
+            _dtPortalSettings.Columns.Add("CreatedByUserID", typeof(int));
+            _dtPortalSettings.Columns.Add("CreatedOnDate", typeof(DateTime));
+            _dtPortalSettings.Columns.Add("LastModifiedByUserID", typeof(int));
+            _dtPortalSettings.Columns.Add("LastModifiedOnDate", typeof(DateTime));
         }
 
         #endregion
