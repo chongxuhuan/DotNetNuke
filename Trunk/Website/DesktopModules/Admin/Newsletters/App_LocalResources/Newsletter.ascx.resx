@@ -275,4 +275,7 @@
   <data name="NoRecipients.Text" xml:space="preserve">
     <value>No Messages were sent because there are no recipients for this email.</value>
   </data>
+  <data name="cmdCancelPreview.Text" xml:space="preserve">
+    <value>Cancel Preview</value>
+  </data>
 </root>

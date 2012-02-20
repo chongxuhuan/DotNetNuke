@@ -104,6 +104,9 @@
             <td style="width:460px;"><asp:Label id="lblPreviewBody" runat="server"></asp:Label></td>
         </tr>
     </table>
+    <ul class="dnnActions dnnClear">
+        <li><asp:LinkButton ID="cmdCancelPreview" resourcekey="cmdCancelPreview" runat="server" CssClass="dnnPrimaryAction" /></li>
+    </ul>
 </asp:Panel>
 <script language="javascript" type="text/javascript">
 /*globals jQuery, window, Sys */

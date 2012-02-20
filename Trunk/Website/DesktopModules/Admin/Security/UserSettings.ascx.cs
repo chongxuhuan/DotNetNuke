@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 using DotNetNuke.Common;
@@ -30,6 +31,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Security.Membership;
+using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.WebControls;
 
 using DataCache = DotNetNuke.UI.Utilities.DataCache;
@@ -189,6 +191,26 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     key = settingsEditor.Editor.Name;
                     setting = Convert.ToString(settingsEditor.Editor.Value);
+
+                    if (key == "Security_EmailValidation" || key == "Security_UserNameValidation")
+                    {
+                        var valid = true;
+                        try
+                        {
+                            var regex = new Regex(setting);
+                        }
+                        catch
+                        {
+                            valid = false;
+                        }
+                        
+                        if(!valid)
+                        {
+                            AddLocalizedModuleMessage(string.Format(LocalizeString("InvalidRegex"), LocalizeString(key)), ModuleMessage.ModuleMessageType.RedError, true);
+                            return;
+                        }
+                    }
+
                     if (key == "Security_DisplayNameFormat")
                     {
 						//Update the DisplayName of all Users in the portal

@@ -512,6 +512,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 pnlWhitelist.Visible = false;
                 pnlLegacy.Visible = false;
                 lblWarningMessage.Text = Localization.GetString("ZipCriticalError", LocalResourceFile);
+                wizInstall.FindControl("StepNavigationTemplateContainerID").FindControl("nextButtonStep").Visible = false;
             }
             else if (!Installer.IsValid)
             {
@@ -523,6 +524,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
 
                 //Error parsing zip
                 phLoadLogs.Controls.Add(Installer.InstallerInfo.Log.GetLogsTable());
+                wizInstall.FindControl("StepNavigationTemplateContainerID").FindControl("nextButtonStep").Visible = false;
             }
             else if (!string.IsNullOrEmpty(Installer.InstallerInfo.LegacyError))
             {
