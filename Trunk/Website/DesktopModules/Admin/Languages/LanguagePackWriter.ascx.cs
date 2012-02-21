@@ -220,6 +220,11 @@ namespace DotNetNuke.Modules.Admin.Languages
                     break;
             }
             XPathNavigator providerNavigator = configDoc.CreateNavigator().SelectSingleNode("/configuration/dotnetnuke/*/providers/add[@name='" + providerName + "']");
+            if(providerNavigator == null)
+            {
+                providerNavigator = configDoc.CreateNavigator().SelectSingleNode("/configuration/dotnetnuke/*/providers/add[@name='" + Package.Name + "']");
+            }
+
             if (providerNavigator != null)
             {
                 string providerPath = providerNavigator.GetAttribute("providerPath", "");

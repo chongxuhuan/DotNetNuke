@@ -35,5 +35,5 @@ using System.Web.UI;
 [assembly: AssemblyTrademark("DotNetNuke")]
 [assembly: CLSCompliant(true)]
 [assembly: Guid("3D57E77F-F723-48BB-A58C-3FAB63C562D4")]
-[assembly: AssemblyVersion("6.2.0.561")]
+[assembly: AssemblyVersion("6.2.0.568")]
 [assembly: TagPrefix("DotNetNuke.UI.WebControls.CountryListBox", "DotNetNuke")]
