@@ -98,6 +98,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         public void OnPasswordUpdated(PasswordUpdatedEventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (PasswordUpdated != null)
             {
                 PasswordUpdated(this, e);
@@ -114,6 +118,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         public void OnPasswordQuestionAnswerUpdated(PasswordUpdatedEventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (PasswordQuestionAnswerUpdated != null)
             {
                 PasswordQuestionAnswerUpdated(this, e);
@@ -263,6 +271,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdReset_Click(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             string answer = "";
             if (MembershipProviderConfig.RequiresQuestionAndAnswer && !IsAdmin)
             {
@@ -302,6 +314,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdUpdate_Click(Object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             //1. Check New Password and Confirm are the same
             if (txtNewPassword.Text != txtNewConfirm.Text)
             {
@@ -367,6 +383,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdUpdateQA_Click(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (String.IsNullOrEmpty(txtQAPassword.Text))
             {
                 OnPasswordQuestionAnswerUpdated(new PasswordUpdatedEventArgs(PasswordUpdateStatus.PasswordInvalid));

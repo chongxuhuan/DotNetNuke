@@ -30,5 +30,6 @@
 .dnnPortalSignup .dnnFormRadioButtons input[type=radio]{ float: none;clear: none;}
 .dnnPortalSignup .dnnFormRadioButtons label{ float: none;display: inline;}
 
-.dnnPortalSignup .dnnFormItem textarea { min-height: 40px;}]
+.dnnPortalSignup .dnnFormItem textarea { min-height: 40px;}
+.crmHostSettingsSummary ul {padding: 0px 0px 0px 40px;}
 /* ===========   End Admin Settings Module Styling   =========== */

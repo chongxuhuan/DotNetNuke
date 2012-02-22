@@ -38,10 +38,15 @@ namespace DotNetNuke.Web.Mvp
             {
                 OnLoadSettings(this, EventArgs.Empty);
             }
+
+            OnSettingsLoaded();
+
         }
 
         public void UpdateSettings()
         {
+            OnSavingSettings();
+
             if (OnSaveSettings != null)
             {
                 OnSaveSettings(this, EventArgs.Empty);
@@ -56,5 +61,19 @@ namespace DotNetNuke.Web.Mvp
         public event EventHandler OnSaveSettings;
 
         #endregion
+
+        /// <summary>
+        /// The OnSettingsLoaded method is called when the Settings have been Loaded 
+        /// </summary>
+        protected virtual void OnSettingsLoaded()
+        {
+        }
+
+        /// <summary>
+        /// OnSavingSettings method is called just before the Settings are saved
+        /// </summary>
+        protected virtual void OnSavingSettings()
+        {
+        }
     }
 }

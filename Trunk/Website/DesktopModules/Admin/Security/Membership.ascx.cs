@@ -102,6 +102,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         public void OnMembershipAuthorized(EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (MembershipAuthorized != null)
             {
                 MembershipAuthorized(this, e);
@@ -118,6 +122,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         public void OnMembershipPasswordUpdateChanged(EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (MembershipPasswordUpdateChanged != null)
             {
                 MembershipPasswordUpdateChanged(this, e);
@@ -134,6 +142,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         public void OnMembershipUnAuthorized(EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (MembershipUnAuthorized != null)
             {
                 MembershipUnAuthorized(this, e);
@@ -150,6 +162,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         public void OnMembershipUnLocked(EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (MembershipUnLocked != null)
             {
                 MembershipUnLocked(this, e);
@@ -228,6 +244,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdAuthorize_Click(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (Request.IsAuthenticated != true) return;
 
 			//Get the Membership Information from the property editors
@@ -257,6 +277,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdPassword_Click(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (Request.IsAuthenticated != true) return;
 
 			//Get the Membership Information from the property editors
@@ -280,6 +304,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdUnAuthorize_Click(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (Request.IsAuthenticated != true) return;
 
 			//Get the Membership Information from the property editors
@@ -303,6 +331,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdUnLock_Click(Object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (Request.IsAuthenticated != true) return;
 
 			//update the user record in the database

@@ -1239,7 +1239,7 @@ namespace DesktopModules.Admin.Tabs
 
         public string GetConfirmString()
         {
-            return Localization.GetString("ConfirmDelete", LocalResourceFile);
+            return ClientAPI.GetSafeJSString(Localization.GetString("ConfirmDelete", LocalResourceFile));
         }
 
         #endregion

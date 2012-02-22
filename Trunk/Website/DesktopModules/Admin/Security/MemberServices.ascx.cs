@@ -413,6 +413,10 @@ namespace DotNetNuke.Modules.Admin.Security
         /// -----------------------------------------------------------------------------
         public void OnSubscriptionUpdated(SubscriptionUpdatedEventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (SubscriptionUpdated != null)
             {
                 SubscriptionUpdated(this, e);
@@ -469,6 +473,10 @@ namespace DotNetNuke.Modules.Admin.Security
         /// -----------------------------------------------------------------------------
         private void cmdRSVP_Click(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             //Get the RSVP code
             string code = txtRSVPCode.Text;
             bool rsvpCodeExists = false;

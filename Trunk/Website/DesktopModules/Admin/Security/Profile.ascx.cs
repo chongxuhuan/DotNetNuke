@@ -248,6 +248,10 @@ namespace DesktopModules.Admin.Security
         /// -----------------------------------------------------------------------------
         private void cmdUpdate_Click(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (IsValid)
             {
                 var properties = (ProfilePropertyDefinitionCollection) ProfileProperties.DataSource;

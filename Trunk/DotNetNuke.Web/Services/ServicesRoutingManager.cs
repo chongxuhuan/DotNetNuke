@@ -23,7 +23,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using DotNetNuke.Common;
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Instrumentation;
 
 namespace DotNetNuke.Web.Services
@@ -168,10 +171,21 @@ namespace DotNetNuke.Web.Services
             return MapRoute(moduleFolderName, name, url, defaults, null, namespaces);
         }
 
+        /// <summary>
+        /// Sets up the route(s) for DotNetNuke services
+        /// </summary>
+        /// <param name="moduleFolderName">The name of the folder under DesktopModules in which your module resides</param>
+        /// <param name="name">The name of the route</param>
+        /// <param name="url">The parameterized portion of the route</param>
+        /// <param name="namespaces">The namespace(s) in which to locate the controllers for this route</param>
+        /// <returns>A list of all routes that were registered.</returns>
+        public IList<Route> MapRoute(string moduleFolderName, string name, string url, string[] namespaces)
+        {
+            return MapRoute(moduleFolderName, name, url, null, null, namespaces);
+        }
+
         private IEnumerable<string> GetRoutePrefixes()
         {
-            return new string[] {""};
-            
             if(_prefixes == null)
             {
                 List<int> segmentCounts = CountSegmentsInPortalAliases();
@@ -208,15 +222,16 @@ namespace DotNetNuke.Web.Services
 
             var segmentCounts = new List<int>();
 
-            var portalAliasController = new PortalAliasController();
             foreach (PortalInfo portal in portals)
             {
                 var aliases =
-                    portalAliasController.GetPortalAliasByPortalID(portal.PortalID).Values.Cast<PortalAliasInfo>().Select(x => x.HTTPAlias);
+                    TestablePortalAliasController.Instance.GetPortalAliasByPortalId(portal.PortalID).Select(x => x.HTTPAlias);
+
+                aliases = StripApplicationPath(aliases);
 
                 foreach (string alias in aliases)
                 {
-                    int count = alias.Where(c => c == '/').Count();
+                    int count = alias.Count(c => c == '/');
 
                     if (!segmentCounts.Contains(count))
                     {
@@ -225,6 +240,35 @@ namespace DotNetNuke.Web.Services
                 }
             }
             return segmentCounts;
+        }
+
+        private IEnumerable<string> StripApplicationPath(IEnumerable<string> aliases)
+        {
+            var appPath = TestableGlobals.Instance.ApplicationPath;
+
+            if(String.IsNullOrEmpty(appPath))
+            {
+                return aliases;
+            }
+
+            return StripApplicationPathIterable(aliases, appPath);
+        }
+
+        private static IEnumerable<string> StripApplicationPathIterable(IEnumerable<string> aliases, string appPath)
+        {
+            foreach (var alias in aliases)
+            {
+                var i = alias.IndexOf(appPath, StringComparison.OrdinalIgnoreCase);
+
+                if (i > 0)
+                {
+                    yield return alias.Remove(i, appPath.Length);
+                }
+                else
+                {
+                    yield return alias;
+                }
+            }
         }
     }
 }

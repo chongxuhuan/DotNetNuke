@@ -395,6 +395,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdDelete_Click(Object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             string name = User.Username;
             int id = UserId;
             UserInfo user = User;
@@ -410,6 +414,10 @@ namespace DotNetNuke.Modules.Admin.Users
 
         private void cmdRestore_Click(Object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             var name = User.Username;
             var id = UserId;
 
@@ -426,6 +434,10 @@ namespace DotNetNuke.Modules.Admin.Users
 
         private void cmdRemove_Click(Object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             var name = User.Username;
             var id = UserId;
 
@@ -449,6 +461,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void cmdUpdate_Click(Object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (AddUser)
             {
                 if (IsValid)

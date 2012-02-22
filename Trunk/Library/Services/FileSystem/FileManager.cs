@@ -28,6 +28,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
@@ -147,7 +148,7 @@ namespace DotNetNuke.Services.FileSystem
                 Width = Null.NullInteger,
                 Height = Null.NullInteger,
                 ContentType = contentType,
-                Folder = GlobalsWrapper.Instance.GetSubFolderPath(Path.Combine(folder.PhysicalPath, fileName), folder.PortalID),
+                Folder = TestableGlobals.Instance.GetSubFolderPath(Path.Combine(folder.PhysicalPath, fileName), folder.PortalID),
                 FolderId = folder.FolderID
             };
 
@@ -688,6 +689,11 @@ namespace DotNetNuke.Services.FileSystem
 
             if (file.FileName == newFileName) return file;
 
+            if (!IsAllowedExtension(newFileName))
+            {
+                throw new InvalidFileExtensionException(string.Format(Localization.Localization.GetExceptionMessage("AddFileExtensionNotAllowed", "The extension '{0}' is not allowed. The file has not been added."), Path.GetExtension(newFileName)));
+            }
+
             var folder = FolderManager.Instance.GetFolder(file.FolderId);
 
             if (FileExists(folder, newFileName))
@@ -1162,7 +1168,7 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual bool IsImageFile(IFileInfo file)
         {
-            return (GlobalsWrapper.Instance.GetImageFileTypes() + ",").IndexOf(file.Extension.ToLower().Replace(".", "") + ",") > -1;
+            return (Globals.glbImageFileTypes + ",").IndexOf(file.Extension.ToLower().Replace(".", "") + ",") > -1;
         }
 
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>

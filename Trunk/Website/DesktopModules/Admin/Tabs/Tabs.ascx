@@ -9,8 +9,8 @@
 	function setUpTabsModule() {
 		$('#dnnTabsModule').dnnPanels()
 			.find('.dnnFormExpandContent a').dnnExpandAll({
-				expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
-				collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+			    expandText: '<%=DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(Localization.GetString("ExpandAll", Localization.SharedResourceFile))%>',
+			    collapseText: '<%=DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(Localization.GetString("CollapseAll", Localization.SharedResourceFile))%>',
 				targetArea: '#dnnTabsModule'
 			});
 	}

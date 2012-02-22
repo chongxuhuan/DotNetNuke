@@ -298,62 +298,12 @@ namespace DotNetNuke.Modules.Admin.Users
             if (User != null)
             {
 				//If trying to add a SuperUser - check that user is a SuperUser
-                if (AddUser && !IsRegister && IsHostMenu && !UserInfo.IsSuperUser)
+                if (VerifyUserPermissions()==false)
                 {
-                    AddModuleMessage("NoUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
-                    DisableForm();
                     return;
                 }
 				
-                //Check if User is a member of the Current Portal (or a member of the MasterPortal if PortalGroups enabled)
-                if (User.PortalID != Null.NullInteger && User.PortalID != PortalId)
-                {
-                    AddModuleMessage("InvalidUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
-                    DisableForm();
-                    return;
-                }
-				
-                //Check if User is a SuperUser and that the current User is a SuperUser
-                if (User.IsSuperUser && !UserInfo.IsSuperUser)
-                {
-                    AddModuleMessage("NoUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
-                    DisableForm();
-                    return;
-                }
-				
-                if (IsEdit)
-                {
-					//Check if user has admin rights
-                    if (!IsAdmin || (User.IsInRole(PortalSettings.AdministratorRoleName) && !PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)))
-                    {
-                        AddModuleMessage("NotAuthorized", ModuleMessage.ModuleMessageType.YellowWarning, true);
-                        DisableForm();
-                        return;
-                    }
-                }
-                else
-                {
-                    if (!IsUser)
-                    {
-                        if (Request.IsAuthenticated)
-                        {
-                            if (!PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
-                            {
-								//Display current user's profile
-                                Response.Redirect(Globals.NavigateURL(PortalSettings.UserTabId, "", "UserID=" + UserInfo.UserID), true);
-                            }
-                        }
-                        else
-                        {
-                            if ((User.UserID > Null.NullInteger))
-                            {
-                                AddModuleMessage("NotAuthorized", ModuleMessage.ModuleMessageType.YellowWarning, true);
-                                DisableForm();
-                                return;
-                            }
-                        }
-                    }
-                }
+           
 				
                 if (AddUser)
                 {
@@ -403,6 +353,65 @@ namespace DotNetNuke.Modules.Admin.Users
                 AddModuleMessage("NoUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
                 DisableForm();
             }
+        }
+        private bool VerifyUserPermissions()
+        {
+            if (AddUser && !IsRegister && IsHostMenu && !UserInfo.IsSuperUser)
+            {
+                AddModuleMessage("NoUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
+                DisableForm();
+                return false;
+            }
+				
+            //Check if User is a member of the Current Portal (or a member of the MasterPortal if PortalGroups enabled)
+            if (User.PortalID != Null.NullInteger && User.PortalID != PortalId)
+            {
+                AddModuleMessage("InvalidUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
+                DisableForm();
+                return false;
+            }
+				
+            //Check if User is a SuperUser and that the current User is a SuperUser
+            if (User.IsSuperUser && !UserInfo.IsSuperUser)
+            {
+                AddModuleMessage("NoUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
+                DisableForm();
+                return false;
+            }
+            if (IsEdit)
+            {
+                //Check if user has admin rights
+                if (!IsAdmin || (User.IsInRole(PortalSettings.AdministratorRoleName) && !PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)))
+                {
+                    AddModuleMessage("NotAuthorized", ModuleMessage.ModuleMessageType.YellowWarning, true);
+                    DisableForm();
+                    return false;
+                }
+            }
+            else
+            {
+                if (!IsUser)
+                {
+                    if (Request.IsAuthenticated)
+                    {
+                        if (!PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
+                        {
+                            //Display current user's profile
+                            Response.Redirect(Globals.NavigateURL(PortalSettings.UserTabId, "", "UserID=" + UserInfo.UserID), true);
+                        }
+                    }
+                    else
+                    {
+                        if ((User.UserID > Null.NullInteger))
+                        {
+                            AddModuleMessage("NotAuthorized", ModuleMessage.ModuleMessageType.YellowWarning, true);
+                            DisableForm();
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         private void BindMembership()
@@ -715,6 +724,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         protected void cmdRegister_Click(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (((UseCaptcha && ctlCaptcha.IsValid) || (!UseCaptcha)) && ctlUser.IsValid && ((RequireProfile && ctlProfile.IsValid) || (!RequireProfile)))
             {
                 ctlUser.CreateUser();
@@ -766,6 +779,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void MembershipAuthorized(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             try
             {
                 AddModuleMessage("UserAuthorized", ModuleMessage.ModuleMessageType.GreenSuccess, true);
@@ -797,6 +814,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         protected void MembershipPasswordUpdateChanged(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             try
             {
                 AddModuleMessage("UserPasswordUpdateChanged", ModuleMessage.ModuleMessageType.GreenSuccess, true);
@@ -821,6 +842,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void MembershipUnAuthorized(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             try
             {
                 AddModuleMessage("UserUnAuthorized", ModuleMessage.ModuleMessageType.GreenSuccess, true);
@@ -845,6 +870,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void MembershipUnLocked(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             try
             {
                 AddModuleMessage("UserUnLocked", ModuleMessage.ModuleMessageType.GreenSuccess, true);
@@ -868,6 +897,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void PasswordQuestionAnswerUpdated(object sender, Password.PasswordUpdatedEventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             PasswordUpdateStatus status = e.UpdateStatus;
             if (status == PasswordUpdateStatus.Success)
             {
@@ -891,6 +924,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void PasswordUpdated(object sender, Password.PasswordUpdatedEventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             PasswordUpdateStatus status = e.UpdateStatus;
 
             if (status == PasswordUpdateStatus.Success)
@@ -935,6 +972,10 @@ namespace DotNetNuke.Modules.Admin.Users
         /// -----------------------------------------------------------------------------
         private void ProfileUpdateCompleted(object sender, EventArgs e)
         {
+            if (IsUserOrAdmin == false)
+            {
+                return;
+            }
             if (IsUser)
             {
 				//Notify the user that his/her profile was updated

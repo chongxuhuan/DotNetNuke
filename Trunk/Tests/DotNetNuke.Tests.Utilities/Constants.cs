@@ -311,6 +311,7 @@ namespace DotNetNuke.Tests.Utilities
         public const string FOLDER_ValidZipFileName = "file.zip";
         public const string FOLDER_ValidZipFilePath = "C:\\folder\\file.zip";
         public const string FOLDER_OtherValidFileName = "otherfile.txt";
+        public const string FOLDER_OtherInvalidFileNameExtension = "otherfile.asp";
         public const string FOLDER_OtherValidFilePath = "C:\\folder\\otherfile.txt";
         public const string FOLDER_OtherValidFolderName = "otherfolder";
         public const string FOLDER_OtherValidFolderPath = "C:\\otherfolder";

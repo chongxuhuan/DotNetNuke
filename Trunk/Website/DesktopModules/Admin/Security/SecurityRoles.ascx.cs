@@ -613,6 +613,11 @@ namespace DotNetNuke.Modules.Admin.Security
         /// -----------------------------------------------------------------------------
         private void cmdValidate_Click(object sender, EventArgs e)
         {
+            if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) == false)
+            {
+                return;
+            }
+
             if (!String.IsNullOrEmpty(txtUsers.Text))
             {
 				//validate username
@@ -661,6 +666,10 @@ namespace DotNetNuke.Modules.Admin.Security
         /// -----------------------------------------------------------------------------
         private void cmdAdd_Click(Object sender, EventArgs e)
         {
+            if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) == false)
+            {
+                return;
+            }
             try
             {
                 if (Page.IsValid)
@@ -708,6 +717,10 @@ namespace DotNetNuke.Modules.Admin.Security
 
         public void cmdDeleteUserRole_click(object sender, ImageClickEventArgs e)
         {
+            if (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName) == false)
+            {
+                return;
+            }
             try
             {
                 var cmdDeleteUserRole = (ImageButton) sender;

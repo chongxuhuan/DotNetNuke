@@ -86,7 +86,6 @@ namespace DotNetNuke.Security.Roles.Internal
         /// Persists a role to the Data Store
         /// </summary>
         /// <param name="role">The role to persist</param>
-
         /// -----------------------------------------------------------------------------
         void UpdateRole(RoleInfo role);
 

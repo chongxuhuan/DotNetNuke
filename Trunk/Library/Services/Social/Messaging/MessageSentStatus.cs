@@ -1,6 +1,6 @@
 #region Copyright
 // 
-// DotNetNukeÂ® - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -21,19 +21,35 @@
 #region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Web.UI;
+using System.Data;
+using System.Xml.Serialization;
+
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities;
+using DotNetNuke.Entities.Modules;
 
 #endregion
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("3D57E77F-F723-48BB-A58C-3FAB63C562D4")]
-[assembly: AssemblyVersion("6.2.0.589")]
-[assembly: TagPrefix("DotNetNuke.UI.WebControls.CountryListBox", "DotNetNuke")]
+namespace DotNetNuke.Services.Social.Messaging
+{
+    /// <summary>
+    /// Sent Status of a Message - Is this a Sent Message or a Received Message
+    /// </summary>
+    public enum MessageSentStatus
+    {
+        /// <summary>
+        /// This Message was Received
+        /// </summary>
+        Received = 1,
+
+        /// <summary>
+        /// This Message was Sent
+        /// </summary>
+        Sent = 0,
+
+        /// <summary>
+        /// Any Message Status - Both Sent and Received
+        /// </summary>
+        Any = -1
+    }
+}

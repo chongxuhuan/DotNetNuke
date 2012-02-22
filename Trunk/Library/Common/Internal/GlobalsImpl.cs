@@ -1,6 +1,6 @@
 #region Copyright
 // 
-// DotNetNukeÂ® - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -18,22 +18,30 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
-
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Web.UI;
 
-#endregion
+namespace DotNetNuke.Common.Internal
+{
+    public class GlobalsImpl : IGlobals
+    {
+        public string ApplicationPath
+        {
+            get { return Globals.ApplicationPath; }
+        }
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("3D57E77F-F723-48BB-A58C-3FAB63C562D4")]
-[assembly: AssemblyVersion("6.2.0.589")]
-[assembly: TagPrefix("DotNetNuke.UI.WebControls.CountryListBox", "DotNetNuke")]
+        public string GetSubFolderPath(string strFileNamePath, int portalId)
+        {
+            return Globals.GetSubFolderPath(strFileNamePath, portalId);
+        }
+
+        public string LinkClick(string link, int tabId, int moduleId)
+        {
+            return Globals.LinkClick(link, tabId, moduleId);
+        }
+
+        public string ResolveUrl(string url)
+        {
+            return Globals.ResolveUrl(url);
+        }
+    }
+}

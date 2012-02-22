@@ -112,7 +112,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DotNetNukeHttpApplication.cs" />
+    <Compile Include="Mvp\ModuleSettingsPresenterOfT.cs" />
+    <Compile Include="Mvp\ISettingsViewOfT.cs" />
     <Compile Include="Mvp\ProfileModuleViewBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Mvp\SettingsModel.cs" />
+    <Compile Include="Mvp\SettingsView.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Services\AssemblyWrapper.cs" />

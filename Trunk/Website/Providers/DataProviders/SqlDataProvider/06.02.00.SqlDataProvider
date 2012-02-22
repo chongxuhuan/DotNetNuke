@@ -1827,9 +1827,10 @@ BEGIN
 CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageRecipients(
 	[RecipientID] [int] IDENTITY(1,1) NOT NULL,
 	[MessageID] [int] NOT NULL,
-	[UserID] [int] NULL,
-	[Read] [bit] NULL,
-	[Archived] [bit] NULL,
+	[UserID] [int] NOT NULL,
+	[Read] [bit] NOT NULL,
+	[Archived] [bit] NOT NULL,
+	[Sent] [bit] NOT NULL,
 	[CreatedByUserID] [int] NULL,
 	[CreatedOnDate] [datetime] NULL,
 	[LastModifiedByUserID] [int] NULL,
@@ -1840,7 +1841,7 @@ CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageRecipients(
 	)
 )
 
-CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Social_MessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}Social_MessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC)		
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Social_MessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}Social_MessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC, [Sent] ASC)		
 
 ALTER TABLE {databaseOwner}[{objectQualifier}Social_MessageRecipients]  
 	ADD CONSTRAINT [FK_{objectQualifier}Social_MessageRecipients_{objectQualifier}Social_Messages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}Social_Messages] ([MessageID]) ON DELETE CASCADE
@@ -1992,6 +1993,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
     @UserID int,
     @Read bit,
 	@Archived bit,  
+	@Sent bit,  
 	@CreateUpdateUserID INT    
 AS 
     IF ( @RecipientID = -1 ) 
@@ -2001,6 +2003,7 @@ AS
 					[UserID],
 					[Read],	
 					[Archived],				
+					[Sent],							
                     [CreatedByUserID],
                     [CreatedOnDate],
                     [LastModifiedByUserID],
@@ -2011,6 +2014,7 @@ AS
 					@UserID,
 					@Read,            
 					@Archived,            			
+					@Sent,            						
                     @CreateUpdateUserID , -- CreatedBy - int
                     GETDATE() , -- CreatedOn - datetime
                     @CreateUpdateUserID , -- LastModifiedBy - int
@@ -2026,6 +2030,7 @@ AS
 					[UserID] = @UserID,
 					[Read] = @Read,
 					[Archived] = @Archived,					
+					[Sent] = @Sent,								
                     LastModifiedByUserID = @CreateUpdateUserID,
                     LastModifiedOnDate = GETDATE()
             WHERE   RecipientID = @RecipientID
@@ -2062,6 +2067,7 @@ AS
 			[UserID],
 			[Read],	
 			[Archived],		
+			[Sent],			
             [CreatedByUserID],
             [CreatedOnDate],
             [LastModifiedByUserID],
@@ -2071,7 +2077,8 @@ AS
 			  @MessageID, 	
 			  UserID,
 			  0,            
-			  0, 	  
+			  0, 	
+			  0,			    
               @CreateUpdateUserID , -- CreatedBy - int
               @currentdate , -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
@@ -2139,19 +2146,21 @@ AS
 	IF (@ReplyAllAllowed = 0) --original message was sent to a Role, reply will be sent to the original sender only
 	BEGIN		
 		INSERT INTO {databaseOwner}{objectQualifier}Social_MessageRecipients
-		        ( MessageID ,
-		          UserID ,
-		          [Read] ,
-		          Archived ,
-		          CreatedByUserID ,
-		          CreatedOnDate ,
-		          LastModifiedByUserID ,
+		        ( [MessageID],
+		          [UserID],
+		          [Read],
+		          [Archived],
+				  [Sent],          
+		          CreatedByUserID,
+		          CreatedOnDate,
+		          LastModifiedByUserID,
 		          LastModifiedOnDate
 		        )
-		VALUES  ( @NewMessageID , -- MessageID - int
-		          @OriginalSenderUserID , -- UserID - int
-		          0 , -- Read - bit
-		          0 , -- Archived - bit
+		VALUES  ( @NewMessageID, -- MessageID - int
+		          @OriginalSenderUserID, -- UserID - int
+		          0, -- Read - bit
+		          0, -- Archived - bit
+				  0, -- Sent - bit          
 		          @CreateUpdateUserID , -- CreatedByUserID - int
 		          GETDATE() , -- CreatedOnDate - datetime
 		          @CreateUpdateUserID , -- LastModifiedByUserID - int
@@ -2165,6 +2174,7 @@ AS
 			[UserID],
 			[Read],	
 			[Archived],		
+			[Sent],			
             [CreatedByUserID],
             [CreatedOnDate],
             [LastModifiedByUserID],
@@ -2175,6 +2185,7 @@ AS
 			  UserID,
 			  0,            
 			  0, 	  
+		      0,	  
               @CreateUpdateUserID , -- CreatedBy - int
               GETDATE() , -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
@@ -2193,7 +2204,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipient] 
     @RecipientID INT
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [RecipientID] = @RecipientID 
 
@@ -2206,7 +2217,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser] 
     @UserID INT
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [UserID] = @UserID 
 
@@ -2219,7 +2230,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage] 
     @MessageID INT    
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [MessageID] = @MessageID 	 
 
@@ -2231,13 +2242,15 @@ GO
 
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessageAndUser] 
     @MessageID INT,
-    @UserID INT  
+    @UserID INT,
+    @Sent bit = 0   	  
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
 	WHERE  [MessageID] = @MessageID 
 	 AND   [UserID] = @UserID 
-
+	 AND (([Sent] = @Sent) or (@Sent is null AND [Sent] IS NOT null))	
+	 
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteSocialMessageRecipient]') AND type in (N'P', N'PC'))
@@ -3629,17 +3642,18 @@ GO
 
 /* Add GetInbox Procedure */
 /************************************/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetInbox]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetInbox]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetMessageItems]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetMessageItems]
 GO
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetInbox]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMessageItems]
 	@UserID          int,
 	@PageIndex       int,
 	@PageSize        int,
 	@SortField       nvarchar(25) = 'CreatedOnDate',
 	@SortAscending   bit = 0, 		
 	@Read            bit = 0,
-	@Archived        bit = 0	
+	@Archived        bit = 0,
+	@Sent            bit = 0			
 AS
 BEGIN
 
@@ -3648,6 +3662,7 @@ SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_Mess
 	WHERE UserID = @UserID
 	AND ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
 	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))	
+	AND (([Sent] = @Sent) or (@Sent is null AND [Sent] IS NOT null))	
 
 
 -- Set the page bounds
@@ -3658,7 +3673,7 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 
 ;WITH inboxItems  AS
 (
-	SELECT  DISTINCT [RecipientID], [Subject], CAST(BODY as nvarchar(150)) AS Body, [SenderUserID], 
+	SELECT  [RecipientID], [Subject], [Body], [SenderUserID], 
 			[Read], [Archived], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
 			mr.[MessageID],	
 			mr.[CreatedByUserID], mr.[CreatedOnDate], 
@@ -3677,47 +3692,12 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 	WHERE UserID = @UserID
 	AND ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
 	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))	
+	AND (([Sent] = @Sent) or (@Sent is null AND [Sent] IS NOT null))	
 )	
 SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
 order by RowNumber ASC
 END
 GO
-
-/* Add GetSentbox Procedure */
-/************************************/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSentbox]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSentbox]
-GO
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSentbox]
-	@SenderUserID int,
-	@PageIndex    int,
-	@PageSize     int
-AS
-BEGIN
-
---Return total message count
-SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_Messages WHERE SenderUserID = @SenderUserID
-
--- Set the page bounds
-DECLARE @PageLowerBound INT, @PageUpperBound INT;
-
-SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
-SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize	
-
-;WITH sentboxItems  AS
-(
-	SELECT [MessageID], [To], [From], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID],
-           [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate],
-		   (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = SocialMessages.MessageID) AS AttachmentCount,
-		   ROW_NUMBER() OVER (ORDER BY MessageID DESC) AS RowNumber                  
-    FROM	{databaseOwner}{objectQualifier}Social_Messages AS SocialMessages  	        
-   	WHERE   SenderUserID = @SenderUserID	
-)	
-SELECT * from sentboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
-order by RowNumber ASC
-END
-GO
-
 
 /* Add UpdateSocialMessageReadStatus Procedure */
 /***********************************************/

@@ -22,13 +22,12 @@ using System;
 using System.Data;
 using System.Drawing;
 using System.IO;
-
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.FileSystem;
-using DotNetNuke.Services.FileSystem.Internal;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
@@ -85,7 +84,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             FolderPermissionControllerWrapper.RegisterInstance(_folderPermissionController.Object);
             PortalControllerWrapper.RegisterInstance(_portalController.Object);
             FolderMappingController.RegisterInstance(_folderMappingController.Object);
-            GlobalsWrapper.RegisterInstance(_globals.Object);
+            TestableGlobals.SetTestableInstance(_globals.Object);
             CBOWrapper.RegisterInstance(_cbo.Object);
             PathUtils.RegisterInstance(_pathUtils.Object);
 
@@ -857,6 +856,19 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _mockFileManager.Setup(mfm => mfm.FileExists(_folderInfo.Object, Constants.FOLDER_OtherValidFileName)).Returns(true);
 
             _mockFileManager.Object.RenameFile(_fileInfo.Object, Constants.FOLDER_OtherValidFileName);
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidFileExtensionException))]
+        public void RenameFile_Does_Not_Call_FolderProvider_RenameFile_When_InvalidExtensionType()
+        {
+            _fileInfo.Setup(fi => fi.FileName).Returns(Constants.FOLDER_ValidFileName);
+            _fileInfo.Setup(fi => fi.PortalId).Returns(Constants.CONTENT_ValidPortalId);
+            _fileInfo.Setup(fi => fi.FolderId).Returns(Constants.FOLDER_ValidFolderId);
+
+            _folderManager.Setup(fm => fm.GetFolder(Constants.FOLDER_ValidFolderId)).Returns(_folderInfo.Object);
+
+            _mockFileManager.Object.RenameFile(_fileInfo.Object, Constants.FOLDER_OtherInvalidFileNameExtension);
         }
 
         [Test]

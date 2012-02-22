@@ -120,7 +120,14 @@ namespace DotNetNuke.Web.UI.WebControls
 		{
 			get
 			{
-				return Globals.IsHostTab(PortalSettings.ActiveTab.TabID);
+				var isHost = Globals.IsHostTab(PortalSettings.ActiveTab.TabID);
+                //if not host tab but current edit user is a host user, then return true
+                if(!isHost && User != null && User.IsSuperUser)
+                {
+                    isHost = true;
+                }
+
+			    return isHost;
 			}
 		}
 
@@ -957,7 +964,9 @@ namespace DotNetNuke.Web.UI.WebControls
 						if (folder == null)
 						{
 							//Add User folder
-							var user = UserController.GetUserById(PortalSettings.PortalId, PortalSettings.UserId);
+                            var user = User ?? UserController.GetCurrentUserInfo();
+                            //fix user's portal id
+						    user.PortalID = PortalId;
                             folder = ((FolderManager)folderManager).AddUserFolder(user);
 						}
 					}

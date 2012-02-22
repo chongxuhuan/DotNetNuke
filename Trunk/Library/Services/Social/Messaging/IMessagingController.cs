@@ -32,7 +32,7 @@ namespace DotNetNuke.Services.Social.Messaging
     {
         #region Messaging Business APIs
 
-        MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId);
+        MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId, MessageSentStatus sentStatus);
 
         ///<summary>How long a user needs to wait before user is allowed sending the next message</summary>
         ///<returns>Time in seconds. Returns zero if user has never sent a message</returns>
@@ -59,14 +59,27 @@ namespace DotNetNuke.Services.Social.Messaging
         void MarkUnArchived(int messageRecipientId, int userId);
 
         IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
-        IList<Message> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
+
+        IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);
+
+        IList<MessageItem> GetRecentInbox(int userId, ref int totalRecords);
+
+        IList<MessageItem> GetRecentInbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
+
+
+        IList<MessageItem> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
+
+        IList<MessageItem> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);
+
+        IList<MessageItem> GetRecentSentbox(int userId, ref int totalRecords);
+
+        IList<MessageItem> GetRecentSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
+
+
         IList<MessageItem> GetArchivedMessages(int userId, int pageIndex, int pageSize, ref int totalRecords);
 
 
         //Gets the latest 10 messages
-        IList<MessageItem> GetRecentMessages(int userId, ref int totalRecords);
-
-        IList<MessageItem> GetRecentMessages(int userId, int pageIndex, int pageSize, ref int totalRecords);
 
         Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
 

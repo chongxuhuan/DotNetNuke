@@ -18,38 +18,17 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 using System;
+using DotNetNuke.Framework;
 
-using DotNetNuke.Common;
-using DotNetNuke.ComponentModel;
-
-namespace DotNetNuke.Services.FileSystem.Internal
+namespace DotNetNuke.Common.Internal
 {
-    public class GlobalsWrapper : ComponentBase<IGlobals, GlobalsWrapper>, IGlobals
+    public class TestableGlobals : ControllerBase<IGlobals, TestableGlobals>
     {
-        public string GetImageFileTypes()
+        protected override Func<IGlobals> GetFactory()
         {
-            return Globals.glbImageFileTypes;
-        }
-
-        public string GetProtectedExtension()
-        {
-            return Globals.glbProtectedExtension;
-        }
-
-        public string GetSubFolderPath(string strFileNamePath, int portalId)
-        {
-            return Globals.GetSubFolderPath(strFileNamePath, portalId);
-        }
-
-        public string LinkClick(string link, int tabId, int moduleId)
-        {
-            return Globals.LinkClick(link, tabId, moduleId);
-        }
-
-        public string ResolveUrl(string url)
-        {
-            return Globals.ResolveUrl(url);
+            return () => new GlobalsImpl();
         }
     }
 }

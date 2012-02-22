@@ -651,8 +651,8 @@
   <data name="valExpiryDate.ErrorMessage" xml:space="preserve">
     <value>Invalid expiry date</value>
   </data>
-  <data name="Performance.Text" xml:space="preserve">
-    <value>Performance</value>
+  <data name="ClientResourceManagement.Text" xml:space="preserve">
+    <value>Client Resource Management</value>
   </data>
   <data name="plEnableCompositeFiles.Help" xml:space="preserve">
     <value>Composite files are combinations of resources (JavaScript and CSS) created to reduce the number of file requests by the browser. This will significantly lower the page loading speed.</value>
@@ -660,11 +660,11 @@
   <data name="plEnableCompositeFiles.Text" xml:space="preserve">
     <value>Enable Composite Files</value>
   </data>
-  <data name="plCdfVersion.Help" xml:space="preserve">
-    <value>Version!</value>
+  <data name="plCrmVersion.Help" xml:space="preserve">
+    <value>This is the version number of the client resources on your site.</value>
   </data>
-  <data name="plCdfVersion.Text" xml:space="preserve">
-    <value>Version</value>
+  <data name="plCrmVersion.Text" xml:space="preserve">
+    <value>Site Version</value>
   </data>
   <data name="MessagingSettings.Text" xml:space="preserve">
     <value>Messaging Settings</value>
@@ -685,7 +685,7 @@
     <value>Enable Profanity Filters:</value>
   </data>
   <data name="plMsgProfanityFilters.Help" xml:space="preserve">
-    <value>Enabling of this setting automatically converts Profane (inappropriate) words into something equivalent. The list is managed at Host->List->ProfanityFilters or at Admin->List->ProfanityFilters.</value>
+    <value>Enabling of this setting automatically converts Profane (inappropriate) words into something equivalent. The list is managed at Host-&gt;List-&gt;ProfanityFilters or at Admin-&gt;List-&gt;ProfanityFilters.</value>
   </data>
   <data name="MsgProfanityFiltersYes.Text" xml:space="preserve">
     <value>Yes</value>
@@ -704,5 +704,35 @@
   </data>
   <data name="MsgAllowAttachmentsNo.Text" xml:space="preserve">
     <value>No</value>
-  </data>  
+  </data>
+  <data name="CrmHostSettingsSummary.Text" xml:space="preserve">
+    <value>The application dictates the default behavior, but if you choose to do so, you may configure the way your site behaves with regards to client resources differently.
+If you choose to use the existing application-level settings, the following settings will be used:
+&lt;ul&gt;
+  &lt;li&gt;EnableCompositeFiles: {0}&lt;/li&gt;
+  &lt;li&gt;Version: {1}&lt;/li&gt;
+  &lt;li&gt;MinifyCss: {2}&lt;/li&gt;
+  &lt;li&gt;MinifyJs: {3}&lt;/li&gt;
+&lt;/ul&gt;</value>
+    <comment>{0} = Enable Composite Files Value (true or false)
+{1} = Version Value (number)
+{2} = Minify CSS Value (true or false)
+{3} = Minify JS Value (true or false)</comment>
+  </data>
+  <data name="plUseApplicationCrmSettings.Help" xml:space="preserve">
+    <value>When this option is enabled, this site will use the default settings for client resources. Please see the specific settings above.</value>
+  </data>
+  <data name="plUseApplicationCrmSettings.Text" xml:space="preserve">
+    <value>Use Application-Level Settings</value>
+  </data>
+  <data name="IncrementCrmVersionButton.Text" xml:space="preserve">
+    <value>Increment Site Version</value>
+  </data>
+  <data name="IncrementCrmVersionConfirm.Text" xml:space="preserve">
+    <value>&lt;p&gt;This action will force all site visitors to download new versions of CSS and JavaScript files. You should only do this if you are certain that the files have changed and you want those changes to be reflected on the client\'s browser.&lt;/p&gt;&lt;p&gt;Are you sure you want to increment the version number for your site?&lt;/p&gt;</value>
+    <comment>This will be used from JS, make sure to escape any quotes.</comment>
+  </data>
+  <data name="IncrementCrmVersionError.Text" xml:space="preserve">
+    <value>There was an error incrementing the Client Resource version.</value>
+  </data>
 </root>

@@ -35,7 +35,6 @@ using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
-using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Social.Messaging.Data;
 using DotNetNuke.Services.Social.Messaging.Exceptions;
 
@@ -69,7 +68,6 @@ namespace DotNetNuke.Services.Social.Messaging
 
 
         private readonly IDataService _dataService;
-        private readonly IEventLogController _eventLogController;
 
         #region Constructors
 
@@ -92,9 +90,9 @@ namespace DotNetNuke.Services.Social.Messaging
 
         #region Messaging Business APIs
 
-        public MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId)
+        public MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId, MessageSentStatus sentStatus)
         {
-            return CBO.FillObject<MessageRecipient>(_dataService.GetSocialMessageRecipientByMessageAndUser(messageRecipientId, userId));
+            return CBO.FillObject<MessageRecipient>(_dataService.GetSocialMessageRecipientByMessageAndUser(messageRecipientId, userId, sentStatus));
         }
 
         ///<summary> How long a user needs to wait before user is allowed sending the next message</summary>
@@ -107,7 +105,7 @@ namespace DotNetNuke.Services.Social.Messaging
             if (interval > 0 && !IsAdminOrHost(sender))
             {
                 var totalRecords = 0;
-                var messages = GetSentbox(sender.UserID, 0, 1, ref totalRecords);
+                var messages = GetRecentSentbox(sender.UserID, 0, 1, ref totalRecords);
                 if (totalRecords > 0)
                 {
                     waitTime = interval - DateTime.Now.Subtract(messages.First().CreatedOnDate).Seconds;
@@ -142,28 +140,44 @@ namespace DotNetNuke.Services.Social.Messaging
 
         public IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
         {
-            return _dataService.GetInbox(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, readStatus, archivedStatus);
+            return _dataService.GetMessageItems(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
         }
 
-        public IList<Message> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
-        {
-            return _dataService.GetSentbox(userId, pageIndex, pageSize, ref totalRecords);
-        }
-
-        public IList<MessageItem> GetRecentMessages(int userId, ref int totalRecords)
-        {
-            return GetRecentMessages(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords);
-        }
-
-        public IList<MessageItem> GetRecentMessages(int userId, int pageIndex, int pageSize, ref int totalRecords)
-        {
-            return GetRecentMessages(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
-        }
-
-        public IList<MessageItem> GetRecentMessages(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
+        public IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
         {
             var messages = GetInbox(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
             return messages;
+        }
+
+        public IList<MessageItem> GetRecentInbox(int userId, ref int totalRecords)
+        {
+            return GetRecentInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords);
+        }
+
+        public IList<MessageItem> GetRecentInbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
+        {
+            return GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
+        }
+
+        public IList<MessageItem> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
+        {
+            return _dataService.GetMessageItems(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Sent);
+        }
+
+        public IList<MessageItem> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
+        {
+            var messages = GetSentbox(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
+            return messages;
+        }
+
+        public IList<MessageItem> GetRecentSentbox(int userId, ref int totalRecords)
+        {
+            return GetRecentSentbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords);
+        }
+
+        public IList<MessageItem> GetRecentSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
+        {
+            return GetSentbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
         }
 
         public IList<MessageItem> GetArchivedMessages(int userId, int pageIndex, int pageSize, ref int totalRecords)
@@ -171,7 +185,6 @@ namespace DotNetNuke.Services.Social.Messaging
             var messages = GetInbox(userId, pageIndex, pageSize, ref totalRecords, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived);
             return messages;
         }
-
 
         public Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)
         {
@@ -259,6 +272,18 @@ namespace DotNetNuke.Services.Social.Messaging
 
             message.MessageID = _dataService.SaveSocialMessage(message, UserController.GetCurrentUserInfo().UserID);
 
+            //create sent record
+            var sendRecord = new MessageRecipient
+                                 {
+                                     MessageID = message.MessageID,
+                                     UserID = sender.UserID,
+                                     Read = false,
+                                     Sent = true,
+                                     RecipientID = Null.NullInteger
+                                 };
+
+            _dataService.SaveSocialMessageRecipient(sendRecord, UserController.GetCurrentUserInfo().UserID);
+
             //associate attachments
             if (fileIDs != null)
             {
@@ -283,7 +308,7 @@ namespace DotNetNuke.Services.Social.Messaging
             //send message to each User - this should be called after CreateSocialMessageRecipientsForRole.
             if (users != null)
             {
-                foreach (var recipient in from user in users where GetSocialMessageRecipient(message.MessageID, user.UserID) == null select new MessageRecipient {MessageID = message.MessageID, UserID = user.UserID, Read = false, RecipientID = Null.NullInteger})
+                foreach (var recipient in from user in users where GetSocialMessageRecipient(message.MessageID, user.UserID, MessageSentStatus.Received) == null select new MessageRecipient {MessageID = message.MessageID, UserID = user.UserID, Read = false, Sent = false, RecipientID = Null.NullInteger})
                 {
                     _dataService.SaveSocialMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
                 }

@@ -30,6 +30,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Controllers;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Security;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
@@ -113,6 +114,30 @@ namespace DotNetNuke.Entities.Modules
             get
             {
                 return IsEditable;
+            }
+        }
+
+        /// <summary>
+        /// gets whether this is the current user or admin
+        /// </summary>
+        /// <value></value>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        protected bool IsUserOrAdmin
+        {
+            get
+            {
+                if (!IsUser)
+                {
+                    if (Request.IsAuthenticated)
+                    {
+                        if (!PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return true;
             }
         }
 

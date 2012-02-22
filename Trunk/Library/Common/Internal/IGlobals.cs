@@ -1,6 +1,6 @@
-﻿#region Copyright
+#region Copyright
 // 
-// DotNetNuke® - http://www.dotnetnuke.com
+// DotNetNuke� - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -18,14 +18,41 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-namespace DotNetNuke.Services.FileSystem.Internal
+using System;
+
+namespace DotNetNuke.Common.Internal
 {
+    
     public interface IGlobals
     {
-        string GetImageFileTypes();
-        string GetProtectedExtension();
-        string GetSubFolderPath(string strFileNamePath, int portalId);
+        /// <summary>
+        /// Gets the application path.
+        /// </summary>
+        string ApplicationPath { get; }
+
+        /// <summary>
+        /// Returns the folder path under the root for the portal 
+        /// </summary>
+        /// <param name="fileNamePath">The folder the absolute path</param>
+        /// <param name="portalId">Portal Id.</param>
+        string GetSubFolderPath(string fileNamePath, int portalId);
+
+        /// <summary>
+        /// Gets Link click url.
+        /// </summary>
+        /// <param name="link">The link.</param>
+        /// <param name="tabId">The tab ID.</param>
+        /// <param name="moduleId">The module ID.</param>
+        /// <returns>Formatted url.</returns>
         string LinkClick(string link, int tabId, int moduleId);
+
+        /// <summary>
+        /// Generates the correctly formatted url
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="url">The url to format.</param>
+        /// <returns>The formatted (resolved) url</returns>
         string ResolveUrl(string url);
     }
 }

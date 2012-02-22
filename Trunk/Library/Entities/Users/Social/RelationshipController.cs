@@ -752,7 +752,7 @@ namespace DotNetNuke.Entities.Users.Social
 	    /// </summary>
         /// <param name="currentUser"> User to determine correct visibility permissions</param>
 	    /// <param name="filterUser"> User which could be used in conjunction with other parameters to filter the list in terms of relationship to.</param>
-	    /// <param name="role">Filter the list of user based on their role.</param>
+	    /// <param name="filterRole">Filter the list of user based on their role.</param>
 	    /// <param name="relationshipType">Filter the list of user based on their relationship to the current user [currUser parameter].</param>
 	    /// <param name="propertyNamesValues"> A collection of Key Value pairs of property names and values to filter upon.</param>
 	    /// <param name="additionalParameters"> A collection of Key Value pairs of more fields to filter upon</param>

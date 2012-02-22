@@ -3363,6 +3363,7 @@ namespace DotNetNuke.Services.Upgrade
                 string password = XmlUtils.GetNodeValue(node.CreateNavigator(), "password");
                 string email = XmlUtils.GetNodeValue(node.CreateNavigator(), "email");
                 string locale = XmlUtils.GetNodeValue(node.CreateNavigator(), "locale");
+                string updatePassword = XmlUtils.GetNodeValue(node.CreateNavigator(), "updatepassword");
 
                 superUser = new UserInfo
                                 {
@@ -3381,6 +3382,11 @@ namespace DotNetNuke.Services.Upgrade
                 superUser.Profile.LastName = lastName;
                 superUser.Profile.PreferredLocale = locale;
                 superUser.Profile.PreferredTimeZone = TimeZoneInfo.Local;
+
+                if(updatePassword.ToLowerInvariant() == "true")
+                {
+                    superUser.Membership.UpdatePassword = true;
+                }
             }
             return superUser;
         }
@@ -3591,10 +3597,6 @@ namespace DotNetNuke.Services.Upgrade
 
                 // parse SuperUser if Available
                 UserInfo superUser = GetSuperUser(xmlDoc, true);
-                if (superUser.Membership.Password.Contains("host"))
-                {
-                    superUser.Membership.UpdatePassword = true;
-                }
                 UserController.CreateUser(ref superUser);
 
                 // parse File List if available

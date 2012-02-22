@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Instrumentation;
@@ -193,7 +194,7 @@ namespace DotNetNuke.Services.FileSystem
                 rootFolder = portalSettings.HomeDirectory;
             }
 
-            return GlobalsWrapper.Instance.ResolveUrl(rootFolder + file.Folder + file.FileName);
+            return TestableGlobals.Instance.ResolveUrl(rootFolder + file.Folder + file.FileName);
         }
 
         public override string GetFolderProviderIconPath()

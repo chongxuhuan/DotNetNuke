@@ -642,10 +642,8 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			string strMessage = Null.NullString;
 			DateTime expiryDate = Null.NullDate;
 
-			if (!objUser.IsSuperUser)
-			{
-				validStatus = UserController.ValidateUser(objUser, PortalId, ignoreExpiring);
-			}
+			validStatus = UserController.ValidateUser(objUser, PortalId, ignoreExpiring);
+
 			if (PasswordConfig.PasswordExpiry > 0)
 			{
 				expiryDate = objUser.Membership.LastPasswordChangeDate.AddDays(PasswordConfig.PasswordExpiry);

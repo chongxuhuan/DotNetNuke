@@ -130,6 +130,9 @@
     </Compile>
     <Compile Include="Common\HttpContextSource.cs" />
     <Compile Include="Common\Initialize.cs" />
+    <Compile Include="Common\Internal\GlobalsImpl.cs" />
+    <Compile Include="Common\Internal\IGlobals.cs" />
+    <Compile Include="Common\Internal\TestableGlobals.cs" />
     <Compile Include="Common\Lists\EntryInfo.cs" />
     <Compile Include="Common\Lists\ListController.cs" />
     <Compile Include="Common\Lists\ListEntryCollection.cs" />
@@ -184,6 +187,9 @@
     <Compile Include="ComponentModel\ComponentLifeStyleType.cs" />
     <Compile Include="ComponentModel\ComponentType.cs" />
     <Compile Include="ComponentModel\ComponentTypeCollection.cs" />
+    <Compile Include="Entities\Portals\Internal\IPortalAliasController.cs" />
+    <Compile Include="Entities\Portals\Internal\PortalAliasControllerImpl.cs" />
+    <Compile Include="Entities\Portals\Internal\TestablePortalAliasController.cs" />
     <Compile Include="Framework\ControllerBase.cs" />
     <Compile Include="ComponentModel\IComponentBuilder.cs" />
     <Compile Include="ComponentModel\IComponentInstaller.cs" />
@@ -238,6 +244,7 @@
     <Compile Include="Services\Localization\ILocalizationProvider.cs" />
     <Compile Include="Services\Localization\LocalizationProvider.cs" />
     <Compile Include="Services\Log\EventLog\IEventLogController.cs" />
+    <Compile Include="Services\Social\Messaging\MessageSentStatus.cs" />
     <Compile Include="Services\Social\Messaging\Exceptions\AttachmentsNotAllowedException.cs" />
     <Compile Include="Services\Social\Messaging\Exceptions\MessageOrRecipientNotFound.cs" />
     <Compile Include="Services\Social\Messaging\Exceptions\RecipientLimitExceeded.cs" />
@@ -624,12 +631,10 @@
     <Compile Include="Services\FileSystem\Wrappers\DirectoryWrapper.cs" />
     <Compile Include="Services\FileSystem\Wrappers\FileWrapper.cs" />
     <Compile Include="Services\FileSystem\Wrappers\FolderPermissionControllerWrapper.cs" />
-    <Compile Include="Services\FileSystem\Wrappers\GlobalsWrapper.cs" />
     <Compile Include="Services\FileSystem\Wrappers\ICBO.cs" />
     <Compile Include="Services\FileSystem\Wrappers\IDirectory.cs" />
     <Compile Include="Services\FileSystem\Wrappers\IFile.cs" />
     <Compile Include="Services\FileSystem\Wrappers\IFolderPermissionController.cs" />
-    <Compile Include="Services\FileSystem\Wrappers\IGlobals.cs" />
     <Compile Include="Services\FileSystem\Wrappers\IUserController.cs" />
     <Compile Include="Services\FileSystem\Wrappers\PortalControllerWrapper.cs" />
     <Compile Include="Services\FileSystem\Wrappers\UserControllerWrapper.cs" />

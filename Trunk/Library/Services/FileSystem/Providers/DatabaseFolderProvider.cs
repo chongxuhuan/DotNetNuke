@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Services.FileSystem.Internal;
@@ -180,7 +181,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             Requires.NotNull("file", file);
 
-            return GlobalsWrapper.Instance.LinkClick(String.Format("fileid={0}", file.FileId), Null.NullInteger, Null.NullInteger);
+            return TestableGlobals.Instance.LinkClick(String.Format("fileid={0}", file.FileId), Null.NullInteger, Null.NullInteger);
         }
 
         public override string GetFolderProviderIconPath()

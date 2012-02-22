@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,22 +18,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
-
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Web.UI;
 
-#endregion
+using WebFormsMvp;
 
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("3D57E77F-F723-48BB-A58C-3FAB63C562D4")]
-[assembly: AssemblyVersion("6.2.0.589")]
-[assembly: TagPrefix("DotNetNuke.UI.WebControls.CountryListBox", "DotNetNuke")]
+namespace DotNetNuke.Web.Mvp
+{
+    public interface ISettingsView<TModel> : IModuleViewBase, IView<TModel> where TModel : class, new()
+    {
+        event EventHandler OnLoadSettings;
+
+        event EventHandler OnSaveSettings;
+    }
+}

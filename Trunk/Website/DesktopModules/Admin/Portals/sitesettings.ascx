@@ -142,15 +142,21 @@
 					<asp:Label ID="lblHomeDirectory" runat="server" />
 				</div>
 			</fieldset>        
-            <h2 id="dnnSitePanel-Performance" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Performance")%></a></h2>
+            <h2 id="dnnSitePanel-Performance" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("ClientResourceManagement")%></a></h2>
             <fieldset>
+                <div class="dnnFormMessage dnnFormInfo crmHostSettingsSummary"><asp:Literal runat="server" ID="CrmHostSettingsSummary"></asp:Literal></div>
                 <div class="dnnFormItem">
+                    <dnn:Label ID="plUseApplicationCrmSettings" runat="server" ControlName="chkUseApplicationCrmSettings" />
+                    <asp:CheckBox runat="server" id="chkUseApplicationCrmSettings" AutoPostBack="true" />
+                </div>
+                <div class="dnnFormItem" runat="server" id="EnableCompositeFilesRow">
                     <dnn:Label ID="plEnableCompositeFiles" runat="server" ControlName="chkEnableCompositeFiles" />
                     <asp:CheckBox runat="server" id="chkEnableCompositeFiles" />
                 </div>
-                <div class="dnnFormItem">
-                    <dnn:Label ID="plCdfVersion" runat="server" ControlName="txtCdfVersion" />
-                    <asp:TextBox runat="server" id="txtCdfVersion" />
+                <div class="dnnFormItem" runat="server" id="CrmVersionRow">
+                    <dnn:Label runat="server" id="plCrmVersion" />
+                    <asp:Label runat="server" id="CrmVersionLabel" />
+                    <asp:LinkButton runat="server" CssClass="dnnSecondaryAction" ID="IncrementCrmVersionButton" ResourceKey="IncrementCrmVersionButton" />
                 </div>
             </fieldset>
 			<h2 id="dnnSitePanel-SecuritySettings" class="dnnFormSectionHead"><a href=""><%=LocalizeString("SecuritySettings")%></a></h2>
@@ -367,61 +373,74 @@
 <script language="javascript" type="text/javascript">
 /*globals jQuery, window, Sys */
 (function ($, Sys) {
-	function setupDnnSiteSettings() {
-		$('#dnnSiteSettings').dnnTabs().dnnPanels();
-		$('#siteSkinSettings,#editSkinSettings').dnnPreview({
-			skinSelector: 'select:eq(0)',
-			containerSelector: 'select:eq(1)',
-			baseUrl: '//<%= this.PortalAlias.HTTPAlias %>',
-			noSelectionMessage: '<%= LocalizeString("PreviewNoSelectionMessage.Text") %>',
-			alertCloseText: '<%= Localization.GetString("Close.Text", Localization.SharedResourceFile)%>',
-			alertOkText: '<%= Localization.GetString("Ok.Text", Localization.SharedResourceFile)%>'
-		});
-		$('#ssBasicSettings .dnnFormExpandContent a').dnnExpandAll({ expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea: '#ssBasicSettings' });
-		$('#ssAdvancedSettings .dnnFormExpandContent a').dnnExpandAll({ expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea: '#ssAdvancedSettings' });
-		$('.dnnDeleteSite').dnnConfirm({
-			text: '<%= LocalizeString("DeleteMessage") %>',
-			yesText: '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
-			noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
-			title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
-		});
-		$('#<%= cmdRestore.ClientID %>').dnnConfirm({
-			text: '<%= LocalizeString("RestoreCCSMessage") %>',
-			yesText: '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
-			noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
-			title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
-		});
+    function setupDnnSiteSettings() {
+        $('#dnnSiteSettings').dnnTabs().dnnPanels();
+        $('#siteSkinSettings,#editSkinSettings').dnnPreview({
+            skinSelector: 'select:eq(0)',
+            containerSelector: 'select:eq(1)',
+            baseUrl: '//<%= this.PortalAlias.HTTPAlias %>',
+            noSelectionMessage: '<%= LocalizeString("PreviewNoSelectionMessage.Text") %>',
+            alertCloseText: '<%= Localization.GetString("Close.Text", Localization.SharedResourceFile)%>',
+            alertOkText: '<%= Localization.GetString("Ok.Text", Localization.SharedResourceFile)%>'
+        });
+        $('#ssBasicSettings .dnnFormExpandContent a').dnnExpandAll({ expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea: '#ssBasicSettings' });
+        $('#ssAdvancedSettings .dnnFormExpandContent a').dnnExpandAll({ expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea: '#ssAdvancedSettings' });
 
-		$('#submitToSearchEngine').click(function (e) {
-			e.preventDefault();
-			var searchEngine = $("select[id$='cboSearchEngine']").val();
+        var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
+        var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
+        var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
 
-			if (searchEngine.indexOf("google") > 0) {
-				searchEngine += "&dq=";
-				var name = $("input[id$='txtPortalName']").val();
-				if (name != "") {
-					searchEngine += encodeURI(name);
-				}
-			    var description = $("textarea[id$='txtDescription']").val();
-				if (description != "") {
-					searchEngine += encodeURI(" " + description);
-				}
-			    var keyWords = $("textarea[id$='txtKeyWords']").val();
-				if (keyWords != "") {
-					searchEngine += encodeURI(" " + keyWords);
-				}
-				searchEngine += "&submit=Add+URL";
-			}
-			window.open(searchEngine, 'new');
-		});
-	}
+        $('.dnnDeleteSite').dnnConfirm({
+            text: '<%= LocalizeString("DeleteMessage") %>',
+            yesText: yesText,
+            noText: noText,
+            title: titleText
+        });
+        
+        $('#<%= cmdRestore.ClientID %>').dnnConfirm({
+            text: '<%= LocalizeString("RestoreCCSMessage") %>',
+            yesText: yesText,
+            noText: noText,
+            title: titleText
+        });
 
-	$(document).ready(function () {
-		setupDnnSiteSettings();
-		Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-			setupDnnSiteSettings();
-		});
-	});
+        $('#<%= IncrementCrmVersionButton.ClientID %>').dnnConfirm({
+            text: '<%= LocalizeString("IncrementCrmVersionConfirm") %>',
+            yesText: yesText,
+            noText: noText,
+            title: titleText
+        });
+
+        $('#submitToSearchEngine').click(function (e) {
+            e.preventDefault();
+            var searchEngine = $("select[id$='cboSearchEngine']").val();
+
+            if (searchEngine.indexOf("google") > 0) {
+                searchEngine += "&dq=";
+                var name = $("input[id$='txtPortalName']").val();
+                if (name != "") {
+                    searchEngine += encodeURI(name);
+                }
+                var description = $("textarea[id$='txtDescription']").val();
+                if (description != "") {
+                    searchEngine += encodeURI(" " + description);
+                }
+                var keyWords = $("textarea[id$='txtKeyWords']").val();
+                if (keyWords != "") {
+                    searchEngine += encodeURI(" " + keyWords);
+                }
+                searchEngine += "&submit=Add+URL";
+            }
+            window.open(searchEngine, 'new');
+        });
+    }
+
+    $(document).ready(function () {
+        setupDnnSiteSettings();
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+            setupDnnSiteSettings();
+        });
+    });
 
 } (jQuery, window.Sys));
 </script>   
