@@ -27,6 +27,7 @@ using System.Linq;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
+using DotNetNuke.Services.Social.Messaging.Views;
 
 #endregion
 
@@ -65,7 +66,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteScalar<int>("CreateSocialMessageReply", parentMessageId, body, senderUserId, createUpdateUserId);
         }
 
-        public IList<MessageItem> GetMessageItems(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
+        public IList<MessageItemView> GetMessageItems(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus, ref int totalRecords)
         {
             object read = null;
             object archived = null;
@@ -119,13 +120,32 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                     totalRecords = Convert.ToInt32(dr["TotalRecords"]);
                 }
                 dr.NextResult();
-                return CBO.FillCollection<MessageItem>(dr);
+                return CBO.FillCollection<MessageItemView>(dr);
             }
             finally
             {
                 CBO.CloseDataReader(dr, true);
             }
-        }      
+        }
+
+        public IList<MessageItemView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, string sortColumn, bool @sortAscending, ref int totalRecords)
+        {
+            IDataReader dr = _provider.ExecuteReader("GetMessageThread", messageId, userId, pageIndex, pageSize, sortColumn, sortAscending);
+
+            try
+            {
+                while (dr.Read())
+                {
+                    totalRecords = Convert.ToInt32(dr["TotalRecords"]);
+                }
+                dr.NextResult();
+                return CBO.FillCollection<MessageItemView>(dr);
+            }
+            finally
+            {
+                CBO.CloseDataReader(dr, true);
+            }
+        }
 
         public void UpdateSocialMessageReadStatus(int recipientId, int userId, bool read)
         {

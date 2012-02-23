@@ -25,6 +25,7 @@ using System.Xml;
 
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Services.Social.Messaging.Views;
 
 namespace DotNetNuke.Services.Social.Messaging
 {
@@ -58,26 +59,27 @@ namespace DotNetNuke.Services.Social.Messaging
         void MarkArchived(int messageRecipientId, int userId);
         void MarkUnArchived(int messageRecipientId, int userId);
 
-        IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
+        IList<MessageItemView> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, ref int totalRecords);
 
-        IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);
+        IList<MessageItemView> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);
 
-        IList<MessageItem> GetRecentInbox(int userId, ref int totalRecords);
+        IList<MessageItemView> GetRecentInbox(int userId, ref int totalRecords);
 
-        IList<MessageItem> GetRecentInbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
+        IList<MessageItemView> GetRecentInbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
 
+        IList<MessageItemView> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, ref int totalRecords);
 
-        IList<MessageItem> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
+        IList<MessageItemView> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);
 
-        IList<MessageItem> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);
+        IList<MessageItemView> GetRecentSentbox(int userId, ref int totalRecords);
 
-        IList<MessageItem> GetRecentSentbox(int userId, ref int totalRecords);
+        IList<MessageItemView> GetRecentSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
 
-        IList<MessageItem> GetRecentSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
+        IList<MessageItemView> GetArchivedMessages(int userId, int pageIndex, int pageSize, ref int totalRecords);
 
+        IList<MessageThreadView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, ref int totalRecords);
 
-        IList<MessageItem> GetArchivedMessages(int userId, int pageIndex, int pageSize, ref int totalRecords);
-
+        IList<MessageThreadView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, ref int totalRecords);
 
         //Gets the latest 10 messages
 

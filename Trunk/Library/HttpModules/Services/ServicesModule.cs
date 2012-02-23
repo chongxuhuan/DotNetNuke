@@ -22,6 +22,7 @@ using System;
 using System.Globalization;
 using System.Text;
 using System.Web;
+using DotNetNuke.Common;
 using DotNetNuke.HttpModules.Services.Internal;
 
 namespace DotNetNuke.HttpModules.Services
@@ -31,6 +32,16 @@ namespace DotNetNuke.HttpModules.Services
         public void Init(HttpApplication context)
         {
             context.PreSendRequestHeaders += CheckForReal401;
+            context.BeginRequest += InitDnn;
+        }
+
+        private void InitDnn(object sender, EventArgs e)
+        {
+            var app = sender as HttpApplication;
+            if (app != null)
+            {
+                Initialize.Init(app);
+            }
         }
 
         private static void CheckForReal401(object sender, EventArgs e)

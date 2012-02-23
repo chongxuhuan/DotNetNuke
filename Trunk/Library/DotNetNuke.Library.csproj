@@ -190,6 +190,9 @@
     <Compile Include="Entities\Portals\Internal\IPortalAliasController.cs" />
     <Compile Include="Entities\Portals\Internal\PortalAliasControllerImpl.cs" />
     <Compile Include="Entities\Portals\Internal\TestablePortalAliasController.cs" />
+    <Compile Include="Entities\Portals\Internal\TestablePortalController.cs" />
+    <Compile Include="Entities\Users\Social\Internal\IRelationshipController.cs" />
+    <Compile Include="Entities\Users\Social\Internal\RelationshipControllerImpl.cs" />
     <Compile Include="Framework\ControllerBase.cs" />
     <Compile Include="ComponentModel\IComponentBuilder.cs" />
     <Compile Include="ComponentModel\IComponentInstaller.cs" />
@@ -251,7 +254,9 @@
     <Compile Include="Services\Social\Messaging\Exceptions\ThrottlingIntervalNotMetException.cs" />
     <Compile Include="Services\Social\Messaging\MessageArchivedStatus.cs" />
     <Compile Include="Services\Social\Messaging\MessageReadStatus.cs" />
-    <Compile Include="Services\Social\Messaging\MessageItem.cs" />
+    <Compile Include="Services\Social\Messaging\Views\MessageFileView.cs" />
+    <Compile Include="Services\Social\Messaging\Views\MessageThreadView.cs" />
+    <Compile Include="Services\Social\Messaging\Views\MessageItemView.cs" />
     <Compile Include="Services\Social\Messaging\MessagingController.cs" />
     <Compile Include="Services\Social\Messaging\Data\DataService.cs" />
     <Compile Include="Services\Social\Messaging\Data\IDataService.cs" />
@@ -399,7 +404,6 @@
     <Compile Include="Entities\Users\Social\DefaultRelationshipTypes.cs" />
     <Compile Include="Entities\Users\Social\Exceptions\UserRelationshipBlockedException.cs" />
     <Compile Include="Entities\Users\Social\Exceptions\InvalidRelationshipTypeException.cs" />
-    <Compile Include="Entities\Users\Social\IRelationshipController.cs" />
     <Compile Include="Entities\Users\Social\RelationshipController.cs" />
     <Compile Include="Entities\Users\Social\RelationshipDirection.cs" />
     <Compile Include="Entities\Users\Social\RelationshipType.cs" />

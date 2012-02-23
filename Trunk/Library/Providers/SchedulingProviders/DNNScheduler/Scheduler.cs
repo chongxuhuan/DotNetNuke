@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 
@@ -784,6 +785,8 @@ namespace DotNetNuke.Services.Scheduling.DNNScheduling
             {
                 try
                 {
+                    AppDomain.CurrentDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal);
+
                     _activeThreadCount = 0;
 
                     //This is where the action begins.

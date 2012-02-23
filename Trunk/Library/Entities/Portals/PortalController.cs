@@ -1292,9 +1292,7 @@ namespace DotNetNuke.Entities.Portals
 
                         try
                         {
-                            //create default portal relationships
-                            var relationshipController = new RelationshipController();
-                            relationshipController.CreateDefaultRelationshipsForPortal(portalId);
+                            RelationshipController.Instance.CreateDefaultRelationshipsForPortal(portalId);
                         }
                         catch (Exception Exc)
                         {

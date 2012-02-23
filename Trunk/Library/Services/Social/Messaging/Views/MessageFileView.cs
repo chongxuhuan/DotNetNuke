@@ -1,6 +1,6 @@
-﻿#region Copyright
+#region Copyright
 // 
-// DotNetNuke® - http://www.dotnetnuke.com
+// DotNetNuke� - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -18,37 +18,48 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
+using System.Xml.Serialization;
 
-using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.ComponentModel;
-using DotNetNuke.Entities.Portals;
-using DotNetNuke.Entities.Users.Social.Data;
-using DotNetNuke.Entities.Users.Social.Internal;
-using DotNetNuke.Framework;
-using DotNetNuke.Security.Roles.Internal;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.Services.Log.EventLog;
+using DotNetNuke.Entities;
+using DotNetNuke.Entities.Modules;
 
 #endregion
 
-namespace DotNetNuke.Entities.Users.Social
+namespace DotNetNuke.Services.Social.Messaging.Views
 {
-	/// <summary>
-	/// Business Layer to manage Relationships. Also contains CRUD methods.
-	/// </summary>
-    public class RelationshipController : ControllerBase<IRelationshipController, RelationshipController>
+    /// -----------------------------------------------------------------------------
+    /// Project:    DotNetNuke
+    /// Namespace:  DotNetNuke.Entities.Messaging.Views
+    /// Class:      MessageFileView
+    /// -----------------------------------------------------------------------------
+    /// <summary>
+    /// The MessageFileView class details about the attachment
+    /// </summary>
+    /// -----------------------------------------------------------------------------
+    [Serializable]
+    public class MessageFileView 
     {
-        protected override Func<IRelationshipController> GetFactory()
-        {
-            return () => new RelationshipControllerImpl();
-        }
+        /// <summary>
+        /// The name of the file with extension
+        /// </summary>
+        [XmlAttribute]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Size of the File with Unit, e.g. 100 B, 12 KB, 200 MB, etc.
+        /// </summary>
+        [XmlAttribute]
+        public string Size { get; set; }
+
+        /// <summary>
+        /// Url of the file to download
+        /// </summary>
+        [XmlAttribute]
+        public string Url { get; set; }
     }
 }

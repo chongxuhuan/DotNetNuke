@@ -29,6 +29,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Social;
 using DotNetNuke.Entities.Users.Social.Data;
+using DotNetNuke.Entities.Users.Social.Internal;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
@@ -86,7 +87,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var mockEventLogController = new Mock<IEventLogController>();
 
             //Act, Assert
-            Assert.Throws<ArgumentNullException>(() => new RelationshipController(null, mockEventLogController.Object));
+            Assert.Throws<ArgumentNullException>(() => new RelationshipControllerImpl(null, mockEventLogController.Object));
         }
 
         [Test]
@@ -96,7 +97,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var mockDataService = new Mock<IDataService>();
 
             //Act, Assert
-            Assert.Throws<ArgumentNullException>(() => new RelationshipController(mockDataService.Object, null));
+            Assert.Throws<ArgumentNullException>(() => new RelationshipControllerImpl(mockDataService.Object, null));
         }
 
         #endregion
@@ -726,7 +727,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             mockDataService.Setup(ds => ds.SaveUserRelationship(It.IsAny<UserRelationship>(), It.IsAny<int>()))
                                 .Returns(Constants.SOCIAL_UserRelationshipIDUser10User11);
             var mockEventLogController = new Mock<IEventLogController>();
-            var relationshipController = new RelationshipController(mockDataService.Object, mockEventLogController.Object);
+            var relationshipController = new RelationshipControllerImpl(mockDataService.Object, mockEventLogController.Object);
             var userRelationship = new UserRelationship
                                             {
                                                 UserRelationshipId = Constants.SOCIAL_UserRelationshipIDUser10User11,
@@ -868,7 +869,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             mockDataService.Setup(ds => ds.SaveUserRelationshipPreference(It.IsAny<UserRelationshipPreference>(), It.IsAny<int>()))
                                 .Returns(Constants.SOCIAL_PrefereceIDForUser11);
             var mockEventLogController = new Mock<IEventLogController>();
-            var relationshipController = new RelationshipController(mockDataService.Object, mockEventLogController.Object);
+            var relationshipController = new RelationshipControllerImpl(mockDataService.Object, mockEventLogController.Object);
             var preference = new UserRelationshipPreference()
                                             {
                                                 PreferenceId = Constants.SOCIAL_PrefereceIDForUser11,
@@ -1441,22 +1442,22 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                         .Returns(Constants.LOCALIZATION_UserRelationship_Updated);
         }
 
-        private RelationshipController CreateRelationshipController()
+        private RelationshipControllerImpl CreateRelationshipController()
         {
             var mockDataService = new Mock<IDataService>();
             return CreateRelationshipController(mockDataService);
         }
 
-        private RelationshipController CreateRelationshipController(Mock<IDataService> mockDataService)
+        private RelationshipControllerImpl CreateRelationshipController(Mock<IDataService> mockDataService)
         {
             var mockEventLogController = new Mock<IEventLogController>();
-            return new RelationshipController(mockDataService.Object, mockEventLogController.Object);
+            return new RelationshipControllerImpl(mockDataService.Object, mockEventLogController.Object);
         }
 
-        private RelationshipController CreateRelationshipController(Mock<IEventLogController> mockEventLogController)
+        private RelationshipControllerImpl CreateRelationshipController(Mock<IEventLogController> mockEventLogController)
         {
             var mockDataService = new Mock<IDataService>();
-            return new RelationshipController(mockDataService.Object, mockEventLogController.Object);
+            return new RelationshipControllerImpl(mockDataService.Object, mockEventLogController.Object);
         }
 
         private void SetupDataTables()

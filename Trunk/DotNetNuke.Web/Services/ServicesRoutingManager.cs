@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using DotNetNuke.Common;
 using DotNetNuke.Common.Internal;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Portals.Internal;
@@ -43,7 +42,6 @@ namespace DotNetNuke.Web.Services
         {
             _routes = routes;
             TypeLocator = new TypeLocator();
-            PortalController = new PortalController();
         }
 
         //todo don't really want this public
@@ -108,8 +106,6 @@ namespace DotNetNuke.Web.Services
         }
 
         internal ITypeLocator TypeLocator { get; set; }
-
-        internal IPortalController PortalController { get; set; }
 
         internal static bool IsValidServiceRouteMapper(Type t)
         {
@@ -218,7 +214,7 @@ namespace DotNetNuke.Web.Services
 
         private List<int> CountSegmentsInPortalAliases()
         {
-            var portals = PortalController.GetPortals();
+            var portals = TestablePortalController.Instance.GetPortals();
 
             var segmentCounts = new List<int>();
 

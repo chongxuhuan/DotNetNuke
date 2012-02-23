@@ -63,7 +63,7 @@ namespace DotNetNuke.Entities.Profile
                     var relationships = lists[1].Substring(2).TrimEnd(',').Split(',');
                     foreach (var relationship in relationships)
                     {
-                        Relationship userRelationship = relationshipController.GetRelationship(Int32.Parse(relationship));
+                        Relationship userRelationship = RelationshipController.Instance.GetRelationship(Int32.Parse(relationship));
                         RelationshipVisibilities.Add(userRelationship);
                     }
                 }

@@ -27,7 +27,6 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Internal;
 using DotNetNuke.Entities.Portals;
-using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Tabs.Internal;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.HttpModules.Membership;
@@ -36,15 +35,10 @@ namespace DotNetNuke.Web.Services
 {
     public class DnnController : Controller
     {
-        private AuthenticatorBase _basicAuthenticator;
-        private AuthenticatorBase _digestAuthenticator;
-
         public DnnController()
         {
             ActionInvoker = new DnnControllerActionInvoker();
             DefaultAuthLevel = ServiceAuthLevel.Host;
-            _basicAuthenticator = new BasicAuthenticator();
-            _digestAuthenticator = new DigetstAuthenticator();
         }
 
         protected override void Initialize(RequestContext requestContext)
@@ -59,12 +53,12 @@ namespace DotNetNuke.Web.Services
         {
             if (!context.Request.IsAuthenticated)
             {
-                _basicAuthenticator.TryToAuthenticate(context, portalId);
+                BasicAuthenticator.Instance.TryToAuthenticate(context, portalId);
             }
 
             if (!context.Request.IsAuthenticated)
             {
-                _digestAuthenticator.TryToAuthenticate(context, portalId);
+                DigestAuthenticator.Instance.TryToAuthenticate(context, portalId);
             }
 
             MembershipModule.AuthenticateRequest(context, true /*allowUnknownExtension*/);
@@ -151,17 +145,5 @@ namespace DotNetNuke.Web.Services
         /// Default Authorization level required to call access the methods of this controller
         /// </summary>
         public ServiceAuthLevel DefaultAuthLevel { get; set; }
-
-        /// <summary>
-        /// Injection point for BasicAuth Authenticator
-        /// <remarks>Should be used for unit test purposes only</remarks> 
-        /// </summary>
-        public AuthenticatorBase BasicAuthenticator { set { _basicAuthenticator = value; } }
-
-        /// <summary>
-        /// Injection point for BasicAuth Authenticator
-        /// <remarks>Should be used for unit test purposes only</remarks> 
-        /// </summary>
-        public AuthenticatorBase DigestAuthenticator { set { _digestAuthenticator = value; } }
     }
 }

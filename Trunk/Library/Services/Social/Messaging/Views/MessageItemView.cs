@@ -30,19 +30,19 @@ using DotNetNuke.Entities.Modules;
 
 #endregion
 
-namespace DotNetNuke.Services.Social.Messaging
+namespace DotNetNuke.Services.Social.Messaging.Views
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.Entities.Messaging
-    /// Class:      MessageRecipient
+    /// Namespace:  DotNetNuke.Entities.Messaging.Views
+    /// Class:      MessageItemView
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageItem class contains combined details of Message and Message Recipient
+    /// The MessageItemView class contains combined details of Message and Message Recipient
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageItem : MessageRecipient, IHydratable
+    public class MessageItemView : MessageRecipient, IHydratable
     {
         /// <summary>
         /// To list for the message. This information is saved for faster display of To list in the message

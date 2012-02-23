@@ -2606,6 +2606,17 @@ namespace DotNetNuke.Services.Upgrade
             }
         }
 
+        private static void UpgradeToVersion614()
+        {
+            //reset host users to not force password as default
+            var hostUsers = UserController.GetUsers(false, true, Null.NullInteger);
+            foreach (UserInfo user in hostUsers)
+            {
+                user.Membership.UpdatePassword = false;
+                UserController.UpdateUser(Null.NullInteger, user);
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -4034,6 +4045,9 @@ namespace DotNetNuke.Services.Upgrade
                     case "6.1.3":
                         UpgradeToVersion613();
                         break;
+                    case "6.1.4":
+                        UpgradeToVersion614();
+                        break;
                     case "6.2.0":
                         UpgradeToVersion620();
                         break;
@@ -4069,12 +4083,13 @@ namespace DotNetNuke.Services.Upgrade
         private static void UpgradeToVersion620()
         {
             //add host (system) profanityfilter list
+            const string listName = "ProfanityFilter";
             var listController = new ListController();
 			var entry = new ListEntryInfo();
 			{
 				entry.DefinitionID = Null.NullInteger;
                 entry.PortalID = Null.NullInteger;
-				entry.ListName = "ProfanityFilter";
+			    entry.ListName = listName;
 				entry.Value = "ReplaceWithNothing";
 				entry.Text = "FindThisText";
                 entry.SystemList = true;
@@ -4089,13 +4104,12 @@ namespace DotNetNuke.Services.Upgrade
             {
                 entry.PortalID = portal.PortalID;
                 entry.SystemList = false;
+                entry.ListName = listName + "-" + portal.PortalID;
                 listController.AddListEntry(entry);
 
                 //also create default social relationship entries for the portal
-                relationshipController.CreateDefaultRelationshipsForPortal(portal.PortalID);
+                RelationshipController.Instance.CreateDefaultRelationshipsForPortal(portal.PortalID);
             }
-
-
         }
 
         public static string UpdateConfig(string providerPath, Version version, bool writeFeedback)

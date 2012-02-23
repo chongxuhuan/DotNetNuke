@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,20 +18,17 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using DotNetNuke.Framework;
 
-#endregion
-
-[assembly: AssemblyTitle("DotNetNuke")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: CLSCompliant(true)]
-[assembly: Guid("4A7E138F-185C-4119-90C2-0AD00FB67E72")]
-[assembly: AssemblyVersion("6.2.0.604")]
+namespace DotNetNuke.Entities.Portals.Internal
+{
+    public class TestablePortalController : ControllerBase<IPortalController, TestablePortalController>
+    {
+        protected override Func<IPortalController> GetFactory()
+        {
+            return () => new PortalController();
+        }
+    }
+}

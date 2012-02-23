@@ -35,5 +35,23 @@ namespace DotNetNuke.Entities.Modules.Internal
         /// <param name="tabId">The tab ID.</param>
         /// <returns>module info</returns>
         ModuleInfo GetModule(int moduleId, int tabId);
+
+        /// <summary>
+        /// Adds or updates a module's setting value
+        /// </summary>
+        /// <param name="moduleId">ID of the tabmodule, the setting belongs to</param>
+        /// <param name="settingName">name of the setting property</param>
+        /// <param name="settingValue">value of the setting (String).</param>
+        /// <remarks>Empty SettingValue will remove the setting</remarks>
+        void UpdateModuleSetting(int moduleId, string settingName, string settingValue);
+
+        /// <summary>
+        /// Adds or updates a tab module's setting value
+        /// </summary>
+        /// <param name="tabModuleId">ID of the tabmodule, the setting belongs to</param>
+        /// <param name="settingName">name of the setting property</param>
+        /// <param name="settingValue">value of the setting (String).</param>
+        /// <remarks>Empty SettingValue will remove the setting</remarks>
+        void UpdateTabModuleSetting(int tabModuleId, string settingName, string settingValue);
     }
 }

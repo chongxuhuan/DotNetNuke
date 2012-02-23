@@ -124,9 +124,11 @@
     <Compile Include="Services\AssemblyWrapper.cs" />
     <Compile Include="Services\AuthenticatorBase.cs" />
     <Compile Include="Services\BasicAuthenticator.cs" />
+    <Compile Include="Services\BasicAuthenticatorImpl.cs" />
     <Compile Include="Services\DigestAuthentication.cs" />
     <Compile Include="Services\DigestAuthenticationRequest.cs" />
-    <Compile Include="Services\DigetstAuthenticator.cs" />
+    <Compile Include="Services\DigestAuthenticator.cs" />
+    <Compile Include="Services\DigestAuthenticatorImpl.cs" />
     <Compile Include="Services\DNNAuthorizeAttribute.cs" />
     <Compile Include="Services\AuthorizeAttributeBase.cs" />
     <Compile Include="Services\DNNController.cs" />

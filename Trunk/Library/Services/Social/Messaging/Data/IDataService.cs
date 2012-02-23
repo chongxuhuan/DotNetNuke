@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using DotNetNuke.Services.Social.Messaging.Views;
 
 #endregion
 
@@ -37,7 +38,8 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         IDataReader GetSocialMessagesBySender();
         void DeleteSocialMessage(int messageId);
 
-        IList<MessageItem> GetMessageItems(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);        
+        IList<MessageItemView> GetMessageItems(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus, ref int totalRecords);
+        IList<MessageItemView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);        
         void UpdateSocialMessageReadStatus(int recipientId, int userId, bool read);
         void UpdateSocialMessageArchivedStatus(int recipientId, int userId, bool archived);
         int CreateMessageReply(int parentMessageId, string body, int senderUserId, int createUpdateUserId);

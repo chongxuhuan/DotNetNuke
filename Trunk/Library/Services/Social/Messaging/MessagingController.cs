@@ -37,6 +37,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Social.Messaging.Data;
 using DotNetNuke.Services.Social.Messaging.Exceptions;
+using DotNetNuke.Services.Social.Messaging.Views;
 
 #endregion
 
@@ -138,51 +139,74 @@ namespace DotNetNuke.Services.Social.Messaging
             _dataService.UpdateSocialMessageArchivedStatus(messageRecipientId, userId, false);
         }
 
-        public IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
+        public IList<MessageItemView> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, ref int totalRecords)
         {
-            return _dataService.GetMessageItems(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
+            return _dataService.GetMessageItems(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received, ref totalRecords);
         }
 
-        public IList<MessageItem> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
+        public IList<MessageItemView> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
         {
-            var messages = GetInbox(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
+            var messages = GetInbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived, ref totalRecords);
             return messages;
         }
 
-        public IList<MessageItem> GetRecentInbox(int userId, ref int totalRecords)
+        public IList<MessageItemView> GetRecentInbox(int userId, ref int totalRecords)
         {
             return GetRecentInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords);
         }
 
-        public IList<MessageItem> GetRecentInbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
+        public IList<MessageItemView> GetRecentInbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
         {
             return GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
         }
 
-        public IList<MessageItem> GetSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
+        public IList<MessageItemView> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, ref int totalRecords)
         {
-            return _dataService.GetMessageItems(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Sent);
+            return _dataService.GetMessageItems(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Sent, ref totalRecords);
         }
 
-        public IList<MessageItem> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
+        public IList<MessageItemView> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
         {
-            var messages = GetSentbox(userId, pageIndex, pageSize, ref totalRecords, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
+            var messages = GetSentbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived, ref totalRecords);
             return messages;
         }
 
-        public IList<MessageItem> GetRecentSentbox(int userId, ref int totalRecords)
+        public IList<MessageItemView> GetRecentSentbox(int userId, ref int totalRecords)
         {
             return GetRecentSentbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords);
         }
 
-        public IList<MessageItem> GetRecentSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
+        public IList<MessageItemView> GetRecentSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
         {
             return GetSentbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
         }
 
-        public IList<MessageItem> GetArchivedMessages(int userId, int pageIndex, int pageSize, ref int totalRecords)
+        public IList<MessageThreadView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
         {
-            var messages = GetInbox(userId, pageIndex, pageSize, ref totalRecords, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived);
+            var threads = new List<MessageThreadView>();
+
+            var messages = _dataService.GetMessageThread(messageId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
+            foreach (var messageItemView in messages)
+            {
+                var thread = new MessageThreadView();
+                thread.MessageItem = messageItemView;
+                if (messageItemView.AttachmentCount > 0)
+                {
+                    //TODO Add Attachment details from File Providers                    
+                }                
+            }
+
+            return threads;
+        }
+
+        public IList<MessageThreadView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, ref int totalRecords)
+        {
+            return GetMessageThread(messageId, userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
+        }
+
+        public IList<MessageItemView> GetArchivedMessages(int userId, int pageIndex, int pageSize, ref int totalRecords)
+        {
+            var messages = GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived, ref totalRecords);
             return messages;
         }
 

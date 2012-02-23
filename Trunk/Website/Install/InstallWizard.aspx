@@ -339,9 +339,9 @@
                         <asp:Label ID="providersErrorLabel" runat="server" />
                     </asp:WizardStep>
                     <asp:WizardStep ID="adminUserStep" runat="server" Title="Portal" AllowReturn="false">
-                        <h2><asp:Label ID="adminUserTitleLabel" runat="server" /></h2>
+                        <h2><asp:Label ID="adminUserTitleLabel" runat="server" ResourceKey="HostUserTitle" /></h2>
                         <h3><asp:Label ID="lblAdminUser" runat="server" /></h3>
-                        <asp:Label ID="adminUserDetailLabel" runat="Server" />
+                        <asp:Label ID="adminUserDetailLabel" runat="Server" ResourceKey="HostUserDetail" />
                         <dnn:WizardUser ID="usrAdmin" runat="server" />
                         <hr />
                         <h3><asp:Label ID="lblPortal" runat="server" /></h3>

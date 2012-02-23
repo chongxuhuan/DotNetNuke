@@ -27,5 +27,15 @@ namespace DotNetNuke.Entities.Modules.Internal
         {
             return _legacyController.GetModule(moduleId, tabId);
         }
+
+        public void UpdateModuleSetting(int moduleId, string settingName, string settingValue)
+        {
+            _legacyController.UpdateModuleSetting(moduleId, settingName, settingName);
+        }
+
+        public void UpdateTabModuleSetting(int tabModuleId, string settingName, string settingValue)
+        {
+            _legacyController.UpdateTabModuleSetting(tabModuleId, settingName, settingValue);
+        }
     }
 }

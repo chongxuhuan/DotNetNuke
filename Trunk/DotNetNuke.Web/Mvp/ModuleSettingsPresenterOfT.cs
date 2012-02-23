@@ -24,7 +24,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 
-using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Modules.Internal;
 
 namespace DotNetNuke.Web.Mvp
 {
@@ -54,6 +54,18 @@ namespace DotNetNuke.Web.Mvp
 
         #region Protected Methods
 
+        protected override void OnLoad()
+        {
+            base.OnLoad();
+
+            if (IsPostBack)
+            {
+                //Initialize dictionaries as LoadSettings is not called on Postback
+                View.Model.ModuleSettings = new Dictionary<string, string>();
+                View.Model.TabModuleSettings = new Dictionary<string, string>();
+            }
+        }
+
         protected virtual void LoadSettings()
         {
             View.Model.ModuleSettings = new Dictionary<string, string>(
@@ -71,7 +83,7 @@ namespace DotNetNuke.Web.Mvp
 
         protected virtual void SaveSettings()
         {
-            var controller = new ModuleController();
+            var controller = TestableModuleController.Instance;
 
             foreach (var setting in View.Model.ModuleSettings)
             {

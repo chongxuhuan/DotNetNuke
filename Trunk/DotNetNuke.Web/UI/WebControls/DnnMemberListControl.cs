@@ -185,7 +185,7 @@ namespace DotNetNuke.Web.UI.WebControls
             var row = 0;
             var users = new DataTable();
 
-            users.Load(_relationshipController.GetUsersAdvancedSearch(_currentUser, filterUser, role, relationship, Filters, additionalFilters));
+            //users.Load(_relationshipController.GetUsersAdvancedSearch(_currentUser, filterUser, role, relationship, Filters, additionalFilters));
 
             if (users.Rows.Count > 0)
             {

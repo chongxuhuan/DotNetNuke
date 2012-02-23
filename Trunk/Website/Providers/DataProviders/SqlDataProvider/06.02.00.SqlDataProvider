@@ -1658,7 +1658,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddPropertyDefinition]
 	@PortalId int,
 	@ModuleDefId int,
 	@DataType int,
-	@DefaultValue ntext,
+	@DefaultValue nvarchar(max),
 	@PropertyCategory nvarchar(50),
 	@PropertyName nvarchar(50),
 	@ReadOnly bit,
@@ -1803,7 +1803,7 @@ CREATE TABLE {databaseOwner}{objectQualifier}Social_Messages(
 	[To] [nvarchar](2000) NULL,
 	[From] [nvarchar](200) NULL,
 	[Subject] [nvarchar](400) NULL,
-	[Body] [ntext] NULL,
+	[Body] [nvarchar](max) NULL,
 	[ParentMessageID] [int] NULL,
 	[ReplyAllAllowed] [bit] NULL,
 	[SenderUserID] [int] NULL,
@@ -1885,7 +1885,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessage]
 	@To nvarchar(2000),
 	@From nvarchar(200),
     @Subject nvarchar(400),
-    @Body ntext,
+    @Body nvarchar(max),
     @ParentMessageID int,
     @ReplyAllAllowed bit,
     @SenderUserID int,
@@ -2092,7 +2092,7 @@ GO
 
 CREATE PROC {databaseOwner}[{objectQualifier}CreateSocialMessageReply] 
     @ParentMessageID    INT,           -- parent message id
-    @Body               NTEXT,         -- message body
+    @Body               nvarchar(max), -- message body
     @SenderUserID       INT,           -- create / update user id       
 	@CreateUpdateUserID INT            -- create / update user id   
 AS
@@ -3640,7 +3640,7 @@ INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
 GO
 
 
-/* Add GetInbox Procedure */
+/* Add GetMessageItems Procedure */
 /************************************/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetMessageItems]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetMessageItems]
@@ -3673,8 +3673,8 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 
 ;WITH inboxItems  AS
 (
-	SELECT  [RecipientID], [Subject], [Body], [SenderUserID], 
-			[Read], [Archived], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
+	SELECT  DISTINCT [RecipientID], [Subject], [Body], [SenderUserID], 
+			[Read], [Archived], [Sent], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
 			mr.[MessageID],	
 			mr.[CreatedByUserID], mr.[CreatedOnDate], 
 			mr.[LastModifiedByUserID], mr.[LastModifiedOnDate],
@@ -3694,6 +3694,65 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))	
 	AND (([Sent] = @Sent) or (@Sent is null AND [Sent] IS NOT null))	
 )	
+SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
+order by RowNumber ASC
+END
+GO
+
+/* Add GetMessageThread Procedure */
+/************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetMessageThread]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetMessageThread]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMessageThread]
+    @MessageID       int,
+	@UserID          int,
+	@PageIndex       int,
+	@PageSize        int,
+	@SortField       nvarchar(25) = 'CreatedOnDate',
+	@SortAscending   bit = 0 		
+AS
+BEGIN
+
+--Cannot return thread if user was not a recipient
+IF NOT EXISTS (SELECT RecipientID FROM {databaseOwner}{objectQualifier}Social_MessageRecipients WHERE UserID = @UserID)
+BEGIN
+	SELECT 0
+	RETURN
+END	
+
+--Return total message count
+SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_Messages
+	WHERE ((MessageID = @MessageID) OR (ParentMessageId = @MessageID))
+
+-- Set the page bounds
+DECLARE @PageLowerBound INT, @PageUpperBound INT;
+
+SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
+SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize	
+
+;WITH inboxItems  AS
+(
+	SELECT  [RecipientID], [Subject], [Body], [SenderUserID], 
+			[Read], [Archived], [Sent], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
+			mr.[MessageID],	
+			mr.[CreatedByUserID], mr.[CreatedOnDate], 
+			mr.[LastModifiedByUserID], mr.[LastModifiedOnDate],
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = mr.MessageID) AS AttachmentCount,
+			ROW_NUMBER() OVER(ORDER BY 
+				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN mr.[CreatedOnDate] END ASC,
+				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN mr.[CreatedOnDate] END DESC,
+				 CASE WHEN @SortField = 'From' AND @SortAscending = 1 THEN [From] END ASC,
+				 CASE WHEN @SortField = 'From' AND @SortAscending = 0 THEN [From] END DESC,
+				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
+				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
+				) AS RowNumber
+	FROM	{databaseOwner}{objectQualifier}Social_MessageRecipients AS mr
+	INNER JOIN {databaseOwner}{objectQualifier}Social_Messages AS m ON mr.MessageID = m.MessageID	
+	WHERE mr.UserID = @UserID
+	AND ((m.MessageID = @MessageID) OR (ParentMessageId = @MessageID))		
+)	
+
 SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
 order by RowNumber ASC
 END

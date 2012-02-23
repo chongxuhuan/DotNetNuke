@@ -22,11 +22,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 
 namespace DotNetNuke.Web.Mvp
 {
-    public class SettingsView<TModel> : SettingsViewBase, ISettingsView<TModel> where TModel : SettingsModel, new() 
+    public abstract class SettingsView<TModel> : SettingsViewBase, ISettingsView<TModel> where TModel : SettingsModel, new() 
     {
         private TModel _model;
 
@@ -47,19 +46,6 @@ namespace DotNetNuke.Web.Mvp
         }
 
         #endregion
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if (IsPostBack)
-            {
-                //Initialize dictionaries as LoadSettings is not called on Postback
-                Model.ModuleSettings = new Dictionary<string, string>();
-                Model.TabModuleSettings = new Dictionary<string, string>();
-            }
-        }
-
 
         protected string GetModuleSetting(string key, string defaultValue)
         {

@@ -481,94 +481,172 @@ namespace DotNetNuke.Security
         /// <summary>
         /// This function applies security filtering to the UserInput string.
         /// </summary>
-        /// <param name="UserInput">This is the string to be filtered</param>
-        /// <param name="FilterType">Flags which designate the filters to be applied</param>
+        /// <param name="userInput">This is the string to be filtered</param>
+        /// <param name="filterType">Flags which designate the filters to be applied</param>
         /// <returns>Filtered UserInput</returns>
         /// <history>
         /// 	[Joe Brinkman] 	8/15/2003	Created Bug #000120, #000121
         /// </history>
         ///-----------------------------------------------------------------------------
-        public string InputFilter(string UserInput, FilterFlag FilterType)
+        public string InputFilter(string userInput, FilterFlag filterType)
         {
-            if (UserInput == null)
+            if (userInput == null)
             {
                 return "";
             }
-            string TempInput = UserInput;
-            if ((FilterType & FilterFlag.NoAngleBrackets) == FilterFlag.NoAngleBrackets)
+            var tempInput = userInput;
+            if ((filterType & FilterFlag.NoAngleBrackets) == FilterFlag.NoAngleBrackets)
             {
-                bool RemoveAngleBrackets;
-                if (Config.GetSetting("RemoveAngleBrackets") == null)
+                var removeAngleBrackets = Config.GetSetting("RemoveAngleBrackets") != null && Boolean.Parse(Config.GetSetting("RemoveAngleBrackets"));
+                if (removeAngleBrackets)
                 {
-                    RemoveAngleBrackets = false;
-                }
-                else
-                {
-                    RemoveAngleBrackets = Boolean.Parse(Config.GetSetting("RemoveAngleBrackets"));
-                }
-                if (RemoveAngleBrackets)
-                {
-                    TempInput = FormatAngleBrackets(TempInput);
+                    tempInput = FormatAngleBrackets(tempInput);
                 }
             }
-            if ((FilterType & FilterFlag.NoSQL) == FilterFlag.NoSQL)
+            if ((filterType & FilterFlag.NoSQL) == FilterFlag.NoSQL)
             {
-                TempInput = FormatRemoveSQL(TempInput);
+                tempInput = FormatRemoveSQL(tempInput);
             }
             else
             {
-                if ((FilterType & FilterFlag.NoMarkup) == FilterFlag.NoMarkup && IncludesMarkup(TempInput))
+                if ((filterType & FilterFlag.NoMarkup) == FilterFlag.NoMarkup && IncludesMarkup(tempInput))
                 {
-                    TempInput = HttpUtility.HtmlEncode(TempInput);
+                    tempInput = HttpUtility.HtmlEncode(tempInput);
                 }
-                if ((FilterType & FilterFlag.NoScripting) == FilterFlag.NoScripting)
+                if ((filterType & FilterFlag.NoScripting) == FilterFlag.NoScripting)
                 {
-                    TempInput = FormatDisableScripting(TempInput);
+                    tempInput = FormatDisableScripting(tempInput);
                 }
-                if ((FilterType & FilterFlag.MultiLine) == FilterFlag.MultiLine)
+                if ((filterType & FilterFlag.MultiLine) == FilterFlag.MultiLine)
                 {
-                    TempInput = FormatMultiLine(TempInput);
+                    tempInput = FormatMultiLine(tempInput);
                 }
             }
-            if ((FilterType & FilterFlag.NoProfanity)== FilterFlag.NoProfanity)
+            if ((filterType & FilterFlag.NoProfanity) == FilterFlag.NoProfanity)
             {
-                Remove(TempInput, ConfigType.ListController, "ProfanityFilter", FilterScope.SystemAndPortalList);
+                tempInput = Replace(tempInput, ConfigType.ListController, "ProfanityFilter", FilterScope.SystemAndPortalList);
             }
-            return TempInput;
+            return tempInput;
         }
 
-        public string Replace(string userInput, ConfigType configType, string configSource, FilterScope replaceRemoveScope)
+        /// <summary>
+        /// Replaces profanity words with other words in the provided input string.
+        /// </summary>
+        /// <remarks>
+        /// The correspondence between the words to search and the words to replace could be specified in two different places:
+        /// 1) In an external file. (NOT IMPLEMENTED)
+        /// 2) In System/Site lists.
+        /// The name of the System List is "ProfanityFilter". The name of the list in each portal is composed using the following rule:
+        /// "ProfanityFilter-" + PortalID.
+        /// </remarks>
+        /// <param name="inputString">The string to search the words in.</param>
+        /// <param name="configType">The type of configuration.</param>
+        /// <param name="configSource">The external file to search the words. Ignored when configType is ListController.</param>
+        /// <param name="filterScope">When using ListController configType, this parameter indicates which list(s) to use.</param>
+        /// <returns>The original text with the profanity words replaced.</returns>
+        public string Replace(string inputString, ConfigType configType, string configSource, FilterScope filterScope)
         {
-            //function not required for initial global inputfilter version
-            return userInput;
+            switch (configType)
+            {
+                case ConfigType.ListController:
+                    const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+                    const string listName = "ProfanityFilter";
+
+                    var listController = new ListController();
+
+                    PortalSettings settings;
+
+                    IEnumerable<ListEntryInfo> listEntryHostInfos;
+                    IEnumerable<ListEntryInfo> listEntryPortalInfos;
+
+                    switch (filterScope)
+                    {
+                        case FilterScope.SystemList:
+                            listEntryHostInfos = listController.GetListEntryInfoItems(listName, "", Null.NullInteger);
+                            inputString = listEntryHostInfos.Aggregate(inputString, (current, removeItem) => Regex.Replace(current, removeItem.Text, removeItem.Value, options));
+                            break;
+                        case FilterScope.SystemAndPortalList:
+                            settings = PortalController.GetCurrentPortalSettings();
+                            listEntryHostInfos = listController.GetListEntryInfoItems(listName, "", Null.NullInteger);
+                            listEntryPortalInfos = listController.GetListEntryInfoItems(listName + "-" + settings.PortalId, "", settings.PortalId);
+                            inputString = listEntryHostInfos.Aggregate(inputString, (current, removeItem) => Regex.Replace(current, removeItem.Text, removeItem.Value, options));
+                            inputString = listEntryPortalInfos.Aggregate(inputString, (current, removeItem) => Regex.Replace(current, removeItem.Text, removeItem.Value, options));
+                            break;
+                        case FilterScope.PortalList:
+                            settings = PortalController.GetCurrentPortalSettings();
+                            listEntryPortalInfos = listController.GetListEntryInfoItems(listName + "-" + settings.PortalId, "", settings.PortalId);
+                            inputString = listEntryPortalInfos.Aggregate(inputString, (current, removeItem) => Regex.Replace(current, removeItem.Text, removeItem.Value, options));
+                            break;
+                    }
+                    break;
+                case ConfigType.ExternalFile:
+                    throw new NotImplementedException();
+                default:
+                    throw new ArgumentOutOfRangeException("configType");
+            }
+
+            return inputString;
         }
 
-        public string Remove(string userInput, ConfigType configType, string configSource, FilterScope replaceRemoveScope)
+        /// <summary>
+        /// Removes profanity words in the provided input string.
+        /// </summary>
+        /// <remarks>
+        /// The words to search could be defined in two different places:
+        /// 1) In an external file. (NOT IMPLEMENTED)
+        /// 2) In System/Site lists.
+        /// The name of the System List is "ProfanityFilter". The name of the list in each portal is composed using the following rule:
+        /// "ProfanityFilter-" + PortalID.
+        /// </remarks>
+        /// <param name="inputString">The string to search the words in.</param>
+        /// <param name="configType">The type of configuration.</param>
+        /// <param name="configSource">The external file to search the words. Ignored when configType is ListController.</param>
+        /// <param name="filterScope">When using ListController configType, this parameter indicates which list(s) to use.</param>
+        /// <returns>The original text with the profanity words removed.</returns>
+        public string Remove(string inputString, ConfigType configType, string configSource, FilterScope filterScope)
         {
-            RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
-            string strReplacement = "";
-            var listController = new ListController();
-            IEnumerable<ListEntryInfo> listEntryHostInfos = listController.GetListEntryInfoItems("ProfanityFilter", "", Null.NullInteger);
-            PortalSettings settings = PortalController.GetCurrentPortalSettings();
-            IEnumerable<ListEntryInfo> listEntryPortalInfos = listController.GetListEntryInfoItems("ProfanityFilter", "", settings.PortalId);
-            switch (replaceRemoveScope)
+            switch (configType)
             {
-                case FilterScope.SystemList:
-                    userInput = listEntryHostInfos.Aggregate(userInput, (current, removeItem) => Regex.Replace(current, removeItem.Value, strReplacement, options));
-                    break;
-                case FilterScope.SystemAndPortalList:
-                    userInput = listEntryHostInfos.Aggregate(userInput, (current, removeItem) => Regex.Replace(current, removeItem.Value, strReplacement, options));
-                    userInput=listEntryPortalInfos.Aggregate(userInput, (current, removeItem) => Regex.Replace(current, removeItem.Value, strReplacement, options));
-                    break;
-                case FilterScope.PortalList:
-                    userInput=listEntryPortalInfos.Aggregate(userInput, (current, removeItem) => Regex.Replace(current, removeItem.Value, strReplacement, options));        
-                    break;
-            }
+                case ConfigType.ListController:
+                    const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+                    const string listName = "ProfanityFilter";
             
-            return userInput;
-        }
+                    var listController = new ListController();
+                
+                    PortalSettings settings;
 
-      
+                    IEnumerable<ListEntryInfo> listEntryHostInfos;
+                    IEnumerable<ListEntryInfo> listEntryPortalInfos;
+            
+                    switch (filterScope)
+                    {
+                        case FilterScope.SystemList:
+                            listEntryHostInfos = listController.GetListEntryInfoItems(listName, "", Null.NullInteger);
+                            inputString = listEntryHostInfos.Aggregate(inputString, (current, removeItem) => Regex.Replace(current, removeItem.Text, string.Empty, options));
+                            break;
+                        case FilterScope.SystemAndPortalList:
+                            settings = PortalController.GetCurrentPortalSettings();
+                            listEntryHostInfos = listController.GetListEntryInfoItems(listName, "", Null.NullInteger);
+                            listEntryPortalInfos = listController.GetListEntryInfoItems(listName + "-" + settings.PortalId, "", settings.PortalId);
+                            inputString = listEntryHostInfos.Aggregate(inputString, (current, removeItem) => Regex.Replace(current, removeItem.Text, string.Empty, options));
+                            inputString = listEntryPortalInfos.Aggregate(inputString, (current, removeItem) => Regex.Replace(current, removeItem.Text, string.Empty, options));
+                            break;
+                        case FilterScope.PortalList:
+                            settings = PortalController.GetCurrentPortalSettings();
+                            listEntryPortalInfos = listController.GetListEntryInfoItems(listName + "-" + settings.PortalId, "", settings.PortalId);
+                            inputString = listEntryPortalInfos.Aggregate(inputString, (current, removeItem) => Regex.Replace(current, removeItem.Text, string.Empty, options));        
+                            break;
+                    }
+
+                    break;
+                case ConfigType.ExternalFile:
+                    throw new NotImplementedException();
+                default:
+                    throw new ArgumentOutOfRangeException("configType");
+            }
+
+            return inputString;
+        }
 
         public void SignIn(UserInfo user, bool createPersistentCookie)
         {
