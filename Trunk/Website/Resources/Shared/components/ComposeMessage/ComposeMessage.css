@@ -1,0 +1,49 @@
+﻿.dnnTertiaryAction{
+	display:inline-block;
+	padding: 9px 15px; margin: 0 7px 0 0;
+	background: rgb(243,243,243); /* Old browsers */
+	font-size:11px; font-weight:bold; color:#0091E1;/*baby blue*/ text-shadow: 0px 1px 0px rgba(255,255,255,0.9);
+		
+	/*CSS3*/
+	background: -moz-linear-gradient(top, rgba(243,243,243,1) 0%, rgba(231,231,231,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(243,243,243,1)), color-stop(100%,rgba(231,231,231,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* Opera 11.10+ */
+	background: linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* W3C */
+		
+	-webkit-border-radius: 	3px;
+	-moz-border-radius: 	3px;
+	border-radius: 			3px; 
+		
+	-webkit-box-shadow: 	1px 1px 0px 0px #ccc;
+	-moz-box-shadow: 		1px 1px 0px 0px #ccc;
+	box-shadow: 			1px 1px 0px 0px #ccc; 
+}
+.dnnTertiaryAction:active, .dnnTertiaryAction:focus{color:#0091E1;/*baby blue*/}
+/* Active / Hover State */
+.dnnTertiaryAction:hover, .dnnTertiaryAction.active{
+	background:#666;
+	color:#ddd;
+	text-shadow:none;
+		
+	-webkit-box-shadow: 	inset 0px 0px 5px 0px #555;
+	-moz-box-shadow: 		inset 0px 0px 5px 0px #555;
+	box-shadow: 			inset 0px 0px 5px 0px #555; 
+}
+/* Disabled State */
+.dnnTertiaryAction.disabled{-moz-opacity:.50; filter:alpha(opacity=50); opacity:.50;}
+/* Disabled Hover */
+.dnnTertiaryAction.disabled:hover{
+	background: rgb(243,243,243); /* Old browsers */ cursor:default; color:#0091E1;/*baby blue*/ text-shadow:none;
+			
+	/*CSS3*/
+	-webkit-box-shadow: 	1px 1px 0px 0px #ccc;
+	-moz-box-shadow: 		1px 1px 0px 0px #ccc;
+	box-shadow: 			1px 1px 0px 0px #ccc; 
+			
+	background: -moz-linear-gradient(top, rgba(243,243,243,1) 0%, rgba(231,231,231,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(243,243,243,1)), color-stop(100%,rgba(231,231,231,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* Opera 11.10+ */
+	background: linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* W3C */
+}

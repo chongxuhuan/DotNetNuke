@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Web.UI;
 
+using DotNetNuke.Application;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
@@ -489,7 +490,8 @@ namespace DotNetNuke.Web.UI.WebControls
                 case "Help":
                     if (!string.IsNullOrEmpty(Host.HelpURL))
                     {
-                        returnValue = Globals.FormatHelpUrl(Host.HelpURL, PortalSettings, "");
+                        var version = Globals.FormatVersion(DotNetNukeContext.Current.Application.Version, false);
+                        returnValue = Globals.FormatHelpUrl(Host.HelpURL, PortalSettings, version);
                     }
                     break;
 

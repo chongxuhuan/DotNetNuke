@@ -1,7 +1,8 @@
-#region Copyright
+﻿#region Copyright
+
 // 
-// DotNetNuke� - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// DotNetNuke® - http://www.dotnetnuke.com
+// Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -17,25 +18,28 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
+
 #endregion
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace DotNetNuke.Entities.Portals.Internal
+#region Usings
+
+using DotNetNuke.Web.Services;
+
+#endregion
+
+namespace DotNetNuke.Web.CoreServices
 {
-    public class PortalAliasControllerImpl : IPortalAliasController
+    public class ServiceRouteMapper : IServiceRouteMapper
     {
-        readonly PortalAliasController _legacyController = new PortalAliasController();
-        
-        public IEnumerable<PortalAliasInfo> GetPortalAliasByPortalId(int portalId)
+        #region Implementation of IServiceRouteMapper
+
+        public void RegisterRoutes(ServicesRoutingManager routeManager)
         {
-            return _legacyController.GetPortalAliasByPortalID(portalId).Values.Cast<PortalAliasInfo>();
+            routeManager.MapRoute("CoreServices", "DEFAULT", "{controller}/{action}",
+                                  new {Controller = "SampleServiceController", Action = "Index"},
+                                  new[] {"DotNetNuke.Web.CoreServices"});
         }
 
-        public PortalAliasInfo GetPortalAliasInfo(string alias)
-        {
-            return PortalAliasController.GetPortalAliasInfo(alias);
-        }
+        #endregion
     }
 }

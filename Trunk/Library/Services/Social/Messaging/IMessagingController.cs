@@ -54,10 +54,10 @@ namespace DotNetNuke.Services.Social.Messaging
 
         #region Easy Wrapper APIs
 
-        void MarkRead(int messageRecipientId, int userId);
-        void MarkUnRead(int messageRecipientId, int userId);
-        void MarkArchived(int messageRecipientId, int userId);
-        void MarkUnArchived(int messageRecipientId, int userId);
+        void MarkRead(int parentMessageId, int userId);
+        void MarkUnRead(int parentMessageId, int userId);
+        void MarkArchived(int parentMessageId, int userId);
+        void MarkUnArchived(int parentMessageId, int userId);
 
         IList<MessageItemView> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, ref int totalRecords);
 

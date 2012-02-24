@@ -213,11 +213,12 @@ namespace DotNetNuke.Common.Utilities
         public static long GetMaxUploadSize()
         {
             var configNav = Load();
-            var httpNode = configNav.SelectSingleNode("configuration//system.web//httpRuntime").CreateNavigator();
-            //'httpNode.Attributes("maxRequestLength")
-            //'Return 0
-
-            var result = XmlUtils.GetAttributeValueAsLong(httpNode, "maxRequestLength", 0);
+            var httpNode = configNav.SelectSingleNode("configuration//system.web//httpRuntime");
+            long result = 0;
+            if (httpNode != null)
+            {
+                result = XmlUtils.GetAttributeValueAsLong(httpNode.CreateNavigator(), "maxRequestLength", 0);
+            }
 
             return result * 1024;
         }

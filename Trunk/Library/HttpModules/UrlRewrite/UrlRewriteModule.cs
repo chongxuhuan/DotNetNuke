@@ -664,6 +664,11 @@ namespace DotNetNuke.HttpModules
                 var portalSettings = new PortalSettings(tabId, portalAliasInfo);
                 app.Context.Items.Add("PortalSettings", portalSettings);
 
+                // load PortalSettings and HostSettings dictionaries into current context
+                // specifically for use in DotNetNuke.Web.Client, which can't reference DotNetNuke.dll to get settings the normal way
+                app.Context.Items.Add("PortalSettingsDictionary", PortalController.GetPortalSettingsDictionary(portalId));
+                app.Context.Items.Add("HostSettingsDictionary", HostController.Instance.GetSettingsDictionary());
+                
                 if (portalSettings.PortalAliasMappingMode == PortalSettings.PortalAliasMapping.Redirect && 
                     !String.IsNullOrEmpty(portalSettings.DefaultPortalAlias) &&
                     portalAliasInfo != null &&
@@ -671,7 +676,16 @@ namespace DotNetNuke.HttpModules
                 {
                     //Permanently Redirect
                     response.StatusCode = 301;
-                    response.AppendHeader("Location", Globals.AddHTTP(portalSettings.DefaultPortalAlias));
+                    
+                    var redirectAlias = Globals.AddHTTP(portalSettings.DefaultPortalAlias);
+                    var checkAlias = Globals.AddHTTP(portalAliasInfo.HTTPAlias);
+                    var redirectUrl = redirectAlias + request.RawUrl;
+                    if(redirectUrl.StartsWith(checkAlias, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        redirectUrl = redirectAlias + redirectUrl.Substring(checkAlias.Length);
+                    }
+
+                    response.AppendHeader("Location", redirectUrl);
                 }
 
                 //manage page URL redirects - that reach here because they bypass the built-in navigation

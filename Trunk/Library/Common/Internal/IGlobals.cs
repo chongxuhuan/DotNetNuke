@@ -19,6 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 using System;
+using System.Web;
 
 namespace DotNetNuke.Common.Internal
 {
@@ -54,5 +55,20 @@ namespace DotNetNuke.Common.Internal
         /// <param name="url">The url to format.</param>
         /// <returns>The formatted (resolved) url</returns>
         string ResolveUrl(string url);
+
+        /// <summary>
+        /// Gets the name of the domain.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns>domain name</returns>
+        string GetDomainName(HttpRequestBase request);
+
+        /// <summary>
+        /// returns the domain name of the current request ( ie. www.domain.com or 207.132.12.123 or www.domain.com/directory if subhost )
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="parsePortNumber">if set to <c>true</c> [parse port number].</param>
+        /// <returns>domain name</returns>
+        string GetDomainName(HttpRequestBase request, bool parsePortNumber);
     }
 }

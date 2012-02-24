@@ -322,14 +322,13 @@ namespace DotNetNuke.Tests.Core.Controllers
             var callingSequence = 0;
 
             //Arrange for Assert
-            mockDataService.Setup(ds => ds.CreateSocialMessageRecipientsForRole(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>())).Callback(() => Assert.That(callingSequence++, Is.EqualTo(1)));
-            mockDataService.Setup(ds => ds.SaveSocialMessageRecipient(It.IsAny<MessageRecipient>(), It.IsAny<int>())).Callback(() => callingSequence++);            
+            mockDataService.Setup(ds => ds.CreateSocialMessageRecipientsForRole(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>())).Callback(() => Assert.That(callingSequence++, Is.EqualTo(0)));
+            mockDataService.Setup(ds => ds.SaveSocialMessageRecipient(It.IsAny<MessageRecipient>(), It.IsAny<int>())).Callback(() => Assert.That(callingSequence++, Is.EqualTo(1)));            
 
             //Act
             var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
 
-            //SaveSocialMessageRecipient is called twice, one for sent message and second for receive            
-            Assert.That(callingSequence, Is.EqualTo(3));
+            //SaveSocialMessageRecipient is called twice, one for sent message and second for receive                        
         }
 
         [Test]
@@ -610,56 +609,56 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void MessagingController_SetReadMessage_Calls_DataService_UpdateSocialMessageReadStatus()
         {
             //Arrange
-            var messageInstance = CreateValidUnReadMessageRecipient();
+            var messageInstance = CreateValidMessage();
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };    
 
             //Act
-           _messagingController.MarkRead(messageInstance.RecipientID, user.UserID);
+            _messagingController.MarkRead(messageInstance.ParentMessageID, user.UserID);
 
             //Assert
-           _mockDataService.Verify(ds => ds.UpdateSocialMessageReadStatus(messageInstance.RecipientID, user.UserID, true));
+           _mockDataService.Verify(ds => ds.UpdateSocialMessageReadStatus(messageInstance.ParentMessageID, user.UserID, true));
         }
 
         [Test]
         public void MessagingController_SetUnReadMessage_Calls_DataService_UpdateSocialMessageReadStatus()
         {
             //Arrange
-            var messageInstance = CreateValidUnReadMessageRecipient();
+            var messageInstance = CreateValidMessage();
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId }; 
 
             //Act
-            _messagingController.MarkUnRead(messageInstance.RecipientID, user.UserID);
+            _messagingController.MarkUnRead(messageInstance.ParentMessageID, user.UserID);
 
             //Assert
-            _mockDataService.Verify(ds => ds.UpdateSocialMessageReadStatus(messageInstance.RecipientID, user.UserID, false));                        
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageReadStatus(messageInstance.ParentMessageID, user.UserID, false));                        
         }
 
         [Test]
         public void MessagingController_SetArchivedMessage_Calls_DataService_UpdateSocialMessageArchivedStatus()
         {
             //Arrange
-            var messageInstance = CreateValidUnReadMessageRecipient();
+            var messageInstance = CreateValidMessage();
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId }; 
 
             //Act
-            _messagingController.MarkArchived(messageInstance.RecipientID, user.UserID);
+            _messagingController.MarkArchived(messageInstance.ParentMessageID, user.UserID);
 
             //Assert
-            _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.RecipientID, user.UserID, true));                       
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.ParentMessageID, user.UserID, true));                       
         }
 
         [Test]
         public void MessagingController_SetUnArchivedMessage_Calls_DataService_UpdateSocialMessageArchivedStatus()
         {
             //Arrange
-            var messageInstance = CreateValidUnReadMessageRecipient();
+            var messageInstance = CreateValidMessage();
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
 
             //Act
-            _messagingController.MarkUnArchived(messageInstance.RecipientID, user.UserID);
+            _messagingController.MarkUnArchived(messageInstance.ParentMessageID, user.UserID);
 
             //Assert
-            _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.RecipientID, user.UserID, false));
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.ParentMessageID, user.UserID, false));
         }   
 
         #endregion

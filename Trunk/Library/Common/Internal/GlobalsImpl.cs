@@ -19,6 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 using System;
+using System.Web;
 
 namespace DotNetNuke.Common.Internal
 {
@@ -42,6 +43,16 @@ namespace DotNetNuke.Common.Internal
         public string ResolveUrl(string url)
         {
             return Globals.ResolveUrl(url);
+        }
+
+        public string GetDomainName(HttpRequestBase request)
+        {
+            return Globals.GetDomainName(request);
+        }
+
+        public string GetDomainName(HttpRequestBase request, bool parsePortNumber)
+        {
+            return Globals.GetDomainName(request, parsePortNumber);
         }
     }
 }

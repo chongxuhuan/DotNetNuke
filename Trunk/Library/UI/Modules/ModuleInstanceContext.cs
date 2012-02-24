@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Web;
 
+using DotNetNuke.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
@@ -158,7 +159,7 @@ namespace DotNetNuke.UI.Modules
         {
             get
             {
-				//Perform tri-state switch check to avoid having to perform a security
+                //Perform tri-state switch check to avoid having to perform a security
                 //role lookup on every property access (instead caching the result)
                 if (!_isEditable.HasValue)
                 {
@@ -189,7 +190,7 @@ namespace DotNetNuke.UI.Modules
         {
             get
             {
-            	return Globals.IsHostTab(PortalSettings.ActiveTab.TabID);
+                return Globals.IsHostTab(PortalSettings.ActiveTab.TabID);
             }
         }
 
@@ -209,7 +210,7 @@ namespace DotNetNuke.UI.Modules
                 {
                     return _configuration.ModuleID;
                 }
-                
+
                 return Null.NullInteger;
             }
             set
@@ -260,10 +261,10 @@ namespace DotNetNuke.UI.Modules
                 var controller = new ModuleController();
                 if (_settings == null)
                 {
-					//we need to make sure we don't directly modify the ModuleSettings so create new HashTable DNN-8715
+                    //we need to make sure we don't directly modify the ModuleSettings so create new HashTable DNN-8715
                     _settings = new Hashtable(controller.GetModuleSettings(ModuleId));
-					
-					//add the TabModuleSettings to the ModuleSettings
+
+                    //add the TabModuleSettings to the ModuleSettings
                     Hashtable tabModuleSettings = controller.GetTabModuleSettings(TabModuleId);
                     foreach (string strKey in tabModuleSettings.Keys)
                     {
@@ -290,7 +291,7 @@ namespace DotNetNuke.UI.Modules
                 {
                     return Convert.ToInt32(_configuration.TabID);
                 }
-                
+
                 return Null.NullInteger;
             }
         }
@@ -311,7 +312,7 @@ namespace DotNetNuke.UI.Modules
                 {
                     return Convert.ToInt32(_configuration.TabModuleID);
                 }
-                
+
                 return Null.NullInteger;
             }
             set
@@ -359,13 +360,14 @@ namespace DotNetNuke.UI.Modules
             string helpURL = Globals.GetOnLineHelp(Configuration.ModuleControl.HelpURL, Configuration);
             if (!string.IsNullOrEmpty(helpURL))
             {
-				//Add OnLine Help menu action
+                //Add OnLine Help menu action
                 helpAction = new ModuleAction(GetNextActionID());
                 helpAction.Title = Localization.GetString(ModuleActionType.OnlineHelp, Localization.GlobalResourceFile);
                 helpAction.CommandName = ModuleActionType.OnlineHelp;
                 helpAction.CommandArgument = "";
                 helpAction.Icon = "action_help.gif";
-                helpAction.Url = Globals.FormatHelpUrl(helpURL, PortalSettings, Configuration.DesktopModule.FriendlyName);
+                var version = Configuration.DesktopModule.Version;
+                helpAction.Url = Globals.FormatHelpUrl(helpURL, PortalSettings, Configuration.DesktopModule.FriendlyName, version);
                 helpAction.Secure = SecurityAccessLevel.Edit;
                 helpAction.UseActionEvent = true;
                 helpAction.Visible = true;
@@ -420,11 +422,11 @@ namespace DotNetNuke.UI.Modules
         /// -----------------------------------------------------------------------------
         private void AddMenuMoveActions()
         {
-			//module movement
+            //module movement
             _moduleMoveActions = new ModuleAction(GetNextActionID(), Localization.GetString(ModuleActionType.MoveRoot, Localization.GlobalResourceFile), string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, false);
-            
-			//move module up/down
-			if (Configuration != null)
+
+            //move module up/down
+            if (Configuration != null)
             {
                 if ((Configuration.ModuleOrder != 0) && (Configuration.PaneModuleIndex > 0))
                 {
@@ -473,8 +475,8 @@ namespace DotNetNuke.UI.Modules
                                                false);
                 }
             }
-			
-			//move module to pane
+
+            //move module to pane
             foreach (object obj in PortalSettings.ActiveTab.Panes)
             {
                 var pane = obj as string;
@@ -564,15 +566,15 @@ namespace DotNetNuke.UI.Modules
                         if (!UIUtilities.IsLegacyUI(ModuleId, action.ControlKey, PortalId) && action.Url.Contains("ctl"))
                         {
                             action.ClientScript = UrlUtils.PopUpUrl(action.Url, _moduleControl as Control, PortalSettings, true, false);
-                        }                       
+                        }
                     }
                 }
                 if (_moduleSpecificActions.Actions.Count > 0)
                 {
-                    _actions.Add(_moduleSpecificActions);                    
+                    _actions.Add(_moduleSpecificActions);
                 }
             }
-			
+
             //Make sure the Next Action Id counter is correct
             int actionCount = GetActionsCount(_actions.Count, _actions);
             if (_nextActionId < maxActionId)
@@ -586,7 +588,7 @@ namespace DotNetNuke.UI.Modules
 
             if (!string.IsNullOrEmpty(Configuration.DesktopModule.BusinessControllerClass))
             {
-				//check if module implements IPortable interface, and user has Admin permissions
+                //check if module implements IPortable interface, and user has Admin permissions
                 if (Configuration.DesktopModule.IsPortable)
                 {
                     if (ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Admin, "EXPORT", Configuration))
@@ -624,18 +626,18 @@ namespace DotNetNuke.UI.Modules
                     AddSyndicateAction();
                 }
             }
-			
+
             //help module actions available to content editors and administrators
             const string permisisonList = "CONTENT,DELETE,EDIT,EXPORT,IMPORT,MANAGE";
             if (Configuration.ModuleID > Null.NullInteger && ModulePermissionController.HasModulePermission(Configuration.ModulePermissions, permisisonList) && request.QueryString["ctl"] != "Help")
             {
                 AddHelpActions();
             }
-			
-			//Add Print Action
+
+            //Add Print Action
             if (Configuration.DisplayPrint)
             {
-				//print module action available to everyone
+                //print module action available to everyone
                 AddPrintAction();
             }
             if (ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Host, "MANAGE", Configuration))
@@ -699,7 +701,7 @@ namespace DotNetNuke.UI.Modules
                     _actions.Add(_moduleGenericActions);
                 }
 
-         
+
                 if (ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Admin, "MANAGE", Configuration))
                 {
                     //module movement
@@ -737,7 +739,7 @@ namespace DotNetNuke.UI.Modules
 
         public string EditUrl(string keyName, string keyValue, string controlKey)
         {
-            var parameters = new string[] {};
+            var parameters = new string[] { };
             return EditUrl(keyName, keyValue, controlKey, parameters);
         }
 
@@ -785,7 +787,7 @@ namespace DotNetNuke.UI.Modules
             }
             return url;
         }
-        
+
         public int GetNextActionID()
         {
             _nextActionId += 1;

@@ -31,5 +31,12 @@ namespace DotNetNuke.Entities.Portals.Internal
         /// <param name="portalId">The portal ID.</param>
         /// <returns>Portal alias collection.</returns>
         IEnumerable<PortalAliasInfo> GetPortalAliasByPortalId(int portalId);
+
+        /// <summary>
+        /// Gets the portal alias info.
+        /// </summary>
+        /// <param name="alias">The portal alias.</param>
+        /// <returns>Portal alias info</returns>
+        PortalAliasInfo GetPortalAliasInfo(string alias);
     }
 }

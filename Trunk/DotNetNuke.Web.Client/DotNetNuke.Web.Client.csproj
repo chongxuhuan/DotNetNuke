@@ -61,7 +61,7 @@
     <Compile Include="Controls\DnnHtmlInclude.cs" />
     <Compile Include="Controls\DnnJsInclude.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="PortalHelper.cs" />
+    <Compile Include="ClientResourceSettings.cs" />
     <Compile Include="Providers\DnnCompositeFileProcessingProvider.cs" />
     <Compile Include="Providers\DnnFileRegistrationProvider.cs" />
     <Compile Include="Providers\DnnPageHeaderProvider.cs" />

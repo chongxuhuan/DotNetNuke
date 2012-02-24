@@ -24,7 +24,7 @@ namespace DotNetNuke.Framework
     /// </summary>
     /// <typeparam name="TContract">The interface that the controller provides</typeparam>
     /// <typeparam name="TSelf">The type of the controller itself, used to call the GetFactory override</typeparam>
-    public abstract class ControllerBase<TContract, TSelf> where TSelf : ControllerBase<TContract, TSelf>, new()
+    public abstract class ServiceLocator<TContract, TSelf> where TSelf : ServiceLocator<TContract, TSelf>, new()
     {
         private static TContract _instance;
 // ReSharper disable StaticFieldInGenericType

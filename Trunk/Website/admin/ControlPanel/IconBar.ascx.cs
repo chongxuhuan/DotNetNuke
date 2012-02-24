@@ -439,7 +439,8 @@ namespace DotNetNuke.UI.ControlPanels
 
                         if (!string.IsNullOrEmpty(Host.HelpURL))
                         {
-                            cmdHelp.NavigateUrl = Globals.FormatHelpUrl(Host.HelpURL, PortalSettings, "");
+                            var version = Globals.FormatVersion(DotNetNukeContext.Current.Application.Version, false);
+                            cmdHelp.NavigateUrl = Globals.FormatHelpUrl(Host.HelpURL, PortalSettings, version);
                             cmdHelpIcon.NavigateUrl = cmdHelp.NavigateUrl;
                             cmdHelp.Enabled = true;
                             cmdHelpIcon.Enabled = true;

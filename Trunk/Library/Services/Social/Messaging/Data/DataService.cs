@@ -61,9 +61,9 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             _provider.ExecuteNonQuery("DeleteSocialMessage", messageId);
         }
 
-        public int CreateMessageReply(int parentMessageId, string body, int senderUserId, int createUpdateUserId)
+        public int CreateMessageReply(int parentMessageId, string body, int senderUserId, string from, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("CreateSocialMessageReply", parentMessageId, body, senderUserId, createUpdateUserId);
+            return _provider.ExecuteScalar<int>("CreateSocialMessageReply", parentMessageId, body, senderUserId, from, createUpdateUserId);
         }
 
         public IList<MessageItemView> GetMessageItems(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus, ref int totalRecords)
@@ -147,14 +147,14 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             }
         }
 
-        public void UpdateSocialMessageReadStatus(int recipientId, int userId, bool read)
+        public void UpdateSocialMessageReadStatus(int parentMessageId, int userId, bool read)
         {
-            _provider.ExecuteNonQuery("UpdateSocialMessageReadStatus", recipientId, userId, read);
+            _provider.ExecuteNonQuery("UpdateSocialMessageReadStatus", parentMessageId, userId, read);
         }
 
-        public void UpdateSocialMessageArchivedStatus(int recipientId, int userId, bool archived)
+        public void UpdateSocialMessageArchivedStatus(int parentMessageId, int userId, bool archived)
         {
-            _provider.ExecuteNonQuery("UpdateSocialMessageArchivedStatus", recipientId, userId, archived);
+            _provider.ExecuteNonQuery("UpdateSocialMessageArchivedStatus", parentMessageId, userId, archived);
         }
 
 

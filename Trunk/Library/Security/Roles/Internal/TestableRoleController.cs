@@ -24,7 +24,7 @@ using DotNetNuke.Framework;
 
 namespace DotNetNuke.Security.Roles.Internal
 {
-    public class TestableRoleController : ControllerBase<IRoleController, TestableRoleController>
+    public class TestableRoleController : ServiceLocator<IRoleController, TestableRoleController>
     {
         protected override Func<IRoleController> GetFactory()
         {

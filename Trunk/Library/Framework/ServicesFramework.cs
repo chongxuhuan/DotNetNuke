@@ -24,7 +24,7 @@ namespace DotNetNuke.Framework
     /// <summary>
     /// Enables modules to support Services Framework features
     /// </summary>
-    public class ServicesFramework : ControllerBase<IServicesFramework, ServicesFramework>
+    public class ServicesFramework : ServiceLocator<IServicesFramework, ServicesFramework>
     {
         protected override Func<IServicesFramework> GetFactory()
         {

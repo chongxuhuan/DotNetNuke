@@ -31,9 +31,9 @@ namespace DotNetNuke.Web.Client.Providers
     {
         public override int GetVersion(HttpContextBase http)
         {
-            var portalHelper = new PortalHelper();
-            var version = portalHelper.GetPortalVersion(http);
-            return version.HasValue ? version.Value : base.GetVersion(http);
+            var dnnSettingsHelper = new ClientResourceSettings();
+            var settingsVersion = dnnSettingsHelper.GetVersion();
+            return settingsVersion.HasValue ? settingsVersion.Value : base.GetVersion(http);
         }
     }
 }

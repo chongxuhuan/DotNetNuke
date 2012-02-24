@@ -24,7 +24,7 @@ using DotNetNuke.Framework;
 
 namespace DotNetNuke.Entities.Modules.Internal
 {
-    public class TestableModuleController : ControllerBase<IModuleController, TestableModuleController>
+    public class TestableModuleController : ServiceLocator<IModuleController, TestableModuleController>
     {
         protected override Func<IModuleController> GetFactory()
         {

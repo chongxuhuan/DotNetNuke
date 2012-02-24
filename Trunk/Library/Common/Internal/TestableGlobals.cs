@@ -24,7 +24,7 @@ using DotNetNuke.Framework;
 
 namespace DotNetNuke.Common.Internal
 {
-    public class TestableGlobals : ControllerBase<IGlobals, TestableGlobals>
+    public class TestableGlobals : ServiceLocator<IGlobals, TestableGlobals>
     {
         protected override Func<IGlobals> GetFactory()
         {

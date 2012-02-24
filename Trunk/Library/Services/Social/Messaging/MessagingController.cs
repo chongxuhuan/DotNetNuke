@@ -119,24 +119,24 @@ namespace DotNetNuke.Services.Social.Messaging
 
         #region Easy Wrapper APIs
 
-        public void MarkRead(int messageRecipientId, int userId)
+        public void MarkRead(int parentMessageId, int userId)
         {
-            _dataService.UpdateSocialMessageReadStatus(messageRecipientId, userId, true);
+            _dataService.UpdateSocialMessageReadStatus(parentMessageId, userId, true);
         }
 
-        public void MarkUnRead(int messageRecipientId, int userId)
+        public void MarkUnRead(int parentMessageId, int userId)
         {
-            _dataService.UpdateSocialMessageReadStatus(messageRecipientId, userId, false);
+            _dataService.UpdateSocialMessageReadStatus(parentMessageId, userId, false);
         }
 
-        public void MarkArchived(int messageRecipientId, int userId)
+        public void MarkArchived(int parentMessageId, int userId)
         {
-            _dataService.UpdateSocialMessageArchivedStatus(messageRecipientId, userId, true);
+            _dataService.UpdateSocialMessageArchivedStatus(parentMessageId, userId, true);
         }
 
-        public void MarkUnArchived(int messageRecipientId, int userId)
+        public void MarkUnArchived(int parentMessageId, int userId)
         {
-            _dataService.UpdateSocialMessageArchivedStatus(messageRecipientId, userId, false);
+            _dataService.UpdateSocialMessageArchivedStatus(parentMessageId, userId, false);
         }
 
         public IList<MessageItemView> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, ref int totalRecords)
@@ -296,6 +296,7 @@ namespace DotNetNuke.Services.Social.Messaging
 
             message.MessageID = _dataService.SaveSocialMessage(message, UserController.GetCurrentUserInfo().UserID);
 
+            /*
             //create sent record
             var sendRecord = new MessageRecipient
                                  {
@@ -307,6 +308,7 @@ namespace DotNetNuke.Services.Social.Messaging
                                  };
 
             _dataService.SaveSocialMessageRecipient(sendRecord, UserController.GetCurrentUserInfo().UserID);
+             */ 
 
             //associate attachments
             if (fileIDs != null)
@@ -366,7 +368,7 @@ namespace DotNetNuke.Services.Social.Messaging
             }
             
             //call ReplyMessage
-            var messageId = _dataService.CreateMessageReply(parentMessageId, body, sender.UserID, UserController.GetCurrentUserInfo().UserID);
+            var messageId = _dataService.CreateMessageReply(parentMessageId, body, sender.UserID, sender.DisplayName, UserController.GetCurrentUserInfo().UserID);
             if (messageId == -1) //Parent message was not found or Recipient was not found in the message
             {
                 throw new MessageOrRecipientNotFound(Localization.Localization.GetString("MsgMessageOrRecipientNotFound", Localization.Localization.ExceptionsResourceFile));

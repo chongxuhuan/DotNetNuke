@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Application;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
@@ -92,7 +93,8 @@ namespace DotNetNuke.UI.UserControls
                 string helpUrl = Globals.GetOnLineHelp(objModuleControl.HelpURL, ModuleConfiguration);
                 if (!string.IsNullOrEmpty(helpUrl))
                 {
-                    cmdHelp.NavigateUrl = Globals.FormatHelpUrl(helpUrl, PortalSettings, FriendlyName);
+                    var version = Globals.FormatVersion(DotNetNukeContext.Current.Application.Version, false);
+                    cmdHelp.NavigateUrl = Globals.FormatHelpUrl(helpUrl, PortalSettings, FriendlyName, version);
                     cmdHelp.Visible = true;
                 }
                 else

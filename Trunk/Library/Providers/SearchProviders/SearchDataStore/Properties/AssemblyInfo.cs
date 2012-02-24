@@ -34,4 +34,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("DotNetNuke")]
 [assembly: CLSCompliant(true)]
 [assembly: Guid("9F3C6661-29F0-4440-9084-7CF9D1D164D6")]
-[assembly: AssemblyVersion("6.2.0.604")]
+[assembly: AssemblyVersion("6.2.0.628")]

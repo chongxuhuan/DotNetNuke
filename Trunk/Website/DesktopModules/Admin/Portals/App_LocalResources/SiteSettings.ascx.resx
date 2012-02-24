@@ -719,11 +719,11 @@ If you choose to use the existing application-level settings, the following sett
 {2} = Minify CSS Value (true or false)
 {3} = Minify JS Value (true or false)</comment>
   </data>
-  <data name="plUseApplicationCrmSettings.Help" xml:space="preserve">
+  <data name="plOverrideDefaultSettings.Help" xml:space="preserve">
     <value>When this option is enabled, this site will use the default settings for client resources. Please see the specific settings above.</value>
   </data>
-  <data name="plUseApplicationCrmSettings.Text" xml:space="preserve">
-    <value>Use Application-Level Settings</value>
+  <data name="plOverrideDefaultSettings.Text" xml:space="preserve">
+    <value>Override Default Settings</value>
   </data>
   <data name="IncrementCrmVersionButton.Text" xml:space="preserve">
     <value>Increment Site Version</value>
@@ -734,5 +734,17 @@ If you choose to use the existing application-level settings, the following sett
   </data>
   <data name="IncrementCrmVersionError.Text" xml:space="preserve">
     <value>There was an error incrementing the Client Resource version.</value>
+  </data>
+  <data name="plMinifyCss.Help" xml:space="preserve">
+    <value>CSS minification will reduce the size of the CSS code by using regular expressions to remove comments, whitespace and "dead css".  It is only available when composite files are enabled.</value>
+  </data>
+  <data name="plMinifyCss.Text" xml:space="preserve">
+    <value>Minify CSS</value>
+  </data>
+  <data name="plMinifyJs.Help" xml:space="preserve">
+    <value>JS minification will reduce the size of the JavaScript code using JSMin. It is only available when composite files are enabled.</value>
+  </data>
+  <data name="plMinifyJs.Text" xml:space="preserve">
+    <value>Minify JS</value>
   </data>
 </root>

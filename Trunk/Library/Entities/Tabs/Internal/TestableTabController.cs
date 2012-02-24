@@ -26,7 +26,7 @@ using DotNetNuke.Framework;
 
 namespace DotNetNuke.Entities.Tabs.Internal
 {
-    public class TestableTabController : ControllerBase<ITabController, TestableTabController>
+    public class TestableTabController : ServiceLocator<ITabController, TestableTabController>
     {
         protected override Func<ITabController> GetFactory()
         {

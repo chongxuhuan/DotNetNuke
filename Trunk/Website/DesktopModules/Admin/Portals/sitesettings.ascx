@@ -146,17 +146,25 @@
             <fieldset>
                 <div class="dnnFormMessage dnnFormInfo crmHostSettingsSummary"><asp:Literal runat="server" ID="CrmHostSettingsSummary"></asp:Literal></div>
                 <div class="dnnFormItem">
-                    <dnn:Label ID="plUseApplicationCrmSettings" runat="server" ControlName="chkUseApplicationCrmSettings" />
-                    <asp:CheckBox runat="server" id="chkUseApplicationCrmSettings" AutoPostBack="true" />
-                </div>
-                <div class="dnnFormItem" runat="server" id="EnableCompositeFilesRow">
-                    <dnn:Label ID="plEnableCompositeFiles" runat="server" ControlName="chkEnableCompositeFiles" />
-                    <asp:CheckBox runat="server" id="chkEnableCompositeFiles" />
+                    <dnn:Label ID="plOverrideDefaultSettings" runat="server" ControlName="chkOverrideDefaultSettings" />
+                    <asp:CheckBox runat="server" id="chkOverrideDefaultSettings" AutoPostBack="true" />
                 </div>
                 <div class="dnnFormItem" runat="server" id="CrmVersionRow">
                     <dnn:Label runat="server" id="plCrmVersion" />
                     <asp:Label runat="server" id="CrmVersionLabel" />
                     <asp:LinkButton runat="server" CssClass="dnnSecondaryAction" ID="IncrementCrmVersionButton" ResourceKey="IncrementCrmVersionButton" />
+                </div>
+                <div class="dnnFormItem" runat="server" id="EnableCompositeFilesRow">
+                    <dnn:Label ID="plEnableCompositeFiles" runat="server" ControlName="chkEnableCompositeFiles" />
+                    <asp:CheckBox runat="server" id="chkEnableCompositeFiles" />
+                </div>
+                <div class="dnnFormItem" runat="server" id="MinifyCssRow">
+                    <dnn:Label ID="plMinifyCss" runat="server" ControlName="chkMinifyCss" />
+                    <asp:CheckBox runat="server" id="chkMinifyCss" />
+                </div>
+                <div class="dnnFormItem" runat="server" id="MinifyJsRow">
+                    <dnn:Label ID="plMinifyJs" runat="server" ControlName="chkMinifyJs" />
+                    <asp:CheckBox runat="server" id="chkMinifyJs" />
                 </div>
             </fieldset>
 			<h2 id="dnnSitePanel-SecuritySettings" class="dnnFormSectionHead"><a href=""><%=LocalizeString("SecuritySettings")%></a></h2>

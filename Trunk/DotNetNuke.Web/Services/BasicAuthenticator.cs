@@ -3,7 +3,7 @@ using DotNetNuke.Framework;
 
 namespace DotNetNuke.Web.Services
 {
-    internal class BasicAuthenticator : ControllerBase<AuthenticatorBase, BasicAuthenticator>
+    internal class BasicAuthenticator : ServiceLocator<AuthenticatorBase, BasicAuthenticator>
     {
         protected override Func<AuthenticatorBase> GetFactory()
         {

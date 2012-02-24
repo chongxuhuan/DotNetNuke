@@ -21,6 +21,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using DotNetNuke.Common;
 using DotNetNuke.HttpModules.Services.Internal;
@@ -29,6 +30,8 @@ namespace DotNetNuke.HttpModules.Services
 {
     public class ServicesModule : IHttpModule
     {
+        static readonly Regex ServiceApi = new Regex(@"DesktopModules/[^/]+/API");
+
         public void Init(HttpApplication context)
         {
             context.PreSendRequestHeaders += CheckForReal401;
@@ -38,7 +41,7 @@ namespace DotNetNuke.HttpModules.Services
         private void InitDnn(object sender, EventArgs e)
         {
             var app = sender as HttpApplication;
-            if (app != null)
+            if (app != null && ServiceApi.IsMatch(app.Context.Request.RawUrl))
             {
                 Initialize.Init(app);
             }

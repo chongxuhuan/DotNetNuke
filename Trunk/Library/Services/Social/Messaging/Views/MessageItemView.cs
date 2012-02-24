@@ -42,50 +42,8 @@ namespace DotNetNuke.Services.Social.Messaging.Views
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageItemView : MessageRecipient, IHydratable
+    public class MessageItemView : Message, IHydratable
     {
-        /// <summary>
-        /// To list for the message. This information is saved for faster display of To list in the message
-        /// </summary>
-        [XmlAttribute]
-        public string To { get; set; }
-
-        /// <summary>
-        /// Message From
-        /// </summary>
-        [XmlAttribute]
-        public string From { get; set; }
-
-        /// <summary>
-        /// Message Subject
-        /// </summary>
-        [XmlAttribute]
-        public string Subject { get; set; }
-
-        /// <summary>
-        /// Message body
-        /// </summary>
-        [XmlAttribute]
-        public string Body { get; set; }
-
-        /// <summary>
-        /// messageID of the message -allows determination of reply rules and whether a message was sent to multiple recipients
-        /// </summary>
-        [XmlAttribute]
-        public int ParentMessageID { get; set; }
-
-        /// <summary>
-        /// ReplyAllAllowed is a bit value to indicate if the reply to the message can be sent to all the recipients or just the sender
-        /// </summary>
-        [XmlAttribute]
-        public bool ReplyAllAllowed { get; set; }
-
-        /// <summary>
-        /// The UserID of the sender of the message
-        /// </summary>
-        [XmlAttribute]
-        public int SenderUserID { get; set; }
-
         /// <summary>
         /// RowNumber of the message in a set
         /// </summary>
@@ -104,13 +62,6 @@ namespace DotNetNuke.Services.Social.Messaging.Views
         /// <param name="dr">the data reader.</param>
         public new void Fill(IDataReader dr)
         {
-            this.To = Null.SetNullString(dr["To"]);
-            this.From = Null.SetNullString(dr["From"]);
-            this.Subject = Null.SetNullString(dr["Subject"]);
-            this.Body = Null.SetNullString(dr["Body"]);
-            this.ParentMessageID = Convert.ToInt32(dr["ParentMessageID"]);            
-            this.ReplyAllAllowed = Null.SetNullBoolean(dr["ReplyAllAllowed"]);
-            this.SenderUserID = Convert.ToInt32(dr["SenderUserID"]);
             this.RowNumber = Convert.ToInt32(dr["RowNumber"]);
             this.AttachmentCount = Convert.ToInt32(dr["AttachmentCount"]);
 

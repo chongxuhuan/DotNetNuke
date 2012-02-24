@@ -1912,7 +1912,7 @@ AS
 					@From,
 				    @Subject,			
 					@Body,
-					@ParentMessageID,
+					NULL,
 					@ReplyAllAllowed,
 					@SenderUserID,
                     @CreateUpdateUserID , -- CreatedBy - int
@@ -1922,6 +1922,7 @@ AS
                     )
                     
             SELECT  @MessageID = SCOPE_IDENTITY()
+			UPDATE  {databaseOwner}{objectQualifier}Social_Messages SET [ParentMessageID] = @MessageID WHERE [MessageID] = @MessageID 
         END
     ELSE 
         BEGIN
@@ -2094,14 +2095,21 @@ CREATE PROC {databaseOwner}[{objectQualifier}CreateSocialMessageReply]
     @ParentMessageID    INT,           -- parent message id
     @Body               nvarchar(max), -- message body
     @SenderUserID       INT,           -- create / update user id       
+    @From               nvarchar(200), -- message from     
 	@CreateUpdateUserID INT            -- create / update user id   
 AS
     DECLARE @ReplyAllAllowed BIT
     DECLARE @NewMessageID INT
     DECLARE @OriginalSenderUserID INT
+    DECLARE @OriginalTo nvarchar(2000)  
+    DECLARE @OriginalSubject nvarchar(400)           
   
 	--Was Sender a Recipient in the Original Message. 
-	SELECT @ReplyAllAllowed = ReplyAllAllowed, @OriginalSenderUserID = SenderUserID FROM {databaseOwner}{objectQualifier}Social_Messages m
+	SELECT @ReplyAllAllowed = [ReplyAllAllowed], 
+	       @OriginalSenderUserID = [SenderUserID], 
+		   @OriginalTo = [TO],      
+		   @OriginalSubject = [Subject]
+	FROM {databaseOwner}{objectQualifier}Social_Messages m
 	INNER JOIN {databaseOwner}{objectQualifier}Social_MessageRecipients mr ON m.MessageID = mr.MessageID
 	AND m.MessageID = @ParentMessageID
 	AND mr.UserID = @SenderUserID
@@ -2128,9 +2136,9 @@ AS
                     [LastModifiedOnDate]			        
                     )
             VALUES  (       
-     			    NULL,
-					NULL,
-				    NULL,			
+     			    @OriginalTo,
+					@From,
+				    @OriginalSubject,			
 					@Body,
 					@ParentMessageID,
 					@ReplyAllAllowed,
@@ -3671,30 +3679,37 @@ DECLARE @PageLowerBound INT, @PageUpperBound INT;
 SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
 SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize	
 
-;WITH inboxItems  AS
+--Get the top message for each conversation
+;WITH RollUpMessageIDs AS 
 (
-	SELECT  DISTINCT [RecipientID], [Subject], [Body], [SenderUserID], 
-			[Read], [Archived], [Sent], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
-			mr.[MessageID],	
-			mr.[CreatedByUserID], mr.[CreatedOnDate], 
-			mr.[LastModifiedByUserID], mr.[LastModifiedOnDate],
-			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = mr.MessageID) AS AttachmentCount,
+	SELECT MAX(m.MessageID) AS TopMessageID  
+	FROM dbo.dnn_Social_MessageRecipients mr 
+	INNER JOIN dbo.dnn_Social_Messages m ON mr.MessageID = m.MessageID
+	WHERE USERid = @UserID
+	AND ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
+	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))	
+	AND (([Sent] = @Sent) or (@Sent is null AND [Sent] IS NOT null))		
+	GROUP BY ParentMessageID
+)
+,Conversations  AS
+(
+	SELECT  [MessageID], [ParentMessageID], [Subject], [Body],
+			[To], [From], [ReplyAllAllowed], [SenderUserID], 			
+			[CreatedByUserID], [CreatedOnDate], 
+			[LastModifiedByUserID], [LastModifiedOnDate],
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = m.MessageID) AS AttachmentCount,
 			ROW_NUMBER() OVER(ORDER BY 
-				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN mr.[CreatedOnDate] END ASC,
-				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN mr.[CreatedOnDate] END DESC,
+				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN [CreatedOnDate] END ASC,
+				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN [CreatedOnDate] END DESC,
 				 CASE WHEN @SortField = 'From' AND @SortAscending = 1 THEN [From] END ASC,
 				 CASE WHEN @SortField = 'From' AND @SortAscending = 0 THEN [From] END DESC,
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
 				) AS RowNumber
-	FROM	{databaseOwner}{objectQualifier}Social_MessageRecipients AS mr
-	INNER JOIN {databaseOwner}{objectQualifier}Social_Messages ON mr.MessageID = {databaseOwner}{objectQualifier}Social_Messages.MessageID	
-	WHERE UserID = @UserID
-	AND ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
-	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))	
-	AND (([Sent] = @Sent) or (@Sent is null AND [Sent] IS NOT null))	
+	FROM {databaseOwner}{objectQualifier}Social_Messages AS m  	                                                                          
+	WHERE MessageID IN (SELECT TopMessageID FROM RollUpMessageIDs)
 )	
-SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
+SELECT * from Conversations where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
 order by RowNumber ASC
 END
 GO
@@ -3764,12 +3779,14 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]
-	@RecipientID	int,
-	@UserID         int,
-	@Read			bit
+	@ParentMessageID int,
+	@UserID          int,
+	@Read			 bit
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Read]=@Read WHERE RecipientID=@RecipientID AND UserID = @UserID
+UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Read]=@Read 
+WHERE UserID = @UserID
+AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}Social_Messages] WHERE ParentMessageID=@ParentMessageID)
 END
 GO
 
@@ -3779,12 +3796,14 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]
-	@RecipientID	int,
-	@UserID	        int,
-	@Archived		bit
+	@ParentMessageID int,
+	@UserID	         int,
+	@Archived		 bit
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Archived]=@Archived WHERE RecipientID=@RecipientID AND UserID = @UserID
+UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Archived]=@Archived 
+WHERE UserID = @UserID
+AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}Social_Messages] WHERE ParentMessageID=@ParentMessageID)
 END
 GO
 

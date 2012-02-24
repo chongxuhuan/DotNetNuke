@@ -22,11 +22,13 @@
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using DotNetNuke.Common;
+
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Internal;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Entities.Tabs.Internal;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.HttpModules.Membership;
@@ -66,8 +68,8 @@ namespace DotNetNuke.Web.Services
 
         protected virtual void LoadDnnContext(HttpContextBase context)
         {
-            var domainName = Globals.GetDomainName(context.Request);
-            var alias = PortalAliasController.GetPortalAliasInfo(domainName);
+            var domainName = TestableGlobals.Instance.GetDomainName(context.Request);
+            var alias = TestablePortalAliasController.Instance.GetPortalAliasInfo(domainName);
 
             int tabId;
             VaidateTabAndModuleContext(context, alias.PortalID, out tabId);

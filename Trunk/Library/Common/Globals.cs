@@ -1761,7 +1761,7 @@ namespace DotNetNuke.Common
         {
             if (PersonalInfo == null)
             {
-		        return Null.NullString;
+                return Null.NullString;
             }
 
             const string Script = @"
@@ -1770,7 +1770,7 @@ namespace DotNetNuke.Common
                         document.write(String.fromCharCode({0}))
                     //]]>
                 </script>
-            ";              
+            ";
 
             var characterCodes = PersonalInfo.Select(ch => ((int)ch).ToString(CultureInfo.InvariantCulture));
             return string.Format(Script, string.Join(",", characterCodes.ToArray()));
@@ -3611,18 +3611,21 @@ namespace DotNetNuke.Common
         /// <returns>url.</returns>
         public static string GetOnLineHelp(string HelpUrl, ModuleInfo moduleConfig)
         {
-            bool isAdminModule = moduleConfig.DesktopModule.IsAdmin;
-            string ctlString = Convert.ToString(HttpContext.Current.Request.QueryString["ctl"]);
-            if (((Host.EnableModuleOnLineHelp && !isAdminModule) || (isAdminModule)))
+            if (string.IsNullOrEmpty(HelpUrl))
             {
-                if ((isAdminModule) || (IsAdminControl() && ctlString == "Module") || (IsAdminControl() && ctlString == "Tab"))
-                {
-                    HelpUrl = Host.HelpURL;
-                }
-            }
-            else
-            {
-                HelpUrl = "";
+                //bool isAdminModule = moduleConfig.DesktopModule.IsAdmin;
+                //string ctlString = Convert.ToString(HttpContext.Current.Request.QueryString["ctl"]);
+                //if (((Host.EnableModuleOnLineHelp && !isAdminModule) || (isAdminModule)))
+                //{
+                //    if ((isAdminModule) || (IsAdminControl() && ctlString == "Module") || (IsAdminControl() && ctlString == "Tab"))
+                //    {
+                //        HelpUrl = Host.HelpURL;
+                //    }
+                //}
+                //else
+                //{
+                HelpUrl = Host.HelpURL;
+                //}
             }
             return HelpUrl;
         }
