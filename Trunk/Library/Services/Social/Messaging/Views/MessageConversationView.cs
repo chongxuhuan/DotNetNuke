@@ -35,14 +35,14 @@ namespace DotNetNuke.Services.Social.Messaging.Views
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
     /// Namespace:  DotNetNuke.Entities.Messaging.Views
-    /// Class:      MessageItemView
+    /// Class:      MessageConversationView
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageItemView class contains combined details of Message and Message Recipient
+    /// The MessageConversationView class contains details of the latest message in a Conversation.
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageItemView : Message, IHydratable
+    public class MessageConversationView : Message, IHydratable
     {
         /// <summary>
         /// RowNumber of the message in a set
@@ -51,10 +51,16 @@ namespace DotNetNuke.Services.Social.Messaging.Views
         public int RowNumber { get; set; }
 
         /// <summary>
-        /// Does the message contain attachments
+        /// Count of Total Attachments in a Conversation. It is calculated by adding attachments in all the threads for a given conversation.
         /// </summary>
         [XmlAttribute]
         public int AttachmentCount { get; set; }
+
+        /// <summary>
+        /// Count of Total New (Unread) Threads in a Conversation. It is calculated by inspecting all the threads in a conversation and counting the ones that are not read yet.
+        /// </summary>
+        [XmlAttribute]
+        public int NewThreadCount { get; set; }        
 
         /// <summary>
         /// Fill the object with data from database.
@@ -64,6 +70,7 @@ namespace DotNetNuke.Services.Social.Messaging.Views
         {
             this.RowNumber = Convert.ToInt32(dr["RowNumber"]);
             this.AttachmentCount = Convert.ToInt32(dr["AttachmentCount"]);
+            this.NewThreadCount = Convert.ToInt32(dr["NewThreadCount"]);
 
             base.Fill(dr);            
         }

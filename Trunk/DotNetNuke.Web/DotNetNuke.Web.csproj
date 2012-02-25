@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DotNetNukeHttpApplication.cs" />
+    <Compile Include="CoreServices\MessagingServiceController.cs" />
     <Compile Include="CoreServices\ServiceRouteMapper.cs" />
     <Compile Include="CoreServices\SampleServiceController.cs" />
     <Compile Include="Mvp\ModuleSettingsPresenterOfT.cs" />

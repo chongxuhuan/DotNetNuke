@@ -54,32 +54,32 @@ namespace DotNetNuke.Services.Social.Messaging
 
         #region Easy Wrapper APIs
 
-        void MarkRead(int parentMessageId, int userId);
-        void MarkUnRead(int parentMessageId, int userId);
-        void MarkArchived(int parentMessageId, int userId);
-        void MarkUnArchived(int parentMessageId, int userId);
+        void MarkRead(int conversationId, int userId);
+        void MarkUnRead(int conversationId, int userId);
+        void MarkArchived(int conversationId, int userId);
+        void MarkUnArchived(int conversationId, int userId);
 
-        IList<MessageItemView> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, ref int totalRecords);
+        MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool @ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
 
-        IList<MessageItemView> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);
+        MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending);
 
-        IList<MessageItemView> GetRecentInbox(int userId, ref int totalRecords);
+        MessageBoxView GetRecentInbox(int userId);
 
-        IList<MessageItemView> GetRecentInbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
+        MessageBoxView GetRecentInbox(int userId, int pageIndex, int pageSize);
 
-        IList<MessageItemView> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, ref int totalRecords);
+        MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
 
-        IList<MessageItemView> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);
+        MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending);
 
-        IList<MessageItemView> GetRecentSentbox(int userId, ref int totalRecords);
+        MessageBoxView GetRecentSentbox(int userId);
 
-        IList<MessageItemView> GetRecentSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords);
+        MessageBoxView GetRecentSentbox(int userId, int pageIndex, int pageSize);
 
-        IList<MessageItemView> GetArchivedMessages(int userId, int pageIndex, int pageSize, ref int totalRecords);
+        MessageBoxView GetArchivedMessages(int userId, int pageIndex, int pageSize);
 
-        IList<MessageThreadView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, ref int totalRecords);
+        IList<MessageThreadView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, ref int totalRecords);
 
-        IList<MessageThreadView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, ref int totalRecords);
+        IList<MessageThreadView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords);
 
         //Gets the latest 10 messages
 
@@ -87,9 +87,9 @@ namespace DotNetNuke.Services.Social.Messaging
 
         Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender);
 
-        int ReplyMessage(int parentMessageId, string body, IList<int> fileIDs);
+        int ReplyMessage(int conversationId, string body, IList<int> fileIDs);
 
-        int ReplyMessage(int parentMessageId, string body, IList<int> fileIDs, UserInfo sender);
+        int ReplyMessage(int conversationId, string body, IList<int> fileIDs, UserInfo sender);
 
         #endregion
     }

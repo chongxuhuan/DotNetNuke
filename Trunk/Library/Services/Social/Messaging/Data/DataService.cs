@@ -43,7 +43,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         public int SaveSocialMessage(Message message, int createUpdateUserId)
         {
             //need to fix groupmail
-            return _provider.ExecuteScalar<int>("SaveSocialMessage", message.MessageID, message.To, message.From, message.Subject, message.Body, message.ParentMessageID, message.ReplyAllAllowed, message.SenderUserID, createUpdateUserId);
+            return _provider.ExecuteScalar<int>("SaveSocialMessage", message.MessageID, message.To, message.From, message.Subject, message.Body, message.ConversationId, message.ReplyAllAllowed, message.SenderUserID, createUpdateUserId);
         }
 
         public IDataReader GetSocialMessage()
@@ -61,16 +61,18 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             _provider.ExecuteNonQuery("DeleteSocialMessage", messageId);
         }
 
-        public int CreateMessageReply(int parentMessageId, string body, int senderUserId, string from, int createUpdateUserId)
+        public int CreateMessageReply(int conversationId, string body, int senderUserId, string from, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("CreateSocialMessageReply", parentMessageId, body, senderUserId, from, createUpdateUserId);
+            return _provider.ExecuteScalar<int>("CreateSocialMessageReply", conversationId, body, senderUserId, from, createUpdateUserId);
         }
 
-        public IList<MessageItemView> GetMessageItems(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus, ref int totalRecords)
+        public MessageBoxView GetMessageItems(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
         {
             object read = null;
             object archived = null;
             object sent = null;
+
+            var messageBoxView = new MessageBoxView();
 
             switch (readStatus)
             {
@@ -117,20 +119,28 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             {
                 while (dr.Read())
                 {
-                    totalRecords = Convert.ToInt32(dr["TotalRecords"]);
+                    messageBoxView.TotalNewThreads = Convert.ToInt32(dr["TotalNewThreads"]);
                 }
                 dr.NextResult();
-                return CBO.FillCollection<MessageItemView>(dr);
+
+                while (dr.Read())
+                {
+                    messageBoxView.TotalConversations = Convert.ToInt32(dr["TotalRecords"]);
+                }
+                dr.NextResult();
+                messageBoxView.Conversations =  CBO.FillCollection<MessageConversationView>(dr);
             }
             finally
             {
                 CBO.CloseDataReader(dr, true);
             }
+
+            return messageBoxView;
         }
 
-        public IList<MessageItemView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, string sortColumn, bool @sortAscending, ref int totalRecords)
+        public IList<MessageConversationView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool @sortAscending, ref int totalRecords)
         {
-            IDataReader dr = _provider.ExecuteReader("GetMessageThread", messageId, userId, pageIndex, pageSize, sortColumn, sortAscending);
+            IDataReader dr = _provider.ExecuteReader("GetMessageThread", conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending);
 
             try
             {
@@ -139,7 +149,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                     totalRecords = Convert.ToInt32(dr["TotalRecords"]);
                 }
                 dr.NextResult();
-                return CBO.FillCollection<MessageItemView>(dr);
+                return CBO.FillCollection<MessageConversationView>(dr);
             }
             finally
             {
@@ -147,14 +157,14 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             }
         }
 
-        public void UpdateSocialMessageReadStatus(int parentMessageId, int userId, bool read)
+        public void UpdateSocialMessageReadStatus(int conversationId, int userId, bool read)
         {
-            _provider.ExecuteNonQuery("UpdateSocialMessageReadStatus", parentMessageId, userId, read);
+            _provider.ExecuteNonQuery("UpdateSocialMessageReadStatus", conversationId, userId, read);
         }
 
-        public void UpdateSocialMessageArchivedStatus(int parentMessageId, int userId, bool archived)
+        public void UpdateSocialMessageArchivedStatus(int conversationId, int userId, bool archived)
         {
-            _provider.ExecuteNonQuery("UpdateSocialMessageArchivedStatus", parentMessageId, userId, archived);
+            _provider.ExecuteNonQuery("UpdateSocialMessageArchivedStatus", conversationId, userId, archived);
         }
 
 

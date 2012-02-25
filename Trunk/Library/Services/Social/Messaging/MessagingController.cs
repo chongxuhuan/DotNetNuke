@@ -32,6 +32,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Portals.Internal;
+using DotNetNuke.Security;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
@@ -102,14 +103,14 @@ namespace DotNetNuke.Services.Social.Messaging
         public int WaitTimeForNextMessage(UserInfo sender)
         {
             var waitTime = 0;
-            var interval = PortalController.GetPortalSettingAsInteger("MessagingThrottlingInterval", sender.PortalID, Null.NullInteger);
+            // MessagingThrottlingInterval contains the number of MINUTES to wait before sending the next message
+            var interval = PortalController.GetPortalSettingAsInteger("MessagingThrottlingInterval", sender.PortalID, Null.NullInteger) * 60;
             if (interval > 0 && !IsAdminOrHost(sender))
             {
-                var totalRecords = 0;
-                var messages = GetRecentSentbox(sender.UserID, 0, 1, ref totalRecords);
-                if (totalRecords > 0)
+                var messageBoxView = GetRecentSentbox(sender.UserID, 0, 1);
+                if (messageBoxView != null && messageBoxView.TotalConversations > 0)
                 {
-                    waitTime = interval - DateTime.Now.Subtract(messages.First().CreatedOnDate).Seconds;
+                    waitTime = (int)(interval - DateTime.Now.Subtract(messageBoxView.Conversations.First().CreatedOnDate).TotalSeconds);
                 }
             }
             return waitTime < 0 ? 0 : waitTime;
@@ -119,73 +120,72 @@ namespace DotNetNuke.Services.Social.Messaging
 
         #region Easy Wrapper APIs
 
-        public void MarkRead(int parentMessageId, int userId)
+        public void MarkRead(int conversationId, int userId)
         {
-            _dataService.UpdateSocialMessageReadStatus(parentMessageId, userId, true);
+            _dataService.UpdateSocialMessageReadStatus(conversationId, userId, true);
         }
 
-        public void MarkUnRead(int parentMessageId, int userId)
+        public void MarkUnRead(int conversationId, int userId)
         {
-            _dataService.UpdateSocialMessageReadStatus(parentMessageId, userId, false);
+            _dataService.UpdateSocialMessageReadStatus(conversationId, userId, false);
         }
 
-        public void MarkArchived(int parentMessageId, int userId)
+        public void MarkArchived(int conversationId, int userId)
         {
-            _dataService.UpdateSocialMessageArchivedStatus(parentMessageId, userId, true);
+            _dataService.UpdateSocialMessageArchivedStatus(conversationId, userId, true);
         }
 
-        public void MarkUnArchived(int parentMessageId, int userId)
+        public void MarkUnArchived(int conversationId, int userId)
         {
-            _dataService.UpdateSocialMessageArchivedStatus(parentMessageId, userId, false);
+            _dataService.UpdateSocialMessageArchivedStatus(conversationId, userId, false);
         }
 
-        public IList<MessageItemView> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, ref int totalRecords)
+        public MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
         {
-            return _dataService.GetMessageItems(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received, ref totalRecords);
+            return _dataService.GetMessageItems(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
         }
 
-        public IList<MessageItemView> GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
+        public MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
         {
-            var messages = GetInbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived, ref totalRecords);
+            return GetInbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);            
+        }
+
+        public MessageBoxView GetRecentInbox(int userId )
+        {
+            return GetRecentInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize);
+        }
+
+        public MessageBoxView GetRecentInbox(int userId, int pageIndex, int pageSize )
+        {
+            return GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending);
+        }
+
+        public MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus )
+        {
+            return _dataService.GetMessageItems(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Sent);
+        }
+
+        public MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending )
+        {
+            var messages = GetSentbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
             return messages;
         }
 
-        public IList<MessageItemView> GetRecentInbox(int userId, ref int totalRecords)
+        public MessageBoxView GetRecentSentbox(int userId )
         {
-            return GetRecentInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords);
+            return GetRecentSentbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize);
         }
 
-        public IList<MessageItemView> GetRecentInbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
+        public MessageBoxView GetRecentSentbox(int userId, int pageIndex, int pageSize )
         {
-            return GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
+            return GetSentbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending);
         }
 
-        public IList<MessageItemView> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, ref int totalRecords)
-        {
-            return _dataService.GetMessageItems(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Sent, ref totalRecords);
-        }
-
-        public IList<MessageItemView> GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
-        {
-            var messages = GetSentbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived, ref totalRecords);
-            return messages;
-        }
-
-        public IList<MessageItemView> GetRecentSentbox(int userId, ref int totalRecords)
-        {
-            return GetRecentSentbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize, ref totalRecords);
-        }
-
-        public IList<MessageItemView> GetRecentSentbox(int userId, int pageIndex, int pageSize, ref int totalRecords)
-        {
-            return GetSentbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
-        }
-
-        public IList<MessageThreadView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
+        public IList<MessageThreadView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
         {
             var threads = new List<MessageThreadView>();
 
-            var messages = _dataService.GetMessageThread(messageId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
+            var messages = _dataService.GetMessageThread(conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
             foreach (var messageItemView in messages)
             {
                 var thread = new MessageThreadView();
@@ -199,14 +199,14 @@ namespace DotNetNuke.Services.Social.Messaging
             return threads;
         }
 
-        public IList<MessageThreadView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, ref int totalRecords)
+        public IList<MessageThreadView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords)
         {
-            return GetMessageThread(messageId, userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
+            return GetMessageThread(conversationId, userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
         }
 
-        public IList<MessageItemView> GetArchivedMessages(int userId, int pageIndex, int pageSize, ref int totalRecords)
+        public MessageBoxView GetArchivedMessages(int userId, int pageIndex, int pageSize )
         {
-            var messages = GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived, ref totalRecords);
+            var messages = GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived);
             return messages;
         }
 
@@ -292,6 +292,15 @@ namespace DotNetNuke.Services.Social.Messaging
                 throw new RecipientLimitExceeded(Localization.Localization.GetString("MsgRecipientLimitExceeded", Localization.Localization.ExceptionsResourceFile));
             }
 
+            //Profanity Filter
+            var profanityFilterSetting = PortalController.GetPortalSetting("MessagingProfanityFilters", sender.PortalID, "NO");
+            if (profanityFilterSetting.Equals("YES", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var ps = new PortalSecurity();
+                subject = ps.InputFilter(subject, PortalSecurity.FilterFlag.NoProfanity);
+                body = ps.InputFilter(body, PortalSecurity.FilterFlag.NoProfanity);
+            }
+
             var message = new Message { Body = body, Subject = subject, To = sbTo.ToString().Trim(','), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName};
 
             message.MessageID = _dataService.SaveSocialMessage(message, UserController.GetCurrentUserInfo().UserID);
@@ -343,13 +352,13 @@ namespace DotNetNuke.Services.Social.Messaging
             return message;
         }
 
-        public int ReplyMessage(int parentMessageId, string body, IList<int> fileIDs)
+        public int ReplyMessage(int conversationId, string body, IList<int> fileIDs)
         {
-            return ReplyMessage(parentMessageId, body, fileIDs, UserController.GetCurrentUserInfo());
+            return ReplyMessage(conversationId, body, fileIDs, UserController.GetCurrentUserInfo());
         }
 
 
-        public int ReplyMessage(int parentMessageId, string body, IList<int> fileIDs, UserInfo sender)
+        public int ReplyMessage(int conversationId, string body, IList<int> fileIDs, UserInfo sender)
         {
             if (sender == null || sender.UserID <= 0)
             {
@@ -368,7 +377,7 @@ namespace DotNetNuke.Services.Social.Messaging
             }
             
             //call ReplyMessage
-            var messageId = _dataService.CreateMessageReply(parentMessageId, body, sender.UserID, sender.DisplayName, UserController.GetCurrentUserInfo().UserID);
+            var messageId = _dataService.CreateMessageReply(conversationId, body, sender.UserID, sender.DisplayName, UserController.GetCurrentUserInfo().UserID);
             if (messageId == -1) //Parent message was not found or Recipient was not found in the message
             {
                 throw new MessageOrRecipientNotFound(Localization.Localization.GetString("MsgMessageOrRecipientNotFound", Localization.Localization.ExceptionsResourceFile));

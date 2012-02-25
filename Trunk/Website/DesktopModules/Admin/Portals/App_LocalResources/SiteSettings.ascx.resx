@@ -670,10 +670,10 @@
     <value>Messaging Settings</value>
   </data>
   <data name="plMsgThrottlingInterval.Text" xml:space="preserve">
-    <value>Throttling Interval:</value>
+    <value>Throttling Interval in Minutes:</value>
   </data>
   <data name="plMsgThrottlingInterval.Help" xml:space="preserve">
-    <value>Number of seconds after which a User can send the next message. Zero indicates no restrictions. Not applies to Site Administrators or Host</value>
+    <value>Number of minutes after which a User can send the next message. Zero indicates no restrictions. Not applies to Site Administrators or Host</value>
   </data>
   <data name="plMsgRecipientLimit.Text" xml:space="preserve">
     <value>Recipient Limit:</value>

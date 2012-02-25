@@ -613,10 +613,10 @@ namespace DotNetNuke.Tests.Core.Controllers
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };    
 
             //Act
-            _messagingController.MarkRead(messageInstance.ParentMessageID, user.UserID);
+            _messagingController.MarkRead(messageInstance.ConversationId, user.UserID);
 
             //Assert
-           _mockDataService.Verify(ds => ds.UpdateSocialMessageReadStatus(messageInstance.ParentMessageID, user.UserID, true));
+           _mockDataService.Verify(ds => ds.UpdateSocialMessageReadStatus(messageInstance.ConversationId, user.UserID, true));
         }
 
         [Test]
@@ -627,10 +627,10 @@ namespace DotNetNuke.Tests.Core.Controllers
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId }; 
 
             //Act
-            _messagingController.MarkUnRead(messageInstance.ParentMessageID, user.UserID);
+            _messagingController.MarkUnRead(messageInstance.ConversationId, user.UserID);
 
             //Assert
-            _mockDataService.Verify(ds => ds.UpdateSocialMessageReadStatus(messageInstance.ParentMessageID, user.UserID, false));                        
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageReadStatus(messageInstance.ConversationId, user.UserID, false));                        
         }
 
         [Test]
@@ -641,10 +641,10 @@ namespace DotNetNuke.Tests.Core.Controllers
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId }; 
 
             //Act
-            _messagingController.MarkArchived(messageInstance.ParentMessageID, user.UserID);
+            _messagingController.MarkArchived(messageInstance.ConversationId, user.UserID);
 
             //Assert
-            _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.ParentMessageID, user.UserID, true));                       
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.ConversationId, user.UserID, true));                       
         }
 
         [Test]
@@ -655,10 +655,10 @@ namespace DotNetNuke.Tests.Core.Controllers
             var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId };
 
             //Act
-            _messagingController.MarkUnArchived(messageInstance.ParentMessageID, user.UserID);
+            _messagingController.MarkUnArchived(messageInstance.ConversationId, user.UserID);
 
             //Assert
-            _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.ParentMessageID, user.UserID, false));
+            _mockDataService.Verify(ds => ds.UpdateSocialMessageArchivedStatus(messageInstance.ConversationId, user.UserID, false));
         }   
 
         #endregion
@@ -676,7 +676,7 @@ namespace DotNetNuke.Tests.Core.Controllers
                 MessageID = 2,
                 Subject  ="test",
                 Body="body",
-                ParentMessageID = 1,
+                ConversationId = 1,
                 ReplyAllAllowed = false,
                 SenderUserID =1
             };
@@ -704,7 +704,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtMessages.Columns.Add("To", typeof(string));
             _dtMessages.Columns.Add("Subject", typeof(string));
             _dtMessages.Columns.Add("Body", typeof(string));
-            _dtMessages.Columns.Add("ParentMessageID", typeof(int));
+            _dtMessages.Columns.Add("ConversationId", typeof(int));
             _dtMessages.Columns.Add("ReplyAllAllowed", typeof(bool));
             _dtMessages.Columns.Add("SenderUserID", typeof(int));
             _dtMessages.Columns.Add("CreatedByUserID", typeof(int));

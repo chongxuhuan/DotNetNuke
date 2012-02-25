@@ -36,8 +36,12 @@ namespace DotNetNuke.Web.CoreServices
         public void RegisterRoutes(ServicesRoutingManager routeManager)
         {
             routeManager.MapRoute("CoreServices", "DEFAULT", "{controller}/{action}",
-                                  new {Controller = "SampleServiceController", Action = "Index"},
-                                  new[] {"DotNetNuke.Web.CoreServices"});
+                new { Controller = "SampleServiceController", Action = "Index" },
+                new[] { "DotNetNuke.Web.CoreServices" });
+
+            routeManager.MapRoute("CoreServices", "DEFAULT", "{controller}/{action}",
+                new { Controller = "MessagingService", Action = "Index" },
+                new[] { "DotNetNuke.Web.CoreServices" });
         }
 
         #endregion

@@ -1796,35 +1796,35 @@ GO
 /* Add objects for social messaging */
 /*************************************/
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Messages]') AND type in (N'U'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessages]') AND type in (N'U'))
 BEGIN
-CREATE TABLE {databaseOwner}{objectQualifier}Social_Messages(
+CREATE TABLE {databaseOwner}{objectQualifier}SocialMessages(
 	[MessageID] [int] IDENTITY(1,1) NOT NULL,
 	[To] [nvarchar](2000) NULL,
 	[From] [nvarchar](200) NULL,
 	[Subject] [nvarchar](400) NULL,
 	[Body] [nvarchar](max) NULL,
-	[ParentMessageID] [int] NULL,
+	[ConversationID] [int] NULL,
 	[ReplyAllAllowed] [bit] NULL,
 	[SenderUserID] [int] NULL,
 	[CreatedByUserID] [int] NULL,
 	[CreatedOnDate] [datetime] NULL,
 	[LastModifiedByUserID] [int] NULL,
 	[LastModifiedOnDate] [datetime] NULL,
- CONSTRAINT [PK_{objectQualifier}Social_Messages] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_{objectQualifier}SocialMessages] PRIMARY KEY CLUSTERED 
 	(
 		[MessageID] ASC
 	)
 )
 
-CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Social_Messages_SenderUserID] ON {databaseOwner}[{objectQualifier}Social_Messages] ([SenderUserID] ASC, [CreatedOnDate] DESC)		
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_SenderUserID] ON {databaseOwner}[{objectQualifier}SocialMessages] ([SenderUserID] ASC, [CreatedOnDate] DESC)		
 
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_MessageRecipients]') AND type in (N'U'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessageRecipients]') AND type in (N'U'))
 BEGIN
-CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageRecipients(
+CREATE TABLE {databaseOwner}{objectQualifier}SocialMessageRecipients(
 	[RecipientID] [int] IDENTITY(1,1) NOT NULL,
 	[MessageID] [int] NOT NULL,
 	[UserID] [int] NOT NULL,
@@ -1835,23 +1835,23 @@ CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageRecipients(
 	[CreatedOnDate] [datetime] NULL,
 	[LastModifiedByUserID] [int] NULL,
 	[LastModifiedOnDate] [datetime] NULL,
- CONSTRAINT [PK_{objectQualifier}Social_MessageRecipients] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_{objectQualifier}SocialMessageRecipients] PRIMARY KEY CLUSTERED 
 	(
 		[RecipientID] ASC
 	)
 )
 
-CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Social_MessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}Social_MessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC, [Sent] ASC)		
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}SocialMessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC, [Sent] ASC)		
 
-ALTER TABLE {databaseOwner}[{objectQualifier}Social_MessageRecipients]  
-	ADD CONSTRAINT [FK_{objectQualifier}Social_MessageRecipients_{objectQualifier}Social_Messages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}Social_Messages] ([MessageID]) ON DELETE CASCADE
+ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageRecipients]  
+	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageRecipients_{objectQualifier}SocialMessages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
 
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_MessageAttachments]') AND type in (N'U'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessageAttachments]') AND type in (N'U'))
 BEGIN
-CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageAttachments(
+CREATE TABLE {databaseOwner}{objectQualifier}SocialMessageAttachments(
 	[MessageAttachmentID] [int] IDENTITY(1,1) NOT NULL,
 	[MessageID] [int] NOT NULL,
 	[FileID] [int] NULL,
@@ -1859,22 +1859,22 @@ CREATE TABLE {databaseOwner}{objectQualifier}Social_MessageAttachments(
 	[CreatedOnDate] [datetime] NULL,
 	[LastModifiedByUserID] [int] NULL,
 	[LastModifiedOnDate] [datetime] NULL,
- CONSTRAINT [PK_{objectQualifier}Social_MessageAttachments] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_{objectQualifier}SocialMessageAttachments] PRIMARY KEY CLUSTERED 
 	(
 		[MessageAttachmentID] ASC
 	)
 )
 
-CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Social_MessageAttachments_MessageID] ON {databaseOwner}[{objectQualifier}Social_MessageAttachments] ([MessageID] ASC)		
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageAttachments_MessageID] ON {databaseOwner}[{objectQualifier}SocialMessageAttachments] ([MessageID] ASC)		
 
-ALTER TABLE {databaseOwner}[{objectQualifier}Social_MessageAttachments]  
-	ADD CONSTRAINT [FK_{objectQualifier}Social_MessageAttachments_{objectQualifier}Social_Messages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}Social_Messages] ([MessageID]) ON DELETE CASCADE
+ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageAttachments]  
+	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageAttachments_{objectQualifier}SocialMessages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
 
 END
 
 GO
 
---CRUD for Social_Messages
+--CRUD for SocialMessages
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessage]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessage]
@@ -1886,7 +1886,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessage]
 	@From nvarchar(200),
     @Subject nvarchar(400),
     @Body nvarchar(max),
-    @ParentMessageID int,
+    @ConversationID int,
     @ReplyAllAllowed bit,
     @SenderUserID int,
 	@CreateUpdateUserID INT
@@ -1894,12 +1894,12 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessage]
 AS 
     IF ( @MessageID = -1 ) 
         BEGIN
-            INSERT {databaseOwner}{objectQualifier}Social_Messages(                    
+            INSERT {databaseOwner}{objectQualifier}SocialMessages(                    
   					[To],
 					[From],					
 					[Subject],
 					[Body],
-					[ParentMessageID],
+					[ConversationID],
 					[ReplyAllAllowed],
 					[SenderUserID],
                     [CreatedByUserID],
@@ -1922,16 +1922,16 @@ AS
                     )
                     
             SELECT  @MessageID = SCOPE_IDENTITY()
-			UPDATE  {databaseOwner}{objectQualifier}Social_Messages SET [ParentMessageID] = @MessageID WHERE [MessageID] = @MessageID 
+			UPDATE  {databaseOwner}{objectQualifier}SocialMessages SET [ConversationID] = @MessageID WHERE [MessageID] = @MessageID 
         END
     ELSE 
         BEGIN
-            UPDATE  {databaseOwner}{objectQualifier}Social_Messages
+            UPDATE  {databaseOwner}{objectQualifier}SocialMessages
             SET     [To] = @To,
 					[From] = @From,
 					[Subject] = @Subject,			
 					[Body] = @Body,
-					[ParentMessageID] = @ParentMessageID,
+					[ConversationID] = @ConversationID,
 					[ReplyAllAllowed] = @ReplyAllAllowed,
 					[SenderUserID] = SenderUserID,
                     LastModifiedByUserID = @CreateUpdateUserID,
@@ -1951,8 +1951,8 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessage]
     @MessageID INT
 AS 
-	SELECT [MessageID], [To], [From], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}[Social_Messages] 
+	SELECT [MessageID], [To], [From], [Subject], [Body], [ConversationID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   {databaseOwner}{objectQualifier}[SocialMessages] 
 	WHERE  [MessageID] = @MessageID 
 
 GO
@@ -1964,8 +1964,8 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessagesBySender]
     @SenderUserID INT
 AS 
-	SELECT [MessageID], [To], [From], [Subject], [Body], [ParentMessageID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}[Social_Messages] 
+	SELECT [MessageID], [To], [From], [Subject], [Body], [ConversationID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	FROM   {databaseOwner}{objectQualifier}[SocialMessages] 
 	WHERE  [SenderUserID] = @SenderUserID 
 
 GO
@@ -1978,11 +1978,11 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessage]    
 	@MessageID int
 AS 
-	DELETE FROM {databaseOwner}{objectQualifier}Social_Messages
+	DELETE FROM {databaseOwner}{objectQualifier}SocialMessages
 	WHERE  [MessageID] = @MessageID
 GO
 
---CRUD for Social_MessageRecipients
+--CRUD for SocialMessageRecipients
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
@@ -1999,7 +1999,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
 AS 
     IF ( @RecipientID = -1 ) 
         BEGIN
-            INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
+            INSERT {databaseOwner}{objectQualifier}SocialMessageRecipients(                    
 					[MessageID],
 					[UserID],
 					[Read],	
@@ -2026,7 +2026,7 @@ AS
         END
     ELSE 
         BEGIN
-            UPDATE  {databaseOwner}{objectQualifier}Social_MessageRecipients
+            UPDATE  {databaseOwner}{objectQualifier}SocialMessageRecipients
             SET     [MessageID] = @MessageID,
 					[UserID] = @UserID,
 					[Read] = @Read,
@@ -2063,7 +2063,7 @@ AS
         INNER JOIN CTE_RoleIDs cr ON ur.RoleID = cr.RowValue    
     )        
       
-    INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
+    INSERT {databaseOwner}{objectQualifier}SocialMessageRecipients(                    
 			[MessageID],
 			[UserID],
 			[Read],	
@@ -2092,7 +2092,7 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 
 CREATE PROC {databaseOwner}[{objectQualifier}CreateSocialMessageReply] 
-    @ParentMessageID    INT,           -- parent message id
+    @ConversationID    INT,           -- parent message id
     @Body               nvarchar(max), -- message body
     @SenderUserID       INT,           -- create / update user id       
     @From               nvarchar(200), -- message from     
@@ -2109,9 +2109,9 @@ AS
 	       @OriginalSenderUserID = [SenderUserID], 
 		   @OriginalTo = [TO],      
 		   @OriginalSubject = [Subject]
-	FROM {databaseOwner}{objectQualifier}Social_Messages m
-	INNER JOIN {databaseOwner}{objectQualifier}Social_MessageRecipients mr ON m.MessageID = mr.MessageID
-	AND m.MessageID = @ParentMessageID
+	FROM {databaseOwner}{objectQualifier}SocialMessages m
+	INNER JOIN {databaseOwner}{objectQualifier}SocialMessageRecipients mr ON m.MessageID = mr.MessageID
+	AND m.MessageID = @ConversationID
 	AND mr.UserID = @SenderUserID
 	
 	--Reply can only be create if Sender was Recipient of Orginial message
@@ -2122,12 +2122,12 @@ AS
 	END	
 	
 	--Create new message
-	INSERT {databaseOwner}{objectQualifier}Social_Messages(                    
+	INSERT {databaseOwner}{objectQualifier}SocialMessages(                    
   					[To],
 					[From],					
 					[Subject],
 					[Body],
-					[ParentMessageID],
+					[ConversationID],
 					[ReplyAllAllowed],
 					[SenderUserID],
                     [CreatedByUserID],
@@ -2140,7 +2140,7 @@ AS
 					@From,
 				    @OriginalSubject,			
 					@Body,
-					@ParentMessageID,
+					@ConversationID,
 					@ReplyAllAllowed,
 					@SenderUserID,
                     @CreateUpdateUserID , -- CreatedBy - int
@@ -2153,7 +2153,7 @@ AS
 	
 	IF (@ReplyAllAllowed = 0) --original message was sent to a Role, reply will be sent to the original sender only
 	BEGIN		
-		INSERT INTO {databaseOwner}{objectQualifier}Social_MessageRecipients
+		INSERT INTO {databaseOwner}{objectQualifier}SocialMessageRecipients
 		        ( [MessageID],
 		          [UserID],
 		          [Read],
@@ -2177,7 +2177,7 @@ AS
 	END
 	ELSE --Reply should be sent to all the original Recipients
 	BEGIN
-		INSERT {databaseOwner}{objectQualifier}Social_MessageRecipients(                    
+		INSERT {databaseOwner}{objectQualifier}SocialMessageRecipients(                    
 			[MessageID],
 			[UserID],
 			[Read],	
@@ -2198,8 +2198,8 @@ AS
               GETDATE() , -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
               GETDATE() -- LastModifiedOn - datetime			                                                
-           FROM {databaseOwner}{objectQualifier}Social_MessageRecipients
-           WHERE MessageID = @ParentMessageID
+           FROM {databaseOwner}{objectQualifier}SocialMessageRecipients
+           WHERE MessageID = @ConversationID
 	END
 
 	SELECT  @NewMessageID        
@@ -2213,7 +2213,7 @@ CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipient]
     @RecipientID INT
 AS 
 	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
+	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
 	WHERE  [RecipientID] = @RecipientID 
 
 GO
@@ -2226,7 +2226,7 @@ CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser]
     @UserID INT
 AS 
 	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
+	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
 	WHERE  [UserID] = @UserID 
 
 GO
@@ -2239,7 +2239,7 @@ CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage
     @MessageID INT    
 AS 
 	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
+	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
 	WHERE  [MessageID] = @MessageID 	 
 
 GO
@@ -2254,7 +2254,7 @@ CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage
     @Sent bit = 0   	  
 AS 
 	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}Social_MessageRecipients
+	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
 	WHERE  [MessageID] = @MessageID 
 	 AND   [UserID] = @UserID 
 	 AND (([Sent] = @Sent) or (@Sent is null AND [Sent] IS NOT null))	
@@ -2268,11 +2268,11 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocialMessageRecipient] 
     @RecipientID int
 AS 
-	DELETE FROM {databaseOwner}{objectQualifier}Social_MessageRecipients
+	DELETE FROM {databaseOwner}{objectQualifier}SocialMessageRecipients
 	WHERE  [RecipientID] = @RecipientID
 GO
 
---CRUD for Social_MessageAttachments
+--CRUD for SocialMessageAttachments
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessageAttachment]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageAttachment]
@@ -2287,7 +2287,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageAttachment]
 AS 
     IF ( @MessageAttachmentID = -1 ) 
         BEGIN
-            INSERT {databaseOwner}{objectQualifier}Social_MessageAttachments(                    
+            INSERT {databaseOwner}{objectQualifier}SocialMessageAttachments(                    
 					[FileID],
 					[MessageID],
                     [CreatedByUserID],
@@ -2308,7 +2308,7 @@ AS
         END
     ELSE 
         BEGIN
-            UPDATE  {databaseOwner}{objectQualifier}Social_MessageAttachments
+            UPDATE  {databaseOwner}{objectQualifier}SocialMessageAttachments
             SET     [FileID] = @FileID,
 					[MessageID] = @MessageID,
                     LastModifiedByUserID = @CreateUpdateUserID,
@@ -2329,7 +2329,7 @@ CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageAttachment]
     @MessageAttachmentID INT
 AS 
 	SELECT [MessageID], [FileID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}Social_MessageAttachments
+	FROM   {databaseOwner}{objectQualifier}SocialMessageAttachments
 	WHERE  [MessageAttachmentID] = @MessageAttachmentID 
 
 GO
@@ -2342,7 +2342,7 @@ CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageAttachmentsByMessag
     @MessageID INT
 AS 
 	SELECT [MessageID], [FileID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}Social_MessageAttachments
+	FROM   {databaseOwner}{objectQualifier}SocialMessageAttachments
 	WHERE  [MessageID] = @MessageID 
 
 GO
@@ -2354,7 +2354,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocialMessageAttachment] 
     @MessageAttachmentID int
 AS 
-	DELETE FROM {databaseOwner}{objectQualifier}Social_MessageAttachments
+	DELETE FROM {databaseOwner}{objectQualifier}SocialMessageAttachments
 	WHERE  [MessageAttachmentID] = @MessageAttachmentID
 GO
 
@@ -3661,17 +3661,29 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMessageItems]
 	@SortAscending   bit = 0, 		
 	@Read            bit = 0,
 	@Archived        bit = 0,
-	@Sent            bit = 0			
+	@SentOnly        bit = 0			
 AS
 BEGIN
 
---Return total message count
-SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_MessageRecipients 
+--Return Unread message count
+	SELECT COUNT(*) AS TotalNewThreads
+	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] 
+	WHERE UserID = @UserID
+	AND [Read] = 0
+	
+--Return total conversation count
+;WITH ConversationIDs AS 
+(
+	SELECT ConversationID
+	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] mr 
+	INNER JOIN {databaseOwner}[{objectQualifier}SocialMessages] m ON mr.MessageID = m.MessageID
 	WHERE UserID = @UserID
 	AND ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
-	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))	
-	AND (([Sent] = @Sent) or (@Sent is null AND [Sent] IS NOT null))	
-
+	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))		
+	AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is null) or (@SentOnly = 0))		
+	GROUP BY ConversationID
+)
+SELECT COUNT(*) AS TotalRecords FROM ConversationIDs
 
 -- Set the page bounds
 DECLARE @PageLowerBound INT, @PageUpperBound INT;
@@ -3683,21 +3695,22 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 ;WITH RollUpMessageIDs AS 
 (
 	SELECT MAX(m.MessageID) AS TopMessageID  
-	FROM dbo.dnn_Social_MessageRecipients mr 
-	INNER JOIN dbo.dnn_Social_Messages m ON mr.MessageID = m.MessageID
-	WHERE USERid = @UserID
+	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] mr 
+	INNER JOIN {databaseOwner}[{objectQualifier}SocialMessages] m ON mr.MessageID = m.MessageID
+	WHERE UserID = @UserID
 	AND ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
-	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))	
-	AND (([Sent] = @Sent) or (@Sent is null AND [Sent] IS NOT null))		
-	GROUP BY ParentMessageID
+	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))		
+	AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is null) or (@SentOnly = 0))		
+	GROUP BY ConversationID
 )
 ,Conversations  AS
 (
-	SELECT  [MessageID], [ParentMessageID], [Subject], [Body],
+	SELECT  DISTINCT [MessageID], [ConversationID], [Subject], convert(nvarchar(50), [Body]) AS Body,
 			[To], [From], [ReplyAllAllowed], [SenderUserID], 			
 			[CreatedByUserID], [CreatedOnDate], 
 			[LastModifiedByUserID], [LastModifiedOnDate],
-			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = m.MessageID) AS AttachmentCount,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageAttachments WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = m.ConversationID)) AS AttachmentCount,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = m.ConversationID) AND UserID = @UserID AND [READ] = 0) AS NewThreadCount,	
 			ROW_NUMBER() OVER(ORDER BY 
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN [CreatedOnDate] END ASC,
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN [CreatedOnDate] END DESC,
@@ -3706,7 +3719,7 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
 				) AS RowNumber
-	FROM {databaseOwner}{objectQualifier}Social_Messages AS m  	                                                                          
+	FROM {databaseOwner}{objectQualifier}SocialMessages AS m  	                                                                          
 	WHERE MessageID IN (SELECT TopMessageID FROM RollUpMessageIDs)
 )	
 SELECT * from Conversations where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
@@ -3720,7 +3733,7 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetMessageThread]
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMessageThread]
-    @MessageID       int,
+    @ConversationID  int,
 	@UserID          int,
 	@PageIndex       int,
 	@PageSize        int,
@@ -3730,15 +3743,15 @@ AS
 BEGIN
 
 --Cannot return thread if user was not a recipient
-IF NOT EXISTS (SELECT RecipientID FROM {databaseOwner}{objectQualifier}Social_MessageRecipients WHERE UserID = @UserID)
+IF NOT EXISTS (SELECT RecipientID FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE UserID = @UserID)
 BEGIN
 	SELECT 0
 	RETURN
 END	
 
 --Return total message count
-SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}Social_Messages
-	WHERE ((MessageID = @MessageID) OR (ParentMessageId = @MessageID))
+SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}SocialMessages
+	WHERE (ConversationID = @ConversationID)
 
 -- Set the page bounds
 DECLARE @PageLowerBound INT, @PageUpperBound INT;
@@ -3749,11 +3762,11 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 ;WITH inboxItems  AS
 (
 	SELECT  [RecipientID], [Subject], [Body], [SenderUserID], 
-			[Read], [Archived], [Sent], [UserID], [To], [From], [ReplyAllAllowed], [ParentMessageID],
+			[Read], [Archived], [Sent], [UserID], [To], [From], [ReplyAllAllowed], [ConversationID],
 			mr.[MessageID],	
 			mr.[CreatedByUserID], mr.[CreatedOnDate], 
 			mr.[LastModifiedByUserID], mr.[LastModifiedOnDate],
-			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Social_MessageAttachments WHERE MessageID = mr.MessageID) AS AttachmentCount,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageAttachments WHERE MessageID = mr.MessageID) AS AttachmentCount,
 			ROW_NUMBER() OVER(ORDER BY 
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN mr.[CreatedOnDate] END ASC,
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN mr.[CreatedOnDate] END DESC,
@@ -3762,10 +3775,10 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
 				) AS RowNumber
-	FROM	{databaseOwner}{objectQualifier}Social_MessageRecipients AS mr
-	INNER JOIN {databaseOwner}{objectQualifier}Social_Messages AS m ON mr.MessageID = m.MessageID	
+	FROM	{databaseOwner}{objectQualifier}SocialMessageRecipients AS mr
+	INNER JOIN {databaseOwner}{objectQualifier}SocialMessages AS m ON mr.MessageID = m.MessageID	
 	WHERE mr.UserID = @UserID
-	AND ((m.MessageID = @MessageID) OR (ParentMessageId = @MessageID))		
+	AND ConversationID = @ConversationID		
 )	
 
 SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
@@ -3779,14 +3792,14 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]
-	@ParentMessageID int,
+	@ConversationID int,
 	@UserID          int,
 	@Read			 bit
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Read]=@Read 
+UPDATE {databaseOwner}[{objectQualifier}SocialMessageRecipients] SET [Read]=@Read 
 WHERE UserID = @UserID
-AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}Social_Messages] WHERE ParentMessageID=@ParentMessageID)
+AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}SocialMessages] WHERE ConversationID=@ConversationID)
 END
 GO
 
@@ -3796,14 +3809,14 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]
-	@ParentMessageID int,
+	@ConversationID int,
 	@UserID	         int,
 	@Archived		 bit
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}Social_MessageRecipients] SET [Archived]=@Archived 
+UPDATE {databaseOwner}[{objectQualifier}SocialMessageRecipients] SET [Archived]=@Archived 
 WHERE UserID = @UserID
-AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}Social_Messages] WHERE ParentMessageID=@ParentMessageID)
+AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}SocialMessages] WHERE ConversationID=@ConversationID)
 END
 GO
 

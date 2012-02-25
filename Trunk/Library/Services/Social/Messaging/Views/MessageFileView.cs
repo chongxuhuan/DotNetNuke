@@ -38,7 +38,7 @@ namespace DotNetNuke.Services.Social.Messaging.Views
     /// Class:      MessageFileView
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageFileView class details about the attachment
+    /// The MessageFileView class contains details about the attachment
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]

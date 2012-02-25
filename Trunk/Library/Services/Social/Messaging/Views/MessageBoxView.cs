@@ -35,26 +35,33 @@ namespace DotNetNuke.Services.Social.Messaging.Views
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.Entities.Messaging
-    /// Class:      MessageThreadView
+    /// Namespace:  DotNetNuke.Entities.Messaging.Views
+    /// Class:      MessageBoxView
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageItemView class contains MessageItemView and collection of MessageAttachmentView
+    /// The MessageBoxView contains the View of Inbox, Sent or Archived messages
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageThreadView
+    public class MessageBoxView 
     {
         /// <summary>
-        /// MessageItemView containing consolidated information about the message
+        /// Total Number of Coversations
         /// </summary>
         [XmlAttribute]
-        public MessageConversationView MessageItem { get; set; }
+        public int TotalConversations { get; set; }
 
         /// <summary>
-        /// List of attachments
+        /// Total Number of New (Unread) Threads
         /// </summary>
         [XmlAttribute]
-        public IList<MessageFileView> Attachments { get; set; }
+        public int TotalNewThreads { get; set; }
+
+        /// <summary>
+        /// Total Number of Unread Threads
+        /// </summary>
+        [XmlAttribute]
+        public List<MessageConversationView> Conversations { get; set; }
+
     }
 }

@@ -146,7 +146,7 @@
 
     $.fn.dnnComposeMessage.defaultOptions = {
         onMessageSent: null, // callback function that accepts a meesage id
-        serviceurlbase: '/desktopmodules/SocialMessaging/API/MessagingService/',
+        serviceurlbase: '/desktopmodules/CoreServices/API/MessagingService/',
         title: 'Compose Message',
         toText: 'Send to',
         subjectText: 'Subject',

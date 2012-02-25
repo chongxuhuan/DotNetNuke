@@ -281,7 +281,7 @@ namespace DotNetNuke.Security.Membership.Data
 
         public override IDataReader GetRoleSettings(int roleId)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRoleSettings"));
+            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRoleSettings"), roleId);
         }
 
         public override void UpdateRole(int roleId, int roleGroupId, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,

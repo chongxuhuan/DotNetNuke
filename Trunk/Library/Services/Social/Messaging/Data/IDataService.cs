@@ -38,11 +38,11 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         IDataReader GetSocialMessagesBySender();
         void DeleteSocialMessage(int messageId);
 
-        IList<MessageItemView> GetMessageItems(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus, ref int totalRecords);
-        IList<MessageItemView> GetMessageThread(int messageId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);        
-        void UpdateSocialMessageReadStatus(int parentMessageId, int userId, bool read);
-        void UpdateSocialMessageArchivedStatus(int parentMessageId, int userId, bool archived);
-        int CreateMessageReply(int parentMessageId, string body, int senderUserId, string from, int createUpdateUserId);
+        MessageBoxView GetMessageItems(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
+        IList<MessageConversationView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);        
+        void UpdateSocialMessageReadStatus(int conversationId, int userId, bool read);
+        void UpdateSocialMessageArchivedStatus(int conversationId, int userId, bool archived);
+        int CreateMessageReply(int conversationId, string body, int senderUserId, string from, int createUpdateUserId);
         
         #endregion
 

@@ -88,10 +88,10 @@ namespace DotNetNuke.Services.Social.Messaging
         public string Body { get; set; }
 
         /// <summary>
-        /// messageID of the message -allows determination of reply rules and whether a message was sent to multiple recipients
+        /// Conversation ID of the Message. Each message has at least one ConversationId. Subsequent Replies to a Message get same ConversationId
         /// </summary>
         [XmlAttribute]
-        public int ParentMessageID { get; set; }
+        public int ConversationId { get; set; }
 
         /// <summary>
         /// ReplyAllAllowed is a bit value to indicate if the reply to the message can be sent to all the recipients or just the sender
@@ -132,7 +132,7 @@ namespace DotNetNuke.Services.Social.Messaging
             this.From = Null.SetNullString(dr["From"]);
             this.Subject = Null.SetNullString(dr["Subject"]);
             this.Body = Null.SetNullString(dr["Body"]);
-            this.ParentMessageID = Convert.ToInt32(dr["ParentMessageID"]);
+            this.ConversationId = Convert.ToInt32(dr["ConversationID"]);
             this.ReplyAllAllowed = Null.SetNullBoolean(dr["ReplyAllAllowed"]);
             this.SenderUserID = Convert.ToInt32(dr["SenderUserID"]);
             
