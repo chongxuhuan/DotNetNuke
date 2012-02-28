@@ -200,6 +200,14 @@ namespace DotNetNuke.Security.Membership.Data
             return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, GetFullyQualifiedName("GetUserCountByPortal"), portalId));
         }
 
+        public override IDataReader GetUsersAdvancedSearch(int portalId, int userId, int filterUserId, int fitlerRoleId, int relationTypeId, 
+                                                            bool isAdmin, int pageIndex, int pageSize, string sortColumn, bool sortAscending, 
+                                                            string propertyNames, string propertyValues)
+        {
+            return (IDataReader)SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersAdvancedSearch"), portalId, userId, filterUserId, fitlerRoleId, relationTypeId, isAdmin, pageSize, pageIndex, sortColumn, sortAscending, propertyNames, propertyValues);
+        }
+
+
         public override IDataReader GetUsersByEmail(int portalID, string email, int pageIndex, int pageSize, bool includeDeleted, bool superUsersOnly)
         {
             return (IDataReader)SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersByEmail"), GetNull(portalID), email, pageIndex, pageSize, includeDeleted, superUsersOnly);

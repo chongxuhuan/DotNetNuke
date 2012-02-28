@@ -74,6 +74,11 @@ namespace DotNetNuke.Security.Membership.Data
         public abstract IDataReader GetUserByAuthToken(int portalID, string userToken, string authType);
         public abstract IDataReader GetUserByUsername(int portalID, string username);
         public abstract int GetUserCountByPortal(int portalId);
+
+        public abstract IDataReader GetUsersAdvancedSearch(int portalId, int userId, int filterUserId, int filterRoleId, int relationTypeId,
+                                                    bool isAdmin, int pageIndex, int pageSize, string sortColumn,
+                                                    bool sortAscending, string propertyNames, string propertyValues);
+
         public abstract IDataReader GetUsersByEmail(int portalID, string email, int pageIndex, int pageSize);
 
         public abstract IDataReader GetUsersByEmail(int portalID, string email, int pageIndex, int pageSize,

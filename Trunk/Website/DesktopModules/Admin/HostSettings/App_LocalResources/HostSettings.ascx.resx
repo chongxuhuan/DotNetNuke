@@ -885,4 +885,47 @@
   <data name="DeprecateGzip.Text" xml:space="preserve">
     <value>DotNetNuke's GZip compression is getting deprecated and removed in 6.2.0. We recommend using IIS compression to increase performance on your server.</value>
   </data>
+  <data name="ClientResourceManagement.Text" xml:space="preserve">
+    <value>Client Resource Management</value>
+  </data>
+  <data name="plCrmVersion.Help" xml:space="preserve">
+    <value>To manage browser caching, client resources are assigned a version number. This number is increased when an extension is installed, portal.css is updated, or when the server cache is cleared.  It applies to any processed file (combined amd/or minified).  You can manually increase the number below to force browsers to download new copies of the resource files.</value>
+  </data>
+  <data name="plCrmVersion.Text" xml:space="preserve">
+    <value>Current Host Version</value>
+  </data>
+  <data name="plCrmEnableCompositeFiles.Help" xml:space="preserve">
+    <value>Composite files are combinations of resources (JavaScript and CSS) created to reduce the number of file requests by the browser. This will significantly lower the page loading speed.</value>
+  </data>
+  <data name="plCrmEnableCompositeFiles.Text" xml:space="preserve">
+    <value>Enable Composite Files</value>
+  </data>
+  <data name="plCrmMinifyCss.Help" xml:space="preserve">
+    <value>CSS minification will reduce the size of the CSS code by using regular expressions to remove comments, whitespace and "dead css".  It is only available when composite files are enabled.</value>
+  </data>
+  <data name="plCrmMinifyCss.Text" xml:space="preserve">
+    <value>Minify CSS</value>
+  </data>
+  <data name="plCrmMinifyJs.Help" xml:space="preserve">
+    <value>JS minification will reduce the size of the JavaScript code using JSMin. It is only available when composite files are enabled.</value>
+  </data>
+  <data name="plCrmMinifyJs.Text" xml:space="preserve">
+    <value>Minify JS</value>
+  </data>
+  <data name="CrmIncrementCrmVersionButton.Text" xml:space="preserve">
+    <value>Increment Version</value>
+  </data>
+  <data name="IncrementCrmVersionButton.Text" xml:space="preserve">
+    <value>Increment Site Version</value>
+  </data>
+  <data name="IncrementCrmVersionConfirm.Text" xml:space="preserve">
+    <value>&lt;p&gt;This action will force all site visitors to download new versions of CSS and JavaScript files. You should only do this if you are certain that the files have changed and you want those changes to be reflected on the client\'s browser.&lt;/p&gt;&lt;p&gt;Are you sure you want to increment the version number for your site?&lt;/p&gt;</value>
+    <comment>This will be used from JS, make sure to escape any quotes.</comment>
+  </data>
+  <data name="IncrementCrmVersionError.Text" xml:space="preserve">
+    <value>There was an error incrementing the Client Resource version.</value>
+  </data>
+  <data name="DebugEnabled.Text" xml:space="preserve">
+    <value>Please note: debugging is enabled at the application level. This means that files will not be combined, even if file combining is turned on.</value>
+  </data>
 </root>

@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region Copyright
+
+// 
+// DotNetNuke® - http://www.dotnetnuke.com
+// Copyright (c) 2002-2012
+// by DotNetNuke Corporation
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// DEALINGS IN THE SOFTWARE.
+
+#endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -11,39 +33,6 @@ namespace DotNetNuke.Web.CoreServices
 {
     public class MessagingServiceController : DnnController
     {
-        //
-        // GET: /Services/
-        [DnnAuthorize(AllowAnonymous = true)]
-        public string Index()
-        {
-            return "Hello World " + DateTime.Now;
-        }
-
-        [DnnAuthorize]
-        public ActionResult Inbox(int pageIndex, int pageSize)
-        {            
-            return Json(MessagingController.Instance.GetRecentInbox(UserInfo.UserID, pageIndex, pageSize).Conversations, JsonRequestBehavior.AllowGet);
-        }
-
-        [DnnAuthorize]
-        public ActionResult Sentbox(int pageIndex, int pageSize)
-        {            
-            return Json(MessagingController.Instance.GetRecentSentbox(UserInfo.UserID, pageIndex, pageSize).Conversations, JsonRequestBehavior.AllowGet);
-        }
-
-        [DnnAuthorize]
-        public ActionResult Archived(int pageIndex, int pageSize)
-        {            
-            return Json(MessagingController.Instance.GetArchivedMessages(UserInfo.UserID, pageIndex, pageSize).Conversations, JsonRequestBehavior.AllowGet);
-        }
-
-        [DnnAuthorize]
-        public ActionResult Thread(int conversationId, int pageIndex, int pageSize)
-        {
-            var totalRecords = 0;
-            return Json(MessagingController.Instance.GetMessageThread(conversationId, UserInfo.UserID, pageIndex, pageSize, ref totalRecords), JsonRequestBehavior.AllowGet);
-        }
-
         [DnnAuthorize]
         public ActionResult WaitTimeForNextMessage()
         {
@@ -63,64 +52,6 @@ namespace DotNetNuke.Web.CoreServices
             var message = MessagingController.Instance.CreateMessage(subject, body, roles, users, fileIds);
 
             return Json(message.MessageID);
-        }
-
-        [DnnAuthorize]
-        public ActionResult Reply(int conversationId, string body, IList<int> fileIds)
-        {
-            var messageId = MessagingController.Instance.ReplyMessage(conversationId, body, fileIds);
-            return Json(messageId);
-        }
-
-        [DnnAuthorize]
-        public ActionResult MarkArchived(int conversationId)
-        {
-            MessagingController.Instance.MarkArchived(conversationId, UserInfo.UserID);
-            return Json(new { Result = "success" }, JsonRequestBehavior.AllowGet);
-        }
-
-        [DnnAuthorize]
-        public ActionResult MarkUnArchived(int conversationId)
-        {
-            MessagingController.Instance.MarkUnArchived(conversationId, UserInfo.UserID);
-            return Json(new { Result = "success" }, JsonRequestBehavior.AllowGet);
-        }
-
-        [DnnAuthorize]
-        public ActionResult MarkRead(int conversationId)
-        {
-            MessagingController.Instance.MarkRead(conversationId, UserInfo.UserID);
-            return Json(new { Result = "success" }, JsonRequestBehavior.AllowGet);
-        }
-
-        [DnnAuthorize]
-        public ActionResult MarkUnRead(int conversationId)
-        {
-            MessagingController.Instance.MarkUnRead(conversationId, UserInfo.UserID);
-            return Json(new { Result = "success" }, JsonRequestBehavior.AllowGet);
-        }
-
-        [DnnAuthorize]
-        public ActionResult Auth()
-        {
-            return Json(new { Result = string.Format("Hello {0} you are Authorized!!", UserInfo.Username) }, JsonRequestBehavior.AllowGet);
-        }
-
-        [DnnAuthorize(Roles = "Registered Users")]
-        public ActionResult Registered()
-        {
-            return Json(new { Output = string.Format("Hello {0} you are a registered user.", UserInfo.Username) }, JsonRequestBehavior.AllowGet);
-        }
-
-        [DnnAuthorize(Roles = "Custom Role")]
-        public ActionResult CustomRole()
-        {
-            return Json(new { Output = string.Format("Hello {0} you are in a custom role.", UserInfo.Username) }, JsonRequestBehavior.AllowGet);
-        }
-
-        public ActionResult HostsOnly()
-        {
-            return Json(new { Output = string.Format("Hello {0} you are a most excellent Host.", UserInfo.Username) }, JsonRequestBehavior.AllowGet);
         }
     }
 }

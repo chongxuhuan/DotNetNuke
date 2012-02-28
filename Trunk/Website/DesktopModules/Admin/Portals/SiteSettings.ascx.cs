@@ -59,6 +59,7 @@ using Globals = DotNetNuke.Common.Globals;
 namespace DotNetNuke.Modules.Admin.Portals
 {
     using System.Globalization;
+    using System.Web;
     using Web.Client;
 
     /// -----------------------------------------------------------------------------
@@ -381,6 +382,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             var overrideDefaultSettings = Boolean.Parse(PortalController.GetPortalSetting(ClientResourceSettings.OverrideDefaultSettingsKey, portalId, "false"));
             chkOverrideDefaultSettings.Checked = overrideDefaultSettings;
             BindClientResourceManagementUi(portal.PortalID, overrideDefaultSettings);
+            ManageMinificationUi();
         }
 
         private void BindClientResourceManagementUi(int portalId, bool overrideDefaultSettings)
@@ -389,6 +391,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             CrmVersionRow.Visible = overrideDefaultSettings;
             MinifyCssRow.Visible = overrideDefaultSettings;
             MinifyJsRow.Visible = overrideDefaultSettings;
+            DebugEnabledRow.Visible = HttpContext.Current.IsDebuggingEnabled;
 
             // set up host settings information
             var hostVersion = HostController.Instance.GetInteger(ClientResourceSettings.VersionKey, 1).ToString(CultureInfo.InvariantCulture);
@@ -408,7 +411,18 @@ namespace DotNetNuke.Modules.Admin.Portals
                 chkEnableCompositeFiles.Checked = Boolean.Parse(PortalController.GetPortalSetting(ClientResourceSettings.EnableCompositeFilesKey, portalId, "false"));
                 chkMinifyCss.Checked = Boolean.Parse(PortalController.GetPortalSetting(ClientResourceSettings.MinifyCssKey, portalId, "false"));
                 chkMinifyJs.Checked = Boolean.Parse(PortalController.GetPortalSetting(ClientResourceSettings.MinifyJsKey, portalId, "false"));
-                CrmVersionLabel.Text = PortalController.GetPortalSetting(ClientResourceSettings.VersionKey, portalId, "1");
+
+                var settingValue = PortalController.GetPortalSetting(ClientResourceSettings.VersionKey, portalId, "0");
+                int version;
+                if (int.TryParse(settingValue, out version))
+                {
+                    if (version == 0)
+                    {
+                        version = 1;
+                        PortalController.UpdatePortalSetting(portalId, ClientResourceSettings.VersionKey, "1", true);
+                    }
+                    CrmVersionLabel.Text = version.ToString(CultureInfo.InvariantCulture);
+                }
             }
         }
 
@@ -628,7 +642,27 @@ namespace DotNetNuke.Modules.Admin.Portals
             IncrementCrmVersionButton.Click += IncrementCrmVersion;
             chkOverrideDefaultSettings.CheckedChanged += OverrideDefaultSettingsChanged;
             ctlDesktopModules.LocalResourceFile = LocalResourceFile;
-            
+            chkEnableCompositeFiles.CheckedChanged += EnableCompositeFilesChanged;
+
+        }
+
+        private void EnableCompositeFilesChanged(object sender, EventArgs e)
+        {
+            ManageMinificationUi();
+        }
+
+        private void ManageMinificationUi()
+        {
+            var enableCompositeFiles = chkEnableCompositeFiles.Checked;
+
+            if (!enableCompositeFiles)
+            {
+                chkMinifyCss.Checked = false;
+                chkMinifyJs.Checked = false;
+            }
+
+            chkMinifyCss.Enabled = enableCompositeFiles;
+            chkMinifyJs.Enabled = enableCompositeFiles;
         }
 
         private void OverrideDefaultSettingsChanged(object sender, EventArgs e)

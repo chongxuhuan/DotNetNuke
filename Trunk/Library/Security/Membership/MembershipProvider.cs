@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Users;
@@ -126,6 +127,13 @@ namespace DotNetNuke.Security.Membership
         public virtual ArrayList GetUnAuthorizedUsers(int portalId, bool includeDeleted, bool superUsersOnly)
         {
             throw new NotImplementedException();
+        }
+
+        public virtual IList<UserInfo> GetUsersAdvancedSearch(int portalId, int userId, int filterUserId, int filterRoleId, int relationTypeId,
+                                                    bool isAdmin, int pageIndex, int pageSize, string sortColumn,
+                                                    bool sortAscending, string propertyNames, string propertyValues)
+        {
+            throw new NotImplementedException();            
         }
         
         #endregion

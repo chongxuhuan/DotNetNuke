@@ -4597,6 +4597,22 @@ AS
 
 GO
 
+/* Add default host settings for Client Resource Management */
+/************************************************************/
+
+-- default CRM host settings
+insert into {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
+values('CrmEnableCompositeFiles', 'True', 0, -1, GETDATE(), -1, GETDATE())
+
+insert into {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
+values('CrmMinifyCss', 'True', 0, -1, GETDATE(), -1, GETDATE())
+
+insert into {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
+values('CrmMinifyJs', 'True', 0, -1, GETDATE(), -1, GETDATE())
+
+insert into {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
+values('CrmVersion', '1', 0, -1, GETDATE(), -1, GETDATE())
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

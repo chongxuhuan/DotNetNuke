@@ -191,6 +191,9 @@
     <Compile Include="Entities\Portals\Internal\PortalAliasControllerImpl.cs" />
     <Compile Include="Entities\Portals\Internal\TestablePortalAliasController.cs" />
     <Compile Include="Entities\Portals\Internal\TestablePortalController.cs" />
+    <Compile Include="Entities\Users\Internal\IUserController.cs" />
+    <Compile Include="Entities\Users\Internal\TestableUserController.cs" />
+    <Compile Include="Entities\Users\Internal\UserControllerImpl.cs" />
     <Compile Include="Entities\Users\Social\Internal\IRelationshipController.cs" />
     <Compile Include="Entities\Users\Social\Internal\RelationshipControllerImpl.cs" />
     <Compile Include="Framework\ServiceLocator.cs" />

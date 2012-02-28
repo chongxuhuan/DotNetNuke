@@ -770,62 +770,6 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             return relationship;
         }
 
-        /// <summary>
-        /// GetUsersAdvancedSearch -- Gets a filtered list of users along with their profile properties.
-        /// </summary>
-        /// <param name="currentUser"> User to determine correct visibility permissions</param>
-        /// <param name="filterUser"> User which could be used in conjunction with other parameters to filter the list in terms of relationship to.</param>
-        /// <param name="filterRole">Filter the list of user based on their role.</param>
-        /// <param name="relationshipType">Filter the list of user based on their relationship to the current user [currUser parameter].</param>
-        /// <param name="propertyNamesValues"> A collection of Key Value pairs of property names and values to filter upon.</param>
-        /// <param name="additionalParameters"> A collection of Key Value pairs of more fields to filter upon</param>
-        /// <returns></returns>
-        public IDataReader GetUsersAdvancedSearch(UserInfo currentUser, UserInfo filterUser, UserRoleInfo filterRole,
-                                                  RelationshipType relationshipType,
-                                                  IDictionary<string, string> propertyNamesValues,
-                                                  Dictionary<string, string> additionalParameters)
-        {
-            if (additionalParameters == null)
-            {
-                additionalParameters = new Dictionary<string, string>();
-            }
-
-            int portalId = additionalParameters.ContainsKey("PortalId") && additionalParameters["PortalId"] != null
-                               ? int.Parse(additionalParameters["PortalId"])
-                               : filterUser.PortalID;
-
-            bool isAdmin = additionalParameters.ContainsKey("IsAdmin") && additionalParameters["IsAdmin"] != null
-                               ? bool.Parse(additionalParameters["IsAdmin"])
-                               : true;
-            int filterRoleId = filterRole != null ? filterRole.RoleID : -1;
-            int relationshipTypeId = relationshipType != null ? relationshipType.RelationshipTypeId : -1;
-
-            int pageIndex = additionalParameters.ContainsKey("PageIndex") && additionalParameters["PageIndex"] != null
-                                ? int.Parse(additionalParameters["PageIndex"])
-                                : 1;
-            int records = additionalParameters.ContainsKey("Records") && additionalParameters["Records"] != null
-                              ? int.Parse(additionalParameters["Records"])
-                              : 1;
-            string sortByColumn = additionalParameters.ContainsKey("SortBy") && additionalParameters["SortBy"] != null
-                                      ? additionalParameters["SortBy"]
-                                      : string.Empty;
-            bool sortAscending = additionalParameters.ContainsKey("SortAscending") &&
-                                 additionalParameters["SortAscending"] != null
-                                     ? bool.Parse(additionalParameters["SortAscending"])
-                                     : true;
-            string propertyNamesFilter = propertyNamesValues.Aggregate("",
-                                                                       (current, property) =>
-                                                                       current + "," + property.Key);
-            string propertyValuesFilter = propertyNamesValues.Aggregate("",
-                                                                        (current, property) =>
-                                                                        current + "," + property.Value);
-
-
-            return _dataService.GetUsersAdvancedSearch(portalId, currentUser.UserID, filterUser.UserID, filterRoleId,
-                                                       relationshipTypeId, isAdmin, records, pageIndex, sortByColumn,
-                                                       sortAscending, propertyNamesFilter, propertyValuesFilter);
-        }
-
         #endregion
 
         public void CreateDefaultRelationshipsForPortal(int portalId)

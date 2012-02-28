@@ -25,11 +25,11 @@ namespace DotNetNuke.Web.Client.Providers
 
     public abstract class DnnFileRegistrationProvider : WebFormsFileRegistrationProvider
     {
-        public override int GetVersion(HttpContextBase http)
+        public override int GetVersion()
         {
             var dnnSettingsHelper = new ClientResourceSettings();
             var settingsVersion = dnnSettingsHelper.GetVersion();
-            return settingsVersion.HasValue ? settingsVersion.Value : base.GetVersion(http);
+            return settingsVersion.HasValue ? settingsVersion.Value : base.GetVersion();
         }
 
         /// <summary>

@@ -63,6 +63,10 @@ using DotNetNuke.Web.UI.WebControls.Extensions;
 
 namespace DotNetNuke.Modules.Admin.Host
 {
+    using System.Globalization;
+    using System.Web;
+    using Web.Client;
+
     /// -----------------------------------------------------------------------------
     /// <summary>
     /// The HostSettings PortalModuleBase is used to edit the host settings
@@ -330,6 +334,8 @@ namespace DotNetNuke.Modules.Admin.Host
             BindSmtpServer();
             BindPerformance();
             BindJQuery();
+            BindClientResourceManagement();
+            ManageMinificationUi();
 
             foreach (KeyValuePair<string, ModuleControlInfo> kvp in ModuleControlController.GetModuleControlsByModuleDefinitionID(Null.NullInteger))
             {
@@ -390,6 +396,15 @@ namespace DotNetNuke.Modules.Admin.Host
             ViewState["SelectedUsersOnlineEnabled"] = chkUsersOnline.Checked;
 
             BindUpgradeLogs();
+        }
+
+        private void BindClientResourceManagement()
+        {
+            DebugEnabledRow.Visible = HttpContext.Current.IsDebuggingEnabled;
+            CrmVersion.Text = Entities.Host.Host.CrmVersion.ToString(CultureInfo.InvariantCulture);
+            chkCrmEnableCompositeFiles.Checked = Entities.Host.Host.CrmEnableCompositeFiles;
+            chkCrmMinifyCss.Checked = Entities.Host.Host.CrmMinifyCss;
+            chkCrmMinifyJs.Checked = Entities.Host.Host.CrmMinifyJs;
         }
 
         private void BindModuleCacheProviderList()
@@ -499,7 +514,8 @@ namespace DotNetNuke.Modules.Admin.Host
             cmdUpdate.Click += UpdateSettings;
             cmdUpgrade.Click += OnUpgradeClick;
             cmdCache.Click += ClearCache;
-
+            IncrementCrmVersionButton.Click += IncrementCrmVersion;
+            chkCrmEnableCompositeFiles.CheckedChanged += EnableCompositeFilesChanged;
             try
             {
                 CheckSecurity();
@@ -514,6 +530,33 @@ namespace DotNetNuke.Modules.Admin.Host
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+        }
+
+        private void EnableCompositeFilesChanged(object sender, EventArgs e)
+        {
+            ManageMinificationUi();
+        }
+
+        private void ManageMinificationUi()
+        {
+            var enableCompositeFiles = chkCrmEnableCompositeFiles.Checked;
+
+            if (!enableCompositeFiles)
+            {
+                chkCrmMinifyCss.Checked = false;
+                chkCrmMinifyJs.Checked = false;
+            }
+
+            chkCrmMinifyCss.Enabled = enableCompositeFiles;
+            chkCrmMinifyJs.Enabled = enableCompositeFiles;
+        }
+
+        private void IncrementCrmVersion(object sender, EventArgs e)
+        {
+            var currentVersion = Entities.Host.Host.CrmVersion;
+            var newVersion = currentVersion + 1;
+            HostController.Instance.Update(ClientResourceSettings.VersionKey, newVersion.ToString(CultureInfo.InvariantCulture), true);
+            Response.Redirect(Request.RawUrl, true); // reload page
         }
 
         protected void OnUpgradeClick(object sender, EventArgs e)
@@ -780,6 +823,9 @@ namespace DotNetNuke.Modules.Admin.Host
                     HostController.Instance.Update("jQueryHosted", chkJQueryUseHosted.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("jQueryUrl", txtJQueryHostedUrl.Text, false);
                     HostController.Instance.Update("jQueryUIUrl", txtJQueryUIHostedUrl.Text, false);
+                    HostController.Instance.Update(ClientResourceSettings.EnableCompositeFilesKey, chkCrmEnableCompositeFiles.Checked.ToString(CultureInfo.InvariantCulture));
+                    HostController.Instance.Update(ClientResourceSettings.MinifyCssKey, chkCrmMinifyCss.Checked.ToString(CultureInfo.InvariantCulture));
+                    HostController.Instance.Update(ClientResourceSettings.MinifyJsKey, chkCrmMinifyJs.Checked.ToString(CultureInfo.InvariantCulture));
 
                     UpdateCompression();
 

@@ -4,8 +4,8 @@
             $wrap = this;
 
         $wrap.each(function () {
-            var $this = $(this),
-                $composeMessageDialog,
+            var self = $(this),
+                composeMessageDialog,
                 html,
                 canSend = false,
                 autoclose,
@@ -25,51 +25,41 @@
 
             html += "</fieldset>";
 
-            $composeMessageDialog = $("<div class='composeMessageDialog dnnForm dnnClear'></div>").html(html).dialog(opts);
-
-            function getWaitTimeForNextMessage() {
+            self.getWaitTimeForNextMessage = function () {
                 var returnValue = 0;
                 $.ajax({
-                    type: "GET",
                     url: opts.serviceurlbase + "WaitTimeForNextMessage",
-                    data: {},
-                    async: false,
-                    success: function (data) {
-                        returnValue = data;
-                    }
-                });
+                    async: false
+                }).done(function (data) { returnValue = data; });
                 return returnValue;
             };
 
-            $this.click(function (e) {
-                if ($composeMessageDialog.is(':visible')) {
-                    $composeMessageDialog.dialog("close");
-                    return true;
-                }
-
+            self.click(function (e) {
                 e.preventDefault();
 
-                $composeMessageDialog.find('input[type="text"]').keyup(function () {
+                composeMessageDialog = $("<div class='composeMessageDialog dnnForm dnnClear'></div>").html(html).dialog(opts);
+
+                composeMessageDialog.find('input[type="text"]').keyup(function () {
                     var sendButton = $('.ui-dialog-buttonpane button:first');
-                    if ($composeMessageDialog.find('#to').val().trim().length > 0 && $composeMessageDialog.find('#subject').val().trim().length > 0 && canSend) {
+                    if (composeMessageDialog.find('#to').val().trim().length > 0 && composeMessageDialog.find('#subject').val().trim().length > 0 && canSend) {
                         sendButton.removeAttr('disabled').removeClass('disabled');
                     } else {
                         sendButton.attr('disabled', 'disabled').addClass('disabled');
                     }
                 });
 
-                $composeMessageDialog.dialog({
+                composeMessageDialog.dialog({
                     minWidth: 650,
                     modal: true,
                     resizable: false,
                     open: function () {
                         $('.ui-dialog-buttonpane :button').removeClass().addClass('dnnTertiaryAction');
-                        $composeMessageDialog.find('.MessageSent').hide();
+                        composeMessageDialog.find('.MessageSent').hide();
                         messageId = -1;
 
                         canSend = false;
                         var sendButton = $('.ui-dialog-buttonpane button:first');
-                        var timeForNextMessage = getWaitTimeForNextMessage();
+                        var timeForNextMessage = self.getWaitTimeForNextMessage();
                         if (timeForNextMessage > 0) {
                             sendButton.text(timeForNextMessage + ' sec').attr('disabled', 'disabled').addClass('disabled');
                             sendButton.before('<span>' + opts.throttlingText + '</span>');
@@ -78,7 +68,7 @@
                                 if (timeForNextMessage == 0) {
                                     canSend = true;
                                     sendButton.text(opts.sendText);
-                                    if ($composeMessageDialog.find('#to').val().trim().length > 0 && $composeMessageDialog.find('#subject').val().trim().length > 0) {
+                                    if (composeMessageDialog.find('#to').val().trim().length > 0 && composeMessageDialog.find('#subject').val().trim().length > 0) {
                                         sendButton.removeAttr('disabled').removeClass('disabled');
                                     }
                                     clearInterval(countdown);
@@ -97,26 +87,24 @@
                             text: opts.sendText,
                             click: function () {
                                 data = {};
-                                data.subject = $composeMessageDialog.find('#subject').val();
-                                data.body = $composeMessageDialog.find('#bodytext').val();
+                                data.subject = composeMessageDialog.find('#subject').val();
+                                data.body = composeMessageDialog.find('#bodytext').val();
                                 data.roleIds = {}; //TODO hardcoded for now
                                 data.userIds = 1; //TODO hardcoded for now 
                                 data.fileIds = {}; //TODO hardcoded for now 
                                 $.ajax({
                                     type: "POST",
                                     url: opts.serviceurlbase + "Create",
-                                    data: data,
-                                    success: function (data) {
-                                        $composeMessageDialog.find('.MessageSent').show();
-                                        $('.ui-dialog-buttonpane button:first').attr('disabled', 'disabled').addClass('disabled');
-                                        messageId = data;
-                                        autoclose = setInterval(function () {
-                                            $composeMessageDialog.dialog("close");
-                                        }, opts.msgSentAutoCloseTimeout);
-                                    },
-                                    error: function (xhr, status, error) {
-                                        alert(error);
-                                    }
+                                    data: data
+                                }).done(function (data) {
+                                    composeMessageDialog.find('.MessageSent').show();
+                                    $('.ui-dialog-buttonpane button:first').attr('disabled', 'disabled').addClass('disabled');
+                                    messageId = data;
+                                    autoclose = setInterval(function () {
+                                        composeMessageDialog.dialog("close");
+                                    }, opts.msgSentAutoCloseTimeout);
+                                }).fail(function (xhr, status, error) {
+                                    alert(error);
                                 });
                             }
                         },
@@ -134,10 +122,11 @@
                         if (messageId != -1 && opts.onMessageSent != null) {
                             opts.onMessageSent(messageId);
                         }
-                        $composeMessageDialog.find('input[type="text"],textarea').val('');
+                        composeMessageDialog.find('input[type="text"],textarea').val('');
+                        composeMessageDialog.dialog("destroy");
                     }
                 });
-                $composeMessageDialog.dialog('open');
+                composeMessageDialog.dialog('open');
             });
 
             return $wrap;

@@ -40,7 +40,9 @@ using DotNetNuke.UI.Skins;
 
 namespace DotNetNuke.Entities.Host
 {
-	/// <summary>
+    using Web.Client;
+
+    /// <summary>
 	/// Contains most of the host settings.
 	/// </summary>
     public class Host : BaseEntityInfo
@@ -125,6 +127,73 @@ namespace DotNetNuke.Entities.Host
                     setting = Globals.glbDefaultControlPanel;
                 }
                 return setting;
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///   Indicates whether Composite Files are enabled at the host level.
+        /// </summary>
+        /// <history>
+        ///   [irobinson]	02/25/2012 Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public static bool CrmEnableCompositeFiles
+        {
+            get
+            {
+                return HostController.Instance.GetBoolean(ClientResourceSettings.EnableCompositeFilesKey, false);
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Indicates whether CSS Minification is enabled at the host level.
+        /// </summary>
+        /// <history>
+        ///   [irobinson]	02/25/2012 Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public static bool CrmMinifyCss
+        {
+            get
+            {
+                return HostController.Instance.GetBoolean(ClientResourceSettings.MinifyCssKey);
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///   Indicates whether JS Minification is enabled at the host level.
+        /// </summary>
+        /// <history>
+        ///   [irobinson]	02/25/2012 Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public static bool CrmMinifyJs
+        {
+            get
+            {
+                return HostController.Instance.GetBoolean(ClientResourceSettings.MinifyJsKey);
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        ///   Returns the Client Resource Management version number.
+        /// </summary>
+        /// <remarks>
+        ///   Defaults to 1
+        /// </remarks>
+        /// <history>
+        ///   [irobinson]	02/25/2012 Created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public static int CrmVersion
+        {
+            get
+            {
+                return HostController.Instance.GetInteger(ClientResourceSettings.VersionKey, 1);
             }
         }
 

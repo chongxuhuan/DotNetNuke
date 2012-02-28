@@ -58,7 +58,22 @@ namespace DotNetNuke.Web.Client
 
         public bool? AreCompositeFilesEnabled()
         {
-            var portalEnabled = GetBooleanSetting(PortalSettingsDictionaryKey, EnableCompositeFilesKey);
+            return IsBooleanSettingEnabled(EnableCompositeFilesKey);
+        }
+
+        public bool? EnableCssMinification()
+        {
+            return IsBooleanSettingEnabled(MinifyCssKey);
+        }
+
+        public bool? EnableJsMinification()
+        {
+            return IsBooleanSettingEnabled(MinifyJsKey);
+        }
+
+        private bool? IsBooleanSettingEnabled(string settingKey)
+        {
+            var portalEnabled = GetBooleanSetting(PortalSettingsDictionaryKey, settingKey);
             var overrideDefaultSettings = GetBooleanSetting(PortalSettingsDictionaryKey, OverrideDefaultSettingsKey);
 
             // if portal version is set
@@ -67,7 +82,7 @@ namespace DotNetNuke.Web.Client
                 return portalEnabled.Value;
 
             // otherwise return the host setting
-            var hostEnabled = GetBooleanSetting(HostSettingsDictionaryKey, EnableCompositeFilesKey);
+            var hostEnabled = GetBooleanSetting(HostSettingsDictionaryKey, settingKey);
             if (hostEnabled.HasValue)
                 return hostEnabled.Value;
 

@@ -20,8 +20,10 @@
 #endregion
 namespace DotNetNuke.Web.Client.Providers
 {
+    using System;
     using System.Web;
-
+    using ClientDependency.Core;
+    using ClientDependency.Core.CompositeFiles;
     using ClientDependency.Core.CompositeFiles.Providers;
 
     /// <summary>
@@ -29,11 +31,43 @@ namespace DotNetNuke.Web.Client.Providers
     /// </summary>
     public class DnnCompositeFileProcessingProvider : CompositeFileProcessingProvider
     {
-        public override int GetVersion(HttpContextBase http)
+        private readonly ClientResourceSettings clientResourceSettings = new ClientResourceSettings();
+
+        public override int GetVersion()
         {
-            var dnnSettingsHelper = new ClientResourceSettings();
-            var settingsVersion = dnnSettingsHelper.GetVersion();
-            return settingsVersion.HasValue ? settingsVersion.Value : base.GetVersion(http);
+            var settingsVersion = clientResourceSettings.GetVersion();
+            return settingsVersion.HasValue ? settingsVersion.Value : base.GetVersion();
+        }
+
+        protected override string MinifyFile(string fileContents, ClientDependencyType type)
+        {
+            switch (type)
+            {
+                case ClientDependencyType.Css:
+                    return MinifyCss ? CssMin.CompressCSS(fileContents) : fileContents;
+                case ClientDependencyType.Javascript:
+                    return MinifyJs ? JSMin.CompressJS(fileContents) : fileContents;
+                default:
+                    return fileContents;
+            }
+        }
+
+        private bool MinifyCss
+        {
+            get
+            {
+                var enableCssMinification = clientResourceSettings.EnableCssMinification();
+                return enableCssMinification.HasValue ? enableCssMinification.Value : EnableCssMinify;
+            }
+        }
+
+        private bool MinifyJs
+        {
+            get
+            {
+                var enableJsMinification = clientResourceSettings.EnableJsMinification();
+                return enableJsMinification.HasValue ? enableJsMinification.Value : EnableJsMinify;
+            }
         }
     }
 }

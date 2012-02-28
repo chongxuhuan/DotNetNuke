@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Web.Security;
 
@@ -391,6 +392,35 @@ namespace DotNetNuke.Security.Membership
             return arrUsers;
         }
 
+        private static IList<UserInfo> FillUserList(int portalId, IDataReader dr)
+        {
+            //TODO - this method needs to be updated to eagerly load the Users.
+            //Currently it is still using the old lazy loading of Membership and profile
+            //The datareader should have the fields needed.
+           
+            var users = new List<UserInfo>();
+            try
+            {
+                while (dr.Read())
+                {
+                    //fill business object
+                    UserInfo user = FillUserInfo(portalId, dr, false);
+                    //add to collection
+                    users.Add(user);
+                }
+            }
+            catch (Exception exc)
+            {
+                Exceptions.LogException(exc);
+            }
+            finally
+            {
+                //close datareader
+                CBO.CloseDataReader(dr, true);
+            }
+            return users;
+        }
+
         private static UserInfo FillUserInfo(int portalId, IDataReader dr, bool closeDataReader)
         {
             UserInfo user = null;
@@ -742,34 +772,6 @@ namespace DotNetNuke.Security.Membership
             _dataProvider.DeleteUsersOnline(timeWindow);
         }
 
-        public static ArrayList FillUserCollection(int portalId, IDataReader dr)
-        {
-            //Note:  the DataReader returned from this method should contain 2 result sets.  The first set
-            //       contains the TotalRecords, that satisfy the filter, the second contains the page
-            //       of data
-            var arrUsers = new ArrayList();
-            try
-            {
-                while (dr.Read())
-                {
-                    //fill business object
-                    UserInfo user = FillUserInfo(portalId, dr, false);
-                    //add to collection
-                    arrUsers.Add(user);
-                }
-            }
-            catch (Exception exc)
-            {
-                Exceptions.LogException(exc);
-            }
-            finally
-            {
-                //close datareader
-                CBO.CloseDataReader(dr, true);
-            }
-            return arrUsers;
-        }
-
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Generates a new random password (Length = Minimum Length + 4)
@@ -948,6 +950,31 @@ namespace DotNetNuke.Security.Membership
             }
 
             return FillUserCollection(portalId, _dataProvider.GetAllUsers(portalId, pageIndex, pageSize, includeDeleted, superUsersOnly), ref totalRecords);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="portalId"></param>
+        /// <param name="userId"></param>
+        /// <param name="filterUserId"></param>
+        /// <param name="filterRoleId"></param>
+        /// <param name="relationTypeId"></param>
+        /// <param name="isAdmin"></param>
+        /// <param name="numberOfRecords"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="sortColumn"></param>
+        /// <param name="sortAscending"></param>
+        /// <param name="propertyNames"></param>
+        /// <param name="propertyValues"></param>
+        /// <returns></returns>
+        public override IList<UserInfo> GetUsersAdvancedSearch(int portalId, int userId, int filterUserId, int filterRoleId, int relationshipTypeId,
+                                             bool isAdmin, int pageIndex, int pageSize, string sortColumn,
+                                             bool sortAscending, string propertyNames, string propertyValues)
+        {
+            return FillUserList(portalId, _dataProvider.GetUsersAdvancedSearch(portalId, userId, filterUserId, filterRoleId,
+                                                                           relationshipTypeId, isAdmin, pageIndex, pageSize, 
+                                                                           sortColumn, sortAscending, propertyNames, propertyValues));
         }
 
         /// -----------------------------------------------------------------------------
@@ -1356,6 +1383,34 @@ namespace DotNetNuke.Security.Membership
         }
 
         #endregion
+
+        public static ArrayList FillUserCollection(int portalId, IDataReader dr)
+        {
+            //Note:  the DataReader returned from this method should contain 2 result sets.  The first set
+            //       contains the TotalRecords, that satisfy the filter, the second contains the page
+            //       of data
+            var arrUsers = new ArrayList();
+            try
+            {
+                while (dr.Read())
+                {
+                    //fill business object
+                    UserInfo user = FillUserInfo(portalId, dr, false);
+                    //add to collection
+                    arrUsers.Add(user);
+                }
+            }
+            catch (Exception exc)
+            {
+                Exceptions.LogException(exc);
+            }
+            finally
+            {
+                //close datareader
+                CBO.CloseDataReader(dr, true);
+            }
+            return arrUsers;
+        }
 
         #region Obsolete Methods
 

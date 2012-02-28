@@ -747,4 +747,7 @@ If you choose to use the existing application-level settings, the following sett
   <data name="plMinifyJs.Text" xml:space="preserve">
     <value>Minify JS</value>
   </data>
+  <data name="DebugEnabled.Text" xml:space="preserve">
+    <value>Please note: debugging is enabled at the application level. This means that files will not be combined, even if file combining is turned on.</value>
+  </data>
 </root>

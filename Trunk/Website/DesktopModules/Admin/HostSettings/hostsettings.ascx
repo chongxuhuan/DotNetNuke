@@ -11,7 +11,7 @@
 <script language="javascript" type="text/javascript">
 /*globals jQuery, window, Sys */
 (function ($, Sys) {
-    function toggleSmtpCredentials(animation){
+    function toggleSmtpCredentials(animation) {
         var smtpVal = $('#<%= optSMTPAuthentication.ClientID %> input:checked').val(); /*0,1,2*/
         if (smtpVal == "1") {
             animation ? $('#SMTPUserNameRow,#SMTPPasswordRow').slideDown() : $('#SMTPUserNameRow,#SMTPPasswordRow').show();
@@ -23,7 +23,7 @@
 
     function setUpDnnHostSettings() {
         $('#dnnHostSettings').dnnTabs().dnnPanels();
-        $('#hostSkinSettings,#adminSkinSettings').dnnPreview({ 
+        $('#hostSkinSettings,#adminSkinSettings').dnnPreview({
             skinSelector: 'select:eq(0)',
             containerSelector: 'select:eq(1)',
             baseUrl: '//<%= this.PortalAlias.HTTPAlias %>',
@@ -31,26 +31,37 @@
             alertCloseText: '<%= Localization.GetString("Close.Text", Localization.SharedResourceFile)%>',
             alertOkText: '<%= Localization.GetString("Ok.Text", Localization.SharedResourceFile)%>'
         });
-        $('#basicSettings .dnnFormExpandContent a').dnnExpandAll({expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea:'#basicSettings'});
-        $('#advancedSettings .dnnFormExpandContent a').dnnExpandAll({expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea:'#advancedSettings'});
+        $('#basicSettings .dnnFormExpandContent a').dnnExpandAll({ expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea: '#basicSettings' });
+        $('#advancedSettings .dnnFormExpandContent a').dnnExpandAll({ expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea: '#advancedSettings' });
 
         toggleSmtpCredentials(false);
-        $('#<%= optSMTPAuthentication.ClientID %>').click(function(){
+        $('#<%= optSMTPAuthentication.ClientID %>').click(function() {
             toggleSmtpCredentials(true);
         });
-        
+
         toggleSection('friendlyUrlsRow', document.getElementById('<%=chkUseFriendlyUrls.ClientID %>').checked);
         toggleSection('requestFiltersRow', document.getElementById('<%=chkEnableRequestFilters.ClientID %>').checked);
 
-		$("#<%=chkUseFriendlyUrls.ClientID %>").click(function(e){
-			toggleSection('friendlyUrlsRow', this.checked);
-		});
+        $("#<%=chkUseFriendlyUrls.ClientID %>").click(function(e) {
+            toggleSection('friendlyUrlsRow', this.checked);
+        });
 
-		$("#<%=chkEnableRequestFilters.ClientID %>").click(function(e){
-			toggleSection('requestFiltersRow', this.checked);
-		});
+        $("#<%=chkEnableRequestFilters.ClientID %>").click(function(e) {
+            toggleSection('requestFiltersRow', this.checked);
+        });
+
+        var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
+            noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
+            titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
+        
+        $('#<%= IncrementCrmVersionButton.ClientID %>').dnnConfirm({
+            text: '<%= LocalizeString("IncrementCrmVersionConfirm") %>',
+            yesText: yesText,
+            noText: noText,
+            title: titleText
+        });
     }
-
+    
     $(document).ready(function () {
         setUpDnnHostSettings();
         Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
@@ -59,9 +70,9 @@
     });
 
     function toggleSection(id, isToggled) {
-        $("div[id$='"+ id + "']").toggle(isToggled);
+        $("div[id$='" + id + "']").toggle(isToggled);
     }
-}(jQuery, window.Sys));
+} (jQuery, window.Sys));
 </script>
 <div class="dnnForm dnnHostSettings dnnClear" id="dnnHostSettings">
     <asp:ValidationSummary ID="valSummary" runat="server" CssClass="dnnFormMessage dnnFormValidationSummary"
@@ -450,6 +461,32 @@
                     <dnn:Label ID="plJQueryUIHostUrl" ControlName="txtJQueryUIHostedUrl" runat="server" />
                     <asp:TextBox ID="txtJQueryUIHostedUrl" runat="server" MaxLength="256" />
                 </div>
+            </fieldset>
+            
+            <h2 id="Panel-ClientResourceManagement" class="dnnFormSectionHead">
+                <a href="#" class=""><%=LocalizeString("ClientResourceManagement")%></a>
+            </h2>
+            <fieldset>
+                <div class="dnnFormItem">
+                    <dnn:Label runat="server" ResourceKey="plCrmVersion"/>
+                    <asp:Label runat="server" ID="CrmVersion" />
+                    <asp:LinkButton runat="server" CssClass="dnnSecondaryAction" ID="IncrementCrmVersionButton" ResourceKey="CrmIncrementCrmVersionButton" />
+                </div>
+                <div class="dnnFormItem" runat="server" id="DebugEnabledRow">
+                    <asp:Label runat="server" ID="DebugEnabledLabel" CssClass="dnnFormMessage dnnFormWarning" ResourceKey="DebugEnabled" />
+                </div>
+                <div class="dnnFormItem">
+                    <dnn:Label runat="server" ResourceKey="plCrmEnableCompositeFiles"/>
+                    <asp:CheckBox runat="server" ID="chkCrmEnableCompositeFiles" AutoPostBack="true" />
+                </div>
+                <div class="dnnFormItem">
+                    <dnn:Label runat="server" ResourceKey="plCrmMinifyCss"/>
+                    <asp:CheckBox runat="server" ID="chkCrmMinifyCss" />            
+	            </div>
+	            <div class="dnnFormItem">
+                <dnn:Label runat="server" ResourceKey="plCrmMinifyJs"/>
+                    <asp:CheckBox runat="server" ID="chkCrmMinifyJs" />
+	            </div>
             </fieldset>
         </div>
     </div>
