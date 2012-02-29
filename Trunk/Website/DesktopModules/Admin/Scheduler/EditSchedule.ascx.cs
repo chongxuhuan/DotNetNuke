@@ -265,6 +265,8 @@ namespace DotNetNuke.Modules.Admin.Scheduler
                     cmdCancel.NavigateUrl = Globals.NavigateURL();
                     BindData();
                 }
+
+                cmdRun.Enabled = chkEnabled.Checked;
             }
             catch (Exception exc) //Module failed to load
             {

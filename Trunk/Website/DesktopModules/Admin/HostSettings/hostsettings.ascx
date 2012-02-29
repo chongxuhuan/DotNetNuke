@@ -467,13 +467,18 @@
                 <a href="#" class=""><%=LocalizeString("ClientResourceManagement")%></a>
             </h2>
             <fieldset>
+                <div class="dnnFormMessage dnnFormWarning">
+                    <div><strong><%=LocalizeString("MinificationSettingsInfo.Title") %></strong></div>
+                    <%= LocalizeString("MinificationSettingsInfo.Text")%>
+                </div>
+                <div runat="server" id="DebugEnabledRow" class="dnnFormMessage dnnFormWarning">
+                    <div><strong><%=LocalizeString("DebugEnabled.Title") %></strong></div>
+                    <%= LocalizeString("DebugEnabled.Text")%>
+                </div>
                 <div class="dnnFormItem">
                     <dnn:Label runat="server" ResourceKey="plCrmVersion"/>
                     <asp:Label runat="server" ID="CrmVersion" />
                     <asp:LinkButton runat="server" CssClass="dnnSecondaryAction" ID="IncrementCrmVersionButton" ResourceKey="CrmIncrementCrmVersionButton" />
-                </div>
-                <div class="dnnFormItem" runat="server" id="DebugEnabledRow">
-                    <asp:Label runat="server" ID="DebugEnabledLabel" CssClass="dnnFormMessage dnnFormWarning" ResourceKey="DebugEnabled" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label runat="server" ResourceKey="plCrmEnableCompositeFiles"/>

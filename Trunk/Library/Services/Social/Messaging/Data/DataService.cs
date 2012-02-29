@@ -23,10 +23,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
+using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Social.Messaging.Views;
 
 #endregion
@@ -34,7 +37,6 @@ using DotNetNuke.Services.Social.Messaging.Views;
 namespace DotNetNuke.Services.Social.Messaging.Data
 {
     internal class DataService : ComponentBase<IDataService, DataService>, IDataService
-        
     {
         private readonly DataProvider _provider = DataProvider.Instance();
 
@@ -66,7 +68,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteScalar<int>("CreateSocialMessageReply", conversationId, body, senderUserId, from, createUpdateUserId);
         }
 
-        public MessageBoxView GetMessageItems(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
+        public MessageBoxView GetMessageBoxView(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
         {
             object read = null;
             object archived = null;
@@ -113,7 +115,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                     break;
             }
 
-            IDataReader dr = _provider.ExecuteReader("GetMessageItems", userId, pageIndex, pageSize, sortColumn, sortAscending, read, archived, sent);
+            IDataReader dr = _provider.ExecuteReader("GetMessageConversations", userId, pageIndex, pageSize, sortColumn, sortAscending, read, archived, sent);
 
             try
             {
@@ -174,7 +176,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         public int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("SaveSocialMessageRecipient", messageRecipient.RecipientID, messageRecipient.MessageID, messageRecipient.UserID, messageRecipient.Read, messageRecipient.Archived, messageRecipient.Sent, createUpdateUserId);
+            return _provider.ExecuteScalar<int>("SaveSocialMessageRecipient", messageRecipient.RecipientID, messageRecipient.MessageID, messageRecipient.UserID, messageRecipient.Read, messageRecipient.Archived, createUpdateUserId);
         }
 
         public void CreateSocialMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId)
@@ -197,24 +199,9 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteReader("GetSocialMessageRecipientsByMessage", messageId);
         }
 
-        public IDataReader GetSocialMessageRecipientByMessageAndUser(int messageId, int userId, MessageSentStatus sentStatus)
+        public IDataReader GetSocialMessageRecipientByMessageAndUser(int messageId, int userId)
         {
-            object sent = null;
-
-            switch (sentStatus)
-            {
-                case MessageSentStatus.Received:
-                    sent = false;
-                    break;
-                case MessageSentStatus.Sent:
-                    sent = true;
-                    break;
-                case MessageSentStatus.Any:
-                    sent = null;
-                    break;
-            }
-
-            return _provider.ExecuteReader("GetSocialMessageRecipientsByMessageAndUser", messageId, userId, sent);
+            return _provider.ExecuteReader("GetSocialMessageRecipientsByMessageAndUser", messageId, userId);
         }
 
         public void DeleteSocialMessageRecipient(int messageRecipientId)
@@ -231,19 +218,48 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteScalar<int>("SaveSocialMessageAttachment", messageAttachment.MessageAttachmentID, messageAttachment.MessageID, messageAttachment.FileID, createUpdateUserId);
         }
 
-        public IDataReader GetSocialMessageAttachment()
+        public IDataReader GetSocialMessageAttachment(int messageAttachmentId)
         {
-            return _provider.ExecuteReader("GetSocialMessageAttachment");
+            return _provider.ExecuteReader("GetSocialMessageAttachment", messageAttachmentId);
         }
 
-        public IDataReader GetSocialMessageAttachmentsByMessage()
+        public IList<MessageFileView> GetSocialMessageAttachmentsByMessage(int messageId)
         {
-            return _provider.ExecuteReader("GetSocialMessageAttachmentsByMessage");
+            var attachments = new List<MessageFileView>();
+            var dr = _provider.ExecuteReader("GetSocialMessageAttachmentsByMessage", messageId);
+            
+            try
+            {
+                while (dr.Read())
+                {
+                    var fileId = Convert.ToInt32(dr["FileID"]);
+                    var file = FileManager.Instance.GetFile(fileId);
+
+                    if (file == null) continue;
+
+                    var attachment = new MessageFileView
+                                         {
+                                             Name = file.FileName,
+                                             Size = file.Size.ToString(CultureInfo.InvariantCulture), //TODO pretty print size
+                                             Url = FileManager.Instance.GetUrl(file)
+                                         };
+
+                    
+
+                    attachments.Add(attachment);
+                }
+            }
+            finally
+            {
+                CBO.CloseDataReader(dr, true);
+            }
+            
+            return attachments;
         }
 
-        public void DeleteSocialMessageAttachment(int messageAttachmentID)
+        public void DeleteSocialMessageAttachment(int messageAttachmentId)
         {
-            _provider.ExecuteNonQuery("DeleteSocialMessageAttachment", messageAttachmentID);
+            _provider.ExecuteNonQuery("DeleteSocialMessageAttachment", messageAttachmentId);
         }
 
         #endregion

@@ -257,14 +257,15 @@
     <Compile Include="Services\Social\Messaging\Exceptions\ThrottlingIntervalNotMetException.cs" />
     <Compile Include="Services\Social\Messaging\MessageArchivedStatus.cs" />
     <Compile Include="Services\Social\Messaging\MessageReadStatus.cs" />
+    <Compile Include="Services\Social\Messaging\MessagingController.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageBoxView.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageFileView.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageThreadView.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageConversationView.cs" />
-    <Compile Include="Services\Social\Messaging\MessagingController.cs" />
+    <Compile Include="Services\Social\Messaging\Ineternal\MessagingControllerImpl.cs" />
     <Compile Include="Services\Social\Messaging\Data\DataService.cs" />
     <Compile Include="Services\Social\Messaging\Data\IDataService.cs" />
-    <Compile Include="Services\Social\Messaging\IMessagingController.cs" />
+    <Compile Include="Services\Social\Messaging\Ineternal\IMessagingController.cs" />
     <Compile Include="Services\Social\Messaging\MessageAttachment.cs" />
     <Compile Include="Services\Social\Messaging\MessageRecipient.cs" />
     <Compile Include="Services\Social\Messaging\Message.cs" />

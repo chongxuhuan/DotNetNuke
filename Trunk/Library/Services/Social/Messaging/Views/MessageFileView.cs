@@ -42,7 +42,7 @@ namespace DotNetNuke.Services.Social.Messaging.Views
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageFileView 
+    public class MessageFileView
     {
         /// <summary>
         /// The name of the file with extension
@@ -50,16 +50,38 @@ namespace DotNetNuke.Services.Social.Messaging.Views
         [XmlAttribute]
         public string Name { get; set; }
 
+        private long _size;
+
         /// <summary>
         /// Size of the File with Unit, e.g. 100 B, 12 KB, 200 MB, etc.
         /// </summary>
         [XmlAttribute]
-        public string Size { get; set; }
+        public string Size
+        {
+            get { return FormatBytes(_size); }
+            set { long.TryParse(value, out _size); }
+        }
 
         /// <summary>
         /// Url of the file to download
         /// </summary>
         [XmlAttribute]
         public string Url { get; set; }
+
+        private static string FormatBytes(long bytes)
+        {
+            const int scale = 1024;
+            var orders = new[] { "GB", "MB", "KB", "B" };
+            var max = (long)Math.Pow(scale, orders.Length - 1);
+
+            foreach (var order in orders)
+            {
+                if (bytes > max)
+                    return string.Format("{0:##.##} {1}", decimal.Divide(bytes, max), order);
+
+                max /= scale;
+            }
+            return "0 B";
+        }
     }
 }

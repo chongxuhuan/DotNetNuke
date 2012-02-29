@@ -86,12 +86,6 @@ namespace DotNetNuke.Services.Social.Messaging
         /// </summary>
         [XmlAttribute]
         public bool Archived { get; set; }
-
-        /// <summary>
-        /// Is this a Sent Record. True: Yes, False: No.
-        /// </summary>
-        [XmlAttribute]
-        public bool Sent { get; set; }
        
         /// <summary>
         /// IHydratable.KeyID.
@@ -120,7 +114,6 @@ namespace DotNetNuke.Services.Social.Messaging
             this.UserID = Convert.ToInt32(dr["UserID"]);
             this.Archived = Null.SetNullBoolean(dr["Archived"]);
             this.Read = Null.SetNullBoolean(dr["Read"]);
-            this.Sent = Null.SetNullBoolean(dr["Sent"]);
             
             //add audit column data
             FillInternal(dr);

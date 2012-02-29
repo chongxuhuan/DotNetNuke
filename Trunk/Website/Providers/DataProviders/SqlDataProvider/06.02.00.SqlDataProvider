@@ -1830,7 +1830,6 @@ CREATE TABLE {databaseOwner}{objectQualifier}SocialMessageRecipients(
 	[UserID] [int] NOT NULL,
 	[Read] [bit] NOT NULL,
 	[Archived] [bit] NOT NULL,
-	[Sent] [bit] NOT NULL,
 	[CreatedByUserID] [int] NULL,
 	[CreatedOnDate] [datetime] NULL,
 	[LastModifiedByUserID] [int] NULL,
@@ -1841,7 +1840,7 @@ CREATE TABLE {databaseOwner}{objectQualifier}SocialMessageRecipients(
 	)
 )
 
-CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}SocialMessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC, [Sent] ASC)		
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}SocialMessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC)		
 
 ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageRecipients]  
 	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageRecipients_{objectQualifier}SocialMessages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
@@ -1993,8 +1992,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
     @MessageID int,
     @UserID int,
     @Read bit,
-	@Archived bit,  
-	@Sent bit,  
+	@Archived bit,  	
 	@CreateUpdateUserID INT    
 AS 
     IF ( @RecipientID = -1 ) 
@@ -2004,7 +2002,6 @@ AS
 					[UserID],
 					[Read],	
 					[Archived],				
-					[Sent],							
                     [CreatedByUserID],
                     [CreatedOnDate],
                     [LastModifiedByUserID],
@@ -2014,8 +2011,7 @@ AS
 					@MessageID,
 					@UserID,
 					@Read,            
-					@Archived,            			
-					@Sent,            						
+					@Archived,            								
                     @CreateUpdateUserID , -- CreatedBy - int
                     GETDATE() , -- CreatedOn - datetime
                     @CreateUpdateUserID , -- LastModifiedBy - int
@@ -2031,7 +2027,6 @@ AS
 					[UserID] = @UserID,
 					[Read] = @Read,
 					[Archived] = @Archived,					
-					[Sent] = @Sent,								
                     LastModifiedByUserID = @CreateUpdateUserID,
                     LastModifiedOnDate = GETDATE()
             WHERE   RecipientID = @RecipientID
@@ -2067,8 +2062,7 @@ AS
 			[MessageID],
 			[UserID],
 			[Read],	
-			[Archived],		
-			[Sent],			
+			[Archived],					
             [CreatedByUserID],
             [CreatedOnDate],
             [LastModifiedByUserID],
@@ -2078,8 +2072,7 @@ AS
 			  @MessageID, 	
 			  UserID,
 			  0,            
-			  0, 	
-			  0,			    
+			  0, 				      
               @CreateUpdateUserID , -- CreatedBy - int
               @currentdate , -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
@@ -2158,7 +2151,6 @@ AS
 		          [UserID],
 		          [Read],
 		          [Archived],
-				  [Sent],          
 		          CreatedByUserID,
 		          CreatedOnDate,
 		          LastModifiedByUserID,
@@ -2168,7 +2160,6 @@ AS
 		          @OriginalSenderUserID, -- UserID - int
 		          0, -- Read - bit
 		          0, -- Archived - bit
-				  0, -- Sent - bit          
 		          @CreateUpdateUserID , -- CreatedByUserID - int
 		          GETDATE() , -- CreatedOnDate - datetime
 		          @CreateUpdateUserID , -- LastModifiedByUserID - int
@@ -2182,7 +2173,6 @@ AS
 			[UserID],
 			[Read],	
 			[Archived],		
-			[Sent],			
             [CreatedByUserID],
             [CreatedOnDate],
             [LastModifiedByUserID],
@@ -2192,8 +2182,7 @@ AS
 			  @NewMessageID, 	
 			  UserID,
 			  0,            
-			  0, 	  
-		      0,	  
+			  0, 	  		      
               @CreateUpdateUserID , -- CreatedBy - int
               GETDATE() , -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
@@ -2212,7 +2201,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipient] 
     @RecipientID INT
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
 	WHERE  [RecipientID] = @RecipientID 
 
@@ -2225,7 +2214,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser] 
     @UserID INT
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
 	WHERE  [UserID] = @UserID 
 
@@ -2238,7 +2227,7 @@ GO
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage] 
     @MessageID INT    
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
 	WHERE  [MessageID] = @MessageID 	 
 
@@ -2250,14 +2239,12 @@ GO
 
 CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessageAndUser] 
     @MessageID INT,
-    @UserID INT,
-    @Sent bit = 0   	  
+    @UserID INT
 AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [Sent], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
 	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
 	WHERE  [MessageID] = @MessageID 
-	 AND   [UserID] = @UserID 
-	 AND (([Sent] = @Sent) or (@Sent is null AND [Sent] IS NOT null))	
+	 AND   [UserID] = @UserID 	 
 	 
 GO
 
@@ -3650,10 +3637,10 @@ GO
 
 /* Add GetMessageItems Procedure */
 /************************************/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetMessageItems]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetMessageItems]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetMessageConversations]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetMessageConversations]
 GO
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMessageItems]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMessageConversations]
 	@UserID          int,
 	@PageIndex       int,
 	@PageSize        int,
@@ -3738,7 +3725,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMessageThread]
 	@PageIndex       int,
 	@PageSize        int,
 	@SortField       nvarchar(25) = 'CreatedOnDate',
-	@SortAscending   bit = 0 		
+	@SortAscending   bit = 0
 AS
 BEGIN
 
@@ -3747,7 +3734,7 @@ IF NOT EXISTS (SELECT RecipientID FROM {databaseOwner}{objectQualifier}SocialMes
 BEGIN
 	SELECT 0
 	RETURN
-END	
+END
 
 --Return total message count
 SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}SocialMessages
@@ -3757,17 +3744,18 @@ SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}SocialMessa
 DECLARE @PageLowerBound INT, @PageUpperBound INT;
 
 SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
-SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize	
+SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 
 ;WITH inboxItems  AS
 (
-	SELECT  [RecipientID], [Subject], [Body], [SenderUserID], 
-			[Read], [Archived], [Sent], [UserID], [To], [From], [ReplyAllAllowed], [ConversationID],
-			mr.[MessageID],	
-			mr.[CreatedByUserID], mr.[CreatedOnDate], 
+	SELECT  [RecipientID], [Subject], [Body], [SenderUserID],
+			[Read], [Archived], [UserID], [To], [From], [ReplyAllAllowed], [ConversationID],
+			mr.[MessageID],
+			mr.[CreatedByUserID], mr.[CreatedOnDate],
 			mr.[LastModifiedByUserID], mr.[LastModifiedOnDate],
 			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageAttachments WHERE MessageID = mr.MessageID) AS AttachmentCount,
-			ROW_NUMBER() OVER(ORDER BY 
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE MessageID = mr.MessageID) AS NewThreadCount,
+			ROW_NUMBER() OVER(ORDER BY
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN mr.[CreatedOnDate] END ASC,
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN mr.[CreatedOnDate] END DESC,
 				 CASE WHEN @SortField = 'From' AND @SortAscending = 1 THEN [From] END ASC,
@@ -3776,12 +3764,12 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
 				) AS RowNumber
 	FROM	{databaseOwner}{objectQualifier}SocialMessageRecipients AS mr
-	INNER JOIN {databaseOwner}{objectQualifier}SocialMessages AS m ON mr.MessageID = m.MessageID	
+	INNER JOIN {databaseOwner}{objectQualifier}SocialMessages AS m ON mr.MessageID = m.MessageID
 	WHERE mr.UserID = @UserID
-	AND ConversationID = @ConversationID		
-)	
+	AND ConversationID = @ConversationID
+)
 
-SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
+SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound
 order by RowNumber ASC
 END
 GO
@@ -4597,21 +4585,163 @@ AS
 
 GO
 
+/*Drop UpdateRole Procedure*/
+/***************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateRole]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateRole]
+GO
+
+/*Add UpdateRole Procedure*/
+/**************************/
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateRole] 
+	@RoleId					int,
+	@RoleGroupId			int,
+	@Description			nvarchar(1000),
+	@ServiceFee				money,
+	@BillingPeriod			int,
+	@BillingFrequency		char(1),
+	@TrialFee				money,
+	@TrialPeriod			int,
+	@TrialFrequency			char(1),
+	@IsPublic				bit,
+	@AutoAssignment			bit,
+	@RSVPCode				nvarchar(50),
+	@IconFile				nvarchar(100),
+	@LastModifiedByUserID	int,
+	@Status					int,
+	@IsSecurityRole			bit
+AS
+
+	UPDATE {databaseOwner}{objectQualifier}Roles
+	SET    RoleGroupId			= @RoleGroupId,
+		   Description			= @Description,
+		   ServiceFee			= @ServiceFee,
+		   BillingPeriod		= @BillingPeriod,
+		   BillingFrequency		= @BillingFrequency,
+		   TrialFee				= @TrialFee,
+		   TrialPeriod			= @TrialPeriod,
+		   TrialFrequency		= @TrialFrequency,
+		   IsPublic				= @IsPublic,
+		   AutoAssignment		= @AutoAssignment,
+		   RSVPCode				= @RSVPCode,
+		   IconFile				= @IconFile,
+		   LastModifiedByUserID = @LastModifiedByUserID,
+		   LastModifiedOnDate		= getdate(),
+		   Status				= @Status,
+		   IsSecurityRole		= @IsSecurityRole
+	WHERE  RoleId = @RoleId
+GO
+
+/*Drop AddRole Procedure*/
+/************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}AddRole]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}AddRole]
+GO
+
+/* Add AddRole Procedure */
+/*************************/
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddRole] 
+	@PortalID         int,
+	@RoleGroupId      int,
+	@RoleName         nvarchar(50),
+	@Description      nvarchar(1000),
+	@ServiceFee       money,
+	@BillingPeriod    int,
+	@BillingFrequency char(1),
+	@TrialFee         money,
+	@TrialPeriod      int,
+	@TrialFrequency   char(1),
+	@IsPublic         bit,
+	@AutoAssignment   bit,
+	@RSVPCode         nvarchar(50),
+	@IconFile         nvarchar(100),
+	@CreatedByUserID  int,
+	@Status			  int,
+	@IsSecurityRole   bit
+AS
+
+	INSERT INTO {databaseOwner}{objectQualifier}Roles (
+	  PortalId,
+	  RoleGroupId,
+	  RoleName,
+	  Description,
+	  ServiceFee,
+	  BillingPeriod,
+	  BillingFrequency,
+	  TrialFee,
+	  TrialPeriod,
+	  TrialFrequency,
+	  IsPublic,
+	  AutoAssignment,
+	  RSVPCode,
+	  IconFile,
+	  CreatedByUserID,
+	  CreatedOnDate,
+	  LastModifiedByUserID,
+	  LastModifiedOnDate,
+	  Status,
+	  IsSecurityRole
+	)
+
+	VALUES (
+	  @PortalID,
+	  @RoleGroupId,
+	  @RoleName,
+	  @Description,
+	  @ServiceFee,
+	  @BillingPeriod,
+	  @BillingFrequency,
+	  @TrialFee,
+	  @TrialPeriod,
+	  @TrialFrequency,
+	  @IsPublic,
+	  @AutoAssignment,
+	  @RSVPCode,
+	  @IconFile,
+	  @CreatedByUserID,
+	  getdate(),
+	  @CreatedByUserID,
+	  getdate(),
+	  @Status,
+	  @IsSecurityRole
+	)
+
+	SELECT SCOPE_IDENTITY()
+
+GO
+
+
+
 /* Add default host settings for Client Resource Management */
 /************************************************************/
 
--- default CRM host settings
-insert into {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
-values('CrmEnableCompositeFiles', 'True', 0, -1, GETDATE(), -1, GETDATE())
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}HostSettings WHERE [SettingName] = N'CrmEnableCompositeFiles')
+  BEGIN
+    INSERT INTO {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
+    VALUES('CrmEnableCompositeFiles', 'True', 0, -1, GETDATE(), -1, GETDATE())
+  END
 
-insert into {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
-values('CrmMinifyCss', 'True', 0, -1, GETDATE(), -1, GETDATE())
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}HostSettings WHERE [SettingName] = N'CrmMinifyCss')
+  BEGIN
+    INSERT INTO {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
+    VALUES('CrmMinifyCss', 'True', 0, -1, GETDATE(), -1, GETDATE())
+  END
 
-insert into {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
-values('CrmMinifyJs', 'True', 0, -1, GETDATE(), -1, GETDATE())
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}HostSettings WHERE [SettingName] = N'CrmMinifyJs')
+  BEGIN
+    INSERT INTO {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
+    VALUES('CrmMinifyJs', 'True', 0, -1, GETDATE(), -1, GETDATE())
+  END
 
-insert into {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
-values('CrmVersion', '1', 0, -1, GETDATE(), -1, GETDATE())
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}HostSettings WHERE [SettingName] = N'CrmVersion')
+  BEGIN
+    INSERT INTO {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
+    VALUES('CrmVersion', '1', 0, -1, GETDATE(), -1, GETDATE())
+  END
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

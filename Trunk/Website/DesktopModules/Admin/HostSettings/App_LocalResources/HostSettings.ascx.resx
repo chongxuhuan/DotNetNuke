@@ -926,6 +926,15 @@
     <value>There was an error incrementing the Client Resource version.</value>
   </data>
   <data name="DebugEnabled.Text" xml:space="preserve">
-    <value>Please note: debugging is enabled at the application level. This means that files will not be combined, even if file combining is turned on.</value>
+    <value>Debug mode is currently enabled at the application level (this is specified in the web.config file). This means that files will not be combined, even if file combining is enabled here or at the host level.</value>
+  </data>
+  <data name="DebugEnabled.Title" xml:space="preserve">
+    <value>Important note regarding application debug mode</value>
+  </data>
+  <data name="MinificationSettingsInfo.Text" xml:space="preserve">
+    <value>If minification settings are changed when composite files are enabled, you must first save the minification settings by clicking Update and then increment the version number. This will issue new composite files using the new minification settings.</value>
+  </data>
+  <data name="MinificationSettingsInfo.Title" xml:space="preserve">
+    <value>Important note regarding minification settings</value>
   </data>
 </root>

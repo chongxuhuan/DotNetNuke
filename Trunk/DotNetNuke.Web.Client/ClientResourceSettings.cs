@@ -21,7 +21,9 @@
 
 namespace DotNetNuke.Web.Client
 {
+    using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Web;
 
     public class ClientResourceSettings
@@ -92,56 +94,115 @@ namespace DotNetNuke.Web.Client
 
         private static bool? GetBooleanSetting(string dictionaryKey, string settingKey)
         {
+            var setting = GetSetting(dictionaryKey, settingKey);
+            bool result;
+            if (setting != null && bool.TryParse(setting, out result))
+            {
+                return result;
+            }
+            return null;
+        }
+
+        private static int? GetIntegerSetting(string dictionaryKey, string settingKey)
+        {
+            var setting = GetSetting(dictionaryKey, settingKey);
+            int version;
+            if (setting != null && int.TryParse(setting, out version))
+            {
+                if (version > -1)
+                {
+                    return version;
+                }
+            }
+            return null;
+        }
+
+        private static string GetSetting(string dictionaryKey, string settingKey)
+        {
             var settings = HttpContext.Current.Items[dictionaryKey];
             if (settings == null)
             {
-                // settings not available
-                return null;
+                if (dictionaryKey == HostSettingsDictionaryKey)
+                    return GetHostSettingThroughReflection(settingKey);
+
+                return GetPortalSettingThroughReflection(settingKey);
             }
 
-            var dictionary = (Dictionary<string, string>) settings;
+            var dictionary = (Dictionary<string, string>)settings;
             if (dictionary.ContainsKey(settingKey))
             {
-                var setting = dictionary[settingKey];
-
-                bool result;
-                if (setting != null && bool.TryParse(setting, out result))
-                {
-                    // a valid setting was found
-                    return result;
-                }
+                return dictionary[settingKey];
             }
 
             // no valid setting was found
             return null;
         }
 
-        private static int? GetIntegerSetting(string dictionaryKey, string settingKey)
+        private static string GetPortalSettingThroughReflection(string settingKey)
         {
-            var settings = HttpContext.Current.Items[dictionaryKey];
-            if (settings == null)
+            try
             {
-                // settings not available
+                int? portalId = GetPortalIdThroughReflection();
+                if (!portalId.HasValue)
+                    return null;
+                
+                var type = Type.GetType("DotNetNuke.Entities.Portals.PortalController, DotNetNuke");
+                MethodInfo method = type.GetMethod("GetPortalSettingsDictionary");
+                var settings = method.Invoke(null, new object[] { portalId.Value });
+
+                var dictionary = (Dictionary<string, string>)settings;
+                if (dictionary.ContainsKey(settingKey))
+                {
+                    return dictionary[settingKey];
+                }
+
                 return null;
             }
-
-            var dictionary = (Dictionary<string, string>) settings;
-            if (dictionary.ContainsKey(settingKey))
+            catch (Exception)
             {
-                var setting = dictionary[settingKey];
-                int version;
-                if (setting != null && int.TryParse(setting, out version))
-                {
-                    if (version > -1)
-                    {
-                        // a valid setting was found
-                        return version;
-                    }
-                }
+                return null;
             }
+        }
 
-            // no valid setting was found
-            return null;
+        private static int? GetPortalIdThroughReflection()
+        {
+            try
+            {
+                Type type = Type.GetType("DotNetNuke.Entities.Portals.PortalAliasController, DotNetNuke");
+                MethodInfo method = type.GetMethod("GetPortalAliasInfo");
+                object portalAliasInfo = method.Invoke(null, new object[] { HttpContext.Current.Request.Url.Host });
+                object portalId = portalAliasInfo.GetType().GetProperty("PortalID").GetValue(portalAliasInfo, new object[] {});
+                return (int) portalId;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private static string GetHostSettingThroughReflection(string settingKey)
+        {
+            try
+            {
+                var type = Type.GetType("DotNetNuke.Entities.Controllers.HostController, DotNetNuke");
+                
+                MethodInfo method = type.GetMethod("GetSettingsDictionary");
+                PropertyInfo property = type.BaseType.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public);
+                object instance = property.GetValue(null, Type.EmptyTypes);
+                var settings = method.Invoke(instance, Type.EmptyTypes);
+
+                var dictionary = (Dictionary<string, string>)settings;
+                if (dictionary.ContainsKey(settingKey))
+                {
+                    return dictionary[settingKey];
+                }
+
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

@@ -20,7 +20,6 @@
 #endregion
 #region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Data;
 using DotNetNuke.Services.Social.Messaging.Views;
@@ -38,7 +37,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         IDataReader GetSocialMessagesBySender();
         void DeleteSocialMessage(int messageId);
 
-        MessageBoxView GetMessageItems(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
+        MessageBoxView GetMessageBoxView(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
         IList<MessageConversationView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);        
         void UpdateSocialMessageReadStatus(int conversationId, int userId, bool read);
         void UpdateSocialMessageArchivedStatus(int conversationId, int userId, bool archived);
@@ -53,7 +52,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         IDataReader GetSocialMessageRecipient(int messageRecipientId);
         IDataReader GetSocialMessageRecipientsByUser(int userId);
         IDataReader GetSocialMessageRecipientsByMessage(int messageId);
-        IDataReader GetSocialMessageRecipientByMessageAndUser(int messageId, int userId, MessageSentStatus sentStatus);
+        IDataReader GetSocialMessageRecipientByMessageAndUser(int messageId, int userId);
         void DeleteSocialMessageRecipient(int messageRecipientId);
 
         #endregion
@@ -61,15 +60,10 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         #region Message_Attachments CRUD
 
         int SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserId);
-        IDataReader GetSocialMessageAttachment();
-        IDataReader GetSocialMessageAttachmentsByMessage();
-        void DeleteSocialMessageAttachment(int messageAttachmentID);
+        IDataReader GetSocialMessageAttachment(int messageAttachmentId);
+        IList<MessageFileView> GetSocialMessageAttachmentsByMessage(int messageId);
+        void DeleteSocialMessageAttachment(int messageAttachmentId);
 
         #endregion
-
-        
-
-        
-        
     }
 }

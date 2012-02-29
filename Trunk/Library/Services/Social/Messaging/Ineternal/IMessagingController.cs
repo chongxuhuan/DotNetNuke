@@ -18,22 +18,19 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Xml;
 
+using System.Collections.Generic;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Social.Messaging.Views;
 
-namespace DotNetNuke.Services.Social.Messaging
+namespace DotNetNuke.Services.Social.Messaging.Ineternal
 {
     public interface IMessagingController
     {
         #region Messaging Business APIs
 
-        MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId, MessageSentStatus sentStatus);
+        MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId);
 
         ///<summary>How long a user needs to wait before user is allowed sending the next message</summary>
         ///<returns>Time in seconds. Returns zero if user has never sent a message</returns>

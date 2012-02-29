@@ -392,18 +392,21 @@ namespace DotNetNuke.Modules.Admin.Portals
             MinifyCssRow.Visible = overrideDefaultSettings;
             MinifyJsRow.Visible = overrideDefaultSettings;
             DebugEnabledRow.Visible = HttpContext.Current.IsDebuggingEnabled;
-
+            
             // set up host settings information
             var hostVersion = HostController.Instance.GetInteger(ClientResourceSettings.VersionKey, 1).ToString(CultureInfo.InvariantCulture);
             var hostEnableCompositeFiles = HostController.Instance.GetBoolean(ClientResourceSettings.EnableCompositeFilesKey, false);
             var hostEnableMinifyCss = HostController.Instance.GetBoolean(ClientResourceSettings.MinifyCssKey, false);
             var hostEnableMinifyJs = HostController.Instance.GetBoolean(ClientResourceSettings.MinifyJsKey, false);
 
+            string yes = Localization.GetString("Yes.Text", Localization.SharedResourceFile);
+            string no = Localization.GetString("No.Text", Localization.SharedResourceFile);
+
             CrmHostSettingsSummary.Text = string.Format(LocalizeString("CrmHostSettingsSummary"),
-                hostEnableCompositeFiles, // {0} = enable composite files
-                hostVersion, // {1} = version
-                hostEnableMinifyCss, // {2} = minify css
-                hostEnableMinifyJs); // {3} = minify js
+                hostVersion, // {0} = version
+                hostEnableCompositeFiles ? yes : no, // {1} = enable composite files
+                hostEnableMinifyCss ? yes : no, // {2} = minify css
+                hostEnableMinifyJs ? yes : no); // {3} = minify js
 
             // set up UI for portal-specific options
             if (overrideDefaultSettings)

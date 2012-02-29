@@ -125,7 +125,9 @@ namespace DotNetNuke.Security.Membership
                                                          role.AutoAssignment,
                                                          role.RSVPCode,
                                                          role.IconFile,
-                                                         UserController.GetCurrentUserInfo().UserID));
+                                                         UserController.GetCurrentUserInfo().UserID,
+                                                         (int)role.Status,
+                                                         role.IsSecurityRole));
             }
             catch (SqlException e)
             {
@@ -188,7 +190,9 @@ namespace DotNetNuke.Security.Membership
                                     role.AutoAssignment,
                                     role.RSVPCode,
                                     role.IconFile,
-                                    UserController.GetCurrentUserInfo().UserID);
+                                    UserController.GetCurrentUserInfo().UserID,
+                                    (int)role.Status,
+                                    role.IsSecurityRole);
         }
 
         /// -----------------------------------------------------------------------------

@@ -333,7 +333,17 @@
 				</fieldset>
                 <h2 id="dnnSitePanel-ClientResourceManagement" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("ClientResourceManagement")%></a></h2>
                 <fieldset>
-                    <div class="dnnFormMessage dnnFormInfo crmHostSettingsSummary"><asp:Literal runat="server" ID="CrmHostSettingsSummary"></asp:Literal></div>
+                    <div class="dnnFormMessage dnnFormInfo crmHostSettingsSummary">
+                        <asp:Literal runat="server" ID="CrmHostSettingsSummary"></asp:Literal>
+                    </div>
+                    <div class="dnnFormMessage dnnFormWarning">
+                        <div><strong><%=LocalizeString("MinificationSettingsInfo.Title") %></strong></div>
+                        <%= LocalizeString("MinificationSettingsInfo.Text")%>
+                    </div>
+                    <div runat="server" id="DebugEnabledRow" class="dnnFormMessage dnnFormWarning">
+                        <div><strong><%=LocalizeString("DebugEnabled.Title") %></strong></div>
+                        <%= LocalizeString("DebugEnabled.Text")%>
+                    </div>
                     <div class="dnnFormItem">
                         <dnn:Label ID="plOverrideDefaultSettings" runat="server" ControlName="chkOverrideDefaultSettings" />
                         <asp:CheckBox runat="server" id="chkOverrideDefaultSettings" AutoPostBack="true" />
@@ -342,9 +352,6 @@
                         <dnn:Label runat="server" id="plCrmVersion" />
                         <asp:Label runat="server" id="CrmVersionLabel" />
                         <asp:LinkButton runat="server" CssClass="dnnSecondaryAction" ID="IncrementCrmVersionButton" ResourceKey="IncrementCrmVersionButton" />
-                    </div>
-                    <div class="dnnFormItem" runat="server" id="DebugEnabledRow">
-                        <asp:Label runat="server" ID="DebugEnabledLabel" CssClass="dnnFormMessage dnnFormWarning" ResourceKey="DebugEnabled" />
                     </div>
                     <div class="dnnFormItem" runat="server" id="EnableCompositeFilesRow">
                         <dnn:Label ID="plEnableCompositeFiles" runat="server" ControlName="chkEnableCompositeFiles" />

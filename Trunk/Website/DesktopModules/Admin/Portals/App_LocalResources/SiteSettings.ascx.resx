@@ -661,7 +661,7 @@
     <value>Enable Composite Files</value>
   </data>
   <data name="plCrmVersion.Help" xml:space="preserve">
-    <value>This is the version number of the client resources on your site.</value>
+    <value>This is the version number of the client resources on your site. As this version number changes, each user will be forced to download the new version of the files. It is recommended the version be incremented only when necessary.</value>
   </data>
   <data name="plCrmVersion.Text" xml:space="preserve">
     <value>Site Version</value>
@@ -706,24 +706,24 @@
     <value>No</value>
   </data>
   <data name="CrmHostSettingsSummary.Text" xml:space="preserve">
-    <value>The application dictates the default behavior, but if you choose to do so, you may configure the way your site behaves with regards to client resources differently.
-If you choose to use the existing application-level settings, the following settings will be used:
+    <value>The host dictates default Client Resource Management behavior, but if you choose to do so, you may configure your site to behave differently.
+The host-level settings are currently set as follows:
 &lt;ul&gt;
-  &lt;li&gt;EnableCompositeFiles: {0}&lt;/li&gt;
-  &lt;li&gt;Version: {1}&lt;/li&gt;
-  &lt;li&gt;MinifyCss: {2}&lt;/li&gt;
-  &lt;li&gt;MinifyJs: {3}&lt;/li&gt;
+  &lt;li&gt;Version: {0}&lt;/li&gt;
+  &lt;li&gt;Enable Composite Files: {1}&lt;/li&gt;
+  &lt;li&gt;Minify Css: {2}&lt;/li&gt;
+  &lt;li&gt;Minify Js: {3}&lt;/li&gt;
 &lt;/ul&gt;</value>
-    <comment>{0} = Enable Composite Files Value (true or false)
-{1} = Version Value (number)
+    <comment>{0} = Version Value (number)
+{1} = Enable Composite Files Value (true or false)
 {2} = Minify CSS Value (true or false)
 {3} = Minify JS Value (true or false)</comment>
   </data>
   <data name="plOverrideDefaultSettings.Help" xml:space="preserve">
-    <value>When this option is enabled, this site will use the default settings for client resources. Please see the specific settings above.</value>
+    <value>When this option is enabled, this site will use its own settings for client resources instead of the host level settings. Check this box to show the settings that are available to configure for your site.</value>
   </data>
   <data name="plOverrideDefaultSettings.Text" xml:space="preserve">
-    <value>Override Default Settings</value>
+    <value>Override Host Settings</value>
   </data>
   <data name="IncrementCrmVersionButton.Text" xml:space="preserve">
     <value>Increment Site Version</value>
@@ -748,6 +748,15 @@ If you choose to use the existing application-level settings, the following sett
     <value>Minify JS</value>
   </data>
   <data name="DebugEnabled.Text" xml:space="preserve">
-    <value>Please note: debugging is enabled at the application level. This means that files will not be combined, even if file combining is turned on.</value>
+    <value>Debug mode is currently enabled at the application level (this is specified in the web.config file). This means that files will not be combined, even if file combining is enabled here or at the host level.</value>
+  </data>
+  <data name="DebugEnabled.Title" xml:space="preserve">
+    <value>Important note regarding application debug mode</value>
+  </data>
+  <data name="MinificationSettingsInfo.Text" xml:space="preserve">
+    <value>If minification settings are changed when composite files are enabled, you must first save the minification settings by clicking Update and then increment the version number. This will issue new composite files using the new minification settings.</value>
+  </data>
+  <data name="MinificationSettingsInfo.Title" xml:space="preserve">
+    <value>Important note regarding minification settings</value>
   </data>
 </root>

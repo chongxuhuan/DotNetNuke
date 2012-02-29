@@ -14,7 +14,7 @@
         </div>
         <div class="dnnFormItem">
             <dnn:Label ID="plEnabled" runat="server" ControlName="chkEnabled" />
-            <asp:CheckBox ID="chkEnabled" runat="server" />
+            <asp:CheckBox ID="chkEnabled" runat="server" AutoPostBack="True" />
         </div>
         <div class="dnnFormItem timeMeasurement">
             <dnn:Label ID="plTimeLapse" runat="server" ControlName="txtTimeLapse" />
