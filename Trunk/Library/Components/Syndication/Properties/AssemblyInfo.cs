@@ -28,9 +28,9 @@ using System.Reflection;
 [assembly: AssemblyCompany("DotNetNuke Corporation")]
 [assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
 [assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyInformationalVersion("6.2.0.661")]
-[assembly: AssemblyFileVersion("6.2.0.661")]
-[assembly: AssemblyVersion("6.2.0.661")]
+[assembly: AssemblyInformationalVersion("6.2.0.673")]
+[assembly: AssemblyFileVersion("6.2.0.673")]
+[assembly: AssemblyVersion("6.2.0.673")]
 [assembly: AssemblyTitle("DotNetNuke.Services.Syndication")]
 [assembly: AssemblyDescription("Open Source Web Application Framework")]
 

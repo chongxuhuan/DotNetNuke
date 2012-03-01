@@ -177,14 +177,14 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
             return GetSentbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending);
         }
 
-        public IList<MessageThreadView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
+        public MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
         {
             var threads = new List<MessageThreadView>();
 
-            var messages = _dataService.GetMessageThread(conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
-            foreach (var messageItemView in messages)
+            var messageThreadsView = _dataService.GetMessageThread(conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
+            foreach (var messageItemView in messageThreadsView.Conversations)
             {
-                var thread = new MessageThreadView { MessageItem = messageItemView };
+                var thread = new MessageThreadView { Conversation = messageItemView };
                 if (messageItemView.AttachmentCount > 0)
                 {
                     thread.Attachments = _dataService.GetSocialMessageAttachmentsByMessage(messageItemView.MessageID);
@@ -192,10 +192,10 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
                 threads.Add(thread);
             }
 
-            return threads;
+            return messageThreadsView;
         }
 
-        public IList<MessageThreadView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords)
+        public MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords)
         {
             return GetMessageThread(conversationId, userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
         }

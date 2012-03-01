@@ -39,7 +39,7 @@ namespace DotNetNuke.Services.Social.Messaging.Views
     /// Class:      MessageThreadView
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageItemView class contains MessageItemView and collection of MessageAttachmentView
+    /// The MessageThreadView class contains MessageConversationView and collection of MessageAttachmentView
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
@@ -49,7 +49,7 @@ namespace DotNetNuke.Services.Social.Messaging.Views
         /// MessageItemView containing consolidated information about the message
         /// </summary>
         [XmlAttribute]
-        public MessageConversationView MessageItem { get; set; }
+        public MessageConversationView Conversation { get; set; }
 
         /// <summary>
         /// List of attachments

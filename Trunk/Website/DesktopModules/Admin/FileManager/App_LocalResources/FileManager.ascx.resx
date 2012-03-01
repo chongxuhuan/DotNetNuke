@@ -394,6 +394,6 @@
     <value>Error Synchronizing Folders:&amp;nbsp;</value>
   </data>
   <data name="ConflictFiles.Text" xml:space="preserve">
-    <value>Below file(s) has already exists in destination folder,&lt;br /&gt; if you want to overwrite them, please make the checkbox checked before file name:</value>
+    <value>The file(s) listed below already exist in destination folder. If you want to overwrite any of these file(s) check the check box before the file name.</value>
   </data>
 </root>

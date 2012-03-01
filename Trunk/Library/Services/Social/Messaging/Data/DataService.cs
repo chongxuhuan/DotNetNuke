@@ -140,23 +140,40 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return messageBoxView;
         }
 
-        public IList<MessageConversationView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool @sortAscending, ref int totalRecords)
+        public MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool @sortAscending, ref int totalRecords)
         {
+            var messageThreadsView = new MessageThreadsView();
+
             IDataReader dr = _provider.ExecuteReader("GetMessageThread", conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending);
 
             try
             {
                 while (dr.Read())
                 {
-                    totalRecords = Convert.ToInt32(dr["TotalRecords"]);
+                    messageThreadsView.TotalNewThreads = Convert.ToInt32(dr["TotalNewThreads"]);
                 }
                 dr.NextResult();
-                return CBO.FillCollection<MessageConversationView>(dr);
+
+                while (dr.Read())
+                {
+                    messageThreadsView.TotalThreads = Convert.ToInt32(dr["TotalRecords"]);
+                }
+                dr.NextResult();
+
+                while (dr.Read())
+                {
+                    messageThreadsView.TotalArchivedThreads = Convert.ToInt32(dr["TotalArchivedThreads"]);
+                }
+                dr.NextResult();
+
+                messageThreadsView.Conversations = CBO.FillCollection<MessageConversationView>(dr);
             }
             finally
             {
                 CBO.CloseDataReader(dr, true);
             }
+
+            return messageThreadsView;
         }
 
         public void UpdateSocialMessageReadStatus(int conversationId, int userId, bool read)

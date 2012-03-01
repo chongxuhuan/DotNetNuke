@@ -38,7 +38,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         void DeleteSocialMessage(int messageId);
 
         MessageBoxView GetMessageBoxView(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
-        IList<MessageConversationView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);        
+        MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);        
         void UpdateSocialMessageReadStatus(int conversationId, int userId, bool read);
         void UpdateSocialMessageArchivedStatus(int conversationId, int userId, bool archived);
         int CreateMessageReply(int conversationId, string body, int senderUserId, string from, int createUpdateUserId);

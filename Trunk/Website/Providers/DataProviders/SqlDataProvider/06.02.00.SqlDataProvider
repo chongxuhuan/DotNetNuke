@@ -3664,10 +3664,9 @@ BEGIN
 	SELECT ConversationID
 	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] mr 
 	INNER JOIN {databaseOwner}[{objectQualifier}SocialMessages] m ON mr.MessageID = m.MessageID
-	WHERE UserID = @UserID
-	AND ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
+	WHERE ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
 	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))		
-	AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is null) or (@SentOnly = 0))		
+	AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is NULL AND UserID = @UserID) or (@SentOnly = 0 AND UserID = @UserID))		
 	GROUP BY ConversationID
 )
 SELECT COUNT(*) AS TotalRecords FROM ConversationIDs
@@ -3684,10 +3683,9 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 	SELECT MAX(m.MessageID) AS TopMessageID  
 	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] mr 
 	INNER JOIN {databaseOwner}[{objectQualifier}SocialMessages] m ON mr.MessageID = m.MessageID
-	WHERE UserID = @UserID
-	AND ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
+	WHERE ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
 	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))		
-	AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is null) or (@SentOnly = 0))		
+	AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is NULL AND UserID = @UserID) or (@SentOnly = 0 AND UserID = @UserID))		
 	GROUP BY ConversationID
 )
 ,Conversations  AS
@@ -3731,15 +3729,30 @@ BEGIN
 
 --Cannot return thread if user was not a recipient
 IF NOT EXISTS (SELECT RecipientID FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE UserID = @UserID)
-BEGIN
-	SELECT 0
-	RETURN
+BEGIN --was the user a sender
+	IF NOT EXISTS (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE SenderUserID = @UserID)
+	BEGIN
+	    SELECT 0
+	    RETURN
+	END
 END
+
+--Return Unread message count
+	SELECT COUNT(*) AS TotalNewThreads
+	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] 
+	WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = @ConversationID)
+	AND [Read] = 0
 
 --Return total message count
 SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}SocialMessages
 	WHERE (ConversationID = @ConversationID)
 
+--Return Archived message count
+	SELECT COUNT(*) AS TotalArchivedThreads
+	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] 
+	WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = @ConversationID)
+	AND [Archived] = 1
+	
 -- Set the page bounds
 DECLARE @PageLowerBound INT, @PageUpperBound INT;
 
@@ -3748,7 +3761,7 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 
 ;WITH inboxItems  AS
 (
-	SELECT  [RecipientID], [Subject], [Body], [SenderUserID],
+	SELECT  DISTINCT [RecipientID], [Subject], [Body], [SenderUserID],
 			[Read], [Archived], [UserID], [To], [From], [ReplyAllAllowed], [ConversationID],
 			mr.[MessageID],
 			mr.[CreatedByUserID], mr.[CreatedOnDate],
@@ -3765,7 +3778,7 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 				) AS RowNumber
 	FROM	{databaseOwner}{objectQualifier}SocialMessageRecipients AS mr
 	INNER JOIN {databaseOwner}{objectQualifier}SocialMessages AS m ON mr.MessageID = m.MessageID
-	WHERE mr.UserID = @UserID
+	WHERE (mr.UserID = @UserID OR m.SenderUserID = @UserID)
 	AND ConversationID = @ConversationID
 )
 

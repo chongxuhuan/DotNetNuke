@@ -11,11 +11,14 @@
                 autoclose,
                 messageId = -1;
 
+            self.addClass('ui-dnncomposemessage');
+
             //construct the form
             html = "<div class='MessageSent dnnFormMessage dnnFormSuccess'>" + opts.messageSentText + "</div>";
+            html += "<div class='ThrottlingWarning dnnFormMessage dnnFormWarning'>" + opts.throttlingText + "</div>";
             html += "<fieldset>";
             html += "<div class='dnnFormItem'><label for='to'>" + opts.toText + "</label><input type='text' id='to' name='to'/></div>";
-            html += "<div class='dnnFormItem'><label for='subject'>" + opts.subjectText + "</label><input type='text' id='subject' name='subject'/></div>";
+            html += "<div class='dnnFormItem'><label for='subject'>" + opts.subjectText + "</label><input type='text' id='subject' name='subject' maxlength='400'/></div>";
             html += "<div class='dnnFormItem'><label for='bodytext'>" + opts.messageText + "</label><textarea rows='2' cols='20' id='bodytext' name='bodytext'/></div>";
 
             //TODO What to do with attachment?
@@ -55,26 +58,26 @@
                     open: function () {
                         $('.ui-dialog-buttonpane :button').removeClass().addClass('dnnTertiaryAction');
                         composeMessageDialog.find('.MessageSent').hide();
+                        composeMessageDialog.find('.ThrottlingWarning').hide();
                         messageId = -1;
 
                         canSend = false;
                         var sendButton = $('.ui-dialog-buttonpane button:first');
                         var timeForNextMessage = self.getWaitTimeForNextMessage();
                         if (timeForNextMessage > 0) {
-                            sendButton.text(timeForNextMessage + ' sec').attr('disabled', 'disabled').addClass('disabled');
-                            sendButton.before('<span>' + opts.throttlingText + '</span>');
+                            composeMessageDialog.find('.ThrottlingWarning').show().text(opts.throttlingText + ' ' + timeForNextMessage + ' sec');
+                            sendButton.attr('disabled', 'disabled').addClass('disabled');
                             var countdown = setInterval(function () {
                                 timeForNextMessage--;
                                 if (timeForNextMessage == 0) {
                                     canSend = true;
-                                    sendButton.text(opts.sendText);
+                                    composeMessageDialog.find('.ThrottlingWarning').hide();
                                     if (composeMessageDialog.find('#to').val().trim().length > 0 && composeMessageDialog.find('#subject').val().trim().length > 0) {
                                         sendButton.removeAttr('disabled').removeClass('disabled');
                                     }
                                     clearInterval(countdown);
-                                    sendButton.prev().remove();
                                 } else {
-                                    sendButton.text(timeForNextMessage + ' sec');
+                                    composeMessageDialog.find('.ThrottlingWarning').text(opts.throttlingText + ' ' + timeForNextMessage + ' sec');
                                 }
                             }, 1000);
                         } else {
@@ -143,7 +146,7 @@
         sendText: 'Send',
         cancelText: 'Cancel',
         messageSentText: 'Your message has been sent successfully.',
-        throttlingText: 'Interval to wait before sending a new message:',
+        throttlingText: 'Please wait before sending a new message.',
         dialogClass: 'dnnFormPopup dnnClear',
         autoOpen: false,
         showAttachements: false,

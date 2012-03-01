@@ -77,6 +77,8 @@ namespace DotNetNuke.Framework
         /// <remarks>Typically only called by the DNN framework.</remarks>
         public void RegisterAjaxScript(Page page)
         {
+            jQuery.RequestRegistration();
+            
             var path = Common.Globals.ApplicationPath;
             path = path.EndsWith("/") ? path : path + "/";
             ClientAPI.RegisterClientVariable(page, "sf_siteRoot", path, /*overwrite*/ true);

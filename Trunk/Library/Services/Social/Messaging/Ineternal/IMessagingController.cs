@@ -74,9 +74,9 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
 
         MessageBoxView GetArchivedMessages(int userId, int pageIndex, int pageSize);
 
-        IList<MessageThreadView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, ref int totalRecords);
+        MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, ref int totalRecords);
 
-        IList<MessageThreadView> GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords);
+        MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords);
 
         //Gets the latest 10 messages
 
