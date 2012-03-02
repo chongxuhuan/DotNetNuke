@@ -93,7 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="DatabaseManager.cs" />
     <Compile Include="EnumerableAssert.cs" />
     <Compile Include="ExceptionAssert.cs" />
     <Compile Include="FileAssert.cs" />

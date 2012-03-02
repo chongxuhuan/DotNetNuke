@@ -130,7 +130,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                     messageBoxView.TotalConversations = Convert.ToInt32(dr["TotalRecords"]);
                 }
                 dr.NextResult();
-                messageBoxView.Conversations =  CBO.FillCollection<MessageConversationView>(dr);
+                messageBoxView.Conversations = CBO.FillCollection<MessageConversationView>(dr);
             }
             finally
             {
@@ -166,7 +166,20 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                 }
                 dr.NextResult();
 
-                messageThreadsView.Conversations = CBO.FillCollection<MessageConversationView>(dr);
+                while (dr.Read())
+                {
+                    var messageThreadView = new MessageThreadView { Conversation = new MessageConversationView() };
+                    messageThreadView.Conversation.Fill(dr);
+
+                    if (messageThreadView.Conversation.AttachmentCount > 0)
+                    {
+                        messageThreadView.Attachments = GetSocialMessageAttachmentsByMessage(messageThreadView.Conversation.MessageID);
+                    }
+
+                    if (messageThreadsView.Conversations == null) messageThreadsView.Conversations = new List<MessageThreadView>();
+
+                    messageThreadsView.Conversations.Add(messageThreadView);
+                }
             }
             finally
             {
@@ -244,7 +257,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         {
             var attachments = new List<MessageFileView>();
             var dr = _provider.ExecuteReader("GetSocialMessageAttachmentsByMessage", messageId);
-            
+
             try
             {
                 while (dr.Read())
@@ -261,7 +274,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                                              Url = FileManager.Instance.GetUrl(file)
                                          };
 
-                    
+
 
                     attachments.Add(attachment);
                 }
@@ -270,7 +283,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             {
                 CBO.CloseDataReader(dr, true);
             }
-            
+
             return attachments;
         }
 

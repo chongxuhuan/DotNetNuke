@@ -24,11 +24,11 @@
 			.cbctAddModule .dnnFormItem, #dnnCurrentPage .dnnClear{padding:0 0 3px 0;}
 			.cbctAddModule .dnnClear, .cbctAddPage, .cbcpPageEdit{width:260px;padding:2px 0;}
 			.cbctAddModule .dnnClear label, #dnnCurrentPage label{width:60px !important;}
-			.dnnCPModSelection .dnnClear input[type="text"], .dnnCPModSelection .dnnClear select, .dnnCPModLocation .dnnClear select, #dnnCurrentPage input[type="text"], #dnnCurrentPage select{width:160px !important;overflow:hidden;}
+			.dnnCPModSelection .dnnClear input[type="text"], .dnnCPModSelection .dnnClear select, .dnnCPModLocation .dnnClear select, #dnnCurrentPage input[type="text"], #dnnCurrentPage select{width:160px !important;overflow:hidden;margin: 0;}
 				#dnnCPWrap input[type="text"]{padding:3px;}
 			#dnnCurrentPage .dnnCPPageList, .dnnFormCheckbox input, .cbctAddModule a.dnnPrimaryAction, #dnnCurrentPage .dnnFormCheckbox{margin-left:76px;}
 			#dnnCurrentPage .dnnFormCheckbox input{margin-left:0px;}
-			#dnnCurrentPage .dnnFormCheckbox label{width:auto !important}
+			#dnnCurrentPage .dnnFormCheckbox label{ width: auto !important;display: inline;float: none;}
 			#dnnCurrentPage a.dnnPrimaryAction{margin-left:82px;}
 			#dnnCPWrapRight a.dnnPrimaryAction{padding:4px 10px;line-height:1.4;}
 			#dnnCurrentPage .cbcpPageCopy, #dnnCurrentPage .cbcpPageActions, .cpcbAdmin .dnnClear{padding-bottom:10px;}

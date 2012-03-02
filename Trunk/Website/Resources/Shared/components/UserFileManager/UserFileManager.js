@@ -1,21 +1,23 @@
-﻿/*globals jQuery, window */
+﻿/*globals jQuery, knockout */
 (function ($, ko) {
     "use strict";
     $.fn.userFileManager = function (options) {
         var opts = $.extend({}, $.fn.userFileManager.defaultOptions, options),
             $wrap = $(this),
-            templateUrl = '/Resources/Shared/Components/UserFileManager/Templates/' + opts.templateName + '.html';
+            templateUrl = opts.templatePath + opts.templateName + opts.templateExtension;
 
         function fileManagerModel(items) {
-            var self = this;
+            var self = this,
+                data = items;
 
-            self.items = ko.observableArray(items);
+            self.items = ko.observableArray(data);
             self.chosenFolderId = ko.observable();
             self.chosenFolderData = ko.observable();
             self.chosenFileData = ko.observable();
             self.nameHeaderText = ko.observable();
             self.typeHeaderText = ko.observable();
             self.lastModifiedHeaderText = ko.observable();
+            self.fileSizeText = ko.observable();
 
             // generic method for navigating the folder hierarchy
             self.find = function (array, id) {
@@ -37,8 +39,15 @@
             self.goToFolder = function (folder) {
                 self.chosenFileData(null); // internal usage
                 $wrap.data('chosenFileData', null); // external usage
-                self.chosenFolderData(self.find(items, folder.id));
+                self.chosenFolderData(self.find(data, folder.id));
                 self.chosenFolderId(folder.id);
+            };
+
+            // refresh the data
+            self.updateItems = function (newItems) {
+                data = newItems;
+                self.items = ko.observable(newItems);
+                self.goToFolder(newItems[0]);
             };
 
             // show file preview event handler
@@ -67,7 +76,7 @@
                 var result = [], current = self.chosenFolderData();
                 while (current) {
                     result.unshift(current);
-                    current = current.parentId ? self.find(items, current.parentId) : null;
+                    current = current.parentId ? self.find(data, current.parentId) : null;
                 }
                 return result;
             }, self);
@@ -75,23 +84,34 @@
             self.nameHeaderText = opts.nameHeaderText;
             self.typeHeaderText = opts.typeHeaderText;
             self.lastModifiedHeaderText = opts.lastModifiedHeaderText;
+            self.fileSizeText = opts.fileSizeText;
 
             // go to the root folder by default
-            self.goToFolder(items[0]);
+            self.goToFolder(data[0]);
         }
 
         $(opts.openTriggerSelector).click(function (e) {
             e.preventDefault();
 
             if (!$wrap.data('bound')) {
+                // fetch template, populate placeholder (i.e. $wrap)
                 $.get(templateUrl, function (data) {
                     $wrap.html(data);
                 });
 
                 // initial load and binding of the data
                 $.get(opts.getItemsServiceUrl, function (result) {
+                    // apply bindings, scope to this instance of the plugin
                     ko.applyBindings(new fileManagerModel(result), document.getElementById($wrap.attr('id')));
                     $wrap.data('bound', true);
+                });
+            }
+            else {
+                // refresh the data
+                $.get(opts.getItemsServiceUrl, function (result) {
+                    var boundDomElement = $wrap.get(0); // expose the underlying DOM element.
+                    var context = ko.contextFor(boundDomElement); // get our KO context
+                    context.$root.updateItems(result); // call the updateItems method
                 });
             }
 
@@ -142,18 +162,25 @@
     };
 
     $.fn.userFileManager.defaultOptions = {
+        openTriggerSelector: '#photoFromSite', // defined in template, opens dialog
         dialogClass: 'dnnFormPopup fileManagerPopup',
+        width: '700px', // dialog width
+        minHeight: '400px', // dialog height
         getItemsServiceUrl: '/DesktopModules/Journal/API/UserFile.ashx/GetItems',
-        openTriggerSelector: '#photoFromSite',
-        title: 'My Files',
-        cancelText: 'Cancel',
-        attachText: 'Attach',
-        width: '700px',
-        minHeight: '400px',
-        attachCallback: function (file) { alert(file.name + ' attached.'); },
+        attachCallback: function (file) {
+            // available properties .id, .modified, .name, .parentId, .size, .thumb_url, .type
+            alert(file.name + ' attached.');
+        },
+        templatePath: '/Resources/Shared/Components/UserFileManager/Templates/',
         templateName: 'Default',
+        templateExtension: '.html',
+        /* localized text values: */
+        title: 'My Files', // dialog title
+        cancelText: 'Cancel', // dialog cancel button
+        attachText: 'Attach', // dialog attach button
         nameHeaderText: 'Name',
         typeHeaderText: 'Type',
-        lastModifiedHeaderText: 'Last Modified'
+        lastModifiedHeaderText: 'Last Modified',
+        fileSizeText: 'File size: '
     };
 } (jQuery, ko));

@@ -45,7 +45,6 @@ namespace DotNetNuke.Services.Social.Messaging.Views
     [Serializable]
     public class MessageThreadsView
     {
-
         /// <summary>
         /// Total Number of Threads
         /// </summary>
@@ -68,6 +67,6 @@ namespace DotNetNuke.Services.Social.Messaging.Views
         /// List of Conversations
         /// </summary>
         [XmlAttribute]
-        public List<MessageConversationView> Conversations { get; set; }
+        public List<MessageThreadView> Conversations { get; set; }
     }
 }

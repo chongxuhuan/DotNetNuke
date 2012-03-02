@@ -3728,31 +3728,30 @@ AS
 BEGIN
 
 --Cannot return thread if user was not a recipient
-IF NOT EXISTS (SELECT RecipientID FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE UserID = @UserID)
-BEGIN --was the user a sender
-	IF NOT EXISTS (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE SenderUserID = @UserID)
-	BEGIN
+IF NOT EXISTS (SELECT RecipientID FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE UserID = @UserID) BEGIN --was the user a sender
+	IF NOT EXISTS (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE SenderUserID = @UserID) BEGIN
 	    SELECT 0
 	    RETURN
 	END
 END
 
 --Return Unread message count
-	SELECT COUNT(*) AS TotalNewThreads
-	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] 
-	WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = @ConversationID)
-	AND [Read] = 0
+SELECT COUNT(*) AS TotalNewThreads
+FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients]
+WHERE UserID = @UserID
+AND [Read] = 0
 
 --Return total message count
-SELECT COUNT(*) AS TotalRecords FROM {databaseOwner}{objectQualifier}SocialMessages
-	WHERE (ConversationID = @ConversationID)
+SELECT COUNT(*) AS TotalRecords
+FROM {databaseOwner}{objectQualifier}SocialMessages
+WHERE (ConversationID = @ConversationID)
 
 --Return Archived message count
-	SELECT COUNT(*) AS TotalArchivedThreads
-	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] 
-	WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = @ConversationID)
-	AND [Archived] = 1
-	
+SELECT COUNT(*) AS TotalArchivedThreads
+FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients]
+WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = @ConversationID)
+AND [Archived] = 1
+
 -- Set the page bounds
 DECLARE @PageLowerBound INT, @PageUpperBound INT;
 
@@ -3783,7 +3782,7 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 )
 
 SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound
-order by RowNumber ASC
+ORDER BY RowNumber ASC
 END
 GO
 

@@ -48,7 +48,7 @@
             <img data-bind="visible: thumb_url != null, attr: { src: thumb_url }" alt="" />
         </div>
         <div class="fm-file-info">
-            <p>File size: <span data-bind="text: size"></span></p>
+            <p><span data-bind="text: $root.fileSizeText"></span> <span data-bind="text: size"></span></p>
         </div>
     </div>
 </div>

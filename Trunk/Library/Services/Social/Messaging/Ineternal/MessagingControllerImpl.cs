@@ -179,20 +179,7 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
 
         public MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
         {
-            var threads = new List<MessageThreadView>();
-
-            var messageThreadsView = _dataService.GetMessageThread(conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
-            foreach (var messageItemView in messageThreadsView.Conversations)
-            {
-                var thread = new MessageThreadView { Conversation = messageItemView };
-                if (messageItemView.AttachmentCount > 0)
-                {
-                    thread.Attachments = _dataService.GetSocialMessageAttachmentsByMessage(messageItemView.MessageID);
-                }
-                threads.Add(thread);
-            }
-
-            return messageThreadsView;
+            return _dataService.GetMessageThread(conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
         }
 
         public MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords)
