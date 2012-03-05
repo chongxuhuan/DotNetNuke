@@ -26,13 +26,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
-using System.Web.Mvc;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 
 namespace DotNetNuke.Web.Services
 {
-    public sealed class DnnAuthorizeAttribute : AuthorizeAttributeBase
+    public sealed class DnnAuthorizeAttribute : AuthorizeAttributeBase, IOverrideDefaultAuthLevel
     {
         private string _roles;
         private string[] _rolesSplit = new string[0];

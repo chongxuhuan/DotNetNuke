@@ -89,7 +89,13 @@
             // go to the root folder by default
             self.goToFolder(data[0]);
         }
-
+        
+        function getItems(callback) {
+            $.get(opts.getItemsServiceUrl, {
+                fileExtensions: $wrap.data('fileExtensions')
+            }, callback);
+        }
+        
         $(opts.openTriggerSelector).click(function (e) {
             e.preventDefault();
 
@@ -100,7 +106,7 @@
                 });
 
                 // initial load and binding of the data
-                $.get(opts.getItemsServiceUrl, function (result) {
+                getItems(function (result) {
                     // apply bindings, scope to this instance of the plugin
                     ko.applyBindings(new fileManagerModel(result), document.getElementById($wrap.attr('id')));
                     $wrap.data('bound', true);
@@ -108,7 +114,7 @@
             }
             else {
                 // refresh the data
-                $.get(opts.getItemsServiceUrl, function (result) {
+                getItems(function (result) {
                     var boundDomElement = $wrap.get(0); // expose the underlying DOM element.
                     var context = ko.contextFor(boundDomElement); // get our KO context
                     context.$root.updateItems(result); // call the updateItems method
@@ -150,15 +156,21 @@
                         }
                     });
                     $actionList.appendTo($div);
-                    $div.appendTo('.ui-dialog-buttonpane');
-                    $('.ui-dialog-buttonset').hide();
 
+                    // finds button pane in scope of the plugin
+                    $div.appendTo($wrap.dialog("widget").find('.ui-dialog-buttonpane'));
+                    $wrap.dialog("widget").find('.ui-dialog-buttonset').hide();
                 },
                 buttons: [{}],
                 close: function () {
                 }
             });
         });
+
+        // comma delimited list of file extensions to show, empty = all
+        $.fn.userFileManager.setFileExtensions = function (fileExtensions) {
+            $wrap.data('fileExtensions', fileExtensions);
+        };
     };
 
     $.fn.userFileManager.defaultOptions = {

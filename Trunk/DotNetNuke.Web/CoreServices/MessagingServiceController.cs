@@ -23,7 +23,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Social.Messaging;
@@ -40,16 +42,24 @@ namespace DotNetNuke.Web.CoreServices
         }
 
         [DnnAuthorize]
-        public ActionResult Create(string subject, string body, IList<int> roleIds, IList<int> userIds, IList<int> fileIds)
+        public ActionResult Create(string subject, string body, string roleIds, string userIds, string fileIds)
         {
-            var userController = new UserController();
+            var roleIdsList = string.IsNullOrEmpty(roleIds) ? null : roleIds.FromJson<IList<int>>();
+            var userIdsList = string.IsNullOrEmpty(userIds) ? null : userIds.FromJson<IList<int>>();
+            var fileIdsList = string.IsNullOrEmpty(fileIds) ? null : fileIds.FromJson<IList<int>>();
 
-            var roles = roleIds != null && roleIds.Count > 0
-                ? roleIds.Select(id => TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == id)).Where(role => role != null).ToList()
+            var roles = roleIdsList != null && roleIdsList.Count > 0
+                ? roleIdsList.Select(id => TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == id)).Where(role => role != null).ToList()
                 : null;
-            var users = userIds.Select(id => userController.GetUser(PortalSettings.PortalId, id)).Where(user => user != null).ToList();
 
-            var message = MessagingController.Instance.CreateMessage(subject, body, roles, users, fileIds);
+            List<UserInfo> users = null;
+            if (userIdsList != null)
+            {
+                var userController = new UserController();
+                users = userIdsList.Select(id => userController.GetUser(PortalSettings.PortalId, id)).Where(user => user != null).ToList();
+            }
+
+            var message = MessagingController.Instance.CreateMessage(HttpUtility.UrlDecode(subject), HttpUtility.UrlDecode(body), roles, users, fileIdsList);
 
             return Json(message.MessageID);
         }

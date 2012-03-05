@@ -3,6 +3,8 @@
         var opts = $.extend({}, $.fn.dnnComposeMessage.defaultOptions, options),
             $wrap = this;
 
+        opts.serviceurlbase = $wrap.dnnSF().getServiceRoot('CoreServices') + 'MessagingService.ashx/';
+
         $wrap.each(function () {
             var self = $(this),
                 composeMessageDialog,
@@ -11,19 +13,21 @@
                 autoclose,
                 messageId = -1;
 
-            self.addClass('ui-dnncomposemessage');
+            if (self.data('bound')) return self;
+            self.data('bound', true);
 
             //construct the form
-            html = "<div class='MessageSent dnnFormMessage dnnFormSuccess'>" + opts.messageSentText + "</div>";
+            html = "<div class='dnnFormMessage dnnFormWarning'>ONLY FOR TESTING PURPOSES: Enter an string of integers (user identifiers) separated by commas in the To input box. For example: 1,2. This will send a message to Host and Admin users. Please do not add whitespaces or letters.</div>";
+            html += "<div class='MessageSent dnnFormMessage dnnFormSuccess'>" + opts.messageSentText + "</div>";
             html += "<div class='ThrottlingWarning dnnFormMessage dnnFormWarning'>" + opts.throttlingText + "</div>";
             html += "<fieldset>";
             html += "<div class='dnnFormItem'><label for='to'>" + opts.toText + "</label><input type='text' id='to' name='to'/></div>";
             html += "<div class='dnnFormItem'><label for='subject'>" + opts.subjectText + "</label><input type='text' id='subject' name='subject' maxlength='400'/></div>";
             html += "<div class='dnnFormItem'><label for='bodytext'>" + opts.messageText + "</label><textarea rows='2' cols='20' id='bodytext' name='bodytext'/></div>";
 
-            //TODO What to do with attachment?
-            if (opts.showAttachements) {
-                html += '<img src="attachment.gif"/>';
+            if (opts.showAttachments) {
+                html += "<div class='dnnFormItem'><label>Attachments</label><a href='#' id='fileFromSite'>Browse from site</a></div>";
+                html += "<div id='userFileManager'></div>";
             }
 
             html += "</fieldset>";
@@ -42,6 +46,14 @@
 
                 composeMessageDialog = $("<div class='composeMessageDialog dnnForm dnnClear'></div>").html(html).dialog(opts);
 
+                if (opts.showAttachments) {
+                    opts.userFileManagerOptions.openTriggerSelector = '#fileFromSite';
+                    opts.userFileManagerOptions.attachCallback = function (file) {
+                        alert(file.id);
+                    };
+                    composeMessageDialog.find('#userFileManager').userFileManager(opts.userFileManagerOptions);
+                }
+
                 composeMessageDialog.find('input[type="text"]').keyup(function () {
                     var sendButton = $('.ui-dialog-buttonpane button:first');
                     if (composeMessageDialog.find('#to').val().trim().length > 0 && composeMessageDialog.find('#subject').val().trim().length > 0 && canSend) {
@@ -56,13 +68,13 @@
                     modal: true,
                     resizable: false,
                     open: function () {
-                        $('.ui-dialog-buttonpane :button').removeClass().addClass('dnnTertiaryAction');
+                        composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane :button').removeClass().addClass('dnnTertiaryAction');
                         composeMessageDialog.find('.MessageSent').hide();
                         composeMessageDialog.find('.ThrottlingWarning').hide();
                         messageId = -1;
 
                         canSend = false;
-                        var sendButton = $('.ui-dialog-buttonpane button:first');
+                        var sendButton = composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane button:first');
                         var timeForNextMessage = self.getWaitTimeForNextMessage();
                         if (timeForNextMessage > 0) {
                             composeMessageDialog.find('.ThrottlingWarning').show().text(opts.throttlingText + ' ' + timeForNextMessage + ' sec');
@@ -89,19 +101,15 @@
                         {
                             text: opts.sendText,
                             click: function () {
-                                data = {};
-                                data.subject = composeMessageDialog.find('#subject').val();
-                                data.body = composeMessageDialog.find('#bodytext').val();
-                                data.roleIds = {}; //TODO hardcoded for now
-                                data.userIds = 1; //TODO hardcoded for now 
-                                data.fileIds = {}; //TODO hardcoded for now 
-                                $.ajax({
-                                    type: "POST",
-                                    url: opts.serviceurlbase + "Create",
-                                    data: data
-                                }).done(function (data) {
+                                var params = {};
+                                params.subject = encodeURIComponent(composeMessageDialog.find('#subject').val());
+                                params.body = encodeURIComponent(composeMessageDialog.find('#bodytext').val());
+                                params.roleIds = {}; //TODO hardcoded for now
+                                params.userIds = "[" + composeMessageDialog.find('#to').val() + "]";
+                                params.fileIds = {}; //TODO hardcoded for now 
+                                $.post(opts.serviceurlbase + "Create", params, function (data) {
                                     composeMessageDialog.find('.MessageSent').show();
-                                    $('.ui-dialog-buttonpane button:first').attr('disabled', 'disabled').addClass('disabled');
+                                    composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane button:first').attr('disabled', 'disabled').addClass('disabled');
                                     messageId = data;
                                     autoclose = setInterval(function () {
                                         composeMessageDialog.dialog("close");
@@ -137,8 +145,9 @@
     };
 
     $.fn.dnnComposeMessage.defaultOptions = {
-        onMessageSent: null, // callback function that accepts a meesage id
-        serviceurlbase: '/desktopmodules/CoreServices/API/MessagingService/',
+        onMessageSent: function (messageId) {
+            // messageId is the identifier of the newly created message
+        },
         title: 'Compose Message',
         toText: 'Send to',
         subjectText: 'Subject',
@@ -149,8 +158,9 @@
         throttlingText: 'Please wait before sending a new message.',
         dialogClass: 'dnnFormPopup dnnClear',
         autoOpen: false,
-        showAttachements: false,
-        msgSentAutoCloseTimeout: 3000
+        showAttachments: false,
+        msgSentAutoCloseTimeout: 3000,
+        userFileManagerOptions: {}
     };
 
 })(jQuery);

@@ -15,33 +15,16 @@
 // // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // // DEALINGS IN THE SOFTWARE.
-using System.Web;
-using DotNetNuke.Security;
-using DotNetNuke.Security.Permissions;
+using System;
 
 namespace DotNetNuke.Web.Services
 {
-    public sealed class DnnModuleAuthorizeAttribute : AuthorizeAttributeBase, IOverrideDefaultAuthLevel
+    /// <summary>
+    /// Implementing this interface on an Auth filter will allow the filter to override the default
+    /// Host level auth provided by DnnController
+    /// </summary>
+    public interface IOverrideDefaultAuthLevel
     {
-        public DnnModuleAuthorizeAttribute()
-        {
-            AccessLevel = SecurityAccessLevel.Host;
-        }
-
-        public string PermissionKey { get; set; }
-        public SecurityAccessLevel AccessLevel { get; set; }
-
-        // This method must be thread-safe since it is called by the caching module.
-        protected override bool AuthorizeCore(HttpContextBase context)
-        {
-            var activeModule = context.FindModuleInfo();
-
-            if (activeModule != null)
-            {
-                return ModulePermissionController.HasModuleAccess(AccessLevel, PermissionKey, activeModule);
-            }
-
-            return false;
-        }
+        //no need for methods the mere presence of this interface acts as a flag to DnnControllerActionInvoker
     }
 }

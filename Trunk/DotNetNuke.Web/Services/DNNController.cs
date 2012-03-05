@@ -40,7 +40,6 @@ namespace DotNetNuke.Web.Services
         public DnnController()
         {
             ActionInvoker = new DnnControllerActionInvoker();
-            DefaultAuthLevel = ServiceAuthLevel.Host;
         }
 
         protected override void Initialize(RequestContext requestContext)
@@ -142,10 +141,5 @@ namespace DotNetNuke.Web.Services
         /// <remarks>Will be null unless a valid pair of module and tab ids were provided in the request</remarks>
         /// </summary>
         public ModuleInfo ActiveModule { get; private set; }
-
-        /// <summary>
-        /// Default Authorization level required to call access the methods of this controller
-        /// </summary>
-        public ServiceAuthLevel DefaultAuthLevel { get; set; }
     }
 }
