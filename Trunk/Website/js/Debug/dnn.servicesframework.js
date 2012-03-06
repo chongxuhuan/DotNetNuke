@@ -49,7 +49,7 @@
         };
 
         base.setModuleHeaders = function (xhr) {
-            xhr.setRequestHeader("ModuleID", base.getModuleId());
+            xhr.setRequestHeader("ModuleId", base.getModuleId());
             xhr.setRequestHeader("TabId", base.getTabId());
         };
 

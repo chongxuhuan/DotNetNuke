@@ -1,0 +1,202 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="FiftyOneClientCapabilityProvider" type="Provider" version="6.2.0">
+      <friendlyName>FiftyOne Client Capability Providers</friendlyName>
+      <description>Device Detection Modules &amp; Client Capability Provider</description>
+      <iconFile>~/DesktopModules/Admin/FiftyOneClientCapabilityProvider/Images/51Degrees.mobi.png</iconFile>
+      <owner>
+        <name>51Degrees.mobi</name>
+        <organization>51 Degrees Mobile Experts Limited</organization>
+        <url>http://51Degrees.mobi</url>
+        <email>info@51degrees.mobi</email>
+      </owner>
+      <license src="License.txt"></license>
+      <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
+      <dependencies>
+        <dependency type="CoreVersion">06.01.00</dependency>
+      </dependencies>
+      <components>
+        <component type="File">
+          <files>
+            <file>
+              <name>51Degrees.mobi.config</name>
+              <sourceFileName>51Degrees.mobi.config</sourceFileName>
+            </file>
+          </files>
+        </component>
+
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath>DesktopModules/Admin/FiftyOneClientCapabilityProvider</basePath>
+            <resourceFile>
+              <name>Resources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+
+        <component type="Module">
+          <desktopModule>
+            <moduleName>51Degrees.mobi</moduleName>
+            <foldername>FiftyOne</foldername>
+            <businessControllerClass>FiftyOne.Modules.Components.FeatureController, FiftyOne.DotNetNuke</businessControllerClass>
+            <supportedFeatures>
+              <supportedFeature type="Searchable" />
+              <supportedFeature type="FiftyOne.Modules.Components.FeatureController, FiftyOne.DotNetNuke"></supportedFeature>
+            </supportedFeatures>
+            <moduleDefinitions>
+              <moduleDefinition>
+                <friendlyName>Administration</friendlyName>
+                <defaultCacheTime>0</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey/>
+                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/Administration.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Administration</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>                  
+                  <moduleControl>
+                    <controlKey>PropertyDictionary</controlKey>
+                      <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/PropertyDictionary.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Property Dictionary</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>1</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>DeviceExplorer</controlKey>
+                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/DeviceExplorer.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Device Explorer</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>2</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>UserAgentTester</controlKey>
+                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/UserAgentTester.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Find a Device by UserAgent</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>3</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>              
+              <moduleDefinition>
+                <friendlyName>Device Explorer</friendlyName>
+                <defaultCacheTime>0</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey />
+                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/DeviceExplorer.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Device Explorer</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>
+              <moduleDefinition>
+                <friendlyName>Property Dictionary</friendlyName>
+                <defaultCacheTime>240</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey />
+                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/PropertyDictionary.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Property Dictionary</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>
+              <moduleDefinition>
+                <friendlyName>UserAgent Tester</friendlyName>
+                <defaultCacheTime>0</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey />
+                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/UserAgentTester.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Find a Device by UserAgent</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>
+            </moduleDefinitions>
+          </desktopModule>
+          <eventMessage>
+            <processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
+            <processorCommand>UpgradeModule</processorCommand>
+            <attributes>
+              <businessControllerClass>FiftyOne.Modules.Components.FeatureController, FiftyOne.DotNetNuke</businessControllerClass>
+              <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
+              <upgradeVersionsList>2.1.1.5</upgradeVersionsList>
+            </attributes>
+          </eventMessage>
+        </component>
+        
+        <component type="Assembly">
+          <assemblies>
+            <basePath>bin\Providers</basePath>
+            <assembly>
+              <path>bin\Providers</path>
+              <name>FiftyOne.DotNetNuke.dll</name>
+            </assembly>
+            <assembly>
+              <path>bin\Providers</path>
+              <name>FiftyOne.Foundation.dll</name>
+            </assembly>
+          </assemblies>
+        </component>
+
+        <component type="Config">
+          <config>
+            <configFile>web.config</configFile>
+            <install>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/system.web/httpModules" action="update" key="name" collision="overwrite">
+                    <add name="Detector" type="FiftyOne.Foundation.Mobile.Detection.DetectorModule, FiftyOne.Foundation" />
+                  </node>
+                  <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
+                    <add name="Detector" type="FiftyOne.Foundation.Mobile.Detection.DetectorModule, FiftyOne.Foundation" preCondition="managedHandler"/>
+                  </node>
+                  <node path="/configuration/dotnetnuke/clientcapability/providers" action="update" key="name" collision="overwrite">
+                    <add name="FiftyOneClientCapabilityProvider" type="FiftyOne.Services.ClientCapability.FiftyOneClientCapabilityProvider, FiftyOne.DotNetNuke" providerPath="~\Providers\ClientCapabilityProviders\FiftyOneClientCapabilityProvider\" />
+                  </node>
+                  <node path="/configuration/dotnetnuke/clientcapability" action="updateattribute" name="defaultProvider" value="FiftyOneClientCapabilityProvider" />
+                </nodes>
+              </configuration>
+            </install>
+            <uninstall>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/system.web/httpModules/add[@name='Detector']" action="remove"/>
+                  <node path="/configuration/system.webServer/modules/add[@name='Detector']" action="remove"/>
+                  <node path="/configuration/dotnetnuke/clientcapability/providers/add[@name='FiftyOneClientCapabilityProvider']" action="remove"/>
+                </nodes>
+              </configuration>
+            </uninstall>
+          </config>
+        </component>
+        
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

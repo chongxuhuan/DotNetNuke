@@ -11,7 +11,8 @@
                 html,
                 canSend = false,
                 autoclose,
-                messageId = -1;
+                messageId = -1,
+                attachments = [];
 
             if (self.data('bound')) return self;
             self.data('bound', true);
@@ -26,7 +27,7 @@
             html += "<div class='dnnFormItem'><label for='bodytext'>" + opts.messageText + "</label><textarea rows='2' cols='20' id='bodytext' name='bodytext'/></div>";
 
             if (opts.showAttachments) {
-                html += "<div class='dnnFormItem'><label>Attachments</label><a href='#' id='fileFromSite'>Browse from site</a></div>";
+                html += "<div class='dnnFormItem'><label>Attachments</label><div class='dnnLeft'><a href='#' id='fileFromSite'>Browse from site</a></div></div>";
                 html += "<div id='userFileManager'></div>";
             }
 
@@ -49,7 +50,18 @@
                 if (opts.showAttachments) {
                     opts.userFileManagerOptions.openTriggerSelector = '#fileFromSite';
                     opts.userFileManagerOptions.attachCallback = function (file) {
-                        alert(file.id);
+                        if ($.inArray(file.id, attachments) === -1) {
+                            attachments.push(file.id);
+                            composeMessageDialog.find('.dnnLeft').append('<div class="dnnFormItem">' + file.name + ' (<a href="#">remove</a>)</div>');
+                            composeMessageDialog.find('.dnnLeft div:last-child a').bind("click", function () {
+                                var index = $.inArray(file.id, attachments);
+                                if (index !== -1) {
+                                    attachments.splice(index, 1);
+                                    $(this).parent().remove();
+                                }
+                                return false;
+                            });
+                        }
                     };
                     composeMessageDialog.find('#userFileManager').userFileManager(opts.userFileManagerOptions);
                 }
@@ -101,12 +113,13 @@
                         {
                             text: opts.sendText,
                             click: function () {
-                                var params = {};
-                                params.subject = encodeURIComponent(composeMessageDialog.find('#subject').val());
-                                params.body = encodeURIComponent(composeMessageDialog.find('#bodytext').val());
-                                params.roleIds = {}; //TODO hardcoded for now
-                                params.userIds = "[" + composeMessageDialog.find('#to').val() + "]";
-                                params.fileIds = {}; //TODO hardcoded for now 
+                                var params = {
+                                    subject: encodeURIComponent(composeMessageDialog.find('#subject').val()),
+                                    body: encodeURIComponent(composeMessageDialog.find('#bodytext').val()),
+                                    roleIds: {}, //TODO hardcoded for now
+                                    userIds: "[" + composeMessageDialog.find('#to').val() + "]",
+                                    fileIds: (attachments.length > 0 ? JSON.stringify(attachments) : {})
+                                };
                                 $.post(opts.serviceurlbase + "Create", params, function (data) {
                                     composeMessageDialog.find('.MessageSent').show();
                                     composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane button:first').attr('disabled', 'disabled').addClass('disabled');

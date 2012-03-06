@@ -572,6 +572,22 @@ namespace DotNetNuke.Services.Installer
         /// -----------------------------------------------------------------------------
         public static void WriteStream(Stream sourceStream, string destFileName)
         {
+            WriteStream(sourceStream, destFileName, null);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// The WriteStream reads a source stream and writes it to a destination file
+        /// </summary>
+        /// <param name="sourceStream">The Source Stream</param>
+        /// <param name="destFileName">The Destination file</param>
+        /// <param name="lastWriteTime">Last Write Time of the file.</param>
+        /// <history>
+        /// 	[cnurse]	08/03/2007  created
+        /// </history>
+        /// -----------------------------------------------------------------------------
+        public static void WriteStream(Stream sourceStream, string destFileName, DateTime? lastWriteTime)
+        {
 			//Delete the file
             FileSystemUtils.DeleteFile(destFileName);
 
@@ -586,6 +602,11 @@ namespace DotNetNuke.Services.Installer
 
             //Close the stream
             fileStrm.Close();
+
+            if(lastWriteTime != null)
+            {
+                File.SetLastWriteTimeUtc(destFileName, lastWriteTime.Value);
+            }
         }
 		
 		#endregion

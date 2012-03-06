@@ -30,7 +30,7 @@ namespace DotNetNuke.Entities.Modules.Internal
 
         public void UpdateModuleSetting(int moduleId, string settingName, string settingValue)
         {
-            _legacyController.UpdateModuleSetting(moduleId, settingName, settingName);
+            _legacyController.UpdateModuleSetting(moduleId, settingName, settingValue);
         }
 
         public void UpdateTabModuleSetting(int tabModuleId, string settingName, string settingValue)
