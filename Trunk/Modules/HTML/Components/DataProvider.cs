@@ -50,7 +50,7 @@ namespace DotNetNuke.Modules.Html
         // dynamically create provider
         private static void CreateProvider()
         {
-            objProvider = (DataProvider) Reflection.CreateObject("data", "DotNetNuke.Modules.Html", "");
+            objProvider = (DataProvider)Reflection.CreateObject("data", "", "DotNetNuke.Modules.Html", "DotNetNuke.Modules.Html", true, false);
         }
 
         // return the provider

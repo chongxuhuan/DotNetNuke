@@ -12,14 +12,15 @@
                 canSend = false,
                 autoclose,
                 messageId = -1,
+                users = [],
+                roles = [],
                 attachments = [];
 
             if (self.data('bound')) return self;
             self.data('bound', true);
 
             //construct the form
-            html = "<div class='dnnFormMessage dnnFormWarning'>ONLY FOR TESTING PURPOSES: Enter an string of integers (user identifiers) separated by commas in the To input box. For example: 1,2. This will send a message to Host and Admin users. Please do not add whitespaces or letters.</div>";
-            html += "<div class='MessageSent dnnFormMessage dnnFormSuccess'>" + opts.messageSentText + "</div>";
+            html = "<div class='MessageSent dnnFormMessage dnnFormSuccess'>" + opts.messageSentText + "</div>";
             html += "<div class='ThrottlingWarning dnnFormMessage dnnFormWarning'>" + opts.throttlingText + "</div>";
             html += "<fieldset>";
             html += "<div class='dnnFormItem'><label for='to'>" + opts.toText + "</label><input type='text' id='to' name='to'/></div>";
@@ -27,7 +28,7 @@
             html += "<div class='dnnFormItem'><label for='bodytext'>" + opts.messageText + "</label><textarea rows='2' cols='20' id='bodytext' name='bodytext'/></div>";
 
             if (opts.showAttachments) {
-                html += "<div class='dnnFormItem'><label>Attachments</label><div class='dnnLeft'><a href='#' id='fileFromSite'>Browse from site</a></div></div>";
+                html += "<div class='dnnFormItem'><label>" + opts.attachmentsText + "</label><div class='dnnLeft'><button type='button' id='fileFromSite' class='dnnTertiaryAction'><span>" + opts.browseText + "</span></button></div></div>";
                 html += "<div id='userFileManager'></div>";
             }
 
@@ -52,8 +53,8 @@
                     opts.userFileManagerOptions.attachCallback = function (file) {
                         if ($.inArray(file.id, attachments) === -1) {
                             attachments.push(file.id);
-                            composeMessageDialog.find('.dnnLeft').append('<div class="dnnFormItem">' + file.name + ' (<a href="#">remove</a>)</div>');
-                            composeMessageDialog.find('.dnnLeft div:last-child a').bind("click", function () {
+                            composeMessageDialog.find('.dnnLeft').append('<div class="dnnFormItem">' + file.name + ' <a href="#"><img src="images/delete.gif" alt="' + opts.removeText + '" title="' + opts.removeText + '" /></a></div>');
+                            composeMessageDialog.find('.dnnLeft div:last-child a').click(function () {
                                 var index = $.inArray(file.id, attachments);
                                 if (index !== -1) {
                                     attachments.splice(index, 1);
@@ -66,13 +67,43 @@
                     composeMessageDialog.find('#userFileManager').userFileManager(opts.userFileManagerOptions);
                 }
 
-                composeMessageDialog.find('input[type="text"]').keyup(function () {
+                function updateSendButtonStatus() {
                     var sendButton = $('.ui-dialog-buttonpane button:first');
-                    if (composeMessageDialog.find('#to').val().trim().length > 0 && composeMessageDialog.find('#subject').val().trim().length > 0 && canSend) {
+                    if ((users.length > 0 || roles.length > 0) && composeMessageDialog.find('#subject').val().trim().length > 0 && canSend) {
                         sendButton.removeAttr('disabled').removeClass('disabled');
                     } else {
                         sendButton.attr('disabled', 'disabled').addClass('disabled');
                     }
+                }
+
+                composeMessageDialog.find('#to').tokenInput([
+                    { id: "user-1", name: "SuperUser Account" },
+                    { id: "user-2", name: "Administrator Account" },
+                    { id: "role-0", name: "Administrators" },
+                    { id: "role-1", name: "Registered Users" },
+                    { id: "role-2", name: "Subscribers" },
+                    { id: "role-3", name: "Translator (en-US)" },
+                    { id: "role-4", name: "Unverified Users" }
+                ], {
+                    theme: "facebook",
+                    preventDuplicates: true,
+                    onAdd: function (item) {
+                        if (item.id.startsWith("user-")) { users.push(item.id.substring(5)); }
+                        else if (item.id.startsWith("role-")) { roles.push(item.id.substring(5)); }
+                        updateSendButtonStatus();
+                    },
+                    onDelete: function (item) {
+                        var array = item.id.startsWith("user-") ? users : roles,
+                            id = item.id.substring(5),
+                            index = $.inArray(id, array);
+
+                        if (index !== -1) { array.splice(index, 1); }
+                        updateSendButtonStatus();
+                    }
+                });
+
+                composeMessageDialog.find('#subject').keyup(function () {
+                    updateSendButtonStatus();
                 });
 
                 composeMessageDialog.dialog({
@@ -116,8 +147,8 @@
                                 var params = {
                                     subject: encodeURIComponent(composeMessageDialog.find('#subject').val()),
                                     body: encodeURIComponent(composeMessageDialog.find('#bodytext').val()),
-                                    roleIds: {}, //TODO hardcoded for now
-                                    userIds: "[" + composeMessageDialog.find('#to').val() + "]",
+                                    roleIds: (roles.length > 0 ? JSON.stringify(roles) : {}),
+                                    userIds: (users.length > 0 ? JSON.stringify(users) : {}),
                                     fileIds: (attachments.length > 0 ? JSON.stringify(attachments) : {})
                                 };
                                 $.post(opts.serviceurlbase + "Create", params, function (data) {
@@ -165,6 +196,9 @@
         toText: 'Send to',
         subjectText: 'Subject',
         messageText: 'Your Message',
+        attachmentsText: 'Attachment(s)',
+        browseText: 'Browse',
+        removeText: 'Remove attachment',
         sendText: 'Send',
         cancelText: 'Cancel',
         messageSentText: 'Your message has been sent successfully.',
@@ -176,4 +210,4 @@
         userFileManagerOptions: {}
     };
 
-})(jQuery);
+} (jQuery));

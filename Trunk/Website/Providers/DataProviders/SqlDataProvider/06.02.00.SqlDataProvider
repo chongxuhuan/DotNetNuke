@@ -4027,10 +4027,6 @@ AS
 	DECLARE @UserFiltersTable TABLE (RowNumber Int, RowValue NVARCHAR(MAX))
 	INSERT INTO @UserFiltersTable SELECT * FROM {objectQualifier}ConvertListToTable(',',@PropertyNames) WHERE RowValue IN (SELECT * FROM @UserColumns)
 	
-	-- JOIN Statement Required if sorted by User properties
-	DECLARE @propertyJoin nvarchar(100) SET @propertyJoin = ''
-	IF @PropertyNames IS NOT NULL AND @PropertyNames <> '' BEGIN SET @propertyJoin = ' INNER JOIN @MatchingUsers m ON m.UserID = s.UserID ' END
-
 
 	DECLARE @sql nvarchar(max) SET @sql = ''
 	DECLARE @filterSql nvarchar(max)SET @filterSql = ''
@@ -4130,8 +4126,7 @@ AS
 		SET @sortSql = {databaseOwner}{objectQualifier}GetSortSql('PropertyValue',@SortAscending,'UserID')
 		SET @filterSortSql = ' ;WITH SortedUsers AS ( SELECT ROW_NUMBER() OVER( ' + @sortSql + ' ) AS RowNumber, *  ' 
 							+ ' FROM {objectQualifier}vw_Profile WHERE PortalId = ' + CONVERT(nvarchar(20), @PortalID) + ' AND PropertyName = ''' + @SortBy + ''' )'
-							+ @roleAndRelationshipFilter 
-							+ ' INSERT INTO @TempUsers SELECT '		
+							+ ' ,MatchingSorted AS ( SELECT ROW_NUMBER() OVER(ORDER BY [RowNumber]) AS RowNumber, s.UserId FROM SortedUsers s '
 	END
 	ELSE
 	BEGIN 	
@@ -4141,20 +4136,20 @@ AS
 		ELSE BEGIN SET @sortSql = {databaseOwner}{objectQualifier}GetSortSql('UserID',@SortAscending,'UserID') END
 		
 		SET @filterSortSql = ' ;WITH SortedUsers AS ( SELECT ROW_NUMBER() OVER( ' + @sortSql + ' ) AS RowNumber, * '
-							+ ' FROM {objectQualifier}vw_Users WHERE PortalId = ' + CONVERT(nvarchar(20), @PortalID) + ')'
-							+ @roleAndRelationshipFilter 
-							+ ' INSERT INTO @TempUsers SELECT '
+							+ ' FROM {objectQualifier}vw_Users WHERE PortalId = ' + CONVERT(nvarchar(20), @PortalID) + ')'							
+							+ ' ,MatchingSorted AS ( SELECT ROW_NUMBER() OVER(ORDER BY [RowNumber]) AS RowNumber, s.UserId FROM SortedUsers s '
+							+ ' INNER JOIN @MatchingUsers m ON m.UserID = s.UserID ) ' 														
 	END
-
 
 	-- ///////////////////////////////////////////////////
 	-- CREATE FINAL QUERY
-	-- ///////////////////////////////////////////////////	
+	-- ///////////////////////////////////////////////////
 	SET @sql =	@filterSql
 				+ ' DECLARE @TempUsers TABLE (SortOrder INT, UserID INT) '
 				+ @filterSortSql
-				+ @topSql 
-				+ ' s.RowNumber, s.UserId FROM SortedUsers s ' + @propertyJoin
+				+ @roleAndRelationshipFilter
+				+ ' INSERT INTO @TempUsers SELECT ' + @topSql
+				+ ' s.RowNumber, s.UserId FROM MatchingSorted s ' 
 				+ ' WHERE RowNumber >= ' + @minRowNumberSql 
 				+ @roleAndRelationshipSelect
 				+ ' ;WITH PivotedUsers AS ( SELECT	U.UserID, U.PortalID, U.Username, U.Email, U.DisplayName, U.IsSuperUser, U.IsDeleted,        

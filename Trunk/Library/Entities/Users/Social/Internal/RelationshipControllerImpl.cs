@@ -1,5 +1,4 @@
 ﻿#region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
@@ -18,11 +17,9 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
 #region Usings
-
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -487,19 +484,39 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         #region Easy Wrapper APIs
 
+
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// IsFriend - Are the Current User and the Target Users in Friend Relationship
-        /// </summary>        
+        /// AddFriend - Current User initiates a Friend Request to the Target User
+        /// </summary>                
         /// <param name="targetUser">UserInfo for Target User</param>        
-        /// <returns>True or False</returns>
-        /// <remarks>True is returned only if a Friend Relationship exists between the two Users. 
-        /// The relation status must be Accepted. Friend Relationship can be initited by either of the Users.
+        /// <returns>UserRelationship object</returns>
+        /// <remarks>If the Friend Relationship is setup for auto-acceptance at the Portal level, the UserRelationship
+        /// status is set as Accepted, otherwise it is set as Initiated.
         /// </remarks>
         /// -----------------------------------------------------------------------------
-        public bool IsFriend(UserInfo targetUser)
+        public UserRelationship AddFriend(UserInfo targetUser)
         {
-            return AreFriends(UserController.GetCurrentUserInfo(), targetUser);
+            return AddFriend(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// AddFriend - Initiating User initiates a Friend Request to the Target User
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship object</returns>
+        /// <remarks>If the Friend Relationship is setup for auto-acceptance at the Portal level, the UserRelationship
+        /// status is set as Accepted, otherwise it is set as Initiated.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            Requires.NotNull("initiatingUser", initiatingUser);
+
+            return InitiateUserRelationship(initiatingUser, targetUser,
+                                            GetFriendsRelationshipByPortal(initiatingUser.PortalID));
         }
 
         /// -----------------------------------------------------------------------------
@@ -518,11 +535,142 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             Requires.NotNull("initiatingUser", initiatingUser);
             Requires.NotNull("targetUser", targetUser);
 
-            Relationship friend = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
+            Relationship friend = GetFriendsRelationshipByPortal(initiatingUser.PortalID);
 
             UserRelationship userRelationship = GetUserRelationship(initiatingUser, targetUser, friend);
 
             return (userRelationship != null && userRelationship.Status == RelationshipStatus.Accepted);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DeleteFriend - Current User deletes a friend relationship with the target User
+        /// </summary>
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// -----------------------------------------------------------------------------
+        public void DeleteFriend(UserInfo targetUser)
+        {
+            DeleteFriend(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// DeleteFriend - Initiating User deletes a friend relationship with the target User
+        /// </summary>
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// -----------------------------------------------------------------------------
+        public void DeleteFriend(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            Requires.NotNull("initiatingUser", initiatingUser);
+
+            UserRelationship friend = GetUserRelationship(initiatingUser, targetUser, GetFriendsRelationshipByPortal(initiatingUser.PortalID));
+
+            DeleteUserRelationship(friend);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FollowUser - Current User initiates a Follow Request to the Target User
+        /// </summary>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship object</returns>
+        /// <remarks>If the Follow Relationship is setup for auto-acceptance (default) at the Portal level, the UserRelationship
+        /// status is set as Accepted, otherwise it is set as Initiated.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship FollowUser(UserInfo targetUser)
+        {
+            return FollowUser(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// FollowUser - Initiating User initiates a Follow Request to the Target User
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship object</returns>
+        /// <remarks>If the Follow Relationship is setup for auto-acceptance (default) at the Portal level, the UserRelationship
+        /// status is set as Accepted, otherwise it is set as Initiated.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship FollowUser(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            Requires.NotNull("initiatingUser", initiatingUser);
+
+            return InitiateUserRelationship(targetUser, initiatingUser,
+                                            GetFollowersRelationshipByPortal(initiatingUser.PortalID));
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFollowerRelationship - Get the UserRelationship between Current User and the Target Users in Follower Relationship
+        /// </summary>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship</returns>
+        /// <remarks>UserRelationship object is returned if a Follower Relationship exists between the two Users. 
+        /// The relation status can be Any (Initiated / Accepted / Blocked). Follower Relationship can be initited by either of the Users.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship GetFollowerRelationship(UserInfo targetUser)
+        {
+            return GetFollowerRelationship(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFollowerRelationship - Get the UserRelationship between InitiatingUser User and the Target Users in Follower Relationship
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship</returns>
+        /// <remarks>UserRelationship object is returned if a Follower Relationship exists between the two Users. 
+        /// The relation status can be Any (Initiated / Accepted / Blocked). Follower Relationship can be initited by either of the Users.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship GetFollowerRelationship(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("targetUser", targetUser);
+
+            return GetUserRelationship(initiatingUser, targetUser,
+                                       GetFollowersRelationshipByPortal(initiatingUser.PortalID));
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFollowingRelationship - Get the UserRelationship between Current User and the Target Users in Following Relationship
+        /// </summary>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship</returns>
+        /// <remarks>UserRelationship object is returned if a Following Relationship exists between the two Users. 
+        /// The relation status can be Any (Initiated / Accepted / Blocked).
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship GetFollowingRelationship(UserInfo targetUser)
+        {
+            return GetFollowingRelationship(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetFollowingRelationship - Get the UserRelationship between InitiatingUser User and the Target Users in Following Relationship
+        /// </summary>        
+        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>UserRelationship</returns>
+        /// <remarks>UserRelationship object is returned if a Following Relationship exists between the two Users. 
+        /// The relation status can be Any (Initiated / Accepted / Blocked).
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public UserRelationship GetFollowingRelationship(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("targetUser", targetUser);
+
+            return GetUserRelationship(targetUser, initiatingUser,
+                                       GetFollowersRelationshipByPortal(initiatingUser.PortalID));
         }
 
         /// -----------------------------------------------------------------------------
@@ -557,75 +705,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             Requires.NotNull("targetUser", targetUser);
 
             return GetUserRelationship(initiatingUser, targetUser,
-                                       GetFriendsRelatioshipByPortal(initiatingUser.PortalID));
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// AddFriend - Current User initiates a Friend Request to the Target User
-        /// </summary>                
-        /// <param name="targetUser">UserInfo for Target User</param>        
-        /// <returns>UserRelationship object</returns>
-        /// <remarks>If the Friend Relationship is setup for auto-acceptance at the Portal level, the UserRelationship
-        /// status is set as Accepted, otherwise it is set as Initiated.
-        /// </remarks>
-        /// -----------------------------------------------------------------------------
-        public UserRelationship AddFriend(UserInfo targetUser)
-        {
-            return AddFriend(UserController.GetCurrentUserInfo(), targetUser);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// AddFriend - Initiating User initiates a Friend Request to the Target User
-        /// </summary>        
-        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
-        /// <param name="targetUser">UserInfo for Target User</param>        
-        /// <returns>UserRelationship object</returns>
-        /// <remarks>If the Friend Relationship is setup for auto-acceptance at the Portal level, the UserRelationship
-        /// status is set as Accepted, otherwise it is set as Initiated.
-        /// </remarks>
-        /// -----------------------------------------------------------------------------
-        public UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser)
-        {
-            Requires.NotNull("initiatingUser", initiatingUser);
-
-            return InitiateUserRelationship(initiatingUser, targetUser,
-                                            GetFriendsRelatioshipByPortal(initiatingUser.PortalID));
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// AddFollower - Current User initiates a Follower Request to the Target User
-        /// </summary>        
-        /// <param name="targetUser">UserInfo for Target User</param>        
-        /// <returns>UserRelationship object</returns>
-        /// <remarks>If the Follower Relationship is setup for auto-acceptance (default) at the Portal level, the UserRelationship
-        /// status is set as Accepted, otherwise it is set as Initiated.
-        /// </remarks>
-        /// -----------------------------------------------------------------------------
-        public UserRelationship AddFollower(UserInfo targetUser)
-        {
-            return AddFollower(UserController.GetCurrentUserInfo(), targetUser);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// AddFollower - Initiating User initiates a Friend Request to the Target User
-        /// </summary>        
-        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
-        /// <param name="targetUser">UserInfo for Target User</param>        
-        /// <returns>UserRelationship object</returns>
-        /// <remarks>If the Follower Relationship is setup for auto-acceptance (default) at the Portal level, the UserRelationship
-        /// status is set as Accepted, otherwise it is set as Initiated.
-        /// </remarks>
-        /// -----------------------------------------------------------------------------
-        public UserRelationship AddFollower(UserInfo initiatingUser, UserInfo targetUser)
-        {
-            Requires.NotNull("initiatingUser", initiatingUser);
-
-            return InitiateUserRelationship(initiatingUser, targetUser,
-                                            GetFollowersRelatioshipByPortal(initiatingUser.PortalID));
+                                       GetFriendsRelationshipByPortal(initiatingUser.PortalID));
         }
 
         /// -----------------------------------------------------------------------------
@@ -642,8 +722,8 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             Requires.NotNull("initiatingUser", initiatingUser);
 
             IList<UserRelationship> friends;
-            Relationship relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
-            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipId, out friends);
+            Relationship relationship = GetFriendsRelationshipByPortal(initiatingUser.PortalID);
+            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipId.ToString(), out friends);
 
             return friends;
         }
@@ -662,8 +742,8 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             Requires.NotNull("initiatingUser", initiatingUser);
 
             IList<UserRelationship> followers;
-            Relationship relationship = GetFollowersRelatioshipByPortal(initiatingUser.PortalID);
-            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipId, out followers);
+            Relationship relationship = GetFollowersRelationshipByPortal(initiatingUser.PortalID);
+            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipId.ToString(), out followers);
 
             return followers;
         }
@@ -681,9 +761,25 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         {
             Requires.NotNull("initiatingUser", initiatingUser);
 
-            Relationship relationship = GetFriendsRelatioshipByPortal(initiatingUser.PortalID);
+            Relationship relationship = GetFollowersRelationshipByPortal(initiatingUser.PortalID);
             return new List<UserRelationship>();
         }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// IsFriend - Are the Current User and the Target Users in Friend Relationship
+        /// </summary>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>True or False</returns>
+        /// <remarks>True is returned only if a Friend Relationship exists between the two Users. 
+        /// The relation status must be Accepted. Friend Relationship can be initited by either of the Users.
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public bool IsFriend(UserInfo targetUser)
+        {
+            return AreFriends(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -775,7 +871,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         public void CreateDefaultRelationshipsForPortal(int portalId)
         {
             //create default Friend Relationship
-            if (GetFriendsRelatioshipByPortal(portalId) == null)
+            if (GetFriendsRelationshipByPortal(portalId) == null)
             {
                 var friendRelationship = new Relationship
                                              {
@@ -792,7 +888,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             }
 
             //create default Follower Relationship
-            if (GetFollowersRelatioshipByPortal(portalId) == null)
+            if (GetFollowersRelationshipByPortal(portalId) == null)
             {
                 var followerRelationship = new Relationship
                                                {
@@ -843,14 +939,14 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             }
         }
 
-        private Relationship GetFriendsRelatioshipByPortal(int portalId)
+        private Relationship GetFriendsRelationshipByPortal(int portalId)
         {
             return
                 GetRelationshipsByPortalId(portalId).Where(
                     re => re.RelationshipTypeId == (int) DefaultRelationshipTypes.Friends).FirstOrDefault();
         }
 
-        private Relationship GetFollowersRelatioshipByPortal(int portalId)
+        private Relationship GetFollowersRelationshipByPortal(int portalId)
         {
             return
                 GetRelationshipsByPortalId(portalId).Where(

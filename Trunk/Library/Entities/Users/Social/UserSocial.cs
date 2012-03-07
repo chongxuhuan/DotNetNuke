@@ -49,7 +49,7 @@ namespace DotNetNuke.Entities.Users.Social
         #region Private
 
         private IList<Relationship> _relationships;
-        private IDictionary<int, IList<UserRelationship>> _userRelationships;
+        private IDictionary<string, IList<UserRelationship>> _userRelationships;
         private  IList<UserRoleInfo> _roles;
         private readonly UserInfo _userInfo;
         private readonly RelationshipController _relationshipController;
@@ -71,9 +71,34 @@ namespace DotNetNuke.Entities.Users.Social
         #region Public Properties
 
         /// <summary>
+        /// Returns the Friend Relationship (if it exists with the current User)
+        /// </summary>
+        public UserRelationship Friend
+        {
+            get { return RelationshipController.Instance.GetFriendRelationship(_userInfo); }
+        }
+
+        /// <summary>
+        /// Returns the Follower Relationship (if it exists with the current User)
+        /// </summary>
+        public UserRelationship Follower
+        {
+            get { return RelationshipController.Instance.GetFollowerRelationship(_userInfo); }
+        }
+
+        /// <summary>
+        /// Returns the Following Relationship (if it exists with the current User)
+        /// </summary>
+        public UserRelationship Following
+        {
+            get { return RelationshipController.Instance.GetFollowingRelationship(_userInfo); }
+        }
+
+
+        /// <summary>
         /// A collection of all the relationships the user is a member of.
         /// </summary>
-        public IDictionary<int, IList<UserRelationship>> UserRelationships
+        public IDictionary<string, IList<UserRelationship>> UserRelationships
         {
             get { return _userRelationships ?? (_userRelationships = GetUserRelationships()); }
         }
@@ -111,19 +136,19 @@ namespace DotNetNuke.Entities.Users.Social
 
         #endregion
 
-        private IDictionary<int, IList<UserRelationship>> GetUserRelationships()
+        private IDictionary<string, IList<UserRelationship>> GetUserRelationships()
         {
-            var dictionary = new Dictionary<int, IList<UserRelationship>>();
+            var dictionary = new Dictionary<string, IList<UserRelationship>>();
 
             foreach (UserRelationship userRelationship in RelationshipController.Instance.GetUserRelationships(_userInfo))
             {
                 Relationship relationship = RelationshipController.Instance.GetRelationship(userRelationship.RelationshipId);
 
                 IList<UserRelationship> userRelationshipList;
-                if (!dictionary.TryGetValue(relationship.RelationshipId, out userRelationshipList))
+                if (!dictionary.TryGetValue(relationship.RelationshipId.ToString(), out userRelationshipList))
                 {
                     userRelationshipList = new List<UserRelationship>();
-                    dictionary.Add(relationship.RelationshipId, userRelationshipList);
+                    dictionary.Add(relationship.RelationshipId.ToString(), userRelationshipList);
                 }
 
                 userRelationshipList.Add(userRelationship);

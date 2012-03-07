@@ -155,6 +155,7 @@
     <Compile Include="Common\Utilities\HtmlUtils.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Common\Utilities\ImageUtils.cs" />
     <Compile Include="Common\Utilities\IPathUtils.cs" />
     <Compile Include="Common\Utilities\NetworkUtils.cs" />
     <Compile Include="Common\Utilities\Null.cs">
@@ -902,6 +903,7 @@
     <Compile Include="Services\Url\FriendlyUrl\FriendlyUrlProvider.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\UserProfile\UserProfilePicHandler.cs" />
     <Compile Include="Services\Vendors\AffiliateController.cs">
       <SubType>Code</SubType>
     </Compile>

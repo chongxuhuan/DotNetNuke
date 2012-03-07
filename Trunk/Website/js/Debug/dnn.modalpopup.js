@@ -139,6 +139,7 @@
             else {
                 $(this).remove();
             }
+            $(windowTop.document).find('html').css('overflow', '');
         }
 
     };

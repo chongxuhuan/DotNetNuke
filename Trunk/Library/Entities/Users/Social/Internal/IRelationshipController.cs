@@ -222,19 +222,31 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         #region Easy Wrapper APIs
 
-        bool IsFriend(UserInfo targetUser);
-        bool AreFriends(UserInfo initiatingUser, UserInfo targetUser);
-        UserRelationship GetFriendRelationship(UserInfo targetUser);
-        UserRelationship GetFriendRelationship(UserInfo initiatingUser, UserInfo targetUser);
-
         UserRelationship AddFriend(UserInfo targetUser);
         UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser);
+
+        bool AreFriends(UserInfo initiatingUser, UserInfo targetUser);
+
+        void DeleteFriend(UserInfo targetUser);
+        void DeleteFriend(UserInfo initiatingUser, UserInfo targetUser);
+
+        UserRelationship FollowUser(UserInfo targetUser);
+        UserRelationship FollowUser(UserInfo initiatingUser, UserInfo targetUser);
+
+        UserRelationship GetFollowerRelationship(UserInfo targetUser);
+        UserRelationship GetFollowerRelationship(UserInfo initiatingUser, UserInfo targetUser);
+        IList<UserRelationship> GetFollowers(UserInfo initiatingUser);
+
+        UserRelationship GetFollowingRelationship(UserInfo targetUser);
+        UserRelationship GetFollowingRelationship(UserInfo initiatingUser, UserInfo targetUser);
+        IList<UserRelationship> GetFollowing(UserInfo initiatingUser);
+
+        UserRelationship GetFriendRelationship(UserInfo targetUser);
+        UserRelationship GetFriendRelationship(UserInfo initiatingUser, UserInfo targetUser);
         IList<UserRelationship> GetFriends(UserInfo initiatingUser);
 
-        UserRelationship AddFollower(UserInfo targetUser);
-        UserRelationship AddFollower(UserInfo initiatingUser, UserInfo targetUser);
-        IList<UserRelationship> GetFollowers(UserInfo initiatingUser);
-        IList<UserRelationship> GetFollowing(UserInfo initiatingUser);
+        bool IsFriend(UserInfo targetUser);
+
 
         Relationship AddUserList(string listName, string listDescription);
         Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus);
