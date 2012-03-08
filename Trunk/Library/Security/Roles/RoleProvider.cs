@@ -68,6 +68,8 @@ namespace DotNetNuke.Security.Roles
 
         public abstract ArrayList GetRoles(int portalId);
 
+        public abstract IList<RoleInfo> GetRolesBasicSearch(int portalID, int pageSize, string filterBy);
+
         public virtual IDictionary<string, string> GetRoleSettings(int roleId)
         {
            return new Dictionary<string, string>(); 

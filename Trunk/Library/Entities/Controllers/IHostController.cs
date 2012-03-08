@@ -62,5 +62,6 @@ namespace DotNetNuke.Entities.Controllers
 
         void Update(string key, string value);
 
+        void IncrementCrmVersion(bool includeOverridingPortals);
     }
 }

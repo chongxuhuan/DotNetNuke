@@ -60,7 +60,9 @@ using FileInfo = DotNetNuke.Services.FileSystem.FileInfo;
 
 namespace DotNetNuke.Entities.Portals
 {
-	/// <summary>
+    using Web.Client;
+
+    /// <summary>
 	/// PoralController provides business layer of poatal.
 	/// </summary>
 	/// <remarks>
@@ -2520,6 +2522,33 @@ namespace DotNetNuke.Entities.Portals
             //ensure localization record exists as new portal default language may be relying on fallback chain
             //of which it is now the final part
             DataProvider.Instance().EnsureLocalizationExists(portalID, CultureCode);
+        }
+
+        public static void IncrementCrmVersion(int portalID)
+        {
+            int currentVersion;
+            var versionSetting = GetPortalSetting(ClientResourceSettings.VersionKey, portalID, "1");
+            if (int.TryParse(versionSetting, out currentVersion))
+            {
+                var newVersion = currentVersion + 1;
+                UpdatePortalSetting(portalID, ClientResourceSettings.VersionKey, newVersion.ToString(CultureInfo.InvariantCulture), true);
+            }
+        }
+
+        public static void IncrementOverridingPortalsCrmVersion()
+        {
+            foreach (PortalInfo portal in new PortalController().GetPortals())
+            {
+                string setting = GetPortalSetting(ClientResourceSettings.OverrideDefaultSettingsKey, portal.PortalID, "False");
+                bool overriden;
+
+                // if this portal is overriding the host level...
+                if (bool.TryParse(setting, out overriden) && overriden)
+                {
+                    // increment its version
+                    IncrementCrmVersion(portal.PortalID);
+                }
+            }
         }
 
         #endregion

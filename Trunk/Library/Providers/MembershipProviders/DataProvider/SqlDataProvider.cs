@@ -207,6 +207,11 @@ namespace DotNetNuke.Security.Membership.Data
             return (IDataReader)SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersAdvancedSearch"), portalId, userId, filterUserId, fitlerRoleId, relationTypeId, isAdmin, pageSize, pageIndex, sortColumn, sortAscending, propertyNames, propertyValues);
         }
 
+        public override IDataReader GetUsersBasicSearch(int portalId, int pageIndex, int pageSize, string sortColumn,
+                                    bool sortAscending, string propertyName, string propertyValue)
+        {
+            return (IDataReader)SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsersBasicSearch"), portalId, pageSize, pageIndex, sortColumn, sortAscending, propertyName, propertyValue);
+        }
 
         public override IDataReader GetUsersByEmail(int portalID, string email, int pageIndex, int pageSize, bool includeDeleted, bool superUsersOnly)
         {
@@ -289,6 +294,12 @@ namespace DotNetNuke.Security.Membership.Data
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRoles"));
         }
 
+        public override IDataReader GetRolesBasicSearch(int portalID, int pageSize, string filterBy)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRolesBasicSearch"),portalID,pageSize,filterBy);
+        }
+        
+        
         public override IDataReader GetRoleSettings(int roleId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetRoleSettings"), roleId);

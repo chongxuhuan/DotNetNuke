@@ -133,6 +133,11 @@ namespace DotNetNuke.Security.Roles.Internal
             return GetRoles(portalId).Where(predicate).ToList();
         }
 
+        public IList<RoleInfo> GetRolesBasicSearch(int portalID, int pageSize, string filterBy)
+        {
+            return provider.GetRolesBasicSearch(portalID, pageSize, filterBy);
+        }
+        
         public IDictionary<string, string> GetRoleSettings(int roleId)
         {
             return provider.GetRoleSettings(roleId);

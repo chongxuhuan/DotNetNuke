@@ -40,6 +40,8 @@ using DotNetNuke.Web.Client.ClientResourceManagement;
 
 namespace DotNetNuke.Services.Installer
 {
+    using Entities.Controllers;
+
     /// -----------------------------------------------------------------------------
     /// <summary>
     /// The Installer class provides a single entrypoint for Package Installation
@@ -237,7 +239,7 @@ namespace DotNetNuke.Services.Installer
         /// 	[cnurse]	07/25/2007  created
         /// </history>
         /// -----------------------------------------------------------------------------
-        private void InstallPackages()
+        private void InstallPackages(ref bool clearClientCache)
         {
 			//Iterate through all the Packages
             for (int index = 0; index <= Packages.Count - 1; index++)
@@ -246,6 +248,11 @@ namespace DotNetNuke.Services.Installer
 				//Check if package is valid
                 if (installer.Package.IsValid)
                 {
+                    if (installer.Package.InstallerInfo.Installed || installer.Package.InstallerInfo.RepairInstall)
+                    {
+                        clearClientCache = true;
+                    }
+
                     InstallerInfo.Log.AddInfo(Util.INSTALL_Start + " - " + installer.Package.Name);
                     installer.Install();
                     if (InstallerInfo.Log.Valid)
@@ -472,7 +479,13 @@ namespace DotNetNuke.Services.Installer
             bool bStatus = true;
             try
             {
-                InstallPackages();
+                bool clearClientCache = false;
+                InstallPackages(ref clearClientCache);
+                if (clearClientCache)
+                {
+                    //Update the version of the client resources - so the cache is cleared
+                    HostController.Instance.IncrementCrmVersion(true);
+                }
             }
             catch (Exception ex)
             {
@@ -501,9 +514,6 @@ namespace DotNetNuke.Services.Installer
 			
             //log installation event
             LogInstallEvent("Package", "Install");
-
-            //Update the version of the client resources - so the cache is cleared
-            ClientResourceManager.UpdateVersion();
 
             //Clear Host Cache
             DataCache.ClearHostCache(true);

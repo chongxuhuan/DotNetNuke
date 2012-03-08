@@ -164,6 +164,13 @@ namespace DotNetNuke.Security.Membership
             return arrRoles;
         }
 
+        public override IList<RoleInfo> GetRolesBasicSearch(int portalID, int pageSize, string filterBy)
+        {
+            return CBO.FillCollection<RoleInfo>(dataProvider.GetRolesBasicSearch(portalID, pageSize, filterBy));
+        }
+
+      
+
         public override IDictionary<string, string> GetRoleSettings(int roleId)
         {
             return CBO.FillDictionary<string, string>("SettingName", dataProvider.GetRoleSettings(roleId));

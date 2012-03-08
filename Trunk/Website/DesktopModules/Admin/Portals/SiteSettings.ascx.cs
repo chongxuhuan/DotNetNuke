@@ -675,17 +675,8 @@ namespace DotNetNuke.Modules.Admin.Portals
 
         private void IncrementCrmVersion(object sender, EventArgs e)
         {
-            int currentVersion;
-            var versionSetting = PortalController.GetPortalSetting(ClientResourceSettings.VersionKey, _portalId, "1");
-            if (int.TryParse(versionSetting, out currentVersion))
-            {
-                var newVersion = currentVersion + 1;
-                PortalController.UpdatePortalSetting(_portalId, ClientResourceSettings.VersionKey, newVersion.ToString(CultureInfo.InvariantCulture), true);
-                Response.Redirect(Request.RawUrl, true); // reload page
-                return;
-            }
-
-            UI.Skins.Skin.AddModuleMessage(this, "IncrementCrmVersionError", ModuleMessage.ModuleMessageType.RedError);
+            PortalController.IncrementCrmVersion(_portalId);
+            Response.Redirect(Request.RawUrl, true); // reload page
         }
 
         /// -----------------------------------------------------------------------------
@@ -903,8 +894,22 @@ namespace DotNetNuke.Modules.Admin.Portals
                     writer.WriteLine(txtStyleSheet.Text);
                 }
 
-                //Clear client depndency cache
-                ClientResourceManager.UpdateVersion();
+                //Clear client resource cache
+                var overrideSetting = PortalController.GetPortalSetting(ClientResourceSettings.OverrideDefaultSettingsKey, _portalId, "False");
+                bool overridePortal;
+                if (bool.TryParse(overrideSetting, out overridePortal))
+                {
+                    if (overridePortal)
+                    {
+                        // increment this portal version only
+                        PortalController.IncrementCrmVersion(_portalId);
+                    }
+                    else
+                    {
+                        // increment host version, do not increment other portal versions though.
+                        HostController.Instance.IncrementCrmVersion(false);
+                    }   
+                }
             }
             catch (Exception exc) //Module failed to load
             {

@@ -135,7 +135,13 @@ namespace DotNetNuke.Security.Membership
         {
             throw new NotImplementedException();            
         }
-        
+
+        public virtual IList<UserInfo> GetUsersBasicSearch(int portalId, int pageIndex, int pageSize, string sortColumn,
+                                            bool sortAscending, string propertyName, string propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Obsolete Methods

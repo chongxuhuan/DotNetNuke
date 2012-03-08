@@ -39,7 +39,10 @@ using DotNetNuke.Services.Log.EventLog;
 
 namespace DotNetNuke.Entities.Controllers
 {
-	/// <summary>
+    using System.Globalization;
+    using Web.Client;
+
+    /// <summary>
 	/// HostController provides business layer of host settings.
 	/// </summary>
 	/// <example>
@@ -305,6 +308,18 @@ namespace DotNetNuke.Entities.Controllers
         public void Update(string key, string value)
         {
             Update(key, value, true);
+        }
+
+        public void IncrementCrmVersion(bool includeOverridingPortals)
+        {
+            var currentVersion = Host.Host.CrmVersion;
+            var newVersion = currentVersion + 1;
+            Update(ClientResourceSettings.VersionKey, newVersion.ToString(CultureInfo.InvariantCulture), true);
+
+            if (includeOverridingPortals)
+            {
+                PortalController.IncrementOverridingPortalsCrmVersion();
+            }
         }
 
         #endregion

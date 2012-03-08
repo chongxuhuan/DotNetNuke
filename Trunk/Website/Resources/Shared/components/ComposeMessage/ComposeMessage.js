@@ -20,8 +20,7 @@
             self.data('bound', true);
 
             //construct the form
-            html = "<div class='MessageSent dnnFormMessage dnnFormSuccess'>" + opts.messageSentText + "</div>";
-            html += "<div class='ThrottlingWarning dnnFormMessage dnnFormWarning'>" + opts.throttlingText + "</div>";
+            html = "<div class='ThrottlingWarning dnnFormMessage dnnFormWarning'>" + opts.throttlingText + "</div>";
             html += "<fieldset>";
             html += "<div class='dnnFormItem'><label for='to'>" + opts.toText + "</label><input type='text' id='to' name='to'/></div>";
             html += "<div class='dnnFormItem'><label for='subject'>" + opts.subjectText + "</label><input type='text' id='subject' name='subject' maxlength='400'/></div>";
@@ -75,18 +74,20 @@
                         sendButton.attr('disabled', 'disabled').addClass('disabled');
                     }
                 }
-
-                composeMessageDialog.find('#to').tokenInput([
-                    { id: "user-1", name: "SuperUser Account" },
-                    { id: "user-2", name: "Administrator Account" },
-                    { id: "role-0", name: "Administrators" },
-                    { id: "role-1", name: "Registered Users" },
-                    { id: "role-2", name: "Subscribers" },
-                    { id: "role-3", name: "Translator (en-US)" },
-                    { id: "role-4", name: "Unverified Users" }
-                ], {
+                //resultsFormatter: function (item) { return "<li>" + "<img src='" + item.url + "' title='" + item.first_name + " " + item.last_name + "' height='25px' width='25px' />" + "<div style='display: inline-block; padding-left: 10px;'><div class='full_name'>" + item.first_name + " " + item.last_name + "</div><div class='email'>" + item.email + "</div></div></li>" },
+                composeMessageDialog.find('#to').tokenInput(opts.serviceurlbase + "Search", {
+                    // We can set the tokenLimit here
                     theme: "facebook",
+                    resultsFormatter: function (item) {
+                        if (item.id.startsWith("user-")) { return "<li>" + "<img src='profilepic.ashx?UserId=" + item.id.substring(5) + "&w=32&h=32' title='" + item.name + "' height='25px' width='25px' />" + "<div style='display: inline-block; padding-left: 10px;'><div class='full_name'>" + item.name + "</div></div></li>" }
+                        if (item.id.startsWith("role-")) { return "<li>" + "<img src='/images/icon_securityroles_32px.gif' title='" + item.name + "' height='25px' width='25px' />" + "<div style='display: inline-block; padding-left: 10px;'><div class='full_name'>" + item.name + "</div></div></li>" }
+                    },
+                    tokenLimit: 10,
+                    minChars: 2,
                     preventDuplicates: true,
+                    hintText: '',
+                    noResultsText: opts.noResultsText,
+                    searchingText: opts.searchingText,
                     onAdd: function (item) {
                         if (item.id.startsWith("user-")) { users.push(item.id.substring(5)); }
                         else if (item.id.startsWith("role-")) { roles.push(item.id.substring(5)); }
@@ -112,7 +113,6 @@
                     resizable: false,
                     open: function () {
                         composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane :button').removeClass().addClass('dnnTertiaryAction');
-                        composeMessageDialog.find('.MessageSent').hide();
                         composeMessageDialog.find('.ThrottlingWarning').hide();
                         messageId = -1;
 
@@ -152,8 +152,19 @@
                                     fileIds: (attachments.length > 0 ? JSON.stringify(attachments) : {})
                                 };
                                 $.post(opts.serviceurlbase + "Create", params, function (data) {
-                                    composeMessageDialog.find('.MessageSent').show();
-                                    composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane button:first').attr('disabled', 'disabled').addClass('disabled');
+                                    composeMessageDialog.dialog("option", "title", opts.messageSentTitle);
+                                    var dismissThis = $('<a href="#"></a>')
+                                        .text(' ' + opts.dismissThisText)
+                                        .click(function () {
+                                            composeMessageDialog.dialog("close");
+                                        });
+                                    var messageSent = $('<div></div>')
+                                        .addClass('MessageSent dnnFormMessage dnnFormSuccess')
+                                        .text(opts.messageSentText)
+                                        .append(dismissThis);
+                                    composeMessageDialog.html(messageSent);
+                                    composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane button').remove();
+
                                     messageId = data;
                                     autoclose = setInterval(function () {
                                         composeMessageDialog.dialog("close");
@@ -177,7 +188,6 @@
                         if (messageId != -1 && opts.onMessageSent != null) {
                             opts.onMessageSent(messageId);
                         }
-                        composeMessageDialog.find('input[type="text"],textarea').val('');
                         composeMessageDialog.dialog("destroy");
                     }
                 });
@@ -201,8 +211,12 @@
         removeText: 'Remove attachment',
         sendText: 'Send',
         cancelText: 'Cancel',
+        messageSentTitle: 'Message Sent',
         messageSentText: 'Your message has been sent successfully.',
+        dismissThisText: 'Dismiss this',
         throttlingText: 'Please wait before sending a new message.',
+        noResultsText: 'No results',
+        searchingText: 'Searching...',
         dialogClass: 'dnnFormPopup dnnClear',
         autoOpen: false,
         showAttachments: false,

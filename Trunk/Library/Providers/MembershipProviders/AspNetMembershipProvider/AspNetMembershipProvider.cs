@@ -961,7 +961,7 @@ namespace DotNetNuke.Security.Membership
         /// <param name="filterRoleId"></param>
         /// <param name="relationTypeId"></param>
         /// <param name="isAdmin"></param>
-        /// <param name="numberOfRecords"></param>
+        /// <param name="pageSize"></param>
         /// <param name="pageIndex"></param>
         /// <param name="sortColumn"></param>
         /// <param name="sortAscending"></param>
@@ -975,6 +975,24 @@ namespace DotNetNuke.Security.Membership
             return FillUserList(portalId, _dataProvider.GetUsersAdvancedSearch(portalId, userId, filterUserId, filterRoleId,
                                                                            relationshipTypeId, isAdmin, pageIndex, pageSize, 
                                                                            sortColumn, sortAscending, propertyNames, propertyValues));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="portalId"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="sortColumn"></param>
+        /// <param name="sortAscending"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="propertyValue"></param>
+        /// <returns></returns>
+        public override IList<UserInfo> GetUsersBasicSearch(int portalId, int pageIndex, int pageSize, string sortColumn,
+                                    bool sortAscending, string propertyName, string propertyValue)
+        {
+            return FillUserList(portalId, _dataProvider.GetUsersBasicSearch(portalId, pageIndex, pageSize,
+                                                                           sortColumn, sortAscending, propertyName, propertyValue));
         }
 
         /// -----------------------------------------------------------------------------

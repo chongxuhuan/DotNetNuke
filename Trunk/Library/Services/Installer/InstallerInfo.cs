@@ -161,6 +161,7 @@ namespace DotNetNuke.Services.Installer
             _PhysicalSitePath = sitePath;
             _TempInstallFolder = Globals.InstallMapPath + "Temp\\" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
             _InstallMode = InstallMode.UnInstall;
+            _ManifestFile = new InstallFile(Path.Combine(_TempInstallFolder, package.Name + ".dnn"));
             package.AttachInstallerInfo(this);
         }
 		

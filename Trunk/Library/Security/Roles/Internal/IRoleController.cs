@@ -62,6 +62,15 @@ namespace DotNetNuke.Security.Roles.Internal
         /// -----------------------------------------------------------------------------
         IList<RoleInfo> GetRoles(int portalId);
 
+        /// <summary>
+        /// get a list of roles based on progressive search
+        /// </summary>
+        /// <param name="portalID">the id of the portal</param>
+        /// <param name="pageSize">the number of items to return</param>
+        /// <param name="filterBy">the text used to trim data</param>
+        /// <returns></returns>
+        IList<RoleInfo> GetRolesBasicSearch(int portalID, int pageSize, string filterBy);
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Get the roles based on a predicate

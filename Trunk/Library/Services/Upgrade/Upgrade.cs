@@ -3918,7 +3918,7 @@ namespace DotNetNuke.Services.Upgrade
                 TryUpgradeNETFramework();
 
                 //Update the version of the client resources - so the cache is cleared
-                ClientResourceManager.UpdateVersion();
+                HostController.Instance.IncrementCrmVersion(true);
             }
             catch (Exception ex)
             {

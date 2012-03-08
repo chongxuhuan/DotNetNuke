@@ -30,5 +30,8 @@ namespace DotNetNuke.Entities.Users.Internal
         IList<UserInfo> GetUsersAdvancedSearch(int portalId, int userId, int filterUserId, int filterRoleId, int relationTypeId,
                                                     bool isAdmin, int pageIndex, int pageSize, string sortColumn,
                                                     bool sortAscending, string propertyNames, string propertyValues);
+
+        IList<UserInfo> GetUsersBasicSearch(int portalId, int pageIndex, int pageSize, string sortColumn,
+                                                bool sortAscending, string propertyName, string propertyValue);
     }
 }

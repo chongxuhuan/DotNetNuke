@@ -79,6 +79,9 @@ namespace DotNetNuke.Security.Membership.Data
                                                     bool isAdmin, int pageIndex, int pageSize, string sortColumn,
                                                     bool sortAscending, string propertyNames, string propertyValues);
 
+        public abstract IDataReader GetUsersBasicSearch(int portalId, int pageIndex, int pageSize, string sortColumn,
+                                            bool sortAscending, string propertyName, string propertyValue);
+
         public abstract IDataReader GetUsersByEmail(int portalID, string email, int pageIndex, int pageSize);
 
         public abstract IDataReader GetUsersByEmail(int portalID, string email, int pageIndex, int pageSize,
@@ -102,6 +105,7 @@ namespace DotNetNuke.Security.Membership.Data
         public abstract void DeleteRole(int roleId);
         public abstract IDataReader GetPortalRoles(int portalId);
         public abstract IDataReader GetRoles();
+        public abstract IDataReader GetRolesBasicSearch(int portalID,int pageSize,string filterBy);
         public abstract IDataReader GetRoleSettings(int roleId);
         public abstract void UpdateRole(int roleId, int roleGroupId, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,
                                         string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int lastModifiedByUserID, int status, bool isSecurityRole);

@@ -154,3 +154,8 @@ Knockout Javascript library
 Used throughout UI
 License Type: MIT
 License Link: http://knockoutjs.com/
+
+jQuery Tokeninput
+Used throughout UI
+License Type: MIT or GPL
+License Link: http://loopj.com/jquery-tokeninput/

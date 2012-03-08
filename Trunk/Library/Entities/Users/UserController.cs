@@ -410,7 +410,6 @@ namespace DotNetNuke.Entities.Users
 
         #region Public Methods
 
-
         /// <summary>
         /// ApproveUser removes the Unverified Users role from the user and adds the auto assigned roles.
         /// </summary>

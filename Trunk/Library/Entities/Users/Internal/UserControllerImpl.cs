@@ -1,5 +1,4 @@
 ﻿#region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
@@ -18,9 +17,8 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -32,12 +30,18 @@ namespace DotNetNuke.Entities.Users.Internal
     internal class UserControllerImpl : IUserController
     {
         public IList<UserInfo> GetUsersAdvancedSearch(int portalId, int userId, int filterUserId, int filterRoleId, int relationshipTypeId,
-                                                    bool isAdmin, int pageIndex, int pageSize, string sortColumn,
-                                                    bool sortAscending, string propertyNames, string propertyValues)
+            bool isAdmin, int pageIndex, int pageSize, string sortColumn,
+            bool sortAscending, string propertyNames, string propertyValues)
         {
             return MembershipProvider.Instance().GetUsersAdvancedSearch(portalId, userId, filterUserId, filterRoleId, relationshipTypeId,
                                                        isAdmin, pageIndex, pageSize, sortColumn,
                                                        sortAscending, propertyNames, propertyValues);
+        }
+
+        public IList<UserInfo> GetUsersBasicSearch(int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, string propertyName, string propertyValue)
+        {
+            return MembershipProvider.Instance().GetUsersBasicSearch(portalId, pageIndex, pageSize, sortColumn,
+                                                       sortAscending, propertyName, propertyValue);
         }
 
     }

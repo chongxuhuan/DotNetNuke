@@ -3987,9 +3987,9 @@ AS
 
 GO
 
+
 /* Add GetUsersAdvancedSearch Procedure */
 /****************************************/
-
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUsersAdvancedSearch]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUsersAdvancedSearch]
 GO
@@ -4023,49 +4023,56 @@ AS
 	DECLARE @UserColumns TABLE(ColumnName NVARCHAR(100))
 	INSERT INTO @UserColumns SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{objectQualifier}vw_Users'
 
+	-- Lists Filters names and values into tables
+	DECLARE @PropertyNamesTable TABLE (RowNumber INT, RowValue nvarchar(MAX))
+	DECLARE @PropertyValuesTable TABLE (RowNumber INT, RowValue nvarchar(MAX))
+	INSERT INTO @PropertyNamesTable SELECT * FROM {databaseOwner}{objectQualifier}ConvertListToTable(',', @PropertyNames)		
+	INSERT INTO @PropertyValuesTable SELECT * FROM {databaseOwner}{objectQualifier}ConvertListToTable(',', @PropertyValues)
+	
 	-- Gets filters that are on the User rather than Profile Properties
 	DECLARE @UserFiltersTable TABLE (RowNumber Int, RowValue NVARCHAR(MAX))
-	INSERT INTO @UserFiltersTable SELECT * FROM {objectQualifier}ConvertListToTable(',',@PropertyNames) WHERE RowValue IN (SELECT * FROM @UserColumns)
-	
+	INSERT INTO @UserFiltersTable SELECT * FROM {databaseOwner}{objectQualifier}ConvertListToTable(',',@PropertyNames) WHERE RowValue IN (SELECT * FROM @UserColumns)
+
 
 	DECLARE @sql nvarchar(max) SET @sql = ''
 	DECLARE @filterSql nvarchar(max)SET @filterSql = ''
 
-	
+
 	-- ///////////////////////////////////////////////////
 	-- FILTERING by PROFILE PROPERTY or USER PROPERTY
 	-- ///////////////////////////////////////////////////
-	IF @PropertyNames IS NOT NULL AND @PropertyNames <> ''
+	--IF @PropertyNames IS NOT NULL AND @PropertyNames <> ''
+	IF ((SELECT COUNT(*) FROM @PropertyNamesTable) > 0) AND ((SELECT COUNT(*) FROM @PropertyValuesTable)> 0) 
 	BEGIN
 		DECLARE @propertyFilter nvarchar(max)
 		DECLARE @userFilter nvarchar(max)
 		DECLARE @userFilterJoin nvarchar(max) SET @userFilterJoin = ''
 		DECLARE @profilePropertyCount INT
+		DECLARE @userFilterCount INT
+		DECLARE @propertyAndUserFilter nvarchar(10) SET @propertyAndUserFilter = ''
 		DECLARE @groupBy NVARCHAR(300)
 
-		-- Filters on Profile Properties
+		-- Filters on Profile Properties	
 		;WITH CTE_PropertyNames(RowNumber, RowValue) AS
-		(	SELECT * FROM {objectQualifier}ConvertListToTable(',', @PropertyNames)
+		(	SELECT * FROM @PropertyNamesTable
 			WHERE RowValue NOT IN (SELECT ColumnName FROM @UserColumns)),
 		CTE_PropertyValues(RowNumber, RowValue) AS
-		(	SELECT * FROM {objectQualifier}ConvertListToTable(',', @PropertyValues)
+		(	SELECT * FROM @PropertyValuesTable
 			WHERE RowValue NOT IN (SELECT ColumnName FROM @UserColumns))
 
 		SELECT @propertyFilter = COALESCE(@propertyFilter + ' OR ' , ' ') + ' (PropertyName=''' + N.RowValue + ''' AND PropertyValue LIKE ''%' + V.RowValue +'%'') '
 		FROM CTE_PropertyNames AS N INNER JOIN CTE_PropertyValues AS V ON N.RowNumber = V.RowNumber
 		
-		-- Filters on User Property
-		;WITH CTE_PropertyValues(RowNumber, RowValue) AS
-		( SELECT * FROM {objectQualifier}ConvertListToTable(',', @PropertyValues))
+		-- Filters on User Property		
+		SELECT @userFilter = COALESCE(@userFilter + ' AND ', ' ')  + ' (u.' + N.RowValue + ' LIKE ''%' + V.RowValue +'%'') '
+		FROM @UserFiltersTable AS N	INNER JOIN @PropertyValuesTable AS V ON N.RowNumber = V.RowNumber
 		
-		SELECT @userFilter = COALESCE(@userFilter + ' AND ' , ' ') + ' (u.' + N.RowValue + ' LIKE ''%' + V.RowValue +'%'') '
-		FROM @UserFiltersTable AS N	INNER JOIN CTE_PropertyValues AS V ON N.RowNumber = V.RowNumber
+		SELECT @userFilterCount = COUNT(*) FROM @UserFiltersTable
+		IF @userFilterCount > 0 BEGIN SET @userFilterJoin = ' INNER JOIN {objectQualifier}vw_Users u ON u.UserId = p.UserId ' END
 
-		-- Join required for User Property Filters
-		IF (SELECT COUNT(*) FROM @UserFiltersTable) > 0 BEGIN SET @userFilterJoin = ' INNER JOIN {objectQualifier}vw_Users u ON u.UserId = p.UserId ' END
 
 		-- Determining the Group By Clause -- dependant on types of filters used
-		SELECT @profilePropertyCount = COUNT(*) FROM {objectQualifier}ConvertListToTable(',', @PropertyNames)
+		SELECT @profilePropertyCount = COUNT(*) FROM {databaseOwner}{objectQualifier}ConvertListToTable(',', @PropertyNames)
 												WHERE RowValue IN (SELECT PropertyName FROM {objectQualifier}ProfilePropertyDefinition WHERE PortalID = @PortalId)
 												AND RowValue NOT IN (SELECT ColumnName FROM @UserColumns)
 		IF @profilePropertyCount > 0
@@ -4073,10 +4080,13 @@ AS
 		ELSE
 		BEGIN SET @groupBy = ' GROUP BY p.UserId HAVING COUNT(*) > 0 '	END
 
+		IF ( @profilePropertyCount > 0 AND @userFilterCount > 0)
+		BEGIN SET @propertyAndUserFilter = ' AND ' END
+
 		-- CREATE FINAL FILTER
 		SET @filterSql = ' DECLARE @MatchingUsers TABLE (UserID INT, Occurrances INT) INSERT INTO @MatchingUsers SELECT p.UserID, COUNT(*) AS occurances ' 
-						+ ' FROM {objectQualifier}vw_profile p ' + @userFilterJoin
-						+ ' WHERE ' + COALESCE(' ( ' + @propertyFilter + ') AND ', ' ') + COALESCE(@userFilter, ' AND ', ' ') 
+						+ ' FROM {databaseOwner}{objectQualifier}vw_profile p ' + @userFilterJoin
+						+ ' WHERE ' + COALESCE(' ( ' + @propertyFilter + ') ', ' ') + @propertyAndUserFilter + COALESCE(@userFilter, ' ') 
 						+ @groupBy
 	END
 
@@ -4116,29 +4126,36 @@ AS
    	-- SET UP SORT
 	-- ///////////////////////////////////////////////////
    	DECLARE @sortSql nvarchar(1000) SET @sortSql = ''
+   	DECLARE @propertySort nvarchar(1000) SET @propertySort = ''
+   	DECLARE @filterJoin nvarchar(100) SET @filterJoin = ''
 	DECLARE @filterSortSql nvarchar(1000) SET @filterSortSql = ''
 	DECLARE @sortByUserProperty BIT	
 	SELECT @sortByUserProperty = COUNT(*) FROM @UserColumns WHERE ColumnName = @SortBy
 
+	IF ( @profilePropertyCount > 0 OR @userFilterCount > 0)
+	BEGIN SET @filterJoin = ' INNER JOIN @MatchingUsers m ON m.UserID = s.UserID ' END
+
 	-- Determine the Type of Sort
 	IF (@SortBy IS NOT NULL AND @SortBy <> '') AND @sortByUserProperty <> 1
 	BEGIN -- Sort By Profile Property
-		SET @sortSql = {databaseOwner}{objectQualifier}GetSortSql('PropertyValue',@SortAscending,'UserID')
-		SET @filterSortSql = ' ;WITH SortedUsers AS ( SELECT ROW_NUMBER() OVER( ' + @sortSql + ' ) AS RowNumber, *  ' 
+		SET @sortSql = {databaseOwner}{objectQualifier}GetSortSql(@SortBy,@SortAscending,'UserID')
+		SET @propertySort = {databaseOwner}{objectQualifier}GetSortSql('PropertyValue',@SortAscending,'UserID')
+		SET @filterSortSql = ' ;WITH SortedUsers AS ( SELECT ROW_NUMBER() OVER( ' + @propertySort + ' ) AS RowNumber, *  ' 
 							+ ' FROM {objectQualifier}vw_Profile WHERE PortalId = ' + CONVERT(nvarchar(20), @PortalID) + ' AND PropertyName = ''' + @SortBy + ''' )'
-							+ ' ,MatchingSorted AS ( SELECT ROW_NUMBER() OVER(ORDER BY [RowNumber]) AS RowNumber, s.UserId FROM SortedUsers s '
+							+ ' , MatchingSorted AS ( SELECT ROW_NUMBER() OVER(ORDER BY [RowNumber]) AS RowNumber, s.UserId FROM SortedUsers s '
+							+ @filterJoin + ' ) '
 	END
 	ELSE
 	BEGIN 	
 		-- Sort By User Property
 		IF @sortByUserProperty = 1 BEGIN SET @sortSql = {databaseOwner}{objectQualifier}GetSortSql(@SortBy,@SortAscending,'UserID')END
-		-- Default: Sort By UserID
-		ELSE BEGIN SET @sortSql = {databaseOwner}{objectQualifier}GetSortSql('UserID',@SortAscending,'UserID') END
 		
+		-- Default: Sort By UserID
+		ELSE BEGIN SET @sortSql = {databaseOwner}{objectQualifier}GetSortSql('UserID',@SortAscending,'UserID') END		
 		SET @filterSortSql = ' ;WITH SortedUsers AS ( SELECT ROW_NUMBER() OVER( ' + @sortSql + ' ) AS RowNumber, * '
 							+ ' FROM {objectQualifier}vw_Users WHERE PortalId = ' + CONVERT(nvarchar(20), @PortalID) + ')'							
-							+ ' ,MatchingSorted AS ( SELECT ROW_NUMBER() OVER(ORDER BY [RowNumber]) AS RowNumber, s.UserId FROM SortedUsers s '
-							+ ' INNER JOIN @MatchingUsers m ON m.UserID = s.UserID ) ' 														
+							+ ' , MatchingSorted AS ( SELECT ROW_NUMBER() OVER(ORDER BY [RowNumber]) AS RowNumber, s.UserId FROM SortedUsers s '
+							+ @filterJoin + ' ) '
 	END
 
 	-- ///////////////////////////////////////////////////
@@ -4169,8 +4186,7 @@ AS
 													AND u.PortalID = ' + CONVERT(nvarchar(20), @PortalID) + '  AND u.IsDeleted = 0 
 											)
 					SELECT * FROM PivotedUsers PIVOT (MAX(PropertyValue) for PropertyName in (' + @pivotSql + ') ) as pivotTable '
-				+ @sortSql
-				
+				+ @sortSql		
 	EXEC(@sql)
 GO
 
@@ -4750,6 +4766,19 @@ IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}HostSettings WHERE 
     VALUES('CrmVersion', '1', 0, -1, GETDATE(), -1, GETDATE())
   END
 
+/* Add stored procedure for return roles based on progressive search (auto-complete) */
+/*************************************************************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetRolesBasicSearch]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetRolesBasicSearch]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRolesBasicSearch]
+(
+	@PortalID int,					-- portal	
+	@PageSize int,					-- page size
+	@FilterBy nvarchar(100)			-- filter field
+)
+AS
+SELECT TOP (@PageSize) * FROM {objectQualifier}Roles where rolename like '%' + @FilterBy + '%'
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

@@ -409,21 +409,21 @@
         var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
 
         $('.dnnDeleteSite').dnnConfirm({
-            text: '<%= LocalizeString("DeleteMessage") %>',
+            text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("DeleteMessage")) %>',
             yesText: yesText,
             noText: noText,
             title: titleText
         });
         
         $('#<%= cmdRestore.ClientID %>').dnnConfirm({
-            text: '<%= LocalizeString("RestoreCCSMessage") %>',
+            text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("RestoreCCSMessage")) %>',
             yesText: yesText,
             noText: noText,
             title: titleText
         });
 
         $('#<%= IncrementCrmVersionButton.ClientID %>').dnnConfirm({
-            text: '<%= LocalizeString("IncrementCrmVersionConfirm") %>',
+            text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("IncrementCrmVersionConfirm")) %>',
             yesText: yesText,
             noText: noText,
             title: titleText

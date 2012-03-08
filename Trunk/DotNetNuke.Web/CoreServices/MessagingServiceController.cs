@@ -21,12 +21,16 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Entities.Users.Internal;
 using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Web.Services;
@@ -62,6 +66,43 @@ namespace DotNetNuke.Web.CoreServices
             var message = MessagingController.Instance.CreateMessage(HttpUtility.UrlDecode(subject), HttpUtility.UrlDecode(body), roles, users, fileIdsList);
 
             return Json(message.MessageID);
+        }
+
+        [DnnAuthorize]
+        [AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult Search(string q)
+        {
+            var portalId = PortalController.GetEffectivePortalId(PortalSettings.PortalId);
+            var isAdmin = UserInfo.IsSuperUser || UserInfo.IsInRole("Administrators");
+
+            // GetUsersAdvancedSearch doesn't accept a comma or a single quote in the query so we have to remove them for now. See issue 20224.
+            q = q.Replace(",", "").Replace("'", "");
+            if (q.Length == 0) return Json(null, JsonRequestBehavior.AllowGet);
+
+            var users = TestableUserController.Instance.GetUsersAdvancedSearch(portalId, UserInfo.UserID, -1, -1, -1, isAdmin, -1, int.MaxValue, "DisplayName", true, "DisplayName", q);
+            var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, 10, q);
+            var rolesdata = roles.Select(role => new SearchResult {id = "role-" + role.RoleID, name = role.RoleName}).ToList();         
+
+            var data = users.Select(user => new SearchResult { id = "user-" + user.UserID, name = user.DisplayName }).ToList();
+            
+            data.AddRange(rolesdata);
+
+            var results = data.OrderBy(sr => sr.name);
+
+            return Json(results, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// This class stores a single search result needed by jQuery Tokeninput
+        /// </summary>
+        private class SearchResult
+        {
+            // ReSharper disable InconsistentNaming
+            // ReSharper disable NotAccessedField.Local
+            public string id;
+            // ReSharper restore NotAccessedField.Local
+            public string name;
+            // ReSharper restore InconsistentNaming
         }
     }
 }
