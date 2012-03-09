@@ -152,18 +152,16 @@ namespace DotNetNuke.Modules.Admin.Extensions
             if (PackageEditor != null)
             {
                 PackageEditor.PackageID = PackageID;
-                PackageEditor.IsWizard = true;
-            }
-            phEditor.Controls.Add(PackageEditor as Control);
-
-            var moduleControl = PackageEditor as IModuleControl;
-            if (moduleControl != null)
-            {
-                moduleControl.ModuleContext.Configuration = ModuleContext.Configuration;
-            }
-            if (PackageEditor != null)
-            {
                 PackageEditor.Initialize();
+                PackageEditor.IsWizard = true;
+
+                phEditor.Controls.Add(PackageEditor as Control);
+
+                var moduleControl = PackageEditor as IModuleControl;
+                if (moduleControl != null)
+                {
+                    moduleControl.ModuleContext.Configuration = ModuleContext.Configuration;
+                }
             }
         }
 

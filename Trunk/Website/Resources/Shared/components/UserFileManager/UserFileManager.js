@@ -96,7 +96,9 @@
             }, callback);
         }
         
-        $(opts.openTriggerSelector).click(function (e) {
+        // Parent scope is defined (e.g. body).
+        // This allows us to bind event to DOM elements that are destroyed and recreated. (i.e. the "attach file" button)
+        $(opts.openTriggerScope).delegate(opts.openTriggerSelector, 'click', function(e) {
             e.preventDefault();
 
             if (!$wrap.data('bound')) {
@@ -174,6 +176,7 @@
     };
 
     $.fn.userFileManager.defaultOptions = {
+        openTriggerScope: 'body', // defines parent scope for openTriggerSelector, allows for event delegation
         openTriggerSelector: '#photoFromSite', // defined in template, opens dialog
         dialogClass: 'dnnFormPopup fileManagerPopup',
         width: '700px', // dialog width

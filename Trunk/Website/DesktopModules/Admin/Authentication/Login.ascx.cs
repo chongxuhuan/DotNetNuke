@@ -183,14 +183,24 @@ namespace DotNetNuke.Modules.Admin.Authentication
 					if (Request.QueryString["returnurl"] != null)
 					{
 						//return to the url passed to signin
-						redirectURL = HttpUtility.UrlDecode(Request.QueryString["returnurl"]);
+                        redirectURL = HttpUtility.UrlDecode(Request.QueryString["returnurl"]);
 						//redirect url should never contain a protocol ( if it does, it is likely a cross-site request forgery attempt )
 						if (redirectURL.Contains("://"))
 						{
 							redirectURL = "";
 						}
 					}
-					if (Request.Params["appctx"] != null)
+                    if (Request.Cookies["returnurl"] != null)
+                    {
+                        //return to the url passed to signin
+                        redirectURL = HttpUtility.UrlDecode(Request.Cookies["returnurl"].Value);
+                        //redirect url should never contain a protocol ( if it does, it is likely a cross-site request forgery attempt )
+                        if (redirectURL.Contains("://"))
+                        {
+                            redirectURL = "";
+                        }
+                    }
+                    if (Request.Params["appctx"] != null)
 					{
 						//HACK return to the url passed to signin (LiveID) 
 						redirectURL = HttpUtility.UrlDecode(Request.Params["appctx"]);
@@ -671,7 +681,12 @@ namespace DotNetNuke.Modules.Admin.Authentication
 					UserController.UserLogin(PortalId, objUser, PortalSettings.PortalName, AuthenticationLoginBase.GetIPAddress(), chkCookie.Checked);
 
 					//redirect browser
-					Response.Redirect(RedirectURL, true);
+			        var redirectUrl = RedirectURL;
+
+                    //Clear the cookie
+                    HttpContext.Current.Response.Cookies.Set(new HttpCookie("returnurl", "") { Expires = DateTime.Now.AddDays(-1) });
+
+                    Response.Redirect(redirectUrl, true);
 					break;
 				case UserValidStatus.PASSWORDEXPIRED:
 					strMessage = string.Format(Localization.GetString("PasswordExpired", LocalResourceFile), expiryDate.ToLongDateString());
@@ -708,9 +723,9 @@ namespace DotNetNuke.Modules.Admin.Authentication
                 !string.IsNullOrEmpty(Request.QueryString["verificationcode"]);
         }
 
-#endregion
+        #endregion
 
-#region Event Handlers
+        #region Event Handlers
 
 		/// <summary>
 		/// Page_Init runs when the control is initialised
@@ -1064,13 +1079,26 @@ namespace DotNetNuke.Modules.Admin.Authentication
 					//  2 - User was not authenticated
 					if (e.Authenticated)
 					{
-						PageNo = 1;
-						AuthenticationType = e.AuthenticationType;
-						AutoRegister = e.AutoRegister;
-						ProfileProperties = e.Profile;
-						UserToken = e.UserToken;
+                        AutoRegister = e.AutoRegister;
+                        AuthenticationType = e.AuthenticationType;
+                        ProfileProperties = e.Profile;
+                        UserToken = e.UserToken;
+                        if (AutoRegister)
+                        {
+                            InitialiseUser();
+                            User.Membership.Password = UserController.GeneratePassword();
 
-						ShowPanel();
+                            ctlUser.User = User;
+
+                            //Call the Create User method of the User control so that it can create
+                            //the user and raise the appropriate event(s)
+                            ctlUser.CreateUser();
+                        }
+                        else
+                        {
+                            PageNo = 1;
+                            ShowPanel();
+                        }
 					}
 					else
 					{

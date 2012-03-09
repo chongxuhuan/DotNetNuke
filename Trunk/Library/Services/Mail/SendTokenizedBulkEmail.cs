@@ -357,7 +357,10 @@ namespace DotNetNuke.Services.Mail
 					memoryStream.Write(buffer, 0, read);
 				}
 
-				attachments.Add(new Attachment(memoryStream, attachment.ContentType));
+			    var newAttachment = new Attachment(memoryStream, attachment.ContentType);
+                newAttachment.ContentStream.Position = 0;
+                attachments.Add(newAttachment);
+                //reset original position
 				attachment.ContentStream.Position = 0;
 			}
 

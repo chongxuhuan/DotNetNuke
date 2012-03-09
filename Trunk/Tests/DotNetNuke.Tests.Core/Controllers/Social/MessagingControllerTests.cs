@@ -20,8 +20,8 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
+using System.Globalization;
 using System.Text;
 
 using DotNetNuke.Common.Utilities;
@@ -35,6 +35,7 @@ using DotNetNuke.Services.Social.Messaging.Data;
 using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Services.Social.Messaging.Exceptions;
 using DotNetNuke.Services.Social.Messaging.Ineternal;
+using DotNetNuke.Services.Social.Messaging.Views;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
@@ -45,7 +46,7 @@ using NUnit.Framework;
 namespace DotNetNuke.Tests.Core.Controllers
 {
 	/// <summary>
-    ///  Testing various aspects of RelationshipController
+    ///  Testing various aspects of MessagingController
 	/// </summary>
 	[TestFixture]
 	public class MessagingControllerTests
@@ -63,6 +64,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         private DataTable _dtMessageAttachment;
         private DataTable _dtMessageRecipients;
         private DataTable _dtPortalSettings;
+	    private DataTable _dtMessageConversationView;
         private UserInfo _adminUserInfo;
         private UserInfo _hostUserInfo;
         private UserInfo _user12UserInfo;
@@ -93,7 +95,6 @@ namespace DotNetNuke.Tests.Core.Controllers
 		    SetupPortalSettingsWrapper();
 		}
 
-
         private void SetupDataProvider()
         {
             //Standard DataProvider Path for Logging
@@ -102,7 +103,7 @@ namespace DotNetNuke.Tests.Core.Controllers
 
         private void SetupUsers()
         {
-            _adminUserInfo = new UserInfo { DisplayName = Constants.UserDisplayName_Admin, UserID = Constants.UserID_Admin };
+            _adminUserInfo = new UserInfo { DisplayName = Constants.UserDisplayName_Admin, UserID = Constants.UserID_Admin, Roles = new[] { Constants.RoleName_Administrators } };
             _hostUserInfo = new UserInfo { DisplayName = Constants.UserDisplayName_Host, UserID = Constants.UserID_Host, IsSuperUser = true};
             _user12UserInfo = new UserInfo { DisplayName = Constants.UserDisplayName_User12, UserID = Constants.UserID_User12 };
         }
@@ -120,7 +121,6 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockRoleProvider.Setup(rp => rp.GetUserRoles(It.Is<UserInfo>(u => u.UserID == Constants.UserID_Admin), It.IsAny<bool>())).Returns(new List<UserRoleInfo> {adminRoleInfo});
             _mockRoleProvider.Setup(rp => rp.GetUserRoles(It.Is<UserInfo>(u => u.UserID == Constants.UserID_User12), It.IsAny<bool>())).Returns(new List<UserRoleInfo> { user12RoleInfo });            
         }
-
 
 		#endregion
 
@@ -281,8 +281,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             //Act
             var message = messagingController.CreateMessage("subject", "body", null, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _user12UserInfo);
         }
-
-
+        
         [Test]
         public void MessagingController_CreateMessage_Calls_DataService_SaveSocialMessage_On_Valid_Message()
         {   
@@ -664,9 +663,160 @@ namespace DotNetNuke.Tests.Core.Controllers
 
         #endregion
 
-        
+        #region GetSocialMessageRecipient
+
+        [Test]
+        public void GetSocialMessageRecipient_Calls_DataService_GetSocialMessageRecipientByMessageAndUser()
+        {
+            _dtMessageRecipients.Clear();
+            _mockDataService.Setup(ds => ds.GetSocialMessageRecipientByMessageAndUser(Constants.SocialMessaging_RecipientId_1, Constants.UserID_User12)).Returns(_dtMessageRecipients.CreateDataReader());
+            
+            _messagingController.GetSocialMessageRecipient(Constants.SocialMessaging_RecipientId_1, Constants.UserID_User12);
+            
+            _mockDataService.Verify(ds => ds.GetSocialMessageRecipientByMessageAndUser(Constants.SocialMessaging_RecipientId_1, Constants.UserID_User12));
+        }
+
         #endregion
 
+        #region WaitTimeForNextMessage
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void WaitTimeForNextMessage_Throws_On_Null_Sender()
+        {
+            _messagingController.WaitTimeForNextMessage(null);
+        }
+
+        [Test]
+        public void WaitTimeForNextMessage_Returns_Zero_When_MessagingThrottlingInterval_Is_Zero()
+        {
+            _user12UserInfo.PortalID = Constants.CONTENT_ValidPortalId;
+            var mockMessagingController = new Mock<MessagingControllerImpl>();
+            mockMessagingController.Setup(mc => mc.GetPortalSettingAsInteger(It.IsAny<string>(), _user12UserInfo.PortalID, Null.NullInteger)).Returns(0);
+
+            var result = mockMessagingController.Object.WaitTimeForNextMessage(_user12UserInfo);
+            
+            Assert.AreEqual(0, result);
+        }
+
+        [Test]
+        public void WaitTimeForNextMessage_Returns_Zero_When_Sender_Is_Admin_Or_Host()
+        {
+            _adminUserInfo.PortalID = Constants.CONTENT_ValidPortalId;
+            var mockMessagingController = new Mock<MessagingControllerImpl>();
+            mockMessagingController.Setup(mc => mc.GetPortalSettingAsInteger(It.IsAny<string>(), _adminUserInfo.PortalID, Null.NullInteger)).Returns(1);
+            mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
+
+            var result = mockMessagingController.Object.WaitTimeForNextMessage(_adminUserInfo);
+
+            Assert.AreEqual(0, result);
+        }
+
+        [Test]
+        public void WaitTimeForNextMessage_Returns_Zero_When_The_User_Has_No_Previous_Conversations()
+        {
+            _user12UserInfo.PortalID = Constants.CONTENT_ValidPortalId;
+            var mockMessagingController = new Mock<MessagingControllerImpl>();
+            mockMessagingController.Setup(mc => mc.GetPortalSettingAsInteger(It.IsAny<string>(), _user12UserInfo.PortalID, Null.NullInteger)).Returns(1);
+            mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(false);
+            var messageBoxView = new MessageBoxView { TotalConversations = 0 };
+            mockMessagingController.Setup(mc => mc.GetRecentSentbox(_user12UserInfo.UserID, It.IsAny<int>(), It.IsAny<int>())).Returns(messageBoxView);
+
+            var result = mockMessagingController.Object.WaitTimeForNextMessage(_user12UserInfo);
+
+            Assert.AreEqual(0, result);
+        }
+
+        [Test]
+        [TestCase("2/16/2012 12:15:12 PM", "2/16/2012 12:14:12 PM", 1, 0)]
+        [TestCase("2/16/2012 12:15:12 PM", "2/16/2012 12:14:12 PM", 2, 60)]
+        [TestCase("2/16/2012 12:15:12 PM", "2/16/2012 12:14:12 PM", 10, 540)]
+        public void WaitTimeForNextMessage_Returns_The_Number_Of_Seconds_Since_Last_Message_Sent(string actualDateString, string lastMessageDateString, int throttlingInterval, int expected)
+        {
+            var culture = CultureInfo.CreateSpecificCulture("en-US");
+            var actualDate = DateTime.Parse(actualDateString, culture);
+            var lastMessageDate = DateTime.Parse(lastMessageDateString, culture);
+
+            _user12UserInfo.PortalID = Constants.CONTENT_ValidPortalId;
+
+            var mockMessagingController = new Mock<MessagingControllerImpl>();
+
+            mockMessagingController.Setup(mc => mc.GetPortalSettingAsInteger(It.IsAny<string>(), _user12UserInfo.PortalID, Null.NullInteger)).Returns(throttlingInterval);
+            mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(false);
+            
+            var messageBoxView = new MessageBoxView { TotalConversations = 1 };
+
+            _dtMessageConversationView.Clear();
+            _dtMessageConversationView.Rows.Add(-1, -1, -1, -1, "", "", "", "", -1, false, -1, -1, lastMessageDate, -1, Null.NullDate);
+
+            var dr = _dtMessageConversationView.CreateDataReader();
+
+            var messageConversationView = CBO.FillObject<MessageConversationView>(dr);
+
+            messageBoxView.Conversations = new List<MessageConversationView> { messageConversationView };
+
+            mockMessagingController.Setup(mc => mc.GetRecentSentbox(_user12UserInfo.UserID, It.IsAny<int>(), It.IsAny<int>())).Returns(messageBoxView);
+            mockMessagingController.Setup(mc => mc.GetDateTimeNow()).Returns(actualDate);
+
+            var result = mockMessagingController.Object.WaitTimeForNextMessage(_user12UserInfo);
+
+            Assert.AreEqual(expected, result);
+        }
+
+        #endregion
+
+        #region GetInbox
+
+        [Test]
+        public void GetInbox_Calls_DataService_GetMessageBoxView()
+        {
+            _messagingController.GetInbox(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), MessageReadStatus.Any, MessageArchivedStatus.Any);
+
+            _mockDataService.Verify(ds => ds.GetMessageBoxView(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), MessageReadStatus.Any, MessageArchivedStatus.Any, MessageSentStatus.Received));
+        }
+
+        //Not working right now
+        //[Test]
+        //public void GetInbox_Calls_Overload_With_MessageReadStatus_Any_And_MessageArchivedStatus_Unarchived()
+        //{
+        //    var mockMessagingController = new Mock<MessagingControllerImpl>();
+        //    mockMessagingController.Setup(mc => mc.GetInbox(Constants.UserID_User12, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), MessageReadStatus.Any, MessageArchivedStatus.UnArchived));
+
+        //    mockMessagingController.Object.GetInbox(Constants.UserID_User12, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>());
+
+        //    mockMessagingController.Verify(mc => mc.GetInbox(Constants.UserID_User12, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), MessageReadStatus.Any, MessageArchivedStatus.UnArchived));
+        //}
+
+        #endregion
+
+        #region GetRecentInbox
+
+        //Not working right now
+        //[Test]
+        //public void GetRecentInbox_Calls_GetInbox_With_Default_Values()
+        //{
+        //    var mockMessagingController = new Mock<MessagingControllerImpl>();
+        //    mockMessagingController.Setup(mc => mc.GetInbox(Constants.UserID_User12, It.IsAny<int>(), It.IsAny<int>(), MessagingControllerImpl.ConstSortColumnDate, !MessagingControllerImpl.ConstAscending));
+
+        //    mockMessagingController.Object.GetRecentInbox(Constants.UserID_User12, It.IsAny<int>(), It.IsAny<int>());
+
+        //    mockMessagingController.Verify(mc => mc.GetInbox(Constants.UserID_User12, It.IsAny<int>(), It.IsAny<int>(), MessagingControllerImpl.ConstSortColumnDate, !MessagingControllerImpl.ConstAscending));
+        //}
+
+        [Test]
+        public void GetRecentInbox_Calls_Overload_WithDefault_Values()
+        {
+            var mockMessagingController = new Mock<MessagingControllerImpl>();
+            mockMessagingController.Setup(mc => mc.GetRecentInbox(Constants.UserID_User12, MessagingControllerImpl.ConstDefaultPageIndex, MessagingControllerImpl.ConstDefaultPageSize));
+
+            mockMessagingController.Object.GetRecentInbox(Constants.UserID_User12);
+
+            mockMessagingController.Verify(mc => mc.GetRecentInbox(Constants.UserID_User12, MessagingControllerImpl.ConstDefaultPageIndex, MessagingControllerImpl.ConstDefaultPageSize));
+        }
+
+        #endregion
+
+        #endregion
 
         #region "Private Methods"
 
@@ -726,8 +876,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtMessageRecipients.Columns.Add("LastModifiedByUserID", typeof(int));
             _dtMessageRecipients.Columns.Add("LastModifiedOnDate", typeof(DateTime));
             _dtMessageRecipients.PrimaryKey = new[] { pkMessageRecipientID };
-
-
+            
             //MessageAttachments
             _dtMessageAttachment = new DataTable("MessageAttachments");
             var pkMessageAttachmentID = _dtMessageAttachment.Columns.Add("MessageAttachmentID", typeof(int));
@@ -748,6 +897,24 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtPortalSettings.Columns.Add("CreatedOnDate", typeof(DateTime));
             _dtPortalSettings.Columns.Add("LastModifiedByUserID", typeof(int));
             _dtPortalSettings.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+
+            //Message Conversation
+            _dtMessageConversationView = new DataTable();
+            _dtMessageConversationView.Columns.Add("RowNumber", typeof(int));
+            _dtMessageConversationView.Columns.Add("AttachmentCount", typeof(int));
+            _dtMessageConversationView.Columns.Add("NewThreadCount", typeof(int));
+            _dtMessageConversationView.Columns.Add("MessageID", typeof(int));
+            _dtMessageConversationView.Columns.Add("To", typeof(string));
+            _dtMessageConversationView.Columns.Add("From", typeof(string));
+            _dtMessageConversationView.Columns.Add("Subject", typeof(string));
+            _dtMessageConversationView.Columns.Add("Body", typeof(string));
+            _dtMessageConversationView.Columns.Add("ConversationID", typeof(int));
+            _dtMessageConversationView.Columns.Add("ReplyAllAllowed", typeof(bool));
+            _dtMessageConversationView.Columns.Add("SenderUserID", typeof(int));
+            _dtMessageConversationView.Columns.Add("CreatedByUserID", typeof(int));
+            _dtMessageConversationView.Columns.Add("CreatedOnDate", typeof(DateTime));
+            _dtMessageConversationView.Columns.Add("LastModifiedByUserID", typeof(int));
+            _dtMessageConversationView.Columns.Add("LastModifiedOnDate", typeof(DateTime));
         }
 
         #endregion

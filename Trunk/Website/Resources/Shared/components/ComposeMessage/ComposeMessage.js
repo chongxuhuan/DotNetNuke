@@ -63,7 +63,13 @@
                             });
                         }
                     };
-                    composeMessageDialog.find('#userFileManager').userFileManager(opts.userFileManagerOptions);
+                    
+                    // we only need to initialize this plugin once, doing so more than once will lead to multiple dialogs.
+                    // this is because the #userFileManager element is never destroyed when the compose message dialog is closed.
+                    if (!$wrap.data('fileManagerInitialized')){
+                      composeMessageDialog.find('#userFileManager').userFileManager(opts.userFileManagerOptions);
+                      $wrap.data('fileManagerInitialized', true);
+                    }
                 }
 
                 function updateSendButtonStatus() {
@@ -74,15 +80,18 @@
                         sendButton.attr('disabled', 'disabled').addClass('disabled');
                     }
                 }
-                //resultsFormatter: function (item) { return "<li>" + "<img src='" + item.url + "' title='" + item.first_name + " " + item.last_name + "' height='25px' width='25px' />" + "<div style='display: inline-block; padding-left: 10px;'><div class='full_name'>" + item.first_name + " " + item.last_name + "</div><div class='email'>" + item.email + "</div></div></li>" },
+
                 composeMessageDialog.find('#to').tokenInput(opts.serviceurlbase + "Search", {
                     // We can set the tokenLimit here
                     theme: "facebook",
                     resultsFormatter: function (item) {
-                        if (item.id.startsWith("user-")) { return "<li>" + "<img src='profilepic.ashx?UserId=" + item.id.substring(5) + "&w=32&h=32' title='" + item.name + "' height='25px' width='25px' />" + "<div style='display: inline-block; padding-left: 10px;'><div class='full_name'>" + item.name + "</div></div></li>" }
-                        if (item.id.startsWith("role-")) { return "<li>" + "<img src='/images/icon_securityroles_32px.gif' title='" + item.name + "' height='25px' width='25px' />" + "<div style='display: inline-block; padding-left: 10px;'><div class='full_name'>" + item.name + "</div></div></li>" }
+                        if (item.id.startsWith("user-")) {
+                            return "<li class='user'><img src='profilepic.ashx?UserId=" + item.id.substring(5) + "&w=32&h=32' title='" + item.name + "' height='25px' width='25px' /><span>" + item.name + "</span></li>";
+                        } else if (item.id.startsWith("role-")) {
+                            return "<li class='role'><img src='" + item.iconfile + "' title='" + item.name + "' height='25px' width='25px' /><span>" + item.name + "</span></li>";
+                        }
+                        return "<li>" + item[this.propertyToSearch] + "</li>"; // Default formatter
                     },
-                    tokenLimit: 10,
                     minChars: 2,
                     preventDuplicates: true,
                     hintText: '',

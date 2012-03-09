@@ -74,22 +74,31 @@ namespace DotNetNuke.Web.CoreServices
         {
             var portalId = PortalController.GetEffectivePortalId(PortalSettings.PortalId);
             var isAdmin = UserInfo.IsSuperUser || UserInfo.IsInRole("Administrators");
-
+            var numResults = 10;
             // GetUsersAdvancedSearch doesn't accept a comma or a single quote in the query so we have to remove them for now. See issue 20224.
             q = q.Replace(",", "").Replace("'", "");
             if (q.Length == 0) return Json(null, JsonRequestBehavior.AllowGet);
 
-            var users = TestableUserController.Instance.GetUsersAdvancedSearch(portalId, UserInfo.UserID, -1, -1, -1, isAdmin, -1, int.MaxValue, "DisplayName", true, "DisplayName", q);
-            var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, 10, q);
-            var rolesdata = roles.Select(role => new SearchResult {id = "role-" + role.RoleID, name = role.RoleName}).ToList();         
+            var results = TestableUserController.Instance.GetUsersAdvancedSearch(portalId, UserInfo.UserID, -1, -1, -1, isAdmin, -1, numResults, "DisplayName", true, "DisplayName", q)
+                .Select(user => new SearchResult { id = "user-" + user.UserID, name = user.DisplayName }).ToList();
 
-            var data = users.Select(user => new SearchResult { id = "user-" + user.UserID, name = user.DisplayName }).ToList();
-            
-            data.AddRange(rolesdata);
+            var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, numResults, q);
+            foreach (var ri in roles)
+            {
+                if (String.IsNullOrEmpty(ri.IconFile))
+                {
+                    results.Add(new SearchResult {id = "role-" + ri.RoleID, name = ri.RoleName, iconfile = "/images/no_avatar.gif"});
 
-            var results = data.OrderBy(sr => sr.name);
+                }
+                else
+                {
+                    results.Add(new SearchResult {id = "role-" + ri.RoleID, name = ri.RoleName, iconfile = PortalSettings.HomeDirectory + "/" + ri.IconFile});
+                }
+                // .Select(role => new SearchResult { id = "role-" + role.RoleID, name = role.RoleName,iconfile=role.IconFile }).ToList();
+            }
+           // results.AddRange(roles);
 
-            return Json(results, JsonRequestBehavior.AllowGet);
+            return Json(results.OrderBy(sr => sr.name), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -103,6 +112,7 @@ namespace DotNetNuke.Web.CoreServices
             // ReSharper restore NotAccessedField.Local
             public string name;
             // ReSharper restore InconsistentNaming
+            public string iconfile;
         }
     }
 }

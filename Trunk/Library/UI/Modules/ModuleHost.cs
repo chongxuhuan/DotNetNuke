@@ -40,6 +40,7 @@ using DotNetNuke.Instrumentation;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.ModuleCache;
 using DotNetNuke.UI.WebControls;
 
@@ -300,6 +301,11 @@ namespace DotNetNuke.UI.Modules
                 {
 					//only display the error to page administrators
                     Exceptions.ProcessModuleLoadException(_control, exc);
+                }
+                else
+                {
+                    // Otherwise just log the fact that an exception occurred
+                    new ExceptionLogController().AddLog(exc);
                 }
             }
         }

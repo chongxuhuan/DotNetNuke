@@ -200,7 +200,7 @@ namespace DotNetNuke.Modules.Admin.Security
                 ctlCaptcha.Text = Localization.GetString("CaptchaText", LocalResourceFile);
             }
 
-            var returnUrl = Request.QueryString["returnurl"];
+            var returnUrl = Request.QueryString["returnurl"] ?? string.Empty;
             if (returnUrl.IndexOf("?returnurl=") != -1)
             {
                 returnUrl = returnUrl.Substring(0, returnUrl.IndexOf("?returnurl="));

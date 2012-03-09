@@ -1,21 +1,17 @@
-/* Example tokeninput style #2: Facebook style */
+    /* Example tokeninput style #2: Facebook style */
 ul.token-input-list-facebook {
     overflow: hidden; 
     height: auto !important; 
     height: 1%;
-    width: 400px;
-    border: 1px solid #8496ba;
+    width: 35%;
     cursor: text;
-    font-size: 12px;
-    font-family: Verdana;
     min-height: 1px;
     z-index: 999;
     margin: 0;
     padding: 0;
-    background-color: #fff;
     list-style-type: none;
-    clear: left;
-}
+-moz-border-radius: 3px;border-radius: 3px;padding:0 5px;background: #FFFFF5;-moz-box-shadow: inset 0 0 3px 3px #fffbe1;-webkit-box-shadow: inset 0 0 3px 3px #fffbe1;box-shadow: inset 0 0 3px 3px #fffbe1;border:1px #BCB691 solid;margin: 0;
+font-family: Helvetica, Arial, Verdana, sans-serif;    }
 
 ul.token-input-list-facebook li input {
     border: 0;
@@ -57,11 +53,7 @@ li.token-input-token-facebook span {
     cursor: pointer;
 }
 
-li.token-input-selected-token-facebook {
-    background-color: #5670a6;
-    border: 1px solid #3b5998;
-    color: #fff;
-}
+li.token-input-selected-token-facebook {background-color: #FEFDDE;border:1px #EEECE5 solid;}
 
 li.token-input-input-token-facebook {
     float: left;
@@ -72,7 +64,7 @@ li.token-input-input-token-facebook {
 
 div.token-input-dropdown-facebook {
     position: absolute;
-    width: 400px;
+    min-width: 234px;
     background-color: #fff;
     overflow: hidden;
     border-left: 1px solid #ccc;
@@ -104,11 +96,11 @@ div.token-input-dropdown-facebook ul li {
 }
 
 div.token-input-dropdown-facebook ul li.token-input-dropdown-item-facebook {
-    background-color: #fff;
+    background:#eee;border:1px #EEECE5 solid;
 }
 
 div.token-input-dropdown-facebook ul li.token-input-dropdown-item2-facebook {
-    background-color: #fff;
+    background:#eee;border:1px #EEECE5 solid;
 }
 
 div.token-input-dropdown-facebook ul li em {
@@ -117,6 +109,6 @@ div.token-input-dropdown-facebook ul li em {
 }
 
 div.token-input-dropdown-facebook ul li.token-input-selected-dropdown-item-facebook {
-    background-color: #3b5998;
-    color: #fff;
+    background-color: #FEFDDE;
+    
 }

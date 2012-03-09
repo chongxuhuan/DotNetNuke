@@ -123,11 +123,11 @@ namespace DotNetNuke.Modules.SearchInput
                     {
                         txtModule.Text = Localization.GetString("NoSearchModule", LocalResourceFile);
                     }
-                    if (ShowGoImage != null)
+                    if (!string.IsNullOrEmpty(ShowGoImage))
                     {
                         chkGo.Checked = Convert.ToBoolean(ShowGoImage);
                     }
-                    if (ShowSearchImage != null)
+                    if (!string.IsNullOrEmpty(ShowSearchImage))
                     {
                         chkSearchImage.Checked = Convert.ToBoolean(ShowSearchImage);
                     }

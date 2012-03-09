@@ -32,10 +32,12 @@ using DotNetNuke.Entities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Security.Roles.Internal;
+using DotNetNuke.Services.Tokens;
+using DotNetNuke.Common;
+using DotNetNuke.Services.FileSystem;
 
 
-namespace DotNetNuke.Security.Roles
-{
+namespace DotNetNuke.Security.Roles {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
     /// Namespace:  DotNetNuke.Security.Roles
@@ -50,24 +52,22 @@ namespace DotNetNuke.Security.Roles
     /// </history>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class RoleInfo : BaseEntityInfo, IHydratable, IXmlSerializable
-    {
+    public class RoleInfo : BaseEntityInfo, IHydratable, IXmlSerializable, IPropertyAccess {
         #region Private Members
 
         private RoleType _RoleType = RoleType.None;
         private bool _RoleTypeSet = Null.NullBoolean;
         private Dictionary<string, string> _settings;
 
-        public RoleInfo()
-        {
+        public RoleInfo() {
             TrialFrequency = "N";
             BillingFrequency = "N";
             RoleID = Null.NullInteger;
         }
 
         #endregion
-		
-		#region Public Properties
+
+        #region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -176,12 +176,9 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// <value>A enum representing the type of the role</value>
         /// -----------------------------------------------------------------------------
-        public RoleType RoleType
-        {
-            get
-            {
-                if (!_RoleTypeSet)
-                {
+        public RoleType RoleType {
+            get {
+                if (!_RoleTypeSet) {
                     GetRoleType();
                     _RoleTypeSet = true;
                 }
@@ -211,10 +208,8 @@ namespace DotNetNuke.Security.Roles
         /// </summary>
         /// -----------------------------------------------------------------------------
         [XmlIgnore]
-        public Dictionary<string, string> Settings
-        {
-            get
-            {
+        public Dictionary<string, string> Settings {
+            get {
                 return _settings ?? (_settings = (RoleID == Null.NullInteger)
                                         ? new Dictionary<string, string>()
                                         : TestableRoleController.Instance.GetRoleSettings(RoleID) as Dictionary<string, string>);
@@ -270,27 +265,36 @@ namespace DotNetNuke.Security.Roles
         /// -----------------------------------------------------------------------------
         public int UserCount { get; private set; }
 
+        public string PhotoURL {
+            get {
+                string photoURL = Globals.ApplicationPath + "/images/1x1.gif";
+
+                if ((IconFile != null)) {
+                    if (!string.IsNullOrEmpty(IconFile)) {
+                        var fileInfo = FileManager.Instance.GetFile(int.Parse(IconFile.Replace("FileID=", string.Empty)));
+                        if ((fileInfo != null)) {
+                            photoURL = FileManager.Instance.GetUrl(fileInfo);
+                        }
+                    }
+                }
+                return photoURL;
+            }
+        }
+
+
         #endregion
 
         #region Private Methods
 
-        private void GetRoleType()
-        {
+        private void GetRoleType() {
             PortalInfo portal = new PortalController().GetPortal(PortalID);
-            if (RoleID == portal.AdministratorRoleId)
-            {
+            if (RoleID == portal.AdministratorRoleId) {
                 _RoleType = RoleType.Administrator;
-            }
-            else if (RoleID == portal.RegisteredRoleId)
-            {
+            } else if (RoleID == portal.RegisteredRoleId) {
                 _RoleType = RoleType.RegisteredUser;
-            }
-            else if (RoleName == "Subscribers")
-            {
+            } else if (RoleName == "Subscribers") {
                 _RoleType = RoleType.Subscriber;
-            }
-            else if (RoleName == "Unverified Users")
-            {
+            } else if (RoleName == "Unverified Users") {
                 _RoleType = RoleType.UnverifiedUser;
             }
         }
@@ -308,8 +312,7 @@ namespace DotNetNuke.Security.Roles
         /// 	[cnurse]	03/17/2008   Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual void Fill(IDataReader dr)
-        {
+        public virtual void Fill(IDataReader dr) {
             RoleID = Null.SetNullInteger(dr["RoleId"]);
             PortalID = Null.SetNullInteger(dr["PortalID"]);
             RoleGroupID = Null.SetNullInteger(dr["RoleGroupId"]);
@@ -327,13 +330,11 @@ namespace DotNetNuke.Security.Roles
             IconFile = Null.SetNullString(dr["IconFile"]);
 
             //New properties may not be present if called before 6.2 Upgrade has been executed
-            try
-            {
+            try {
                 IsSecurityRole = Null.SetNullBoolean(dr["IsSecurityRole"]);
 
                 var status = Null.SetNullInteger(dr["Status"]);
-                switch (status)
-                {
+                switch (status) {
                     case -1:
                         Status = RoleStatus.Pending;
                         break;
@@ -346,9 +347,7 @@ namespace DotNetNuke.Security.Roles
                 }
 
                 UserCount = Null.SetNullInteger(dr["UserCount"]);
-            }
-            catch (IndexOutOfRangeException)
-            {
+            } catch (IndexOutOfRangeException) {
                 //do nothing
             }
 
@@ -366,14 +365,11 @@ namespace DotNetNuke.Security.Roles
         /// 	[cnurse]	03/17/2008   Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public virtual int KeyID
-        {
-            get
-            {
+        public virtual int KeyID {
+            get {
                 return RoleID;
             }
-            set
-            {
+            set {
                 RoleID = value;
             }
         }
@@ -390,8 +386,7 @@ namespace DotNetNuke.Security.Roles
         /// 	[cnurse]	03/14/2008   Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public XmlSchema GetSchema()
-        {
+        public XmlSchema GetSchema() {
             return null;
         }
 
@@ -404,22 +399,16 @@ namespace DotNetNuke.Security.Roles
         /// 	[cnurse]	03/14/2008   Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public void ReadXml(XmlReader reader)
-        {
-            while (reader.Read())
-            {
-                if (reader.NodeType == XmlNodeType.EndElement)
-                {
+        public void ReadXml(XmlReader reader) {
+            while (reader.Read()) {
+                if (reader.NodeType == XmlNodeType.EndElement) {
                     break;
                 }
-                if (reader.NodeType == XmlNodeType.Whitespace)
-                {
+                if (reader.NodeType == XmlNodeType.Whitespace) {
                     continue;
                 }
-                if (reader.NodeType == XmlNodeType.Element)
-                {
-                    switch (reader.Name.ToLowerInvariant())
-                    {
+                if (reader.NodeType == XmlNodeType.Element) {
+                    switch (reader.Name.ToLowerInvariant()) {
                         case "rolename":
                             RoleName = reader.ReadElementContentAsString();
                             break;
@@ -428,8 +417,7 @@ namespace DotNetNuke.Security.Roles
                             break;
                         case "billingfrequency":
                             BillingFrequency = reader.ReadElementContentAsString();
-                            if (string.IsNullOrEmpty(BillingFrequency))
-                            {
+                            if (string.IsNullOrEmpty(BillingFrequency)) {
                                 BillingFrequency = "N";
                             }
                             break;
@@ -438,15 +426,13 @@ namespace DotNetNuke.Security.Roles
                             break;
                         case "servicefee":
                             ServiceFee = reader.ReadElementContentAsFloat();
-                            if (ServiceFee < 0)
-                            {
+                            if (ServiceFee < 0) {
                                 ServiceFee = 0;
                             }
                             break;
                         case "trialfrequency":
                             TrialFrequency = reader.ReadElementContentAsString();
-                            if (string.IsNullOrEmpty(TrialFrequency))
-                            {
+                            if (string.IsNullOrEmpty(TrialFrequency)) {
                                 TrialFrequency = "N";
                             }
                             break;
@@ -455,8 +441,7 @@ namespace DotNetNuke.Security.Roles
                             break;
                         case "trialfee":
                             TrialFee = reader.ReadElementContentAsFloat();
-                            if (TrialFee < 0)
-                            {
+                            if (TrialFee < 0) {
                                 TrialFee = 0;
                             }
                             break;
@@ -473,8 +458,7 @@ namespace DotNetNuke.Security.Roles
                             IconFile = reader.ReadElementContentAsString();
                             break;
                         case "roletype":
-                            switch (reader.ReadElementContentAsString())
-                            {
+                            switch (reader.ReadElementContentAsString()) {
                                 case "adminrole":
                                     _RoleType = RoleType.Administrator;
                                     break;
@@ -500,8 +484,7 @@ namespace DotNetNuke.Security.Roles
                             UserCount = reader.ReadContentAsInt();
                             break;
                         case "status":
-                            switch (reader.ReadElementContentAsString())
-                            {
+                            switch (reader.ReadElementContentAsString()) {
                                 case "pending":
                                     Status = RoleStatus.Pending;
                                     break;
@@ -527,8 +510,7 @@ namespace DotNetNuke.Security.Roles
         /// 	[cnurse]	03/14/2008   Created
         /// </history>
         /// -----------------------------------------------------------------------------
-        public void WriteXml(XmlWriter writer)
-        {
+        public void WriteXml(XmlWriter writer) {
             //Write start of main elemenst
             writer.WriteStartElement("role");
 
@@ -545,8 +527,7 @@ namespace DotNetNuke.Security.Roles
             writer.WriteElementString("autoassignment", AutoAssignment.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
             writer.WriteElementString("rsvpcode", RSVPCode);
             writer.WriteElementString("iconfile", IconFile);
-            switch (RoleType)
-            {
+            switch (RoleType) {
                 case RoleType.Administrator:
                     writer.WriteElementString("roletype", "adminrole");
                     break;
@@ -567,8 +548,7 @@ namespace DotNetNuke.Security.Roles
             writer.WriteElementString("issecurityrole", IsSecurityRole.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
             writer.WriteElementString("usercount", UserCount.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
 
-            switch (Status)
-            {
+            switch (Status) {
                 case RoleStatus.Pending:
                     writer.WriteElementString("status", "pending");
                     break;
@@ -585,6 +565,73 @@ namespace DotNetNuke.Security.Roles
             writer.WriteEndElement();
         }
 
+        #endregion
+
+        #region IPropertyAccess Members
+        public CacheLevel Cacheability {
+            get {
+                return CacheLevel.fullyCacheable;
+            }
+        }
+        public string GetProperty(string propertyName, string format, System.Globalization.CultureInfo formatProvider, Entities.Users.UserInfo accessingUser, Scope accessLevel, ref bool propertyNotFound) {
+            string OutputFormat = string.Empty;
+            if (format == string.Empty) {
+                OutputFormat = "g";
+            } else {
+                OutputFormat = format;
+            }
+            propertyName = propertyName.ToLowerInvariant();
+            switch (propertyName) {
+                case "roleid":
+                    return PropertyAccess.FormatString(RoleID.ToString(), format);
+                case "groupid":
+                    return PropertyAccess.FormatString(RoleID.ToString(), format);
+                case "status":
+                    return PropertyAccess.FormatString(Status.ToString(), format);
+                case "groupname":
+                    return PropertyAccess.FormatString(RoleName, format);
+                case "rolename":
+                    return PropertyAccess.FormatString(RoleName, format);
+                case "groupdescription":
+                    return PropertyAccess.FormatString(Description, format);
+                case "description":
+                    return PropertyAccess.FormatString(Description, format);
+                case "usercount":
+                    return PropertyAccess.FormatString(UserCount.ToString(), format);
+                case "street":
+                    return PropertyAccess.FormatString(GetString("Street", string.Empty), format);
+                case "city":
+                    return PropertyAccess.FormatString(GetString("City", string.Empty), format);
+                case "region":
+                    return PropertyAccess.FormatString(GetString("Region", string.Empty), format);
+                case "country":
+                    return PropertyAccess.FormatString(GetString("Country", string.Empty), format);
+                case "postalcode":
+                    return PropertyAccess.FormatString(GetString("PostalCode", string.Empty), format);
+                case "website":
+                    return PropertyAccess.FormatString(GetString("Website", string.Empty), format);
+                case "datecreated":
+                    return PropertyAccess.FormatString(CreatedOnDate.ToString(), format);
+                case "photourl":
+                    return PropertyAccess.FormatString(PhotoURL, format);
+
+
+            }
+
+            propertyNotFound = true;
+            return string.Empty;
+
+        }
+        private string GetString(string keyName, string defaultValue) {
+            if (Settings == null) {
+                return defaultValue;
+            }
+            if (Settings.ContainsKey(keyName)) {
+                return Settings[keyName];
+            } else {
+                return defaultValue;
+            }
+        }
         #endregion
     }
 }

@@ -4773,12 +4773,27 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetRolesBasicSearch]
 (
-	@PortalID int,					-- portal	
+	@PortalID int,					-- portal
 	@PageSize int,					-- page size
 	@FilterBy nvarchar(100)			-- filter field
 )
 AS
-SELECT TOP (@PageSize) * FROM {objectQualifier}Roles where rolename like '%' + @FilterBy + '%'
+BEGIN
+	SELECT TOP (@PageSize) 
+	RoleID,PortalID,RoleName,Description,ServiceFee,BillingFrequency,TrialPeriod,TrialFrequency,BillingPeriod,TrialFee,IsPublic,AutoAssignment,RoleGroupID,RSVPCode,CASE WHEN LEFT(LOWER(IconFile), 7) = 'fileid=' THEN
+			(SELECT Folder + FileName
+				FROM {databaseOwner}[{objectQualifier}Files]
+				WHERE fileid = CAST((RIGHT(LOWER(IconFile), Len(IconFile) - 7)) AS int)
+			) ELSE ''
+			END AS IconFile,
+			CreatedByUserID,CreatedOnDate,LastModifiedByUserID,LastModifiedOnDate, Status, IsSecurityRole
+	FROM {databaseOwner}[{objectQualifier}Roles]
+	WHERE RoleName LIKE '%' + @FilterBy + '%'
+	AND (PortalID = @PortalID OR (@PortalID is null))
+	ORDER BY RoleName
+END
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

@@ -1,3 +1,4 @@
 ﻿.composeMessageDialog .dnnLeft .dnnFormItem{border-bottom:solid 1px #eee;width:400px;}
 .composeMessageDialog .dnnLeft .dnnFormItem img{vertical-align:middle;float:right;}
 .composeMessageDialog .dnnLeft button{cursor:pointer;padding:0.5em 1em;border:none;}
+div.token-input-dropdown-facebook ul li img{padding-right:10px;vertical-align:middle;}
