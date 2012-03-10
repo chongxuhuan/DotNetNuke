@@ -35,11 +35,9 @@ namespace DotNetNuke.Authentication.Facebook
                 HttpContext.Current.Response.Cookies.Set(new HttpCookie("returnurl", RedirectURL) { Expires = DateTime.Now.AddMinutes(5) });
             }
 
-            if (_facebookClient.HaveVerificationCode() || _facebookClient.IsCurrentUserAuthorized())
+            if (_facebookClient.IsFacebook() && _facebookClient.HaveVerificationCode() || _facebookClient.IsCurrentUserAuthorized())
             {
-                var result = _facebookClient.Authorize();
-
-                if (result == FacebookAuthorisationResult.Authorized)
+                if (_facebookClient.Authorize() == FacebookAuthorisationResult.Authorized)
                 {
                     var user = _facebookClient.GetCurrentUser();
                     UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
@@ -88,7 +86,7 @@ namespace DotNetNuke.Authentication.Facebook
 
         private void loginButton_Click(object sender, EventArgs e)
         {
-            var result = _facebookClient.Authorize();
+            _facebookClient.Authorize();
         }
 
         #region Overrides of AuthenticationLoginBase

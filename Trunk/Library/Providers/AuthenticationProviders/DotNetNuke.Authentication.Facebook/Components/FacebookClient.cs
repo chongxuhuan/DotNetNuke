@@ -34,7 +34,7 @@ namespace DotNetNuke.Authentication.Facebook.Components
 {
     public class FacebookClient
     {
-        private const String SESSION_NAME_TOKEN = "UserFacebookToken";
+        #region Constructors
 
         public FacebookClient(int portalId)
         {
@@ -44,86 +44,37 @@ namespace DotNetNuke.Authentication.Facebook.Components
             APIKey = FacebookConfig.GetConfig(portalId).APIKey;
             APISecret = FacebookConfig.GetConfig(portalId).APISecret;
             LoginPage = new Uri(FacebookConfig.GetConfig(portalId).SiteURL);
+            SessionTokenName = "UserFacebookToken";
         }
 
-        public Uri TokenEndpoint { get; set; }
-        public Uri AuthorizationEndpoint { get; set; }
-        public Uri MeGraphEndpoint { get; set; }
-        public String APISecret { get; set; }
-        public String APIKey { get; set; }
-        
-        private Uri LoginPage { get; set; }
+        #endregion
 
-        private string VerificationCode
+        #region Protected Properties
+
+        protected string APIKey { get; set; }
+        protected string APISecret { get; set; }
+        protected Uri AuthorizationEndpoint { get; set; }
+        protected Uri LoginPage { get; set; }
+        protected Uri MeGraphEndpoint { get; set; }
+        protected string SessionToken
+        {
+            get { return HttpContext.Current.Session[SessionTokenName] as string; }
+            set { HttpContext.Current.Session[SessionTokenName] = value; }
+        }
+        protected string SessionTokenName { get; set; }
+        protected Uri TokenEndpoint { get; set; }
+        protected string VerificationCode
         {
             get { return HttpContext.Current.Request.Params["code"]; }
         }
 
-        public bool HaveVerificationCode()
-        {
-            return (VerificationCode != null);
-        }
-
-        public FacebookAuthorisationResult Authorize()
-        {
-            string errorReason = HttpContext.Current.Request.Params["error_reason"];
-            bool userDenied = (errorReason != null);
-            if (userDenied)
-            {
-                return FacebookAuthorisationResult.Denied;
-            }
-
-            if (!HaveVerificationCode())
-            {
-                string url = AuthorizationEndpoint + "?" +
-                             "client_id=" + APIKey + "&" +
-                             "redirect_uri=" + LoginPage + "&" +
-                             "scope=email";
-                HttpContext.Current.Response.Redirect(url, true);
-                return FacebookAuthorisationResult.RequestingCode;
-            }
-
-            string token = ExchangeCodeForToken(VerificationCode, LoginPage);
-            HttpContext.Current.Session[SESSION_NAME_TOKEN] = token;
-
-            return FacebookAuthorisationResult.Authorized;
-        }
-
-        public Boolean IsCurrentUserAuthorized()
-        {
-            return HttpContext.Current.Session[SESSION_NAME_TOKEN] != null;
-        }
-
-        public FacebookGraph GetCurrentUser()
-        {
-            object token = HttpContext.Current.Session[SESSION_NAME_TOKEN];
-            if (token == null)
-            {
-                return null;
-            }
-
-            string url = MeGraphEndpoint + "?" + "access_token=" + token;
-
-            WebRequest request = WebRequest.CreateDefault(new Uri(url));
-            using (WebResponse response = request.GetResponse())
-            {
-                using (Stream responseStream = response.GetResponseStream())
-                {
-                    using (var responseReader = new StreamReader(responseStream))
-                    {
-                        string responseText = responseReader.ReadToEnd();
-                        FacebookGraph user = FacebookGraph.Deserialize(responseText);
-                        return user;
-                    }
-                }
-            }
-        }
+        #endregion
 
         private String ExchangeCodeForToken(String code, Uri redirectUrl)
         {
             string url = TokenEndpoint + "?" +
                          "client_id=" + APIKey + "&" +
-                         "redirect_uri=" + redirectUrl + "&" +
+                         "redirect_uri=" + HttpContext.Current.Server.UrlEncode(redirectUrl.ToString()) + "&" +
                          "client_secret=" + APISecret + "&" +
                          "code=" + code;
 
@@ -140,6 +91,70 @@ namespace DotNetNuke.Authentication.Facebook.Components
                     }
                 }
             }
+        }
+
+        public FacebookAuthorisationResult Authorize()
+        {
+            string errorReason = HttpContext.Current.Request.Params["error_reason"];
+            bool userDenied = (errorReason != null);
+            if (userDenied)
+            {
+                return FacebookAuthorisationResult.Denied;
+            }
+
+            if (!HaveVerificationCode())
+            {
+                string url = AuthorizationEndpoint + "?" +
+                             "client_id=" + APIKey + "&" +
+                             "redirect_uri=" + HttpContext.Current.Server.UrlEncode(LoginPage.ToString()) + "&" +
+                             "state=facebook&scope=email";
+                HttpContext.Current.Response.Redirect(url, true);
+                return FacebookAuthorisationResult.RequestingCode;
+            }
+
+            SessionToken = ExchangeCodeForToken(VerificationCode, LoginPage);
+
+            return FacebookAuthorisationResult.Authorized;
+        }
+
+        public FacebookGraph GetCurrentUser()
+        {
+            if (!IsCurrentUserAuthorized())
+            {
+                return null;
+            }
+
+            string url = MeGraphEndpoint + "?" + "access_token=" + SessionToken;
+
+            WebRequest request = WebRequest.CreateDefault(new Uri(url));
+            using (WebResponse response = request.GetResponse())
+            {
+                using (Stream responseStream = response.GetResponseStream())
+                {
+                    using (var responseReader = new StreamReader(responseStream))
+                    {
+                        string responseText = responseReader.ReadToEnd();
+                        FacebookGraph user = FacebookGraph.Deserialize(responseText);
+                        return user;
+                    }
+                }
+            }
+        }
+
+        public bool HaveVerificationCode()
+        {
+            return (VerificationCode != null);
+        }
+
+        public Boolean IsCurrentUserAuthorized()
+        {
+            return !String.IsNullOrEmpty(SessionToken);
+        }
+
+        public bool IsFacebook()
+        {
+            string service = HttpContext.Current.Request.Params["state"];
+            return !String.IsNullOrEmpty(service) && service == "facebook";
         }
     }
 }

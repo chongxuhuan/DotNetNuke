@@ -89,39 +89,38 @@
             // go to the root folder by default
             self.goToFolder(data[0]);
         }
-        
+
         function getItems(callback) {
             $.get(opts.getItemsServiceUrl, {
                 fileExtensions: $wrap.data('fileExtensions')
             }, callback);
         }
-        
+
+        // fetch template, populate placeholder (i.e. $wrap)
+        $.get(templateUrl, function (data) {
+            $wrap.html(data);
+        });
+
+        // initial load and binding of the data
+        getItems(function (result) {
+            // apply bindings, scope to this instance of the plugin
+            ko.applyBindings(new fileManagerModel(result), document.getElementById($wrap.attr('id')));
+            $wrap.data('userFileManager.bound', true);
+        });
+
+        $wrap.css('display', 'none');
+
         // Parent scope is defined (e.g. body).
         // This allows us to bind event to DOM elements that are destroyed and recreated. (i.e. the "attach file" button)
-        $(opts.openTriggerScope).delegate(opts.openTriggerSelector, 'click', function(e) {
+        $(opts.openTriggerScope).delegate(opts.openTriggerSelector, 'click', function (e) {
             e.preventDefault();
 
-            if (!$wrap.data('bound')) {
-                // fetch template, populate placeholder (i.e. $wrap)
-                $.get(templateUrl, function (data) {
-                    $wrap.html(data);
-                });
-
-                // initial load and binding of the data
-                getItems(function (result) {
-                    // apply bindings, scope to this instance of the plugin
-                    ko.applyBindings(new fileManagerModel(result), document.getElementById($wrap.attr('id')));
-                    $wrap.data('bound', true);
-                });
-            }
-            else {
-                // refresh the data
-                getItems(function (result) {
-                    var boundDomElement = $wrap.get(0); // expose the underlying DOM element.
-                    var context = ko.contextFor(boundDomElement); // get our KO context
-                    context.$root.updateItems(result); // call the updateItems method
-                });
-            }
+            // refresh the data
+            getItems(function (result) {
+                var boundDomElement = $wrap.get(0); // expose the underlying DOM element.
+                var context = ko.contextFor(boundDomElement); // get our KO context
+                context.$root.updateItems(result); // call the updateItems method
+            });
 
             $wrap.dialog({
                 dialogClass: opts.dialogClass,

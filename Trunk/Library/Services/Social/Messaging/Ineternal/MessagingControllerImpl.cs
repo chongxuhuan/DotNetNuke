@@ -50,7 +50,7 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
     /// -----------------------------------------------------------------------------
     public class MessagingControllerImpl : IMessagingController
     {
-        #region constants
+        #region Constants
 
         internal const int ConstMaxTo = 2000;
         internal const int ConstMaxSubject = 400;
@@ -62,8 +62,12 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
         internal const bool ConstAscending = true;
 
         #endregion
-        
+
+        #region Private Variables
+
         private readonly IDataService _dataService;
+
+        #endregion
 
         #region Constructors
 
@@ -81,125 +85,23 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
         }
 
         #endregion
-        
+
         #region Public Methods
 
-        #region Messaging Business APIs
-
-        public MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId)
+        ///<summary>Are attachments allowed</summary>        
+        ///<returns>True or False</returns>
+        /// <param name="portalId">Portal Id</param>               
+        public virtual bool AttachmentsAllowed(int portalId)
         {
-            return CBO.FillObject<MessageRecipient>(_dataService.GetSocialMessageRecipientByMessageAndUser(messageRecipientId, userId));
+            return GetPortalSetting("MessagingAllowAttachments", portalId, "YES") == "YES";
         }
 
-        /// <summary>How long a user needs to wait before sending the next message.</summary>
-        /// <returns>Time in seconds. Returns zero if user is Host, Admin or has never sent a message.</returns>
-        /// <param name="sender">Sender's UserInfo</param>
-        /// <exception cref="System.ArgumentNullException"></exception>
-        public int WaitTimeForNextMessage(UserInfo sender)
-        {
-            Requires.NotNull("sender", sender);
-
-            var waitTime = 0;
-            // MessagingThrottlingInterval contains the number of MINUTES to wait before sending the next message
-            var interval = GetPortalSettingAsInteger("MessagingThrottlingInterval", sender.PortalID, Null.NullInteger) * 60;
-            if (interval > 0 && !IsAdminOrHost(sender))
-            {
-                var messageBoxView = GetRecentSentbox(sender.UserID, 0, 1);
-                if (messageBoxView != null && messageBoxView.TotalConversations > 0)
-                {
-                    waitTime = (int)(interval - GetDateTimeNow().Subtract(messageBoxView.Conversations.First().CreatedOnDate).TotalSeconds);
-                }
-            }
-            return waitTime < 0 ? 0 : waitTime;
-        }
-
-        #endregion
-
-        #region Easy Wrapper APIs
-
-        public void MarkRead(int conversationId, int userId)
-        {
-            _dataService.UpdateSocialMessageReadStatus(conversationId, userId, true);
-        }
-
-        public void MarkUnRead(int conversationId, int userId)
-        {
-            _dataService.UpdateSocialMessageReadStatus(conversationId, userId, false);
-        }
-
-        public void MarkArchived(int conversationId, int userId)
-        {
-            _dataService.UpdateSocialMessageArchivedStatus(conversationId, userId, true);
-        }
-
-        public void MarkUnArchived(int conversationId, int userId)
-        {
-            _dataService.UpdateSocialMessageArchivedStatus(conversationId, userId, false);
-        }
-
-        public virtual MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
-        {
-            return _dataService.GetMessageBoxView(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
-        }
-
-        public virtual MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
-        {
-            return GetInbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
-        }
-
-        public MessageBoxView GetRecentInbox(int userId)
-        {
-            return GetRecentInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize);
-        }
-
-        public virtual MessageBoxView GetRecentInbox(int userId, int pageIndex, int pageSize)
-        {
-            return GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending);
-        }
-
-        public MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
-        {
-            return _dataService.GetMessageBoxView(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Sent);
-        }
-
-        public MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
-        {
-            var messages = GetSentbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
-            return messages;
-        }
-
-        public MessageBoxView GetRecentSentbox(int userId)
-        {
-            return GetRecentSentbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize);
-        }
-
-        public virtual MessageBoxView GetRecentSentbox(int userId, int pageIndex, int pageSize)
-        {
-            return GetSentbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending);
-        }
-
-        public MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
-        {
-            return _dataService.GetMessageThread(conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
-        }
-
-        public MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords)
-        {
-            return GetMessageThread(conversationId, userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
-        }
-
-        public MessageBoxView GetArchivedMessages(int userId, int pageIndex, int pageSize)
-        {
-            var messages = GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived);
-            return messages;
-        }
-
-        public Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)
+        public virtual Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)
         {
             return CreateMessage(subject, body, roles, users, fileIDs, UserController.GetCurrentUserInfo());
         }
 
-        public Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender)
+        public virtual Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender)
         {
             if (sender == null || sender.UserID <= 0)
             {
@@ -230,7 +132,7 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
             }
 
             var sbTo = new StringBuilder();
-            bool replyAllAllowed = true;
+            var replyAllAllowed = true;
             if (roles != null)
             {
                 foreach (var role in roles.Where(role => !string.IsNullOrEmpty(role.RoleName)))
@@ -277,12 +179,11 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
             }
 
             //Profanity Filter
-            var profanityFilterSetting = PortalController.GetPortalSetting("MessagingProfanityFilters", sender.PortalID, "NO");
+            var profanityFilterSetting = GetPortalSetting("MessagingProfanityFilters", sender.PortalID, "NO");
             if (profanityFilterSetting.Equals("YES", StringComparison.InvariantCultureIgnoreCase))
             {
-                var ps = new PortalSecurity();
-                subject = ps.InputFilter(subject, PortalSecurity.FilterFlag.NoProfanity);
-                body = ps.InputFilter(body, PortalSecurity.FilterFlag.NoProfanity);
+                subject = InputFilter(subject);
+                body = InputFilter(body);
             }
 
             var message = new Message { Body = body, Subject = subject, To = sbTo.ToString().Trim(','), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName };
@@ -322,12 +223,100 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
             return message;
         }
 
-        public int ReplyMessage(int conversationId, string body, IList<int> fileIDs)
+        public virtual MessageBoxView GetArchivedMessages(int userId, int pageIndex, int pageSize)
+        {
+            return GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived);
+        }
+
+        public virtual MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
+        {
+            return GetInbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
+        }
+
+        public virtual MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
+        {
+            return _dataService.GetMessageBoxView(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
+        }
+
+        public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords)
+        {
+            return GetMessageThread(conversationId, userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
+        }
+
+        public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
+        {
+            return _dataService.GetMessageThread(conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
+        }
+
+        public virtual MessageBoxView GetRecentInbox(int userId)
+        {
+            return GetRecentInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize);
+        }
+
+        public virtual MessageBoxView GetRecentInbox(int userId, int pageIndex, int pageSize)
+        {
+            return GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending);
+        }
+
+        public virtual MessageBoxView GetRecentSentbox(int userId)
+        {
+            return GetRecentSentbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize);
+        }
+
+        public virtual MessageBoxView GetRecentSentbox(int userId, int pageIndex, int pageSize)
+        {
+            return GetSentbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending);
+        }
+
+        public virtual MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
+        {
+            return GetSentbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
+        }
+
+        public virtual MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
+        {
+            return _dataService.GetMessageBoxView(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Sent);
+        }
+
+        public virtual MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId)
+        {
+            return CBO.FillObject<MessageRecipient>(_dataService.GetSocialMessageRecipientByMessageAndUser(messageRecipientId, userId));
+        }
+
+        public virtual void MarkArchived(int conversationId, int userId)
+        {
+            _dataService.UpdateSocialMessageArchivedStatus(conversationId, userId, true);
+        }
+
+        public virtual void MarkRead(int conversationId, int userId)
+        {
+            _dataService.UpdateSocialMessageReadStatus(conversationId, userId, true);
+        }
+
+        public virtual void MarkUnArchived(int conversationId, int userId)
+        {
+            _dataService.UpdateSocialMessageArchivedStatus(conversationId, userId, false);
+        }
+
+        public virtual void MarkUnRead(int conversationId, int userId)
+        {
+            _dataService.UpdateSocialMessageReadStatus(conversationId, userId, false);
+        }
+
+        ///<summary>Maximum number of Recipients allowed</summary>        
+        ///<returns>Count. Message to a Role is considered a single Recipient. Each User in the To list is counted as one User each.</returns>
+        /// <param name="portalId">Portal Id</param>        
+        public virtual int RecipientLimit(int portalId)
+        {
+            return GetPortalSettingAsInteger("MessagingRecipientLimit", portalId, 5);
+        }
+
+        public virtual int ReplyMessage(int conversationId, string body, IList<int> fileIDs)
         {
             return ReplyMessage(conversationId, body, fileIDs, UserController.GetCurrentUserInfo());
         }
-        
-        public int ReplyMessage(int conversationId, string body, IList<int> fileIDs, UserInfo sender)
+
+        public virtual int ReplyMessage(int conversationId, string body, IList<int> fileIDs, UserInfo sender)
         {
             if (sender == null || sender.UserID <= 0)
             {
@@ -345,8 +334,15 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
                 throw new AttachmentsNotAllowed(Localization.Localization.GetString("MsgAttachmentsNotAllowed", Localization.Localization.ExceptionsResourceFile));
             }
 
+            //Profanity Filter
+            var profanityFilterSetting = GetPortalSetting("MessagingProfanityFilters", sender.PortalID, "NO");
+            if (profanityFilterSetting.Equals("YES", StringComparison.InvariantCultureIgnoreCase))
+            {
+                body = InputFilter(body);
+            }
+
             //call ReplyMessage
-            var messageId = _dataService.CreateMessageReply(conversationId, body, sender.UserID, sender.DisplayName, UserController.GetCurrentUserInfo().UserID);
+            var messageId = _dataService.CreateMessageReply(conversationId, body, sender.UserID, sender.DisplayName, GetCurrentUserInfo().UserID);
             if (messageId == -1) //Parent message was not found or Recipient was not found in the message
             {
                 throw new MessageOrRecipientNotFound(Localization.Localization.GetString("MsgMessageOrRecipientNotFound", Localization.Localization.ExceptionsResourceFile));
@@ -363,40 +359,36 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
 
             return messageId;
         }
-        
-        ///<summary>Are attachments allowed</summary>        
-        ///<returns>True or False</returns>
-        /// <param name="portalId">Portal Id</param>               
-        public bool AttachmentsAllowed(int portalId)
-        {
-            return GetPortalSetting("MessagingAllowAttachments", portalId, "YES") == "YES";
-        }
 
-        ///<summary>Maximum number of Recipients allowed</summary>        
-        ///<returns>Count. Message to a Role is considered a single Recipient. Each User in the To list is counted as one User each.</returns>
-        /// <param name="portalId">Portal Id</param>        
-        public int RecipientLimit(int portalId)
+        /// <summary>How long a user needs to wait before sending the next message.</summary>
+        /// <returns>Time in seconds. Returns zero if user is Host, Admin or has never sent a message.</returns>
+        /// <param name="sender">Sender's UserInfo</param>
+        /// <exception cref="System.ArgumentNullException"></exception>
+        public virtual int WaitTimeForNextMessage(UserInfo sender)
         {
-            return GetPortalSettingAsInteger("MessagingRecipientLimit", portalId, 5);
+            Requires.NotNull("sender", sender);
+
+            var waitTime = 0;
+            // MessagingThrottlingInterval contains the number of MINUTES to wait before sending the next message
+            var interval = GetPortalSettingAsInteger("MessagingThrottlingInterval", sender.PortalID, Null.NullInteger) * 60;
+            if (interval > 0 && !IsAdminOrHost(sender))
+            {
+                var messageBoxView = GetRecentSentbox(sender.UserID, 0, 1);
+                if (messageBoxView != null && messageBoxView.TotalConversations > 0)
+                {
+                    waitTime = (int)(interval - GetDateTimeNow().Subtract(messageBoxView.Conversations.First().CreatedOnDate).TotalSeconds);
+                }
+            }
+            return waitTime < 0 ? 0 : waitTime;
         }
 
         #endregion
 
         #region Internal Methods
 
-        internal virtual bool IsAdminOrHost(UserInfo userInfo)
+        internal virtual UserInfo GetCurrentUserInfo()
         {
-            return userInfo.IsSuperUser || userInfo.IsInRole(TestablePortalSettings.Instance.AdministratorRoleName);
-        }
-
-        internal virtual int GetPortalSettingAsInteger(string key, int portalId, int defaultValue)
-        {
-            return PortalController.GetPortalSettingAsInteger(key, portalId, defaultValue);
-        }
-
-        internal virtual string GetPortalSetting(string settingName, int portalId, string defaultValue)
-        {
-            return PortalController.GetPortalSetting(settingName, portalId, defaultValue);
+            return UserController.GetCurrentUserInfo();
         }
 
         internal virtual DateTime GetDateTimeNow()
@@ -404,7 +396,26 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
             return DateTime.Now;
         }
 
-        #endregion
+        internal virtual string GetPortalSetting(string settingName, int portalId, string defaultValue)
+        {
+            return PortalController.GetPortalSetting(settingName, portalId, defaultValue);
+        }
+
+        internal virtual int GetPortalSettingAsInteger(string key, int portalId, int defaultValue)
+        {
+            return PortalController.GetPortalSettingAsInteger(key, portalId, defaultValue);
+        }
+
+        internal virtual string InputFilter(string input)
+        {
+            var ps = new PortalSecurity();
+            return ps.InputFilter(input, PortalSecurity.FilterFlag.NoProfanity);
+        }
+
+        internal virtual bool IsAdminOrHost(UserInfo userInfo)
+        {
+            return userInfo.IsSuperUser || userInfo.IsInRole(TestablePortalSettings.Instance.AdministratorRoleName);
+        }
 
         #endregion
     }
