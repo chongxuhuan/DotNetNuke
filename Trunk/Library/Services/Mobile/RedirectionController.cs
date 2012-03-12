@@ -580,10 +580,15 @@ namespace DotNetNuke.Services.Mobile
                 int targetPortalId = int.Parse(redirection.TargetValue.ToString());
                 if (targetPortalId != portalId) //ensure it's not redirecting to itself
                 {
-                    var portalSettings = new PortalSettings(targetPortalId);                   
-                    if (portalSettings.HomeTabId != Null.NullInteger && portalSettings.HomeTabId != currentTabId) //ensure it's not redirecting to itself
+                    //check whethter the target portal still exists
+                    var portalController = new PortalController();
+                    if (portalController.GetPortals().Cast<PortalInfo>().Any(p => p.PortalID == targetPortalId))
                     {
-                        redirectUrl = GetPortalHomePageUrl(portalSettings);
+                        var portalSettings = new PortalSettings(targetPortalId);
+                        if (portalSettings.HomeTabId != Null.NullInteger && portalSettings.HomeTabId != currentTabId) //ensure it's not redirecting to itself
+                        {
+                            redirectUrl = GetPortalHomePageUrl(portalSettings);
+                        }
                     }
                 }
             }
