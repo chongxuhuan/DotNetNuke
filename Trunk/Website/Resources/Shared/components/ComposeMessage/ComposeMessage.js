@@ -5,7 +5,7 @@
             html,
             composeMessageDialog,
             canSend = false,
-            users = [],
+            users = opts.users,
             roles = [],
             attachments = [];
 
@@ -49,7 +49,6 @@
             }).done(function (data) { returnValue = data; });
             return returnValue;
         };
-
         function updateSendButtonStatus() {
             var sendButton = composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane button:first');
             if ((users.length > 0 || roles.length > 0) && composeMessageDialog.find('#subject').val().trim().length > 0 && canSend) {
@@ -58,16 +57,15 @@
                 sendButton.attr('disabled', 'disabled').addClass('disabled');
             }
         }
-
         $wrap.delegate(opts.openTriggerSelector, 'click', function (e) {
             e.preventDefault();
-
+            e.stopPropagation();
+            
             var autoclose,
                 messageId = -1;
 
             // Reset variable values
             canSend = false;
-            users = [];
             roles = [];
             attachments = [];
 
@@ -96,6 +94,7 @@
                 hintText: '',
                 noResultsText: opts.noResultsText,
                 searchingText: opts.searchingText,
+                prePopulate: opts.prePopulatedUsers,
                 onAdd: function (item) {
                     if (item.id.startsWith("user-")) {
                         users.push(item.id.substring(5));
@@ -106,12 +105,15 @@
                 },
                 onDelete: function (item) {
                     var array = item.id.startsWith("user-") ? users : roles,
-                    id = item.id.substring(5),
-                    index = $.inArray(id, array);
+                        id = item.id.substring(5),
+                        index = $.inArray(id, array);
 
                     if (index !== -1) {
                         array.splice(index, 1);
                     }
+                    updateSendButtonStatus();
+                },
+                onReady: function () {
                     updateSendButtonStatus();
                 }
             });
@@ -152,6 +154,7 @@
                         canSend = true;
                         sendButton.attr('disabled', 'disabled').addClass('disabled');
                     }
+                    updateSendButtonStatus();
                 },
                 buttons: [
                     {
@@ -233,7 +236,9 @@
         autoOpen: false,
         showAttachments: false,
         msgSentAutoCloseTimeout: 3000,
-        userFileManagerOptions: {}
+        userFileManagerOptions: {},
+        users: [],
+        prePopulatedUsers: []
     };
 
 } (jQuery));
