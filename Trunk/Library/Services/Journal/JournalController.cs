@@ -10,6 +10,9 @@ using DotNetNuke.Common.Utilities;
 using System.Data;
 using DotNetNuke.Security;
 using System.Web;
+using DotNetNuke.Security.Roles.Internal;
+using DotNetNuke.Security.Roles;
+using DotNetNuke.Entities.Users;
 
 namespace DotNetNuke.Services.Journal {
     public class JournalController {
@@ -41,6 +44,9 @@ namespace DotNetNuke.Services.Journal {
         }
         public List<JournalItem> ListForSummary(int PortalId, int CurrentUserId, int RowIndex, int MaxRows) {
             return CBO.FillCollection<JournalItem>(_DataService.Journal_ListForSummary(PortalId, CurrentUserId, RowIndex, MaxRows));
+        }
+        public List<JournalItem> ListForGroup(int PortalId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows) {
+            return CBO.FillCollection<JournalItem>(_DataService.Journal_ListForGroup(PortalId, CurrentUserId, GroupId, RowIndex, MaxRows));
         }
         public JournalItem Journal_Get(int PortalId, int CurrentUserId, int JournalId) {
             return (JournalItem)CBO.FillObject(_DataService.Journal_Get(PortalId, CurrentUserId, JournalId), typeof(JournalItem));
@@ -77,6 +83,13 @@ namespace DotNetNuke.Services.Journal {
             return Journal_Save(ji, TabId);
         }
         public JournalItem Journal_Save(JournalItem objJournalItem, int TabId) {
+            if (objJournalItem.UserId < 1) {
+                return null;
+            }
+            UserInfo currentUser = UserController.GetUser(objJournalItem.PortalId, objJournalItem.UserId, false, true);
+            if (currentUser == null) {
+                return null;
+            }
             JournalDataService jds = new JournalDataService();
             string xml = null;
             PortalSecurity portalSecurity = new PortalSecurity();
@@ -145,6 +158,19 @@ namespace DotNetNuke.Services.Journal {
             }
             if (!objJournalItem.SecuritySet.Contains("U" + objJournalItem.UserId.ToString())) {
                 objJournalItem.SecuritySet += "U" + objJournalItem.UserId.ToString() + ",";
+            }
+            if (objJournalItem.SocialGroupId > 0) {
+                RoleInfo role = TestableRoleController.Instance.GetRole(objJournalItem.PortalId, r => r.IsSecurityRole == false && r.RoleID == objJournalItem.SocialGroupId);
+                if (role != null) {
+                    if (currentUser.IsInRole(role.RoleName)) {
+                        objJournalItem.SecuritySet += "R" + objJournalItem.SocialGroupId.ToString() + ",";
+                        if (!role.IsPublic) {
+                            objJournalItem.SecuritySet = objJournalItem.SecuritySet.Replace("E,", String.Empty);
+                        }
+                    }
+                    
+                }
+
             }
             objJournalItem.JournalId = jds.Journal_Save(objJournalItem.PortalId, objJournalItem.UserId, objJournalItem.ProfileId, objJournalItem.SocialGroupId,
                     objJournalItem.JournalId, objJournalItem.JournalTypeId, objJournalItem.Title, objJournalItem.Summary, objJournalItem.Body, journalData, xml, 

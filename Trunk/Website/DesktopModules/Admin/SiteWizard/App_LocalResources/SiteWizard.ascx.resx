@@ -12,7 +12,7 @@
     
     Example:
     
-    ... ado.net/XML headers && schema ...
+    ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
@@ -142,10 +142,7 @@
 				also already on your site).
 		</value>
   </data>
-  <data name="TemplateDetail.Text" xml:space="preserve">
-    <value>Build your site from a template (below)</value>
-  </data>
-  <data name="MergeDetail.Text" xml:space="preserve">
+  <data name="lblMergeModule.Help" xml:space="preserve">
     <value>Choose how to deal with duplicate Modules (Modules that are in the Template and also already on your site).</value>
   </data>
   <data name="Ignore.Text" xml:space="preserve">
@@ -265,5 +262,20 @@
   </data>
   <data name="EditOnly.Text" xml:space="preserve">
     <value>This module is only available for users who have been given Edit permission.  Please contact the site administrator if you think you should have this permission.</value>
+  </data>
+  <data name="lblMergeModule.Text" xml:space="preserve">
+    <value>How to deal with duplicate Modules</value>
+  </data>
+  <data name="lblTemplateList.Help" xml:space="preserve">
+    <value>You can select a template which you want to build the site with.</value>
+  </data>
+  <data name="lblTemplateList.Text" xml:space="preserve">
+    <value>Template List</value>
+  </data>
+  <data name="lblTemplateMessage.Help" xml:space="preserve">
+    <value>If you want to rebuild your site with a template, please select this checkbox.</value>
+  </data>
+  <data name="lblTemplateMessage.Text" xml:space="preserve">
+    <value>Build your site from a template</value>
   </data>
 </root>

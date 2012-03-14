@@ -29,6 +29,7 @@ namespace DotNetNuke.Framework
         private static TContract _instance;
 // ReSharper disable StaticFieldInGenericType
         private static bool _isInitialized;
+        private static readonly object Lock = new object();
 // ReSharper restore StaticFieldInGenericType
 
         protected static Func<TContract> Factory { get; set; }
@@ -40,18 +41,22 @@ namespace DotNetNuke.Framework
         {
             get
             {
-                //ignore potential races
-                //it is not a big deal if two instances are occaisionally created
                 if (!_isInitialized)
                 {
-                    if (Factory == null)
+                    lock(Lock)
                     {
-                        var controllerInstance = new TSelf();
-                        Factory = controllerInstance.GetFactory();
-                    }
+                        if (!_isInitialized)
+                        {
+                            if (Factory == null)
+                            {
+                                var controllerInstance = new TSelf();
+                                Factory = controllerInstance.GetFactory();
+                            }
 
-                    _instance = Factory();
-                    _isInitialized = true;
+                            _instance = Factory();
+                            _isInitialized = true;
+                        }
+                    }
                 }
 
                 return _instance;

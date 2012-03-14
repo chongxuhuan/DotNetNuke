@@ -491,7 +491,7 @@ namespace DotNetNuke.Web.UI.WebControls
                     if (!string.IsNullOrEmpty(Host.HelpURL))
                     {
                         var version = Globals.FormatVersion(DotNetNukeContext.Current.Application.Version, false);
-                        returnValue = Globals.FormatHelpUrl(Host.HelpURL, PortalSettings, version);
+                        returnValue = Globals.FormatHelpUrl(Host.HelpURL, PortalSettings, "Home", version);
                     }
                     break;
 

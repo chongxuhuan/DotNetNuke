@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Web;
 
@@ -36,12 +37,19 @@ namespace DotNetNuke.HttpModules.Services.Internal
 
         public bool SupportBasicAuth
         {
-            get { return true; }
+            get { return !IsXHRequest(); }
         }
 
         public bool SupportDigestAuth
         {
-            get { return true; }
+            get { return !IsXHRequest(); }
+        }
+
+        private bool IsXHRequest()
+        {
+            string header = _context.Request.Headers.Get("X-REQUESTED-WITH");
+            return !String.IsNullOrEmpty(header) &&
+                   header.Equals("XmlHttpRequest", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public bool IsStale

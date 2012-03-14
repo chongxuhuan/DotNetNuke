@@ -23,6 +23,7 @@ using System.Web.Routing;
 using System.Web.UI;
 using DotNetNuke.Common;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.Web.Client.ClientResourceManagement;
 
@@ -78,8 +79,17 @@ namespace DotNetNuke.Framework
         public void RegisterAjaxScript(Page page)
         {
             jQuery.RequestRegistration();
-            
-            var path = Common.Globals.ApplicationPath;
+
+            var path = TestablePortalController.Instance.GetCurrentPortalSettings().PortalAlias.HTTPAlias;
+            int index = path.IndexOf('/');
+            if (index > 0)
+            {
+                path = path.Substring(index);
+            }
+            else
+            {
+                path = "/";
+            }
             path = path.EndsWith("/") ? path : path + "/";
             ClientAPI.RegisterClientVariable(page, "sf_siteRoot", path, /*overwrite*/ true);
             ClientAPI.RegisterClientVariable(page, "sf_tabId", PortalSettings.Current.ActiveTab.TabID.ToString(CultureInfo.InvariantCulture), /*overwrite*/ true);

@@ -89,12 +89,12 @@ a.TreeMenu_Node:active, a.TreeMenu_NodeSelected:active{text-decoration:none;colo
 .StandardButton{padding-right:5px;padding-left:5px;font-weight:normal;font-size:11px;background:#ddd;color:#000;}
 
 /* GENERIC */
-h1, h2{ font-size: 20px;font-weight: normal;color: #664;}
-h3, h4{ font-size: 12px;font-weight: normal;color: #036;}
-h5, h6, dt{ font-size: 11px;font-weight: normal;color: #036;}
+h1, h2{font:20px normal #664}
+h3, h4{font:12px normal #036}
+h5, h6, dt{font:11px bold #036}
 
 tfoot, thead{font-size:12px;color:#036;}
-th{vertical-align:baseline;font-size: 12px;font-weight: bold;color: #036;}
+th{vertical-align:baseline;font:12px bold #036;}
 img{border: none;}
 a:link, a:visited, a:active{text-decoration:none;color:#036;}
 	a:hover{text-decoration:underline;color:#f00;}

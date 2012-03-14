@@ -1949,7 +1949,16 @@ namespace DotNetNuke.Entities.Portals
             DataCache.ClearHostCache(true);
         }
 
-	    #region Public Static Methods
+        /// <summary>
+        /// Gets the current portal settings.
+        /// </summary>
+        /// <returns>portal settings.</returns>
+        PortalSettings IPortalController.GetCurrentPortalSettings()
+        {
+            return GetCurrentPortalSettings();
+        }
+
+        #region Public Static Methods
 
         /// <summary>
         /// Adds the portal dictionary.

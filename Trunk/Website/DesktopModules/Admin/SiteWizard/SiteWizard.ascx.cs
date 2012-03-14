@@ -217,7 +217,7 @@ namespace DotNetNuke.Modules.Admin.Portals
         {
             lstTemplate.Enabled = chkTemplate.Checked;
             optMerge.Enabled = chkTemplate.Checked;
-            lblMergeTitle.Enabled = chkTemplate.Checked;
+            //lblMergeModule.Enabled = chkTemplate.Checked;
             lblMergeWarning.Enabled = chkTemplate.Checked;
             lblTemplateMessage.Text = "";
         }
@@ -249,11 +249,11 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             try
             {
-                Wizard.StartNextButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/rt.gif\" border=\"0\" /> " + Localization.GetString("Next", LocalResourceFile);
-                Wizard.StepNextButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/rt.gif\" border=\"0\" /> " + Localization.GetString("Next", LocalResourceFile);
-                Wizard.StepPreviousButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("Previous", LocalResourceFile);
-                Wizard.FinishPreviousButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("Previous", LocalResourceFile);
-                Wizard.FinishCompleteButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/save.gif\" border=\"0\" /> " + Localization.GetString("Finish", LocalResourceFile);
+                Wizard.StartNextButtonText = Localization.GetString("Next", LocalResourceFile);
+                Wizard.StepNextButtonText = Localization.GetString("Next", LocalResourceFile);
+                Wizard.StepPreviousButtonText = Localization.GetString("Previous", LocalResourceFile);
+                Wizard.FinishPreviousButtonText = Localization.GetString("Previous", LocalResourceFile);
+                Wizard.FinishCompleteButtonText = Localization.GetString("Finish", LocalResourceFile);
                 if (!Page.IsPostBack)
                 {
                     //Get Templates for Page 1
@@ -272,8 +272,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                     txtKeyWords.Text = objPortal.KeyWords;
 
                     //Get Details for Page 5
-                    urlLogo.Url = objPortal.LogoFile;
-                    urlLogo.FileFilter = Globals.glbImageFileTypes;
+                    ctlLogo.FilePath = objPortal.LogoFile;
+                    ctlLogo.FileFilter = Globals.glbImageFileTypes;
 
                     UseTemplate();
                 }
@@ -438,7 +438,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             objPortal.Description = txtDescription.Text;
             objPortal.KeyWords = txtKeyWords.Text;
             objPortal.PortalName = txtPortalName.Text;
-            objPortal.LogoFile = urlLogo.Url;
+            objPortal.LogoFile = String.Format("FileID={0}", ctlLogo.FileID);
             objPortalController.UpdatePortalInfo(objPortal);
 
             //Set Portal Skin
@@ -448,6 +448,8 @@ namespace DotNetNuke.Modules.Admin.Portals
             //Set Portal Container
             SkinController.SetSkin(SkinController.RootContainer, PortalId, SkinType.Portal, ctlPortalContainer.SkinSrc);
             SkinController.SetSkin(SkinController.RootContainer, PortalId, SkinType.Admin, ctlPortalContainer.SkinSrc);
+
+            Response.Redirect(Globals.NavigateURL(objPortal.HomeTabId), true);
         }
 
         /// -----------------------------------------------------------------------------

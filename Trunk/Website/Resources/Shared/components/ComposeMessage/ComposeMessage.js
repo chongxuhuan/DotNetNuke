@@ -5,7 +5,7 @@
             html,
             composeMessageDialog,
             canSend = false,
-            users = opts.users,
+            users = [],
             roles = [],
             attachments = [];
 
@@ -60,18 +60,19 @@
         $wrap.delegate(opts.openTriggerSelector, 'click', function (e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             var autoclose,
                 messageId = -1;
 
             // Reset variable values
             canSend = false;
+            users = [];
             roles = [];
             attachments = [];
 
             composeMessageDialog = $("<div class='composeMessageDialog dnnForm dnnClear'/>").html(html).dialog(opts);
 
-            if (!$wrap.data('fileManagerInitialized')) {
+            if (opts.showAttachments && !$wrap.data('fileManagerInitialized')) {
                 // we only need to initialize this plugin once, doing so more than once will lead to multiple dialogs.
                 // this is because the #userFileManager element is never destroyed when the compose message dialog is closed.
                 composeMessageDialog.find('#userFileManager').userFileManager(opts.userFileManagerOptions);
@@ -94,7 +95,6 @@
                 hintText: '',
                 noResultsText: opts.noResultsText,
                 searchingText: opts.searchingText,
-                prePopulate: opts.prePopulatedUsers,
                 onAdd: function (item) {
                     if (item.id.startsWith("user-")) {
                         users.push(item.id.substring(5));
@@ -112,15 +112,21 @@
                         array.splice(index, 1);
                     }
                     updateSendButtonStatus();
-                },
-                onReady: function () {
-                    updateSendButtonStatus();
                 }
             });
 
             composeMessageDialog.find('#subject').keyup(function () {
                 updateSendButtonStatus();
             });
+
+            var prePopulatedRecipients = opts.onPrePopulate(this);
+
+            if (prePopulatedRecipients != null) {
+                var to = composeMessageDialog.find('#to');
+                $.each(prePopulatedRecipients, function (index, value) {
+                    to.tokenInput("add", value);
+                });
+            }
 
             composeMessageDialog.dialog({
                 minWidth: 650,
@@ -154,7 +160,10 @@
                         canSend = true;
                         sendButton.attr('disabled', 'disabled').addClass('disabled');
                     }
-                    updateSendButtonStatus();
+                    
+                    if (prePopulatedRecipients != null) {
+                        composeMessageDialog.find('#subject').focus();
+                    }
                 },
                 buttons: [
                     {
@@ -235,10 +244,22 @@
         dialogClass: 'dnnFormPopup dnnClear',
         autoOpen: false,
         showAttachments: false,
+        onPrePopulate: function (target) {
+            // params
+            //     target: Is the element which raised the click event that opens the dialog
+            // returns
+            //     An array of objects with 2 properties:
+            //         id: an string with a prefix based on the type of recipient ("user-" for users and "role-" for roles) and a suffix with the user/role identifier
+            //         name: the displayname in case of users and rolename in case of roles
+            // example
+            //     var context = ko.contextFor(this);
+            //     var prePopulatedRecipients = [{ id: "user-" + context.$data.UserId(), name: context.$data.DisplayName() }];
+            //     return prePopulatedRecipients;
+
+            return null;
+        },
         msgSentAutoCloseTimeout: 3000,
-        userFileManagerOptions: {},
-        users: [],
-        prePopulatedUsers: []
+        userFileManagerOptions: {}
     };
 
 } (jQuery));

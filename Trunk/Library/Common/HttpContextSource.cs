@@ -26,14 +26,26 @@ namespace DotNetNuke.Common
     /// </summary>
     public class HttpContextSource
     {
-        static HttpContextBase _fakeContext;
+        private static HttpContextBase _fakeContext;
 
         /// <summary>
         /// Gets the current HttpContext
         /// </summary>
         public static HttpContextBase Current
         {
-            get { return _fakeContext ?? new HttpContextWrapper(HttpContext.Current); }
+            get
+            {
+                if (_fakeContext != null)
+                {
+                    return _fakeContext;
+                }
+
+                if (HttpContext.Current != null)
+                {
+                    return new HttpContextWrapper(HttpContext.Current);
+                }
+                return null;
+            }
         }
 
         /// <summary>

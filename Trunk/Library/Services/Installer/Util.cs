@@ -51,7 +51,7 @@ namespace DotNetNuke.Services.Installer
     {
         #region Constants
 
-// ReSharper disable InconsistentNaming
+        // ReSharper disable InconsistentNaming
         public const string DEFAULT_MANIFESTEXT = ".manifest";
         public static string ASSEMBLY_Added = GetLocalizedString("ASSEMBLY_Added");
         public static string ASSEMBLY_InUse = GetLocalizedString("ASSEMBLY_InUse");
@@ -169,11 +169,11 @@ namespace DotNetNuke.Services.Installer
         public static string WRITER_SavedFile = GetLocalizedString("WRITER_SavedFile");
         public static string WRITER_SaveFileError = GetLocalizedString("WRITER_SaveFileError");
         public static string REGEX_Version = "\\d{2}.\\d{2}.\\d{2}";
-// ReSharper restore InconsistentNaming
+        // ReSharper restore InconsistentNaming
         #endregion
 
-		#region "Private Shared Methods"
-		
+        #region "Private Shared Methods"
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// The StreamToStream method reads a source stream and wrtites it to a destination stream
@@ -190,7 +190,7 @@ namespace DotNetNuke.Services.Installer
             int count;
             do
             {
-				//Read the chunk from the source
+                //Read the chunk from the source
                 count = sourceStream.Read(buf, 0, 1024);
 
                 //Write the chunk to the destination
@@ -215,22 +215,22 @@ namespace DotNetNuke.Services.Installer
             {
                 if (isRequired)
                 {
-					//Log Error
+                    //Log Error
                     log.AddFailure(logmessage);
                 }
                 else
                 {
-					//Use Default
+                    //Use Default
                     propValue = defaultValue;
                 }
             }
             return propValue;
         }
-        
+
         #endregion
 
-		#region Public Shared Methods
-		
+        #region Public Shared Methods
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// The BackupFile method backs up a file to the backup folder
@@ -252,7 +252,7 @@ namespace DotNetNuke.Services.Installer
             {
                 Directory.CreateDirectory(installFile.BackupPath);
             }
-			
+
             //Copy file to backup location
             RetryableAction.RetryEverySecondFor30Seconds(() => FileSystemUtils.CopyFile(fullFileName, backupFileName), "Backup file " + fullFileName);
             log.AddInfo(string.Format(FILE_CreateBackup, installFile.FullName));
@@ -280,7 +280,7 @@ namespace DotNetNuke.Services.Installer
                 log.AddInfo(string.Format(FOLDER_Created, filePath));
                 Directory.CreateDirectory(filePath);
             }
-			
+
             //Copy file from temp location
             RetryableAction.RetryEverySecondFor30Seconds(() => FileSystemUtils.CopyFile(installFile.TempFileName, fullFileName), "Copy file to " + fullFileName);
 
@@ -357,7 +357,7 @@ namespace DotNetNuke.Services.Installer
             if ((strExtension == "dnn" || whiteList.IsAllowedExtension(strExtension) || packageWhiteList.Contains(strExtension) ||
                  (packageWhiteList.Contains("*dataprovider") && strExtension.EndsWith("dataprovider"))))
             {
-				//Install File is Valid
+                //Install File is Valid
                 return true;
             }
 
@@ -395,13 +395,13 @@ namespace DotNetNuke.Services.Installer
             if (!string.IsNullOrEmpty(returnUrl))
             {
                 parameters[1] = "returnUrl=" + returnUrl;
-            } 
+            }
             if (!string.IsNullOrEmpty(type))
             {
                 parameters[2] = "ptype=" + type;
             }
             var context = new ModuleInstanceContext();
-            return context.NavigateUrl(tabId, "Install", false, parameters);            
+            return context.NavigateUrl(tabId, "Install", false, parameters);
         }
 
         public static string InstallURL(int tabId, string returnUrl, string type, string package)
@@ -456,13 +456,13 @@ namespace DotNetNuke.Services.Installer
 
             return context.NavigateUrl(context.TabId, "PackageWriter", true, parameters);
         }
-        
+
         public static string ParsePackageIconFileName(PackageInfo package)
         {
             var filename = string.Empty;
-            if ((package.IconFile !=null) && (package.PackageType == "Module" || package.PackageType == "Auth_System" || package.PackageType == "Container" || package.PackageType == "Skin"))
+            if ((package.IconFile != null) && (package.PackageType == "Module" || package.PackageType == "Auth_System" || package.PackageType == "Container" || package.PackageType == "Skin"))
             {
-                filename = package.IconFile.StartsWith("~/" + package.FolderName) ? package.IconFile.Remove(0, ("~/" + package.FolderName).Length).TrimStart('/'): package.IconFile;
+                filename = package.IconFile.StartsWith("~/" + package.FolderName) ? package.IconFile.Remove(0, ("~/" + package.FolderName).Length).TrimStart('/') : package.IconFile;
             }
             return filename;
         }
@@ -491,11 +491,11 @@ namespace DotNetNuke.Services.Installer
         {
             return ValidateNode(nav.GetAttribute(attributeName, ""), isRequired, log, logmessage, defaultValue);
         }
-		
-		#endregion
 
-		#region ReadElement
-	
+        #endregion
+
+        #region ReadElement
+
         public static string ReadElement(XPathNavigator nav, string elementName)
         {
             return ValidateNode(XmlUtils.GetNodeValue(nav, elementName), false, null, "", "");
@@ -572,23 +572,7 @@ namespace DotNetNuke.Services.Installer
         /// -----------------------------------------------------------------------------
         public static void WriteStream(Stream sourceStream, string destFileName)
         {
-            WriteStream(sourceStream, destFileName, null);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// The WriteStream reads a source stream and writes it to a destination file
-        /// </summary>
-        /// <param name="sourceStream">The Source Stream</param>
-        /// <param name="destFileName">The Destination file</param>
-        /// <param name="lastWriteTime">Last Write Time of the file.</param>
-        /// <history>
-        /// 	[cnurse]	08/03/2007  created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        public static void WriteStream(Stream sourceStream, string destFileName, DateTime? lastWriteTime)
-        {
-			//Delete the file
+            //Delete the file
             FileSystemUtils.DeleteFile(destFileName);
 
             var file = new FileInfo(destFileName);
@@ -602,13 +586,8 @@ namespace DotNetNuke.Services.Installer
 
             //Close the stream
             fileStrm.Close();
-
-            if(lastWriteTime != null)
-            {
-                File.SetLastWriteTimeUtc(destFileName, lastWriteTime.Value);
-            }
         }
-		
-		#endregion
+
+        #endregion
     }
 }

@@ -74,7 +74,8 @@ namespace DotNetNuke.Web.CoreServices
         {
             var portalId = PortalController.GetEffectivePortalId(PortalSettings.PortalId);
             var isAdmin = UserInfo.IsSuperUser || UserInfo.IsInRole("Administrators");
-            var numResults = 10;
+            const int numResults = 10;
+
             // GetUsersAdvancedSearch doesn't accept a comma or a single quote in the query so we have to remove them for now. See issue 20224.
             q = q.Replace(",", "").Replace("'", "");
             if (q.Length == 0) return Json(null, JsonRequestBehavior.AllowGet);
@@ -83,20 +84,12 @@ namespace DotNetNuke.Web.CoreServices
                 .Select(user => new SearchResult { id = "user-" + user.UserID, name = user.DisplayName }).ToList();
 
             var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, numResults, q);
-            foreach (var ri in roles)
-            {
-                if (String.IsNullOrEmpty(ri.IconFile))
-                {
-                    results.Add(new SearchResult {id = "role-" + ri.RoleID, name = ri.RoleName, iconfile = "/images/no_avatar.gif"});
-
-                }
-                else
-                {
-                    results.Add(new SearchResult {id = "role-" + ri.RoleID, name = ri.RoleName, iconfile = PortalSettings.HomeDirectory + "/" + ri.IconFile});
-                }
-                // .Select(role => new SearchResult { id = "role-" + role.RoleID, name = role.RoleName,iconfile=role.IconFile }).ToList();
-            }
-           // results.AddRange(roles);
+            results.AddRange(roles.Select(ri => new SearchResult
+                                                    {
+                                                        id = "role-" + ri.RoleID,
+                                                        name = ri.RoleName,
+                                                        iconfile = string.IsNullOrEmpty(ri.IconFile) ? "/images/no_avatar.gif" : PortalSettings.HomeDirectory + "/" + ri.IconFile
+                                                    }));
 
             return Json(results.OrderBy(sr => sr.name), JsonRequestBehavior.AllowGet);
         }
@@ -109,10 +102,10 @@ namespace DotNetNuke.Web.CoreServices
             // ReSharper disable InconsistentNaming
             // ReSharper disable NotAccessedField.Local
             public string id;
-            // ReSharper restore NotAccessedField.Local
             public string name;
-            // ReSharper restore InconsistentNaming
             public string iconfile;
+            // ReSharper restore NotAccessedField.Local
+            // ReSharper restore InconsistentNaming
         }
     }
 }

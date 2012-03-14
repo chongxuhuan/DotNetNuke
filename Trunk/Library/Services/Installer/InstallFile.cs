@@ -517,7 +517,7 @@ namespace DotNetNuke.Services.Installer
         private void ReadZip(ZipInputStream unzip, ZipEntry entry)
         {
             ParseFileName(entry.Name);
-            Util.WriteStream(unzip, TempFileName, entry.DateTime);
+            Util.WriteStream(unzip, TempFileName);
         }
 		
 		#endregion

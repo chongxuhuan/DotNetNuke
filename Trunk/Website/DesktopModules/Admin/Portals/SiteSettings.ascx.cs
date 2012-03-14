@@ -106,15 +106,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
             portalAliasModeButtonList.Select(portalAliasMapping, false);
 
-            if (portalAliasMapping.ToUpperInvariant() == "NONE")
-            {
-                defaultAliasRow.Visible = false;
-            }
-            else
-            {
-                defaultAliasRow.Visible = true;
-                BindDefaultAlias(aliases);
-            }
+            BindDefaultAlias(aliases);
 
             //Auto Add Portal Alias
             if (new PortalController().GetPortals().Count > 1)
@@ -1090,14 +1082,15 @@ namespace DotNetNuke.Modules.Admin.Portals
                     PortalController.UpdatePortalSetting(_portalId, "paypalsubscriptionreturn", txtPayPalReturnURL.Text, false);
                     PortalController.UpdatePortalSetting(_portalId, "paypalsubscriptioncancelreturn", txtPayPalCancelURL.Text, false);
                     PortalController.UpdatePortalSetting(_portalId, "TimeZone", cboTimeZone.SelectedValue, false);
-                    PortalController.UpdatePortalSetting(_portalId, "PortalAliasMapping", portalAliasModeButtonList.SelectedValue, false);
-                    PortalController.UpdatePortalSetting(_portalId, "DefaultPortalAlias", defaultAliasDropDown.SelectedValue, false);
-                    HostController.Instance.Update("AutoAddPortalAlias", chkAutoAddPortalAlias.Checked ? "Y" : "N", true);
 
                     new FavIcon(_portalId).Update(ctlFavIcon.FileID);
 
                     if (IsSuperUser())
                     {
+                        PortalController.UpdatePortalSetting(_portalId, "PortalAliasMapping", portalAliasModeButtonList.SelectedValue, false);
+                        PortalController.UpdatePortalSetting(_portalId, "DefaultPortalAlias", defaultAliasDropDown.SelectedValue, false);
+                        HostController.Instance.Update("AutoAddPortalAlias", chkAutoAddPortalAlias.Checked ? "Y" : "N", true);
+
                         PortalController.UpdatePortalSetting(_portalId, "SSLEnabled", chkSSLEnabled.Checked.ToString(), false);
                         PortalController.UpdatePortalSetting(_portalId, "SSLEnforced", chkSSLEnforced.Checked.ToString(), false);
                         PortalController.UpdatePortalSetting(_portalId, "SSLURL", AddPortalAlias(txtSSLURL.Text, _portalId), false);

@@ -272,6 +272,12 @@ namespace DotNetNuke.Entities.Portals
         /// </history>
         /// -----------------------------------------------------------------------------
         void UpdatePortalInfo(PortalInfo portal);
+
+        /// <summary>
+        /// Gets the current portal settings.
+        /// </summary>
+        /// <returns>portal settings.</returns>
+        PortalSettings GetCurrentPortalSettings();
     }
 }
         

@@ -45,8 +45,8 @@ namespace DotNetNuke.Services.Journal {
         public IDataReader Journal_ListForProfile(int PortalId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows) {
             return provider.ExecuteReader("Journal_ListForProfile", PortalId, CurrentUserId, ProfileId, RowIndex, MaxRows);
         }
-        public IDataReader Journal_ListForGroup(int PortalId, int CurrentUserId, int SocialGroupId, int JournalTypeId, int RowIndex, int MaxRows) {
-            return provider.ExecuteReader("Journal_ListForGroup", PortalId, CurrentUserId, -1, SocialGroupId, JournalTypeId, RowIndex, MaxRows);
+        public IDataReader Journal_ListForGroup(int PortalId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows) {
+            return provider.ExecuteReader("Journal_ListForGroup", PortalId, CurrentUserId, GroupId, RowIndex, MaxRows);
         }
         public void Journal_Delete(int JournalId) {
             provider.ExecuteNonQuery("Journal_Delete", JournalId);

@@ -33,7 +33,7 @@ namespace DotNetNuke.Services.Journal {
 
         IDataReader Journal_ListForSummary(int PortalId, int CurrentUserId, int RowIndex, int MaxRows);
         IDataReader Journal_ListForProfile(int PortalId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows);
-        IDataReader Journal_ListForGroup(int PortalId, int CurrentUserId, int SocialGroupId, int JournalTypeId, int RowIndex, int MaxRows);
+        IDataReader Journal_ListForGroup(int PortalId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows);
         void Journal_Delete(int JournalId);
         IDataReader Journal_Get(int PortalId, int CurrentUserId, int JournalId);
         int Journal_Save(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalId, int JournalTypeId, string Title, string Summary,

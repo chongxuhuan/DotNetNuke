@@ -1,10 +1,17 @@
 <%@ Control Inherits="DotNetNuke.Modules.Admin.Portals.SiteWizard" Language="C#" AutoEventWireup="false" EnableViewState="True" CodeFile="SiteWizard.ascx.cs" %>
+<%@ Register TagPrefix="dnn" Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" %>
 <%@ Register TagPrefix="dnn" TagName="Skin" Src="~/controls/SkinThumbNailControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="url" Src="~/controls/UrlControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="label" Src="~/controls/LabelControl.ascx" %>
-<asp:Wizard ID="Wizard" runat="server" DisplaySideBar="false" ActiveStepIndex="0" StartNextButtonType="Link" StepNextButtonType="Link" StepPreviousButtonType="Link" FinishPreviousButtonType="Link" FinishCompleteButtonType="Link" CssClass="dnnSiteWizard dnnClear">
+<asp:Wizard ID="Wizard" runat="server" DisplaySideBar="false" ActiveStepIndex="0" 
+    StartNextButtonType="Link" StepNextButtonType="Link" StepPreviousButtonType="Link" FinishPreviousButtonType="Link"
+     FinishCompleteButtonType="Link" CssClass="dnnSiteWizard dnnClear">
     <StepStyle VerticalAlign="Top" />
-    <NavigationButtonStyle />
+    <CancelButtonStyle CssClass="dnnSecondaryAction" />
+    <StartNextButtonStyle CssClass="dnnPrimaryAction" />
+    <StepNextButtonStyle CssClass="dnnPrimaryAction" />
+    <FinishCompleteButtonStyle CssClass="dnnPrimaryAction" />
+    <StepPreviousButtonStyle CssClass="dnnSecondaryAction"></StepPreviousButtonStyle>
     <HeaderTemplate>
         <h2><% =Localization.GetString(Wizard.ActiveStep.Title + ".Title", LocalResourceFile)%></h2>
         <div class="dnnFormMessage dnnFormInfo">
@@ -15,16 +22,23 @@
         <asp:WizardStep ID="wizIntroduction" runat="server" Title="Introduction" StepType="Start" AllowReturn="false" />
         <asp:WizardStep ID="wizTemplate" runat="server" Title="Template">
             <div class="dnnForm dnnSiteWizardStep2 dnnClear">
-                <asp:CheckBox ID="chkTemplate" runat="server" AutoPostBack="True" resourcekey="TemplateDetail" />
-                <div class="dnnFormItem"><asp:ListBox ID="lstTemplate" runat="server" Rows="8" Width="350" AutoPostBack="True" /></div>
-                <asp:Label ID="lblTemplateMessage" runat="server" />
+                <div class="dnnFormItem">
+                    <dnn:Label ID="lblTemplateMessage" runat="server" ControlName="chkTemplate" />
+                    <asp:CheckBox ID="chkTemplate" runat="server" AutoPostBack="True" />
+                </div>
+                <div class="dnnFormItem">
+                    <dnn:Label ID="lblTemplateList" runat="server" ControlName="lstTemplate" />
+                    <asp:ListBox ID="lstTemplate" runat="server" Rows="8" Width="350" AutoPostBack="True" />
+                </div>
                 <div class="dnnFormItem dnnSWMergeModules">
-                    <asp:Label ID="lblMergeTitle" runat="server" resourcekey="MergeDetail" />    
+                    <dnn:Label ID="lblMergeModule" runat="server" ControlName="optMerge" />    
                     <asp:RadioButtonList ID="optMerge" CssClass="dnnFormRadioButtons" runat="server" RepeatDirection="Horizontal">
                         <asp:ListItem Value="Ignore" resourcekey="Ignore" Selected="true"></asp:ListItem>
                         <asp:ListItem Value="Replace" resourcekey="Replace"></asp:ListItem>
                         <asp:ListItem Value="Merge" resourcekey="Merge"></asp:ListItem>
                     </asp:RadioButtonList>
+                </div>
+                <div class="dnnFormItem">
                     <asp:Label ID="lblMergeWarning" runat="server" resourcekey="MergeWarning" CssClass="dnnFormMessage dnnFormValidationSummary" />
                 </div>
             </div>
@@ -52,15 +66,15 @@
                 </div>
                 <div class="dnnFormItem">
                     <dnn:label ID="lblDescription" runat="server" ControlName="txtDescription" />
-                    <asp:TextBox ID="txtDescription" runat="server" Width="300" MaxLength="475" Rows="3" TextMode="MultiLine" />
+                    <asp:TextBox ID="txtDescription" runat="server" Width="50%" MaxLength="475" Rows="3" TextMode="MultiLine" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:label ID="lblKeyWords" runat="server" ControlName="txtKeyWords" />
-                    <asp:TextBox ID="txtKeyWords" runat="server" Width="300" MaxLength="475" Rows="3" TextMode="MultiLine" />
+                    <asp:TextBox ID="txtKeyWords" runat="server" Width="50%" MaxLength="475" Rows="3" TextMode="MultiLine" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:label ID="lblLogo" runat="server" ControlName="urlLogo" />
-                    <div class="dnnLeft"><dnn:url ID="urlLogo" runat="server" ShowLog="False" ShowTabs="False" ShowUrls="False" ShowTrack="false" Required="false" /></div>
+                    <dnn:DnnFilePicker ID="ctlLogo" runat="server" Required="False" ShowUpLoad="False" />
                 </div>
             </div>
         </asp:WizardStep>

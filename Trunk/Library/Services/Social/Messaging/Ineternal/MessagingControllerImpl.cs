@@ -212,13 +212,21 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
             }
 
             //send message to each User - this should be called after CreateSocialMessageRecipientsForRole.
-            if (users != null)
+            if (users == null)
             {
-                foreach (var recipient in from user in users where GetSocialMessageRecipient(message.MessageID, user.UserID) == null select new MessageRecipient { MessageID = message.MessageID, UserID = user.UserID, Read = false, RecipientID = Null.NullInteger })
-                {
-                    _dataService.SaveSocialMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
-                }
+                users = new List<UserInfo>();
             }
+
+            //add sender as a recipient of the message
+            users.Add(sender);
+
+            foreach (var recipient in from user in users where GetSocialMessageRecipient(message.MessageID, user.UserID) == null select new MessageRecipient { MessageID = message.MessageID, UserID = user.UserID, Read = false, RecipientID = Null.NullInteger })
+            {
+                _dataService.SaveSocialMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
+            }
+
+            // Mark the conversation as read by the sender of the message.
+            MarkRead(message.MessageID, sender.UserID);
 
             return message;
         }
@@ -356,6 +364,9 @@ namespace DotNetNuke.Services.Social.Messaging.Ineternal
                     _dataService.SaveSocialMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
                 }
             }
+
+            // Mark reply as read by the sender
+            MarkRead(conversationId, sender.UserID);
 
             return messageId;
         }

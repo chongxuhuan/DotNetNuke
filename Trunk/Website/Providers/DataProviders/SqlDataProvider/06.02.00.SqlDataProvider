@@ -2991,6 +2991,9 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_LikeList]') AND type in (N'P', N'PC'))
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_LikeList]
 GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_ListForGroup]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForGroup]
+GO
 
 SET ANSI_NULLS ON
 GO
@@ -2998,6 +3001,52 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForGroup]
+@PortalId int,
+@CurrentUserId int,
+@GroupId int,
+@RowIndex int,
+@MaxRows int
+AS
+DECLARE @EndRow int
+SET @EndRow = @RowIndex + @MaxRows;
+
+DECLARE @j TABLE(id int IDENTITY, journalid int, datecreated datetime)
+INSERT INTO @j 
+	SELECT j.journalid, jt.datecreated from (
+		SELECT DISTINCT js.JournalId from {databaseOwner}[{objectQualifier}Journal] as j
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js ON js.JournalId = j.JournalId
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId ,1) as t ON t.seckey = js.SecurityKey AND js.SecurityKey = 'R' + CAST(@GroupId as nvarchar(100))
+			WHERE j.PortalId = @PortalId
+		) as j INNER JOIN {databaseOwner}[{objectQualifier}Journal] jt ON jt.JournalId = j.JournalId AND jt.PortalId = @PortalId
+		ORDER BY jt.DateCreated DESC, jt.JournalId DESC;
+
+
+WITH journalItems  AS
+(
+	SELECT	j.JournalId,
+			ROW_NUMBER() OVER (ORDER BY j.JournalId DESC) AS RowNumber
+	FROM	{databaseOwner}[{objectQualifier}Journal] as j INNER JOIN @j as jtmp ON jtmp.JournalId = j.JournalId
+	WHERE j.PortalId = @PortalId
+)
+SELECT	j.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated, j.PortalId,
+			j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey,
+			"JournalOwner" = '<entity><id>' + CAST(p.UserId as nvarchar(150)) + '</id><name>' + p.DisplayName + '</name></entity>',
+			"JournalAuthor" = CASE WHEN ISNULL(a.UserId,-1) >0 THEN '<entity><id>' + CAST(a.UserId as nvarchar(150)) + '</id><name>' + a.DisplayName + '</name></entity>' ELSE '' END,
+			"JournalOwnerId" = ISNULL(j.ProfileId,j.UserId),
+			 jt.Icon, jt.JournalType,
+			"Profile" = CASE WHEN j.ProfileId > 0 THEN '<entity><id>' + CAST(p.UserID as nvarchar(150)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>' ELSE '' END,
+			jd.JournalXML, j.ContentItemId, j.ItemData, RowNumber
+FROM	journalItems as ji INNER JOIN 
+	{databaseOwner}[{objectQualifier}Journal] as j ON j.JournalId = ji.JournalId INNER JOIN
+	{databaseOwner}[{objectQualifier}Journal_Types] as jt ON jt.JournalTypeId = j.JournalTypeId LEFT OUTER JOIN
+			{databaseOwner}[{objectQualifier}Journal_Data] as jd on jd.JournalId = j.JournalId LEFT OUTER JOIN
+            {databaseOwner}[{objectQualifier}Users] AS p ON j.ProfileId = p.UserID LEFT OUTER JOIN
+            {databaseOwner}[{objectQualifier}Users] AS a ON j.UserId = a.UserID
+WHERE	RowNumber BETWEEN @RowIndex AND @EndRow
+ORDER BY RowNumber ASC;
+
+GO
 
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForSummary]
@@ -3728,11 +3777,9 @@ AS
 BEGIN
 
 --Cannot return thread if user was not a recipient
-IF NOT EXISTS (SELECT RecipientID FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE UserID = @UserID) BEGIN --was the user a sender
-	IF NOT EXISTS (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE SenderUserID = @UserID) BEGIN
-	    SELECT 0
-	    RETURN
-	END
+IF NOT EXISTS (SELECT RecipientID FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE UserID = @UserID) BEGIN
+	SELECT 0
+	RETURN
 END
 
 --Return Unread message count
@@ -3766,7 +3813,7 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 			mr.[CreatedByUserID], mr.[CreatedOnDate],
 			mr.[LastModifiedByUserID], mr.[LastModifiedOnDate],
 			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageAttachments WHERE MessageID = mr.MessageID) AS AttachmentCount,
-			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE MessageID = mr.MessageID) AS NewThreadCount,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = m.ConversationID) AND UserID = @UserID AND [READ] = 0) AS NewThreadCount,
 			ROW_NUMBER() OVER(ORDER BY
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN mr.[CreatedOnDate] END ASC,
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN mr.[CreatedOnDate] END DESC,
@@ -3777,7 +3824,7 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 				) AS RowNumber
 	FROM	{databaseOwner}{objectQualifier}SocialMessageRecipients AS mr
 	INNER JOIN {databaseOwner}{objectQualifier}SocialMessages AS m ON mr.MessageID = m.MessageID
-	WHERE (mr.UserID = @UserID OR m.SenderUserID = @UserID)
+	WHERE mr.UserID = @UserID
 	AND ConversationID = @ConversationID
 )
 

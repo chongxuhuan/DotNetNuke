@@ -77,7 +77,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 		private string GetLinkClickURL(ref DialogParams dialogParams, ref string link)
 		{
 			link = GetLinkUrl(ref dialogParams, link);
-			return "http://" + this.Context.Request.Url.Host + DotNetNuke.Common.Globals.LinkClick(link, dialogParams.TabId, dialogParams.ModuleId, true, false, dialogParams.PortalId, dialogParams.EnableUrlLanguage, dialogParams.PortalGuid);
+
+			return GetDomain() + Globals.LinkClick(link, dialogParams.TabId, dialogParams.ModuleId, true, false, dialogParams.PortalId, dialogParams.EnableUrlLanguage, dialogParams.PortalGuid);
 
 		}
 
@@ -186,6 +187,15 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			return fullTableContent.ToString();
 		}
 
+        private string GetDomain()
+        {
+            var scheme = Context.Request.Url.Scheme;
+            var host = Context.Request.Url.Host;
+            var port = Context.Request.Url.IsDefaultPort ? string.Empty : ":" + Context.Request.Url.Port;
+            
+            return string.Format("{0}://{1}{2}", scheme, host, port);
+        }
+
 #endregion
 
 #region Public Methods
@@ -281,7 +291,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 								FileInfo savedFile = _fileController.GetFileById(Int32.Parse(fileID), dialogParams.PortalId);
 
 								linkTrackingInfo = _urlController.GetUrlTracking(dialogParams.PortalId, string.Format("fileID={0}", fileID), dialogParams.ModuleId);
-								dialogParams.LinkClickUrl = string.Format("{0}{1}{2}{3}/{4}", "http://", this.Context.Request.Url.Host, dialogParams.HomeDirectory, savedFile.Folder, savedFile.FileName).Replace("//", "/");
+								dialogParams.LinkClickUrl = string.Format("{0}{1}{2}/{3}", GetDomain(), dialogParams.HomeDirectory, savedFile.Folder, savedFile.FileName).Replace("//", "/");
 							}
 							else
 							{

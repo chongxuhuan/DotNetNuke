@@ -267,7 +267,7 @@ namespace DotNetNuke.Security.Roles {
 
         public string PhotoURL {
             get {
-                string photoURL = Globals.ApplicationPath + "/images/1x1.gif";
+                string photoURL = Globals.ApplicationPath + "/images/sample-group-profile.jpg";
 
                 if ((IconFile != null)) {
                     if (!string.IsNullOrEmpty(IconFile)) {

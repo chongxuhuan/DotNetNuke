@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -17,16 +18,37 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
+
 #endregion
-using System;
 
 namespace DotNetNuke.UI.Skins.Controls
 {
+    using System;
+
     public partial class jQuery : SkinObjectBase
     {
+        public bool DnnjQueryPlugins { get; set; }
+        public bool jQueryHoverIntent { get; set; }
+        public bool jQueryUI { get; set; }
+
         protected override void OnInit(EventArgs e)
         {
             Framework.jQuery.RequestRegistration();
+
+            if (jQueryUI)
+            {
+                Framework.jQuery.RequestUIRegistration();
+            }
+
+            if (DnnjQueryPlugins)
+            {
+                Framework.jQuery.RequestDnnPluginsRegistration();
+            }
+
+            if (jQueryHoverIntent)
+            {
+                Framework.jQuery.RequestHoverIntentRegistration();
+            }
         }
     }
 }

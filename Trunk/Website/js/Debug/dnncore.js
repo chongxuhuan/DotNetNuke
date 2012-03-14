@@ -44,7 +44,7 @@ function __dnn_KeyDown(iKeyCode, sFunc, e)
 function __dnn_bodyscroll() 
 {
 	var oF=document.forms[0];	
-	if (__dnn_ClientAPIEnabled() && __dnn_m_bPageLoaded)
+	if (__dnn_ClientAPIEnabled() && __dnn_m_bPageLoaded && typeof(oF.ScrollTop) != 'undefined')
 		oF.ScrollTop.value=document.documentElement.scrollTop ? document.documentElement.scrollTop : dnn.dom.getByTagName("body")[0].scrollTop;
 }
 
