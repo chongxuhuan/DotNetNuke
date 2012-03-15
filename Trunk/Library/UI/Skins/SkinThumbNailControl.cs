@@ -233,7 +233,7 @@ namespace DotNetNuke.UI.Skins
                 case "default":
                     return strSkinFolder;
                 default:
-                    return strSkinFolder + " - " + strSkinFile;
+                    return string.Format("<span class=\"NormalBold\">{0} - {1}</span>", strSkinFolder, strSkinFile);
             }
         }
 

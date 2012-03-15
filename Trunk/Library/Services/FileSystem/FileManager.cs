@@ -46,6 +46,54 @@ namespace DotNetNuke.Services.FileSystem
     /// </summary>
     public class FileManager : ComponentBase<IFileManager, FileManager>, IFileManager
     {
+        #region Properties
+
+        private IDictionary<string, string> _contentTypes;
+
+        protected IDictionary<string, string> ContentTypes
+        {
+            get
+            {
+                if(_contentTypes == null)
+                {
+                    _contentTypes = new Dictionary<string, string>();
+                    _contentTypes.Add("txt", "text/plain");
+                    _contentTypes.Add("htm", "text/html");
+                    _contentTypes.Add("html", "text/html");
+                    _contentTypes.Add("rtf", "text/richtext");
+                    _contentTypes.Add("jpg", "image/jpeg");
+                    _contentTypes.Add("jpeg", "image/jpeg");
+                    _contentTypes.Add("gif", "image/gif");
+                    _contentTypes.Add("bmp", "image/bmp");
+                    _contentTypes.Add("png", "image/png");
+                    _contentTypes.Add("ico", "image/x-icon");
+                    _contentTypes.Add("mp3", "audio/mpeg");
+                    _contentTypes.Add("wma", "audio/x-ms-wma");
+                    _contentTypes.Add("mpg", "video/mpeg");
+                    _contentTypes.Add("mpeg", "video/mpeg");
+                    _contentTypes.Add("avi", "video/avi");
+                    _contentTypes.Add("mp4", "video/mp4");
+                    _contentTypes.Add("wmv", "video/x-ms-wmv");
+                    _contentTypes.Add("pdf", "application/pdf");
+                    _contentTypes.Add("doc", "application/msword");
+                    _contentTypes.Add("dot", "application/msword");
+                    _contentTypes.Add("docx", "application/msword");
+                    _contentTypes.Add("dotx", "application/msword");
+                    _contentTypes.Add("csv", "text/csv");
+                    _contentTypes.Add("xls", "application/x-msexcel");
+                    _contentTypes.Add("xlt", "application/x-msexcel");
+                    _contentTypes.Add("xlsx", "application/x-msexcel");
+                    _contentTypes.Add("xltx", "application/x-msexcel");
+                    _contentTypes.Add("ppt", "application/vnd.ms-powerpoint");
+                    _contentTypes.Add("pps", "application/vnd.ms-powerpoint");
+                    _contentTypes.Add("pptx", "application/vnd.ms-powerpoint");
+                    _contentTypes.Add("ppsx", "application/vnd.ms-powerpoint");
+                }
+
+                return _contentTypes;
+            }
+        }
+        #endregion
         #region Constants
 
         private const int BufferSize = 4096;
@@ -348,79 +396,8 @@ namespace DotNetNuke.Services.FileSystem
 
             Requires.NotNullOrEmpty("extension", extension);
 
-            string contentType;
-
-            switch (extension.TrimStart('.').ToLower())
-            {
-                case "txt":
-                    contentType = "text/plain";
-                    break;
-                case "htm":
-                case "html":
-                    contentType = "text/html";
-                    break;
-                case "rtf":
-                    contentType = "text/richtext";
-                    break;
-                case "jpg":
-                case "jpeg":
-                    contentType = "image/jpeg";
-                    break;
-                case "gif":
-                    contentType = "image/gif";
-                    break;
-                case "bmp":
-                    contentType = "image/bmp";
-                    break;
-                case "png":
-                    contentType = "image/png";
-                    break;
-                case "ico":
-                    contentType = "image/x-icon";
-                    break;
-                case "mp3":
-                    contentType = "audio/mpeg";
-                    break;
-                case "wma":
-                    contentType = "audio/x-ms-wma";
-                    break;
-                case "mpg":
-                case "mpeg":
-                    contentType = "video/mpeg";
-                    break;
-                case "avi":
-                    contentType = "video/avi";
-                    break;
-                case "mp4":
-                    contentType = "video/mp4";
-                    break;
-                case "wmv":
-                    contentType = "video/x-ms-wmv";
-                    break;
-                case "pdf":
-                    contentType = "application/pdf";
-                    break;
-                case "doc":
-                case "dot":
-                case "docx":
-                case "dotx":
-                    contentType = "application/msword";
-                    break;
-                case "csv":
-                    contentType = "text/csv";
-                    break;
-                case "xls":
-                case "xlt":
-                case "xlsx":
-                case "xltx":
-                    contentType = "application/x-msexcel";
-                    break;
-                default:
-                    contentType = "application/octet-stream";
-                    break;
-            }
-
-            return contentType;
+            var key = extension.TrimStart('.').ToLowerInvariant();
+            return ContentTypes.ContainsKey(key) ? ContentTypes[key] : "application/octet-stream";
         }
 
         /// <summary>

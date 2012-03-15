@@ -609,7 +609,7 @@ namespace DotNetNuke.Common.Utilities
             try
             {
                 memStream = new MemoryStream();
-                byte[] fileDataBytes = Encoding.ASCII.GetBytes(fileData);
+                byte[] fileDataBytes = Encoding.UTF8.GetBytes(fileData);
                 memStream.Write(fileDataBytes, 0, fileDataBytes.Length);
                 memStream.Flush();
                 memStream.Position = 0;

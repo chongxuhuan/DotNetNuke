@@ -1012,9 +1012,10 @@ namespace DotNetNuke.Entities.Tabs
                                updatedTab.CultureCode);
 
             //Update Tags
+            var terms = updatedTab.Terms;
             ITermController termController = Util.GetTermController();
             termController.RemoveTermsFromContent(updatedTab);
-            foreach (Term term in updatedTab.Terms)
+            foreach (var term in terms)
             {
                 termController.AddTermToContent(term, updatedTab);
             }

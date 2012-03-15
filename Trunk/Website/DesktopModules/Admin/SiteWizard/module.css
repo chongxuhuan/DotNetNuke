@@ -7,3 +7,5 @@
 .dnnSiteWizardStep5 .urlControl label{text-align:left;font-weight:normal;}
 	.dnnForm input[type="checkbox"]{width:auto;}		
 .dnnSiteWizard .dnnFormMessage.dnnFormHelpContent{max-width:100%;}
+.dnnSiteWizard .SkinList img{ margin-left: 24px;}
+.dnnSiteWizard .SkinList td{ vertical-align: top;}
