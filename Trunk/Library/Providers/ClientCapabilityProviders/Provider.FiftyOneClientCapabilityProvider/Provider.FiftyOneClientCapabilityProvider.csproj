@@ -168,6 +168,9 @@
       <Name>DotNetNuke.Library</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\Provider.resx" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <Extension>zip</Extension>

@@ -1095,7 +1095,7 @@ namespace DotNetNuke.Common
             var uri = new Uri(originalUrl);
             var aliasUri = new Uri(httpAlias);
 
-            if (uri.Port != 80)
+            if (!uri.IsDefaultPort)
             {
                 httpAlias = AddHTTP(aliasUri.Host + ":" + uri.Port + aliasUri.LocalPath);
             }

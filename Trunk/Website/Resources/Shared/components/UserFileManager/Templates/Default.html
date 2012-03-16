@@ -3,12 +3,8 @@
         <div class="fm-breadcrumb">
         <p>
           <span data-bind="foreach: currentBreadcrumbs">
-            <!-- ko if: id === $root.chosenFolderId() -->
-            <span data-bind="text: name"></span>
-            <!-- /ko -->
-            <!-- ko if: id !== $root.chosenFolderId() -->
-            <a href="#" data-bind="text: name, click: $root.goToFolder"></a> /
-            <!-- /ko -->
+            <span data-bind="visible: id === $root.chosenFolderId(), text: name"></span>
+            <span data-bind="visible: id !== $root.chosenFolderId()"><a href="#" data-bind="text: name, click: $root.goToFolder"></a> /</span>
           </span>
         </p>
         </div>

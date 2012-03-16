@@ -12,7 +12,9 @@ using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Modules.MobileManagement.Presenters;
 using DotNetNuke.Modules.MobileManagement.Views;
 using DotNetNuke.Modules.MobileManagement.ViewModels;
+using DotNetNuke.Services.ClientCapability;
 using DotNetNuke.Services.Mobile;
+using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.Web.Mvp;
 using System.Linq;
@@ -50,6 +52,12 @@ namespace DotNetNuke.Modules.MobileManagement
                     optSimpleAdvanced.SelectedValue = Model.ModeType;
                 }
 			}
+
+            var extraMessage = ClientCapabilityProvider.Instance().ExtraMessage;
+            if (!string.IsNullOrEmpty(extraMessage))
+            {
+                UI.Skins.Skin.AddModuleMessage(this, extraMessage, ModuleMessage.ModuleMessageType.RedError);
+            }
 
             dvRedirectionsGrid.Visible = (Model.Redirections.Count > 0);
             ClientAPI.RegisterClientVariable(Page, "ActionCallback", ClientAPI.GetCallbackEventReference(this, "[ACTIONTOKEN]", "success", "this", "error"), true);

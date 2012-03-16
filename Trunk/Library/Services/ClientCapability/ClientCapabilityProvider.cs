@@ -32,6 +32,32 @@ namespace DotNetNuke.Services.ClientCapability
 {
     public abstract class ClientCapabilityProvider : IClientCapabilityProvider
     {
+        #region Virtual Properties
+
+        /// <summary>
+        /// Support detect the device whether is a tablet.
+        /// </summary>
+        public virtual bool SupportTabletDetect
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual string ExtraMessage
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        #endregion
+
         #region Abstract Methods
         /// <summary>
         ///   Returns ClientCapability based on userAgent

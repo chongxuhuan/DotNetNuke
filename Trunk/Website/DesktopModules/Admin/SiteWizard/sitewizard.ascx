@@ -74,7 +74,7 @@
                 </div>
                 <div class="dnnFormItem">
                     <dnn:label ID="lblLogo" runat="server" ControlName="urlLogo" />
-                    <dnn:DnnFilePicker ID="ctlLogo" runat="server" Required="False" ShowUpLoad="False" />
+                    <dnn:DnnFilePicker ID="ctlLogo" runat="server" Required="False" />
                 </div>
             </div>
         </asp:WizardStep>

@@ -322,7 +322,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
         private IDictionary<int, TabInfo> BuildData(int portalID)
         {
             IDictionary<int, TabInfo> tabsWithModule = TabCtrl.GetTabsByPackageID(portalID, PackageID, false);
-            TabCollection allPortalTabs = TabCtrl.GetTabsByPortal(PortalId);
+            TabCollection allPortalTabs = TabCtrl.GetTabsByPortal(portalID);
             IDictionary<int, TabInfo> tabsInOrder = new Dictionary<int, TabInfo>();
 
 			//must get each tab, they parent may not exist

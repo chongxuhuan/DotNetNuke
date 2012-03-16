@@ -24,8 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.Linq;
-using DotNetNuke.Common;
+
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
@@ -84,9 +83,6 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                 case MessageReadStatus.UnRead:
                     read = false;
                     break;
-                case MessageReadStatus.Any:
-                    read = null;
-                    break;
             }
 
             switch (archivedStatus)
@@ -96,9 +92,6 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                     break;
                 case MessageArchivedStatus.UnArchived:
                     archived = false;
-                    break;
-                case MessageArchivedStatus.Any:
-                    archived = null;
                     break;
             }
 
@@ -110,12 +103,9 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                 case MessageSentStatus.Sent:
                     sent = true;
                     break;
-                case MessageSentStatus.Any:
-                    sent = null;
-                    break;
             }
 
-            IDataReader dr = _provider.ExecuteReader("GetMessageConversations", userId, pageIndex, pageSize, sortColumn, sortAscending, read, archived, sent);
+            var dr = _provider.ExecuteReader("GetMessageConversations", userId, pageIndex, pageSize, sortColumn, sortAscending, read, archived, sent);
 
             try
             {
@@ -144,7 +134,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         {
             var messageThreadsView = new MessageThreadsView();
 
-            IDataReader dr = _provider.ExecuteReader("GetMessageThread", conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending);
+            var dr = _provider.ExecuteReader("GetMessageThread", conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending);
 
             try
             {
@@ -270,11 +260,9 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                     var attachment = new MessageFileView
                                          {
                                              Name = file.FileName,
-                                             Size = file.Size.ToString(CultureInfo.InvariantCulture), //TODO pretty print size
+                                             Size = file.Size.ToString(CultureInfo.InvariantCulture),
                                              Url = FileManager.Instance.GetUrl(file)
                                          };
-
-
 
                     attachments.Add(attachment);
                 }

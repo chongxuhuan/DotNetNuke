@@ -224,6 +224,7 @@ namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
                 if ((HttpContext.Current != null))
                 {
                     HttpResponse response = HttpContext.Current.Response;
+                    response.StatusCode = 500;
                     HtmlUtils.WriteHeader(response, "SQL Exception");
 
                     string strMessage = SqlUtils.TranslateSQLException(exc);

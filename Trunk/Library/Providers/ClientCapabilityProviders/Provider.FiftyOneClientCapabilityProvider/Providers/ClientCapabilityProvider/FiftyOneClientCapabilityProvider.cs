@@ -26,10 +26,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using DotNetNuke.Common;
+using DotNetNuke.Services.Localization;
+
 using FiftyOne.Foundation.Mobile.Detection;
 using System.Web;
 using FiftyOne.Foundation.Mobile;
 using DotNetNuke.Services.ClientCapability;
+
+using FiftyOne.Foundation.UI;
 
 #endregion
 
@@ -40,6 +44,9 @@ namespace FiftyOne.Services.ClientCapability
     /// </summary>
     public class FiftyOneClientCapabilityProvider : DotNetNuke.Services.ClientCapability.ClientCapabilityProvider
     {
+        #region Properties
+        private const string ResourceFileRelativePath = "~/DesktopModules/Admin/FiftyOneClientCapabilityProvider/App_LocalResources/Provider.resx";
+        #endregion
         #region Constructors
 
         /// <summary>
@@ -179,6 +186,33 @@ namespace FiftyOne.Services.ClientCapability
         public override IQueryable<IClientCapability> GetAllClientCapabilities()
         {
             return AllCapabilities;
+        }
+
+        #endregion
+
+        #region Override Properties
+
+        public override bool SupportTabletDetect
+        {
+            get
+            {
+                return DataProvider.IsPremium;
+            }
+        }
+
+        public override string ExtraMessage
+        {
+            get
+            {
+                if (!DataProvider.IsPremium)
+                {
+                    return Localization.GetString("ExtraMessage", ResourceFileRelativePath); ;
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
         }
 
         #endregion

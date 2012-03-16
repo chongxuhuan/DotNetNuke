@@ -150,6 +150,7 @@
     <Compile Include="Common\Utilities\DataCache.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Common\Utilities\DateUtils.cs" />
     <Compile Include="Common\Utilities\FileExtensionWhitelist.cs" />
     <Compile Include="Common\Utilities\FileSystemUtils.cs" />
     <Compile Include="Common\Utilities\HtmlUtils.cs">

@@ -9,11 +9,10 @@
             roles = [],
             attachments = [];
 
-        opts.serviceurlbase = $wrap.dnnSF().getServiceRoot('CoreServices') + 'MessagingService.ashx/';
+        opts.serviceurlbase = opts.servicesFramework.getServiceRoot('CoreServices') + 'MessagingService.ashx/';
 
         //construct the form
-        html = "<div class='ThrottlingWarning dnnFormMessage dnnFormWarning'>" + opts.throttlingText + "</div>";
-        html += "<fieldset>";
+        html = "<fieldset>";
         html += "<div class='dnnFormItem'><label for='to'>" + opts.toText + "</label><input type='text' id='to' name='to'/></div>";
         html += "<div class='dnnFormItem'><label for='subject'>" + opts.subjectText + "</label><input type='text' id='subject' name='subject' maxlength='400'/></div>";
         html += "<div class='dnnFormItem'><label for='bodytext'>" + opts.messageText + "</label><textarea rows='2' cols='20' id='bodytext' name='bodytext'/></div>";
@@ -45,7 +44,8 @@
             var returnValue = 0;
             $.ajax({
                 url: opts.serviceurlbase + "WaitTimeForNextMessage",
-                async: false
+                async: false,
+                cache: false // Important. IE is caching this call, so we need to explicitly set it to false
             }).done(function (data) { returnValue = data; });
             return returnValue;
         };
@@ -129,38 +129,42 @@
             }
 
             composeMessageDialog.dialog({
-                minWidth: 650,
+                minWidth: 550,
                 modal: true,
                 resizable: false,
                 open: function () {
                     composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane :button').removeClass().addClass('dnnTertiaryAction');
-                    composeMessageDialog.find('.ThrottlingWarning').hide();
                     messageId = -1;
 
                     canSend = false;
                     var sendButton = composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane button:first');
                     var timeForNextMessage = getWaitTimeForNextMessage();
                     if (timeForNextMessage > 0) {
-                        composeMessageDialog.find('.ThrottlingWarning').show().text(opts.throttlingText + ' ' + timeForNextMessage + ' sec');
+                        var throttlingMessage = $('<div/>')
+                            .addClass('ThrottlingWarning dnnFormMessage dnnFormWarning')
+                            .text(opts.throttlingText + ' ' + timeForNextMessage + ' sec');
+
+                        composeMessageDialog.prepend(throttlingMessage);
+
                         sendButton.attr('disabled', 'disabled').addClass('disabled');
                         var countdown = setInterval(function () {
                             timeForNextMessage--;
                             if (timeForNextMessage == 0) {
                                 canSend = true;
-                                composeMessageDialog.find('.ThrottlingWarning').hide();
+                                throttlingMessage.remove();
                                 if (composeMessageDialog.find('#to').val().trim().length > 0 && composeMessageDialog.find('#subject').val().trim().length > 0) {
                                     sendButton.removeAttr('disabled').removeClass('disabled');
                                 }
                                 clearInterval(countdown);
                             } else {
-                                composeMessageDialog.find('.ThrottlingWarning').text(opts.throttlingText + ' ' + timeForNextMessage + ' sec');
+                                throttlingMessage.text(opts.throttlingText + ' ' + timeForNextMessage + ' sec');
                             }
                         }, 1000);
                     } else {
                         canSend = true;
                         sendButton.attr('disabled', 'disabled').addClass('disabled');
                     }
-                    
+
                     if (prePopulatedRecipients != null) {
                         composeMessageDialog.find('#subject').focus();
                     }

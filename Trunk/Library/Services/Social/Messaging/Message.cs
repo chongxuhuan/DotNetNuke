@@ -46,6 +46,7 @@ namespace DotNetNuke.Services.Social.Messaging
     public class Message : BaseEntityInfo, IHydratable
     {
         private int _messageID = -1;
+        private string _displayDate;
 
         /// <summary>
         /// MessageID - The primary key
@@ -106,6 +107,22 @@ namespace DotNetNuke.Services.Social.Messaging
         public int SenderUserID { get; set; }
 
         /// <summary>
+        /// A pretty printed string with the time since the message was created
+        /// </summary>
+        [XmlAttribute]
+        public string DisplayDate
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_displayDate))
+                {
+                    _displayDate = DateUtils.CalculateDateForDisplay(CreatedOnDate);
+                }
+                return _displayDate;
+            }
+        }
+
+        /// <summary>
         /// IHydratable.KeyID.
         /// </summary>
         [XmlIgnore]
@@ -113,11 +130,11 @@ namespace DotNetNuke.Services.Social.Messaging
         {
             get
             {
-                return this.MessageID;
+                return MessageID;
             }
             set
             {
-                this.MessageID = value;
+                MessageID = value;
             }
         }
 
@@ -127,18 +144,17 @@ namespace DotNetNuke.Services.Social.Messaging
         /// <param name="dr">the data reader.</param>
         public void Fill(IDataReader dr)
         {
-            this.MessageID = Convert.ToInt32(dr["MessageID"]);
-            this.To = Null.SetNullString(dr["To"]);
-            this.From = Null.SetNullString(dr["From"]);
-            this.Subject = Null.SetNullString(dr["Subject"]);
-            this.Body = Null.SetNullString(dr["Body"]);
-            this.ConversationId = Convert.ToInt32(dr["ConversationID"]);
-            this.ReplyAllAllowed = Null.SetNullBoolean(dr["ReplyAllAllowed"]);
-            this.SenderUserID = Convert.ToInt32(dr["SenderUserID"]);
+            MessageID = Convert.ToInt32(dr["MessageID"]);
+            To = Null.SetNullString(dr["To"]);
+            From = Null.SetNullString(dr["From"]);
+            Subject = Null.SetNullString(dr["Subject"]);
+            Body = Null.SetNullString(dr["Body"]);
+            ConversationId = Convert.ToInt32(dr["ConversationID"]);
+            ReplyAllAllowed = Null.SetNullBoolean(dr["ReplyAllAllowed"]);
+            SenderUserID = Convert.ToInt32(dr["SenderUserID"]);
             
             //add audit column data
             FillInternal(dr);
-            
         }
     }
 }
