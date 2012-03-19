@@ -37,7 +37,7 @@ using DotNetNuke.Services.Social.Messaging.Views;
 
 #endregion
 
-namespace DotNetNuke.Services.Social.Messaging.Ineternal
+namespace DotNetNuke.Services.Social.Messaging.Internal
 {
     /// -----------------------------------------------------------------------------
     /// <summary>

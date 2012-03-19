@@ -30,7 +30,7 @@ namespace DotNetNuke.Tests.Core.Framework
             HttpContextHelper.RegisterMockHttpContext();
         }
 
-        [Test]
+        [Test, Ignore("antiforgery requires sf ajax js requires jquery which uses httpcontext directly need to break httpcontext dependancy")]
         public void RequestingAjaxAntiForgeryIsNoted()
         {
             //Act

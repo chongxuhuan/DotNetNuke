@@ -3,7 +3,7 @@
 <%@ Register TagPrefix="Telerik" Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" TagName="label" Src="~/controls/LabelControl.ascx" %>
-<asp:Panel class="dnnProviderConfig dnnClear" id="dnnProviderConfig">
+<asp:Panel class="dnnProviderConfig dnnClear" id="dnnProviderConfig" runat="server">
 	<div class="dnnTreeArea">
 		<asp:Panel id="pnlSelectProvider" runat="server" class="dnnProviderSelect">
 			<h3><asp:Label ID="lblSelectedProvider" runat="server" resourcekey="lblSelectedProvider" /></h3>
@@ -40,7 +40,7 @@
 				<li><asp:LinkButton ID="cmdDelete" runat="server" CssClass="dnnSecondaryAction dnnDeleteTab" ValidationGroup="Page" resourcekey="cmdDelete" /></li>
 			</ul>
 		</asp:Panel>                         
-		<asp:Panel ID="pnlForm" runat="server">
+		<asp:Panel ID="pnlForm" runat="server" CssClass="dnnForm">
 			<fieldset>
 				<div class="dnnFormItem">
 					<dnn:Label ID="lblMode" runat="server" resourcekey="lblMode" suffix=":" />
@@ -65,7 +65,7 @@
 			</ul>                                     
 		</asp:Panel> 
 	</asp:Panel>                     
-</div>
+</asp:Panel>
 <script language="javascript" type="text/javascript">
 	/*globals jQuery, window, Sys */
 	(function ($, Sys) {

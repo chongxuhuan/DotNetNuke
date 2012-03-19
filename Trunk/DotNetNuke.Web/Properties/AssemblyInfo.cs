@@ -54,8 +54,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("6.2.0.830")]
-[assembly: AssemblyFileVersion("6.2.0.830")]
+[assembly: AssemblyVersion("6.2.0.852")]
+[assembly: AssemblyFileVersion("6.2.0.852")]
 [assembly: InternalsVisibleTo("DotNetNuke.Tests.Content")]
 [assembly: InternalsVisibleTo("DotNetNuke.Tests.Messaging")]
 [assembly: InternalsVisibleTo("DotNetNuke.Tests.Web")]

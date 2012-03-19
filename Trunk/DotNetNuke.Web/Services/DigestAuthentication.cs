@@ -8,7 +8,7 @@ using DotNetNuke.Security.Membership;
 
 namespace DotNetNuke.Web.Services
 {
-    public class DigestAuthentication
+    internal class DigestAuthentication
     {
         private static readonly MD5 Md5 = new MD5CryptoServiceProvider();
         private DigestAuthenticationRequest _request;

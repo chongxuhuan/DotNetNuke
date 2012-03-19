@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace DotNetNuke.Web.Services.Internal
 {
-    public interface IAssemblyLocator
+    internal interface IAssemblyLocator
     {
         IEnumerable<IAssembly> Assemblies { get; }
     }

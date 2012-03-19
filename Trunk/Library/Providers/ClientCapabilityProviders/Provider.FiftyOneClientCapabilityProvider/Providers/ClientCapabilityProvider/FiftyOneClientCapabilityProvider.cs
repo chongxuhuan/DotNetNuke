@@ -44,9 +44,6 @@ namespace FiftyOne.Services.ClientCapability
     /// </summary>
     public class FiftyOneClientCapabilityProvider : DotNetNuke.Services.ClientCapability.ClientCapabilityProvider
     {
-        #region Properties
-        private const string ResourceFileRelativePath = "~/DesktopModules/Admin/FiftyOneClientCapabilityProvider/App_LocalResources/Provider.resx";
-        #endregion
         #region Constructors
 
         /// <summary>
@@ -197,21 +194,6 @@ namespace FiftyOne.Services.ClientCapability
             get
             {
                 return DataProvider.IsPremium;
-            }
-        }
-
-        public override string ExtraMessage
-        {
-            get
-            {
-                if (!DataProvider.IsPremium)
-                {
-                    return Localization.GetString("ExtraMessage", ResourceFileRelativePath); ;
-                }
-                else
-                {
-                    return string.Empty;
-                }
             }
         }
 

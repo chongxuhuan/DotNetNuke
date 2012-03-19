@@ -36,6 +36,7 @@ namespace DotNetNuke.Framework
 
         public void RequestAjaxAntiForgerySupport()
         {
+            RequestAjaxScriptSupport();
             SetKey(AntiForgeryKey);
         }
 
@@ -68,6 +69,7 @@ namespace DotNetNuke.Framework
         /// </summary>
         public void RequestAjaxScriptSupport()
         {
+            jQuery.RequestRegistration();
             SetKey(ScriptKey);
         }
 
@@ -78,8 +80,6 @@ namespace DotNetNuke.Framework
         /// <remarks>Typically only called by the DNN framework.</remarks>
         public void RegisterAjaxScript(Page page)
         {
-            jQuery.RequestRegistration();
-
             var path = TestablePortalController.Instance.GetCurrentPortalSettings().PortalAlias.HTTPAlias;
             int index = path.IndexOf('/');
             if (index > 0)
@@ -93,8 +93,18 @@ namespace DotNetNuke.Framework
             path = path.EndsWith("/") ? path : path + "/";
             ClientAPI.RegisterClientVariable(page, "sf_siteRoot", path, /*overwrite*/ true);
             ClientAPI.RegisterClientVariable(page, "sf_tabId", PortalSettings.Current.ActiveTab.TabID.ToString(CultureInfo.InvariantCulture), /*overwrite*/ true);
-
-            ClientResourceManager.RegisterScript(page, "~/js/dnn.servicesframework.js");
+                        
+            string scriptPath;
+            if(HttpContextSource.Current.IsDebuggingEnabled)
+            {
+                scriptPath = "~/js/Debug/dnn.servicesframework.js";
+            }
+            else
+            {
+                scriptPath = "~/js/dnn.servicesframework.js";
+            }
+            
+            ClientResourceManager.RegisterScript(page, scriptPath);
         }
 
         private static void SetKey(string key)

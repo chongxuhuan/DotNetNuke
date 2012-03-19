@@ -23,11 +23,28 @@
             xhr.setRequestHeader("TabId", base.getTabId());
         };
 
+        base.getAntiForgeryKey = function () {
+            return "__RequestVerificationToken";
+        };
+
+        base.getAntiForgeryValue = function () {
+            return $('[name="__RequestVerificationToken"]').val();
+        };
+
+        base.getAntiForgeryProperty = function (hash) {
+            if (!hash) {
+                hash = {};
+            }
+
+            hash[base.getAntiForgeryKey()] = base.getAntiForgeryValue();
+            return hash;
+        };
+
         return base;
     };
 
     $.ServicesFramework = function (moduleId) {
-        return new $.dnnSF(moduleId)
+        return new $.dnnSF(moduleId);
     };
 
 })(jQuery);

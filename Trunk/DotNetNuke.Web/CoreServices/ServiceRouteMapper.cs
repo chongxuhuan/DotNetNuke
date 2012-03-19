@@ -33,7 +33,7 @@ namespace DotNetNuke.Web.CoreServices
     {
         #region Implementation of IServiceRouteMapper
 
-        public void RegisterRoutes(ServicesRoutingManager routeManager)
+        public void RegisterRoutes(IRouteMapper routeManager)
         {
             routeManager.MapRoute("CoreServices", "DEFAULT", "{controller}.ashx/{action}", new[] { "DotNetNuke.Web.CoreServices" });
         }

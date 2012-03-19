@@ -591,4 +591,7 @@ Utiliser l’Explorateur Windows, recherchez le dossier racine du site Web (C:\D
   <data name="InvalidQualifier.Text" xml:space="preserve">
     <value>Object Qualifier must start with a letter and no more than 20 characters.</value>
   </data>
+  <data name="NoAuthSystems.Text">
+    <value>There are no authentication system to install.</value>
+  </data>
 </root>

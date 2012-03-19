@@ -265,10 +265,10 @@
     <Compile Include="Services\Social\Messaging\Views\MessageFileView.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageThreadView.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageConversationView.cs" />
-    <Compile Include="Services\Social\Messaging\Ineternal\MessagingControllerImpl.cs" />
+    <Compile Include="Services\Social\Messaging\Internal\MessagingControllerImpl.cs" />
     <Compile Include="Services\Social\Messaging\Data\DataService.cs" />
     <Compile Include="Services\Social\Messaging\Data\IDataService.cs" />
-    <Compile Include="Services\Social\Messaging\Ineternal\IMessagingController.cs" />
+    <Compile Include="Services\Social\Messaging\Internal\IMessagingController.cs" />
     <Compile Include="Services\Social\Messaging\MessageAttachment.cs" />
     <Compile Include="Services\Social\Messaging\MessageRecipient.cs" />
     <Compile Include="Services\Social\Messaging\Message.cs" />

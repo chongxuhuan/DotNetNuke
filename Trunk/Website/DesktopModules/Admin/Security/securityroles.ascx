@@ -81,4 +81,7 @@
             </Columns>
         </asp:DataGrid>
     </asp:Panel>
+    <ul id="actionsRow" runat="server" class="dnnActions dnnClear">
+        <li><asp:HyperLink id="cmdCancel" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdCancel" /></li>
+    </ul>
 </div>

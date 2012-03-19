@@ -24,7 +24,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Social.Messaging.Views;
 
-namespace DotNetNuke.Services.Social.Messaging.Ineternal
+namespace DotNetNuke.Services.Social.Messaging.Internal
 {
     public interface IMessagingController
     {

@@ -610,4 +610,7 @@ Wykorzystując Windows Explorer, proszę przejść do folderu głównego witryny
   <data name="InvalidQualifier.Text" xml:space="preserve">
     <value>Object Qualifier must start with a letter and no more than 20 characters.</value>
   </data>
+  <data name="NoAuthSystems.Text" xml:space="preserve">
+    <value>There are no authentication system to install.</value>
+  </data>
 </root>

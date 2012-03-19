@@ -206,18 +206,7 @@ namespace DotNetNuke.Modules.Admin.Security
         {
             get
             {
-                var Actions = new ModuleActionCollection();
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString("Cancel.Action", LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "lt.gif",
-                            ReturnUrl,
-                            false,
-                            SecurityAccessLevel.Edit,
-                            true,
-                            false);
-                return Actions;
+                return new ModuleActionCollection();
             }
         }
 
@@ -564,6 +553,7 @@ namespace DotNetNuke.Modules.Admin.Security
 
             try
             {
+                cmdCancel.NavigateUrl = ReturnUrl;
                 if (ParentModule == null)
                 {
                     DataBind();

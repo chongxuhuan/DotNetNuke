@@ -22,6 +22,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -110,6 +111,10 @@ namespace DotNetNuke.Modules.Admin.Vendors
                         Response.Redirect(strURL, true);
                     }
                 }
+            }
+            catch(ThreadAbortException)
+            {
+                //ignore the abort thread expcetion.
             }
             catch (Exception exc) //Page failed to load
             {

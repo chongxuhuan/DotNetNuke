@@ -226,7 +226,7 @@ namespace DotNetNuke.Common
             {
                 //new ServicesRoutingManager().RegisterRoutes();
                 var instance = Activator.CreateInstance("DotNetNuke.Web",
-                                                                 "DotNetNuke.Web.Services.ServicesRoutingManager");
+                                                                 "DotNetNuke.Web.Services.Internal.ServicesRoutingManager");
 
                 var method = instance.Unwrap().GetType().GetMethod("RegisterRoutes");
                 method.Invoke(instance.Unwrap(), new object[0]);

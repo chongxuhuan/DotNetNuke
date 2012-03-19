@@ -28,14 +28,13 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Instrumentation;
 
-namespace DotNetNuke.Web.Services
+namespace DotNetNuke.Web.Services.Internal
 {
-    public sealed class ServicesRoutingManager
+    public sealed class ServicesRoutingManager : IRouteMapper
     {
         private readonly RouteCollection _routes;
         private IList<string> _prefixes;
 
-        //todo don't really want this public
         public ServicesRoutingManager() : this(RouteTable.Routes) {}
 
         internal ServicesRoutingManager(RouteCollection routes)
@@ -44,7 +43,6 @@ namespace DotNetNuke.Web.Services
             TypeLocator = new TypeLocator();
         }
 
-        //todo don't really want this public
         public void RegisterRoutes()
         {
             _routes.Clear();
@@ -112,16 +110,6 @@ namespace DotNetNuke.Web.Services
             return t != null && t.IsClass && !t.IsAbstract && t.IsVisible && typeof(IServiceRouteMapper).IsAssignableFrom(t);
         }
 
-        /// <summary>
-        /// Sets up the route(s) for DotNetNuke services
-        /// </summary>
-        /// <param name="moduleFolderName">The name of the folder under DesktopModules in which your module resides</param>
-        /// <param name="name">The name of the route</param>
-        /// <param name="url">The parameterized portion of the route</param>
-        /// <param name="defaults">Default values for the route parameters</param>
-        /// <param name="constraints">The constraints</param>
-        /// <param name="namespaces">The namespace(s) in which to locate the controllers for this route</param>
-        /// <returns>A list of all routes that were registered.</returns>
         public IList<Route> MapRoute(string moduleFolderName, string name, string url, object defaults, object constraints, string[] namespaces)
         {
             if(namespaces == null || namespaces.Length == 0 || String.IsNullOrEmpty(namespaces[0]))
@@ -153,28 +141,11 @@ namespace DotNetNuke.Web.Services
             return routes;
         }
 
-        /// <summary>
-        /// Sets up the route(s) for DotNetNuke services
-        /// </summary>
-        /// <param name="moduleFolderName">The name of the folder under DesktopModules in which your module resides</param>
-        /// <param name="name">The name of the route</param>
-        /// <param name="url">The parameterized portion of the route</param>
-        /// <param name="defaults">Default values for the route parameters</param>
-        /// <param name="namespaces">The namespace(s) in which to locate the controllers for this route</param>
-        /// <returns>A list of all routes that were registered.</returns>
         public IList<Route> MapRoute(string moduleFolderName, string name, string url, object defaults, string[] namespaces)
         {
             return MapRoute(moduleFolderName, name, url, defaults, null, namespaces);
         }
 
-        /// <summary>
-        /// Sets up the route(s) for DotNetNuke services
-        /// </summary>
-        /// <param name="moduleFolderName">The name of the folder under DesktopModules in which your module resides</param>
-        /// <param name="name">The name of the route</param>
-        /// <param name="url">The parameterized portion of the route</param>
-        /// <param name="namespaces">The namespace(s) in which to locate the controllers for this route</param>
-        /// <returns>A list of all routes that were registered.</returns>
         public IList<Route> MapRoute(string moduleFolderName, string name, string url, string[] namespaces)
         {
             return MapRoute(moduleFolderName, name, url, null, null, namespaces);

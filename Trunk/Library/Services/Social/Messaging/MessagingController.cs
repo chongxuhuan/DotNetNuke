@@ -23,7 +23,7 @@
 
 using System;
 
-using DotNetNuke.Services.Social.Messaging.Ineternal;
+using DotNetNuke.Services.Social.Messaging.Internal;
 using DotNetNuke.Framework;
 
 #endregion

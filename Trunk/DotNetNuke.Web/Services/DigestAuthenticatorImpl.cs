@@ -4,7 +4,7 @@ using DotNetNuke.HttpModules.Services.Internal;
 
 namespace DotNetNuke.Web.Services
 {
-    public class DigestAuthenticatorImpl : AuthenticatorBase
+    internal class DigestAuthenticatorImpl : AuthenticatorBase
     {
         public override void TryToAuthenticate(HttpContextBase context, int portalId)
         {

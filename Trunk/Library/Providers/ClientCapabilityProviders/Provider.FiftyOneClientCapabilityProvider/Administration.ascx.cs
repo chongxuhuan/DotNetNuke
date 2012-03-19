@@ -37,7 +37,7 @@ namespace FiftyOne.Modules
         /// <summary>
         ///  Records if premium data is in use when the control is first loaded.
         /// </summary>
-        protected static bool IsPremium = FiftyOne.Foundation.UI.DataProvider.IsPremium;
+        protected bool IsPremium = FiftyOne.Foundation.UI.DataProvider.IsPremium;
     }
 }
 

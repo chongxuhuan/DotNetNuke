@@ -141,10 +141,10 @@
     <Compile Include="Services\IAssembly.cs" />
     <Compile Include="Services\IAssemblyLocator.cs" />
     <Compile Include="Services\IOverrideDefaultAuthLevel.cs" />
+    <Compile Include="Services\IRouteMapper.cs" />
     <Compile Include="Services\IServiceRouteMapper.cs" />
     <Compile Include="Services\ITypeLocator.cs" />
-    <Compile Include="Services\ServiceAuthLevel.cs" />
-    <Compile Include="Services\ServicesRoutingManager.cs" />
+    <Compile Include="Services\Internal\ServicesRoutingManager.cs" />
     <Compile Include="Services\SupportedModulesAttribute.cs" />
     <Compile Include="Services\TypeLocator.cs" />
     <Compile Include="UI\WebControls\DnnFormPanel.cs" />

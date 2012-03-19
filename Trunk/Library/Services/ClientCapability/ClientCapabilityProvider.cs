@@ -45,17 +45,6 @@ namespace DotNetNuke.Services.ClientCapability
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public virtual string ExtraMessage
-        {
-            get
-            {
-                return string.Empty;
-            }
-        }
-
         #endregion
 
         #region Abstract Methods

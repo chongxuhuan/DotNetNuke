@@ -29,6 +29,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Content;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Security;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Skins.Controls;
@@ -96,6 +97,7 @@ namespace DotNetNuke.Modules.ContentList
                 dt.Columns.Add(new DataColumn("PubDate", typeof (DateTime)));
 
                 var results = new ContentController().GetContentItemsByTerm(_tagQuery).ToList();
+                var tabController = new TabController();
 
                 if (_tagQuery.Length > 0)
                 {
@@ -105,14 +107,18 @@ namespace DotNetNuke.Modules.ContentList
                         dr["TabId"] = item.TabID;
                         dr["ContentKey"] = item.ContentKey;
                         dr["Title"] = item.Content;
-                        if (item.Content.Length > 1000)
+
+                        //get tab info and use the tab description
+                        var tab = tabController.GetTab(item.TabID, PortalId, false);
+                        if(tab != null)
                         {
-                            dr["Description"] = item.Content.Substring(0, 1000);
+                            dr["Description"] = tab.Description;
                         }
                         else
                         {
-                            dr["Description"] = item.Content;
+                            dr["Description"] = item.Content.Length > 1000 ? item.Content.Substring(0, 1000) : item.Content;
                         }
+
                         dr["PubDate"] = item.CreatedOnDate;
                         dt.Rows.Add(dr);
                     }

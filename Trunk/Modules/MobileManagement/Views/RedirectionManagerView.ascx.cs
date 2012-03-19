@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Framework.Providers;
 using DotNetNuke.Modules.MobileManagement.Presenters;
 using DotNetNuke.Modules.MobileManagement.Views;
 using DotNetNuke.Modules.MobileManagement.ViewModels;
@@ -53,10 +54,10 @@ namespace DotNetNuke.Modules.MobileManagement
                 }
 			}
 
-            var extraMessage = ClientCapabilityProvider.Instance().ExtraMessage;
-            if (!string.IsNullOrEmpty(extraMessage))
+            if (IsTrialFiftyOneProvider())
             {
-                UI.Skins.Skin.AddModuleMessage(this, extraMessage, ModuleMessage.ModuleMessageType.RedError);
+                var trialMessage = LocalizeString("TrialFiftyOneProvider");
+                UI.Skins.Skin.AddModuleMessage(this, trialMessage, ModuleMessage.ModuleMessageType.RedError);
             }
 
             dvRedirectionsGrid.Visible = (Model.Redirections.Count > 0);
@@ -118,6 +119,15 @@ namespace DotNetNuke.Modules.MobileManagement
 		    RedirectionsGrid.DataSource = redirections;
 			RedirectionsGrid.DataBind();
 		}
+
+
+        private bool IsTrialFiftyOneProvider()
+        {
+            var provider = ProviderConfiguration.GetProviderConfiguration("clientcapability");
+            return provider.DefaultProvider == "FiftyOneClientCapabilityProvider" 
+                && !ClientCapabilityProvider.Instance().SupportTabletDetect;
+        }
+
 
         #endregion
 

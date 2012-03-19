@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace DotNetNuke.Web.Services
 {
-    public class DigestAuthenticationRequest
+    internal class DigestAuthenticationRequest
     {
         public DigestAuthenticationRequest(string authorizationHeader, string httpMethod)
         {
