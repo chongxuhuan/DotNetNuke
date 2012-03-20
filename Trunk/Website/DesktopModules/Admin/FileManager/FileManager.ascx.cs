@@ -2353,6 +2353,10 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 //reload page to make treeview update.
                 Response.Redirect(Globals.NavigateURL(), true);
             }
+            catch(ThreadAbortException)
+            {
+                //ignore ThreadAbortException because its caught by Redirect.
+            }
             catch (Exception ex)
             {
                 DnnLog.Error(ex);

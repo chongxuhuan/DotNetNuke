@@ -453,10 +453,12 @@ namespace DotNetNuke.HttpModules
 			
             //'Carry out first time initialization tasks
             Initialize.Init(app);
-            if (request.Url.LocalPath.ToLower().EndsWith("install.aspx") 
-                || request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
-                || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx")
-                || request.Url.LocalPath.ToLower().EndsWith("captcha.aspx"))
+            if (request.Url.LocalPath.ToLower().EndsWith("/install/install.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("/install/upgradewizard.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("/install/installwizard.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("captcha.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("scriptresource.axd") 
+                || request.Url.LocalPath.ToLower().EndsWith("webresource.axd"))
             {
                 return;
             }

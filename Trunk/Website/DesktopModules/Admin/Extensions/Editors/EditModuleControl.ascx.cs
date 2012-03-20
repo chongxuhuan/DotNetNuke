@@ -22,6 +22,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
@@ -260,11 +261,20 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                 {
                     if (cboSource.SelectedIndex != 0 || !String.IsNullOrEmpty(txtSource.Text))
                     {
+                        //check whether have a same control key in the module definition
+                        var controlKey = !String.IsNullOrEmpty(txtKey.Text) ? txtKey.Text : Null.NullString;
+                        var moduleControls = ModuleControlController.GetModuleControlsByModuleDefinitionID(ModuleDefId).Values;
+                        var keyExists = moduleControls.Any(c => c.ControlKey.Equals(controlKey, StringComparison.InvariantCultureIgnoreCase));
+                        if(keyExists)
+                        {
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("DuplicateKey.ErrorMessage", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                            return;
+                        }
                         var moduleControl = new ModuleControlInfo
                                                 {
                                                     ModuleControlID = ModuleControlId,
                                                     ModuleDefID = ModuleDefId,
-                                                    ControlKey = !String.IsNullOrEmpty(txtKey.Text) ? txtKey.Text : Null.NullString,
+                                                    ControlKey = controlKey,
                                                     ControlTitle = !String.IsNullOrEmpty(txtTitle.Text) ? txtTitle.Text : Null.NullString,
                                                     ControlSrc = !String.IsNullOrEmpty(txtSource.Text) ? txtSource.Text : cboSource.SelectedItem.Text,
                                                     ControlType = (SecurityAccessLevel) Enum.Parse(typeof (SecurityAccessLevel), cboType.SelectedItem.Value),

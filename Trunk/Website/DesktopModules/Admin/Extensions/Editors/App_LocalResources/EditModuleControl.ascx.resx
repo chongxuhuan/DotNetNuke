@@ -201,6 +201,9 @@
   <data name="MissingSource.ErrorMessage" xml:space="preserve">
     <value>Your must specify a source value for the control.</value>
   </data>
+  <data name="DuplicateKey.ErrorMessage" xml:space="preserve">
+    <value>There is already a control with the same key in this module definition.</value>
+  </data>
   <data name="plSupportsPartialRendering.Text" xml:space="preserve">
     <value>Supports Partial Rendering?</value>
   </data>

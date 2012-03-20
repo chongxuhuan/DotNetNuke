@@ -59,9 +59,9 @@ namespace DotNetNuke.HttpModules.UsersOnline
             HttpRequest request = app.Request;
 
             //check if we are upgrading/installing or if this is a captcha request
-            if (request.Url.LocalPath.ToLower().EndsWith("install.aspx") 
-                || request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx")
-                || request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
+            if (request.Url.LocalPath.ToLower().EndsWith("/install/install.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("/install/installwizard.aspx")
+                || request.Url.LocalPath.ToLower().EndsWith("/install/upgradewizard.aspx")
                 || request.Url.LocalPath.ToLower().EndsWith("captcha.aspx") 
                 || request.Url.LocalPath.ToLower().EndsWith("scriptresource.axd") 
                 || request.Url.LocalPath.ToLower().EndsWith("webresource.axd"))

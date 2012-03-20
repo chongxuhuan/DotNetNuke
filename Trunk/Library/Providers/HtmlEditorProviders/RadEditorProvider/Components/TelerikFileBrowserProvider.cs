@@ -206,7 +206,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 		{
 			try
 			{
-				string virtualPath = (string)(string)FileSystemValidation.ToVirtualPath(path);
+				string virtualPath = FileSystemValidation.ToVirtualPath(path);
 
 				string returnValue = DNNValidator.OnDeleteFolder(virtualPath);
 				if (! (string.IsNullOrEmpty(returnValue)))
@@ -216,7 +216,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 				//Are all items visible to user?
 				FolderInfo folder = DNNValidator.GetUserFolder(virtualPath);
-				if (! (CheckAllChildrenVisible(ref folder)))
+				if (!CheckAllChildrenVisible(ref folder))
 				{
 					return DNNValidator.LogDetailError(ErrorCodes.CannotDeleteFolder_ChildrenVisible);
 				}
@@ -225,8 +225,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 				if (string.IsNullOrEmpty(returnValue))
 				{
-					//Sync to remove old folder & files
-					FileSystemUtils.SynchronizeFolder(PortalSettings.PortalId, HttpContext.Current.Request.MapPath(virtualPath), FileSystemValidation.ToDBPath(virtualPath), true, true, true);
+                    FolderManager.Instance.DeleteFolder(folder);
 				}
 
 				return returnValue;
