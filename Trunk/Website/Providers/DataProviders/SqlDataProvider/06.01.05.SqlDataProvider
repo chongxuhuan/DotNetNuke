@@ -1,0 +1,179 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/
+
+/** DNN-13280 - Clustered Primary Key for Portals **/
+
+DECLARE @TableName nvarchar(128), @ConstraintName nvarchar(128), @UpdateRule nvarchar(128), @DeleteRule nvarchar(128) 
+CREATE TABLE #constraints 
+( 
+   TableName nvarchar(128), 
+   ConstraintName nvarchar(128),
+   UpdateRule nvarchar(128),    
+   DeleteRule nvarchar(128)   
+) 
+ 
+INSERT INTO #constraints  
+SELECT
+K_Table = FK.TABLE_NAME,
+Constraint_Name = C.CONSTRAINT_NAME,
+C.UPDATE_RULE,
+C.DELETE_RULE
+FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS C
+INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS FK ON C.CONSTRAINT_NAME = FK.CONSTRAINT_NAME
+INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS PK ON C.UNIQUE_CONSTRAINT_NAME = PK.CONSTRAINT_NAME
+INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE CU ON C.CONSTRAINT_NAME = CU.CONSTRAINT_NAME
+INNER JOIN (
+SELECT i1.TABLE_NAME, i2.COLUMN_NAME
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS i1
+INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE i2 ON i1.CONSTRAINT_NAME = i2.CONSTRAINT_NAME
+WHERE i1.CONSTRAINT_TYPE = 'PRIMARY KEY'
+) PT ON PT.TABLE_NAME = PK.TABLE_NAME
+---- optional:
+WHERE PK.TABLE_NAME IN ('{objectQualifier}Portals')
+
+DECLARE @SQLString nvarchar(500);
+DECLARE remove_constraint_tables_cursor CURSOR FOR 
+SELECT TableName, ConstraintName, UpdateRule, DeleteRule from #constraints
+
+OPEN remove_constraint_tables_cursor
+FETCH NEXT FROM remove_constraint_tables_cursor
+INTO @TableName, @ConstraintName, @UpdateRule, @DeleteRule
+WHILE @@FETCH_STATUS = 0
+BEGIN
+ PRINT 'Table Name: ' + @TableName + ' Constraint:' +  @ConstraintName
+ SET @SQLString = N'ALTER TABLE ' + @TableName + ' DROP CONSTRAINT ' + @ConstraintName
+ EXEC sp_executesql @SQLString
+
+ FETCH NEXT FROM remove_constraint_tables_cursor
+ INTO @TableName, @ConstraintName, @UpdateRule, @DeleteRule
+END
+
+CLOSE remove_constraint_tables_cursor
+DEALLOCATE remove_constraint_tables_cursor
+
+ALTER TABLE {databaseOwner}{objectQualifier}Portals DROP CONSTRAINT PK_{objectQualifier}Portals
+ALTER TABLE {databaseOwner}{objectQualifier}Portals ADD CONSTRAINT
+ PK_{objectQualifier}Portals PRIMARY KEY CLUSTERED 
+ (
+ PortalID
+ )
+
+
+DECLARE add_constraint_tables_cursor CURSOR FOR 
+SELECT TableName, ConstraintName, UpdateRule, DeleteRule from #constraints
+
+OPEN add_constraint_tables_cursor
+FETCH NEXT FROM add_constraint_tables_cursor
+INTO @TableName, @ConstraintName, @UpdateRule, @DeleteRule
+WHILE @@FETCH_STATUS = 0
+BEGIN
+ SET @SQLString = N'ALTER TABLE ' + @TableName + ' ADD CONSTRAINT ' + @ConstraintName
+ + ' FOREIGN KEY (PortalID) REFERENCES {databaseOwner}{objectQualifier}Portals (PortalID) ON UPDATE ' + @UpdateRule + ' ON DELETE ' + @DeleteRule
+ PRINT @SQLString
+ EXEC sp_executesql @SQLString
+ FETCH NEXT FROM add_constraint_tables_cursor
+ INTO @TableName, @ConstraintName, @UpdateRule, @DeleteRule
+END
+
+CLOSE add_constraint_tables_cursor
+DEALLOCATE add_constraint_tables_cursor
+GO
+
+IF OBJECT_ID(N'tempdb..#constraints', N'U') IS NOT NULL 
+DROP TABLE #constraints
+
+GO
+
+
+/** DNN-13278 - Clustered Primary Key for Roles  **/
+DECLARE @TableName nvarchar(128), @ConstraintName nvarchar(128), @UpdateRule nvarchar(128), @DeleteRule nvarchar(128) 
+CREATE TABLE #constraints 
+( 
+   TableName nvarchar(128), 
+   ConstraintName nvarchar(128),
+   UpdateRule nvarchar(128),    
+   DeleteRule nvarchar(128)   
+) 
+ 
+INSERT INTO #constraints  
+SELECT
+K_Table = FK.TABLE_NAME,
+Constraint_Name = C.CONSTRAINT_NAME,
+C.UPDATE_RULE,
+C.DELETE_RULE
+FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS C
+INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS FK ON C.CONSTRAINT_NAME = FK.CONSTRAINT_NAME
+INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS PK ON C.UNIQUE_CONSTRAINT_NAME = PK.CONSTRAINT_NAME
+INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE CU ON C.CONSTRAINT_NAME = CU.CONSTRAINT_NAME
+INNER JOIN (
+SELECT i1.TABLE_NAME, i2.COLUMN_NAME
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS i1
+INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE i2 ON i1.CONSTRAINT_NAME = i2.CONSTRAINT_NAME
+WHERE i1.CONSTRAINT_TYPE = 'PRIMARY KEY'
+) PT ON PT.TABLE_NAME = PK.TABLE_NAME
+---- optional:
+WHERE PK.TABLE_NAME IN ('{objectQualifier}Roles')
+
+DECLARE @SQLString nvarchar(500);
+DECLARE remove_constraint_tables_cursor CURSOR FOR 
+SELECT TableName, ConstraintName, UpdateRule, DeleteRule from #constraints
+
+OPEN remove_constraint_tables_cursor
+FETCH NEXT FROM remove_constraint_tables_cursor
+INTO @TableName, @ConstraintName, @UpdateRule, @DeleteRule
+WHILE @@FETCH_STATUS = 0
+BEGIN
+ PRINT 'Table Name: ' + @TableName + ' Constraint:' +  @ConstraintName
+ SET @SQLString = N'ALTER TABLE ' + @TableName + ' DROP CONSTRAINT ' + @ConstraintName
+ EXEC sp_executesql @SQLString
+
+ FETCH NEXT FROM remove_constraint_tables_cursor
+ INTO @TableName, @ConstraintName, @UpdateRule, @DeleteRule
+END
+
+CLOSE remove_constraint_tables_cursor
+DEALLOCATE remove_constraint_tables_cursor
+
+ALTER TABLE {databaseOwner}{objectQualifier}Roles DROP CONSTRAINT PK_{objectQualifier}Roles
+ALTER TABLE {databaseOwner}{objectQualifier}Roles ADD CONSTRAINT
+ PK_{objectQualifier}Roles PRIMARY KEY CLUSTERED 
+ (
+ RoleID
+ )
+
+
+DECLARE add_constraint_tables_cursor CURSOR FOR 
+SELECT TableName, ConstraintName, UpdateRule, DeleteRule from #constraints
+
+OPEN add_constraint_tables_cursor
+FETCH NEXT FROM add_constraint_tables_cursor
+INTO @TableName, @ConstraintName, @UpdateRule, @DeleteRule
+WHILE @@FETCH_STATUS = 0
+BEGIN
+ SET @SQLString = N'ALTER TABLE ' + @TableName + ' ADD CONSTRAINT ' + @ConstraintName
+ + ' FOREIGN KEY (RoleID) REFERENCES {databaseOwner}{objectQualifier}Roles (RoleID) ON UPDATE ' + @UpdateRule + ' ON DELETE ' + @DeleteRule
+ PRINT @SQLString
+ EXEC sp_executesql @SQLString
+ FETCH NEXT FROM add_constraint_tables_cursor
+ INTO @TableName, @ConstraintName, @UpdateRule, @DeleteRule
+END
+
+CLOSE add_constraint_tables_cursor
+DEALLOCATE add_constraint_tables_cursor
+GO
+
+IF OBJECT_ID(N'tempdb..#constraints', N'U') IS NOT NULL 
+DROP TABLE #constraints

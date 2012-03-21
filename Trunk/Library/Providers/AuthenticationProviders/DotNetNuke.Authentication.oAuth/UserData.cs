@@ -31,55 +31,68 @@ using System.Text;
 
 #endregion
 
-namespace DotNetNuke.Authentication.Google.Components
+namespace DotNetNuke.Authentication.oAuth
 {
     [DataContract]
-    public class GoogleGraph
+    public class UserData
     {
-        private static readonly DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof (GoogleGraph));
-
         [DataMember(Name = "id")]
         public string Id { get; set; }
 
-        [DataMember(Name = "name")]
-        public string Name { get; set; }
+        //[DataMember(Name = "location")]
+        //public string City { get; set; }
 
-        [DataMember(Name = "given_name")]
-        public string FirstName { get; set; }
-
-        [DataMember(Name = "family_name")]
-        public string LastName { get; set; }
+        public virtual string DisplayName
+        {
+            get
+            {
+                return Name;
+            }
+            set { }
+        }
 
         [DataMember(Name = "email")]
-        public string Email { get; set; }
+        public virtual string Email { get; set; }
 
-        [DataMember(Name = "timezone")]
-        public string Timezone { get; set; }
+        public virtual string FirstName
+        {
+            get
+            {
+                return (Name.IndexOf(" ") > 0) ? Name.Substring(0, Name.IndexOf(" ")) : String.Empty;
+            }
+            set { }
+        }
 
-        [DataMember(Name = "locale")]
-        public string Locale { get; set; }
+        public virtual string LastName
+        {
+            get
+            {
+                return (Name.IndexOf(" ") > 0) ? Name.Substring(Name.IndexOf(" ") + 1) : Name;
+            }
+            set { }
+        }
 
         [DataMember(Name = "gender")]
         public string Gender { get; set; }
 
-        public static GoogleGraph Deserialize(string json)
-        {
-            if (String.IsNullOrEmpty(json))
-            {
-                throw new ArgumentNullException("json");
-            }
+        [DataMember(Name = "locale")]
+        public virtual string Locale { get; set; }
 
-            return Deserialize(new MemoryStream(Encoding.UTF8.GetBytes(json)));
-        }
+        [DataMember(Name = "name")]
+        public virtual string Name { get; set; }
 
-        public static GoogleGraph Deserialize(Stream jsonStream)
-        {
-            if (jsonStream == null)
-            {
-                throw new ArgumentNullException("jsonStream");
-            }
+        public virtual string ProfileImage { get; set; }
 
-            return (GoogleGraph) jsonSerializer.ReadObject(jsonStream);
-        }
+        [DataMember(Name = "timezone")]
+        public string Timezone { get; set; }
+
+        [DataMember(Name = "time_zone")]
+        public string TimeZoneInfo { get; set; }
+
+        [DataMember(Name = "username")]
+        public virtual string UserName { get; set; }
+
+        [DataMember(Name = "website")]
+        public virtual string Website { get; set; }
     }
 }

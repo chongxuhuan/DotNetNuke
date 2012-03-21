@@ -240,6 +240,18 @@
     <Compile Include="Security\Roles\Internal\RoleControllerImpl.cs" />
     <Compile Include="Security\Roles\Internal\TestableRoleController.cs" />
     <Compile Include="Security\Roles\RoleStatus.cs" />
+    <Compile Include="Services\Authentication\OAuth\AuthExtensions.cs" />
+    <Compile Include="Services\Authentication\OAuth\AuthorisationResult.cs" />
+    <Compile Include="Services\Authentication\OAuth\HttpMethod.cs" />
+    <Compile Include="Services\Authentication\OAuth\Json.cs" />
+    <Compile Include="Services\Authentication\OAuth\oAuthClientBase.cs" />
+    <Compile Include="Services\Authentication\OAuth\oAuthConfigBase.cs" />
+    <Compile Include="Services\Authentication\OAuth\oAuthLoginBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Services\Authentication\OAuth\QueryParameter.cs" />
+    <Compile Include="Services\Authentication\OAuth\QueryParameterComparer.cs" />
+    <Compile Include="Services\Authentication\OAuth\UserData.cs" />
     <Compile Include="Services\Journal\CommentInfo.cs" />
     <Compile Include="Services\Journal\Content.cs" />
     <Compile Include="Services\Journal\Data\IJournalDataService.cs" />

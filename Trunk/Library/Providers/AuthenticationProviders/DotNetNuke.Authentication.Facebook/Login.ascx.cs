@@ -1,20 +1,48 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Web;
+﻿#region Copyright
+
+// 
+// DotNetNuke® - http://www.dotnetnuke.com
+// Copyright (c) 2002-2011
+// by DotNetNuke Corporation
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// DEALINGS IN THE SOFTWARE.
+
+#endregion
+
+#region Usings
+
+using System;
 
 using DotNetNuke.Authentication.Facebook.Components;
-using DotNetNuke.Entities.Users;
-using DotNetNuke.Security.Membership;
-using DotNetNuke.Services.Authentication;
-using DotNetNuke.Services.Localization;
+using DotNetNuke.Services.Authentication.OAuth;
+
+#endregion
 
 namespace DotNetNuke.Authentication.Facebook
 {
-    public partial class Login : AuthenticationLoginBase
+    public partial class Login : oAuthLoginBase
     {
-        private FacebookClient _facebookClient;
-        private const string AuthSystemApplicationName = "Facebook";
+        protected override string AuthSystemApplicationName
+        {
+            get { return "Facebook"; }
+        }
+
+        protected override UserData GetCurrentUser()
+        {
+            return OAuthClient.GetCurrentUser<FacebookUserData>();
+        }
 
         protected override void OnInit(EventArgs e)
         {
@@ -22,82 +50,12 @@ namespace DotNetNuke.Authentication.Facebook
 
             loginButton.Click += loginButton_Click;
 
-            _facebookClient = new FacebookClient(PortalId);
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if (!IsPostBack)
-            {
-                //Save the return Url in the cookie
-                HttpContext.Current.Response.Cookies.Set(new HttpCookie("returnurl", RedirectURL) { Expires = DateTime.Now.AddMinutes(5) });
-            }
-
-            if (_facebookClient.IsFacebook() && _facebookClient.HaveVerificationCode() || _facebookClient.IsCurrentUserAuthorized())
-            {
-                if (_facebookClient.Authorize() == FacebookAuthorisationResult.Authorized)
-                {
-                    var user = _facebookClient.GetCurrentUser();
-                    UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
-
-                    string userName = AuthSystemApplicationName + "-" + user.Id;
-
-                    UserInfo objUserInfo = UserController.ValidateUser(PortalId, userName, "",
-                                                                        AuthSystemApplicationName, "",
-                                                                        PortalSettings.PortalName, IPAddress,
-                                                                        ref loginStatus);
-
-
-                    //Raise UserAuthenticated Event
-                    UserAuthenticatedEventArgs eventArgs = new UserAuthenticatedEventArgs(objUserInfo, userName, loginStatus,
-                                                                                          AuthSystemApplicationName);
-                    eventArgs.AutoRegister = true;
-
-                    NameValueCollection profileProperties = new NameValueCollection();
-
-                    profileProperties.Add("FirstName", user.FirstName);
-                    profileProperties.Add("LastName", user.LastName);
-                    profileProperties.Add("Email", user.Email);
-                    profileProperties.Add("DisplayName", user.Name);
-                    profileProperties.Add("PreferredLocale", user.Locale.Replace('_', '-'));
-
-                    #pragma warning disable 612,618
-                    int timeZone;
-                    if (Int32.TryParse(user.Timezone, out timeZone))
-                    {
-                        TimeZoneInfo timeZoneInfo = Localization.ConvertLegacyTimeZoneOffsetToTimeZoneInfo(timeZone);
-
-                        profileProperties.Add("PreferredTimeZone", timeZoneInfo.Id);
-                    }
-                    #pragma warning restore 612,618
-
-                    eventArgs.Profile = profileProperties;
-
-                    //eventArgs.Authenticated = authenticated
-                    //eventArgs.Message = message
-                    OnUserAuthenticated(eventArgs);
-                }
-            }
-
-
+            OAuthClient = new FacebookClient(PortalId);
         }
 
         private void loginButton_Click(object sender, EventArgs e)
         {
-            _facebookClient.Authorize();
+            OAuthClient.Authorize();
         }
-
-        #region Overrides of AuthenticationLoginBase
-
-        public override bool Enabled
-        {
-            get { return FacebookConfig.GetConfig(PortalId).Enabled; }
-        }
-
-        #endregion
-
-        
     }
 }

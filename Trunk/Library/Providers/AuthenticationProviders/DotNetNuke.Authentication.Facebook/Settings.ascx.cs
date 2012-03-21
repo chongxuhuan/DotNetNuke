@@ -25,8 +25,8 @@
 
 using System;
 
-using DotNetNuke.Authentication.Facebook.Components;
 using DotNetNuke.Services.Authentication;
+using DotNetNuke.Services.Authentication.OAuth;
 using DotNetNuke.Services.Exceptions;
 
 #endregion
@@ -39,8 +39,8 @@ namespace DotNetNuke.Authentication.Facebook
         {
             if (SettingsEditor.IsValid && SettingsEditor.IsDirty)
             {
-                var config = (FacebookConfig)SettingsEditor.DataSource;
-                FacebookConfig.UpdateConfig(config);
+                var config = (oAuthConfigBase) SettingsEditor.DataSource;
+                oAuthConfigBase.UpdateConfig(config);
             }
         }
 
@@ -50,7 +50,7 @@ namespace DotNetNuke.Authentication.Facebook
 
             try
             {
-                FacebookConfig config = FacebookConfig.GetConfig(PortalId);
+                oAuthConfigBase config = oAuthConfigBase.GetConfig("Facebook", PortalId);
                 SettingsEditor.DataSource = config;
                 SettingsEditor.DataBind();
             }

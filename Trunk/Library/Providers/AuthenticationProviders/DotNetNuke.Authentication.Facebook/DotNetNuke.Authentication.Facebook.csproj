@@ -55,16 +55,16 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\facebook_16X16.jpg" />
+    <Content Include="Images\facebook_32X32.jpg" />
     <Content Include="license.txt" />
     <Content Include="Login.ascx" />
     <Content Include="releasenotes.txt" />
     <Content Include="Settings.ascx" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\FacebookConfig.cs" />
-    <Compile Include="Components\FacebookAuthorisationResult.cs" />
     <Compile Include="Components\FacebookClient.cs" />
-    <Compile Include="Components\FacebookGraph.cs" />
+    <Compile Include="Components\FacebookUserData.cs" />
     <Compile Include="Login.ascx.cs">
       <DependentUpon>Login.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -80,9 +80,6 @@
     <Compile Include="Settings.ascx.designer.cs">
       <DependentUpon>Settings.ascx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Externals\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Facebook_Auth.dnn" />
@@ -115,7 +112,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>10003</DevelopmentServerPort>
+          <DevelopmentServerPort>26653</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

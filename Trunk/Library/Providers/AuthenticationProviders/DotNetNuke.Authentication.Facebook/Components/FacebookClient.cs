@@ -24,137 +24,63 @@
 #region Usings
 
 using System;
-using System.IO;
-using System.Net;
-using System.Web;
+
+using DotNetNuke.Services.Authentication.OAuth;
 
 #endregion
 
 namespace DotNetNuke.Authentication.Facebook.Components
 {
-    public class FacebookClient
+    public class FacebookClient : oAuthClientBase
     {
         #region Constructors
 
         public FacebookClient(int portalId)
         {
             TokenEndpoint = new Uri("https://graph.facebook.com/oauth/access_token");
+            TokenMethod = HttpMethod.GET;
             AuthorizationEndpoint = new Uri("https://graph.facebook.com/oauth/authorize");
             MeGraphEndpoint = new Uri("https://graph.facebook.com/me");
-            APIKey = FacebookConfig.GetConfig(portalId).APIKey;
-            APISecret = FacebookConfig.GetConfig(portalId).APISecret;
-            LoginPage = new Uri(FacebookConfig.GetConfig(portalId).SiteURL);
-            SessionTokenName = "UserFacebookToken";
+
+            Service = "Facebook";
+            Scope = "email";
+
+            APIKey = oAuthConfigBase.GetConfig(Service, portalId).APIKey;
+            APISecret = oAuthConfigBase.GetConfig(Service, portalId).APISecret;
+            CallbackUri = new Uri(oAuthConfigBase.GetConfig(Service, portalId).SiteURL);
+            AuthTokenName = "FacebookUserToken";
+
+            OAuthVersion = "2.0";
+
+            LoadTokenCookie(String.Empty);
         }
 
         #endregion
 
-        #region Protected Properties
-
-        protected string APIKey { get; set; }
-        protected string APISecret { get; set; }
-        protected Uri AuthorizationEndpoint { get; set; }
-        protected Uri LoginPage { get; set; }
-        protected Uri MeGraphEndpoint { get; set; }
-        protected string SessionToken
+        protected override TimeSpan GetExpiry(string responseText)
         {
-            get { return HttpContext.Current.Session[SessionTokenName] as string; }
-            set { HttpContext.Current.Session[SessionTokenName] = value; }
-        }
-        protected string SessionTokenName { get; set; }
-        protected Uri TokenEndpoint { get; set; }
-        protected string VerificationCode
-        {
-            get { return HttpContext.Current.Request.Params["code"]; }
-        }
-
-        #endregion
-
-        private String ExchangeCodeForToken(String code, Uri redirectUrl)
-        {
-            string url = TokenEndpoint + "?" +
-                         "client_id=" + APIKey + "&" +
-                         "redirect_uri=" + HttpContext.Current.Server.UrlEncode(redirectUrl.ToString()) + "&" +
-                         "client_secret=" + APISecret + "&" +
-                         "code=" + code;
-
-            WebRequest request = WebRequest.CreateDefault(new Uri(url));
-            using (WebResponse response = request.GetResponse())
+            TimeSpan expiry = TimeSpan.MinValue;
+            foreach (string token in responseText.Split('&'))
             {
-                using (Stream responseStream = response.GetResponseStream())
+                if (token.StartsWith("expires"))
                 {
-                    using (var responseReader = new StreamReader(responseStream))
-                    {
-                        string responseText = responseReader.ReadToEnd();
-                        string token = responseText.Replace("access_token=", "");
-                        return token;
-                    }
+                    expiry = new TimeSpan(0, 0, Convert.ToInt32(token.Replace("expires=", "")));
                 }
             }
+            return expiry;
         }
 
-        public FacebookAuthorisationResult Authorize()
+        protected override string GetToken(string responseText)
         {
-            string errorReason = HttpContext.Current.Request.Params["error_reason"];
-            bool userDenied = (errorReason != null);
-            if (userDenied)
+            string authToken = String.Empty;
+            foreach (string token in responseText.Split('&'))
             {
-                return FacebookAuthorisationResult.Denied;
-            }
-
-            if (!HaveVerificationCode())
-            {
-                string url = AuthorizationEndpoint + "?" +
-                             "client_id=" + APIKey + "&" +
-                             "redirect_uri=" + HttpContext.Current.Server.UrlEncode(LoginPage.ToString()) + "&" +
-                             "state=facebook&scope=email";
-                HttpContext.Current.Response.Redirect(url, true);
-                return FacebookAuthorisationResult.RequestingCode;
-            }
-
-            SessionToken = ExchangeCodeForToken(VerificationCode, LoginPage);
-
-            return FacebookAuthorisationResult.Authorized;
-        }
-
-        public FacebookGraph GetCurrentUser()
-        {
-            if (!IsCurrentUserAuthorized())
-            {
-                return null;
-            }
-
-            string url = MeGraphEndpoint + "?" + "access_token=" + SessionToken;
-
-            WebRequest request = WebRequest.CreateDefault(new Uri(url));
-            using (WebResponse response = request.GetResponse())
-            {
-                using (Stream responseStream = response.GetResponseStream())
+                if (token.StartsWith("access_token"))
                 {
-                    using (var responseReader = new StreamReader(responseStream))
-                    {
-                        string responseText = responseReader.ReadToEnd();
-                        FacebookGraph user = FacebookGraph.Deserialize(responseText);
-                        return user;
-                    }
+                    authToken = token.Replace("access_token=", "");
                 }
             }
-        }
-
-        public bool HaveVerificationCode()
-        {
-            return (VerificationCode != null);
-        }
-
-        public Boolean IsCurrentUserAuthorized()
-        {
-            return !String.IsNullOrEmpty(SessionToken);
-        }
-
-        public bool IsFacebook()
-        {
-            string service = HttpContext.Current.Request.Params["state"];
-            return !String.IsNullOrEmpty(service) && service == "facebook";
+            return authToken;
         }
     }
 }

@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DDRMenu_02.00.01_Install.zip" />
+    <None Include="DDRMenu_02.00.02_Install.zip" />
   </ItemGroup>
   <PropertyGroup>
     <BuildScriptsPath>$(MSBuildProjectDirectory)\..\BuildScripts</BuildScriptsPath>

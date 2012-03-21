@@ -462,7 +462,7 @@ div.SearchIcon img{margin-top:3px;}
 					.dnnFormPopup a.dnnToggleMax{float:right;display:block;text-indent:-9999em;background:url(../../images/modal-max-min-icn.png) no-repeat bottom;height:24px;width:24px;margin:1px 24px 0 0}
 					.dnnFormPopup a.dnnToggleMax.ui-dialog-titlebar-max{background:url(../../images/modal-max-min-icn.png) no-repeat top;}
 				.dnnFormPopup .ui-dialog-content, #iPopUp .ui-dialog-content{position:relative;border:0;padding:0px;background:#fff;overflow:auto;zoom:1;}
-					.dnnFormPopup .ui-dialog-buttonpane {text-align:left;border-width:1px 0 0 0;background-image:none;margin:.5em 0 0 0;padding:.3em 1em .5em .4em;}
+					.dnnFormPopup .ui-dialog-buttonpane {text-align:left;border-width:1px 0 0 0;background-image:none;margin:.5em 0 0 0;padding:.3em 1em 1em .4em;overflow:hidden;}
 					.dnnFormPopup .ui-dialog-buttonpane .ui-dialog-buttonset {float:right;}
 					.dnnFormPopup .ui-dialog-buttonpane button {margin:.5em .4em .5em 0.8em;cursor:pointer;padding:0.5em 1em;border:none;outline:none;}
 				.dnnFormPopup .ui-resizable-se{width:14px;height:14px;float:right;background:url(../../images/modal-resize-icn.png) no-repeat bottom;height:24px;width:24px;}

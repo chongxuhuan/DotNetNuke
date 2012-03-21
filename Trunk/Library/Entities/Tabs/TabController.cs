@@ -1146,6 +1146,12 @@ namespace DotNetNuke.Entities.Tabs
             {
                 if (TabPermissionController.CanAdminPage(tab))
                 {
+                    //Update ContentItem If neccessary
+                    if (tab.ContentItemId == Null.NullInteger && tab.TabID != Null.NullInteger)
+                    {
+                        tabController.CreateContentItem(tab);
+                    }
+
                     Provider.UpdateTab(tab.TabID,
                                        tab.ContentItemId,
                                        tab.PortalID,

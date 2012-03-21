@@ -36,6 +36,7 @@ namespace DotNetNuke.Web.UI.WebControls
 {
     public class TermsSelector : DnnComboBox
     {
+        public event EventHandler DataSourceChanged;
         public TermsSelector()
         {
             IncludeSystemVocabularies = false;
@@ -53,6 +54,7 @@ namespace DotNetNuke.Web.UI.WebControls
             set
             {
                 ViewState["PortalId"] = value;
+                OnDataSourceChanged();
             }
         }
 
@@ -65,6 +67,7 @@ namespace DotNetNuke.Web.UI.WebControls
             set
             {
                 ViewState["IncludeSystemVocabularies"] = value;
+                OnDataSourceChanged();
             }
             
         }
@@ -78,6 +81,7 @@ namespace DotNetNuke.Web.UI.WebControls
             set
             {
                 ViewState["IncludeTags"] = value;
+                OnDataSourceChanged();
             }
 
         }
@@ -112,6 +116,20 @@ namespace DotNetNuke.Web.UI.WebControls
             ToolTip = Terms.ToDelimittedString(", ");
         }
 
+        protected override void LoadViewState(object savedState)
+        {
+            base.LoadViewState(savedState);
+
+            OnDataSourceChanged();
+        }
+
+        protected void OnDataSourceChanged()
+        {
+            if(DataSourceChanged != null)
+            {
+                DataSourceChanged(this, new EventArgs());
+            }
+        }
         #endregion
 
         #region "Private Template Class"
@@ -230,6 +248,8 @@ namespace DotNetNuke.Web.UI.WebControls
                 _tree.DataBound += TreeDataBound;
 
                 _container.Controls.Add(_tree);
+
+                _termsSelector.DataSourceChanged += new EventHandler(TermsSelector_DataSourceChanged);
             }
 
             #endregion
@@ -290,6 +310,12 @@ namespace DotNetNuke.Web.UI.WebControls
                         break;
                     }
                 }
+            }
+
+            private void TermsSelector_DataSourceChanged(object sender, EventArgs e)
+            {
+                _terms = null;
+                _tree.DataSource = Terms;
             }
         }
 

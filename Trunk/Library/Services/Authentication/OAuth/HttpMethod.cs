@@ -1,7 +1,7 @@
-﻿#region Copyright
+#region Copyright
 
 // 
-// DotNetNuke® - http://www.dotnetnuke.com
+// DotNetNuke� - http://www.dotnetnuke.com
 // Copyright (c) 2002-2011
 // by DotNetNuke Corporation
 // 
@@ -21,12 +21,13 @@
 
 #endregion
 
-namespace DotNetNuke.Authentication.Facebook.Components
+namespace DotNetNuke.Services.Authentication.OAuth
 {
-    public enum FacebookAuthorisationResult
+    public enum HttpMethod
     {
-        Denied,
-        Authorized,
-        RequestingCode
+        GET,
+        POST,
+        PUT,
+        DELETE
     }
 }

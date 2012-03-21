@@ -21,9 +21,9 @@
 
 #endregion
 
-namespace DotNetNuke.Authentication.Google.Components
+namespace DotNetNuke.Services.Authentication.OAuth
 {
-    public enum GoogleAuthorisationResult
+    public enum AuthorisationResult
     {
         Denied,
         Authorized,

@@ -959,7 +959,6 @@ namespace DotNetNuke.Security.Membership
         /// <param name="userId"></param>
         /// <param name="filterUserId"></param>
         /// <param name="filterRoleId"></param>
-        /// <param name="relationTypeId"></param>
         /// <param name="isAdmin"></param>
         /// <param name="pageSize"></param>
         /// <param name="pageIndex"></param>

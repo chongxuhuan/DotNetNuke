@@ -124,7 +124,7 @@ function confirmMoveFiles(strDestFolder, destFiles) {
 
     //check conflict files
     var conflictFiles = "";
-    if(destFiles != "") {
+    if(destFiles != "" && getMoveStatus() != 'unzip') {
         var moveFiles = getMoveFiles().split(';');
         var checkFiles = destFiles.split(';');
         for(var i = 0; i < checkFiles.length; i++) {

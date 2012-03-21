@@ -223,18 +223,25 @@ namespace DotNetNuke.Services.Log.EventLog.DBLoggingProvider
                 DnnLog.Error(exc);
                 if ((HttpContext.Current != null))
                 {
-                    HttpResponse response = HttpContext.Current.Response;
-                    response.StatusCode = 500;
-                    HtmlUtils.WriteHeader(response, "SQL Exception");
-
-                    string strMessage = SqlUtils.TranslateSQLException(exc);
-                    if (logTypeConfigInfo != null)
+                    if (HttpContext.Current.IsCustomErrorEnabled)
                     {
-                        HtmlUtils.WriteError(response, logTypeConfigInfo.LogFileNameWithPath, strMessage);
+                        HttpContext.Current.AddError(exc);
                     }
+                    else
+                    {
+                        HttpResponse response = HttpContext.Current.Response;
+                        response.StatusCode = 500;
+                        HtmlUtils.WriteHeader(response, "SQL Exception");
 
-                    HtmlUtils.WriteFooter(response);
-                    response.End();
+                        string strMessage = SqlUtils.TranslateSQLException(exc);
+                        if (logTypeConfigInfo != null)
+                        {
+                            HtmlUtils.WriteError(response, logTypeConfigInfo.LogFileNameWithPath, strMessage);
+                        }
+
+                        HtmlUtils.WriteFooter(response);
+                        response.End();
+                    }
                 }
             }
             catch (Exception exc)

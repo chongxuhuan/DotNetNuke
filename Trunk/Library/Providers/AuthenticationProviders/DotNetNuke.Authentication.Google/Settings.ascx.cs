@@ -27,6 +27,7 @@ using System;
 
 using DotNetNuke.Authentication.Google.Components;
 using DotNetNuke.Services.Authentication;
+using DotNetNuke.Services.Authentication.OAuth;
 using DotNetNuke.Services.Exceptions;
 
 #endregion
@@ -39,8 +40,8 @@ namespace DotNetNuke.Authentication.Google
         {
             if (SettingsEditor.IsValid && SettingsEditor.IsDirty)
             {
-                var config = (GoogleConfig)SettingsEditor.DataSource;
-                GoogleConfig.UpdateConfig(config);
+                var config = (oAuthConfigBase)SettingsEditor.DataSource;
+                oAuthConfigBase.UpdateConfig(config);
             }
         }
 
@@ -50,7 +51,7 @@ namespace DotNetNuke.Authentication.Google
 
             try
             {
-                GoogleConfig config = GoogleConfig.GetConfig(PortalId);
+                oAuthConfigBase config = oAuthConfigBase.GetConfig("Google", PortalId);
                 SettingsEditor.DataSource = config;
                 SettingsEditor.DataBind();
             }

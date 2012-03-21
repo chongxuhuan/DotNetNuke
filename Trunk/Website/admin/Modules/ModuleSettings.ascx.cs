@@ -726,7 +726,7 @@ namespace DotNetNuke.Modules.Admin.Modules
                                     }
                                     else
                                     {
-                                        objModules.CopyModule(Module, destinationTab, Null.NullString, true);
+                                        objModules.CopyModule(Module, destinationTab, Module.PaneName, true);
                                     }
                                 }
                             }

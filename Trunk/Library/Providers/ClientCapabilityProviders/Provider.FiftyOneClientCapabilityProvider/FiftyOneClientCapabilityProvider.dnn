@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="FiftyOneClientCapabilityProvider" type="Provider" version="6.2.0">
+    <package name="FiftyOneClientCapabilityProvider" type="Provider" version="06.02.00">
       <friendlyName>FiftyOne Client Capability Providers</friendlyName>
       <description>Device Detection Modules &amp; Client Capability Provider</description>
       <iconFile>~/DesktopModules/Admin/FiftyOneClientCapabilityProvider/Images/51Degrees.mobi.png</iconFile>
