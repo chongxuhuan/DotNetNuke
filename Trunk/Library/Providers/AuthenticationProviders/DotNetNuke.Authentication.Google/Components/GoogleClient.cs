@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -34,7 +34,7 @@ using DotNetNuke.Services.Authentication.OAuth;
 
 namespace DotNetNuke.Authentication.Google.Components
 {
-    public class GoogleClient : oAuthClientBase
+    public class GoogleClient : OAuthClientBase
     {
         #region Constructors
 
@@ -50,9 +50,9 @@ namespace DotNetNuke.Authentication.Google.Components
                 HttpContext.Current.Server.UrlEncode(
                     "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email");
 
-            APIKey = oAuthConfigBase.GetConfig(Service, portalId).APIKey;
-            APISecret = oAuthConfigBase.GetConfig(Service, portalId).APISecret;
-            CallbackUri = new Uri(oAuthConfigBase.GetConfig(Service, portalId).SiteURL);
+            APIKey = OAuthConfigBase.GetConfig(Service, portalId).APIKey;
+            APISecret = OAuthConfigBase.GetConfig(Service, portalId).APISecret;
+            CallbackUri = new Uri(OAuthConfigBase.GetConfig(Service, portalId).SiteURL);
 
             AuthTokenName = "GoogleUserToken";
 

@@ -281,5 +281,29 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         }
 
         #endregion
+
+        #region MessageTypes CRUD
+        
+        public int SaveMessageType(int messageTypeId, string name, string description, int timeToLive, bool isNotification)
+        {
+            return _provider.ExecuteScalar<int>("SaveMessageType", messageTypeId, name, _provider.GetNull(description), _provider.GetNull(timeToLive), isNotification);
+        }
+
+        public void DeleteMessageType(int messageTypeId)
+        {
+            _provider.ExecuteNonQuery("DeleteMessageType", messageTypeId);
+        }
+
+        public IDataReader GetMessageType(int messageTypeId)
+        {
+            return _provider.ExecuteReader("GetMessageType", messageTypeId);
+        }
+
+        public IDataReader GetMessageTypeByName(string name)
+        {
+            return _provider.ExecuteReader("GetMessageTypeByName", name);
+        }
+
+        #endregion
     }
 }

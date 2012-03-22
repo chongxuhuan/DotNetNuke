@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -32,7 +32,7 @@ using DotNetNuke.Services.Authentication.OAuth;
 
 namespace DotNetNuke.Authentication.Google
 {
-    public partial class Login : oAuthLoginBase
+    public partial class Login : OAuthLoginBase
     {
         protected override string AuthSystemApplicationName
         {

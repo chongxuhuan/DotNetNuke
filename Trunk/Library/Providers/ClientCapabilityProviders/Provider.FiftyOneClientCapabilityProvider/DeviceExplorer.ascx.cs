@@ -21,17 +21,15 @@
  * 
  * ********************************************************************* */
 
-using System;
-using FiftyOne.Foundation.UI.Web;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace FiftyOne.Modules
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
 {
+    using System;
+    using FiftyOne;
+
     /// <summary>
     /// Class to wrap access to the 51Degrees.mobi device explorer control.
     /// </summary>
-    partial class DeviceExplorer : ModuleBase
+    partial class DeviceExplorer : Components.ModuleBase
     {
         /// <summary>
         /// Displays all the vendors available in the system.

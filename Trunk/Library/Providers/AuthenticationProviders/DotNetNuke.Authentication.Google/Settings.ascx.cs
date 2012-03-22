@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -34,31 +34,11 @@ using DotNetNuke.Services.Exceptions;
 
 namespace DotNetNuke.Authentication.Google
 {
-    public partial class Settings : AuthenticationSettingsBase
+    public partial class Settings : OAuthSettingsBase
     {
-        public override void UpdateSettings()
+        protected override string AuthSystemApplicationName
         {
-            if (SettingsEditor.IsValid && SettingsEditor.IsDirty)
-            {
-                var config = (oAuthConfigBase)SettingsEditor.DataSource;
-                oAuthConfigBase.UpdateConfig(config);
-            }
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            try
-            {
-                oAuthConfigBase config = oAuthConfigBase.GetConfig("Google", PortalId);
-                SettingsEditor.DataSource = config;
-                SettingsEditor.DataBind();
-            }
-            catch (Exception exc)
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
+            get { return "Google"; }
         }
     }
 }

@@ -50,3 +50,7 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 
 .dnnUser .dnnForm, .dnnMembership .dnnForm{ min-width: 500px;}
 .dnnUser.register{ width: 750px;}
+
+div.dnnRegistrationForm { width: 96%;min-width: 620px;}
+div.dnnRegistrationForm .dnnForm {float: left;min-width: 50px; width: 60%;}
+.dnnSocialRegistration { float: none;height: 200px;}

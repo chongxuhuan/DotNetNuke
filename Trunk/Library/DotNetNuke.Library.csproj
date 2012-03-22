@@ -244,9 +244,12 @@
     <Compile Include="Services\Authentication\OAuth\AuthorisationResult.cs" />
     <Compile Include="Services\Authentication\OAuth\HttpMethod.cs" />
     <Compile Include="Services\Authentication\OAuth\Json.cs" />
-    <Compile Include="Services\Authentication\OAuth\oAuthClientBase.cs" />
-    <Compile Include="Services\Authentication\OAuth\oAuthConfigBase.cs" />
-    <Compile Include="Services\Authentication\OAuth\oAuthLoginBase.cs">
+    <Compile Include="Services\Authentication\OAuth\OAuthClientBase.cs" />
+    <Compile Include="Services\Authentication\OAuth\OAuthConfigBase.cs" />
+    <Compile Include="Services\Authentication\OAuth\OAuthLoginBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Services\Authentication\OAuth\OAuthSettingsBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Services\Authentication\OAuth\QueryParameter.cs" />
@@ -626,6 +629,12 @@
     <Compile Include="Services\Mobile\RedirectionController.cs" />
     <Compile Include="Services\Mobile\RedirectionType.cs" />
     <Compile Include="Services\Mobile\TargetType.cs" />
+    <Compile Include="Services\Social\Notifications\Data\DataService.cs" />
+    <Compile Include="Services\Social\Notifications\Data\IDataService.cs" />
+    <Compile Include="Services\Social\Notifications\Internal\INotificationsController.cs" />
+    <Compile Include="Services\Social\Notifications\Internal\NotificationsControllerImpl.cs" />
+    <Compile Include="Services\Social\Messaging\MessageType.cs" />
+    <Compile Include="Services\Social\Notifications\NotificationsController.cs" />
     <Compile Include="Services\SystemDateTime\SystemDateTime.cs" />
     <Compile Include="Services\EventQueue\Config\EventQueueConfiguration.cs" />
     <Compile Include="Services\EventQueue\Config\PublishedEvent.cs" />

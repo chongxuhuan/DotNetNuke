@@ -349,12 +349,6 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 ctlPackage.DataSource = Package;
                 ctlPackage.DataBind();
 
-                wizPackage.CancelButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("Cancel", LocalResourceFile);
-                wizPackage.StartNextButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/rt.gif\" border=\"0\" /> " + Localization.GetString("Next", LocalResourceFile);
-                wizPackage.StepNextButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/rt.gif\" border=\"0\" /> " + Localization.GetString("Next", LocalResourceFile);
-                wizPackage.StepPreviousButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("Previous", LocalResourceFile);
-                wizPackage.FinishCompleteButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("Cancel", LocalResourceFile);
-
                 _Writer = PackageWriterFactory.GetWriter(Package);
 
                 if (Page.IsPostBack)
@@ -419,7 +413,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                         wizPackage.ActiveStepIndex = 3;
                     }
                     GetFiles(string.IsNullOrEmpty(txtFiles.Text));
-                    chkIncludeSource.Visible = _Writer.HasProjectFile || _Writer.AppCodeFiles.Count > 0;
+                    includeSourceRow.Visible = _Writer.HasProjectFile || _Writer.AppCodeFiles.Count > 0;
                     break;
                 case 2: //Display the assemblies
                     if (_Writer.IncludeAssemblies)

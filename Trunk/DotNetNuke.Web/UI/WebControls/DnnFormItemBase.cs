@@ -50,12 +50,21 @@ namespace DotNetNuke.Web.UI.WebControls
 
         #region Protected Properties
 
+        protected PropertyDescriptor ChildProperty
+        {
+            get
+            {
+                PropertyDescriptorCollection childProps = Property.GetChildProperties();
+                return childProps[DataField];
+            }
+        }
+
         protected PropertyDescriptor Property
         {
             get
             {
                 PropertyDescriptorCollection props = TypeDescriptor.GetProperties(DataSource);
-                return props[DataField];
+                return !String.IsNullOrEmpty(DataMember) ? props[DataMember] : props[DataField];
             }
         }
 
@@ -78,6 +87,8 @@ namespace DotNetNuke.Web.UI.WebControls
         #region Public Properties
 
         public string DataField { get; set; }
+
+        public string DataMember { get; set; }
 
         internal object DataSource { get; set; }
 
@@ -228,11 +239,27 @@ namespace DotNetNuke.Web.UI.WebControls
             {
                 if (!String.IsNullOrEmpty(dataField))
                 {
-                    if (Property != null && Property.GetValue(DataSource) != null)
+                    if (String.IsNullOrEmpty(DataMember))
                     {
-                        // ReSharper disable PossibleNullReferenceException
-                        value = Property.GetValue(DataSource);
-                        // ReSharper restore PossibleNullReferenceException
+                        if (Property != null && Property.GetValue(DataSource) != null)
+                        {
+                            // ReSharper disable PossibleNullReferenceException
+                            value = Property.GetValue(DataSource);
+                            // ReSharper restore PossibleNullReferenceException
+                        } 
+                    }
+                    else
+                    {
+                        if (Property != null && Property.GetValue(DataSource) != null)
+                        {
+                            // ReSharper disable PossibleNullReferenceException
+                            object parentValue = Property.GetValue(DataSource);
+                            if (ChildProperty != null && ChildProperty.GetValue(parentValue) != null)
+                            {
+                                value = ChildProperty.GetValue(parentValue);
+                            }
+                            // ReSharper restore PossibleNullReferenceException
+                        }
                     }
                 }
             }
@@ -280,11 +307,25 @@ namespace DotNetNuke.Web.UI.WebControls
                 }
                 else
                 {
-                    if (Property != null)
+                    if (String.IsNullOrEmpty(DataMember))
                     {
-                        if (!ReferenceEquals(newValue, oldValue))
+                        if (Property != null)
                         {
-                            Property.SetValue(DataSource, Convert.ChangeType(newValue, Property.PropertyType));
+                            if (!ReferenceEquals(newValue, oldValue))
+                            {
+                                Property.SetValue(DataSource, Convert.ChangeType(newValue, Property.PropertyType));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (Property != null)
+                        {
+                            object parentValue = Property.GetValue(DataSource);
+                            if (ChildProperty != null && parentValue != null)
+                            {
+                                ChildProperty.SetValue(parentValue, Convert.ChangeType(newValue, ChildProperty.PropertyType));
+                            }
                         }
                     }
                 }

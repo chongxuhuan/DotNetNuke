@@ -50,7 +50,7 @@ namespace DotNetNuke.Modules.Admin.Users
     /// -----------------------------------------------------------------------------
     public partial class User : UserUserControlBase
     {
-		#region "Public Properties"
+		#region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -126,7 +126,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
 		#endregion
 
-		#region "Private Methods"
+		#region Private Methods
 
         private void UpdateDisplayName()
         {
@@ -208,7 +208,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
 		#endregion
 
-		#region "Public Methods"
+		#region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -364,7 +364,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
         /// -----------------------------------------------------------------------------
         /// <summary>

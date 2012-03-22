@@ -117,30 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FacebookConfig_APIKey.Help" xml:space="preserve">
-    <value>Enter the value of the APP ID/API Key you configured at facebook.com.</value>
-  </data>
-  <data name="FacebookConfig_APIKey.Text" xml:space="preserve">
-    <value>APP ID</value>
-  </data>
-  <data name="FacebookConfig_APISecret.Help" xml:space="preserve">
-    <value>Enter the value of the APP Secret you configured at facebook.com.</value>
-  </data>
-  <data name="FacebookConfig_APISecret.Text" xml:space="preserve">
-    <value>APP Secret</value>
-  </data>
-  <data name="FacebookConfig_Enabled.Help" xml:space="preserve">
-    <value>Check this box to enable Facebook Authentication for this site</value>
-  </data>
-  <data name="FacebookConfig_Enabled.Text" xml:space="preserve">
-    <value>Enabled</value>
-  </data>
-  <data name="FacebookConfig_SiteURL.Help" xml:space="preserve">
-    <value>Enter the Site URL you configured at facebook.com</value>
-  </data>
-  <data name="FacebookConfig_SiteURL.Text" xml:space="preserve">
-    <value>Site URL</value>
-  </data>
   <data name="Title.Text" xml:space="preserve">
     <value>Facebook Settings</value>
   </data>

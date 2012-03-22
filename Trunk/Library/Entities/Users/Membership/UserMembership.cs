@@ -168,6 +168,13 @@ namespace DotNetNuke.Entities.Users
 
         /// -----------------------------------------------------------------------------
         /// <summary>
+        /// Gets and sets the User's Password Confirm value
+        /// </summary>
+        /// -----------------------------------------------------------------------------
+        public string PasswordConfirm { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
         /// Gets and sets the User's Password Question
         /// </summary>
         /// <history>

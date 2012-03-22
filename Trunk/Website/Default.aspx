@@ -2,7 +2,7 @@
 <%@ Register TagPrefix="dnncrm" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Common.Controls" Assembly="DotNetNuke" %>
 <asp:literal id="skinDocType" runat="server"></asp:literal>
-<html <%= HtmlAttributeList %>>
+<html <asp:literal id="attributeList" runat="server"></asp:literal>>
 <head id="Head" runat="server">
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
     <meta content="text/javascript" http-equiv="Content-Script-Type" />

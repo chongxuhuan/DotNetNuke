@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -52,6 +53,13 @@ namespace DotNetNuke.Modules.Admin.Users
     /// -----------------------------------------------------------------------------
     public partial class UserSettings : UserModuleBase
     {
+        private void ExtractSetting(Hashtable sourceSettings, Hashtable targetSettings, string key)
+        {
+            targetSettings[key] = sourceSettings[key];
+            sourceSettings.Remove(key);
+        }
+
+
         protected string ReturnURL
         {
             get
@@ -126,30 +134,62 @@ namespace DotNetNuke.Modules.Admin.Users
 
             //Create a hashtable for the custom editors being used, using the same keys
             //as in the settings hashtable
+            var settings = UserController.GetUserSettings(UserPortalID);
+            var regSettings = new Hashtable();
+            ExtractSetting(settings, regSettings, "Security_UserNameValidation");
+            ExtractSetting(settings, regSettings, "Security_EmailValidation");
+            ExtractSetting(settings, regSettings, "Security_DisplayNameFormat");
+            ExtractSetting(settings, regSettings, "Security_CaptchaRegister");
+            ExtractSetting(settings, regSettings, "Security_RequireValidProfile");
+            ExtractSetting(settings, regSettings, "Redirect_AfterRegistration");
+            ExtractSetting(settings, regSettings, "Security_RequireConfirmPassword");
+            ExtractSetting(settings, regSettings, "Security_RandomPassword");
+            ExtractSetting(settings, regSettings, "Security_UseEmailAsUserName");
+            ExtractSetting(settings, regSettings, "Security_UseAuthProvidersForRegistration");
+            ExtractSetting(settings, regSettings, "Security_UseProfanityFilter");
+
             var editors = new Hashtable();
-            editors["Redirect_AfterLogin"] = EditorInfo.GetEditor("Page");
-            editors["Redirect_AfterLogout"] = EditorInfo.GetEditor("Page");
             editors["Redirect_AfterRegistration"] = EditorInfo.GetEditor("Page");
 
-            //Create a Hashtable for the custom Visibility options
             var visibility = new Hashtable();
+            if (IsHostMenu)
+            {
+                visibility["Redirect_AfterRegistration"] = false;
+                visibility["Security_CaptchaRegister"] = false;
+                visibility["Security_EmailValidation"] = false;
+                visibility["Security_RequireValidProfile"] = false;
+                visibility["Security_RequireConfirmPassword"] = false;
+                visibility["Security_RandomPassword"] = false;
+                visibility["Security_UseEmailAsUserName"] = false;
+                visibility["Security_UseAuthProvidersForRegistration"] = false;
+                visibility["Security_UseProfanityFilter"] = false;
+            }
+
+            RegistrationSettingsEditor.LocalResourceFile = LocalResourceFile;
+            RegistrationSettingsEditor.DataSource = regSettings;
+            RegistrationSettingsEditor.CustomEditors = editors;
+            RegistrationSettingsEditor.Visibility = visibility;
+            RegistrationSettingsEditor.DataBind();
+
+            editors = new Hashtable();
+            editors["Redirect_AfterLogin"] = EditorInfo.GetEditor("Page");
+            editors["Redirect_AfterLogout"] = EditorInfo.GetEditor("Page");
+
+            //Create a Hashtable for the custom Visibility options
+            visibility = new Hashtable();
             if (IsHostMenu)
             {
                 visibility["Profile_DefaultVisibility"] = false;
                 visibility["Profile_DisplayVisibility"] = false;
                 visibility["Profile_ManageServices"] = false;
                 visibility["Redirect_AfterLogin"] = false;
-                visibility["Redirect_AfterRegistration"] = false;
                 visibility["Redirect_AfterLogout"] = false;
                 visibility["Security_CaptchaLogin"] = false;
-                visibility["Security_CaptchaRegister"] = false;
-                visibility["Security_EmailValidation"] = false;
-                visibility["Security_RequireValidProfile"] = false;
                 visibility["Security_RequireValidProfileAtLogin"] = false;
                 visibility["Security_UsersControl"] = false;
             }
             UserSettingsEditor.LocalResourceFile = LocalResourceFile;
-            UserSettingsEditor.DataSource = UserController.GetUserSettings(UserPortalID);
+            UserSettingsEditor.DataSource = settings;
             UserSettingsEditor.CustomEditors = editors;
             UserSettingsEditor.Visibility = visibility;
             UserSettingsEditor.DataBind();
@@ -186,6 +226,14 @@ namespace DotNetNuke.Modules.Admin.Users
             string setting = Null.NullString;
 
             foreach (FieldEditorControl settingsEditor in UserSettingsEditor.Fields)
+            {
+                if (settingsEditor.IsDirty)
+                {
+                    UpdateSetting(UserPortalID, key, setting);
+                }
+            }
+
+            foreach (FieldEditorControl settingsEditor in RegistrationSettingsEditor.Fields)
             {
                 if (settingsEditor.IsDirty)
                 {

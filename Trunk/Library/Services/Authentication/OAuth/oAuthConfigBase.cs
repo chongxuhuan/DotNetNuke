@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -33,11 +33,11 @@ namespace DotNetNuke.Services.Authentication.OAuth
     /// The Config class provides a central area for management of Module Configuration Settings.
     /// </summary>
     [Serializable]
-    public class oAuthConfigBase : AuthenticationConfigBase
+    public class OAuthConfigBase : AuthenticationConfigBase
     {
         private static readonly string _cacheKey = "Authentication";
 
-        protected oAuthConfigBase(string service, int portalId)
+        protected OAuthConfigBase(string service, int portalId)
             : base(portalId)
         {
             Service = service;
@@ -68,19 +68,19 @@ namespace DotNetNuke.Services.Authentication.OAuth
             DataCache.RemoveCache(GetCacheKey(service, portalId));
         }
 
-        public static oAuthConfigBase GetConfig(string service, int portalId)
+        public static OAuthConfigBase GetConfig(string service, int portalId)
         {
             string key = GetCacheKey(service, portalId);
-            var config = (oAuthConfigBase)DataCache.GetCache(key);
+            var config = (OAuthConfigBase)DataCache.GetCache(key);
             if (config == null)
             {
-                config = new oAuthConfigBase(service, portalId);
+                config = new OAuthConfigBase(service, portalId);
                 DataCache.SetCache(key, config);
             }
             return config;
         }
 
-        public static void UpdateConfig(oAuthConfigBase config)
+        public static void UpdateConfig(OAuthConfigBase config)
         {
             PortalController.UpdatePortalSetting(config.PortalID, config.Service + "_APIKey", config.APIKey);
             PortalController.UpdatePortalSetting(config.PortalID, config.Service + "_APISecret", config.APISecret);

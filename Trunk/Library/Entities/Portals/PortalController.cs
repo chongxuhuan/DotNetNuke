@@ -99,7 +99,7 @@ namespace DotNetNuke.Entities.Portals
             FolderPermissionController.SaveFolderPermissions((FolderInfo)folder);
         }
 
-        private static void CreateDefaultPortalRoles(int portalId, int administratorId, int administratorRoleId, int registeredRoleId, int subscriberRoleId, int unverifiedRoleId)
+        private static void CreateDefaultPortalRoles(int portalId, int administratorId, ref int administratorRoleId, ref int registeredRoleId, ref int subscriberRoleId, int unverifiedRoleId)
         {
             var controller = new RoleController();
 
@@ -730,7 +730,7 @@ namespace DotNetNuke.Entities.Portals
                     }
                 }
             }
-            CreateDefaultPortalRoles(portalID, administratorId, administratorRoleId, registeredRoleId, subscriberRoleId, unverifiedRoleId);
+            CreateDefaultPortalRoles(portalID, administratorId, ref administratorRoleId, ref registeredRoleId, ref subscriberRoleId, unverifiedRoleId);
 
             //update portal setup
             var objportal = GetPortal(portalID);
@@ -781,7 +781,7 @@ namespace DotNetNuke.Entities.Portals
             }
 
             //create required roles if not already created
-            CreateDefaultPortalRoles(portalID, administratorId, administratorRoleId, registeredRoleId, subscriberRoleId, unverifiedRoleId);
+            CreateDefaultPortalRoles(portalID, administratorId, ref administratorRoleId, ref registeredRoleId, ref subscriberRoleId, unverifiedRoleId);
 
             //update portal setup
             var objportal = GetPortal(portalID);

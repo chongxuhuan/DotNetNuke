@@ -330,7 +330,7 @@ div.SearchIcon img{margin-top:3px;}
 		.dnnModuleAuditControl{width:95%;margin:0 auto}
 		
 		ul.dnnActions, ul.dnnActions li{list-style:none;padding:0;margin:0;}
-			.dnnForm ul.dnnActions, ul.dnnActions{margin:1em 0;border-top:#ccc double;padding:1em 0 0 0;}
+			.dnnForm ul.dnnActions, ul.dnnActions{margin:1em 0;border-top:#ccc double;padding:1em 0 0 0 !important;}
 			ul.dnnActions li{overflow:hidden;display:block;float:left;}
 			ul.dnnActions li a{display:block;float:left;}
 			ul.dnnActions li a, a.dnnPrimaryAction, a.dnnPrimaryAction:link, a.dnnPrimaryAction:visited, a.dnnSecondaryAction, 

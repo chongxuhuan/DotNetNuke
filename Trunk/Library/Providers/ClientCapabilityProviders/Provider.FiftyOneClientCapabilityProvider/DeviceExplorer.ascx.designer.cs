@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FiftyOne.Modules {
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider {
     
     
     public partial class DeviceExplorer {

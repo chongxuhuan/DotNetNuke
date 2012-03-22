@@ -31,7 +31,7 @@ using DotNetNuke.Services.Authentication.OAuth;
 
 namespace DotNetNuke.Authentication.Twitter.Components
 {
-    public class TwitterClient : oAuthClientBase
+    public class TwitterClient : OAuthClientBase
     {
         public TwitterClient(int portalId)
         {
@@ -42,9 +42,9 @@ namespace DotNetNuke.Authentication.Twitter.Components
 
             Service = "Twitter";
 
-            APIKey = oAuthConfigBase.GetConfig(Service, portalId).APIKey;
-            APISecret = oAuthConfigBase.GetConfig(Service, portalId).APISecret;
-            CallbackUri = new Uri(oAuthConfigBase.GetConfig(Service, portalId).SiteURL);
+            APIKey = OAuthConfigBase.GetConfig(Service, portalId).APIKey;
+            APISecret = OAuthConfigBase.GetConfig(Service, portalId).APISecret;
+            CallbackUri = new Uri(OAuthConfigBase.GetConfig(Service, portalId).SiteURL);
             AuthTokenName = "TwitterUserToken";
 
             OAuthVersion = "1.0";

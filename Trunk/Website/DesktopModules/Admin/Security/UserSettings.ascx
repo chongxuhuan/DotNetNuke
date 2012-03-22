@@ -6,6 +6,7 @@
     <ul class="dnnAdminTabNav dnnClear">
 		<li><a href="#usProviderSettings"><%=LocalizeString("ProviderSettings")%></a></li>
 		<li><a href="#usPasswordSettings"><%=LocalizeString("PasswordSettings")%></a></li>
+        <li><a href="#usRegistrationSettings"><%=LocalizeString("RegistrationSettings")%></a></li>
 		<li><a href="#usUserAccounts"><%=LocalizeString("UserAccounts")%></a></li>
 	</ul>
     <div class="usProviderSettings" id="usProviderSettings">
@@ -18,6 +19,12 @@
         <fieldset>
             <div class="dnnFormMessage dnnFormInfo"><asp:label id="lblPassword" runat="server" resourcekey="PasswordSettingsHelp" /></div>
             <dnn:propertyeditorcontrol id="PasswordSettings" runat="Server" valuedatafield="PropertyValue" namedatafield="Name" helpstyle-cssclass="dnnFormHelpContent dnnClear" sortmode="SortOrderAttribute" />
+        </fieldset>
+    </div>
+    <div class="usRegistrationSettings" id="usRegistrationSettings">
+        <fieldset>
+            <div class="dnnFormMessage dnnFormInfo"><asp:label id="lblRegistration" runat="server" resourcekey="RegistrationSettingsHelp" /></div>
+            <dnn:settingseditorcontrol id="RegistrationSettingsEditor" runat="server" helpstyle-cssclass="dnnFormHelpContent dnnClear" editmode="Edit" />
         </fieldset>
     </div>
     <div class="usUserAccounts" id="usUserAccounts">

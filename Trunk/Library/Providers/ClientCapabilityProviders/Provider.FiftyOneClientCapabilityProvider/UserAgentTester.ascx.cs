@@ -21,12 +21,12 @@
  * 
  * ********************************************************************* */
 
-namespace FiftyOne.Modules
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
 {
-    /// <summary>
-    /// Used to contain the 51Degrees.mobi user agent tester control.
-    /// </summary>
-    partial class UserAgentTester : ModuleBase
+    using System;
+    using FiftyOne.Foundation.UI;
+    
+    partial class UserAgentTester : Components.ModuleBase
     {
     }
 }

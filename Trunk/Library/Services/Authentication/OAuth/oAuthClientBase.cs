@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -49,7 +49,7 @@ using DotNetNuke.Entities.Portals;
 
 namespace DotNetNuke.Services.Authentication.OAuth
 {
-    public abstract class oAuthClientBase
+    public abstract class OAuthClientBase
     {
         #region Private Members
 
@@ -81,7 +81,7 @@ namespace DotNetNuke.Services.Authentication.OAuth
 
         #endregion
 
-        public oAuthClientBase()
+        public OAuthClientBase()
         {
             //Set default Expiry to 14 days 
             //oAuth v1 tokens do not expire

@@ -65,5 +65,14 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         void DeleteSocialMessageAttachment(int messageAttachmentId);
 
         #endregion
+
+        #region MessageTypes CRUD
+
+        int SaveMessageType(int messageTypeId, string name, string description, int timeToLive, bool isNotification);
+        void DeleteMessageType(int messageTypeId);
+        IDataReader GetMessageType(int messageTypeId);
+        IDataReader GetMessageTypeByName(string name);
+
+        #endregion
     }
 }

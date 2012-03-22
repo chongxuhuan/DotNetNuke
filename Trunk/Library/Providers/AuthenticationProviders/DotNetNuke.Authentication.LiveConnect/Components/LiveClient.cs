@@ -34,7 +34,7 @@ using DotNetNuke.Services.Authentication.OAuth;
 
 namespace DotNetNuke.Authentication.LiveConnect.Components
 {
-    public class LiveClient : oAuthClientBase
+    public class LiveClient : OAuthClientBase
     {
         #region Constructors
 
@@ -47,9 +47,9 @@ namespace DotNetNuke.Authentication.LiveConnect.Components
             Service = "Live";
             Scope = HttpContext.Current.Server.UrlEncode("wl.signin wl.basic wl.emails");
 
-            APIKey = oAuthConfigBase.GetConfig(Service, portalId).APIKey;
-            APISecret = oAuthConfigBase.GetConfig(Service, portalId).APISecret;
-            CallbackUri = new Uri(oAuthConfigBase.GetConfig(Service, portalId).SiteURL);
+            APIKey = OAuthConfigBase.GetConfig(Service, portalId).APIKey;
+            APISecret = OAuthConfigBase.GetConfig(Service, portalId).APISecret;
+            CallbackUri = new Uri(OAuthConfigBase.GetConfig(Service, portalId).SiteURL);
 
             AuthTokenName = "LiveUserToken";
 

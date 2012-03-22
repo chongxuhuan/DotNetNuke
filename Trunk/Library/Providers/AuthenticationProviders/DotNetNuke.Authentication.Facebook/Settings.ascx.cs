@@ -25,39 +25,17 @@
 
 using System;
 
-using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Authentication.OAuth;
-using DotNetNuke.Services.Exceptions;
 
 #endregion
 
 namespace DotNetNuke.Authentication.Facebook
 {
-    public partial class Settings : AuthenticationSettingsBase
+    public partial class Settings : OAuthSettingsBase
     {
-        public override void UpdateSettings()
+        protected override string AuthSystemApplicationName
         {
-            if (SettingsEditor.IsValid && SettingsEditor.IsDirty)
-            {
-                var config = (oAuthConfigBase) SettingsEditor.DataSource;
-                oAuthConfigBase.UpdateConfig(config);
-            }
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            try
-            {
-                oAuthConfigBase config = oAuthConfigBase.GetConfig("Facebook", PortalId);
-                SettingsEditor.DataSource = config;
-                SettingsEditor.DataBind();
-            }
-            catch (Exception exc)
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
+            get { return "Facebook"; }
         }
     }
 }

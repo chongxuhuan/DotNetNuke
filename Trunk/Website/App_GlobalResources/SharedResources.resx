@@ -975,9 +975,6 @@
   <data name="PasswordMailError.Text" xml:space="preserve">
     <value>The password has been reset, but there was an error sending the Email reminder message.</value>
   </data>
-  <data name="PasswordMismatch.Text1" xml:space="preserve">
-    <value>Password Values Entered Do Not Match.</value>
-  </data>
   <data name="PasswordMissing.Text" xml:space="preserve">
     <value>You must provide your current password in order to change the password.</value>
   </data>
@@ -1487,5 +1484,35 @@
   </data>
   <data name="WeeksAgo.Text" xml:space="preserve">
     <value> weeks ago</value>
+  </data>
+  <data name="DuplicateDisplayName.Text" xml:space="preserve">
+    <value>The Display Name is already in use.</value>
+  </data>
+  <data name="InvalidDisplayName.Text" xml:space="preserve">
+    <value>The Display Name is invalid.</value>
+  </data>
+  <data name="OAuthConfigBase_APIKey.Help" xml:space="preserve">
+    <value>Enter the value of the APP ID/API Key/Consumer Key you configured for this authentication provider.</value>
+  </data>
+  <data name="OAuthConfigBase_APIKey.Text" xml:space="preserve">
+    <value>APP ID</value>
+  </data>
+  <data name="OAuthConfigBase_APISecret.Help" xml:space="preserve">
+    <value>Enter the value of the APP Secret/Consumer Secret you configured for this authentication provider.</value>
+  </data>
+  <data name="OAuthConfigBase_APISecret.Text" xml:space="preserve">
+    <value>APP Secret</value>
+  </data>
+  <data name="OAuthConfigBase_Enabled.Help" xml:space="preserve">
+    <value>Check this box to enable this authentication provider for this site</value>
+  </data>
+  <data name="OAuthConfigBase_Enabled.Text" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="OAuthConfigBase_SiteURL.Help" xml:space="preserve">
+    <value>Enter the Site URL/Redirect URL you configured for this authentication provider.</value>
+  </data>
+  <data name="OAuthConfigBase_SiteURL.Text" xml:space="preserve">
+    <value>Redirect</value>
   </data>
 </root>

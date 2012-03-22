@@ -373,6 +373,26 @@ namespace DotNetNuke.Entities.Users
             {
                 settings["Security_DisplayNameFormat"] = "";
             }
+            if (settings["Security_RequireConfirmPassword"] == null)
+            {
+                settings["Security_RequireConfirmPassword"] = true;
+            }
+            if (settings["Security_RandomPassword"] == null)
+            {
+                settings["Security_RandomPassword"] = false;
+            }
+            if (settings["Security_UseEmailAsUserName"] == null)
+            {
+                settings["Security_UseEmailAsUserName"] = false;
+            }
+            if (settings["Security_UseAuthProvidersForRegistration"] == null)
+            {
+                settings["Security_UseAuthProvidersForRegistration"] = false;
+            }
+            if (settings["Security_UseProfanityFilter"] == null)
+            {
+                settings["Security_UseProfanityFilter"] = false;
+            }
             return settings;
         }
 
@@ -903,6 +923,10 @@ namespace DotNetNuke.Entities.Users
                     return Localization.GetString("InvalidQuestion");
                 case UserCreateStatus.InvalidUserName:
                     return Localization.GetString("InvalidUserName");
+                case UserCreateStatus.InvalidDisplayName:
+                    return Localization.GetString("InvalidDisplayName");
+                case UserCreateStatus.DuplicateDisplayName:
+                    return Localization.GetString("DuplicateDisplayName");
                 case UserCreateStatus.UserRejected:
                     return Localization.GetString("UserRejected");
                 case UserCreateStatus.DuplicateUserName:

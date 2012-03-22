@@ -65,6 +65,12 @@ namespace DotNetNuke.Services.Social.Messaging
         }
 
         /// <summary>
+        /// The message type identifier
+        /// </summary>
+        [XmlAttribute]
+        public int MessageTypeID { get; set; }
+
+        /// <summary>
         /// To list for the message. This information is saved for faster display of To list in the message
         /// </summary>
         [XmlAttribute]
@@ -145,6 +151,7 @@ namespace DotNetNuke.Services.Social.Messaging
         public void Fill(IDataReader dr)
         {
             MessageID = Convert.ToInt32(dr["MessageID"]);
+            //MessageTypeID = Convert.ToInt32(dr["MessageTypeID"]); //TODO: Commented for now until the stored procedures are modified.
             To = Null.SetNullString(dr["To"]);
             From = Null.SetNullString(dr["From"]);
             Subject = Null.SetNullString(dr["Subject"]);

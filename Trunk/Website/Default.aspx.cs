@@ -450,6 +450,7 @@ namespace DotNetNuke.Framework
             }
             //Find the placeholder control and render the doctype
             skinDocType.Text = PortalSettings.ActiveTab.SkinDoctype;
+            attributeList.Text = HtmlAttributeList;
         }
 
         /// -----------------------------------------------------------------------------

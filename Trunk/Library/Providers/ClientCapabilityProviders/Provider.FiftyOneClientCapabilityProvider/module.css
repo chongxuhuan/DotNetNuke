@@ -20,6 +20,141 @@
  *     James Rosewell <james@51degrees.mobi>
  * 
  * ********************************************************************* */
+ 
+ @charset "utf-8";
+/* CSS Document */
+
+
+/* GENERAL STYLES
+----------------------------------------------- */
+#MainContent{
+		position:relative;
+		margin:0 auto; padding:25px 0;
+		width:960px;
+}
+img,
+embed,
+object,
+video { 
+	max-width: 100%; 
+}
+
+/* ----- SELECTION COLORS ----- */
+::selection 	 	{ background: rgba(255,255,150,.9); }
+::-moz-selection 	{ background: rgba(255,255,150.9); }
+img::selection 		{ background: transparent; }
+img::-moz-selection	{ background: transparent; }
+body { -webkit-tap-highlight-color: rgb(239,248,247); }
+
+/* ----- LINKS ----- */
+
+
+.DnnModule-Device-Detection a, #listings li ul * {
+	-webkit-transition: all .15s ease;
+	   -moz-transition: all .15s ease;  
+   	     -o-transition: all .15s ease;  
+        	transition: all .15s ease; 
+}
+
+/* BUTTONS */
+	/*standard button style*/
+	.dnnTertiaryAction{
+		display:inline-block;
+		padding: 9px 15px; margin: 0 7px 0 0;
+		background: rgb(243,243,243); /* Old browsers */
+		font-size:11px; font-weight:bold; color:#0091E1;/*baby blue*/ text-shadow: 0px 1px 0px rgba(255,255,255,0.9);
+		
+		/*CSS3*/
+		background: -moz-linear-gradient(top, rgba(243,243,243,1) 0%, rgba(231,231,231,1) 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(243,243,243,1)), color-stop(100%,rgba(231,231,231,1))); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* Opera 11.10+ */
+		background: linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* W3C */
+		
+		-webkit-border-radius: 	3px;
+		-moz-border-radius: 	3px;
+		border-radius: 			3px; 
+		
+		-webkit-box-shadow: 	1px 1px 0px 0px #ccc;
+		-moz-box-shadow: 		1px 1px 0px 0px #ccc;
+		box-shadow: 			1px 1px 0px 0px #ccc; 
+	}
+	.dnnTertiaryAction:active, .dnnTertiaryAction:focus{color:#0091E1;/*baby blue*/}
+	/* Active / Hover State */
+	.dnnTertiaryAction:hover, .dnnTertiaryAction.active{
+		background:#666;
+		color:#ddd;
+		text-shadow:none;
+		
+		-webkit-box-shadow: 	inset 0px 0px 5px 0px #555;
+		-moz-box-shadow: 		inset 0px 0px 5px 0px #555;
+		box-shadow: 			inset 0px 0px 5px 0px #555; 
+	}
+
+/* DEVICE MESSAGE
+----------------------------------------------- */
+.DnnModule-Device-Detection .deviceMsg{
+	display:inline-block;
+	padding:25px; margin-bottom:25px;
+	background:#efefef;
+	border:1px solid #ccc;
+	line-height:1.5em;
+	
+	
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px; 
+}
+.DnnModule-Device-Detection .deviceMsg .upgradeInfo,
+.DnnModule-Device-Detection .deviceMsg .upgradePremium{
+	float:left;	width:50%;
+}
+.DnnModule-Device-Detection .deviceMsg .upgradeInfo {width:395px; padding-left:25px; border-left:1px solid #ddd;}
+
+
+	.DnnModule-Device-Detection .deviceMsg .footer{float:left;width:33%;}
+	.DnnModule-Device-Detection .deviceMsg .footer span{display:block;}
+	
+	.DnnModule-Device-Detection .footer span strong{display:inline; width:auto;}
+	.DnnModule-Device-Detection .upgradePremium em{font-size:11px;}
+	.DnnModule-Device-Detection .upgradePremium p{margin:5px 0;}
+	.DnnModule-Device-Detection .upgradePremium input[type="text"]{width:250px; padding:5px; margin-right:5px;}
+	.DnnModule-Device-Detection .upgradePoints {padding:0;}
+	.DnnModule-Device-Detection .upgradePoints li{
+		padding:0!important; margin:0 0 0 15px!important;
+		width:415px;
+		float:left;
+	}
+.DnnModule-Device-Detection h4 {font-size:16px;}
+.DnnModule-Device-Detection h5{margin:0 0 10px 0; padding:0; font-size:14px;}
+
+.DnnModule-Device-Detection .deviceCol-left{
+	float:left;
+	width:305px;
+	padding:0 10px 15px 0;
+}
+.DnnModule-Device-Detection .deviceCol-left input[type="text"]{padding:5px; margin-right:5px;}
+.DnnModule-Device-Detection .deviceCol-right{
+	position:relative;
+	float:left;
+	width:585px;
+	padding:0 0 15px 15px;
+	border-left:1px solid #ddd;
+    height: 400px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.DnnModule-Device-Detection .deviceCol-right .contents-help,
+.DnnModule-Device-Detection .deviceCol-right .contents-back{position:absolute; top:25px; right:0;}
+
+.DnnModule-Device-Detection .deviceCol-left label{
+	display:block;
+	margin-bottom:5px;
+	font-weight:bold;
+}
+
+/*.DnnModule-Device-Detection .content .footer{border-top:1px solid #ddd!important; margin-top:15px; padding:10px 0; clear: both;}*/
+ 
 
 .deviceExplorerVendors .item { margin: 0.5em; height: 2.5em; width: 100px; float: left; overflow: hidden; vertical-align: top; }
 .deviceExplorerVendors .item .vendor { text-align: center; font-weight: bold; }

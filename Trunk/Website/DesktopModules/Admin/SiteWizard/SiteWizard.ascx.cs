@@ -249,11 +249,6 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             try
             {
-                Wizard.StartNextButtonText = Localization.GetString("Next", LocalResourceFile);
-                Wizard.StepNextButtonText = Localization.GetString("Next", LocalResourceFile);
-                Wizard.StepPreviousButtonText = Localization.GetString("Previous", LocalResourceFile);
-                Wizard.FinishPreviousButtonText = Localization.GetString("Previous", LocalResourceFile);
-                Wizard.FinishCompleteButtonText = Localization.GetString("Finish", LocalResourceFile);
                 if (!Page.IsPostBack)
                 {
                     //Get Templates for Page 1

@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -26,7 +26,7 @@ using System.Text;
 
 namespace DotNetNuke.Services.Authentication.OAuth
 {
-    public static class AuthExtensions
+    internal static class AuthExtensions
     {
         public static string ToAuthorizationString(this IList<QueryParameter> parameters)
         {
@@ -38,7 +38,7 @@ namespace DotNetNuke.Services.Authentication.OAuth
                 string format = "{0}=\"{1}\"";
 
                 QueryParameter p = parameters[i];
-                sb.AppendFormat(format, oAuthClientBase.UrlEncode(p.Name), oAuthClientBase.UrlEncode(p.Value));
+                sb.AppendFormat(format, OAuthClientBase.UrlEncode(p.Name), OAuthClientBase.UrlEncode(p.Value));
 
                 if (i < parameters.Count - 1)
                 {

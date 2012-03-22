@@ -31,7 +31,7 @@ using DotNetNuke.Services.Authentication.OAuth;
 
 namespace DotNetNuke.Authentication.LinkedIn.Components
 {
-    public class LinkedInClient : oAuthClientBase
+    public class LinkedInClient : OAuthClientBase
     {
         public LinkedInClient(int portalId)
         {
@@ -42,9 +42,9 @@ namespace DotNetNuke.Authentication.LinkedIn.Components
 
             Service = "LinkedIn";
 
-            APIKey = oAuthConfigBase.GetConfig(Service, portalId).APIKey;
-            APISecret = oAuthConfigBase.GetConfig(Service, portalId).APISecret;
-            CallbackUri = new Uri(oAuthConfigBase.GetConfig(Service, portalId).SiteURL);
+            APIKey = OAuthConfigBase.GetConfig(Service, portalId).APIKey;
+            APISecret = OAuthConfigBase.GetConfig(Service, portalId).APISecret;
+            CallbackUri = new Uri(OAuthConfigBase.GetConfig(Service, portalId).SiteURL);
             AuthTokenName = "LinkedInUserToken";
 
             OAuthVersion = "1.0";

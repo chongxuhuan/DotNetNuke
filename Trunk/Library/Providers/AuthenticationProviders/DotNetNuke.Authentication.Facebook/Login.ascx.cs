@@ -32,7 +32,7 @@ using DotNetNuke.Services.Authentication.OAuth;
 
 namespace DotNetNuke.Authentication.Facebook
 {
-    public partial class Login : oAuthLoginBase
+    public partial class Login : OAuthLoginBase
     {
         protected override string AuthSystemApplicationName
         {

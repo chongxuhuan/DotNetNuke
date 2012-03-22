@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ControlTitle_usersettings.Text" xml:space="preserve">
     <value>User Settings</value>
@@ -370,7 +370,7 @@
     <value>Requires Unique Email:</value>
   </data>
   <data name="Security_UserNameValidation.Help" xml:space="preserve">
-    <value>Add your own Validation Expression, which is used to check the validity of the user name provided.</value>
+    <value>Add your own Validation Expression, which is used to check the validity of the user name provided.  If you change this from the default you should update the message that a user would see when they enter an invalid username using the localization editor. (SharedResources.resx - Username.RegExError)</value>
   </data>
   <data name="Security_UserNameValidation.Text" xml:space="preserve">
     <value>User Name Validation</value>
@@ -383,5 +383,41 @@
   </data>
   <data name="InvalidRegex.Text" xml:space="preserve">
     <value>{0}'s value is not a valid regular expression.</value>
+  </data>
+  <data name="RegistrationSettingsHelp.Text" xml:space="preserve">
+    <value>You can setup registration settings for your site here.</value>
+  </data>
+  <data name="RegistrationSettings.Text" xml:space="preserve">
+    <value>Registration Settings</value>
+  </data>
+  <data name="Security_RandomPassword.Help" xml:space="preserve">
+    <value>Check this box to generate random passwords during registration, rather than displaying a password entry field.</value>
+  </data>
+  <data name="Security_RandomPassword.Text" xml:space="preserve">
+    <value>Use Random Password:</value>
+  </data>
+  <data name="Security_RequireConfirmPassword.help" xml:space="preserve">
+    <value>Chcek this to require the registration form to display a password confirmation box.</value>
+  </data>
+  <data name="Security_RequireConfirmPassword.Text" xml:space="preserve">
+    <value>Require Password Confirmation::</value>
+  </data>
+  <data name="Security_UseEmailAsUserName.Help" xml:space="preserve">
+    <value>Check this option to use the Email Address as a UserName.  If this is true the username entry field is not shown in the regsitration form.</value>
+  </data>
+  <data name="Security_UseEmailAsUserName.Text" xml:space="preserve">
+    <value>Use Email Address as Username:</value>
+  </data>
+  <data name="Security_UseAuthProvidersForRegistration.Help" xml:space="preserve">
+    <value>Select this option to use Authentication providers during registration.  Note - that not all providers support this option.</value>
+  </data>
+  <data name="Security_UseAuthProvidersForRegistration.Text" xml:space="preserve">
+    <value>Use Authentication Providers in Registration:</value>
+  </data>
+  <data name="Security_UseProfanityFilter.Help" xml:space="preserve">
+    <value>Selecting this option will enforce the profanity filter for the UserName and DisplayName  during Registration.</value>
+  </data>
+  <data name="Security_UseProfanityFilter.Text" xml:space="preserve">
+    <value>Use Profanity Filter:</value>
   </data>
 </root>

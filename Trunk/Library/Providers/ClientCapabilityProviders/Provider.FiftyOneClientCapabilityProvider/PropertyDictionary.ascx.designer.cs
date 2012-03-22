@@ -7,18 +7,45 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FiftyOne.Modules {
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider {
     
     
     public partial class PropertyDictionary {
         
         /// <summary>
-        /// Dictionary control.
+        /// HardwareList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::FiftyOne.Foundation.UI.Web.PropertyDictionary Dictionary;
+        protected global::System.Web.UI.WebControls.Repeater HardwareList;
+        
+        /// <summary>
+        /// SoftwareList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater SoftwareList;
+        
+        /// <summary>
+        /// BrowserList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater BrowserList;
+        
+        /// <summary>
+        /// ContentList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater ContentList;
     }
 }

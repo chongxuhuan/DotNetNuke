@@ -9,7 +9,7 @@
  * See the License for the specific language governing rights and 
  * limitations under the License.
  *
- * The Original Code is named 51Degrees.mobi Dot Net Nuke Module, first 
+ * The Original Code is named 51Degrees.mobi DotNetNuke Module, first 
  * released under this licence on 26th January 2012.
  * 
  * The Initial Developer of the Original Code is owned by 
@@ -21,25 +21,20 @@
  * 
  * ********************************************************************* */
 
-using System;
-
-using DotNetNuke.Common;
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Services.Installer;
-using DotNetNuke.Services.Search;
-using FiftyOne.Foundation.Mobile.Detection;
-using FiftyOne.Foundation.UI;
-using DotNetNuke.Services.Installer.Packages;
-using System.Collections.Generic;
-using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.Entities.Modules.Definitions;
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities.Icons;
-using DotNetNuke.Services.Upgrade;
-
-namespace FiftyOne.Modules.Components
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider.Components
 {
+    using System.Collections.Generic;
+    using Common;
+    using Common.Utilities;
+    using Entities.Modules;
+    using Entities.Modules.Definitions;
+    using Entities.Tabs;
+    using Services.Installer;
+    using Services.Installer.Packages;
+    using Services.Localization;
+    using Services.Upgrade;
+    using Constants = FiftyOne.Constants;
+
     /// -----------------------------------------------------------------------------
     ///<summary>
     /// The FeatureController class for the modules.

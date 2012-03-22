@@ -39,6 +39,8 @@ namespace DotNetNuke.Security.Membership
         UnexpectedError = 14,
         UserRejected = 15,
         PasswordMismatch = 16,
-        AddUserToPortal = 17
+        AddUserToPortal = 17,
+        InvalidDisplayName = 18,
+        DuplicateDisplayName = 19
     }
 }

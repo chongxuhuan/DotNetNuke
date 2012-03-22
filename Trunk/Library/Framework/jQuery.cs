@@ -386,12 +386,7 @@ namespace DotNetNuke.Framework
 
         	RegisterJQueryUI(page);
         	RegisterHoverIntent(page);
-
-            var dnnJqueryPath = HttpContext.Current.IsDebuggingEnabled
-                   ? "~/js/Debug/dnn.jquery.js"
-                   : "~/js/dnn.jquery.js";
-
-            ClientResourceManager.RegisterScript(page, dnnJqueryPath);
+            ClientResourceManager.RegisterScript(page, "~/js/dnn.jquery.js");
         }
 
         public static void RegisterHoverIntent(Page page)

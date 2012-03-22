@@ -34,6 +34,8 @@ namespace DotNetNuke.Web.UI.WebControls
     {
         private TextBox _textBox;
 
+        public AutoCompleteType AutoCompleteType { get; set; }
+
         public int Columns { get; set; }
 
         public int Rows { get; set; }
@@ -52,6 +54,7 @@ namespace DotNetNuke.Web.UI.WebControls
             _textBox.Rows = Rows;
             _textBox.Columns = Columns;
             _textBox.TextMode = TextMode;
+            _textBox.AutoCompleteType = AutoCompleteType;
             _textBox.TextChanged += TextChanged;
 
             //Load from ControlState

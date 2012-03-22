@@ -58,7 +58,7 @@ namespace DotNetNuke.Modules.Admin.Users
     /// -----------------------------------------------------------------------------
     public partial class ManageUsers : UserModuleBase, IActionable
     {
-		#region "Protected Members"
+		#region Protected Members
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -210,7 +210,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
 		#endregion
 
-		#region "Public Properties"
+		#region Public Properties
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -291,7 +291,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
         #endregion
 
-		#region "Private Methods"
+		#region Private Methods
 
         private void BindData()
         {
@@ -302,8 +302,6 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     return;
                 }
-				
-           
 				
                 if (AddUser)
                 {
@@ -354,6 +352,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 DisableForm();
             }
         }
+
         private bool VerifyUserPermissions()
         {
             if (AddUser && !IsRegister && IsHostMenu && !UserInfo.IsSuperUser)
@@ -587,7 +586,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
         /// -----------------------------------------------------------------------------
         /// <summary>

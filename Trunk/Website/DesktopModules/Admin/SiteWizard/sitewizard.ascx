@@ -18,6 +18,23 @@
             <% =Localization.GetString(Wizard.ActiveStep.Title + ".Help", LocalResourceFile)%>
         </div>
     </HeaderTemplate>
+    <StartNavigationTemplate>
+        <ul class="dnnActions dnnClear">
+    	    <li><asp:LinkButton id="nextButtonStart" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveNext" resourcekey="Next" /></li>
+        </ul>
+    </StartNavigationTemplate>
+    <StepNavigationTemplate>
+        <ul class="dnnActions dnnClear">
+    	    <li><asp:LinkButton id="nextButtonStep" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveNext" resourcekey="Next" /></li>
+            <li><asp:LinkButton id="StepPreviousButton" runat="server" CssClass="dnnSecondaryAction" CommandName="MovePrevious" resourcekey="Previous" /></li>
+        </ul>
+    </StepNavigationTemplate>
+    <FinishNavigationTemplate>
+        <ul class="dnnActions dnnClear">
+    	    <li><asp:LinkButton id="finishButtonStep" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveComplete" resourcekey="Finish" /></li>
+            <li><asp:LinkButton id="StepPreviousButton" runat="server" CssClass="dnnSecondaryAction" CommandName="MovePrevious" resourcekey="Previous" /></li>
+        </ul>
+    </FinishNavigationTemplate>
     <WizardSteps>
         <asp:WizardStep ID="wizIntroduction" runat="server" Title="Introduction" StepType="Start" AllowReturn="false" />
         <asp:WizardStep ID="wizTemplate" runat="server" Title="Template">

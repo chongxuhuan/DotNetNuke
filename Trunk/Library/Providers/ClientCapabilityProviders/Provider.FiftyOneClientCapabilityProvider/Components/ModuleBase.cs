@@ -9,7 +9,7 @@
  * See the License for the specific language governing rights and 
  * limitations under the License.
  *
- * The Original Code is named 51Degrees.mobi Dot Net Nuke Module, first 
+ * The Original Code is named 51Degrees.mobi DotNetNuke Module, first 
  * released under this licence on 26th January 2012.
  * 
  * The Initial Developer of the Original Code is owned by 
@@ -21,12 +21,12 @@
  * 
  * ********************************************************************* */
 
-namespace FiftyOne.Modules
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider.Components
 {
     /// <summary>
     /// Base class used by all user controls.
     /// </summary>
-    public class ModuleBase : DotNetNuke.Entities.Modules.PortalModuleBase
+    public class ModuleBase : Entities.Modules.PortalModuleBase
     {
     }
 }

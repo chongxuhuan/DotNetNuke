@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -30,14 +30,14 @@ using System.Web;
 
 namespace DotNetNuke.Services.Authentication.OAuth
 {
-    public abstract class oAuthLoginBase : AuthenticationLoginBase
+    public abstract class OAuthLoginBase : AuthenticationLoginBase
     {
         protected virtual string AuthSystemApplicationName
         {
             get { return String.Empty; }
         }
 
-        protected oAuthClientBase OAuthClient { get; set; }
+        protected OAuthClientBase OAuthClient { get; set; }
 
         protected abstract UserData GetCurrentUser();
 
@@ -68,7 +68,7 @@ namespace DotNetNuke.Services.Authentication.OAuth
 
         public override bool Enabled
         {
-            get { return oAuthConfigBase.GetConfig(AuthSystemApplicationName, PortalId).Enabled; }
+            get { return OAuthConfigBase.GetConfig(AuthSystemApplicationName, PortalId).Enabled; }
         }
 
         #endregion

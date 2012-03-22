@@ -264,7 +264,8 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
                         //check whether have a same control key in the module definition
                         var controlKey = !String.IsNullOrEmpty(txtKey.Text) ? txtKey.Text : Null.NullString;
                         var moduleControls = ModuleControlController.GetModuleControlsByModuleDefinitionID(ModuleDefId).Values;
-                        var keyExists = moduleControls.Any(c => c.ControlKey.Equals(controlKey, StringComparison.InvariantCultureIgnoreCase));
+                        var keyExists = moduleControls.Any(c => c.ControlKey.Equals(controlKey, StringComparison.InvariantCultureIgnoreCase)
+                                                            && c.ModuleControlID != ModuleControlId);
                         if(keyExists)
                         {
                             UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("DuplicateKey.ErrorMessage", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);

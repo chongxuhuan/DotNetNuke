@@ -18,10 +18,10 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -56,9 +56,6 @@ namespace DotNetNuke.Security
         /// enumerated values in a single variable by OR'ing the individual values
         /// together.
         /// </summary>
-        /// <history>
-        /// 	[Joe Brinkman] 	8/15/2003	Created  Bug #000120, #000121
-        /// </history>
         ///-----------------------------------------------------------------------------
         [Flags]
         public enum FilterFlag
@@ -95,6 +92,17 @@ namespace DotNetNuke.Security
 		
 		#region Private Methods
 
+        private string BytesToHexString(byte[] bytes)
+        {
+            var hexString = new StringBuilder(64);
+            int counter;
+            for (counter = 0; counter <= bytes.Length - 1; counter++)
+            {
+                hexString.Append(String.Format("{0:X2}", bytes[counter]));
+            }
+            return hexString.ToString();
+        }
+
         ///-----------------------------------------------------------------------------
         /// <summary>
         /// This function uses Regex search strings to remove HTML tags which are
@@ -114,50 +122,46 @@ namespace DotNetNuke.Security
         {
 			//setup up list of search terms as items may be used twice
             string TempInput = strInput;
-            var listStrings = new List<string>();
-            listStrings.Add("<script[^>]*>.*?</script[^><]*>");
-            listStrings.Add("<script");
-            listStrings.Add("<input[^>]*>.*?</input[^><]*>");
-            listStrings.Add("<object[^>]*>.*?</object[^><]*>");
-            listStrings.Add("<embed[^>]*>.*?</embed[^><]*>");
-            listStrings.Add("<applet[^>]*>.*?</applet[^><]*>");
-            listStrings.Add("<form[^>]*>.*?</form[^><]*>");
-            listStrings.Add("<option[^>]*>.*?</option[^><]*>");
-            listStrings.Add("<select[^>]*>.*?</select[^><]*>");
-            listStrings.Add("<iframe[^>]*>.*?</iframe[^><]*>");
-            listStrings.Add("<iframe.*?<");
-            listStrings.Add("<iframe.*?");
-            listStrings.Add("<ilayer[^>]*>.*?</ilayer[^><]*>");
-            listStrings.Add("<form[^>]*>");
-            listStrings.Add("</form[^><]*>");
-            listStrings.Add("onerror");
-            listStrings.Add("onmouseover");
-            listStrings.Add("javascript:");
-            listStrings.Add("vbscript:");
-            listStrings.Add("alert[\\s(&nbsp;)]*\\([\\s(&nbsp;)]*'?[\\s(&nbsp;)]*[\"(&quot;)]?");
+            var listStrings = new List<string>
+                                  {
+                                      "<script[^>]*>.*?</script[^><]*>",
+                                      "<script",
+                                      "<input[^>]*>.*?</input[^><]*>",
+                                      "<object[^>]*>.*?</object[^><]*>",
+                                      "<embed[^>]*>.*?</embed[^><]*>",
+                                      "<applet[^>]*>.*?</applet[^><]*>",
+                                      "<form[^>]*>.*?</form[^><]*>",
+                                      "<option[^>]*>.*?</option[^><]*>",
+                                      "<select[^>]*>.*?</select[^><]*>",
+                                      "<iframe[^>]*>.*?</iframe[^><]*>",
+                                      "<iframe.*?<",
+                                      "<iframe.*?",
+                                      "<ilayer[^>]*>.*?</ilayer[^><]*>",
+                                      "<form[^>]*>",
+                                      "</form[^><]*>",
+                                      "onerror",
+                                      "onmouseover",
+                                      "javascript:",
+                                      "vbscript:",
+                                      "alert[\\s(&nbsp;)]*\\([\\s(&nbsp;)]*'?[\\s(&nbsp;)]*[\"(&quot;)]?"
+                                  };
 
-            RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
-            string strReplacement = " ";
+            const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+            const string replacement = " ";
 
             //check if text contains encoded angle brackets, if it does it we decode it to check the plain text
             if (TempInput.Contains("&gt;") && TempInput.Contains("&lt;"))
             {
 				//text is encoded, so decode and try again
                 TempInput = HttpContext.Current.Server.HtmlDecode(TempInput);
-                foreach (string s in listStrings)
-                {
-                    TempInput = Regex.Replace(TempInput, s, strReplacement, options);
-                }
-				
+                TempInput = listStrings.Aggregate(TempInput, (current, s) => Regex.Replace(current, s, replacement, options));
+
                 //Re-encode
                 TempInput = HttpContext.Current.Server.HtmlEncode(TempInput);
             }
             else
             {
-                foreach (string s in listStrings)
-                {
-                    TempInput = Regex.Replace(TempInput, s, strReplacement, options);
-                }
+                TempInput = listStrings.Aggregate(TempInput, (current, s) => Regex.Replace(current, s, replacement, options));
             }
             return TempInput;
         }
@@ -173,10 +177,6 @@ namespace DotNetNuke.Security
         /// <remarks>
         /// This is a private function that is used internally by the InputFilter function
         /// </remarks>
-        /// <history>
-        /// 	[Joe Brinkman] 	8/15/2003	Created Bug #000120
-        ///     [cathal]        3/06/2007   Added check for encoded content
-        /// </history>
         ///-----------------------------------------------------------------------------
         private string FormatDisableScripting(string strInput)
         {
@@ -214,9 +214,6 @@ namespace DotNetNuke.Security
         /// <remarks>
         /// This is a private function that is used internally by the InputFilter function
         /// </remarks>
-        /// <history>
-        /// 	[Joe Brinkman] 	8/15/2003	Created Bug #000120
-        /// </history>
         ///-----------------------------------------------------------------------------
         private string FormatMultiLine(string strInput)
         {
@@ -234,11 +231,6 @@ namespace DotNetNuke.Security
         /// <remarks>
         /// This is a private function that is used internally by the InputFilter function
         /// </remarks>
-        /// <history>
-        /// 	[Joe Brinkman] 	8/15/2003	Created Bug #000121
-        ///     [Tom Lucas]     3/8/2004    Fixed   Bug #000114 (Aardvark)
-        ///                     8/5/2009 added additional strings and performance tweak
-        /// </history>
         ///-----------------------------------------------------------------------------
         private string FormatRemoveSQL(string strSQL)
         {
@@ -255,43 +247,17 @@ namespace DotNetNuke.Security
         /// <remarks>
         /// This is a private function that is used internally by the InputFilter function
         /// </remarks>
-        /// <history>
-        /// 	[Joe Brinkman] 	8/15/2003	Created Bug #000120
-        /// </history>
         ///-----------------------------------------------------------------------------
         private bool IncludesMarkup(string strInput)
         {
-            RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
-            string strPattern = "<[^<>]*>";
-            return Regex.IsMatch(strInput, strPattern, options);
+            const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+            const string pattern = "<[^<>]*>";
+            return Regex.IsMatch(strInput, pattern, options);
         }
 		
 		#endregion
 		
 		#region Public Methods
-
-        ///-----------------------------------------------------------------------------
-        /// <summary>
-        /// This function converts a byte array to a hex string
-        /// </summary>
-        /// <param name="bytes">An array of bytes</param>
-        /// <returns>A string representing the hex converted value</returns>
-        /// <remarks>
-        /// This is a private function that is used internally by the CreateKey function
-        /// </remarks>
-        /// <history>
-        /// </history>
-        ///-----------------------------------------------------------------------------
-        private string BytesToHexString(byte[] bytes)
-        {
-            var hexString = new StringBuilder(64);
-            int counter;
-            for (counter = 0; counter <= bytes.Length - 1; counter++)
-            {
-                hexString.Append(String.Format("{0:X2}", bytes[counter]));
-            }
-            return hexString.ToString();
-        }
 
         ///-----------------------------------------------------------------------------
         /// <summary>
@@ -311,70 +277,6 @@ namespace DotNetNuke.Security
             var buff = new byte[numBytes];
             rng.GetBytes(buff);
             return BytesToHexString(buff);
-        }
-
-        public string EncryptString(string message, string passphrase)
-        {
-            byte[] results;
-            UTF8Encoding utf8 = new UTF8Encoding();
-
-            //hash the passphrase using MD5 to create 128bit byte array
-            MD5CryptoServiceProvider hashProvider = new MD5CryptoServiceProvider();
-            byte[] tdesKey = hashProvider.ComputeHash(utf8.GetBytes(passphrase));
-            
-            TripleDESCryptoServiceProvider tdesAlgorithm = new TripleDESCryptoServiceProvider();
-
-            tdesAlgorithm.Key = tdesKey;
-            tdesAlgorithm.Mode = CipherMode.ECB;
-            tdesAlgorithm.Padding = PaddingMode.PKCS7;
-            
-            byte[] dataToEncrypt = utf8.GetBytes(message);
-
-            try
-            {
-                ICryptoTransform encryptor = tdesAlgorithm.CreateEncryptor();
-                results = encryptor.TransformFinalBlock(dataToEncrypt, 0, dataToEncrypt.Length);
-            }
-            finally
-            {
-                // Clear the TripleDes and Hashprovider services of any sensitive information 
-                tdesAlgorithm.Clear();
-                hashProvider.Clear();
-            }
-
-            //Return the encrypted string as a base64 encoded string 
-            return Convert.ToBase64String(results);
-        }
-
-        public string DecryptString(string message, string passphrase)
-        {
-            byte[] results;
-            UTF8Encoding utf8 = new UTF8Encoding();
-
-            //hash the passphrase using MD5 to create 128bit byte array
-            MD5CryptoServiceProvider hashProvider = new MD5CryptoServiceProvider();
-            byte[] tdesKey = hashProvider.ComputeHash(utf8.GetBytes(passphrase));
-
-            TripleDESCryptoServiceProvider tdesAlgorithm = new TripleDESCryptoServiceProvider();
-
-            tdesAlgorithm.Key = tdesKey;
-            tdesAlgorithm.Mode = CipherMode.ECB;
-            tdesAlgorithm.Padding = PaddingMode.PKCS7;
-
-            byte[] dataToDecrypt = Convert.FromBase64String(message);
-            try
-            {
-                ICryptoTransform decryptor = tdesAlgorithm.CreateDecryptor();
-                results = decryptor.TransformFinalBlock(dataToDecrypt, 0, dataToDecrypt.Length);
-            }
-            finally
-            {
-                // Clear the TripleDes and Hashprovider services of any sensitive information 
-                tdesAlgorithm.Clear();
-                hashProvider.Clear();
-            }
-
-            return utf8.GetString(results);
         }
 
         public string Decrypt(string strKey, string strData)
@@ -438,27 +340,55 @@ namespace DotNetNuke.Security
             return strValue;
         }
 
-        public string Encrypt(string strKey, string strData)
+        public string DecryptString(string message, string passphrase)
         {
-            string strValue = "";
-            if (!String.IsNullOrEmpty(strKey))
+            byte[] results;
+            var utf8 = new UTF8Encoding();
+
+            //hash the passphrase using MD5 to create 128bit byte array
+            var hashProvider = new MD5CryptoServiceProvider();
+            byte[] tdesKey = hashProvider.ComputeHash(utf8.GetBytes(passphrase));
+
+            var tdesAlgorithm = new TripleDESCryptoServiceProvider {Key = tdesKey, Mode = CipherMode.ECB, Padding = PaddingMode.PKCS7};
+
+
+            byte[] dataToDecrypt = Convert.FromBase64String(message);
+            try
+            {
+                ICryptoTransform decryptor = tdesAlgorithm.CreateDecryptor();
+                results = decryptor.TransformFinalBlock(dataToDecrypt, 0, dataToDecrypt.Length);
+            }
+            finally
+            {
+                // Clear the TripleDes and Hashprovider services of any sensitive information 
+                tdesAlgorithm.Clear();
+                hashProvider.Clear();
+            }
+
+            return utf8.GetString(results);
+        }
+
+        public string Encrypt(string key, string data)
+        {
+            string value;
+            if (!String.IsNullOrEmpty(key))
             {
                 //convert key to 16 characters for simplicity
-                if (strKey.Length < 16)
+                if (key.Length < 16)
                 {
-                    strKey = strKey + "XXXXXXXXXXXXXXXX".Substring(0, 16 - strKey.Length);
+                    key = key + "XXXXXXXXXXXXXXXX".Substring(0, 16 - key.Length);
                 }
                 else
                 {
-                    strKey = strKey.Substring(0, 16);
+                    key = key.Substring(0, 16);
                 }
 				
                 //create encryption keys
-                byte[] byteKey = Encoding.UTF8.GetBytes(strKey.Substring(0, 8));
-                byte[] byteVector = Encoding.UTF8.GetBytes(strKey.Substring(strKey.Length - 8, 8));
+                byte[] byteKey = Encoding.UTF8.GetBytes(key.Substring(0, 8));
+                byte[] byteVector = Encoding.UTF8.GetBytes(key.Substring(key.Length - 8, 8));
 
                 //convert data to byte array
-                byte[] byteData = Encoding.UTF8.GetBytes(strData);
+                byte[] byteData = Encoding.UTF8.GetBytes(data);
 
                 //encrypt 
                 var objDES = new DESCryptoServiceProvider();
@@ -468,13 +398,43 @@ namespace DotNetNuke.Security
                 objCryptoStream.FlushFinalBlock();
 
                 //convert to string and Base64 encode
-                strValue = Convert.ToBase64String(objMemoryStream.ToArray());
+                value = Convert.ToBase64String(objMemoryStream.ToArray());
             }
             else
             {
-                strValue = strData;
+                value = data;
             }
-            return strValue;
+            return value;
+        }
+
+        public string EncryptString(string message, string passphrase)
+        {
+            byte[] results;
+            var utf8 = new UTF8Encoding();
+
+            //hash the passphrase using MD5 to create 128bit byte array
+            var hashProvider = new MD5CryptoServiceProvider();
+            byte[] tdesKey = hashProvider.ComputeHash(utf8.GetBytes(passphrase));
+
+            var tdesAlgorithm = new TripleDESCryptoServiceProvider {Key = tdesKey, Mode = CipherMode.ECB, Padding = PaddingMode.PKCS7};
+
+
+            byte[] dataToEncrypt = utf8.GetBytes(message);
+
+            try
+            {
+                ICryptoTransform encryptor = tdesAlgorithm.CreateEncryptor();
+                results = encryptor.TransformFinalBlock(dataToEncrypt, 0, dataToEncrypt.Length);
+            }
+            finally
+            {
+                // Clear the TripleDes and Hashprovider services of any sensitive information 
+                tdesAlgorithm.Clear();
+                hashProvider.Clear();
+            }
+
+            //Return the encrypted string as a base64 encoded string 
+            return Convert.ToBase64String(results);
         }
 
         ///-----------------------------------------------------------------------------
@@ -484,9 +444,6 @@ namespace DotNetNuke.Security
         /// <param name="userInput">This is the string to be filtered</param>
         /// <param name="filterType">Flags which designate the filters to be applied</param>
         /// <returns>Filtered UserInput</returns>
-        /// <history>
-        /// 	[Joe Brinkman] 	8/15/2003	Created Bug #000120, #000121
-        /// </history>
         ///-----------------------------------------------------------------------------
         public string InputFilter(string userInput, FilterFlag filterType)
         {
@@ -529,6 +486,7 @@ namespace DotNetNuke.Security
             return tempInput;
         }
 
+        ///-----------------------------------------------------------------------------
         /// <summary>
         /// Replaces profanity words with other words in the provided input string.
         /// </summary>
@@ -544,6 +502,7 @@ namespace DotNetNuke.Security
         /// <param name="configSource">The external file to search the words. Ignored when configType is ListController.</param>
         /// <param name="filterScope">When using ListController configType, this parameter indicates which list(s) to use.</param>
         /// <returns>The original text with the profanity words replaced.</returns>
+        ///-----------------------------------------------------------------------------
         public string Replace(string inputString, ConfigType configType, string configSource, FilterScope filterScope)
         {
             switch (configType)
@@ -588,6 +547,7 @@ namespace DotNetNuke.Security
             return inputString;
         }
 
+        ///-----------------------------------------------------------------------------
         /// <summary>
         /// Removes profanity words in the provided input string.
         /// </summary>
@@ -603,6 +563,7 @@ namespace DotNetNuke.Security
         /// <param name="configSource">The external file to search the words. Ignored when configType is ListController.</param>
         /// <param name="filterScope">When using ListController configType, this parameter indicates which list(s) to use.</param>
         /// <returns>The original text with the profanity words removed.</returns>
+        ///-----------------------------------------------------------------------------
         public string Remove(string inputString, ConfigType configType, string configSource, FilterScope filterScope)
         {
             switch (configType)
@@ -741,31 +702,56 @@ namespace DotNetNuke.Security
 			HttpContext.Current.Items.Remove("UserInfo");
 
             //remove language cookie
-            HttpContext.Current.Response.Cookies["language"].Value = "";
+            var httpCookie = HttpContext.Current.Response.Cookies["language"];
+            if (httpCookie != null)
+            {
+                httpCookie.Value = "";
+            }
 
             //remove authentication type cookie
-            HttpContext.Current.Response.Cookies["authentication"].Value = "";
+            var cookie = HttpContext.Current.Response.Cookies["authentication"];
+            if (cookie != null)
+            {
+                cookie.Value = "";
+            }
 
             //expire cookies
-            HttpContext.Current.Response.Cookies["portalaliasid"].Value = null;
-            HttpContext.Current.Response.Cookies["portalaliasid"].Path = "/";
-            HttpContext.Current.Response.Cookies["portalaliasid"].Expires = DateTime.Now.AddYears(-30);
+            var httpCookie1 = HttpContext.Current.Response.Cookies["portalaliasid"];
+            if (httpCookie1 != null)
+            {
+                httpCookie1.Value = null;
+                httpCookie1.Path = "/";
+                httpCookie1.Expires = DateTime.Now.AddYears(-30);
+            }
 
-            HttpContext.Current.Response.Cookies["portalroles"].Value = null;
-            HttpContext.Current.Response.Cookies["portalroles"].Path = "/";
-            HttpContext.Current.Response.Cookies["portalroles"].Expires = DateTime.Now.AddYears(-30);
+            var cookie1 = HttpContext.Current.Response.Cookies["portalroles"];
+            if (cookie1 != null)
+            {
+                cookie1.Value = null;
+                cookie1.Path = "/";
+                cookie1.Expires = DateTime.Now.AddYears(-30);
+            }
+        }
+
+        ///-----------------------------------------------------------------------------
+        /// <summary>
+        /// This function applies security filtering to the UserInput string, and reports
+        /// whether the input string is valid.
+        /// </summary>
+        /// <param name="userInput">This is the string to be filtered</param>
+        /// <param name="filterType">Flags which designate the filters to be applied</param>
+        /// <returns></returns>
+        ///-----------------------------------------------------------------------------
+        public bool ValidateInput(string userInput, FilterFlag filterType)
+        {
+            string filteredInput = InputFilter(userInput, filterType);
+
+            return (userInput == filteredInput);
         }
 		
 		#endregion
 		
 		#region Public Shared/Static Methods
-
-        public static void ClearRoles()
-        {
-            HttpContext.Current.Response.Cookies["portalroles"].Value = null;
-            HttpContext.Current.Response.Cookies["portalroles"].Path = "/";
-            HttpContext.Current.Response.Cookies["portalroles"].Expires = DateTime.Now.AddYears(-30);
-        }
 
         public static void ForceSecureConnection()
         {
@@ -777,7 +763,7 @@ namespace DotNetNuke.Security
 				//switch to secure connection
                 URL = URL.Replace("http://", "https://");
                 //append ssl parameter to querystring to indicate secure connection processing has already occurred
-                if (URL.IndexOf("?") == -1)
+                if (URL.IndexOf("?", StringComparison.Ordinal) == -1)
                 {
                     URL = URL + "?ssl=1";
                 }
@@ -797,9 +783,7 @@ namespace DotNetNuke.Security
             {
                 //set cookie domain for portal group
                 var groupController = new PortalGroupController();
-                var group = groupController.GetPortalGroups()
-                                .Where(p => p.MasterPortalId == PortalController.GetEffectivePortalId(portalId))
-                                .SingleOrDefault();
+                var group = groupController.GetPortalGroups().SingleOrDefault(p => p.MasterPortalId == PortalController.GetEffectivePortalId(portalId));
 
 				if (@group != null 
 						&& !string.IsNullOrEmpty(@group.AuthenticationDomain)
@@ -823,19 +807,15 @@ namespace DotNetNuke.Security
             return cookieDomain;
         }
 
-
         public static bool IsInRole(string role)
         {
             UserInfo objUserInfo = UserController.GetCurrentUserInfo();
             HttpContext context = HttpContext.Current;
-            if ((!String.IsNullOrEmpty(role) && role != null && ((context.Request.IsAuthenticated == false && role == Globals.glbRoleUnauthUserName))))
+            if (!String.IsNullOrEmpty(role) && ((context.Request.IsAuthenticated == false && role == Globals.glbRoleUnauthUserName)))
             {
                 return true;
             }
-            else
-            {
-                return objUserInfo.IsInRole(role);
-            }
+            return objUserInfo.IsInRole(role);
         }
 
         public static bool IsInRoles(string roles)
@@ -867,7 +847,6 @@ namespace DotNetNuke.Security
                                     if (((context.Request.IsAuthenticated == false && denyRole == Globals.glbRoleUnauthUserName) || denyRole == Globals.glbRoleAllUsersName ||
                                          objUserInfo.IsInRole(denyRole)))
                                     {
-                                        blnIsInRoles = false;
                                         break;
                                     }
                                 }
@@ -890,6 +869,18 @@ namespace DotNetNuke.Security
 		#endregion
 		
 		#region Obsoleted Methods, retained for Binary Compatability
+
+        [Obsolete("Deprecated in DNN 6.2 - roles cookie is no longer used)")]
+        public static void ClearRoles()
+        {
+            var httpCookie = HttpContext.Current.Response.Cookies["portalroles"];
+            if (httpCookie != null)
+            {
+                httpCookie.Value = null;
+                httpCookie.Path = "/";
+                httpCookie.Expires = DateTime.Now.AddYears(-30);
+            }
+        }
 
         [Obsolete("Deprecated in DNN 5.0.  Please use HasModuleAccess(SecurityAccessLevel.Edit, PortalSettings, ModuleInfo, Username)")]
         public static bool HasEditPermissions(int ModuleId)

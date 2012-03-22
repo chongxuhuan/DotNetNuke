@@ -231,6 +231,32 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             return message;
         }
 
+        public virtual MessageType CreateMessageType(string name, string description, int timeToLive, bool isNotification)
+        {
+            Requires.NotNullOrEmpty("name", name);
+
+            if (timeToLive <= 0)
+            {
+                timeToLive = Null.NullInteger;
+            }
+
+            var messageType = new MessageType
+            {
+                MessageTypeId = _dataService.SaveMessageType(Null.NullInteger, name, description, timeToLive, isNotification),
+                Name = name,
+                Description = description,
+                TimeToLive = timeToLive,
+                IsNotification = isNotification
+            };
+
+            return messageType;
+        }
+
+        public virtual void DeleteMessageType(int messageTypeId)
+        {
+            _dataService.DeleteMessageType(messageTypeId);
+        }
+
         public virtual MessageBoxView GetArchivedMessages(int userId, int pageIndex, int pageSize)
         {
             return GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, MessageReadStatus.Any, MessageArchivedStatus.Archived);
@@ -254,6 +280,18 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
         public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
         {
             return _dataService.GetMessageThread(conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
+        }
+
+        public virtual MessageType GetMessageType(int messageTypeId)
+        {
+            return CBO.FillObject<MessageType>(_dataService.GetMessageType(messageTypeId));
+        }
+
+        public virtual MessageType GetMessageType(string name)
+        {
+            Requires.NotNullOrEmpty("name", name);
+
+            return CBO.FillObject<MessageType>(_dataService.GetMessageTypeByName(name));
         }
 
         public virtual MessageBoxView GetRecentInbox(int userId)
@@ -369,6 +407,18 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             MarkRead(conversationId, sender.UserID);
 
             return messageId;
+        }
+
+        public virtual void UpdateMessageType(MessageType messageType)
+        {
+            Requires.NotNull("messageType", messageType);
+
+            _dataService.SaveMessageType(
+                messageType.MessageTypeId,
+                messageType.Name,
+                messageType.Description,
+                messageType.TimeToLive,
+                messageType.IsNotification);
         }
 
         /// <summary>How long a user needs to wait before sending the next message.</summary>

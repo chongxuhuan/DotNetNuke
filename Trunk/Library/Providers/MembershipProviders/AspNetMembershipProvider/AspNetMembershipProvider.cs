@@ -654,6 +654,32 @@ namespace DotNetNuke.Security.Membership
             return aspnetUser.ChangePasswordQuestionAndAnswer(password, passwordQuestion, passwordAnswer);
         }
 
+        private UserCreateStatus ValidateForProfanity(UserInfo user)
+        {
+            var portalSecurity = new PortalSecurity();
+            UserCreateStatus createStatus = UserCreateStatus.AddUser;
+
+            Hashtable settings = UserController.GetUserSettings(user.PortalID);
+            bool useProfanityFilter =  Convert.ToBoolean(settings["Security_UseProfanityFilter"]);
+
+            //Validate Profanity
+            if (useProfanityFilter)
+            {
+                if (!portalSecurity.ValidateInput(user.Username, PortalSecurity.FilterFlag.NoProfanity))
+                {
+                    createStatus = UserCreateStatus.InvalidUserName;
+                }
+                if (!String.IsNullOrEmpty(user.DisplayName))
+                {
+                    if (!portalSecurity.ValidateInput(user.DisplayName, PortalSecurity.FilterFlag.NoProfanity))
+                    {
+                        createStatus = UserCreateStatus.InvalidDisplayName;
+                    }
+                }
+            }
+            return createStatus;
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// CreateUser persists a User to the Data Store
@@ -665,72 +691,77 @@ namespace DotNetNuke.Security.Membership
         /// -----------------------------------------------------------------------------
         public override UserCreateStatus CreateUser(ref UserInfo user)
         {
-            UserCreateStatus createStatus;
-            try
+            UserCreateStatus createStatus = ValidateForProfanity(user);
+
+            if (createStatus == UserCreateStatus.AddUser)
             {
-                //check if username exists in database for any portal
-                UserInfo objVerifyUser = GetUserByUserName(Null.NullInteger, user.Username);
-                if (objVerifyUser != null)
+                try
                 {
-                    //the username exists so we should now verify the password
-                    if (ValidateUser(user.Username, user.Membership.Password))
+                    //check if username exists in database for any portal
+                    UserInfo objVerifyUser = GetUserByUserName(Null.NullInteger, user.Username);
+                    if (objVerifyUser != null)
                     {
-                        //check if user exists for the portal specified
-                        objVerifyUser = GetUserByUserName(user.PortalID, user.Username);
-                        if (objVerifyUser != null)
+                        //the username exists so we should now verify the password
+                        if (ValidateUser(user.Username, user.Membership.Password))
                         {
-                            if (objVerifyUser.PortalID == user.PortalID && !user.IsSuperUser)
+                            //check if user exists for the portal specified
+                            objVerifyUser = GetUserByUserName(user.PortalID, user.Username);
+                            if (objVerifyUser != null)
                             {
-                                createStatus = UserCreateStatus.UserAlreadyRegistered;
+                                if (objVerifyUser.PortalID == user.PortalID && !user.IsSuperUser)
+                                {
+                                    createStatus = UserCreateStatus.UserAlreadyRegistered;
+                                }
+                                else
+                                {
+                                    //SuperUser who is not part of portal
+                                    createStatus = UserCreateStatus.AddUserToPortal;
+                                }
                             }
                             else
                             {
-                                //SuperUser who is not part of portal
                                 createStatus = UserCreateStatus.AddUserToPortal;
                             }
                         }
                         else
                         {
-                            createStatus = UserCreateStatus.AddUserToPortal;
+                            //not the same person - prevent registration
+                            createStatus = UserCreateStatus.UsernameAlreadyExists;
                         }
                     }
                     else
                     {
-                        //not the same person - prevent registration
-                        createStatus = UserCreateStatus.UsernameAlreadyExists;
+                        //the user does not exist
+                        createStatus = UserCreateStatus.AddUser;
                     }
-                }
-                else
-                {
-					//the user does not exist
-                    createStatus = UserCreateStatus.AddUser;
-                }
-				
-                //If new user - add to aspnet membership
-                if (createStatus == UserCreateStatus.AddUser)
-                {
-                    createStatus = CreateMemberhipUser(user);
-                }
-				
-                //If asp user has been successfully created or we are adding a existing user
-                //to a new portal 
-                if (createStatus == UserCreateStatus.Success || createStatus == UserCreateStatus.AddUserToPortal)
-                {
-					//Create the DNN User Record
-                    createStatus = CreateDNNUser(ref user);
-                    if (createStatus == UserCreateStatus.Success)
+
+                    //If new user - add to aspnet membership
+                    if (createStatus == UserCreateStatus.AddUser)
                     {
-						//Persist the Profile to the Data Store
-                        ProfileController.UpdateUserProfile(user);
+                        createStatus = CreateMemberhipUser(user);
                     }
+
+                    //If asp user has been successfully created or we are adding a existing user
+                    //to a new portal 
+                    if (createStatus == UserCreateStatus.Success || createStatus == UserCreateStatus.AddUserToPortal)
+                    {
+                        //Create the DNN User Record
+                        createStatus = CreateDNNUser(ref user);
+                        if (createStatus == UserCreateStatus.Success)
+                        {
+                            //Persist the Profile to the Data Store
+                            ProfileController.UpdateUserProfile(user);
+                        }
+                    }
+
                 }
-                
+                catch (Exception exc) //an unexpected error occurred
+                {
+                    Exceptions.LogException(exc);
+                    createStatus = UserCreateStatus.UnexpectedError;
+                }                    
             }
-            catch (Exception exc) //an unexpected error occurred
-            {
-                Exceptions.LogException(exc);
-                createStatus = UserCreateStatus.UnexpectedError;
-            }
+ 
             return createStatus;
         }
 

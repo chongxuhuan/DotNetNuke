@@ -112,35 +112,11 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="GoogleConfig_APIKey.Help" xml:space="preserve">
-    <value>Enter the value of the APP ID/API Key you configured at google.com</value>
-  </data>
-  <data name="GoogleConfig_APIKey.Text" xml:space="preserve">
-    <value>APP ID</value>
-  </data>
-  <data name="GoogleConfig_APISecret.Help" xml:space="preserve">
-    <value>Enter the value of the APP Secret you configured at google.com</value>
-  </data>
-  <data name="GoogleConfig_APISecret.Text" xml:space="preserve">
-    <value>APP Secret</value>
-  </data>
-  <data name="GoogleConfig_Enabled.Help" xml:space="preserve">
-    <value>Check this box to enable Google Authentication for this site</value>
-  </data>
-  <data name="GoogleConfig_Enabled.Text" xml:space="preserve">
-    <value>Enabled</value>
-  </data>
-  <data name="GoogleConfig_SiteURL.Help" xml:space="preserve">
-    <value>Enter the Site URL you configured at google.com.</value>
-  </data>
-  <data name="GoogleConfig_SiteURL.Text" xml:space="preserve">
-    <value>Site URL</value>
-  </data>
   <data name="Title.Text" xml:space="preserve">
     <value>Google Settings</value>
   </data>

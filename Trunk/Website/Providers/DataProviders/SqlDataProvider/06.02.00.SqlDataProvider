@@ -1796,81 +1796,93 @@ GO
 /* Add objects for social messaging */
 /*************************************/
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessages]') AND type in (N'U'))
-BEGIN
-CREATE TABLE {databaseOwner}{objectQualifier}SocialMessages(
-	[MessageID] [int] IDENTITY(1,1) NOT NULL,
-	[To] [nvarchar](2000) NULL,
-	[From] [nvarchar](200) NULL,
-	[Subject] [nvarchar](400) NULL,
-	[Body] [nvarchar](max) NULL,
-	[ConversationID] [int] NULL,
-	[ReplyAllAllowed] [bit] NULL,
-	[SenderUserID] [int] NULL,
-	[CreatedByUserID] [int] NULL,
-	[CreatedOnDate] [datetime] NULL,
-	[LastModifiedByUserID] [int] NULL,
-	[LastModifiedOnDate] [datetime] NULL,
- CONSTRAINT [PK_{objectQualifier}SocialMessages] PRIMARY KEY CLUSTERED 
-	(
-		[MessageID] ASC
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes](
+		[MessageTypeID] [int] IDENTITY(1,1) NOT NULL,
+		[Name] [nvarchar](100) NOT NULL,
+		[Description] [nvarchar](2000) NULL,
+		[TTL] [int] NULL,
+		[IsNotification] [bit] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}SocialMessages_MessageTypes] PRIMARY KEY CLUSTERED ([MessageTypeID] ASC)
 	)
-)
 
-CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_SenderUserID] ON {databaseOwner}[{objectQualifier}SocialMessages] ([SenderUserID] ASC, [CreatedOnDate] DESC)		
-
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_MessageTypes] ON {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([Name] ASC)
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessageRecipients]') AND type in (N'U'))
-BEGIN
-CREATE TABLE {databaseOwner}{objectQualifier}SocialMessageRecipients(
-	[RecipientID] [int] IDENTITY(1,1) NOT NULL,
-	[MessageID] [int] NOT NULL,
-	[UserID] [int] NOT NULL,
-	[Read] [bit] NOT NULL,
-	[Archived] [bit] NOT NULL,
-	[CreatedByUserID] [int] NULL,
-	[CreatedOnDate] [datetime] NULL,
-	[LastModifiedByUserID] [int] NULL,
-	[LastModifiedOnDate] [datetime] NULL,
- CONSTRAINT [PK_{objectQualifier}SocialMessageRecipients] PRIMARY KEY CLUSTERED 
-	(
-		[RecipientID] ASC
+-- Add Default Message Types
+INSERT INTO {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([Name], [Description], [IsNotification]) VALUES (N'StandardMessage', N'This is a standard message', 0)
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessages]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}SocialMessages(
+		[MessageID] [int] IDENTITY(1,1) NOT NULL,
+		[MessageTypeID] int NOT NULL,
+		[To] [nvarchar](2000) NULL,
+		[From] [nvarchar](200) NULL,
+		[Subject] [nvarchar](400) NULL,
+		[Body] [nvarchar](max) NULL,
+		[ConversationID] [int] NULL,
+		[ReplyAllAllowed] [bit] NULL,
+		[SenderUserID] [int] NULL,
+		[CreatedByUserID] [int] NULL,
+		[CreatedOnDate] [datetime] NULL,
+		[LastModifiedByUserID] [int] NULL,
+		[LastModifiedOnDate] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}SocialMessages] PRIMARY KEY CLUSTERED ([MessageID] ASC)
 	)
-)
 
-CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}SocialMessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC)		
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_SenderUserID] ON {databaseOwner}[{objectQualifier}SocialMessages] ([SenderUserID] ASC, [CreatedOnDate] DESC)
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_MessageTypeID] ON {databaseOwner}[{objectQualifier}SocialMessages] ([MessageTypeID] ASC)
 
-ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageRecipients]  
-	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageRecipients_{objectQualifier}SocialMessages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
-
+	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessages]
+	ADD CONSTRAINT [FK_{objectQualifier}SocialMessages_{objectQualifier}SocialMessages_MessageTypes]
+	FOREIGN KEY([MessageTypeID])
+	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([MessageTypeID]) ON DELETE CASCADE
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessageAttachments]') AND type in (N'U'))
-BEGIN
-CREATE TABLE {databaseOwner}{objectQualifier}SocialMessageAttachments(
-	[MessageAttachmentID] [int] IDENTITY(1,1) NOT NULL,
-	[MessageID] [int] NOT NULL,
-	[FileID] [int] NULL,
-	[CreatedByUserID] [int] NULL,
-	[CreatedOnDate] [datetime] NULL,
-	[LastModifiedByUserID] [int] NULL,
-	[LastModifiedOnDate] [datetime] NULL,
- CONSTRAINT [PK_{objectQualifier}SocialMessageAttachments] PRIMARY KEY CLUSTERED 
-	(
-		[MessageAttachmentID] ASC
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessageRecipients]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}SocialMessageRecipients(
+		[RecipientID] [int] IDENTITY(1,1) NOT NULL,
+		[MessageID] [int] NOT NULL,
+		[UserID] [int] NOT NULL,
+		[Read] [bit] NOT NULL,
+		[Archived] [bit] NOT NULL,
+		[CreatedByUserID] [int] NULL,
+		[CreatedOnDate] [datetime] NULL,
+		[LastModifiedByUserID] [int] NULL,
+		[LastModifiedOnDate] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}SocialMessageRecipients] PRIMARY KEY CLUSTERED ([RecipientID] ASC)
 	)
-)
 
-CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageAttachments_MessageID] ON {databaseOwner}[{objectQualifier}SocialMessageAttachments] ([MessageID] ASC)		
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}SocialMessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC)
 
-ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageAttachments]  
-	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageAttachments_{objectQualifier}SocialMessages] FOREIGN KEY([MessageID]) REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
-
+	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageRecipients]
+	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageRecipients_{objectQualifier}SocialMessages]
+	FOREIGN KEY([MessageID])
+	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
 END
+GO
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessageAttachments]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}SocialMessageAttachments(
+		[MessageAttachmentID] [int] IDENTITY(1,1) NOT NULL,
+		[MessageID] [int] NOT NULL,
+		[FileID] [int] NULL,
+		[CreatedByUserID] [int] NULL,
+		[CreatedOnDate] [datetime] NULL,
+		[LastModifiedByUserID] [int] NULL,
+		[LastModifiedOnDate] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}SocialMessageAttachments] PRIMARY KEY CLUSTERED ([MessageAttachmentID] ASC)
+	)
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageAttachments_MessageID] ON {databaseOwner}[{objectQualifier}SocialMessageAttachments] ([MessageID] ASC)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageAttachments]
+	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageAttachments_{objectQualifier}SocialMessages]
+	FOREIGN KEY([MessageID])
+	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
+END
 GO
 
 --CRUD for SocialMessages
@@ -2343,6 +2355,89 @@ CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocialMessageAttachment]
 AS 
 	DELETE FROM {databaseOwner}{objectQualifier}SocialMessageAttachments
 	WHERE  [MessageAttachmentID] = @MessageAttachmentID
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessageType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageType]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageType]
+	@MessageTypeID int,
+	@Name nvarchar(100),
+	@Description nvarchar(2000),
+	@TTL int,
+	@IsNotification bit
+AS
+BEGIN
+	IF (@MessageTypeID = -1) BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] (
+			[Name],
+			[Description],
+			[TTL],
+			[IsNotification]
+		) VALUES (
+			@Name,
+			@Description,
+			@TTL,
+			@IsNotification
+		)
+		
+		SELECT SCOPE_IDENTITY()
+	END
+	ELSE BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
+		SET
+			[Name] = @Name,
+			[Description] = @Description,
+			[TTL] = @TTL,
+			[IsNotification] = @IsNotification
+		WHERE [MessageTypeID] = @MessageTypeID
+		
+		SELECT @MessageTypeID
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteSocialMessageType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessageType]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessageType]
+	@MessageTypeID int
+AS
+BEGIN
+	DELETE
+	FROM {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
+	WHERE [MessageTypeID] = @MessageTypeID
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageType]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageType]
+	@MessageTypeID int
+AS
+BEGIN
+	SELECT [MessageTypeID], [Name], [Description], [TTL], [IsNotification]
+	FROM {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
+	WHERE [MessageTypeID] = @MessageTypeID
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageTypeByName]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageTypeByName]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageTypeByName]
+	@Name nvarchar(100)
+AS
+BEGIN
+	SELECT [MessageTypeID], [Name], [Description], [TTL], [IsNotification]
+	FROM {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
+	WHERE [Name] LIKE @Name
+END
 GO
 
 /* Add ExtendedVisibility To UserProfile Table */

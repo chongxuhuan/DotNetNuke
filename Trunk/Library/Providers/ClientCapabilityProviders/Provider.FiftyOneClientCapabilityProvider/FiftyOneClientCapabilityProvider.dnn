@@ -13,7 +13,7 @@
       <license src="License.txt"></license>
       <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
       <dependencies>
-        <dependency type="CoreVersion">06.01.00</dependency>
+        <dependency type="CoreVersion">06.02.00</dependency>
       </dependencies>
       <components>
         <component type="File">
@@ -38,10 +38,10 @@
           <desktopModule>
             <moduleName>51Degrees.mobi</moduleName>
             <foldername>FiftyOne</foldername>
-            <businessControllerClass>FiftyOne.Modules.Components.FeatureController, FiftyOne.DotNetNuke</businessControllerClass>
+            <businessControllerClass>DotNetNuke.Providers.FiftyOneClientCapabilityProvider.Components.FeatureController, DotNetNuke.Providers.FiftyOneClientCapabilityProvider</businessControllerClass>
             <supportedFeatures>
               <supportedFeature type="Searchable" />
-              <supportedFeature type="FiftyOne.Modules.Components.FeatureController, FiftyOne.DotNetNuke"></supportedFeature>
+              <supportedFeature type="DotNetNuke.Providers.FiftyOneClientCapabilityProvider.Components.FeatureController, DotNetNuke.Providers.FiftyOneClientCapabilityProvider"></supportedFeature>
             </supportedFeatures>
             <moduleDefinitions>
               <moduleDefinition>
@@ -57,84 +57,6 @@
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
-                  </moduleControl>                  
-                  <moduleControl>
-                    <controlKey>PropertyDictionary</controlKey>
-                      <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/PropertyDictionary.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>Property Dictionary</controlTitle>
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>1</viewOrder>
-                  </moduleControl>
-                  <moduleControl>
-                    <controlKey>DeviceExplorer</controlKey>
-                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/DeviceExplorer.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>Device Explorer</controlTitle>
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>2</viewOrder>
-                  </moduleControl>
-                  <moduleControl>
-                    <controlKey>UserAgentTester</controlKey>
-                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/UserAgentTester.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>Find a Device by UserAgent</controlTitle>
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>3</viewOrder>
-                  </moduleControl>
-                </moduleControls>
-              </moduleDefinition>              
-              <moduleDefinition>
-                <friendlyName>Device Explorer</friendlyName>
-                <defaultCacheTime>0</defaultCacheTime>
-                <moduleControls>
-                  <moduleControl>
-                    <controlKey />
-                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/DeviceExplorer.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>Device Explorer</controlTitle>
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                </moduleControls>
-              </moduleDefinition>
-              <moduleDefinition>
-                <friendlyName>Property Dictionary</friendlyName>
-                <defaultCacheTime>240</defaultCacheTime>
-                <moduleControls>
-                  <moduleControl>
-                    <controlKey />
-                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/PropertyDictionary.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>Property Dictionary</controlTitle>
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                </moduleControls>
-              </moduleDefinition>
-              <moduleDefinition>
-                <friendlyName>UserAgent Tester</friendlyName>
-                <defaultCacheTime>0</defaultCacheTime>
-                <moduleControls>
-                  <moduleControl>
-                    <controlKey />
-                    <controlSrc>DesktopModules/Admin/FiftyOneClientCapabilityProvider/UserAgentTester.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>Find a Device by UserAgent</controlTitle>
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
                   </moduleControl>
                 </moduleControls>
               </moduleDefinition>
@@ -144,7 +66,7 @@
             <processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
             <processorCommand>UpgradeModule</processorCommand>
             <attributes>
-              <businessControllerClass>FiftyOne.Modules.Components.FeatureController, FiftyOne.DotNetNuke</businessControllerClass>
+              <businessControllerClass>DotNetNuke.Providers.FiftyOneClientCapabilityProvider.Components.FeatureController, DotNetNuke.Providers.FiftyOneClientCapabilityProvider</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
               <upgradeVersionsList>2.1.1.5</upgradeVersionsList>
             </attributes>
@@ -156,7 +78,7 @@
             <basePath>bin\Providers</basePath>
             <assembly>
               <path>bin\Providers</path>
-              <name>FiftyOne.DotNetNuke.dll</name>
+              <name>DotNetNuke.Providers.FiftyOneClientCapabilityProvider.dll</name>
             </assembly>
             <assembly>
               <path>bin\Providers</path>
@@ -178,7 +100,7 @@
                     <add name="Detector" type="FiftyOne.Foundation.Mobile.Detection.DetectorModule, FiftyOne.Foundation" preCondition="managedHandler"/>
                   </node>
                   <node path="/configuration/dotnetnuke/clientcapability/providers" action="update" key="name" collision="overwrite">
-                    <add name="FiftyOneClientCapabilityProvider" type="FiftyOne.Services.ClientCapability.FiftyOneClientCapabilityProvider, FiftyOne.DotNetNuke" providerPath="~\Providers\ClientCapabilityProviders\FiftyOneClientCapabilityProvider\" />
+                    <add name="FiftyOneClientCapabilityProvider" type="DotNetNuke.Providers.FiftyOneClientCapabilityProvider.FiftyOneClientCapabilityProvider, DotNetNuke.Providers.FiftyOneClientCapabilityProvider" providerPath="~\Providers\ClientCapabilityProviders\FiftyOneClientCapabilityProvider\" />
                   </node>
                   <node path="/configuration/dotnetnuke/clientcapability" action="updateattribute" name="defaultProvider" value="FiftyOneClientCapabilityProvider" />
                 </nodes>

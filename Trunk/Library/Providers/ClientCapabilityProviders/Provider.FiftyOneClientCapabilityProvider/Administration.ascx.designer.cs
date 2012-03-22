@@ -7,45 +7,108 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FiftyOne.Modules {
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider {
     
     
     public partial class Administration {
         
         /// <summary>
-        /// Dictionary51 control.
+        /// Activate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::FiftyOne.Modules.PropertyDictionary Dictionary51;
+        protected global::FiftyOne.Foundation.UI.Web.Activate Activate;
         
         /// <summary>
-        /// Explorer51 control.
+        /// LiteStats control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::FiftyOne.Modules.DeviceExplorer Explorer51;
+        protected global::FiftyOne.Foundation.UI.Web.Stats LiteStats;
         
         /// <summary>
-        /// UserAgentTester51 control.
+        /// NoResultsMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::FiftyOne.Modules.UserAgentTester UserAgentTester51;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl NoResultsMessage;
         
         /// <summary>
-        /// Activate51 control.
+        /// SearchTextBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::FiftyOne.Foundation.UI.Web.Activate Activate51;
+        protected global::System.Web.UI.WebControls.TextBox SearchTextBox;
+        
+        /// <summary>
+        /// SearchButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton SearchButton;
+        
+        /// <summary>
+        /// HardwareList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater HardwareList;
+        
+        /// <summary>
+        /// SoftwareList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater SoftwareList;
+        
+        /// <summary>
+        /// BrowserList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater BrowserList;
+        
+        /// <summary>
+        /// ContentList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater ContentList;
+        
+        /// <summary>
+        /// DeviceExplorer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DotNetNuke.Providers.FiftyOneClientCapabilityProvider.DnnDeviceExplorer DeviceExplorer;
+        
+        /// <summary>
+        /// FooterStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::FiftyOne.Foundation.UI.Web.Stats FooterStats;
     }
 }

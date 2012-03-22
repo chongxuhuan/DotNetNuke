@@ -7,18 +7,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FiftyOne.Modules {
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider {
     
     
     public partial class UserAgentTester {
-        
-        /// <summary>
-        /// Tester control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::FiftyOne.Foundation.UI.Web.UserAgentTester Tester;
     }
 }

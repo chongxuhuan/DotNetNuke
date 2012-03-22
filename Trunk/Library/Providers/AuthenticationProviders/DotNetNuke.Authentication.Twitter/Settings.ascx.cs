@@ -39,8 +39,8 @@ namespace DotNetNuke.Authentication.Twitter
         {
             if (SettingsEditor.IsValid && SettingsEditor.IsDirty)
             {
-                var config = (oAuthConfigBase) SettingsEditor.DataSource;
-                oAuthConfigBase.UpdateConfig(config);
+                var config = (OAuthConfigBase) SettingsEditor.DataSource;
+                OAuthConfigBase.UpdateConfig(config);
             }
         }
 
@@ -50,7 +50,7 @@ namespace DotNetNuke.Authentication.Twitter
 
             try
             {
-                oAuthConfigBase config = oAuthConfigBase.GetConfig("Twitter", PortalId);
+                OAuthConfigBase config = OAuthConfigBase.GetConfig("Twitter", PortalId);
                 SettingsEditor.DataSource = config;
                 SettingsEditor.DataBind();
             }

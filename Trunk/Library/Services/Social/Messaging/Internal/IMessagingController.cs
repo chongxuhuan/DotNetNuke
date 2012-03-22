@@ -89,5 +89,15 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
         int ReplyMessage(int conversationId, string body, IList<int> fileIDs, UserInfo sender);
 
         #endregion
+
+        #region MessageTypes Methods
+
+        MessageType CreateMessageType(string name, string description, int timeToLive, bool isNotification);
+        void UpdateMessageType(MessageType messageType);
+        void DeleteMessageType(int messageTypeId);
+        MessageType GetMessageType(int messageTypeId);
+        MessageType GetMessageType(string name);
+
+        #endregion
     }
 }

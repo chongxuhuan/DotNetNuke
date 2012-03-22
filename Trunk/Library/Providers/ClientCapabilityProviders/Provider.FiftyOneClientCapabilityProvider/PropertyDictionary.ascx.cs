@@ -21,13 +21,59 @@
  * 
  * ********************************************************************* */
 
-namespace FiftyOne.Modules
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
 {
+    using System.Linq;
+    using System.Web.UI.HtmlControls;
+    using System.Web.UI.WebControls;
+    using FiftyOne.Foundation.Mobile.Detection;
+    using FiftyOne.Foundation.UI;
+
     /// <summary>
     /// Used to contain the 51Degrees.mobi property dictionary control.
     /// </summary>
-    partial class PropertyDictionary : ModuleBase
+    partial class PropertyDictionary : Components.ModuleBase
     {
+        protected override void OnInit(System.EventArgs e)
+        {
+            base.OnInit(e);
+            
+            HardwareList.DataSource = DataProvider.HardwareProperties;
+            SoftwareList.DataSource = DataProvider.SoftwareProperties;
+            BrowserList.DataSource = DataProvider.BrowserProperties;
+            ContentList.DataSource = DataProvider.ContentProperties;
+
+            HardwareList.ItemDataBound += ListItemDataBound;
+
+            HardwareList.DataBind();
+            SoftwareList.DataBind();
+            BrowserList.DataBind();
+            ContentList.DataBind();
+        }
+
+        private void ListItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+            if (e.Item.DataItem == null || !(e.Item.DataItem is Property))
+                return;
+
+            var property = (Property) e.Item.DataItem;
+            var premiumLabel = e.Item.FindControl("Premium") as HtmlGenericControl;
+            if (premiumLabel != null)
+            {
+                premiumLabel.Visible = property.IsPremium;
+            }
+
+            var values = e.Item.FindControl("Values") as HtmlGenericControl;
+            if (values == null)
+                return;
+
+            values.Visible = property.ShowValues;
+
+            if (property.ShowValues)
+            {
+                values.InnerText = string.Join(", ", property.Values.Select(item => item.Name).ToArray());
+            }
+        }
     }
 }
 

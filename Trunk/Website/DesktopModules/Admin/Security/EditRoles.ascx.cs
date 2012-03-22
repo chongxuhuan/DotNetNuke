@@ -194,44 +194,44 @@ namespace DotNetNuke.Modules.Admin.Security
                         txtRoleName.Visible = false;
                         valRoleName.Enabled = false;
 
-                        var objRoleInfo = TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == _roleID);
-                        if (objRoleInfo != null)
+                        var role = TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == _roleID);
+                        if (role != null)
                         {
-                            lblRoleName.Text = objRoleInfo.RoleName;
-                            txtDescription.Text = objRoleInfo.Description;
-                            if (cboRoleGroups.Items.FindByValue(objRoleInfo.RoleGroupID.ToString()) != null)
+                            lblRoleName.Text = role.RoleName;
+                            txtDescription.Text = role.Description;
+                            if (cboRoleGroups.Items.FindByValue(role.RoleGroupID.ToString()) != null)
                             {
                                 cboRoleGroups.ClearSelection();
-                                cboRoleGroups.Items.FindByValue(objRoleInfo.RoleGroupID.ToString()).Selected = true;
+                                cboRoleGroups.Items.FindByValue(role.RoleGroupID.ToString()).Selected = true;
                             }
-                            if (objRoleInfo.BillingFrequency != "N")
+                            if (!String.IsNullOrEmpty(role.BillingFrequency))
                             {
-                                txtServiceFee.Text = objRoleInfo.ServiceFee.ToString("N2", CultureInfo.CurrentCulture);
-                                txtBillingPeriod.Text = objRoleInfo.BillingPeriod.ToString();
-                                if (cboBillingFrequency.Items.FindByValue(objRoleInfo.BillingFrequency) != null)
+                                txtServiceFee.Text = role.ServiceFee.ToString("N2", CultureInfo.CurrentCulture);
+                                txtBillingPeriod.Text = role.BillingPeriod.ToString();
+                                if (cboBillingFrequency.Items.FindByValue(role.BillingFrequency) != null)
                                 {
                                     cboBillingFrequency.ClearSelection();
-                                    cboBillingFrequency.Items.FindByValue(objRoleInfo.BillingFrequency).Selected = true;
+                                    cboBillingFrequency.Items.FindByValue(role.BillingFrequency).Selected = true;
                                 }
                             }
-                            if (objRoleInfo.TrialFrequency != "N")
+                            if (!String.IsNullOrEmpty(role.TrialFrequency))
                             {
-                                txtTrialFee.Text = objRoleInfo.TrialFee.ToString("N2", CultureInfo.CurrentCulture);
-                                txtTrialPeriod.Text = objRoleInfo.TrialPeriod.ToString();
-                                if (cboTrialFrequency.Items.FindByValue(objRoleInfo.TrialFrequency) != null)
+                                txtTrialFee.Text = role.TrialFee.ToString("N2", CultureInfo.CurrentCulture);
+                                txtTrialPeriod.Text = role.TrialPeriod.ToString();
+                                if (cboTrialFrequency.Items.FindByValue(role.TrialFrequency) != null)
                                 {
                                     cboTrialFrequency.ClearSelection();
-                                    cboTrialFrequency.Items.FindByValue(objRoleInfo.TrialFrequency).Selected = true;
+                                    cboTrialFrequency.Items.FindByValue(role.TrialFrequency).Selected = true;
                                 }
                             }
-                            chkIsPublic.Checked = objRoleInfo.IsPublic;
-                            chkAutoAssignment.Checked = objRoleInfo.AutoAssignment;
-                            txtRSVPCode.Text = objRoleInfo.RSVPCode;
+                            chkIsPublic.Checked = role.IsPublic;
+                            chkAutoAssignment.Checked = role.AutoAssignment;
+                            txtRSVPCode.Text = role.RSVPCode;
                             if (!String.IsNullOrEmpty(txtRSVPCode.Text))
                             {
                                 lblRSVPLink.Text = Globals.AddHTTP(Globals.GetDomainName(Request)) + "/" + Globals.glbDefaultPage + "?rsvp=" + txtRSVPCode.Text + "&portalid=" + PortalId;
                             }
-                            ctlIcon.Url = objRoleInfo.IconFile;
+                            ctlIcon.Url = role.IconFile;
 
                             UpdateFeeTextBoxes();
                         }

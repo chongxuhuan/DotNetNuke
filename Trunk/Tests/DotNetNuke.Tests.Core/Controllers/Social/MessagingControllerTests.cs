@@ -1067,6 +1067,71 @@ namespace DotNetNuke.Tests.Core.Controllers
 
         #endregion
 
+        #region CreateMessageType
+
+        [Test]
+        [TestCase("")]
+        [TestCase(null)]
+        [ExpectedException(typeof(ArgumentException))]
+        public void CreateMessageType_Throws_On_Null_Or_Empty_Name(string name)
+        {
+            _messagingController.CreateMessageType(name, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>());
+        }
+
+        [Test]
+        public void CreateMessageType_Calls_DataService_SaveMessageType()
+        {
+            _mockDataService
+                .Setup(ds => ds.SaveMessageType(Null.NullInteger, Constants.SocialMessaging_MessageTypeName, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>()))
+                .Verifiable();
+
+            _messagingController.CreateMessageType(Constants.SocialMessaging_MessageTypeName, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>());
+
+            _mockDataService.Verify();
+        }
+
+        [Test]
+        [TestCase(int.MaxValue, int.MaxValue)]
+        [TestCase(1, 1)]
+        [TestCase(0, -1)]
+        [TestCase(-1, -1)]
+        [TestCase(-2, -1)]
+        [TestCase(int.MinValue, -1)]
+        public void CreateMessageType_Returns_Object_With_Valid_TimeToLive(int actualTimeToLive, int expectedTimeToLive)
+        {
+            var messageType = _messagingController.CreateMessageType(Constants.SocialMessaging_MessageTypeName, It.IsAny<string>(), actualTimeToLive, It.IsAny<bool>());
+            
+            Assert.AreEqual(expectedTimeToLive, messageType.TimeToLive);
+        }
+
+        [Test]
+        public void CreateMessageType_Returns_Valid_Object()
+        {
+            var expectedMessageType = new MessageType
+                                          {
+                                              MessageTypeId = Constants.SocialMessaging_MessageTypeId,
+                                              Name = Constants.SocialMessaging_MessageTypeName,
+                                              Description = Constants.SocialMessaging_MessageTypeDescription,
+                                              TimeToLive = Constants.SocialMessaging_MessageTypeTTL,
+                                              IsNotification = Constants.SocialMessaging_MessageTypeIsNotification
+                                          };
+
+            _mockDataService
+                .Setup(ds => ds.SaveMessageType(
+                    Null.NullInteger,
+                    expectedMessageType.Name,
+                    expectedMessageType.Description,
+                    expectedMessageType.TimeToLive,
+                    expectedMessageType.IsNotification))
+                .Returns(Constants.SocialMessaging_MessageTypeId);
+
+            var actualMessageType = _messagingController.CreateMessageType(expectedMessageType.Name, expectedMessageType.Description, expectedMessageType.TimeToLive, expectedMessageType.IsNotification);
+
+            Assert.IsTrue(new MessageTypeComparer().Equals(expectedMessageType, actualMessageType));
+        }
+
+        #endregion
+
         #endregion
 
         #region "Private Methods"
@@ -1166,6 +1231,31 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtMessageConversationView.Columns.Add("CreatedOnDate", typeof(DateTime));
             _dtMessageConversationView.Columns.Add("LastModifiedByUserID", typeof(int));
             _dtMessageConversationView.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+        }
+
+        #endregion
+
+        #region Private Classes
+
+        private class MessageTypeComparer : IEqualityComparer<MessageType>
+        {
+            public bool Equals(MessageType x, MessageType y)
+            {
+                if (x == null) return y == null;
+                if (y == null) return false;
+
+                return 
+                    x.MessageTypeId == y.MessageTypeId && 
+                    x.Name == y.Name && 
+                    x.Description == y.Description && 
+                    x.TimeToLive == y.TimeToLive && 
+                    x.IsNotification == y.IsNotification;
+            }
+
+            public int GetHashCode(MessageType obj)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #endregion
