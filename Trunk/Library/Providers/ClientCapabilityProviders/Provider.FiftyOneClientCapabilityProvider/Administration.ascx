@@ -1,7 +1,6 @@
 <%@ Control Language="C#" Inherits="DotNetNuke.Providers.FiftyOneClientCapabilityProvider.Administration, DotNetNuke.Providers.FiftyOneClientCapabilityProvider" AutoEventWireup="true" CodeBehind="Administration.ascx.cs" %>
 <%@ Register Assembly="FiftyOne.Foundation" Namespace="FiftyOne.Foundation.UI.Web" TagPrefix="fiftyOne" %>
 <%@ Register Assembly="DotNetNuke.Providers.FiftyOneClientCapabilityProvider" Namespace="DotNetNuke.Providers.FiftyOneClientCapabilityProvider" tagPrefix="dnn" %>
-<%@ Register TagPrefix="dnn" TagName="jQuery" Src="~/Admin/Skins/jQuery.ascx" %>
 
 <div class="DnnModule DnnModule-Device-Detection" id="fiftyOneDegrees">
 
@@ -152,7 +151,6 @@
                         <div class="contents-header">
                         <% if (this.IsPremium) { %>
                             <h4><%=LocalizeString("DeviceExplorer.Header") %></h4>
-                            <p><%=LocalizeString("LiteSearchResults.Text") %></p>
                         <% } else {%>
                             <h4><%=LocalizeString("LiteSearchResults.Header") %></h4>
                             <p><%=LocalizeString("LiteSearchResults.Text") %></p>
@@ -170,8 +168,6 @@
     
 </div>
 
-<dnn:jQuery runat="server" DnnjQueryPlugins="True" />
-
 <script type="text/javascript">
     $('.dnnTooltip').dnnTooltip();
     
@@ -188,6 +184,4 @@
             $('.explorer').slideToggle();
         });
     });
-    
-
 </script>

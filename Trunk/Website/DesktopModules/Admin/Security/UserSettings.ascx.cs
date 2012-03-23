@@ -147,6 +147,7 @@ namespace DotNetNuke.Modules.Admin.Users
             ExtractSetting(settings, regSettings, "Security_UseEmailAsUserName");
             ExtractSetting(settings, regSettings, "Security_UseAuthProvidersForRegistration");
             ExtractSetting(settings, regSettings, "Security_UseProfanityFilter");
+            ExtractSetting(settings, regSettings, "Security_RegistrationFields");
 
             var editors = new Hashtable();
             editors["Redirect_AfterRegistration"] = EditorInfo.GetEditor("Page");
@@ -163,6 +164,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 visibility["Security_UseEmailAsUserName"] = false;
                 visibility["Security_UseAuthProvidersForRegistration"] = false;
                 visibility["Security_UseProfanityFilter"] = false;
+                visibility["Security_RegistrationFields"] = false;
             }
 
             RegistrationSettingsEditor.LocalResourceFile = LocalResourceFile;

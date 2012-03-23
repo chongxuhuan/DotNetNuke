@@ -27,10 +27,12 @@ using System.Data;
 using System.Linq;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Log.EventLog;
 
 #endregion
@@ -336,8 +338,10 @@ namespace DotNetNuke.Entities.Portals
             int Id = DataProvider.Instance().AddPortalAlias(objPortalAliasInfo.PortalID, objPortalAliasInfo.HTTPAlias.ToLower().Trim('/'), UserController.GetCurrentUserInfo().UserID);
             var objEventLog = new EventLogController();
             objEventLog.AddLog(objPortalAliasInfo, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.PORTALALIAS_CREATED);
+
             //clear portal alias cache
             DataCache.RemoveCache(DataCache.PortalAliasCacheKey);
+            ServicesRoutingManager.ReRegisterServiceRoutesWhileSiteIsRunning();
             return Id;
         }
 

@@ -138,8 +138,8 @@
     <Compile Include="Services\DnnControllerActionInvoker.cs" />
     <Compile Include="Services\DnnModuleAuthorizeAttribute.cs" />
     <Compile Include="Services\HttpContextExtensions.cs" />
-    <Compile Include="Services\IAssembly.cs" />
-    <Compile Include="Services\IAssemblyLocator.cs" />
+    <Compile Include="Services\Internal\IAssembly.cs" />
+    <Compile Include="Services\Internal\IAssemblyLocator.cs" />
     <Compile Include="Services\IOverrideDefaultAuthLevel.cs" />
     <Compile Include="Services\IRouteMapper.cs" />
     <Compile Include="Services\IServiceRouteMapper.cs" />

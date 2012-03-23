@@ -66,6 +66,8 @@ namespace DotNetNuke.Tests.Core.Controllers
         private DataTable _dtMessageRecipients;
         private DataTable _dtPortalSettings;
         private DataTable _dtMessageConversationView;
+        private DataTable _dtMessageTypes;
+
         private UserInfo _adminUserInfo;
         private UserInfo _hostUserInfo;
         private UserInfo _user12UserInfo;
@@ -1075,17 +1077,17 @@ namespace DotNetNuke.Tests.Core.Controllers
         [ExpectedException(typeof(ArgumentException))]
         public void CreateMessageType_Throws_On_Null_Or_Empty_Name(string name)
         {
-            _messagingController.CreateMessageType(name, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>());
+            _messagingController.CreateMessageType(name, It.IsAny<string>(), It.IsAny<int>());
         }
 
         [Test]
         public void CreateMessageType_Calls_DataService_SaveMessageType()
         {
             _mockDataService
-                .Setup(ds => ds.SaveMessageType(Null.NullInteger, Constants.SocialMessaging_MessageTypeName, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>()))
+                .Setup(ds => ds.SaveMessageType(Null.NullInteger, Constants.SocialMessaging_MessageTypeName, It.IsAny<string>(), It.IsAny<int>()))
                 .Verifiable();
 
-            _messagingController.CreateMessageType(Constants.SocialMessaging_MessageTypeName, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>());
+            _messagingController.CreateMessageType(Constants.SocialMessaging_MessageTypeName, It.IsAny<string>(), It.IsAny<int>());
 
             _mockDataService.Verify();
         }
@@ -1099,7 +1101,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         [TestCase(int.MinValue, -1)]
         public void CreateMessageType_Returns_Object_With_Valid_TimeToLive(int actualTimeToLive, int expectedTimeToLive)
         {
-            var messageType = _messagingController.CreateMessageType(Constants.SocialMessaging_MessageTypeName, It.IsAny<string>(), actualTimeToLive, It.IsAny<bool>());
+            var messageType = _messagingController.CreateMessageType(Constants.SocialMessaging_MessageTypeName, It.IsAny<string>(), actualTimeToLive);
             
             Assert.AreEqual(expectedTimeToLive, messageType.TimeToLive);
         }
@@ -1107,27 +1109,149 @@ namespace DotNetNuke.Tests.Core.Controllers
         [Test]
         public void CreateMessageType_Returns_Valid_Object()
         {
-            var expectedMessageType = new MessageType
-                                          {
-                                              MessageTypeId = Constants.SocialMessaging_MessageTypeId,
-                                              Name = Constants.SocialMessaging_MessageTypeName,
-                                              Description = Constants.SocialMessaging_MessageTypeDescription,
-                                              TimeToLive = Constants.SocialMessaging_MessageTypeTTL,
-                                              IsNotification = Constants.SocialMessaging_MessageTypeIsNotification
-                                          };
+            var expectedMessageType = CreateValidMessageType();
 
             _mockDataService
                 .Setup(ds => ds.SaveMessageType(
                     Null.NullInteger,
                     expectedMessageType.Name,
                     expectedMessageType.Description,
-                    expectedMessageType.TimeToLive,
-                    expectedMessageType.IsNotification))
+                    expectedMessageType.TimeToLive))
                 .Returns(Constants.SocialMessaging_MessageTypeId);
 
-            var actualMessageType = _messagingController.CreateMessageType(expectedMessageType.Name, expectedMessageType.Description, expectedMessageType.TimeToLive, expectedMessageType.IsNotification);
+            var actualMessageType = _messagingController.CreateMessageType(expectedMessageType.Name, expectedMessageType.Description, expectedMessageType.TimeToLive);
 
             Assert.IsTrue(new MessageTypeComparer().Equals(expectedMessageType, actualMessageType));
+        }
+
+        #endregion
+
+        #region DeleteMessageType
+
+        [Test]
+        public void DeleteMessageType_Calls_DataService_DeleteMessageType()
+        {
+            _mockDataService.Setup(ds => ds.DeleteMessageType(Constants.SocialMessaging_MessageTypeId)).Verifiable();
+
+            _messagingController.DeleteMessageType(Constants.SocialMessaging_MessageTypeId);
+
+            _mockDataService.Verify();
+        }
+
+        #endregion
+
+        #region GetMessageType
+
+        [Test]
+        public void GetMessageType_By_Id_Calls_DataService_GetMessageType()
+        {
+            var messageTypeDataTable = new DataTable();
+
+            _mockDataService
+                .Setup(ds => ds.GetMessageType(Constants.SocialMessaging_MessageTypeId))
+                .Returns(messageTypeDataTable.CreateDataReader())
+                .Verifiable();
+
+            _messagingController.GetMessageType(Constants.SocialMessaging_MessageTypeId);
+
+            _mockDataService.Verify();
+        }
+
+        [Test]
+        public void GetMessageType_By_Id_Returns_Valid_Object()
+        {
+            var expectedMessageType = CreateValidMessageType();
+
+            _dtMessageTypes.Rows.Clear();
+
+            _dtMessageTypes.Rows.Add(
+                expectedMessageType.MessageTypeId,
+                expectedMessageType.Name,
+                expectedMessageType.Description,
+                expectedMessageType.TimeToLive);
+
+            _mockDataService
+                .Setup(ds => ds.GetMessageType(Constants.SocialMessaging_MessageTypeId))
+                .Returns(_dtMessageTypes.CreateDataReader());
+
+            var actualMessageType = _messagingController.GetMessageType(Constants.SocialMessaging_MessageTypeId);
+
+            Assert.IsTrue(new MessageTypeComparer().Equals(expectedMessageType, actualMessageType));
+        }
+
+        [Test]
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GetMessageType_By_Name_Throws_On_Null_Or_Empty_Name(string name)
+        {
+            _messagingController.GetMessageType(name);
+        }
+
+        [Test]
+        public void GetMessageType_By_Name_Calls_DataService_GetMessageTypeByName()
+        {
+            var messageTypeDataTable = new DataTable();
+
+            _mockDataService
+                .Setup(ds => ds.GetMessageTypeByName(Constants.SocialMessaging_MessageTypeName))
+                .Returns(messageTypeDataTable.CreateDataReader())
+                .Verifiable();
+
+            _messagingController.GetMessageType(Constants.SocialMessaging_MessageTypeName);
+
+            _mockDataService.Verify();
+        }
+
+        [Test]
+        public void GetMessageType_By_Name_Returns_Valid_Object()
+        {
+            var expectedMessageType = CreateValidMessageType();
+
+            _dtMessageTypes.Rows.Clear();
+
+            _dtMessageTypes.Rows.Add(
+                expectedMessageType.MessageTypeId,
+                expectedMessageType.Name,
+                expectedMessageType.Description,
+                expectedMessageType.TimeToLive);
+
+            _mockDataService
+                .Setup(ds => ds.GetMessageTypeByName(Constants.SocialMessaging_MessageTypeName))
+                .Returns(_dtMessageTypes.CreateDataReader());
+
+            var actualMessageType = _messagingController.GetMessageType(Constants.SocialMessaging_MessageTypeName);
+
+            Assert.IsTrue(new MessageTypeComparer().Equals(expectedMessageType, actualMessageType));
+        }
+
+        #endregion
+
+        #region UpdateMessageType
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void UpdateMessageType_Throws_On_Null_MessageType()
+        {
+            _messagingController.UpdateMessageType(null);
+        }
+
+        [Test]
+        public void UpdateMessageType_Calls_DataService_SaveMessageType()
+        {
+            var messageType = CreateValidMessageType();
+
+            _mockDataService
+                .Setup(ds => ds.SaveMessageType(
+                    messageType.MessageTypeId,
+                    messageType.Name,
+                    messageType.Description,
+                    messageType.TimeToLive))
+                .Verifiable();
+
+            _messagingController.UpdateMessageType(messageType);
+
+            _mockDataService.Verify();
         }
 
         #endregion
@@ -1150,17 +1274,15 @@ namespace DotNetNuke.Tests.Core.Controllers
             return message;
         }
 
-        private static MessageRecipient CreateValidUnReadMessageRecipient()
+        private static MessageType CreateValidMessageType()
         {
-            var messageRecipient = new MessageRecipient
+            return new MessageType
             {
-                RecipientID = 1,
-                MessageID = 1,
-                UserID = 1,
-                Read = false,
-                Archived = false
+                MessageTypeId = Constants.SocialMessaging_MessageTypeId,
+                Name = Constants.SocialMessaging_MessageTypeName,
+                Description = Constants.SocialMessaging_MessageTypeDescription,
+                TimeToLive = Constants.SocialMessaging_MessageTypeTTL
             };
-            return messageRecipient;
         }
 
         private void SetupDataTables()
@@ -1231,6 +1353,13 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtMessageConversationView.Columns.Add("CreatedOnDate", typeof(DateTime));
             _dtMessageConversationView.Columns.Add("LastModifiedByUserID", typeof(int));
             _dtMessageConversationView.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+
+            //MessageType
+            _dtMessageTypes = new DataTable();
+            _dtMessageTypes.Columns.Add("MessageTypeID", typeof(int));
+            _dtMessageTypes.Columns.Add("Name", typeof(string));
+            _dtMessageTypes.Columns.Add("Description", typeof(string));
+            _dtMessageTypes.Columns.Add("TTL", typeof(int));
         }
 
         #endregion
@@ -1248,8 +1377,7 @@ namespace DotNetNuke.Tests.Core.Controllers
                     x.MessageTypeId == y.MessageTypeId && 
                     x.Name == y.Name && 
                     x.Description == y.Description && 
-                    x.TimeToLive == y.TimeToLive && 
-                    x.IsNotification == y.IsNotification;
+                    x.TimeToLive == y.TimeToLive;
             }
 
             public int GetHashCode(MessageType obj)

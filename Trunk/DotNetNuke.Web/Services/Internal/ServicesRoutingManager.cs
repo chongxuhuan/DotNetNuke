@@ -45,8 +45,11 @@ namespace DotNetNuke.Web.Services.Internal
 
         public void RegisterRoutes()
         {
-            _routes.Clear();
-            LocateServicesAndMapRoutes();
+            using(_routes.GetWriteLock())
+            {
+                _routes.Clear();
+                LocateServicesAndMapRoutes();
+            }
             DnnLog.Trace("Registered a total of {0} routes", _routes.Count);
         }
 

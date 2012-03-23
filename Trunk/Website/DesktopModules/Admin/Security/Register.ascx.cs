@@ -38,6 +38,9 @@ using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Skins.Controls;
+using DotNetNuke.Entities.Profile;
+using DotNetNuke.Web.UI.WebControls;
+using DotNetNuke.UI.WebControls;
 
 #endregion
 
@@ -129,6 +132,14 @@ namespace DotNetNuke.Modules.Admin.Users
             get
             {
                 return Convert.ToBoolean(GetSetting(PortalId, "Security_RequireConfirmPassword"));
+            }
+        }
+
+        protected bool RequireValidProfile
+        {
+            get
+            {
+                return Convert.ToBoolean(GetSetting(PortalId, "Security_RequireValidProfile"));
             }
         }
 
@@ -400,6 +411,22 @@ namespace DotNetNuke.Modules.Admin.Users
 
             passwordAnswer.Visible = MembershipProviderConfig.RequiresQuestionAndAnswer;
             passwordQuestion.Visible = MembershipProviderConfig.RequiresQuestionAndAnswer;
+
+            foreach (ProfilePropertyDefinition property in User.Profile.ProfileProperties)
+            {
+                if (property.Required)
+                {
+                    DnnFormEditControlItem formItem = new DnnFormEditControlItem();
+                    formItem.ResourceKey = String.Format("ProfileProperties_{0}", property.PropertyName);
+                    formItem.LocalResourceFile = "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx.resx";
+                    formItem.ControlType = EditorInfo.GetEditor(property.DataType);
+                    formItem.DataMember = "Profile";
+                    formItem.DataField = property.PropertyName;
+                    formItem.Visible = true;
+                    formItem.Required = true;
+                    userForm.Items.Add(formItem);
+                }
+            }
 
             userForm.DataSource = User;
             if (!Page.IsPostBack)

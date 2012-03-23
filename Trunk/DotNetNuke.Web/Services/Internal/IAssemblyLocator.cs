@@ -18,13 +18,12 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-using System;
+using System.Collections.Generic;
 
 namespace DotNetNuke.Web.Services.Internal
 {
-    //interface to allowing mocking of System.Reflection.Assembly
-    internal interface IAssembly
+    public interface IAssemblyLocator
     {
-        Type[] GetTypes();
+        IEnumerable<IAssembly> Assemblies { get; }
     }
 }

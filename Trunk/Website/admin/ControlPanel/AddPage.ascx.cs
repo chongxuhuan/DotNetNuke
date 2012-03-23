@@ -29,6 +29,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
@@ -54,6 +55,15 @@ namespace DotNetNuke.UI.ControlPanel
 
             try
             {
+                if (PortalSettings.Pages < PortalSettings.PageQuota || UserController.GetCurrentUserInfo().IsSuperUser || PortalSettings.PageQuota == 0)
+                {
+                    cmdAddPage.Enabled = true;
+                }
+                else
+                {
+                    cmdAddPage.Enabled = false;
+                    cmdAddPage.ToolTip = Localization.GetString("ExceededQuota", LocalResourceFile);
+                }
                 if (!IsPostBack)
                 {
                     if ((Visible))

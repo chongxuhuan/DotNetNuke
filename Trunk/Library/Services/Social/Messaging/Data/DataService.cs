@@ -284,9 +284,9 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region MessageTypes CRUD
         
-        public int SaveMessageType(int messageTypeId, string name, string description, int timeToLive, bool isNotification)
+        public int SaveMessageType(int messageTypeId, string name, string description, int timeToLive)
         {
-            return _provider.ExecuteScalar<int>("SaveMessageType", messageTypeId, name, _provider.GetNull(description), _provider.GetNull(timeToLive), isNotification);
+            return _provider.ExecuteScalar<int>("SaveMessageType", messageTypeId, name, _provider.GetNull(description), _provider.GetNull(timeToLive));
         }
 
         public void DeleteMessageType(int messageTypeId)

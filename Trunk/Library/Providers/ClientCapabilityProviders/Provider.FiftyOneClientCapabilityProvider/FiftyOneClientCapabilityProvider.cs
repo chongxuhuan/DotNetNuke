@@ -23,21 +23,25 @@
 
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using DotNetNuke.Common;
-using DotNetNuke.Services.Localization;
 
 using FiftyOne.Foundation.Mobile.Detection;
+
 using System.Web;
+
 using FiftyOne.Foundation.Mobile;
+
 using DotNetNuke.Services.ClientCapability;
 
 using FiftyOne.Foundation.UI;
 
 #endregion
 
-namespace FiftyOne.Services.ClientCapability
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
 {
     /// <summary>
     /// 51Degrees.mobi implementation of ClientCapabilityProvider

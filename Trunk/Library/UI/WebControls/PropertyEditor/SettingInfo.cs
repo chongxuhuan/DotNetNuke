@@ -63,7 +63,7 @@ namespace DotNetNuke.UI.WebControls
                 try
                 {
                     bool boolValue = bool.Parse(strValue);
-                    Editor = EditorInfo.GetEditor("TrueFalse");
+                    Editor = EditorInfo.GetEditor("Checkbox");
                     IsFound = true;
                 }
                 catch (Exception exc)

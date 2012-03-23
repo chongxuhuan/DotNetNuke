@@ -65,8 +65,9 @@ namespace DotNetNuke.Services.Social.Messaging
         }
 
         /// <summary>
-        /// The message type identifier
+        /// The message type identifier.
         /// </summary>
+        /// <remarks>-1 means the message is a standard message between users. Otherwise it is a notification.</remarks>
         [XmlAttribute]
         public int MessageTypeID { get; set; }
 

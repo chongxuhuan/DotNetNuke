@@ -1802,21 +1802,43 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 		[Name] [nvarchar](100) NOT NULL,
 		[Description] [nvarchar](2000) NULL,
 		[TTL] [int] NULL,
-		[IsNotification] [bit] NOT NULL,
+		[DesktopModuleID] [int] NULL,
 		CONSTRAINT [PK_{objectQualifier}SocialMessages_MessageTypes] PRIMARY KEY CLUSTERED ([MessageTypeID] ASC)
 	)
 
 	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_MessageTypes] ON {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([Name] ASC)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
+	ADD CONSTRAINT [FK_{objectQualifier}SocialMessages_MessageTypes_{objectQualifier}DesktopModules]
+	FOREIGN KEY([DesktopModuleID])
+	REFERENCES {databaseOwner}[{objectQualifier}DesktopModules] ([DesktopModuleID])
 END
 GO
 
--- Add Default Message Types
-INSERT INTO {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([Name], [Description], [IsNotification]) VALUES (N'StandardMessage', N'This is a standard message', 0)
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessages_MessageTypeActions]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}SocialMessages_MessageTypeActions](
+		[MessageTypeActionID] [int] IDENTITY(1,1) NOT NULL,
+		[MessageTypeID] [int] NOT NULL,
+		[Name] [nvarchar](100) NOT NULL,
+		[Description] [nvarchar](2000) NULL,
+		[Order] [int] NOT NULL,
+		[APICall] [nvarchar](500) NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}SocialMessages_MessageTypeActions] PRIMARY KEY CLUSTERED ([MessageTypeActionID] ASC)
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessages_MessageTypeActions]
+	ADD CONSTRAINT [FK_{objectQualifier}SocialMessages_MessageTypeActions_{objectQualifier}SocialMessages_MessageTypes]
+	FOREIGN KEY([MessageTypeID])
+	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([MessageTypeID])
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_MessageTypeActions] ON {databaseOwner}[{objectQualifier}SocialMessages_MessageTypeActions] ([MessageTypeID] ASC)
+END
+GO
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessages]') AND type in (N'U')) BEGIN
 	CREATE TABLE {databaseOwner}{objectQualifier}SocialMessages(
 		[MessageID] [int] IDENTITY(1,1) NOT NULL,
-		[MessageTypeID] int NOT NULL,
+		[MessageTypeID] int NULL,
 		[To] [nvarchar](2000) NULL,
 		[From] [nvarchar](200) NULL,
 		[Subject] [nvarchar](400) NULL,
@@ -1824,6 +1846,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 		[ConversationID] [int] NULL,
 		[ReplyAllAllowed] [bit] NULL,
 		[SenderUserID] [int] NULL,
+		[ExpirationDate] [datetime] NULL,
 		[CreatedByUserID] [int] NULL,
 		[CreatedOnDate] [datetime] NULL,
 		[LastModifiedByUserID] [int] NULL,
@@ -1832,12 +1855,34 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 	)
 
 	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_SenderUserID] ON {databaseOwner}[{objectQualifier}SocialMessages] ([SenderUserID] ASC, [CreatedOnDate] DESC)
-	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_MessageTypeID] ON {databaseOwner}[{objectQualifier}SocialMessages] ([MessageTypeID] ASC)
 
 	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessages]
 	ADD CONSTRAINT [FK_{objectQualifier}SocialMessages_{objectQualifier}SocialMessages_MessageTypes]
 	FOREIGN KEY([MessageTypeID])
-	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([MessageTypeID]) ON DELETE CASCADE
+	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([MessageTypeID])
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessageActions]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}SocialMessageActions](
+		[MessageActionID] [int] IDENTITY(1,1) NOT NULL,
+		[MessageID] [int] NOT NULL,
+		[MessageTypeActionID] [int] NOT NULL,
+		[Key] [nvarchar](500) NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}SocialMessageActions] PRIMARY KEY CLUSTERED ([MessageActionID] ASC)
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageActions]
+	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageActions_{objectQualifier}SocialMessages]
+	FOREIGN KEY([MessageID])
+	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageActions]
+	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageActions_{objectQualifier}SocialMessages_MessageTypeActions]
+	FOREIGN KEY([MessageTypeActionID])
+	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages_MessageTypeActions] ([MessageTypeActionID]) ON DELETE CASCADE
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageActions] ON {databaseOwner}[{objectQualifier}SocialMessageActions] ([MessageID] ASC)
 END
 GO
 
@@ -2365,21 +2410,18 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageType]
 	@MessageTypeID int,
 	@Name nvarchar(100),
 	@Description nvarchar(2000),
-	@TTL int,
-	@IsNotification bit
+	@TTL int
 AS
 BEGIN
 	IF (@MessageTypeID = -1) BEGIN
 		INSERT INTO {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] (
 			[Name],
 			[Description],
-			[TTL],
-			[IsNotification]
+			[TTL]
 		) VALUES (
 			@Name,
 			@Description,
-			@TTL,
-			@IsNotification
+			@TTL
 		)
 		
 		SELECT SCOPE_IDENTITY()
@@ -2389,8 +2431,7 @@ BEGIN
 		SET
 			[Name] = @Name,
 			[Description] = @Description,
-			[TTL] = @TTL,
-			[IsNotification] = @IsNotification
+			[TTL] = @TTL
 		WHERE [MessageTypeID] = @MessageTypeID
 		
 		SELECT @MessageTypeID
@@ -2420,7 +2461,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageType]
 	@MessageTypeID int
 AS
 BEGIN
-	SELECT [MessageTypeID], [Name], [Description], [TTL], [IsNotification]
+	SELECT [MessageTypeID], [Name], [Description], [TTL]
 	FROM {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
 	WHERE [MessageTypeID] = @MessageTypeID
 END
@@ -2434,7 +2475,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageTypeByName]
 	@Name nvarchar(100)
 AS
 BEGIN
-	SELECT [MessageTypeID], [Name], [Description], [TTL], [IsNotification]
+	SELECT [MessageTypeID], [Name], [Description], [TTL]
 	FROM {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
 	WHERE [Name] LIKE @Name
 END
@@ -4934,6 +4975,16 @@ BEGIN
 	AND (PortalID = @PortalID OR (@PortalID is null))
 	ORDER BY RoleName
 END
+GO
+
+/* Update to use new Register control */
+/*************************************/
+
+UPDATE {databaseOwner}{objectQualifier}ModuleControls
+	SET ControlSrc = 'DesktopModules/Admin/Security/Register.ascx'
+	WHERE ControlSrc = 'DesktopModules/Admin/Security/ManageUsers.ascx'
+		AND ModuleDefID IS NULL
+		AND ControlKey = 'Register'
 GO
 
 /************************************************************/

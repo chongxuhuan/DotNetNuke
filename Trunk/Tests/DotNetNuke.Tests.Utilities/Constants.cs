@@ -383,7 +383,7 @@ namespace DotNetNuke.Tests.Utilities
         public const int SocialMessaging_MessageTypeId = 1;
         public const string SocialMessaging_MessageTypeName = "AcceptFriend";
         public const string SocialMessaging_MessageTypeDescription = "Accept Friend Notification";
-        public const int SocialMessaging_MessageTypeTTL = 86400; // This is one day in seconds
+        public const int SocialMessaging_MessageTypeTTL = 1440; // This is one day in minutes
         public const bool SocialMessaging_MessageTypeIsNotification = true;
 
         #endregion

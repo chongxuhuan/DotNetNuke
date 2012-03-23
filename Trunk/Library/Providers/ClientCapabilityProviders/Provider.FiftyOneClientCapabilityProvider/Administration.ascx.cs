@@ -21,6 +21,8 @@
  * 
  * ********************************************************************* */
 
+using DotNetNuke.Framework;
+
 namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
 {
     using System;
@@ -54,6 +56,8 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
             HardwareList.ItemDataBound += ListItemDataBound;
             
             NoResultsMessage.Visible = false;
+
+            jQuery.RequestDnnPluginsRegistration();
 
             HardwareList.DataSource = DataProvider.HardwareProperties;
             SoftwareList.DataSource = DataProvider.SoftwareProperties;

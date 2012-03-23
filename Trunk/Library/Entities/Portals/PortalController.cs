@@ -34,6 +34,7 @@ using System.Xml;
 using System.Xml.XPath;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Common.Lists;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
@@ -47,6 +48,7 @@ using DotNetNuke.Security.Membership;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Security.Roles.Internal;
+using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
@@ -1300,6 +1302,8 @@ namespace DotNetNuke.Entities.Portals
                         {
                             DnnLog.Error(Exc);                            
                         }
+
+                        ServicesRoutingManager.ReRegisterServiceRoutesWhileSiteIsRunning();
 
                         try
                         {

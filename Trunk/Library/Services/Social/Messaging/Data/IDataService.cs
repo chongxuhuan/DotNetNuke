@@ -68,7 +68,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region MessageTypes CRUD
 
-        int SaveMessageType(int messageTypeId, string name, string description, int timeToLive, bool isNotification);
+        int SaveMessageType(int messageTypeId, string name, string description, int timeToLive);
         void DeleteMessageType(int messageTypeId);
         IDataReader GetMessageType(int messageTypeId);
         IDataReader GetMessageTypeByName(string name);

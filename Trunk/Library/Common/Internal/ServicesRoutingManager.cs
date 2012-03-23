@@ -1,5 +1,5 @@
 ﻿#region Copyright
-
+// 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
@@ -17,45 +17,41 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
-
-#region Usings
 
 using System;
+using DotNetNuke.Instrumentation;
+using DotNetNuke.Services.Cache;
 
-using DotNetNuke.Authentication.Twitter.Components;
-using DotNetNuke.Services.Authentication.OAuth;
-
-#endregion
-
-namespace DotNetNuke.Authentication.Twitter
+namespace DotNetNuke.Common.Internal
 {
-    public partial class Login : OAuthLoginBase
+    public static class ServicesRoutingManager
     {
-        protected override string AuthSystemApplicationName
+        public static void RegisterServiceRoutes()
         {
-            get { return "Twitter"; }
+            const string unableToRegisterServiceRoutes = "Unable to register service routes";
+
+            try
+            {
+                //new ServicesRoutingManager().RegisterRoutes();
+                var instance = Activator.CreateInstance("DotNetNuke.Web",
+                                                        "DotNetNuke.Web.Services.Internal.ServicesRoutingManager");
+
+                var method = instance.Unwrap().GetType().GetMethod("RegisterRoutes");
+                method.Invoke(instance.Unwrap(), new object[0]);
+            }
+            catch (Exception e)
+            {
+                DnnLog.Error(unableToRegisterServiceRoutes, e);
+            }
         }
 
-        protected override UserData GetCurrentUser()
+        public static void ReRegisterServiceRoutesWhileSiteIsRunning()
         {
-            return OAuthClient.GetCurrentUser<TwitterUserData>();
-        }
-
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-
-            loginButton.Click += loginButton_Click;
-
-            OAuthClient = new TwitterClient(PortalId);
-        }
-
-        private void loginButton_Click(object sender, EventArgs e)
-        {
-            OAuthClient.CallbackUri = new Uri(OAuthClient.CallbackUri + "?state=Twitter");
-            OAuthClient.Authorize();
+            //by clearing a "fake" key on the caching provider we can echo this
+            //command to all the members of a web farm
+            //the caching provider will call to make the actual registration of new routes
+            CachingProvider.Instance().Clear("ServiceFrameworkRoutes", "-1");
         }
     }
 }

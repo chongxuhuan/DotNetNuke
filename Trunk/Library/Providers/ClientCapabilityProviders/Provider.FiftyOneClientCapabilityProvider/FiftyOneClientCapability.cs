@@ -23,10 +23,12 @@
 
 using System;
 using System.Collections.Generic;
+
 using FiftyOne.Foundation.Mobile.Detection;
+
 using System.Web;
 
-namespace FiftyOne.Services.ClientCapability
+namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
 {
     /// <summary>
     /// 51Degrees.mobi Implementation of IClientCapability

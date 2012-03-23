@@ -214,7 +214,7 @@ The web servers firewall or another firewall is blocking access to the host or t
     <value>Search Results</value>
   </data>
   <data name="LiteSearchResults.Text" xml:space="preserve">
-    <value>Nam congue iaculis risus, non imperdiet quam elementum in. Nam velit augue, auctor ac convallis accumsan, sagittis sed sapien. Morbi venenatis tristique elit, in ultricies tortor condimentum a. Cras faucibus nisi quis dui luctus auctor ullamcorper orci varius. Etiam lobortis mollis dictum. Integer interdum massa gravida lacus varius et mollis tortor vestibulum. Donec sit amet quam mi.</value>
+    <value>Select a hardware vendor to view the device models they produce.</value>
   </data>
   <data name="LiteUpgrade.Label" xml:space="preserve">
     <value>Upgrade to Premium Data:</value>
@@ -226,10 +226,10 @@ The web servers firewall or another firewall is blocking access to the host or t
     <value>Thank you for using Premium device data</value>
   </data>
   <data name="PremiumIntro.Text" xml:space="preserve">
-    <value>Nam congue iaculis risus, non imperdiet quam elementum in. Nam velit augue, auctor ac convallis accumsan, sagittis sed sapien. Morbi venenatis tristique elit, in ultricies tortor condimentum a. Cras faucibus nisi quis dui luctus auctor ullamcorper orci varius. We value you, homie. Etiam lobortis mollis dictum. Integer interdum massa gravida lacus varius et mollis tortor vestibulum. Donec sit amet quam mi.</value>
+    <value>The premium data contains thousands of devices, including games consoles, eBook readers, tablets, smart phones and feature phones. Each device is associated with a wide range of relevant properties, from screen size and input methods to operating system, browser and hardware.</value>
   </data>
   <data name="PurchaseInfo.Text" xml:space="preserve">
-    <value>You can purchase your license from the</value>
+    <value>You can purchase your license from the </value>
   </data>
   <data name="PurchaseInfoEnd.Text" xml:space="preserve">
     <value>.</value>

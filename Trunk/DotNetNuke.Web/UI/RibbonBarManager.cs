@@ -450,7 +450,7 @@ namespace DotNetNuke.Web.UI
             }
         }
 
-        private static void DeserializeTabPermissions(XmlNodeList nodeTabPermissions, TabInfo tab)
+        public static void DeserializeTabPermissions(XmlNodeList nodeTabPermissions, TabInfo tab)
         {
             var permissionController = new PermissionController();
             foreach (XmlNode xmlTabPermission in nodeTabPermissions)

@@ -15,7 +15,7 @@
             <dnn:DnnFormTextBoxItem ID="passwordConfirm" runat="server" TextMode="Password" DataMember="Membership" DataField="PasswordConfirm" Required="true" AutoCompleteType="Disabled" />
             <dnn:DnnFormTextBoxItem ID="passwordQuestion" runat="server" DataMember="Membership" DataField="PasswordQuestion" />
             <dnn:DnnFormTextBoxItem ID="passwordAnswer" runat="server" DataMember="Membership" DataField="PasswordAnswer" />
-            <dnn:DnnFormTextBoxItem ID="displayName" runat="server" DataField="DisplayName" Visible="True" />
+            <dnn:DnnFormTextBoxItem ID="displayName" runat="server" DataField="DisplayName" Visible="True" Required="true" />
        </Items>
     </dnn:DnnFormEditor>
     <div class="dnnSocialRegistration">

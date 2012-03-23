@@ -74,10 +74,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\sign-in-with-twitter-d-sm.png" />
-    <Content Include="Images\sign-in-with-twitter-d.png" />
-    <Content Include="Images\sign-in-with-twitter-l-sm.png" />
-    <Content Include="Images\sign-in-with-twitter-l.png" />
     <Content Include="Images\Twitter_16X16.jpg" />
     <Content Include="Images\Twitter_32X32.jpg" />
     <Content Include="license.txt" />

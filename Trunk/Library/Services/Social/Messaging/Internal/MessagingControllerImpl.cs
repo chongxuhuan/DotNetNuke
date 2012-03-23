@@ -231,7 +231,7 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             return message;
         }
 
-        public virtual MessageType CreateMessageType(string name, string description, int timeToLive, bool isNotification)
+        public virtual MessageType CreateMessageType(string name, string description, int timeToLive)
         {
             Requires.NotNullOrEmpty("name", name);
 
@@ -242,11 +242,10 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
             var messageType = new MessageType
             {
-                MessageTypeId = _dataService.SaveMessageType(Null.NullInteger, name, description, timeToLive, isNotification),
+                MessageTypeId = _dataService.SaveMessageType(Null.NullInteger, name, description, timeToLive),
                 Name = name,
                 Description = description,
-                TimeToLive = timeToLive,
-                IsNotification = isNotification
+                TimeToLive = timeToLive
             };
 
             return messageType;
@@ -417,8 +416,7 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
                 messageType.MessageTypeId,
                 messageType.Name,
                 messageType.Description,
-                messageType.TimeToLive,
-                messageType.IsNotification);
+                messageType.TimeToLive);
         }
 
         /// <summary>How long a user needs to wait before sending the next message.</summary>

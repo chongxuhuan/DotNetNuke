@@ -25,7 +25,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Web;
 using System.Web.Caching;
-
+using DotNetNuke.Common;
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Host;
@@ -340,10 +341,21 @@ namespace DotNetNuke.Services.Cache
                 case "Tab":
                     ClearTabCacheInternal(int.Parse(data), clearRuntime);
                     break;
+                case "ServiceFrameworkRoutes":
+                    ReloadServicesFrameworkRoutes();
+                    break;
             }
         }
 
-		/// <summary>
+	    private void ReloadServicesFrameworkRoutes()
+	    {
+            //registration of routes when the servers is operating is done as part of the cache
+            //because the web request cahcing provider is the only inter-server communication channel
+            //that is reliable
+            ServicesRoutingManager.RegisterServiceRoutes();
+	    }
+
+	    /// <summary>
 		/// Removes the internal.
 		/// </summary>
 		/// <param name="cacheKey">The cache key.</param>

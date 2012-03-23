@@ -24,7 +24,6 @@ using System.Data;
 using System.Xml.Serialization;
 
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities;
 using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Services.Social.Messaging
@@ -40,7 +39,7 @@ namespace DotNetNuke.Services.Social.Messaging
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageType : BaseEntityInfo, IHydratable
+    public class MessageType : IHydratable
     {
         private int _messageTypeId = -1;
         private int _timeToLive = -1;
@@ -74,7 +73,7 @@ namespace DotNetNuke.Services.Social.Messaging
         public string Description { get; set; }
 
         /// <summary>
-        /// The number of seconds to add to the creation date of the message to calculate the expiration date.
+        /// The number of minutes to add to the creation date of the message to calculate the expiration date.
         /// </summary>
         [XmlAttribute]
         public int TimeToLive
@@ -88,12 +87,6 @@ namespace DotNetNuke.Services.Social.Messaging
                 _timeToLive = value;
             }
         }
-
-        /// <summary>
-        /// Indicates if the message is a notification or not.
-        /// </summary>
-        [XmlAttribute]
-        public bool IsNotification { get; set; }
 
         #region Implementation of IHydratable
 
@@ -117,10 +110,6 @@ namespace DotNetNuke.Services.Social.Messaging
             Name = dr["Name"].ToString();
             Description = Null.SetNullString(dr["Description"]);
             TimeToLive = Null.SetNullInteger(dr["TTL"]);
-            IsNotification = Null.SetNullBoolean(dr["IsNotification"]);
-
-            //add audit column data
-            FillInternal(dr);
         }
 
         #endregion

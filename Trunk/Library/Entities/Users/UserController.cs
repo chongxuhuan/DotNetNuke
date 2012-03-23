@@ -393,6 +393,10 @@ namespace DotNetNuke.Entities.Users
             {
                 settings["Security_UseProfanityFilter"] = false;
             }
+            if (settings["Security_RegistrationFields"] == null)
+            {
+                settings["Security_RegistrationFields"] = String.Empty;
+            }
             return settings;
         }
 

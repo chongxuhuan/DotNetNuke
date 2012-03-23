@@ -241,7 +241,10 @@ namespace DotNetNuke.Web.UI.WebControls
 
             foreach (DnnFormItemBase item in items)
             {
-                item.LocalResourceFile = LocalResourceFile;
+                if (String.IsNullOrEmpty(item.LocalResourceFile))
+                {
+                    item.LocalResourceFile = LocalResourceFile;
+                }
                 if (item.FormMode == DnnFormMode.Inherit)
                 {
                     item.FormMode = FormMode;

@@ -132,6 +132,7 @@
     <Compile Include="Common\Initialize.cs" />
     <Compile Include="Common\Internal\GlobalsImpl.cs" />
     <Compile Include="Common\Internal\IGlobals.cs" />
+    <Compile Include="Common\Internal\ServicesRoutingManager.cs" />
     <Compile Include="Common\Internal\TestableGlobals.cs" />
     <Compile Include="Common\Lists\EntryInfo.cs" />
     <Compile Include="Common\Lists\ListController.cs" />

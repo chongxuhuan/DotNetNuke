@@ -92,7 +92,7 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         #region MessageTypes Methods
 
-        MessageType CreateMessageType(string name, string description, int timeToLive, bool isNotification);
+        MessageType CreateMessageType(string name, string description, int timeToLive);
         void UpdateMessageType(MessageType messageType);
         void DeleteMessageType(int messageTypeId);
         MessageType GetMessageType(int messageTypeId);
