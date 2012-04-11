@@ -30,6 +30,11 @@ namespace DotNetNuke.Common.Internal
             get { return Globals.ApplicationPath; }
         }
 
+        public string HostMapPath
+        {
+            get { return Globals.HostMapPath; }
+        }
+
         public string GetSubFolderPath(string strFileNamePath, int portalId)
         {
             return Globals.GetSubFolderPath(strFileNamePath, portalId);

@@ -2,5 +2,5 @@
 
 
 <div>
-    <asp:ImageButton runat="server" ID="loginButton" ImageUrl="Images/Twitter_32X32.jpg" resourcekey="SignInTwitter" />
+    <asp:ImageButton runat="server" ID="loginButton" ImageUrl="Images/Twitter_32X32.jpg" resourcekey="SignInTwitter"  CausesValidation="False"/>
 </div>

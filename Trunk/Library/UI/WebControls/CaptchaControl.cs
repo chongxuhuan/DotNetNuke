@@ -903,7 +903,7 @@ namespace DotNetNuke.UI.WebControls
 			if (!IsValid && Page.IsPostBack && !string.IsNullOrEmpty(_UserText))
 			{
 				ErrorStyle.AddAttributesToRender(writer);
-				writer.RenderBeginTag(HtmlTextWriterTag.Div);
+				writer.RenderBeginTag(HtmlTextWriterTag.Span);
 				writer.Write(ErrorMessage);
 				writer.RenderEndTag();
 			}

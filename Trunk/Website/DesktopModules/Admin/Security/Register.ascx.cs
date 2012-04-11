@@ -25,6 +25,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Web;
 
@@ -32,6 +34,7 @@ using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Entities.Users.Internal;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Services.Authentication;
@@ -41,6 +44,7 @@ using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Web.UI.WebControls;
 using DotNetNuke.UI.WebControls;
+using System.Web.UI.WebControls;
 
 #endregion
 
@@ -51,6 +55,23 @@ namespace DotNetNuke.Modules.Admin.Users
         private readonly List<AuthenticationLoginBase> _loginControls = new List<AuthenticationLoginBase>();
 
         #region Protected Properties
+
+        protected string AuthenticationType
+        {
+            get
+            {
+                var authenticationType = Null.NullString;
+                if (ViewState["AuthenticationType"] != null)
+                {
+                    authenticationType = Convert.ToString(ViewState["AuthenticationType"]);
+                }
+                return authenticationType;
+            }
+            set
+            {
+                ViewState["AuthenticationType"] = value;
+            }
+        }
 
         protected UserCreateStatus CreateStatus { get; set; }
 
@@ -70,6 +91,20 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        protected string ExcludeTerms
+        {
+            get
+            {
+                string excludeTerms = GetSettingValue("Registration_ExcludeTerms");
+                string regex = String.Empty;
+                if (!String.IsNullOrEmpty(excludeTerms))
+                {
+                    regex = @"^(?:(?!" + excludeTerms.Replace(",", "|") + @").)*$\r?\n?";
+                }
+                return regex;
+            }
+        }
+
         protected bool IsValid
         {
             get
@@ -82,7 +117,7 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                return Convert.ToBoolean(GetSetting(PortalId, "Security_RandomPassword"));
+                return Convert.ToBoolean(GetSetting(PortalId, "Registration_RandomPassword"));
             }
         }
 
@@ -127,11 +162,35 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        protected string RegistrationFields
+        {
+            get
+            {
+                return GetSettingValue("Registration_RegistrationFields");
+            }
+        }
+
+        protected int RegistrationFormType
+        {
+            get
+            {
+                return Convert.ToInt32(GetSettingValue("Registration_RegistrationFormType"));
+            }
+        }
+
         protected bool RequirePasswordConfirm
         {
             get
             {
-                return Convert.ToBoolean(GetSetting(PortalId, "Security_RequireConfirmPassword"));
+                return Convert.ToBoolean(GetSetting(PortalId, "Registration_RequireConfirmPassword"));
+            }
+        }
+
+        protected bool RequireUniqueDisplayName
+        {
+            get
+            {
+                return Convert.ToBoolean(GetSetting(PortalId, "Registration_RequireUniqueDisplayName"));
             }
         }
 
@@ -147,7 +206,7 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                return Convert.ToBoolean(GetSetting(PortalId, "Security_UseAuthProvidersForRegistration"));
+                return Convert.ToBoolean(GetSetting(PortalId, "Registration_UseAuthProviders"));
             }
         }
 
@@ -163,7 +222,7 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                return Convert.ToBoolean(GetSetting(PortalId, "Security_UseEmailAsUserName"));
+                return Convert.ToBoolean(GetSetting(PortalId, "Registration_UseEmailAsUserName"));
             }
         }
 
@@ -179,11 +238,63 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             get
             {
-                return Convert.ToBoolean(GetSetting(PortalId, "Security_UseProfanityFilter"));
+                return Convert.ToBoolean(GetSetting(PortalId, "Registration_UseProfanityFilter"));
+            }
+        }
+
+        protected string UserToken
+        {
+            get
+            {
+                var userToken = "";
+                if (ViewState["UserToken"] != null)
+                {
+                    userToken = Convert.ToString(ViewState["UserToken"]);
+                }
+                return userToken;
+            }
+            set
+            {
+                ViewState["UserToken"] = value;
             }
         }
 
         #endregion
+
+        private void AddField(string dataField, string dataMember, bool required, string regexValidator, TextBoxMode textMode)
+        {
+            var formItem = new DnnFormTextBoxItem
+                               {
+                                   ID = dataField,
+                                   DataField = dataField,
+                                   DataMember = dataMember,
+                                   Visible = true,
+                                   Required = required,
+                                   TextMode = textMode
+                               };
+            if (!String.IsNullOrEmpty(regexValidator))
+            {
+                formItem.ValidationExpression = regexValidator;
+            }
+            userForm.Items.Add(formItem);
+        }
+
+        private void AddProperty(ProfilePropertyDefinition property)
+        {
+            DnnFormEditControlItem formItem = new DnnFormEditControlItem
+                                                  {
+                                                      ResourceKey =
+                                                          String.Format("ProfileProperties_{0}", property.PropertyName),
+                                                      LocalResourceFile =
+                                                          "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx.resx",
+                                                      ControlType = EditorInfo.GetEditor(property.DataType),
+                                                      DataMember = "Profile",
+                                                      DataField = property.PropertyName,
+                                                      Visible = property.Visible,
+                                                      Required = property.Required
+                                                  };
+            userForm.Items.Add(formItem);
+        }
 
         private void BindLoginControl(AuthenticationLoginBase authLoginControl, AuthenticationInfo authSystem)
         {
@@ -196,12 +307,10 @@ namespace DotNetNuke.Modules.Admin.Users
             authLoginControl.RedirectURL = RedirectURL;
             authLoginControl.ModuleConfiguration = ModuleConfiguration;
 
-            //attempt to inject control attributes
-            //AddLoginControlAttributes(authLoginControl);
-            //authLoginControl.UserAuthenticated += UserAuthenticated;
+            authLoginControl.UserAuthenticated += UserAuthenticated;
         }
 
-        public UserInfo CreateUser()
+        private void CreateUser()
         {
             //Update DisplayName to conform to Format
             UpdateDisplayName();
@@ -210,7 +319,37 @@ namespace DotNetNuke.Modules.Admin.Users
             var user = User;
             CreateStatus = UserController.CreateUser(ref user);
 
-            return user;
+            DataCache.ClearPortalCache(PortalId, true);
+
+            try
+            {
+                if (CreateStatus == UserCreateStatus.Success)
+                {
+                    //hide the succesful captcha
+                    captchaRow.Visible = false;
+
+                    //Assocate alternate Login with User and proceed with Login
+                    if(!String.IsNullOrEmpty(AuthenticationType))
+                    {
+                        AuthenticationController.AddUserAuthentication(User.UserID, AuthenticationType, UserToken);
+                    }
+
+                    string strMessage = CompleteUserCreation(CreateStatus, user, true, IsRegister);
+
+                    if ((string.IsNullOrEmpty(strMessage)))
+                    {
+                        Response.Redirect(RedirectURL, true);
+                    }
+                }
+                else
+                {
+                    AddLocalizedModuleMessage(UserController.GetUserCreateStatus(CreateStatus), ModuleMessage.ModuleMessageType.RedError, true);
+                }
+            }
+            catch (Exception exc) //Module failed to load
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
+            }
         }
 
         private string GetSettingValue(string key)
@@ -243,13 +382,89 @@ namespace DotNetNuke.Modules.Admin.Users
             //Check User Editor
             bool _IsValid = userForm.IsValid;
 
-            //Update UserName
-            if(UseEmailAsUserName)
+            if (RegistrationFormType == 0)
             {
-                User.Username = User.Email;
-                if(String.IsNullOrEmpty(User.DisplayName))
+                //Update UserName
+                if (UseEmailAsUserName)
+                {
+                    User.Username = User.Email;
+                    if (String.IsNullOrEmpty(User.DisplayName))
+                    {
+                        User.DisplayName = User.Email.Substring(0, User.Email.IndexOf("@", StringComparison.Ordinal));
+                    }
+                }
+
+                //Check Password is valid
+                if (!RandomPassword)
+                {
+                    //Check Password is Valid
+                    if (CreateStatus == UserCreateStatus.AddUser && !UserController.ValidatePassword(User.Membership.Password))
+                    {
+                        CreateStatus = UserCreateStatus.InvalidPassword;
+                    }
+
+                    if (RequirePasswordConfirm && String.IsNullOrEmpty(AuthenticationType))
+                    {
+                        if (User.Membership.Password != User.Membership.PasswordConfirm)
+                        {
+                            CreateStatus = UserCreateStatus.PasswordMismatch;
+                        }
+                    }
+                }
+                else
+                {
+                    //Generate a random password for the user
+                    User.Membership.Password = UserController.GeneratePassword();
+                    User.Membership.PasswordConfirm = User.Membership.Password;
+                }
+
+            }
+            else
+            {
+                //Set Username to Email
+                if (String.IsNullOrEmpty(User.Username))
+                {
+                    User.Username = User.Email;
+                }
+
+                //Set DisplayName
+                if (String.IsNullOrEmpty(User.DisplayName))
                 {
                     User.DisplayName = User.Email.Substring(0, User.Email.IndexOf("@", StringComparison.Ordinal));
+                }
+                
+                //Random Password
+                if (String.IsNullOrEmpty(User.Membership.Password))
+                {
+                    //Generate a random password for the user
+                    User.Membership.Password = UserController.GeneratePassword();
+                }
+
+                //Password Confirm
+                if (!String.IsNullOrEmpty(User.Membership.PasswordConfirm))
+                {
+                    if (User.Membership.Password != User.Membership.PasswordConfirm)
+                    {
+                        CreateStatus = UserCreateStatus.PasswordMismatch;
+                    }
+                }
+            }
+
+            //Validate Exclude Terms
+            if (!String.IsNullOrEmpty(ExcludeTerms))
+            {
+                string[] excludeTerms = ExcludeTerms.Split(',');
+                foreach (string term in excludeTerms)
+                {
+                    var trimmedTerm = term.Trim().ToLowerInvariant();
+                    if (User.Username.ToLowerInvariant().Contains(trimmedTerm))
+                    {
+                        CreateStatus = UserCreateStatus.InvalidUserName;
+                    }
+                    if (User.DisplayName.ToLowerInvariant().Contains(trimmedTerm))
+                    {
+                        CreateStatus = UserCreateStatus.InvalidDisplayName;
+                    }
                 }
             }
 
@@ -269,26 +484,38 @@ namespace DotNetNuke.Modules.Admin.Users
                 }
             }
 
-            //Check Password is valid
-            if (!RandomPassword)
+            //Validate Unique User Name
+            UserInfo user = UserController.GetUserByName(PortalId, User.Username);
+            if (user != null)
             {
-                //Check Password is Valid
-                if (CreateStatus == UserCreateStatus.AddUser && !UserController.ValidatePassword(User.Membership.Password))
+                CreateStatus = UserCreateStatus.DuplicateUserName;
+                int i = 1;
+                string userName = null;
+                while (user != null)
                 {
-                    CreateStatus = UserCreateStatus.InvalidPassword;
+                    userName = User.Username + "0" + i.ToString(CultureInfo.InvariantCulture);
+                    user = UserController.GetUserByName(PortalId, userName);
+                    i++;
                 }
-            }
-            else
-            {
-                //Generate a random password for the user
-                User.Membership.Password = UserController.GeneratePassword();
+                User.Username = userName;
             }
 
-            if (RequirePasswordConfirm)
+            //Validate Unique Display Name
+            if (CreateStatus == UserCreateStatus.AddUser && RequireUniqueDisplayName)
             {
-                if (User.Membership.Password != User.Membership.PasswordConfirm)
+                user = TestableUserController.Instance.GetUserByDisplayname(PortalId, User.DisplayName);
+                if (user != null)
                 {
-                    CreateStatus = UserCreateStatus.PasswordMismatch;
+                    CreateStatus = UserCreateStatus.DuplicateDisplayName;
+                    int i = 1;
+                    string displayName = null;
+                    while (user != null)
+                    {
+                        displayName = User.DisplayName + " 0" + i.ToString(CultureInfo.InvariantCulture);
+                        user = TestableUserController.Instance.GetUserByDisplayname(PortalId, displayName);
+                        i++;
+                    }
+                    User.DisplayName = displayName;
                 }
             }
 
@@ -309,6 +536,7 @@ namespace DotNetNuke.Modules.Admin.Users
                     }
                 }
             }
+
             if (CreateStatus != UserCreateStatus.AddUser)
             {
                 _IsValid = false;
@@ -319,6 +547,92 @@ namespace DotNetNuke.Modules.Admin.Users
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+
+            if (RegistrationFormType == 0)
+            {
+                //UserName
+                if (!UseEmailAsUserName)
+                {
+                    
+                    AddField("Username", String.Empty, true, 
+                            String.IsNullOrEmpty(UserNameValidator) ? ExcludeTerms : UserNameValidator, 
+                            TextBoxMode.SingleLine);
+                }
+
+                //Email
+                AddField("Email", String.Empty, true, EmailValidator, TextBoxMode.SingleLine);
+
+                //Password
+                if (!RandomPassword)
+                {
+                    AddField("Password", "Membership", true, String.Empty, TextBoxMode.Password);
+                    if (RequirePasswordConfirm)
+                    {
+                        AddField("PasswordConfirm", "Membership", true, String.Empty, TextBoxMode.Password);
+                    }
+                }
+
+                //Password Q&A
+                if (MembershipProviderConfig.RequiresQuestionAndAnswer)
+                {
+                    AddField("PasswordQuestion", "Membership", true, String.Empty, TextBoxMode.SingleLine);
+                    AddField("PasswordAnswer", "Membership", true, String.Empty, TextBoxMode.SingleLine);
+                }
+
+                //DisplayName
+                if (String.IsNullOrEmpty(DisplayNameFormat))
+                {
+                    AddField("DisplayName", ExcludeTerms, true, String.Empty, TextBoxMode.SingleLine);
+                }
+
+                if (RequireValidProfile)
+                {
+                    foreach (ProfilePropertyDefinition property in User.Profile.ProfileProperties)
+                    {
+                        if (property.Required)
+                        {
+                            AddProperty(property);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                string[] fields = RegistrationFields.Split(',');
+                foreach (string field in fields)
+                {
+                    var trimmedField = field.Trim();
+                    switch (trimmedField)
+                    {
+                        case "Username":
+                            AddField("Username", String.Empty, true, String.IsNullOrEmpty(UserNameValidator) 
+                                                                        ? ExcludeTerms : UserNameValidator, 
+                                                                        TextBoxMode.SingleLine);
+                            break;
+                        case "Email":
+                            AddField("Email", String.Empty, true, EmailValidator, TextBoxMode.SingleLine);
+                            break;
+                        case "Password":
+                        case "PasswordConfirm":
+                            AddField(trimmedField, "Membership", true, String.Empty, TextBoxMode.Password);
+                            break;
+                        case "PasswordQuestion":
+                        case "PasswordAnswer":
+                            AddField(trimmedField, "Membership", true, String.Empty, TextBoxMode.SingleLine);
+                            break;
+                        case "DisplayName":
+                            AddField(trimmedField, String.Empty, true, ExcludeTerms, TextBoxMode.SingleLine);
+                            break;
+                        default:
+                            ProfilePropertyDefinition property = User.Profile.GetProperty(trimmedField);
+                            if (property != null)
+                            {
+                                AddProperty(property);
+                            }
+                            break;
+                    }
+                }
+            }
 
             //Verify that the current user has access to this page
             if (PortalSettings.UserRegistration == (int)Globals.PortalRegistrationType.NoRegistration && Request.IsAuthenticated == false)
@@ -341,8 +655,10 @@ namespace DotNetNuke.Modules.Admin.Users
                         {
                             BindLoginControl(authLoginControl, authSystem);
                             //Check if AuthSystem is Enabled
-                            if (authLoginControl.Enabled)
+                            if (authLoginControl.Enabled && authLoginControl.SupportsRegistration)
                             {
+                                authLoginControl.Mode = AuthMode.Register;
+
                                 //Add Login Control to List
                                 _loginControls.Add(authLoginControl);
                             }
@@ -360,7 +676,14 @@ namespace DotNetNuke.Modules.Admin.Users
         {
             base.OnLoad(e);
 
-            if (UseAuthProviders)
+            if (UseCaptcha)
+            {
+                captchaRow.Visible = true;
+                ctlCaptcha.ErrorMessage = Localization.GetString("InvalidCaptcha", LocalResourceFile);
+                ctlCaptcha.Text = Localization.GetString("CaptchaText", LocalResourceFile);
+            }
+
+            if (UseAuthProviders && String.IsNullOrEmpty(AuthenticationType))
             {
                 foreach (AuthenticationLoginBase authLoginControl in _loginControls)
                 {
@@ -385,55 +708,11 @@ namespace DotNetNuke.Modules.Admin.Users
             userHelpLabel.Text += Localization.GetString("Required", LocalResourceFile);
             userHelpLabel.Text += Localization.GetString("RegisterWarning", LocalResourceFile);
 
-            //Manage Email Address / userName
-            userName.Visible = !UseEmailAsUserName;
-            userName.Required = !UseEmailAsUserName;
-            if (!UseEmailAsUserName && !String.IsNullOrEmpty(UserNameValidator))
-            {
-                userName.ValidationExpression = UserNameValidator;
-            }
-            if (!String.IsNullOrEmpty(EmailValidator))
-            {
-                email.ValidationExpression = EmailValidator;
-            }
-
-            //DisplayName
-            if (!String.IsNullOrEmpty(DisplayNameFormat))
-            {
-                displayName.Visible = false;
-            }
-
-            //Manage Password
-            password.Visible = !RandomPassword;
-            password.Required = !RandomPassword;
-            passwordConfirm.Visible = RequirePasswordConfirm;
-            passwordConfirm.Required = RequirePasswordConfirm;
-
-            passwordAnswer.Visible = MembershipProviderConfig.RequiresQuestionAndAnswer;
-            passwordQuestion.Visible = MembershipProviderConfig.RequiresQuestionAndAnswer;
-
-            foreach (ProfilePropertyDefinition property in User.Profile.ProfileProperties)
-            {
-                if (property.Required)
-                {
-                    DnnFormEditControlItem formItem = new DnnFormEditControlItem();
-                    formItem.ResourceKey = String.Format("ProfileProperties_{0}", property.PropertyName);
-                    formItem.LocalResourceFile = "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx.resx";
-                    formItem.ControlType = EditorInfo.GetEditor(property.DataType);
-                    formItem.DataMember = "Profile";
-                    formItem.DataField = property.PropertyName;
-                    formItem.Visible = true;
-                    formItem.Required = true;
-                    userForm.Items.Add(formItem);
-                }
-            }
-
             userForm.DataSource = User;
             if (!Page.IsPostBack)
             {
                 userForm.DataBind();
             }
-
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
@@ -443,37 +722,65 @@ namespace DotNetNuke.Modules.Admin.Users
 
         private void registerButton_Click(object sender, EventArgs e)
         {
-            if (IsValid)
+            if ((UseCaptcha && ctlCaptcha.IsValid) || !UseCaptcha)
             {
-                UserInfo newUser = CreateUser();
-                DataCache.ClearPortalCache(PortalId, true);
-
-                try
+                if (IsValid)
                 {
-                    if (CreateStatus == UserCreateStatus.Success)
-                    {
-                        //hide the succesful captcha
-                        //captchaRow.Visible = false;
-
-                        string strMessage = CompleteUserCreation(CreateStatus, newUser, true, IsRegister);
-                        if ((string.IsNullOrEmpty(strMessage)))
-                        {
-                            Response.Redirect(RedirectURL, true);
-                        }
-                    }
-                    else
-                    {
-                        AddLocalizedModuleMessage(UserController.GetUserCreateStatus(CreateStatus), ModuleMessage.ModuleMessageType.RedError, true);
-                    }
+                    CreateUser();
                 }
-                catch (Exception exc) //Module failed to load
+                else
                 {
-                    Exceptions.ProcessModuleLoadException(this, exc);
+                    AddLocalizedModuleMessage(UserController.GetUserCreateStatus(CreateStatus), ModuleMessage.ModuleMessageType.RedError, true);
+                    userForm.DataBind();
+                }                
+            }
+        }
+
+        private void UserAuthenticated(object sender, UserAuthenticatedEventArgs e)
+        {
+            NameValueCollection profileProperties = e.Profile;
+
+            User.Username = e.UserToken;
+            AuthenticationType = e.AuthenticationType;
+            UserToken = e.UserToken;
+
+            foreach (string key in profileProperties)
+            {
+                switch (key)
+                {
+                    case "FirstName":
+                            User.FirstName = profileProperties[key];
+                        break;
+                    case "LastName":
+                            User.LastName = profileProperties[key];
+                        break;
+                    case "Email":
+                            User.Email = profileProperties[key];
+                        break;
+                    case "DisplayName":
+                            User.DisplayName = profileProperties[key];
+                        break;
+                    default:
+                        User.Profile.SetProfileProperty(key, profileProperties[key]);
+                        break;
                 }
+            }
+
+            //Generate a random password for the user
+            User.Membership.Password = UserController.GeneratePassword();
+
+            if (!String.IsNullOrEmpty(User.Email))
+            {
+                CreateUser();
             }
             else
             {
-                AddLocalizedModuleMessage(UserController.GetUserCreateStatus(CreateStatus), ModuleMessage.ModuleMessageType.RedError, true);
+                AddLocalizedModuleMessage(LocalizeString("NoEmail"), ModuleMessage.ModuleMessageType.RedError, true);
+                foreach(DnnFormItemBase formItem in userForm.Items)
+                {
+                    formItem.Visible = formItem.DataField == "Email";
+                }
+                userForm.DataBind();
             }
         }
     }

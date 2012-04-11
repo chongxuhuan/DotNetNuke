@@ -120,6 +120,12 @@
   <data name="ControlTitle_settings.Text" xml:space="preserve">
     <value>View Profile Settings</value>
   </data>
+  <data name="IncludeButton.Help" xml:space="preserve">
+    <value>Check this box to include the Edit Profile button.</value>
+  </data>
+  <data name="IncludeButton.Text" xml:space="preserve">
+    <value>Include Edit Button:</value>
+  </data>
   <data name="LoadDefault.Confirm" xml:space="preserve">
     <value>This will overwrite the existing template.  Are you sure you wish to continue?</value>
   </data>

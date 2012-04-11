@@ -88,7 +88,7 @@ namespace DotNetNuke.Modules.MobileManagement
 
             if (!IsPostBack)
             {
-                optRedirectType.Items[1].Enabled = ClientCapabilityProvider.Instance().SupportTabletDetect;
+                optRedirectType.Items[1].Enabled = optRedirectType.Items[2].Enabled = ClientCapabilityProvider.Instance().SupportsTabletDetection;
                 BindSettingControls();
                 BindRedirection(RedirectId);
             }

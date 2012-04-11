@@ -225,7 +225,14 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         UserRelationship AddFriend(UserInfo targetUser);
         UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser);
 
+        bool IsFriend(UserInfo targetUser);
         bool AreFriends(UserInfo initiatingUser, UserInfo targetUser);
+        
+        bool IsFollower(UserInfo targetUser);
+        bool IsFollower(UserInfo user1, UserInfo user2);
+
+        bool IsFollowing(UserInfo targetUser);
+        bool IsFollowing(UserInfo user1, UserInfo user2);
 
         void DeleteFriend(UserInfo targetUser);
         void DeleteFriend(UserInfo initiatingUser, UserInfo targetUser);
@@ -244,9 +251,6 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         UserRelationship GetFriendRelationship(UserInfo targetUser);
         UserRelationship GetFriendRelationship(UserInfo initiatingUser, UserInfo targetUser);
         IList<UserRelationship> GetFriends(UserInfo initiatingUser);
-
-        bool IsFriend(UserInfo targetUser);
-
 
         Relationship AddUserList(string listName, string listDescription);
         Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus);

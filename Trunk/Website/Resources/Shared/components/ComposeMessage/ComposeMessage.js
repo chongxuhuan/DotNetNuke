@@ -129,7 +129,7 @@
             }
 
             composeMessageDialog.dialog({
-                minWidth: 550,
+                minWidth: 650,
                 modal: true,
                 resizable: false,
                 open: function () {

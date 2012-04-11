@@ -1,56 +1,36 @@
-/* *********************************************************************
- * The contents of this file are subject to the Mozilla Public License 
- * Version 1.1 (the "License"); you may not use this file except in 
- * compliance with the License. You may obtain a copy of the License at 
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. 
- * See the License for the specific language governing rights and 
- * limitations under the License.
- *
- * The Original Code is named .NET Mobile API, first released under 
- * this licence on 11th March 2009.
- * 
- * The Initial Developer of the Original Code is owned by 
- * 51 Degrees Mobile Experts Limited. Portions created by 51 Degrees
- * Mobile Experts Limited are Copyright (C) 2009 - 2012. All Rights Reserved.
- * 
- * Contributor(s):
- *     James Rosewell <james@51degrees.mobi>
- * 
- * ********************************************************************* */
+#region Copyright
+// 
+// DotNetNuke® - http://www.dotnetnuke.com
+// Copyright (c) 2002-2012
+// by DotNetNuke Corporation
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// DEALINGS IN THE SOFTWARE.
+#endregion
+#region Usings
 
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("FiftyOne.Modules")]
-[assembly: AssemblyDescription("51Degrees.mobi DotNetNuke Modules & Client Capability Provider")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("51 Degrees Mobile Experts Limited")]
-[assembly: AssemblyProduct("51degrees.mobi - DotNetNuke")]
-[assembly: AssemblyCopyright("Copyright � 51Degrees.mobi Mobile Experts Limited 2009 - 2012")]
-[assembly: AssemblyTrademark("51Degrees")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
+#endregion
 
-[assembly: AssemblyVersion("6.2.0.899")]
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
-[assembly: AssemblyKeyName("")]
-
+[assembly: AssemblyTitle("DotNetNuke.Providers.FiftyOneClientCapabilityProvider")]
+[assembly: AssemblyDescription("Open Source Web Application Framework")]
+[assembly: AssemblyCompany("DotNetNuke Corporation")]
+[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
+[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
+[assembly: AssemblyTrademark("DotNetNuke")]
+[assembly: Guid("25C9803D-A80E-44D5-A87E-1CDFB05C99A0")]
+[assembly: AssemblyVersion("6.2.0.1085")]

@@ -27,6 +27,6 @@ namespace DotNetNuke.Web.Services
 {
     public interface IServiceRouteMapper
     {
-        void RegisterRoutes(IRouteMapper routeManager);
+        void RegisterRoutes(IMapRoute mapRouteManager);
     }
 }

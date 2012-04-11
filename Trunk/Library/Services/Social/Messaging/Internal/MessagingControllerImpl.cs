@@ -24,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
+
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
@@ -34,6 +36,7 @@ using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Social.Messaging.Data;
 using DotNetNuke.Services.Social.Messaging.Exceptions;
 using DotNetNuke.Services.Social.Messaging.Views;
+using DotNetNuke.Services.Social.Notifications;
 
 #endregion
 
@@ -102,6 +105,11 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
         }
 
         public virtual Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender)
+        {
+            return CreateMessage(subject, body, roles, users, fileIDs, sender, DateTime.Now);
+        }
+
+        public virtual Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender, DateTime messageDateTime)
         {
             if (sender == null || sender.UserID <= 0)
             {
@@ -175,7 +183,7 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             if (roles != null) recipientCount += roles.Count;
             if (recipientCount > RecipientLimit(sender.PortalID))
             {
-                throw new RecipientLimitExceeded(Localization.Localization.GetString("MsgRecipientLimitExceeded", Localization.Localization.ExceptionsResourceFile));
+                throw new RecipientLimitExceededException(Localization.Localization.GetString("MsgRecipientLimitExceeded", Localization.Localization.ExceptionsResourceFile));
             }
 
             //Profanity Filter
@@ -188,14 +196,14 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
             var message = new Message { Body = body, Subject = subject, To = sbTo.ToString().Trim(','), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName };
 
-            message.MessageID = _dataService.SaveSocialMessage(message, UserController.GetCurrentUserInfo().UserID);
+            message.MessageID = _dataService.SaveMessage(message, UserController.GetCurrentUserInfo().PortalID,UserController.GetCurrentUserInfo().UserID, messageDateTime);
 
             //associate attachments
             if (fileIDs != null)
             {
                 foreach (var attachment in fileIDs.Select(fileId => new MessageAttachment { MessageAttachmentID = Null.NullInteger, FileID = fileId, MessageID = message.MessageID }))
                 {
-                    _dataService.SaveSocialMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
+                    _dataService.SaveMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
                 }
             }
 
@@ -208,10 +216,10 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
                     .Aggregate(roleIds, (current, roleId) => current + (roleId + ","))
                     .Trim(',');
 
-                _dataService.CreateSocialMessageRecipientsForRole(message.MessageID, roleIds, UserController.GetCurrentUserInfo().UserID);
+                _dataService.CreateMessageRecipientsForRole(message.MessageID, roleIds, UserController.GetCurrentUserInfo().UserID, messageDateTime);
             }
 
-            //send message to each User - this should be called after CreateSocialMessageRecipientsForRole.
+            //send message to each User - this should be called after CreateMessageRecipientsForRole.
             if (users == null)
             {
                 users = new List<UserInfo>();
@@ -220,9 +228,9 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             //add sender as a recipient of the message
             users.Add(sender);
 
-            foreach (var recipient in from user in users where GetSocialMessageRecipient(message.MessageID, user.UserID) == null select new MessageRecipient { MessageID = message.MessageID, UserID = user.UserID, Read = false, RecipientID = Null.NullInteger })
+            foreach (var recipient in from user in users where GetMessageRecipient(message.MessageID, user.UserID) == null select new MessageRecipient { MessageID = message.MessageID, UserID = user.UserID, Read = false, RecipientID = Null.NullInteger })
             {
-                _dataService.SaveSocialMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
+                _dataService.SaveMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID, messageDateTime);
             }
 
             // Mark the conversation as read by the sender of the message.
@@ -231,29 +239,9 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             return message;
         }
 
-        public virtual MessageType CreateMessageType(string name, string description, int timeToLive)
+        public virtual void DeleteMessageRecipient(int messageId, int userId)
         {
-            Requires.NotNullOrEmpty("name", name);
-
-            if (timeToLive <= 0)
-            {
-                timeToLive = Null.NullInteger;
-            }
-
-            var messageType = new MessageType
-            {
-                MessageTypeId = _dataService.SaveMessageType(Null.NullInteger, name, description, timeToLive),
-                Name = name,
-                Description = description,
-                TimeToLive = timeToLive
-            };
-
-            return messageType;
-        }
-
-        public virtual void DeleteMessageType(int messageTypeId)
-        {
-            _dataService.DeleteMessageType(messageTypeId);
+            _dataService.DeleteMessageRecipientByMessageAndUser(messageId, userId);
         }
 
         public virtual MessageBoxView GetArchivedMessages(int userId, int pageIndex, int pageSize)
@@ -268,7 +256,22 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         public virtual MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
         {
-            return _dataService.GetMessageBoxView(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
+            return _dataService.GetMessageBoxView(userId, GetCurrentUserInfo().PortalID, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
+        }
+
+        public virtual Message GetMessage(int messageId)
+        {
+            return CBO.FillObject<Message>(_dataService.GetMessage(messageId));
+        }
+
+        public virtual MessageRecipient GetMessageRecipient(int messageId, int userId)
+        {
+            return CBO.FillObject<MessageRecipient>(_dataService.GetMessageRecipientByMessageAndUser(messageId, userId));
+        }
+
+        public virtual IList<MessageRecipient> GetMessageRecipients(int messageId)
+        {
+            return CBO.FillCollection<MessageRecipient>(_dataService.GetMessageRecipientsByMessage(messageId));
         }
 
         public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords)
@@ -279,18 +282,6 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
         public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
         {
             return _dataService.GetMessageThread(conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
-        }
-
-        public virtual MessageType GetMessageType(int messageTypeId)
-        {
-            return CBO.FillObject<MessageType>(_dataService.GetMessageType(messageTypeId));
-        }
-
-        public virtual MessageType GetMessageType(string name)
-        {
-            Requires.NotNullOrEmpty("name", name);
-
-            return CBO.FillObject<MessageType>(_dataService.GetMessageTypeByName(name));
         }
 
         public virtual MessageBoxView GetRecentInbox(int userId)
@@ -320,32 +311,83 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         public virtual MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
         {
-            return _dataService.GetMessageBoxView(userId, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Sent);
+            return _dataService.GetMessageBoxView(userId, GetCurrentUserInfo().PortalID, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Sent);
         }
 
-        public virtual MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId)
+        public virtual int CountArchivedMessagesByConversation(int conversationId)
         {
-            return CBO.FillObject<MessageRecipient>(_dataService.GetSocialMessageRecipientByMessageAndUser(messageRecipientId, userId));
+            return _dataService.CountArchivedMessagesByConversation(conversationId);
+        }
+
+        public virtual int CountMessagesByConversation(int conversationId)
+        {
+            return _dataService.CountMessagesByConversation(conversationId);
+        }
+
+        public virtual int CountConversations(int userId, int portalId, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
+        {
+            bool? read = null;
+
+            switch (readStatus)
+            {
+                case MessageReadStatus.Read:
+                    read = true;
+                    break;
+                case MessageReadStatus.UnRead:
+                    read = false;
+                    break;
+            }
+
+            bool? archived = null;
+
+            switch (archivedStatus)
+            {
+                case MessageArchivedStatus.Archived:
+                    archived = true;
+                    break;
+                case MessageArchivedStatus.UnArchived:
+                    archived = false;
+                    break;
+            }
+
+            bool? sent = null;
+
+            switch (sentStatus)
+            {
+                case MessageSentStatus.Received:
+                    sent = false;
+                    break;
+                case MessageSentStatus.Sent:
+                    sent = true;
+                    break;
+            }
+
+            return _dataService.CountTotalConversations(userId, portalId, read, archived, sent);
+        }
+
+        public virtual int CountUnreadMessages(int userId, int portalId)
+        {
+            return _dataService.CountNewThreads(userId, portalId);
         }
 
         public virtual void MarkArchived(int conversationId, int userId)
         {
-            _dataService.UpdateSocialMessageArchivedStatus(conversationId, userId, true);
+            _dataService.UpdateMessageArchivedStatus(conversationId, userId, true);
         }
 
         public virtual void MarkRead(int conversationId, int userId)
         {
-            _dataService.UpdateSocialMessageReadStatus(conversationId, userId, true);
+            _dataService.UpdateMessageReadStatus(conversationId, userId, true);
         }
 
         public virtual void MarkUnArchived(int conversationId, int userId)
         {
-            _dataService.UpdateSocialMessageArchivedStatus(conversationId, userId, false);
+            _dataService.UpdateMessageArchivedStatus(conversationId, userId, false);
         }
 
         public virtual void MarkUnRead(int conversationId, int userId)
         {
-            _dataService.UpdateSocialMessageReadStatus(conversationId, userId, false);
+            _dataService.UpdateMessageReadStatus(conversationId, userId, false);
         }
 
         ///<summary>Maximum number of Recipients allowed</summary>        
@@ -387,10 +429,10 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             }
 
             //call ReplyMessage
-            var messageId = _dataService.CreateMessageReply(conversationId, body, sender.UserID, sender.DisplayName, GetCurrentUserInfo().UserID);
+            var messageId = _dataService.CreateMessageReply(conversationId,sender.PortalID, body, sender.UserID, sender.DisplayName, GetCurrentUserInfo().UserID);
             if (messageId == -1) //Parent message was not found or Recipient was not found in the message
             {
-                throw new MessageOrRecipientNotFound(Localization.Localization.GetString("MsgMessageOrRecipientNotFound", Localization.Localization.ExceptionsResourceFile));
+                throw new MessageOrRecipientNotFoundException(Localization.Localization.GetString("MsgMessageOrRecipientNotFound", Localization.Localization.ExceptionsResourceFile));
             }
 
             //associate attachments
@@ -398,7 +440,7 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             {
                 foreach (var attachment in fileIDs.Select(fileId => new MessageAttachment { MessageAttachmentID = Null.NullInteger, FileID = fileId, MessageID = messageId }))
                 {
-                    _dataService.SaveSocialMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
+                    _dataService.SaveMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
                 }
             }
 
@@ -406,17 +448,6 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             MarkRead(conversationId, sender.UserID);
 
             return messageId;
-        }
-
-        public virtual void UpdateMessageType(MessageType messageType)
-        {
-            Requires.NotNull("messageType", messageType);
-
-            _dataService.SaveMessageType(
-                messageType.MessageTypeId,
-                messageType.Name,
-                messageType.Description,
-                messageType.TimeToLive);
         }
 
         /// <summary>How long a user needs to wait before sending the next message.</summary>
@@ -475,6 +506,50 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
         {
             return userInfo.IsSuperUser || userInfo.IsInRole(TestablePortalSettings.Instance.AdministratorRoleName);
         }
+
+        #endregion
+
+        #region Upgrade APIs
+
+        public void ConvertLegacyMessages(int pageIndex, int pageSize)
+        {            
+            _dataService.ConvertLegacyMessages(pageIndex, pageSize);
+        }
+
+        public int CountLegacyMessages()
+        {
+            var totalRecords = 0;
+            var dr = _dataService.CountLegacyMessages();
+
+            try
+            {
+                while (dr.Read())
+                {
+                    totalRecords = Convert.ToInt32(dr["TotalRecords"]);
+                }
+            }
+            finally
+            {
+                CBO.CloseDataReader(dr, true);
+            }
+
+            return totalRecords;
+        }        
+
+        #endregion
+
+        #region Queued email API's
+
+        public MessageRecipient GetNextMessageForDispatch(Guid schedulerInstance)
+        {
+            return (MessageRecipient)CBO.FillObject(_dataService.GetNextMessageForDispatch(schedulerInstance), typeof(MessageRecipient));
+        }
+
+        public void MarkMessageAsDispatched(int messageId, int recipientId)
+        {
+            _dataService.MarkMessageAsDispatched(messageId, recipientId);
+        }
+
 
         #endregion
     }

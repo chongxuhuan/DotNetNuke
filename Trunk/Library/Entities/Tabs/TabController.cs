@@ -2028,6 +2028,7 @@ namespace DotNetNuke.Entities.Tabs
         public void LocalizeTab(TabInfo originalTab, Locale locale)
         {
             Provider.LocalizeTab(originalTab.TabID, locale.Code, UserController.GetCurrentUserInfo().UserID);
+            DataCache.ClearModuleCache(originalTab.TabID);
         }
 
         /// <summary>

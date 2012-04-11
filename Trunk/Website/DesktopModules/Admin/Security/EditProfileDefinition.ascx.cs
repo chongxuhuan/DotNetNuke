@@ -337,11 +337,6 @@ namespace DotNetNuke.Modules.Admin.Users
 
             try
             {
-                Wizard.CancelButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("cmdCancel", LocalResourceFile);
-                Wizard.StartNextButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/rt.gif\" border=\"0\" /> " + Localization.GetString("Next", LocalResourceFile);
-                Wizard.StepNextButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/rt.gif\" border=\"0\" /> " + Localization.GetString("Next", LocalResourceFile);
-                Wizard.FinishCompleteButtonText = "<img src=\"" + Globals.ApplicationPath + "/images/lt.gif\" border=\"0\" /> " + Localization.GetString("cmdCancel", LocalResourceFile);
-
                 if (!Page.IsPostBack)
                 {
                     Localization.LoadCultureDropDownList(cboLocales, CultureDropDownTypes.NativeName, ((PageBase) Page).PageCulture.Name);
@@ -503,7 +498,7 @@ namespace DotNetNuke.Modules.Admin.Users
             try
             {
 				//Redirect to Definitions page
-                Response.Redirect(ModuleContext.NavigateUrl(TabId, "ManageProfile", true, "mid=" + ModuleId), true);
+                Response.Redirect(Globals.NavigateURL(TabId), true);
             }
             catch (Exception exc) //Module failed to load
             {
@@ -526,7 +521,7 @@ namespace DotNetNuke.Modules.Admin.Users
             try
             {
 				//Redirect to Definitions page
-                Response.Redirect(ModuleContext.NavigateUrl(TabId, "ManageProfile", true, "mid=" + ModuleId), true);
+                Response.Redirect(Globals.NavigateURL(TabId), true);
             }
             catch (Exception exc) //Module failed to load
             {

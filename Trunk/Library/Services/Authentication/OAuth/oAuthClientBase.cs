@@ -81,20 +81,35 @@ namespace DotNetNuke.Services.Authentication.OAuth
 
         #endregion
 
-        public OAuthClientBase()
+        public OAuthClientBase(int portalId, AuthMode mode, string service)
         {
             //Set default Expiry to 14 days 
             //oAuth v1 tokens do not expire
             //oAuth v2 tokens have an expiry
             AuthTokenExpiry = new TimeSpan(14, 0, 0, 0);
+            Service = service;
+
+            APIKey = OAuthConfigBase.GetConfig(Service, portalId).APIKey;
+            APISecret = OAuthConfigBase.GetConfig(Service, portalId).APISecret;
+            Mode = mode;
+
+            CallbackUri = Mode == AuthMode.Login 
+                                    ? new Uri(OAuthConfigBase.GetConfig(Service, portalId).LoginURL) 
+                                    : new Uri(OAuthConfigBase.GetConfig(Service, portalId).RegisterURL);
         }
 
         #region Protected Properties
 
         protected const string OAuthTokenKey = "oauth_token";
 
+        protected virtual string UserGuidKey 
+        {
+            get { return String.Empty; }
+        }
+
         protected string APIKey { get; set; }
         protected string APISecret { get; set; }
+        protected AuthMode Mode { get; set; }
         protected string OAuthVersion { get; set; }
         protected HttpMethod TokenMethod { get; set; }
 
@@ -104,7 +119,9 @@ namespace DotNetNuke.Services.Authentication.OAuth
             get { return HttpContext.Current.Request.Params[OAuthVerifierKey]; }
         }
         protected Uri RequestTokenEndpoint { get; set; }
+        protected HttpMethod RequestTokenMethod { get; set; }
         protected string TokenSecret { get; set; }
+        protected string UserGuid { get; set; }
 
         //oAuth 1 and 2
         protected Uri AuthorizationEndpoint { get; set; }
@@ -157,7 +174,7 @@ namespace DotNetNuke.Services.Authentication.OAuth
 
                         if (qs[OAuthTokenKey] != null)
                         {
-                            ret = AuthorizationEndpoint.ToString() + "?" + OAuthTokenKey + "=" + qs[OAuthTokenKey];
+                            ret = AuthorizationEndpoint + "?" + OAuthTokenKey + "=" + qs[OAuthTokenKey];
 
                             AuthToken = qs[OAuthTokenKey];
                             TokenSecret = qs[OAuthTokenSecretKey];
@@ -253,6 +270,10 @@ namespace DotNetNuke.Services.Authentication.OAuth
                 if (qs[OAuthTokenSecretKey] != null)
                 {
                     TokenSecret = qs[OAuthTokenSecretKey];
+                }
+                if (qs[UserGuidKey] != null)
+                {
+                    UserGuid = qs[UserGuidKey];
                 }
             }
         }
@@ -452,7 +473,7 @@ namespace DotNetNuke.Services.Authentication.OAuth
                                             String.Empty,
                                             CallbackUri.OriginalString,
                                             String.Empty,
-                                            HttpMethod.POST.ToString(),
+                                            RequestTokenMethod.ToString(),
                                             timeStamp,
                                             nonce,
                                             out outUrl,
@@ -460,16 +481,17 @@ namespace DotNetNuke.Services.Authentication.OAuth
 
             string postData = requestParameters.ToNormalizedString() + "&" + OAuthSignatureKey + "=" + UrlEncode(sig);
 
-            ret = ExecuteWebRequest(HttpMethod.POST, new Uri(outUrl), postData, String.Empty);
+            ret = ExecuteWebRequest(RequestTokenMethod, new Uri(outUrl), postData, String.Empty);
 
             return ret;
         }
 
         private void SaveTokenCookie(string suffix)
         {
-            HttpCookie authTokenCookie = new HttpCookie(AuthTokenName + suffix);
+            var authTokenCookie = new HttpCookie(AuthTokenName + suffix);
             authTokenCookie.Values[OAuthTokenKey] = AuthToken;
             authTokenCookie.Values[OAuthTokenSecretKey] = TokenSecret;
+            authTokenCookie.Values[UserGuidKey] = UserGuid;
 
             authTokenCookie.Expires = DateTime.Now.Add(AuthTokenExpiry);
             HttpContext.Current.Response.SetCookie(authTokenCookie);
@@ -519,6 +541,7 @@ namespace DotNetNuke.Services.Authentication.OAuth
                 {
                     AuthToken = authTokenCookie.Values[OAuthTokenKey];
                     TokenSecret = authTokenCookie.Values[OAuthTokenSecretKey];
+                    UserGuid = authTokenCookie.Values[UserGuidKey];
                 }
             }
         }
@@ -546,7 +569,7 @@ namespace DotNetNuke.Services.Authentication.OAuth
 
             profileProperties.Add("FirstName", user.FirstName);
             profileProperties.Add("LastName", user.LastName);
-            profileProperties.Add("Email", user.Email);
+            profileProperties.Add("Email", user.PreferredEmail);
             profileProperties.Add("DisplayName", user.DisplayName);
             if (!String.IsNullOrEmpty(user.Locale))
             {
@@ -580,7 +603,10 @@ namespace DotNetNuke.Services.Authentication.OAuth
 
             eventArgs.Profile = profileProperties;
 
-            SaveTokenCookie(String.Empty);
+            if (Mode == AuthMode.Login)
+            {
+                SaveTokenCookie(String.Empty);
+            }
 
             onAuthenticated(eventArgs);
         }
@@ -642,7 +668,7 @@ namespace DotNetNuke.Services.Authentication.OAuth
             }
             else
             {
-                responseText = ExecuteWebRequest(HttpMethod.GET, new Uri(MeGraphEndpoint.ToString() + "?" + "access_token=" + AuthToken), null, String.Empty);
+                responseText = ExecuteWebRequest(HttpMethod.GET, new Uri(MeGraphEndpoint + "?" + "access_token=" + AuthToken), null, String.Empty);
             }
             TUserData user = Json.Deserialize<TUserData>(responseText);
             return user;
@@ -662,6 +688,13 @@ namespace DotNetNuke.Services.Authentication.OAuth
         public Boolean IsCurrentUserAuthorized()
         {
             return !String.IsNullOrEmpty(AuthToken);
+        }
+
+        public void RemoveToken()
+        {
+            HttpCookie authTokenCookie = new HttpCookie(AuthTokenName);
+            authTokenCookie.Expires = DateTime.Now.AddDays(-30);
+            HttpContext.Current.Response.SetCookie(authTokenCookie);
         }
 
         /// <summary>

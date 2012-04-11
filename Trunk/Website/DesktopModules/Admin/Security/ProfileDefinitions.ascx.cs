@@ -54,7 +54,7 @@ namespace DotNetNuke.Modules.Admin.Users
     /// -----------------------------------------------------------------------------
     public partial class ProfileDefinitions : PortalModuleBase, IActionable
     {
-        #region "Constants"
+        #region Constants
 
         private const int COLUMN_REQUIRED = 11;
         private const int COLUMN_VISIBLE = 12;
@@ -63,13 +63,13 @@ namespace DotNetNuke.Modules.Admin.Users
 
         #endregion
 
-        #region "Private Members"
+        #region Private Members
 
         private ProfilePropertyDefinitionCollection _profileProperties;
 
         #endregion
 
-        #region "Protected Members"
+        #region Protected Members
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -195,7 +195,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
         #endregion
 
-        #region "Private Methods"
+        #region Private Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -401,7 +401,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
         #endregion
 
-        #region "Protected Methods"
+        #region Protected Methods
 
         protected override void LoadViewState(object savedState)
         {
@@ -437,7 +437,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
         #endregion
 
-        #region "Public Methods"
+        #region Public Methods
 
         public string DisplayDataType(ProfilePropertyDefinition definition)
         {
@@ -451,9 +451,24 @@ namespace DotNetNuke.Modules.Admin.Users
             return retValue;
         }
 
+        public void Update()
+        {
+            try
+            {
+                UpdateProperties();
+
+                //Redirect to upadte page
+                Response.Redirect(Request.RawUrl, true);
+            }
+            catch (Exception exc) //Module failed to load
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
+            }            
+        }
+
         #endregion
 
-        #region "Event Handlers"
+        #region Event Handlers
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -518,10 +533,11 @@ namespace DotNetNuke.Modules.Admin.Users
             base.OnLoad(e);
 
             cmdRefresh.Click += cmdRefresh_Click;
-            cmdUpdate.Click += cmdUpdate_Click;
             grdProfileProperties.ItemCommand += grdProfileProperties_ItemCommand;
             grdProfileProperties.ItemCreated += grdProfileProperties_ItemCreated;
             grdProfileProperties.ItemDataBound += grdProfileProperties_ItemDataBound;
+
+            cmdAdd.NavigateUrl = EditUrl("EditProfileProperty");
 
             try
             {
@@ -550,31 +566,6 @@ namespace DotNetNuke.Modules.Admin.Users
         private void cmdRefresh_Click(object sender, EventArgs e)
         {
             RefreshGrid();
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// cmdUpdate_Click runs when the update button is clciked
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        /// <history>
-        /// 	[cnurse]	02/23/2006  Created
-        /// </history>
-        /// -----------------------------------------------------------------------------
-        private void cmdUpdate_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                UpdateProperties();
-
-                //Redirect to upadte page
-                Response.Redirect(Request.RawUrl, true);
-            }
-            catch (Exception exc) //Module failed to load
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
         }
 
         /// -----------------------------------------------------------------------------

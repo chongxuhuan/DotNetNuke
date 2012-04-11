@@ -25,6 +25,7 @@
 
 using System;
 using System.Web;
+using System.Web.UI;
 
 #endregion
 
@@ -52,8 +53,13 @@ namespace DotNetNuke.Services.Authentication.OAuth
                                                              {Expires = DateTime.Now.AddMinutes(5)});
             }
 
-            if (OAuthClient.IsCurrentService() && OAuthClient.HaveVerificationCode() ||
-                OAuthClient.IsCurrentUserAuthorized())
+            bool shouldAuthorize = OAuthClient.IsCurrentService() && OAuthClient.HaveVerificationCode();
+            if(Mode == AuthMode.Login)
+            {
+                shouldAuthorize = shouldAuthorize || OAuthClient.IsCurrentUserAuthorized();
+            }
+
+            if (shouldAuthorize)
             {
                 if (OAuthClient.Authorize() == AuthorisationResult.Authorized)
                 {

@@ -13,8 +13,8 @@
                     <fieldset class="upgradePremium">
                         <h5><%= LocalizeString("LiteUpgrade.Label")%></h5>
                         <fiftyOne:Activate runat="server" ID="Activate" LogoEnabled="False" ErrorCssClass="dnnFormMessage dnnFormValidationSummary" SuccessCssClass="dnnFormMessage dnnFormSuccess" FooterEnabled="False" />
-                        <fiftyOne:Stats runat="server" ID="LiteStats" />
-                        <p><em><%= LocalizeString("PurchaseInfo.Text")%><a href="<%=LocalizeString("PurchaseInfoLink.Href") %>" target="_blank"><%= LocalizeString("PurchaseInfoLink.Text")%></a><%= LocalizeString("PurchaseInfoEnd.Text")%></em></p>
+                        <fiftyOne:Stats runat="server" ID="LiteStats" ButtonVisible="False" />
+                        <p class="footer purchaseBox" id="purchaseBox" runat="server"><em><%= LocalizeString("PurchaseInfo.Text")%><a href="<%=LocalizeString("PurchaseInfoLink.Href") %>" target="_blank"><%= LocalizeString("PurchaseInfoLink.Text")%></a><%= LocalizeString("PurchaseInfoEnd.Text")%></em></p>
                     </fieldset>
                     
                     <fieldset class="upgradeInfo">
@@ -30,6 +30,10 @@
                     <h2><%= LocalizeString("Premium.Header") %></h2>
                     <fieldset>
                         <p><%= LocalizeString("PremiumIntro.Text") %></p>
+                        <fiftyOne:Stats runat="server" ID="PremiumStats" />
+                        <p id="PremiumUploadError" runat="server" class="dnnFormMessage dnnFormValidationSummary"><%=LocalizeString("PremiumUploadError.Text")%></p>
+                        <p id="PremiumUploadSuccess" runat="server" class="dnnFormMessage dnnFormSuccess"><%=LocalizeString("PremiumUploadSuccess.Text")%></p>
+                        <fiftyOne:Upload runat="server" ID="PremiumUpload" FooterEnabled="False" LogoEnabled="False" />
                     </fieldset>
                 <% } %>
             </div>
@@ -39,8 +43,10 @@
                     <h4><%= LocalizeString("SearchPremium.Header") %></h4>
                     <p><%= LocalizeString("SearchPremium.Text")%></p>
                     <p id="NoResultsMessage" runat="server" class="dnnFormMessage dnnFormWarning"><%=LocalizeString("NoResultsFound.Text")%></p>
-                    <p><asp:TextBox runat="server" ID="SearchTextBox" MaxLength="800" ValidationGroup="DeviceSearch" /></p>
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="SearchTextBox" ValidationGroup="DeviceSearch" ResourceKey="DeviceSearchRequired" CssClass="dnnFormMessage dnnFormError"></asp:RequiredFieldValidator>
+                    <p>
+                        <asp:TextBox runat="server" ID="SearchTextBox" MaxLength="800" ValidationGroup="DeviceSearch" />
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="SearchTextBox" ValidationGroup="DeviceSearch" ResourceKey="DeviceSearchRequired" CssClass="dnnFormMessage dnnFormError" Display="Dynamic"></asp:RequiredFieldValidator>
+                    </p>
                     <p><asp:LinkButton runat="server" ID="SearchButton" ResourceKey="SearchButton" CssClass="dnnPrimaryAction" CausesValidation="True" ValidationGroup="DeviceSearch" /></p>
                 </div>
                 <div class="deviceCol-right">
@@ -161,7 +167,6 @@
                     </div>
                 </div>
             </div>
-            <fiftyOne:Stats runat="server" ID="FooterStats" />
             <% } %>
         </div>
     </div>
@@ -184,4 +189,11 @@
             $('.explorer').slideToggle();
         });
     });
+
+    $("#<%= SearchTextBox.ClientID %>").keyup(function (event) {
+        if (event.keyCode == 13) {
+            $("<%= SearchButton.ClientID %>").click();
+        }
+    });
+
 </script>

@@ -29,6 +29,11 @@ namespace DotNetNuke.Entities.Users.Internal
 {
     internal class UserControllerImpl : IUserController
     {
+        public UserInfo GetUserByDisplayname(int portalId, string displayName)
+        {
+            return MembershipProvider.Instance().GetUserByDisplayName(portalId, displayName);
+        }
+
         public IList<UserInfo> GetUsersAdvancedSearch(int portalId, int userId, int filterUserId, int filterRoleId, int relationshipTypeId,
             bool isAdmin, int pageIndex, int pageSize, string sortColumn,
             bool sortAscending, string propertyNames, string propertyValues)

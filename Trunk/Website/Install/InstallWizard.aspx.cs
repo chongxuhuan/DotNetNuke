@@ -36,17 +36,22 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.XPath;
-
+using ASP;
 using DotNetNuke.Application;
+using DotNetNuke.Common;
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Controllers;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.Services.Localization.Internal;
+using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.Web.Client.ClientResourceManagement;
 
@@ -527,39 +532,92 @@ namespace DotNetNuke.Services.Install
                 }
                 txtPortalTitle.Text = XmlUtils.GetNodeValue(portalNode.CreateNavigator(), "portalname");
 
-                string strTemplate = XmlUtils.GetNodeValue(portalNode.CreateNavigator(), "templatefile");
-                string strFolder = Globals.HostMapPath;
-                if (Directory.Exists(strFolder))
-                {
-                    cboPortalTemplate.Items.Clear();
-                    string[] fileEntries = Directory.GetFiles(strFolder, "*.template");
+                string templateName = XmlUtils.GetNodeValue(portalNode.CreateNavigator(), "templatefile");
 
-                    foreach (string strFileName in fileEntries)
-                    {
-                        if (Path.GetFileNameWithoutExtension(strFileName) == "admin")
-                        {
-                        }
-                        else
-                        {
-                            cboPortalTemplate.Items.Add(Path.GetFileNameWithoutExtension(strFileName));
-                        }
-                    }
-                    if (cboPortalTemplate.Items.Count == 0)
-                    {
-                    }
-                    if (cboPortalTemplate.Items.FindByValue(strTemplate.Replace(".template", "")) != null)
-                    {
-                        cboPortalTemplate.Items.FindByValue(strTemplate.Replace(".template", "")).Selected = true;
-                    }
-                    else
-                    {
-                        cboPortalTemplate.SelectedIndex = 0;
-                    }
-                }
+                BindTemplates(templateName);
             }
             adminUserErrorLabel.Text = Null.NullString;
 
         	PortalBinded = true;
+        }
+
+        class TemplateDisplayComparer : IComparer<PortalController.PortalTemplateInfo>
+        {
+            public int Compare(PortalController.PortalTemplateInfo x, PortalController.PortalTemplateInfo y)
+            {
+                var cultureCompare = String.Compare(x.CultureCode, y.CultureCode, StringComparison.CurrentCulture);
+                if (cultureCompare == 0)
+                {
+                    return String.Compare(x.Name, y.Name, StringComparison.CurrentCulture);
+                }
+
+                //put blank cultures last
+                if (string.IsNullOrEmpty(x.CultureCode) || string.IsNullOrEmpty(y.CultureCode))
+                {
+                    cultureCompare *= -1;
+                }
+                return cultureCompare;
+            }
+        }
+
+        void BindTemplates(string templateName)
+        {
+            var templates = TestablePortalController.Instance.GetAvailablePortalTemplates();
+            templates = templates.OrderBy(x => x, new TemplateDisplayComparer()).ToList();
+
+            foreach (var template in templates)
+            {
+                cboPortalTemplate.Items.Add(CreateListItem(template));
+            }
+
+            SelectADefaultTemplate(templates, templateName);
+
+            if (cboPortalTemplate.Items.Count == 0)
+            {
+                UI.Skins.Skin.AddModuleMessage(this, "", Localization.Localization.GetString("PortalMissing", LocalResourceFile),
+                                                ModuleMessage.ModuleMessageType.RedError);
+            }
+            cboPortalTemplate.Items.Insert(0, new ListItem(Localization.Localization.GetString("None_Specified"), "-1"));
+        }
+
+        void SelectADefaultTemplate(IList<PortalController.PortalTemplateInfo> templates, string templateName)
+        {
+            string currentCulture = Thread.CurrentThread.CurrentUICulture.Name;
+
+            var defaultTemplates =
+                templates.Where(x => Path.GetFileName(x.TemplateFilePath) == templateName).ToList();
+
+            var match = defaultTemplates.FirstOrDefault(x => x.CultureCode == currentCulture);
+            if (match == null)
+            {
+                match = defaultTemplates.FirstOrDefault(x => x.CultureCode.StartsWith(currentCulture.Substring(0, 2)));
+            }
+            if (match == null)
+            {
+                match = defaultTemplates.FirstOrDefault(x => string.IsNullOrEmpty(x.CultureCode));
+            }
+
+            if (match != null)
+            {
+                cboPortalTemplate.SelectedIndex = templates.IndexOf(match);
+            }
+        }
+
+        ListItem CreateListItem(PortalController.PortalTemplateInfo template)
+        {
+            string text, value;
+            if (string.IsNullOrEmpty(template.CultureCode))
+            {
+                text = template.Name;
+                value = Path.GetFileName(template.TemplateFilePath);
+            }
+            else
+            {
+                text = string.Format("{0} - {1}", template.Name, template.CultureCode);
+                value = string.Format("{0}|{1}", Path.GetFileName(template.TemplateFilePath), template.CultureCode);
+            }
+
+            return new ListItem(text, value);
         }
 
         /// -----------------------------------------------------------------------------
@@ -882,31 +940,27 @@ namespace DotNetNuke.Services.Install
             {
                 try
                 {
-                    var objPortalController = new PortalController();
                     string strServerPath = Globals.ApplicationMapPath + "\\";
                     string strPortalAlias = Globals.GetDomainName(HttpContext.Current.Request, true).Replace("/Install", "");
-                    string strTemplate = cboPortalTemplate.SelectedValue + ".template";
+                    PortalController.PortalTemplateInfo template = LoadPortalTemplateInfoForSelectedItem();
+
+                    UserInfo adminUser = CreateUserInfo();
 
                     //Create Portal
-                    PortalId = objPortalController.CreatePortal(txtPortalTitle.Text,
-                                                                usrAdmin.FirstName,
-                                                                usrAdmin.LastName,
-                                                                usrAdmin.UserName,
-                                                                usrAdmin.Password,
-                                                                usrAdmin.Email,
-                                                                "",
-                                                                "",
-                                                                Globals.HostMapPath,
-                                                                strTemplate,
-                                                                "",
-                                                                strPortalAlias,
-                                                                strServerPath,
-                                                                "",
-                                                                false);
+                    PortalId = TestablePortalController.Instance.CreatePortal(txtPortalTitle.Text,
+                                                                              adminUser,
+                                                                              "",
+                                                                              "", 
+                                                                              template,
+                                                                              "",
+                                                                              strPortalAlias,
+                                                                              strServerPath,
+                                                                              "",
+                                                                              false);
                     success = (PortalId > Null.NullInteger);
 
                     //Set admin user to be a superuser
-                    UserInfo adminUser = UserController.GetUserByName(PortalId, usrAdmin.UserName);
+                    adminUser = UserController.GetUserByName(PortalId, usrAdmin.UserName);
                     adminUser.IsSuperUser = true;
                     UserController.UpdateUser(PortalId, adminUser);
 
@@ -933,6 +987,29 @@ namespace DotNetNuke.Services.Install
                 }
             }
             return success;
+        }
+
+        private UserInfo CreateUserInfo()
+        {
+            var adminUser = new UserInfo();
+            adminUser.FirstName = usrAdmin.FirstName;
+            adminUser.LastName = usrAdmin.LastName;
+            adminUser.Username = usrAdmin.UserName;
+            adminUser.DisplayName = usrAdmin.FirstName + " " + usrAdmin.LastName;
+            adminUser.Membership.Password = usrAdmin.Password;
+            adminUser.Email = usrAdmin.Email;
+            adminUser.IsSuperUser = false;
+            adminUser.Membership.Approved = true;
+            adminUser.Profile.FirstName = usrAdmin.FirstName;
+            adminUser.Profile.LastName = usrAdmin.LastName;
+            return adminUser;
+        }
+
+        PortalController.PortalTemplateInfo LoadPortalTemplateInfoForSelectedItem()
+        {
+            var values = cboPortalTemplate.SelectedItem.Value.Split('|');
+
+            return TestablePortalController.Instance.GetPortalTemplate(Path.Combine(TestableGlobals.Instance.HostMapPath, values[0]), values.Length > 1 ? values[1] : null);
         }
 
         private bool InstallProviders()
@@ -1503,11 +1580,20 @@ namespace DotNetNuke.Services.Install
                 }
                 cboLanguages.DataSource = GetInstallerLocales();
                 cboLanguages.DataBind();
+                SelectBrowserLanguage();
                 wizInstall.ActiveStepIndex = 0;
 
                 LocalizePage();
                 SetupPage();
             }
+        }
+
+        private void SelectBrowserLanguage()
+        {
+            var codes = cboLanguages.Items.Cast<ListItem>().Select(x => x.Value);
+            string cultureCode = TestableLocalization.Instance.BestCultureCodeBasedOnBrowserLanguages(codes);
+
+            cboLanguages.Items.FindByValue(cultureCode).Selected = true;
         }
 
         /// -----------------------------------------------------------------------------

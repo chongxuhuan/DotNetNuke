@@ -738,7 +738,8 @@ namespace DotNetNuke.Entities.Portals
                     break;
                 case "footertext":
                     propertyNotFound = false;
-                    result = PropertyAccess.FormatString(FooterText, format);
+                    var footerText = FooterText.Replace("[year]", DateTime.Now.Year.ToString());
+                    result = PropertyAccess.FormatString(footerText, format);
                     break;
                 case "expirydate":
                     isPublic = false;

@@ -45,42 +45,51 @@ namespace DotNetNuke.Modules.MobileManagement.Components
 
             foreach (PortalInfo portal in portalController.GetPortals())
             {
-                //Update Google Analytics to say 'Google Analytics Pro'
-                if (TabController.GetTabByTabPath(portal.PortalID, "//Admin//SiteRedirectionManagement", Null.NullString) != Null.NullInteger)
+                //Update Site Redirection management page
+                var tabId = TabController.GetTabByTabPath(portal.PortalID, "//Admin//SiteRedirectionManagement", Null.NullString);
+                if(tabId == Null.NullInteger)
                 {
-                    int gaTabID = TabController.GetTabByTabPath(portal.PortalID, "//Admin//SiteRedirectionManagement", Null.NullString);
-                    newTab = tabController.GetTab(gaTabID, portal.PortalID, true);
+                    newTab = Upgrade.AddAdminPage(portal,
+                                                 "Site Redirection Management",
+                                                 "Site Redirection Management.",
+                                                 "~/desktopmodules/MobileManagement/images/MobileManagement_Standard_16x16.png",
+                                                 "~/desktopmodules/MobileManagement/images/MobileManagement_Standard_32x32.png",
+                                                 true);
+                }
+                else
+                {
+                    newTab = tabController.GetTab(tabId, portal.PortalID, true);
                     newTab.IconFile = "~/desktopmodules/MobileManagement/images/MobileManagement_Standard_16x16.png";
                     newTab.IconFileLarge = "~/desktopmodules/MobileManagement/images/MobileManagement_Standard_32x32.png";
                     tabController.UpdateTab(newTab);
+                }
 
-                    //Remove Pro edition module
-                    int moduleID = Null.NullInteger;
-                    IDictionary<int, ModuleInfo> modules = moduleController.GetTabModules(newTab.TabID);
+                //Remove Pro edition module
+                int moduleID = Null.NullInteger;
+                IDictionary<int, ModuleInfo> modules = moduleController.GetTabModules(newTab.TabID);
 
-                    if (modules != null)
+                if (modules != null)
+                {
+                    foreach (ModuleInfo m in modules.Values)
                     {
-                        foreach (ModuleInfo m in modules.Values)
+                        if (m.DesktopModule.FriendlyName == "Site Redirection Management")
                         {
-                            if (m.DesktopModule.FriendlyName == "Site Redirection Management")
-                            {
-                                moduleID = m.ModuleID;
-                                break;
-                            }
+                            moduleID = m.ModuleID;
+                            break;
                         }
                     }
+                }
 
-                    if (moduleID != Null.NullInteger)
-                    {
-                        moduleController.DeleteTabModule(newTab.TabID, moduleID, false);
-                    }
+                if (moduleID != Null.NullInteger)
+                {
+                    moduleController.DeleteTabModule(newTab.TabID, moduleID, false);
+                }
 
-                    //Add community edition module
-                    ModuleDefinitionInfo mDef = ModuleDefinitionController.GetModuleDefinitionByFriendlyName("DNN Site Redirection Management");
-                    if (mDef != null)
-                    {
-                        Upgrade.AddModuleToPage(newTab, mDef.ModuleDefID, "Site Redirection Management", "~/desktopmodules/MobileManagement/images/MobileManagement_Standard_32x32.png", true);
-                    }
+                //Add community edition module
+                ModuleDefinitionInfo mDef = ModuleDefinitionController.GetModuleDefinitionByFriendlyName("DNN Site Redirection Management");
+                if (mDef != null)
+                {
+                    Upgrade.AddModuleToPage(newTab, mDef.ModuleDefID, "Site Redirection Management", "~/desktopmodules/MobileManagement/images/MobileManagement_Standard_32x32.png", true);
                 }
             }
 

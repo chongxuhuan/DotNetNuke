@@ -694,7 +694,7 @@ namespace DotNetNuke.Services.Mobile
                 {
                     if (clientCapability.Capabilities != null && clientCapability.Capabilities.ContainsKey(rule.Capability))
                     {
-                        if (clientCapability.Capabilities[rule.Capability] == rule.Expression)
+                        if (clientCapability.Capabilities[rule.Capability].Equals(rule.Expression, StringComparison.InvariantCultureIgnoreCase))
                         {
                             matchCount++;
                         }

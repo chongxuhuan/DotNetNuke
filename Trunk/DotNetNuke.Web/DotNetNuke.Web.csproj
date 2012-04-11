@@ -112,6 +112,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DotNetNukeHttpApplication.cs" />
+    <Compile Include="CoreServices\NotificationsServiceController.cs" />
+    <Compile Include="CoreServices\RelationshipServiceController.cs" />
     <Compile Include="CoreServices\MessagingServiceController.cs" />
     <Compile Include="CoreServices\ServiceRouteMapper.cs" />
     <Compile Include="CoreServices\SampleServiceController.cs" />
@@ -141,12 +143,14 @@
     <Compile Include="Services\Internal\IAssembly.cs" />
     <Compile Include="Services\Internal\IAssemblyLocator.cs" />
     <Compile Include="Services\IOverrideDefaultAuthLevel.cs" />
-    <Compile Include="Services\IRouteMapper.cs" />
+    <Compile Include="Services\IMapRoute.cs" />
     <Compile Include="Services\IServiceRouteMapper.cs" />
     <Compile Include="Services\ITypeLocator.cs" />
     <Compile Include="Services\Internal\ServicesRoutingManager.cs" />
     <Compile Include="Services\SupportedModulesAttribute.cs" />
     <Compile Include="Services\TypeLocator.cs" />
+    <Compile Include="UI\WebControls\DnnFormEnumItem.cs" />
+    <Compile Include="UI\WebControls\DnnFormPagesItem.cs" />
     <Compile Include="UI\WebControls\DnnFormPanel.cs" />
     <Compile Include="UI\WebControls\DnnFormTabStrip.cs" />
     <Compile Include="UI\WebControls\DnnImageButton.cs" />

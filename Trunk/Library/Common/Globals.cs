@@ -1950,7 +1950,8 @@ namespace DotNetNuke.Common
             {
                 strRSS = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + Environment.NewLine + "<rss version=\"0.91\">" + Environment.NewLine + "  <channel>" + Environment.NewLine + "     <title>" +
                          _portalSettings.PortalName + "</title>" + Environment.NewLine + "     <link>" + DomainName + "</link>" + Environment.NewLine + "     <description>" +
-                         _portalSettings.PortalName + "</description>" + Environment.NewLine + "     <language>en-us</language>" + Environment.NewLine + "     <copyright>" + _portalSettings.FooterText +
+                         _portalSettings.PortalName + "</description>" + Environment.NewLine + "     <language>en-us</language>" + Environment.NewLine + "     <copyright>" +
+                         (!string.IsNullOrEmpty(_portalSettings.FooterText) ? _portalSettings.FooterText.Replace("[year]", DateTime.Now.Year.ToString()) : string.Empty) +
                          "</copyright>" + Environment.NewLine + "     <webMaster>" + _portalSettings.Email + "</webMaster>" + Environment.NewLine + strRSS + "   </channel>" + Environment.NewLine +
                          "</rss>";
                 StreamWriter objStream;

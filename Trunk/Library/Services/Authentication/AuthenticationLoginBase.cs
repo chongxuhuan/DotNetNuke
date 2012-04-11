@@ -46,37 +46,25 @@ namespace DotNetNuke.Services.Authentication
 
         #endregion
 
-        private string _AuthenticationType = Null.NullString;
-        private string _RedirectURL = Null.NullString;
+        public AuthenticationLoginBase()
+        {
+            RedirectURL = Null.NullString;
+            AuthenticationType = Null.NullString;
+            Mode = AuthMode.Login;
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and Sets the Type of Authentication associated with this control
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/10/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
-        public string AuthenticationType
-        {
-            get
-            {
-                return _AuthenticationType;
-            }
-            set
-            {
-                _AuthenticationType = value;
-            }
-        }
+        public string AuthenticationType { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Gets and Sets whether the control is Enabled
+        /// Gets whether the control is Enabled
         /// </summary>
         /// <remarks>This property must be overriden in the inherited class</remarks>
-        /// <history>
-        /// 	[cnurse]	07/10/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public abstract bool Enabled { get; }
 
@@ -84,9 +72,6 @@ namespace DotNetNuke.Services.Authentication
         /// <summary>
         /// Gets the IP address associated with the request
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/10/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public string IPAddress
         {
@@ -98,23 +83,26 @@ namespace DotNetNuke.Services.Authentication
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// Gets and Sets the Type of Authentication associated with this control
+        /// Gets the Authentication mode of the control (Login or Register)
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/10/2007  Created
-        /// </history>
+        /// <remarks>This property may be overriden in the inherited class</remarks>
+        /// -----------------------------------------------------------------------------        
+        public virtual AuthMode Mode { get; set; }
+
         /// -----------------------------------------------------------------------------
-        public string RedirectURL
-        {
-            get
-            {
-                return _RedirectURL;
-            }
-            set
-            {
-                _RedirectURL = value;
-            }
-        }
+        /// <summary>
+        /// Gets and Sets the Redirect Url for this control
+        /// </summary>
+        /// -----------------------------------------------------------------------------
+        public string RedirectURL { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether the control supports Registration
+        /// </summary>
+        /// <remarks>This property may be overriden in the inherited class</remarks>
+        /// -----------------------------------------------------------------------------
+        public virtual bool SupportsRegistration { get { return false; } }
 
         public event UserAuthenticatedEventHandler UserAuthenticated;
 

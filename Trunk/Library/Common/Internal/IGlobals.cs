@@ -32,6 +32,12 @@ namespace DotNetNuke.Common.Internal
         string ApplicationPath { get; }
 
         /// <summary>
+        /// Gets or sets the host map path.
+        /// </summary>
+        /// <value>ApplicationMapPath + "Portals\_default\"</value>
+        string HostMapPath { get; }
+
+        /// <summary>
         /// Returns the folder path under the root for the portal 
         /// </summary>
         /// <param name="fileNamePath">The folder the absolute path</param>

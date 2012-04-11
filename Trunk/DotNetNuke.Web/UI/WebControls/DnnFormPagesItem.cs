@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -17,33 +18,22 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
+
 #endregion
 
-using System;
-using System.Runtime.Serialization;
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Services.Localization;
 
-namespace DotNetNuke.Services.Social.Messaging.Exceptions
+namespace DotNetNuke.Web.UI.WebControls
 {
-    [Serializable]
-    public class RecipientLimitExceeded : Exception
+    public class DnnFormPagesItem : DnnFormComboBoxItem
     {
-        public RecipientLimitExceeded()
+        public DnnFormPagesItem()
         {
-        }
-
-        public RecipientLimitExceeded(string message)
-            : base(message)
-        {
-        }
-
-        public RecipientLimitExceeded(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
-
-        public RecipientLimitExceeded(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
+            ListSource = TabController.GetPortalTabs(PortalSettings.PortalId, Null.NullInteger, true, "<" + Localization.GetString("None_Specified") + ">", true, false, true, true, false);
+            ListTextField = "TabName";
+            ListValueField = "TabID";
         }
     }
 }

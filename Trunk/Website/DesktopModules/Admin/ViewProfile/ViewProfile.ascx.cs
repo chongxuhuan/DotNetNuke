@@ -43,10 +43,7 @@ namespace DotNetNuke.Modules.Admin.Users
 	/// <summary>
 	///   The ViewProfile ProfileModuleUserControlBase is used to view a Users Profile
 	/// </summary>
-	/// <history>
-	///   [jlucarino]	02/25/2010 created
-	/// </history>
-	public partial class ViewProfile : ProfileModuleUserControlBase
+    public partial class ViewProfile : ProfileModuleUserControlBase
 	{
 		public override bool DisplayModule
 		{
@@ -56,6 +53,19 @@ namespace DotNetNuke.Modules.Admin.Users
 			}
 		}
 
+        public bool IncludeButton   
+        {
+            get
+            {
+                var includeButton = true;
+                if (ModuleContext.Settings.ContainsKey("IncludeButton"))
+                {
+                    includeButton = Convert.ToBoolean(ModuleContext.Settings["IncludeButton"]);
+                }
+                return includeButton;
+            }
+        }
+
         #region Event Handlers
 
 		/// <summary>
@@ -63,35 +73,48 @@ namespace DotNetNuke.Modules.Admin.Users
 		/// </summary>
 		/// <remarks>
 		/// </remarks>
-		/// <history>
-		///   [jlucarino]	02/25/2010 created
-		/// </history>
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 
 			try
 			{
-                if (!IsUser)
+                var template = (ModuleContext.Settings["ProfileTemplate"] != null) 
+                            ? Convert.ToString(ModuleContext.Settings["ProfileTemplate"]) 
+                            : Localization.GetString("DefaultTemplate", LocalResourceFile);
+                var editUrl = Globals.NavigateURL(ModuleContext.PortalSettings.ActiveTab.TabID, "Profile", "userId=" + ProfileUserId, "pageno=3");
+
+                if (template.Contains("[HYPERLINK:EDITPROFILE]"))
                 {
-                    editLink.Visible = false;
+                    if (IncludeButton && IsUser)
+                    {
+                        string editHyperLink = String.Format("<a href=\"{0}\" class=\"dnnPrimaryAction\">{1}</a>", editUrl, LocalizeString("Edit"));
+                        template = template.Replace("[HYPERLINK:EDITPROFILE]", editHyperLink);
+                    }
+                    buttonPanel.Visible = false;
+                }
+                else
+                {
+                    buttonPanel.Visible = IncludeButton;
+                    editLink.NavigateUrl = editUrl;
                 }
 
-                editLink.NavigateUrl = Globals.NavigateURL(ModuleContext.PortalSettings.ActiveTab.TabID, "Profile", "userId=" + ProfileUserId, "pageno=3");
+                if (!IsUser && buttonPanel.Visible)
+                {
+                    buttonPanel.Visible = false;
+                }
 
-                if (ProfileUser.Profile.ProfileProperties.Cast<ProfilePropertyDefinition>().Count(profProperty => profProperty.Visible) == 0)
+			    if (ProfileUser.Profile.ProfileProperties.Cast<ProfilePropertyDefinition>().Count(profProperty => profProperty.Visible) == 0)
                 {
                     noPropertiesLabel.Visible = true;
                 }
                 else
                 {
-                    var template = "";
                     var token = new TokenReplace { User = ProfileUser, AccessingUser = ModuleContext.PortalSettings.UserInfo };
-
-                    template = (ModuleContext.Settings["ProfileTemplate"] != null) ? Convert.ToString(ModuleContext.Settings["ProfileTemplate"]) : Localization.GetString("DefaultTemplate", LocalResourceFile);
-
                     profileOutput.Text = token.ReplaceEnvironmentTokens(template);
                 }
+
+
 			}
 			catch (Exception exc)
 			{

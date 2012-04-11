@@ -1,25 +1,23 @@
-/* *********************************************************************
- * The contents of this file are subject to the Mozilla Public License 
- * Version 1.1 (the "License"); you may not use this file except in 
- * compliance with the License. You may obtain a copy of the License at 
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. 
- * See the License for the specific language governing rights and 
- * limitations under the License.
- *
- * The Original Code is named 51Degrees.mobi DotNetNuke Module, first 
- * released under this licence on 26th January 2012.
- * 
- * The Initial Developer of the Original Code is owned by 
- * 51 Degrees Mobile Experts Limited. Portions created by 51 Degrees
- * Mobile Experts Limited are Copyright (C) 2012. All Rights Reserved.
- * 
- * Contributor(s):
- *     James Rosewell <james@51degrees.mobi>
- * 
- * ********************************************************************* */
+#region Copyright
+// 
+// DotNetNuke® - http://www.dotnetnuke.com
+// Copyright (c) 2002-2012
+// by DotNetNuke Corporation
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// DEALINGS IN THE SOFTWARE.
+#endregion
 
 using DotNetNuke.Framework;
 
@@ -32,8 +30,8 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
     using Components;
     using FiftyOne.Foundation.Mobile.Detection;
     using FiftyOne.Foundation.UI;
-
-    /// <summary>
+    using FiftyOne.Foundation.UI.Web;
+/// <summary>
     /// Administration control is used as the main control off the hosts
     /// page to activate 51Degrees.mobi.
     /// </summary>
@@ -54,8 +52,11 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
 
             SearchButton.Click += SearchButtonClick;
             HardwareList.ItemDataBound += ListItemDataBound;
+            PremiumUpload.UploadComplete += UploadComplete;
             
             NoResultsMessage.Visible = false;
+            PremiumUploadSuccess.Visible = false;
+            PremiumUploadError.Visible = false;
 
             jQuery.RequestDnnPluginsRegistration();
 
@@ -71,8 +72,9 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
 
             var refreshButtonText = LocalizeString("StatsRefreshButton.Text");
             var statsHtml = LocalizeString("StatsHtml.Text");
-            FooterStats.RefreshButtonText = refreshButtonText;
-            FooterStats.Html = statsHtml;
+            PremiumStats.RefreshButtonText = refreshButtonText;
+            PremiumStats.Html = statsHtml;
+            PremiumUpload.UploadButtonText = LocalizeString("UploadData.Text");
             LiteStats.RefreshButtonText = refreshButtonText;
             LiteStats.Html = statsHtml;
 
@@ -134,6 +136,19 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
                 SearchTextBox.Text = Server.UrlDecode(searchQuery);
 
             NoResultsMessage.Visible = hasSearchQuery && !hasDeviceId && !hasModel && !hasVendor;
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+
+            purchaseBox.Visible = !DataProvider.IsPremium;
+        }
+
+        private void UploadComplete(object sender, ActivityResult e)
+        {
+            PremiumUploadError.Visible = !e.Success;
+            PremiumUploadSuccess.Visible = e.Success;
         }
 
         private static void ListItemDataBound(object sender, RepeaterItemEventArgs e)

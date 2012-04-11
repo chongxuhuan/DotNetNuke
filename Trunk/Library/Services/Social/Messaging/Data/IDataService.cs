@@ -20,6 +20,7 @@
 #endregion
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Data;
 using DotNetNuke.Services.Social.Messaging.Views;
@@ -31,47 +32,58 @@ namespace DotNetNuke.Services.Social.Messaging.Data
     public interface IDataService
     {
         #region Messages CRUD
-        
-        int SaveSocialMessage(Message message, int createUpdateUserId);
-        IDataReader GetSocialMessage();
-        IDataReader GetSocialMessagesBySender();
-        void DeleteSocialMessage(int messageId);
 
-        MessageBoxView GetMessageBoxView(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
+        int SaveMessage(Message message,int portalId, int createUpdateUserId, DateTime messageDateTime);
+        IDataReader GetMessage(int messageId);
+        IDataReader GetMessagesBySender(int messageId, int portalId);
+        void DeleteMessage(int messageId);
+
+        MessageBoxView GetMessageBoxView(int userId, int portalId,int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
         MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);        
-        void UpdateSocialMessageReadStatus(int conversationId, int userId, bool read);
-        void UpdateSocialMessageArchivedStatus(int conversationId, int userId, bool archived);
-        int CreateMessageReply(int conversationId, string body, int senderUserId, string from, int createUpdateUserId);
+        void UpdateMessageReadStatus(int conversationId, int userId, bool read);
+        void UpdateMessageArchivedStatus(int conversationId, int userId, bool archived);
+        int CreateMessageReply(int conversationId, int portalId,string body, int senderUserId, string from, int createUpdateUserId);
+        int CountNewThreads(int userId, int portalId);
+        int CountTotalConversations(int userId, int portalId, bool? read, bool? archived, bool? sentOnly);
+        int CountMessagesByConversation(int conversationId);
+        int CountArchivedMessagesByConversation(int conversationId);
         
         #endregion
 
         #region Message_Recipients CRUD
-        
-        int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId);
-        void CreateSocialMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId);
-        IDataReader GetSocialMessageRecipient(int messageRecipientId);
-        IDataReader GetSocialMessageRecipientsByUser(int userId);
-        IDataReader GetSocialMessageRecipientsByMessage(int messageId);
-        IDataReader GetSocialMessageRecipientByMessageAndUser(int messageId, int userId);
-        void DeleteSocialMessageRecipient(int messageRecipientId);
+
+        int SaveMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId, DateTime messageDateTime);
+        void CreateMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId, DateTime messageDateTime);
+        IDataReader GetMessageRecipient(int messageRecipientId);
+        IDataReader GetMessageRecipientsByUser(int userId);
+        IDataReader GetMessageRecipientsByMessage(int messageId);
+        IDataReader GetMessageRecipientByMessageAndUser(int messageId, int userId);
+        void DeleteMessageRecipient(int messageRecipientId);
+        void DeleteMessageRecipientByMessageAndUser(int messageId, int userId);
 
         #endregion
 
         #region Message_Attachments CRUD
 
-        int SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserId);
-        IDataReader GetSocialMessageAttachment(int messageAttachmentId);
-        IList<MessageFileView> GetSocialMessageAttachmentsByMessage(int messageId);
-        void DeleteSocialMessageAttachment(int messageAttachmentId);
+        int SaveMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserId);
+        IDataReader GetMessageAttachment(int messageAttachmentId);
+        IList<MessageFileView> GetMessageAttachmentsByMessage(int messageId);
+        void DeleteMessageAttachment(int messageAttachmentId);
 
         #endregion
 
-        #region MessageTypes CRUD
+        #region Upgrade APIs
+        
+        void ConvertLegacyMessages(int pageIndex, int pageSize);
 
-        int SaveMessageType(int messageTypeId, string name, string description, int timeToLive);
-        void DeleteMessageType(int messageTypeId);
-        IDataReader GetMessageType(int messageTypeId);
-        IDataReader GetMessageTypeByName(string name);
+        IDataReader CountLegacyMessages();        
+
+        #endregion
+
+        #region Queued email API's
+
+        IDataReader GetNextMessageForDispatch(Guid schedulerInstance);
+        void MarkMessageAsDispatched(int messageId,int recipientId);
 
         #endregion
     }

@@ -57,7 +57,7 @@ namespace DotNetNuke.Modules.MobileManagement
             if (IsTrialFiftyOneProvider())
             {
                 var trialMessage = LocalizeString("TrialFiftyOneProvider");
-                UI.Skins.Skin.AddModuleMessage(this, trialMessage, ModuleMessage.ModuleMessageType.RedError);
+                UI.Skins.Skin.AddModuleMessage(this, trialMessage, ModuleMessage.ModuleMessageType.BlueInfo);
             }
 
             dvRedirectionsGrid.Visible = (Model.Redirections.Count > 0);
@@ -125,7 +125,7 @@ namespace DotNetNuke.Modules.MobileManagement
         {
             var provider = ProviderConfiguration.GetProviderConfiguration("clientcapability");
             return provider.DefaultProvider == "FiftyOneClientCapabilityProvider" 
-                && !ClientCapabilityProvider.Instance().SupportTabletDetect;
+                && !ClientCapabilityProvider.Instance().SupportsTabletDetection;
         }
 
 

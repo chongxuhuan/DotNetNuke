@@ -26,15 +26,15 @@ using System.Collections;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
-using DotNetNuke.Services.Messaging.Data;
 using DotNetNuke.Services.Scheduling;
 
 #endregion
 
 namespace DotNetNuke.Services.Messaging.Scheduler
-{
+{[Obsolete("Deprecated in 6.2.0 - scheduled item type will automatically update.")]
     public class MessagingScheduler : SchedulerClient
     {
+        
         private readonly MessagingController _mController = new MessagingController();
         private readonly PortalController _pController = new PortalController();
 
@@ -68,8 +68,8 @@ namespace DotNetNuke.Services.Messaging.Scheduler
 
                     while (_messageLeft)
                     {
-                        Message currentMessage = _mController.GetNextMessageForDispatch(_schedulerInstance);
-
+                       Data.Message currentMessage = _mController.GetNextMessageForDispatch(_schedulerInstance);
+                        
                         if ((currentMessage != null))
                         {
                             try
@@ -100,7 +100,7 @@ namespace DotNetNuke.Services.Messaging.Scheduler
             }
         }
 
-        private void SendMessage(Message objMessage)
+        private void SendMessage(Data.Message objMessage)
         {
             string senderAddress = UserController.GetUserById(objMessage.PortalID, objMessage.FromUserID).Email;
             string fromAddress = _pController.GetPortal(objMessage.PortalID).Email;

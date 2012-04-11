@@ -60,7 +60,8 @@ namespace DotNetNuke.Services.Syndication
                 Channel["description"] = Settings.PortalName;
             }
             Channel["language"] = Settings.DefaultLanguage;
-            Channel["copyright"] = Settings.FooterText;
+            Channel["copyright"] = !string.IsNullOrEmpty(Settings.FooterText) ? 
+                Settings.FooterText.Replace("[year]", DateTime.Now.Year.ToString()) : string.Empty;
             Channel["webMaster"] = Settings.Email;
             SearchResultsInfoCollection searchResults = null;
             try

@@ -30,6 +30,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users.Social.Data;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
+using DotNetNuke.Services.Social.Notifications;
 
 #endregion
 
@@ -37,8 +38,20 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 {
     internal class RelationshipControllerImpl : IRelationshipController
     {
+        #region Constants
+
+        internal const string FriendRequest = "FriendRequest";
+        internal const string FollowerRequest = "FollowerRequest";
+        internal const string FollowBackRequest = "FollowBackRequest";
+
+        #endregion
+
+        #region Private Variables
+
         private readonly IDataService _dataService;
         private readonly IEventLogController _eventLogController;
+
+        #endregion
 
         #region Constructors
 
@@ -206,12 +219,17 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         public UserRelationship GetUserRelationship(UserInfo user, UserInfo relatedUser, Relationship relationship)
         {
-            return
-                CBO.FillObject<UserRelationship>(_dataService.GetUserRelationship(user.UserID, relatedUser.UserID,
+            UserRelationship userRelationship = null;
+            if (relationship != null)
+            {
+                userRelationship = CBO.FillObject<UserRelationship>(_dataService.GetUserRelationship(user.UserID, relatedUser.UserID,
                                                                                   relationship.RelationshipId,
                                                                                   GetRelationshipType(
                                                                                       relationship.RelationshipTypeId).
                                                                                       Direction));
+            }
+            return userRelationship;
+
         }
 
         public IList<UserRelationship> GetUserRelationships(UserInfo user)
@@ -315,15 +333,15 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         public UserRelationship InitiateUserRelationship(UserInfo initiatingUser, UserInfo targetUser,
                                                          Relationship relationship)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
-            Requires.NotNull("targetUser", targetUser);
+            Requires.NotNull("user1", initiatingUser);
+            Requires.NotNull("user2", targetUser);
             Requires.NotNull("relationship", relationship);
 
-            Requires.PropertyNotNegative("initiatingUser", "UserID", initiatingUser.UserID);
-            Requires.PropertyNotNegative("targetUser", "UserID", targetUser.UserID);
+            Requires.PropertyNotNegative("user1", "UserID", initiatingUser.UserID);
+            Requires.PropertyNotNegative("user2", "UserID", targetUser.UserID);
 
-            Requires.PropertyNotNegative("initiatingUser", "PortalID", initiatingUser.PortalID);
-            Requires.PropertyNotNegative("targetUser", "PortalID", targetUser.PortalID);
+            Requires.PropertyNotNegative("user1", "PortalID", initiatingUser.PortalID);
+            Requires.PropertyNotNegative("user2", "PortalID", targetUser.PortalID);
 
             Requires.PropertyNotNegative("relationship", "RelationshipId", relationship.RelationshipId);
 
@@ -483,8 +501,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         #endregion
 
         #region Easy Wrapper APIs
-
-
+        
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// AddFriend - Current User initiates a Friend Request to the Target User
@@ -513,10 +530,14 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         /// -----------------------------------------------------------------------------
         public UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("user1", initiatingUser);
 
-            return InitiateUserRelationship(initiatingUser, targetUser,
+            var userRelationship = InitiateUserRelationship(initiatingUser, targetUser,
                                             GetFriendsRelationshipByPortal(initiatingUser.PortalID));
+
+            AddFriendRequestNotification(initiatingUser, targetUser);
+
+            return userRelationship;
         }
 
         /// -----------------------------------------------------------------------------
@@ -532,8 +553,8 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         /// -----------------------------------------------------------------------------
         public bool AreFriends(UserInfo initiatingUser, UserInfo targetUser)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
-            Requires.NotNull("targetUser", targetUser);
+            Requires.NotNull("user1", initiatingUser);
+            Requires.NotNull("user2", targetUser);
 
             Relationship friend = GetFriendsRelationshipByPortal(initiatingUser.PortalID);
 
@@ -562,7 +583,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         /// -----------------------------------------------------------------------------
         public void DeleteFriend(UserInfo initiatingUser, UserInfo targetUser)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("user1", initiatingUser);
 
             UserRelationship friend = GetUserRelationship(initiatingUser, targetUser, GetFriendsRelationshipByPortal(initiatingUser.PortalID));
 
@@ -597,10 +618,14 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         /// -----------------------------------------------------------------------------
         public UserRelationship FollowUser(UserInfo initiatingUser, UserInfo targetUser)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("user1", initiatingUser);
 
-            return InitiateUserRelationship(targetUser, initiatingUser,
+            var userRelationship = InitiateUserRelationship(initiatingUser, targetUser,
                                             GetFollowersRelationshipByPortal(initiatingUser.PortalID));
+
+            AddFollowerRequestNotification(initiatingUser, targetUser);
+
+            return userRelationship;
         }
 
         /// -----------------------------------------------------------------------------
@@ -631,8 +656,8 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         /// -----------------------------------------------------------------------------
         public UserRelationship GetFollowerRelationship(UserInfo initiatingUser, UserInfo targetUser)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
-            Requires.NotNull("targetUser", targetUser);
+            Requires.NotNull("user1", initiatingUser);
+            Requires.NotNull("user2", targetUser);
 
             return GetUserRelationship(initiatingUser, targetUser,
                                        GetFollowersRelationshipByPortal(initiatingUser.PortalID));
@@ -666,8 +691,8 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         /// -----------------------------------------------------------------------------
         public UserRelationship GetFollowingRelationship(UserInfo initiatingUser, UserInfo targetUser)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
-            Requires.NotNull("targetUser", targetUser);
+            Requires.NotNull("user1", initiatingUser);
+            Requires.NotNull("user2", targetUser);
 
             return GetUserRelationship(targetUser, initiatingUser,
                                        GetFollowersRelationshipByPortal(initiatingUser.PortalID));
@@ -701,8 +726,8 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         /// -----------------------------------------------------------------------------
         public UserRelationship GetFriendRelationship(UserInfo initiatingUser, UserInfo targetUser)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
-            Requires.NotNull("targetUser", targetUser);
+            Requires.NotNull("user1", initiatingUser);
+            Requires.NotNull("user2", targetUser);
 
             return GetUserRelationship(initiatingUser, targetUser,
                                        GetFriendsRelationshipByPortal(initiatingUser.PortalID));
@@ -719,7 +744,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         /// -----------------------------------------------------------------------------
         public IList<UserRelationship> GetFriends(UserInfo initiatingUser)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("user1", initiatingUser);
 
             IList<UserRelationship> friends;
             Relationship relationship = GetFriendsRelationshipByPortal(initiatingUser.PortalID);
@@ -739,7 +764,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         /// -----------------------------------------------------------------------------
         public IList<UserRelationship> GetFollowers(UserInfo initiatingUser)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("user1", initiatingUser);
 
             IList<UserRelationship> followers;
             Relationship relationship = GetFollowersRelationshipByPortal(initiatingUser.PortalID);
@@ -759,7 +784,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         /// -----------------------------------------------------------------------------
         public IList<UserRelationship> GetFollowing(UserInfo initiatingUser)
         {
-            Requires.NotNull("initiatingUser", initiatingUser);
+            Requires.NotNull("user1", initiatingUser);
 
             Relationship relationship = GetFollowersRelationshipByPortal(initiatingUser.PortalID);
             return new List<UserRelationship>();
@@ -780,6 +805,73 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             return AreFriends(UserController.GetCurrentUserInfo(), targetUser);
         }
 
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// IsFollower - Is the current user following target user
+        /// </summary>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>True or False</returns>
+        /// <remarks>True is returned only if current user is following target user. 
+        /// The relation status must be Accepted. 
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public bool IsFollowing(UserInfo targetUser)
+        {
+            return IsFollowing(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// IsFollowing - Is User1 following User2
+        /// </summary>        
+        /// <param name="user1">UserInfo for First User</param>        
+        /// <param name="user2">UserInfo for Second User</param>        
+        /// <returns>True or False</returns>
+        /// <remarks>True is returned only if initiating user is following target user. 
+        /// The relation status must be Accepted. 
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public bool IsFollowing(UserInfo user1, UserInfo user2)
+        {
+
+            UserRelationship userRelationship = RelationshipController.Instance.GetFollowerRelationship(user1, user2);
+
+            return (userRelationship != null && userRelationship.Status == RelationshipStatus.Accepted);         
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// IsFollower - Is the current user follower of target user
+        /// </summary>        
+        /// <param name="targetUser">UserInfo for Target User</param>        
+        /// <returns>True or False</returns>
+        /// <remarks>True is returned only if current user is a follower target user. 
+        /// The relation status must be Accepted. 
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public bool IsFollower(UserInfo targetUser)
+        {
+            return IsFollower(UserController.GetCurrentUserInfo(), targetUser);
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// IsFollower - Is User1 follower of User2
+        /// </summary>        
+        /// <param name="user1">UserInfo for First User</param>        
+        /// <param name="user2">UserInfo for Second User</param>        
+        /// <returns>True or False</returns>
+        /// <remarks>True is returned only if initiating user is a follower of target user. 
+        /// The relation status must be Accepted. 
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public bool IsFollower(UserInfo user1, UserInfo user2)
+        {
+
+            UserRelationship userRelationship = RelationshipController.Instance.GetFollowerRelationship(user2, user1);
+
+            return (userRelationship != null && userRelationship.Status == RelationshipStatus.Accepted);
+        }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -941,16 +1033,12 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         private Relationship GetFriendsRelationshipByPortal(int portalId)
         {
-            return
-                GetRelationshipsByPortalId(portalId).Where(
-                    re => re.RelationshipTypeId == (int) DefaultRelationshipTypes.Friends).FirstOrDefault();
+            return GetRelationshipsByPortalId(portalId).FirstOrDefault(re => re.RelationshipTypeId == (int) DefaultRelationshipTypes.Friends);
         }
 
         private Relationship GetFollowersRelationshipByPortal(int portalId)
         {
-            return
-                GetRelationshipsByPortalId(portalId).Where(
-                    re => re.RelationshipTypeId == (int) DefaultRelationshipTypes.Followers).FirstOrDefault();
+            return GetRelationshipsByPortalId(portalId).FirstOrDefault(re => re.RelationshipTypeId == (int) DefaultRelationshipTypes.Followers);
         }
 
         private void ManageUserRelationshipStatus(int userRelationshipId, RelationshipStatus newStatus)
@@ -1006,6 +1094,53 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             }
 
             return userRelationship;
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        internal virtual Notification AddFriendRequestNotification(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            var notificationType = NotificationsController.Instance.GetNotificationType(FriendRequest);
+            var subject = string.Format(Localization.GetString("AddFriendRequestSubject", Localization.GlobalResourceFile),
+                              initiatingUser.DisplayName);
+
+            var body = string.Format(Localization.GetString("AddFriendRequestBody", Localization.GlobalResourceFile),
+                              initiatingUser.DisplayName);
+
+            var notification = NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId,initiatingUser.PortalID, subject, body, null,
+                                                  new List<UserInfo> { targetUser }, initiatingUser);
+
+            var notificationTypeActions = NotificationsController.Instance.GetNotificationTypeActions(notification.NotificationTypeID);
+            foreach (var notificationTypeAction in notificationTypeActions)
+            {
+                NotificationsController.Instance.CreateNotificationAction(notification.NotificationID, notificationTypeAction.NotificationTypeActionId,
+                                         initiatingUser.UserID.ToString());
+            }
+
+            return notification;
+        }
+
+        internal virtual Notification AddFollowerRequestNotification(UserInfo initiatingUser, UserInfo targetUser)
+        {
+            var notificationType = NotificationsController.Instance.GetNotificationType(IsFollowing(targetUser, initiatingUser) ? FollowerRequest: FollowBackRequest);
+            var subject = string.Format(Localization.GetString("AddFollowerRequestSubject", Localization.GlobalResourceFile),
+                              initiatingUser.DisplayName);
+
+            var body = string.Format(Localization.GetString("AddFollowerRequestBody", Localization.GlobalResourceFile),
+                              initiatingUser.DisplayName);
+
+            var notification = NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId,initiatingUser.PortalID, subject, body, null,
+                                                  new List<UserInfo> { targetUser }, initiatingUser);
+
+            var notificationTypeActions = NotificationsController.Instance.GetNotificationTypeActions(notification.NotificationTypeID);
+            foreach (var notificationTypeAction in notificationTypeActions)
+            {                
+                NotificationsController.Instance.CreateNotificationAction(notification.NotificationID, notificationTypeAction.NotificationTypeActionId, initiatingUser.UserID.ToString());
+            }
+
+            return notification;
         }
 
         #endregion

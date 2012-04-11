@@ -4,10 +4,13 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="PortalAliases" Src="~/DesktopModules/Admin/Portals/PortalAliases.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
+<%@ Register TagPrefix="dnn" TagName="ProfileDefinitions" Src="~/DesktopModules/Admin/Security/ProfileDefinitions.ascx" %>
+
 <div class="dnnForm dnnSiteSettings dnnClear" id="dnnSiteSettings">
 	<ul class="dnnAdminTabNav dnnClear">
 		<li><a href="#ssBasicSettings"><%=LocalizeString("BasicSettings") %></a></li>
 		<li><a href="#ssAdvancedSettings"><%=LocalizeString("AdvancedSettings") %></a></li>
+		<li><a href="#ssUserAccountSettings"><%=LocalizeString("UserAccountSettings")%></a></li>
 		<li><a href="#ssStylesheetEditor"><%=LocalizeString("StylesheetEditor")%></a></li>
 	</ul>
 	<div class="ssBasicSettings dnnClear" id="ssBasicSettings">
@@ -144,15 +147,6 @@
 			</fieldset>        
             <h2 id="dnnSitePanel-SecuritySettings" class="dnnFormSectionHead"><a href=""><%=LocalizeString("SecuritySettings")%></a></h2>
 			<fieldset class="ssasSecuritySettings">
-				<div class="dnnFormItem">
-					<dnn:Label ID="plUserRegistration" runat="server" ControlName="optUserRegistration" />
-					<asp:RadioButtonList ID="optUserRegistration" CssClass="dnnFormRadioButtons" runat="server" EnableViewState="False" RepeatDirection="Horizontal">
-						<asp:ListItem Value="0" resourcekey="None" />
-						<asp:ListItem Value="1" resourcekey="Private" />
-						<asp:ListItem Value="2" resourcekey="Public" />
-						<asp:ListItem Value="3" resourcekey="Verified" />
-					</asp:RadioButtonList>
-				</div>
 				<div class="dnnFormItem">
 					<dnn:Label ID="plAdministrator" runat="server" ControlName="cboAdministratorId" />
 					<asp:DropDownList ID="cboAdministratorId" runat="server" DataTextField="FullName" DataValueField="UserId" />
@@ -369,6 +363,135 @@
 			</div>
 		</div>	
 	</div>
+    <div class="ssUserAccountSettings dnnClear" id="ssUserAccountSettings">
+		<div class="dnnFormExpandContent"><a href=""><%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%></a></div>
+ 		<h2 id="dnnSitePanel-Registration" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Registration")%></a></h2>
+        <fieldset>
+			<div class="dnnFormItem">
+				<dnn:Label ID="plUserRegistration" runat="server" ControlName="optUserRegistration" />
+				<asp:RadioButtonList ID="optUserRegistration" CssClass="dnnFormRadioButtons" runat="server" EnableViewState="False" RepeatDirection="Horizontal">
+					<asp:ListItem Value="0" resourcekey="None" />
+					<asp:ListItem Value="1" resourcekey="Private" />
+					<asp:ListItem Value="2" resourcekey="Public" />
+					<asp:ListItem Value="3" resourcekey="Verified" />
+				</asp:RadioButtonList>
+			</div>
+            <div class="dnnFormItem">
+                <fieldset>
+                    <dnn:DnnFormEditor id="basicRegistrationSettings" runat="Server" FormMode="Short">
+                        <Items>
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Registration_UseAuthProviders" />
+                            <dnn:DnnFormTextBoxItem runat="server" DataField="Registration_ExcludeTerms" />
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Registration_UseProfanityFilter" />
+                        </Items>
+                    </dnn:DnnFormEditor>
+                </fieldset>
+			</div>
+            <div class="dnnFormItem">
+                <fieldset>
+ 				    <div class="dnnFormItem">
+					    <dnn:Label ID="registrationFormTypeLabel" runat="server" ControlName="registrationFormType" />
+					    <asp:RadioButtonList ID="registrationFormType" CssClass="dnnFormRadioButtons" runat="server" EnableViewState="False" RepeatDirection="Horizontal">
+						    <asp:ListItem Value="0" resourcekey="Standard" />
+						    <asp:ListItem Value="1" resourcekey="Custom" />
+					    </asp:RadioButtonList>  
+				    </div>                       
+                </fieldset>
+                <div id="standardRegistration">
+                    <dnn:DnnFormEditor id="standardRegistrationSettings" runat="Server" FormMode="Short">
+                        <Items>
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Registration_UseEmailAsUserName" />
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Registration_RequireUniqueDisplayName" />
+                            <dnn:DnnFormTextBoxItem runat="server" DataField="Security_DisplayNameFormat" />
+                        </Items>
+                    </dnn:DnnFormEditor>
+                </div>
+                <dnn:DnnFormEditor id="validationRegistrationSettings" runat="Server" FormMode="Short">
+                    <Items>
+                        <dnn:DnnFormTextBoxItem runat="server" DataField="Security_UserNameValidation" />
+                        <dnn:DnnFormTextBoxItem runat="server" DataField="Security_EmailValidation" />
+                    </Items>
+                </dnn:DnnFormEditor>
+                <div id="uniqueEmailRow">
+                    <hr/>
+                    <dnn:DnnFormEditor id="standardProviderSettings" runat="Server" FormMode="Short">
+                        <Items>
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="RequiresUniqueEmail" Enabled="False" />
+                        </Items>
+                    </dnn:DnnFormEditor>
+                </div>
+                <fieldset id="customRegistrationFieldSet">
+					<div class="dnnFormItem">
+						<dnn:Label ID="registrationFieldsLabel" runat="server" ControlName="registrationFields" />
+						<asp:TextBox ID="registrationFields" runat="server" />
+					</div>
+                </fieldset>
+                <fieldset id="passwordRegistrationFieldSet">
+                    <dnn:DnnFormEditor id="passwordRegistrationSettings" runat="Server" FormMode="Short">
+                        <Items>
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Registration_RandomPassword" />
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Registration_RequireConfirmPassword" />
+                        </Items>
+                    </dnn:DnnFormEditor>
+                </fieldset>
+                <dnn:propertyeditorcontrol id="passwordSettings" runat="Server" valuedatafield="PropertyValue" namedatafield="Name" helpstyle-cssclass="dnnFormHelpContent dnnClear" sortmode="SortOrderAttribute" />
+                <fieldset>
+                    <dnn:DnnFormEditor id="passwordProviderSettings" runat="Server" FormMode="Short">
+                        <Items>
+                            <dnn:DnnFormTextBoxItem runat="server" DataField="PasswordFormat" Enabled="False" />
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="PasswordRetrievalEnabled" Enabled="False" />
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="PasswordResetEnabled" Enabled="False" />
+                            <dnn:DnnFormNumericTextBoxItem runat="server" DataField="MinPasswordLength" Enabled="False" />
+                            <dnn:DnnFormNumericTextBoxItem runat="server" DataField="MinNonAlphanumericCharacters" Enabled="False" />
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="RequiresQuestionAndAnswer" Enabled="False" />
+                            <dnn:DnnFormTextBoxItem runat="server" DataField="PasswordStrengthRegularExpression" Enabled="False" />
+                            <dnn:DnnFormNumericTextBoxItem runat="server" DataField="MaxInvalidPasswordAttempts" Enabled="False" />
+                            <dnn:DnnFormNumericTextBoxItem runat="server" DataField="PasswordAttemptWindow" Enabled="False" />
+                        </Items>
+                    </dnn:DnnFormEditor>
+                </fieldset>
+                <fieldset>
+                    <dnn:DnnFormEditor id="otherRegistrationSettings" runat="Server" FormMode="Short">
+                        <Items>
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Security_RequireValidProfile" />
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Security_CaptchaRegister" />
+                            <dnn:DnnFormPagesItem runat="server" DataField="Redirect_AfterRegistration" />
+                        </Items>
+                    </dnn:DnnFormEditor>
+                </fieldset>
+            </div>            
+        </fieldset>
+ 		<h2 id="dnnSitePanel-Login" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Login")%></a></h2>
+        <fieldset>
+ 			<div class="dnnFormItem">
+                <fieldset>
+                    <dnn:DnnFormEditor id="loginSettings" runat="Server" FormMode="Short">
+                        <Items>
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Security_CaptchaLogin" />
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Security_RequireValidProfileAtLogin" />
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Security_CaptchaRetrivePassword" />
+                            <dnn:DnnFormPagesItem runat="server" DataField="Redirect_AfterLogin" />
+                            <dnn:DnnFormPagesItem runat="server" DataField="Redirect_AfterLogout" />
+                        </Items>
+                    </dnn:DnnFormEditor>
+                </fieldset>
+			</div>               
+        </fieldset>
+ 		<h2 id="dnnSitePanel-Profile" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Profile")%></a></h2>
+        <fieldset>
+ 			<div class="dnnFormItem">
+                <fieldset>
+                    <dnn:DnnFormEditor id="profileSettings" runat="Server" FormMode="Short">
+                        <Items>
+                            <dnn:DnnFormEnumItem id="userVisiblity" runat="server" DataField="Profile_DefaultVisibility" />
+                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Profile_DisplayVisibility" />
+                        </Items>
+                    </dnn:DnnFormEditor>
+                </fieldset>
+ 			    <dnn:ProfileDefinitions ID="profileDefinitions" runat="server" />
+			</div>               
+        </fieldset>
+    </div>
 	<div class="ssStylesheetEditor dnnClear" id="ssStylesheetEditor">
 		<div class="ssseContent dnnClear">
 			<fieldset>
@@ -391,6 +514,22 @@
 <script language="javascript" type="text/javascript">
 /*globals jQuery, window, Sys */
 (function ($, Sys) {
+    function toggleRegistrationFormType(animation) {
+        var registrationType = $('#<%= registrationFormType.ClientID %> input:checked').val(); /*0,1*/
+        if (registrationType == "0") {
+            animation ? $('#standardRegistration').slideDown() : $('#standardRegistration').show();
+            animation ? $('#uniqueEmailRow').slideDown() : $('#uniqueEmailRow').show();
+            animation ? $('#passwordRegistrationFieldSet').slideDown() : $('#passwordRegistrationFieldSet').show();
+            animation ? $('#customRegistrationFieldSet').slideUp('fast') : $('#customRegistrationFieldSet').hide();
+        }
+        else {
+            animation ? $('#standardRegistration').slideUp('fast') : $('#standardRegistration').hide();
+            animation ? $('#uniqueEmailRow').slideUp('fast') : $('#uniqueEmailRow').hide();
+            animation ? $('#passwordRegistrationFieldSet').slideUp('fast') : $('#passwordRegistrationFieldSet').hide();
+            animation ? $('#customRegistrationFieldSet').slideDown() : $('#customRegistrationFieldSet').show();
+        }
+    }
+
     function setupDnnSiteSettings() {
         $('#dnnSiteSettings').dnnTabs().dnnPanels();
         $('#siteSkinSettings,#editSkinSettings').dnnPreview({
@@ -450,6 +589,11 @@
                 searchEngine += "&submit=Add+URL";
             }
             window.open(searchEngine, 'new');
+        });
+
+        toggleRegistrationFormType(false);
+        $('#<%= registrationFormType.ClientID %>').click(function () {
+            toggleRegistrationFormType(true);
         });
     }
 

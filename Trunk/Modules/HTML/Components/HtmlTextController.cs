@@ -21,7 +21,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -38,14 +37,11 @@ using DotNetNuke.Security.Permissions;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.Services.Mail;
-using DotNetNuke.Services.Messaging;
 using DotNetNuke.Services.Messaging.Data;
 using DotNetNuke.Services.Search;
+using DotNetNuke.Services.Social.Notifications;
 using DotNetNuke.Services.Tokens;
 using DotNetNuke.Services.Exceptions;
-
-
 
 namespace DotNetNuke.Modules.Html
 {
@@ -67,40 +63,25 @@ namespace DotNetNuke.Modules.Html
         private const int MAX_DESCRIPTION_LENGTH = 100;
         private const string PortalRootToken = "{{PortalRoot}}";
 
-        private static readonly MessagingController _messagingController = new MessagingController();
+        #region Private Methods
 
-        private string DeTokeniseLinks(string content, int portalId)
+        private static void AddHtmlNotification(string subject, string body, UserInfo user)
         {
+            var notificationType = NotificationsController.Instance.GetNotificationType("HtmlNotification");
+            var portalSettings = PortalController.GetCurrentPortalSettings();
+            var sender = UserController.GetUserById(portalSettings.PortalId, portalSettings.AdministratorId);
 
-            var portalController = new PortalController();
-            var portal = portalController.GetPortal(portalId);
-            var portalRoot = UrlUtils.Combine(Globals.ApplicationPath, portal.HomeDirectory);
-            if (!portalRoot.StartsWith("/"))
-            {
-                portalRoot = "/" + portalRoot;
-            }
-            content = content.Replace(PortalRootToken, portalRoot);
-
-            return content;
+            NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId, portalSettings.PortalId, subject, body, null, new List<UserInfo> { user }, sender);
         }
 
-        private string TokeniseLinks(string content, int portalId)
+        private void ClearModuleSettings(ModuleInfo objModule)
         {
-            //Replace any relative portal root reference by a token "{{PortalRoot}}"
-            var portalController = new PortalController();
-            var portal = portalController.GetPortal(portalId);
-            var portalRoot = UrlUtils.Combine(Globals.ApplicationPath, portal.HomeDirectory);
-            if (!portalRoot.StartsWith("/"))
+            var moduleController = new ModuleController();
+            if (objModule.ModuleDefinition.FriendlyName == "Text/HTML")
             {
-                portalRoot = "/" + portalRoot;
+                moduleController.DeleteModuleSetting(objModule.ModuleID, "WorkFlowID");
             }
-            Regex exp = new Regex(portalRoot, RegexOptions.IgnoreCase);
-            content = exp.Replace(content, PortalRootToken);
-
-            return content;
         }
-
-        #region Public Methods
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -108,7 +89,7 @@ namespace DotNetNuke.Modules.Html
         /// </summary>
         /// <remarks>
         /// </remarks>
-        /// <param name = "objHtmlText">An HtmlTextInfo object</param>
+        /// <param name="objHtmlText">An HtmlTextInfo object</param>
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
@@ -207,23 +188,9 @@ namespace DotNetNuke.Modules.Html
                         if (objHtmlText.Notify)
                         {
                             _user = UserController.GetUserById(objHtmlText.PortalID, intUserID);
-                            if ((_user != null))
+                            if (_user != null)
                             {
-                                var message = new Message();
-                                message.FromUserID = objPortalSettings.AdministratorId;
-                                message.ToUserID = _user.UserID;
-                                message.Subject = strSubject;
-                                message.Body = strBody;
-                                message.Status = MessageStatusType.Unread;
-                                _messagingController.SaveMessage(message);
-                                try
-                                {
-                                    Services.Mail.Mail.SendEmail(objPortalSettings.Email, _user.Email, message.Subject, message.Body);
-                                }
-                                catch (Exception exc)
-                                {
-                                    Exceptions.LogException(exc);
-                                }
+                                AddHtmlNotification(strSubject, strBody, _user);
                             }
                         }
                     }
@@ -233,18 +200,11 @@ namespace DotNetNuke.Modules.Html
                     {
                         // send email notification to the author
                         _user = UserController.GetUserById(objHtmlText.PortalID, objHtmlText.CreatedByUserID);
-                        if ((_user != null))
+                        if (_user != null)
                         {
-                            var message = new Message();
-                            message.FromUserID = objPortalSettings.AdministratorId;
-                            message.ToUserID = _user.UserID;
-                            message.Subject = strSubject;
-                            message.Body = strBody;
-                            message.Status = MessageStatusType.Unread;
-                            //_messagingController.SaveMessage(message);
                             try
                             {
-                                Services.Mail.Mail.SendEmail(objPortalSettings.Email, objPortalSettings.Email, message.Subject, message.Body);
+                                Services.Mail.Mail.SendEmail(objPortalSettings.Email, objPortalSettings.Email, strSubject, strBody);
                             }
                             catch (Exception exc)
                             {
@@ -256,6 +216,41 @@ namespace DotNetNuke.Modules.Html
             }
         }
 
+        private string DeTokeniseLinks(string content, int portalId)
+        {
+
+            var portalController = new PortalController();
+            var portal = portalController.GetPortal(portalId);
+            var portalRoot = UrlUtils.Combine(Globals.ApplicationPath, portal.HomeDirectory);
+            if (!portalRoot.StartsWith("/"))
+            {
+                portalRoot = "/" + portalRoot;
+            }
+            content = content.Replace(PortalRootToken, portalRoot);
+
+            return content;
+        }
+
+        private string TokeniseLinks(string content, int portalId)
+        {
+            //Replace any relative portal root reference by a token "{{PortalRoot}}"
+            var portalController = new PortalController();
+            var portal = portalController.GetPortal(portalId);
+            var portalRoot = UrlUtils.Combine(Globals.ApplicationPath, portal.HomeDirectory);
+            if (!portalRoot.StartsWith("/"))
+            {
+                portalRoot = "/" + portalRoot;
+            }
+            Regex exp = new Regex(portalRoot, RegexOptions.IgnoreCase);
+            content = exp.Replace(content, PortalRootToken);
+
+            return content;
+        }
+
+        #endregion
+
+        #region Public Methods
+        
         /// -----------------------------------------------------------------------------
         /// <summary>
         ///   DeleteHtmlText deletes an HtmlTextInfo object for the Module and Item
@@ -646,15 +641,6 @@ namespace DotNetNuke.Modules.Html
                         }
                     }
                     break;
-            }
-        }
-
-        private void ClearModuleSettings(ModuleInfo objModule)
-        {
-            var moduleController = new ModuleController();
-            if (objModule.ModuleDefinition.FriendlyName == "Text/HTML")
-            {
-                moduleController.DeleteModuleSetting(objModule.ModuleID, "WorkFlowID");
             }
         }
 

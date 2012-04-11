@@ -25,6 +25,7 @@
 
 using System;
 
+using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Authentication.OAuth;
 
 #endregion
@@ -35,19 +36,16 @@ namespace DotNetNuke.Authentication.Facebook.Components
     {
         #region Constructors
 
-        public FacebookClient(int portalId)
+        public FacebookClient(int portalId, AuthMode mode) 
+            : base(portalId, mode, "Facebook")
         {
             TokenEndpoint = new Uri("https://graph.facebook.com/oauth/access_token");
             TokenMethod = HttpMethod.GET;
             AuthorizationEndpoint = new Uri("https://graph.facebook.com/oauth/authorize");
             MeGraphEndpoint = new Uri("https://graph.facebook.com/me");
 
-            Service = "Facebook";
             Scope = "email";
 
-            APIKey = OAuthConfigBase.GetConfig(Service, portalId).APIKey;
-            APISecret = OAuthConfigBase.GetConfig(Service, portalId).APISecret;
-            CallbackUri = new Uri(OAuthConfigBase.GetConfig(Service, portalId).SiteURL);
             AuthTokenName = "FacebookUserToken";
 
             OAuthVersion = "2.0";

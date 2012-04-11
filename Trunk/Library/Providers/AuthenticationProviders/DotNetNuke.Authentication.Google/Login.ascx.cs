@@ -39,6 +39,11 @@ namespace DotNetNuke.Authentication.Google
             get { return "Google"; }
         }
 
+        public override bool SupportsRegistration
+        {
+            get { return true; }
+        }
+
         protected override UserData GetCurrentUser()
         {
             return OAuthClient.GetCurrentUser<GoogleUserData>();
@@ -50,7 +55,7 @@ namespace DotNetNuke.Authentication.Google
 
             loginButton.Click += loginButton_Click;
 
-            OAuthClient = new GoogleClient(PortalId);
+            OAuthClient = new GoogleClient(PortalId, Mode);
         }
 
         private void loginButton_Click(object sender, EventArgs e)

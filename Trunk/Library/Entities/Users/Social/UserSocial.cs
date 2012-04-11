@@ -79,11 +79,11 @@ namespace DotNetNuke.Entities.Users.Social
         }
 
         /// <summary>
-        /// Returns the Follower Relationship (if it exists with the current User)
+        /// Returns the Follower Relationship. Does the user in object Follow the current User (with any status)
         /// </summary>
         public UserRelationship Follower
         {
-            get { return RelationshipController.Instance.GetFollowerRelationship(_userInfo); }
+            get { return RelationshipController.Instance.GetFollowingRelationship(_userInfo); }            
         }
 
         /// <summary>
@@ -91,9 +91,8 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         public UserRelationship Following
         {
-            get { return RelationshipController.Instance.GetFollowingRelationship(_userInfo); }
+            get { return RelationshipController.Instance.GetFollowerRelationship(_userInfo); }
         }
-
 
         /// <summary>
         /// A collection of all the relationships the user is a member of.

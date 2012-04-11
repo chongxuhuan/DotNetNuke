@@ -50,7 +50,7 @@ namespace DotNetNuke.Authentication.LinkedIn
 
             loginButton.Click += loginButton_Click;
 
-            OAuthClient = new LinkedInClient(PortalId);
+            OAuthClient = new LinkedInClient(PortalId, Mode);
         }
 
         private void loginButton_Click(object sender, EventArgs e)

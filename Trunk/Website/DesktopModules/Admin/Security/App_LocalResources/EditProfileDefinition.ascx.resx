@@ -163,7 +163,7 @@
     <value>Visible:</value>
   </data>
   <data name="ProfilePropertyDefinition_Visible.Help" xml:space="preserve">
-    <value>If left unchecked this property will only be visible to Administrators only - the user will not be able to view or edit the property.</value>
+    <value>If left unchecked this property will only be visible to Administrators - the user will not be able to view or edit the property.</value>
   </data>
   <data name="ProfilePropertyDefinition_Required.Text" xml:space="preserve">
     <value>Required:</value>
@@ -266,5 +266,23 @@
   </data>
   <data name="AddProperty.Text" xml:space="preserve">
     <value>Add Profile Property Definition</value>
+  </data>
+  <data name="ProfilePropertyDefinition_DefaultVisibility.Help" xml:space="preserve">
+    <value>You can set the default visibility of the profile property.  This is the initial value of the visibility and applies if the user does not modify it, when editing their profile.</value>
+  </data>
+  <data name="ProfilePropertyDefinition_DefaultVisibility.Text" xml:space="preserve">
+    <value>Default Visibility:</value>
+  </data>
+  <data name="ProfilePropertyDefinition_ReadOnly.Help" xml:space="preserve">
+    <value>You can make a profile property read only.  A read-onlly property can be edited by the admin and is readon-only to the end-user.</value>
+  </data>
+  <data name="ProfilePropertyDefinition_ReadOnly.Text" xml:space="preserve">
+    <value>Read Only:</value>
+  </data>
+  <data name="Cancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Return.Text" xml:space="preserve">
+    <value>Return</value>
   </data>
 </root>

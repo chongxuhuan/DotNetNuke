@@ -731,6 +731,13 @@ namespace DotNetNuke.Modules.Admin.Users
             {
                 ctlUser.CreateUser();
             }
+            else
+            {
+                if (ctlUser.CreateStatus != UserCreateStatus.AddUser)
+                {
+                    AddLocalizedModuleMessage(UserController.GetUserCreateStatus(ctlUser.CreateStatus), ModuleMessage.ModuleMessageType.RedError, true);
+                }
+            }
         }
 
         /// -----------------------------------------------------------------------------

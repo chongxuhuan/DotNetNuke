@@ -19,6 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
@@ -28,10 +29,21 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 {
     public interface IMessagingController
     {
+        #region Upgrade APIs
+
+        void ConvertLegacyMessages(int pageIndex, int pageSize);
+        int CountLegacyMessages();
+
+        #endregion
+
         #region Messaging Business APIs
 
-        MessageRecipient GetSocialMessageRecipient(int messageRecipientId, int userId);
+        Message GetMessage(int messageId);
 
+        MessageRecipient GetMessageRecipient(int messageId, int userId);
+        IList<MessageRecipient> GetMessageRecipients(int messageId);
+        void DeleteMessageRecipient(int messageId, int userId);
+        
         ///<summary>How long a user needs to wait before user is allowed sending the next message</summary>
         ///<returns>Time in seconds. Returns zero if user has never sent a message</returns>
         /// <param name="sender">Sender's UserInfo</param>        
@@ -84,19 +96,26 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender);
 
+        Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender, DateTime messageDateTime);
+
         int ReplyMessage(int conversationId, string body, IList<int> fileIDs);
 
         int ReplyMessage(int conversationId, string body, IList<int> fileIDs, UserInfo sender);
 
+        int CountUnreadMessages(int userId,int portalId);
+
+        int CountConversations(int userId, int portalId,MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
+
+        int CountMessagesByConversation(int conversationId);
+
+        int CountArchivedMessagesByConversation(int conversationId);
+
         #endregion
 
-        #region MessageTypes Methods
+        #region Queued email API's
 
-        MessageType CreateMessageType(string name, string description, int timeToLive);
-        void UpdateMessageType(MessageType messageType);
-        void DeleteMessageType(int messageTypeId);
-        MessageType GetMessageType(int messageTypeId);
-        MessageType GetMessageType(string name);
+        MessageRecipient GetNextMessageForDispatch(Guid schedulerInstance);
+        void MarkMessageAsDispatched(int messageId, int recipientId);
 
         #endregion
     }

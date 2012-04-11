@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Web.Script.Serialization;
 
+using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Authentication.OAuth;
 
 #endregion
@@ -38,18 +39,13 @@ namespace DotNetNuke.Authentication.LiveConnect.Components
     {
         #region Constructors
 
-        public LiveClient(int portalId)
+        public LiveClient(int portalId, AuthMode mode) : base(portalId, mode, "Live")
         {
             TokenEndpoint = new Uri("https://oauth.live.com/token");
             AuthorizationEndpoint = new Uri("https://oauth.live.com/authorize");
             MeGraphEndpoint = new Uri("https://apis.live.net/v5.0/me");
 
-            Service = "Live";
             Scope = HttpContext.Current.Server.UrlEncode("wl.signin wl.basic wl.emails");
-
-            APIKey = OAuthConfigBase.GetConfig(Service, portalId).APIKey;
-            APISecret = OAuthConfigBase.GetConfig(Service, portalId).APISecret;
-            CallbackUri = new Uri(OAuthConfigBase.GetConfig(Service, portalId).SiteURL);
 
             AuthTokenName = "LiveUserToken";
 

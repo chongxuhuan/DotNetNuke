@@ -7,8 +7,8 @@
     <Items>
         <dnn:DnnFormLiteralItem ID="userNameReadOnly" runat="server" DataField="Username" />
         <dnn:DnnFormTextBoxItem ID="userName" runat="server" DataField="Username" Required="true"/>
-        <dnn:DnnFormTextBoxItem ID="firstName" runat="server" DataField="FirstName" Required="true" />
-        <dnn:DnnFormTextBoxItem ID="lastName" runat="server" DataField="LastName" Required="true" />
+        <dnn:DnnFormTextBoxItem ID="firstName" runat="server" DataField="FirstName" />
+        <dnn:DnnFormTextBoxItem ID="lastName" runat="server" DataField="LastName" />
         <dnn:DnnFormTextBoxItem ID="displayName" runat="server" DataField="DisplayName" Required="true" />
         <dnn:DnnFormLiteralItem ID="displayNameReadOnly" runat="server" DataField="DisplayName" />
         <dnn:DnnFormTextBoxItem ID="email" runat="server" DataField="Email" Required="true" />

@@ -45,12 +45,12 @@ namespace DotNetNuke.UI.Skins.Controls
     /// -----------------------------------------------------------------------------
     public partial class Login : SkinObjectBase
     {
-		#region "Private Members"
+		#region Private Members
 
         private const string MyFileName = "Login.ascx";
 		#endregion
 
-		#region "Public Members"
+		#region Public Members
 		
         public string Text { get; set; }
 
@@ -60,7 +60,7 @@ namespace DotNetNuke.UI.Skins.Controls
 
 		#endregion
 
-		#region "Event Handlers"
+		#region Event Handlers
 
         protected override void OnLoad(EventArgs e)
         {
@@ -113,10 +113,10 @@ namespace DotNetNuke.UI.Skins.Controls
 
                     loginLink.NavigateUrl = Globals.LoginURL(returnUrl, (Request.QueryString["override"] != null));
 
-                    if (PortalSettings.EnablePopUps && PortalSettings.LoginTabId == Null.NullInteger)
-                    {
-                        loginLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(loginLink.NavigateUrl, this, PortalSettings, true, false, 300, 650));
-                    }
+                    //if (PortalSettings.EnablePopUps && PortalSettings.LoginTabId == Null.NullInteger)
+                    //{
+                    //    loginLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(loginLink.NavigateUrl, this, PortalSettings, true, false, 300, 650));
+                    //}
                 }
             }
             catch (Exception exc)

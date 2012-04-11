@@ -373,30 +373,42 @@ namespace DotNetNuke.Entities.Users
             {
                 settings["Security_DisplayNameFormat"] = "";
             }
-            if (settings["Security_RequireConfirmPassword"] == null)
+            if (settings["Registration_RequireConfirmPassword"] == null)
             {
-                settings["Security_RequireConfirmPassword"] = true;
+                settings["Registration_RequireConfirmPassword"] = true;
             }
-            if (settings["Security_RandomPassword"] == null)
+            if (settings["Registration_RandomPassword"] == null)
             {
-                settings["Security_RandomPassword"] = false;
+                settings["Registration_RandomPassword"] = false;
             }
-            if (settings["Security_UseEmailAsUserName"] == null)
+            if (settings["Registration_UseEmailAsUserName"] == null)
             {
-                settings["Security_UseEmailAsUserName"] = false;
+                settings["Registration_UseEmailAsUserName"] = false;
             }
-            if (settings["Security_UseAuthProvidersForRegistration"] == null)
+            if (settings["Registration_UseAuthProviders"] == null)
             {
-                settings["Security_UseAuthProvidersForRegistration"] = false;
+                settings["Registration_UseAuthProviders"] = false;
             }
-            if (settings["Security_UseProfanityFilter"] == null)
+            if (settings["Registration_UseProfanityFilter"] == null)
             {
-                settings["Security_UseProfanityFilter"] = false;
+                settings["Registration_UseProfanityFilter"] = false;
             }
-            if (settings["Security_RegistrationFields"] == null)
+            if (settings["Registration_RegistrationFormType"] == null)
             {
-                settings["Security_RegistrationFields"] = String.Empty;
+                settings["Registration_RegistrationFormType"] = 0;
             }
+            if (settings["Registration_RegistrationFields"] == null)
+            {
+                settings["Registration_RegistrationFields"] = String.Empty;
+            } 
+            if (settings["Registration_ExcludeTerms"] == null)
+            {
+                settings["Registration_ExcludeTerms"] = String.Empty;
+            }
+            if (settings["Registration_RequireUniqueDisplayName"] == null)
+            {
+                settings["Registration_RequireUniqueDisplayName"] = false;
+            } 
             return settings;
         }
 
@@ -1026,6 +1038,7 @@ namespace DotNetNuke.Entities.Users
                             case "Profile_":
                             case "Records_":
                             case "Redirect_":
+                            case "Registration_":
                             case "Security_":
                                 switch (kvp.Key)
                                 {

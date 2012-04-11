@@ -199,7 +199,7 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 			request.CookieContainer = new CookieContainer();
 			foreach (var key in Request.Cookies.AllKeys)
 			{
-				var cookie = new Cookie(key, Request.Cookies[key].Value, "/", request.RequestUri.Host);
+                var cookie = new Cookie(HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(Request.Cookies[key].Value), "/", request.RequestUri.Host);
 				request.CookieContainer.Add(cookie);
 			}
 		}

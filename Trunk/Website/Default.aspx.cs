@@ -368,7 +368,7 @@ namespace DotNetNuke.Framework
             //META copyright
             if (!string.IsNullOrEmpty(PortalSettings.FooterText))
             {
-                Copyright = PortalSettings.FooterText;
+                Copyright = PortalSettings.FooterText.Replace("[year]", DateTime.Now.Year.ToString());
             }
             else
             {

@@ -72,6 +72,7 @@ namespace DotNetNuke.Security.Membership.Data
         public abstract IDataReader GetDeletedUsers(int portalId);
         public abstract IDataReader GetUser(int portalId, int userId);
         public abstract IDataReader GetUserByAuthToken(int portalID, string userToken, string authType);
+        public abstract IDataReader GetUserByDisplayName(int portalID, string displayName);
         public abstract IDataReader GetUserByUsername(int portalID, string username);
         public abstract int GetUserCountByPortal(int portalId);
 

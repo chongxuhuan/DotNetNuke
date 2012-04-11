@@ -25,6 +25,7 @@ using System.Collections;
 using System.Data.Common;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
@@ -46,6 +47,7 @@ using DotNetNuke.Security;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.Services.Localization.Internal;
 using DotNetNuke.UI.Utilities;
 
 using DataCache = DotNetNuke.Common.Utilities.DataCache;
@@ -294,12 +296,21 @@ namespace DotNetNuke.Services.Install
             if (!Page.IsPostBack)
             {
                 cboLanguages.DataSource = GetInstallerLocales();
-                cboLanguages.DataBind(); 
+                cboLanguages.DataBind();
+                SelectBrowserLanguage(); 
                 wizInstall.ActiveStepIndex = 0;
 
                 LocalizePage();
 
             }
+        }
+
+        private void SelectBrowserLanguage()
+        {
+            var codes = cboLanguages.Items.Cast<ListItem>().Select(x => x.Value);
+            string cultureCode = TestableLocalization.Instance.BestCultureCodeBasedOnBrowserLanguages(codes);
+
+            cboLanguages.Items.FindByValue(cultureCode).Selected = true;
         }
 
         // ReSharper disable InconsistentNaming

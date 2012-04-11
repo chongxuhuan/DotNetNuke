@@ -190,6 +190,11 @@ namespace DotNetNuke.Security.Membership.Data
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUserByAuthToken"), portalID, userToken, authType);
         }
 
+        public override IDataReader GetUserByDisplayName(int portalId, string displayName)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUserByDisplayName"), GetNull(portalId), displayName);
+        }
+
         public override IDataReader GetUserByUsername(int portalId, string username)
         {
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUserByUsername"), GetNull(portalId), username);

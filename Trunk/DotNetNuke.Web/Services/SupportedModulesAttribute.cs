@@ -25,7 +25,7 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Web.Services
 {
-    public sealed class SupportedModulesAttribute : AuthorizeAttributeBase
+    public class SupportedModulesAttribute : AuthorizeAttributeBase
     {
         private readonly string[] _supportedModules;
 
@@ -34,9 +34,14 @@ namespace DotNetNuke.Web.Services
             _supportedModules = supportedModules.Split(new[] { ',' });
         }
 
+        protected virtual ModuleInfo FindModuleInfo(HttpContextBase context)
+        {
+            return context.FindModuleInfo();
+        }
+
         protected override bool AuthorizeCore(HttpContextBase context)
         {
-            var module = context.FindModuleInfo();
+            var module = FindModuleInfo(context);
 
             if(module != null)
             {

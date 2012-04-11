@@ -932,14 +932,14 @@ namespace DotNetNuke.Providers.RadEditorProvider
         	var scriptManager = AJAX.GetScriptManager(_panel.Page);
 
             string strRegisterClientScriptPath = _panel.Page.ResolveUrl(moduleFolderPath + "js/ClientScripts.js");
-			scriptManager.Scripts.Add(new ScriptReference(strRegisterClientScriptPath));
+            ScriptManager.RegisterClientScriptInclude(_panel.Page, _panel.Page.GetType(), "ClientScripts", strRegisterClientScriptPath);
 
             string strRegisterDialogScriptPath = _panel.Page.ResolveUrl(moduleFolderPath + "js/RegisterDialogs.js");
-			scriptManager.Scripts.Add(new ScriptReference(strRegisterDialogScriptPath));
+            ScriptManager.RegisterClientScriptInclude(_panel.Page, _panel.Page.GetType(), "RegisterDialogs", strRegisterDialogScriptPath);
 
             if (! string.IsNullOrEmpty(_scripttoload))
             {
-				scriptManager.Scripts.Add(new ScriptReference(_panel.Page.ResolveUrl(_scripttoload)));
+                ScriptManager.RegisterClientScriptInclude(_panel, _panel.GetType(), "ScriptToLoad", _panel.Page.ResolveUrl(_scripttoload));
             }
 
             //add save template dialog var

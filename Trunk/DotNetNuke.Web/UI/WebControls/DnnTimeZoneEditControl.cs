@@ -68,6 +68,15 @@ namespace DotNetNuke.Web.UI.WebControls
             return dataChanged;
         }
 
+        protected override void OnDataChanged(EventArgs e)
+        {
+            var args = new PropertyEditorEventArgs(Name);
+            args.Value = TimeZoneInfo.FindSystemTimeZoneById(StringValue);
+            args.OldValue = OldStringValue;
+            args.StringValue = StringValue;
+            base.OnValueChanged(args);
+        }
+
         protected override void OnInit(System.EventArgs e)
         {
             this.EnsureChildControls();

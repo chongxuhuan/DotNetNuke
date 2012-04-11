@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading;
 using System.Web;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.XPath;
 
 using DotNetNuke.Common;
@@ -39,6 +40,7 @@ using DotNetNuke.Common.Lists;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
@@ -51,6 +53,7 @@ using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
+using DotNetNuke.Services.Installer;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 
@@ -127,7 +130,7 @@ namespace DotNetNuke.Entities.Portals
             controller.AddUserRole(portalId, administratorId, subscriberRoleId, Null.NullDate, Null.NullDate);
         }
 
-        private static string CreateProfileDefinitions(int portalId, string templatePath, string templateFile)
+        private static string CreateProfileDefinitions(int portalId, string templateFilePath)
         {
             string strMessage = Null.NullString;
             try
@@ -138,7 +141,7 @@ namespace DotNetNuke.Entities.Portals
                 //open the XML template file
                 try
                 {
-                    xmlDoc.Load(templatePath + templateFile);
+                    xmlDoc.Load(templateFilePath);
                 }
                 catch (Exception ex)
                 {
@@ -1133,6 +1136,29 @@ namespace DotNetNuke.Entities.Portals
                                 string templateFile, string homeDirectory, string portalAlias,
                                 string serverPath, string childPath, bool isChildPortal)
         {
+            var template = TestablePortalController.Instance.GetPortalTemplate(Path.Combine(templatePath, templateFile), null);
+
+            return CreatePortal(portalName, adminUser, description, keyWords, template, homeDirectory, portalAlias,
+                                serverPath, childPath, isChildPortal);
+        }
+
+        /// <summary>
+        /// Creates the portal.
+        /// </summary>
+        /// <param name="portalName">Name of the portal.</param>
+        /// <param name="adminUser">The obj admin user.</param>
+        /// <param name="description">The description.</param>
+        /// <param name="keyWords">The key words.</param>
+        /// <param name="template"> </param>
+        /// <param name="homeDirectory">The home directory.</param>
+        /// <param name="portalAlias">The portal alias.</param>
+        /// <param name="serverPath">The server path.</param>
+        /// <param name="childPath">The child path.</param>
+        /// <param name="isChildPortal">if set to <c>true</c> means the portal is child portal.</param>
+        /// <returns>Portal id.</returns>
+        public int CreatePortal(string portalName, UserInfo adminUser, string description, string keyWords, PortalTemplateInfo template, 
+                                string homeDirectory, string portalAlias, string serverPath, string childPath, bool isChildPortal)
+        {
             string message = Null.NullString;
             int administratorId = Null.NullInteger;
 
@@ -1142,6 +1168,10 @@ namespace DotNetNuke.Entities.Portals
             //Add Languages to Portal 
             Localization.AddLanguagesToPortal(portalId);
 
+            string templatePath, templateFile;
+            PrepareLocalizedPortalTemplate(template, out templatePath, out templateFile);
+            string mergedTemplatePath = Path.Combine(templatePath, templateFile);
+
             if (portalId != -1)
             {
                 if (String.IsNullOrEmpty(homeDirectory))
@@ -1149,7 +1179,7 @@ namespace DotNetNuke.Entities.Portals
                     homeDirectory = "Portals/" + portalId;
                 }
                 string mappedHomeDirectory = String.Format(Globals.ApplicationMapPath + "\\" + homeDirectory + "\\").Replace("/", "\\");
-                message += CreateProfileDefinitions(portalId, templatePath, templateFile);
+                message += CreateProfileDefinitions(portalId, mergedTemplatePath);
                 if (message == Null.NullString)
                 {
                     //add administrator
@@ -1231,9 +1261,9 @@ namespace DotNetNuke.Entities.Portals
                             CopyPageTemplate("Default.page.template", mappedHomeDirectory);
 
                             // process zip resource file if present
-                            if (File.Exists(templatePath + templateFile + ".resources"))
+                            if (File.Exists(template.ResourceFilePath))
                             {
-                                ProcessResourceFile(mappedHomeDirectory, templatePath + templateFile);
+                                ProcessResourceFileExplicit(mappedHomeDirectory, template.ResourceFilePath);
                             }
                         }
                         catch (Exception Exc)
@@ -1317,8 +1347,8 @@ namespace DotNetNuke.Entities.Portals
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("Email:", adminUser.Email));
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("Description:", description));
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("Keywords:", keyWords));
-                            objEventLogInfo.LogProperties.Add(new LogDetailInfo("TemplatePath:", templatePath));
-                            objEventLogInfo.LogProperties.Add(new LogDetailInfo("TemplateFile:", templateFile));
+                            objEventLogInfo.LogProperties.Add(new LogDetailInfo("Template:", template.TemplateFilePath));
+                            objEventLogInfo.LogProperties.Add(new LogDetailInfo("TemplateCulture:", template.CultureCode));
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("HomeDirectory:", homeDirectory));
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("PortalAlias:", portalAlias));
                             objEventLogInfo.LogProperties.Add(new LogDetailInfo("ServerPath:", serverPath));
@@ -1350,6 +1380,50 @@ namespace DotNetNuke.Entities.Portals
                 throw new Exception(message);
             }
             return portalId;
+        }
+
+        private void PrepareLocalizedPortalTemplate(PortalTemplateInfo template, out string templatePath, out string templateFile)
+        {
+            if(string.IsNullOrEmpty(template.LanguageFilePath))
+            {
+                //no language to merge
+                templatePath = Path.GetDirectoryName(template.TemplateFilePath) + @"\";
+                templateFile = Path.GetFileName(template.TemplateFilePath);
+                return;
+            }
+
+            templatePath = Path.Combine(TestableGlobals.Instance.HostMapPath, "MergedTemplate");
+            Directory.CreateDirectory(templatePath);
+
+            var buffer = new StringBuilder(File.ReadAllText(template.TemplateFilePath));
+
+            XDocument languageDoc;
+            using (var reader = PortalTemplateIO.Instance.OpenTextReader(template.LanguageFilePath))
+            {
+                languageDoc = XDocument.Load(reader);
+            }
+
+            var localizedData = languageDoc.Descendants("data");
+
+            foreach (var item in localizedData)
+            {
+                var nameAttribute = item.Attribute("name");
+                if (nameAttribute != null)
+                {
+                    string name = nameAttribute.Value;
+                    var valueElement = item.Descendants("value").FirstOrDefault();
+                    if (valueElement != null)
+                    {
+                        string value = valueElement.Value;
+
+                        buffer = buffer.Replace(string.Format("[{0}]", name), value);
+                    }
+                }
+            }
+
+            templateFile = string.Format("Merged-{0}-{1}", template.CultureCode, Path.GetFileName(template.TemplateFilePath));
+
+            File.WriteAllText(Path.Combine(templatePath, templateFile), buffer.ToString());
         }
 
         /// -----------------------------------------------------------------------------
@@ -1682,7 +1756,7 @@ namespace DotNetNuke.Entities.Portals
             XmlNode node;
             try
             {
-                xmlPortal.Load(TemplatePath + TemplateFile);
+                xmlPortal.Load(Path.Combine(TemplatePath, TemplateFile));
             }
             catch(Exception ex)
             {
@@ -1773,7 +1847,15 @@ namespace DotNetNuke.Entities.Portals
                     XmlDocument xmlAdmin = new XmlDocument();
                     try
                     {
-                        xmlAdmin.Load(TemplatePath + "admin.template");
+                        string path = Path.Combine(TemplatePath, "admin.template");
+                        if(!File.Exists(path))
+                        {
+                            //if the template is a merged copy of a localized templte the
+                            //admin.template may be one director up
+                            path = Path.Combine(TemplatePath, "..\admin.template");
+                        }
+
+                        xmlAdmin.Load(path);
 
 						XmlNode adminNode = xmlAdmin.SelectSingleNode("//portal/tabs");
 						foreach (XmlNode adminTabNode in adminNode.ChildNodes)
@@ -1790,7 +1872,6 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
-        /// -----------------------------------------------------------------------------
         /// <summary>
         /// Processes the resource file for the template file selected
         /// </summary>
@@ -1798,23 +1879,31 @@ namespace DotNetNuke.Entities.Portals
         /// <param name="TemplateFile">Selected template file</param>
         /// <remarks>
         /// The resource file is a zip file with the same name as the selected template file and with
-        /// an extension of .resources (to unable this file being downloaded).
+        /// an extension of .resources (to disable this file being downloaded).
         /// For example: for template file "portal.template" a resource file "portal.template.resources" can be defined.
         /// </remarks>
-        /// <history>
-        /// 	[VMasanas]	10/09/2004	Created
-        ///     [cnurse]    11/08/2004  Moved from SignUp to PortalController
-        ///     [cnurse]    03/04/2005  made Public
-        ///     [cnurse]    05/20/2005  moved most of processing to new method in FileSystemUtils
-        /// </history>
-        /// -----------------------------------------------------------------------------
+        [Obsolete("Deprecated in DNN 6.2.0 use ProcessResourceFileExplicit instead")]
         public void ProcessResourceFile(string portalPath, string TemplateFile)
         {
-            ZipInputStream objZipInputStream;
+            ProcessResourceFileExplicit(portalPath, TemplateFile + ".resources");
+        }
+
+        /// <summary>
+        /// Processes the resource file for the template file selected
+        /// </summary>
+        /// <param name="portalPath">New portal's folder</param>
+        /// <param name="resoureceFile">full path to the resource file</param>
+        /// <remarks>
+        /// The resource file is a zip file with the same name as the selected template file and with
+        /// an extension of .resources (to disable this file being downloaded).
+        /// For example: for template file "portal.template" a resource file "portal.template.resources" can be defined.
+        /// </remarks>
+        public void ProcessResourceFileExplicit(string portalPath, string resoureceFile)
+        {
             try
             {
-                objZipInputStream = new ZipInputStream(new FileStream(TemplateFile + ".resources", FileMode.Open, FileAccess.Read));
-                FileSystemUtils.UnzipResources(objZipInputStream, portalPath);
+                var zipStream = new ZipInputStream(new FileStream(resoureceFile, FileMode.Open, FileAccess.Read));
+                FileSystemUtils.UnzipResources(zipStream, portalPath);
             }
             catch (Exception exc)
             {
@@ -1960,6 +2049,171 @@ namespace DotNetNuke.Entities.Portals
         PortalSettings IPortalController.GetCurrentPortalSettings()
         {
             return GetCurrentPortalSettings();
+        }
+
+        public class PortalTemplateInfo
+        {
+            private string _resourceFilePath;
+
+            public PortalTemplateInfo(string templateFilePath, string cultureCode)
+            {
+                TemplateFilePath = templateFilePath;
+
+                InitLocalizationFields(cultureCode);
+                InitNameAndDescription();
+            }
+
+            private void InitNameAndDescription()
+            {
+                if(!String.IsNullOrEmpty(LanguageFilePath))
+                {
+                    LoadNameAndDescriptionFromLanguageFile();
+                }
+
+                if(String.IsNullOrEmpty(Name))
+                {
+                    Name = Path.GetFileNameWithoutExtension(TemplateFilePath);
+                }
+
+                if(String.IsNullOrEmpty(Description))
+                {
+                    LoadDescriptionFromTemplateFile();
+                }
+            }
+
+            private void LoadDescriptionFromTemplateFile()
+            {
+                try
+                {
+                    XDocument xmlDoc;
+                    using (var reader = PortalTemplateIO.Instance.OpenTextReader(TemplateFilePath))
+                    {
+                        xmlDoc = XDocument.Load(reader);
+                    }
+
+                    Description = xmlDoc.Elements("portal").Elements("description").SingleOrDefault().Value;
+                }
+                catch (Exception e)
+                {
+                    DnnLog.Error("Error while parsing: " + TemplateFilePath, e);
+                }
+            }
+
+            private void LoadNameAndDescriptionFromLanguageFile()
+            {
+                try
+                {
+                    using (var reader = PortalTemplateIO.Instance.OpenTextReader(LanguageFilePath))
+                    {
+                        var xmlDoc = XDocument.Load(reader);
+
+                        Name = ReadLanguageFileValue(xmlDoc, "LocalizedTemplateName.Text");
+                        Description = ReadLanguageFileValue(xmlDoc, "PortalDescription.Text");
+                    }
+                }
+                catch (Exception e)
+                {
+                    DnnLog.Error("Error while parsing: " + TemplateFilePath, e);
+                }
+            }
+
+            static string ReadLanguageFileValue(XDocument xmlDoc, string name)
+            {
+                return (from f in xmlDoc.Descendants("data")
+                        where (string)f.Attribute("name") == name
+                        select (string)f.Element("value")).SingleOrDefault();
+            }
+
+            private void InitLocalizationFields(string cultureCode)
+            {
+                LanguageFilePath = PortalTemplateIO.Instance.GetLanguageFilePath(TemplateFilePath, cultureCode);
+                if(!String.IsNullOrEmpty(LanguageFilePath))
+                {
+                    CultureCode = cultureCode;
+                }
+                else
+                {
+                    CultureCode = "";
+                }
+            }
+
+            public string Name { get; private set; }
+            public string CultureCode { get; private set; }
+            public string TemplateFilePath { get; private set; }
+            public string LanguageFilePath { get; private set; }
+            public string Description { get; private set; }
+
+            public string ResourceFilePath
+            {
+                get
+                {
+                    if(_resourceFilePath == null)
+                    {
+                        _resourceFilePath = PortalTemplateIO.Instance.GetResourceFilePath(TemplateFilePath);
+                    }
+
+                    return _resourceFilePath;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get all the available portal templates grouped by culture
+        /// </summary>
+        /// <returns>List of PortalTemplateInfo objects</returns>
+        public IList<PortalTemplateInfo> GetAvailablePortalTemplates()
+        {
+            var list = new List<PortalTemplateInfo>();
+
+            var templateFilePaths = PortalTemplateIO.Instance.EnumerateTemplates();
+            var languageFileNames = PortalTemplateIO.Instance.EnumerateLanguageFiles().Select(x => Path.GetFileName(x)).ToList();
+
+            foreach (string templateFilePath in templateFilePaths)
+            {
+                var currentFileName = Path.GetFileName(templateFilePath);
+                var langs = languageFileNames.Where(x => GetTemplateName(x).Equals(currentFileName, StringComparison.InvariantCultureIgnoreCase)).Select(x => GetCultureCode(x)).Distinct().ToList();
+
+                if(langs.Any())
+                {
+                    langs.ForEach(x => list.Add(new PortalTemplateInfo(templateFilePath, x)));
+                }
+                else
+                {
+                    list.Add(new PortalTemplateInfo(templateFilePath, ""));
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Load info for a portal template
+        /// </summary>
+        /// <param name="templatePath">Full path to the portal template</param>
+        /// <param name="cultureCode">the culture code if any for the localization of the portal template</param>
+        /// <returns>A portal template</returns>
+        public PortalTemplateInfo GetPortalTemplate(string templatePath, string cultureCode)
+        {
+            var template = new PortalTemplateInfo(templatePath, cultureCode);
+
+            if(!string.IsNullOrEmpty(cultureCode) && template.CultureCode != cultureCode)
+            {
+                return null;
+            }
+
+            return template;
+        }
+
+        private string GetTemplateName(string languageFileName)
+        {
+            //e.g. "default template.template.en-US.resx"
+            return languageFileName.Substring(0, languageFileName.Length - ".xx-XX.resx".Length);
+        }
+
+        private string GetCultureCode(string languageFileName)
+        {
+            //e.g. "default template.template.en-US.resx"
+            return languageFileName.Substring(1 + languageFileName.Length - ".xx-XX.resx".Length, "xx-XX".Length);
         }
 
         #region Public Static Methods

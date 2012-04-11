@@ -1245,4 +1245,16 @@ Sincerely,
   <data name="UserRelationship_Updated.Text" xml:space="preserve">
     <value>Updated UserRelationship ID {0} for UserID {1}, RelatedUserID {2}</value>
   </data>
+  <data name="AddFriendRequestSubject.Text" xml:space="preserve">
+    <value>{0} wants to be friends</value>
+  </data>
+  <data name="AddFriendRequestBody.Text" xml:space="preserve">
+    <value>{0} wants to be friends with you</value>
+  </data>
+  <data name="AddFollowerRequestSubject.Text" xml:space="preserve">
+    <value>{0} is now following</value>
+  </data>
+  <data name="AddFollowerRequestBody.Text" xml:space="preserve">
+    <value>{0} is now following with you</value>
+  </data>
 </root>

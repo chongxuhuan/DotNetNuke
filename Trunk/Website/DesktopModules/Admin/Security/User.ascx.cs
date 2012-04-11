@@ -52,6 +52,8 @@ namespace DotNetNuke.Modules.Admin.Users
     {
 		#region Public Properties
 
+        public UserCreateStatus CreateStatus { get; set; }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets whether the User is valid
@@ -154,15 +156,15 @@ namespace DotNetNuke.Modules.Admin.Users
             //Check Password is valid
             if (AddUser && ShowPassword)
             {
-                UserCreateStatus createStatus = UserCreateStatus.AddUser;
+                CreateStatus = UserCreateStatus.AddUser;
                 if (!chkRandom.Checked)
                 {					
 					//1. Check Password is Valid
-                    if (createStatus == UserCreateStatus.AddUser && !UserController.ValidatePassword(txtPassword.Text))
+                    if (CreateStatus == UserCreateStatus.AddUser && !UserController.ValidatePassword(txtPassword.Text))
                     {
-                        createStatus = UserCreateStatus.InvalidPassword;
+                        CreateStatus = UserCreateStatus.InvalidPassword;
                     }
-                    if (createStatus == UserCreateStatus.AddUser)
+                    if (CreateStatus == UserCreateStatus.AddUser)
                     {
                         User.Membership.Password = txtPassword.Text;
                     }
@@ -174,23 +176,23 @@ namespace DotNetNuke.Modules.Admin.Users
                 }
 				
                 //Check Question/Answer
-                if (createStatus == UserCreateStatus.AddUser && MembershipProviderConfig.RequiresQuestionAndAnswer)
+                if (CreateStatus == UserCreateStatus.AddUser && MembershipProviderConfig.RequiresQuestionAndAnswer)
                 {
                     if (string.IsNullOrEmpty(txtQuestion.Text))
                     {
 						//Invalid Question
-                        createStatus = UserCreateStatus.InvalidQuestion;
+                        CreateStatus = UserCreateStatus.InvalidQuestion;
                     }
                     else
                     {
                         User.Membership.PasswordQuestion = txtQuestion.Text;
                     }
-                    if (createStatus == UserCreateStatus.AddUser)
+                    if (CreateStatus == UserCreateStatus.AddUser)
                     {
                         if (string.IsNullOrEmpty(txtAnswer.Text))
                         {
 							//Invalid Question
-                            createStatus = UserCreateStatus.InvalidAnswer;
+                            CreateStatus = UserCreateStatus.InvalidAnswer;
                         }
                         else
                         {
@@ -198,7 +200,7 @@ namespace DotNetNuke.Modules.Admin.Users
                         }
                     }
                 }
-                if (createStatus != UserCreateStatus.AddUser)
+                if (CreateStatus != UserCreateStatus.AddUser)
                 {
                     _IsValid = false;
                 }

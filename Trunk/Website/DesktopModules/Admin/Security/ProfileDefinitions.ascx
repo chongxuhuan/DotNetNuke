@@ -1,8 +1,9 @@
 <%@ Control Inherits="DotNetNuke.Modules.Admin.Users.ProfileDefinitions" Language="C#" AutoEventWireup="false" CodeFile="ProfileDefinitions.ascx.cs" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.UI.WebControls" Assembly="DotNetNuke" %>
 <div class="dnnForm dnnProfileProperties">
-    <asp:datagrid id="grdProfileProperties" AutoGenerateColumns="false" width="100%" CellPadding="4" GridLines="None" CssClass="dnnGrid" Runat="server">
-        <headerstyle cssclass="dnnGridHeader" verticalalign="Top" horizontalalign="Center" />
+    <asp:datagrid id="grdProfileProperties" AutoGenerateColumns="false" 
+                width="96%" CellPadding="4" GridLines="None" CssClass="dnnGrid" Runat="server">
+        <headerstyle cssclass="dnnGridHeader" verticalalign="Top" horizontalalign="Left" />
         <itemstyle cssclass="dnnGridItem" horizontalalign="Left" />
         <alternatingitemstyle cssclass="dnnGridAltItem" />
         <edititemstyle cssclass="dnnFormInput" />
@@ -31,7 +32,7 @@
         </columns>
     </asp:datagrid>
     <ul id="actionsRow" runat="server" class="dnnActions dnnClear">
-        <li><asp:LinkButton id="cmdUpdate" runat="server" CssClass="dnnPrimaryAction" resourcekey="cmdUpdate" /></li>
+        <li><asp:HyperLink id="cmdAdd" runat="server" CssClass="dnnSecondaryAction" resourcekey="AddContent.Action" /></li>
         <li><asp:LinkButton id="cmdRefresh" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdRefresh" /></li>
     </ul>
 </div>

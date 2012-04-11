@@ -18,19 +18,21 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.UI;
-
-using Telerik.Web.UI;
 
 #endregion
 
@@ -50,21 +52,30 @@ namespace DotNetNuke.Web.UI.WebControls
 
         #region Protected Properties
 
-        protected PropertyDescriptor ChildProperty
+        protected PropertyInfo ChildProperty
         {
             get
             {
-                PropertyDescriptorCollection childProps = Property.GetChildProperties();
-                return childProps[DataField];
+                Type type = Property.PropertyType;
+                IList<PropertyInfo> props = new List<PropertyInfo>(type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static));
+                return props.SingleOrDefault(p => p.Name == DataField);
             }
         }
 
-        protected PropertyDescriptor Property
+        protected PortalSettings PortalSettings
+        {
+            get { return PortalController.GetCurrentPortalSettings(); }
+        }
+
+        protected PropertyInfo Property
         {
             get
             {
-                PropertyDescriptorCollection props = TypeDescriptor.GetProperties(DataSource);
-                return !String.IsNullOrEmpty(DataMember) ? props[DataMember] : props[DataField];
+                Type type = DataSource.GetType();
+                IList<PropertyInfo> props = new List<PropertyInfo>(type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static));
+                return !String.IsNullOrEmpty(DataMember) 
+                           ? props.SingleOrDefault(p => p.Name == DataMember) 
+                           : props.SingleOrDefault(p => p.Name == DataField);
             }
         }
 
@@ -227,10 +238,10 @@ namespace DotNetNuke.Web.UI.WebControls
 
         protected void DataBindInternal(string dataField, ref object value)
         {
-            var dictionary = DataSource as IDictionary<string, string>;
+            var dictionary = DataSource as IDictionary;
             if (dictionary != null)
             {
-                if (!String.IsNullOrEmpty(dataField) && dictionary.ContainsKey(dataField))
+                if (!String.IsNullOrEmpty(dataField) && dictionary.Contains(dataField))
                 {
                     value = dictionary[dataField];
                 }
@@ -241,22 +252,22 @@ namespace DotNetNuke.Web.UI.WebControls
                 {
                     if (String.IsNullOrEmpty(DataMember))
                     {
-                        if (Property != null && Property.GetValue(DataSource) != null)
+                        if (Property != null && Property.GetValue(DataSource, null) != null)
                         {
                             // ReSharper disable PossibleNullReferenceException
-                            value = Property.GetValue(DataSource);
+                            value = Property.GetValue(DataSource, null);
                             // ReSharper restore PossibleNullReferenceException
                         } 
                     }
                     else
                     {
-                        if (Property != null && Property.GetValue(DataSource) != null)
+                        if (Property != null && Property.GetValue(DataSource, null) != null)
                         {
                             // ReSharper disable PossibleNullReferenceException
-                            object parentValue = Property.GetValue(DataSource);
-                            if (ChildProperty != null && ChildProperty.GetValue(parentValue) != null)
+                            object parentValue = Property.GetValue(DataSource, null);
+                            if (ChildProperty != null && ChildProperty.GetValue(parentValue, null) != null)
                             {
-                                value = ChildProperty.GetValue(parentValue);
+                                value = ChildProperty.GetValue(parentValue, null);
                             }
                             // ReSharper restore PossibleNullReferenceException
                         }
@@ -313,7 +324,7 @@ namespace DotNetNuke.Web.UI.WebControls
                         {
                             if (!ReferenceEquals(newValue, oldValue))
                             {
-                                Property.SetValue(DataSource, Convert.ChangeType(newValue, Property.PropertyType));
+                                Property.SetValue(DataSource, Convert.ChangeType(newValue, Property.PropertyType), null);
                             }
                         }
                     }
@@ -321,10 +332,10 @@ namespace DotNetNuke.Web.UI.WebControls
                     {
                         if (Property != null)
                         {
-                            object parentValue = Property.GetValue(DataSource);
+                            object parentValue = Property.GetValue(DataSource, null);
                             if (ChildProperty != null && parentValue != null)
                             {
-                                ChildProperty.SetValue(parentValue, Convert.ChangeType(newValue, ChildProperty.PropertyType));
+                                ChildProperty.SetValue(parentValue, Convert.ChangeType(newValue, ChildProperty.PropertyType), null);
                             }
                         }
                     }

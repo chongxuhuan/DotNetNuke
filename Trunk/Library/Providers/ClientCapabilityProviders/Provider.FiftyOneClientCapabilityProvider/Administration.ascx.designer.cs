@@ -31,6 +31,51 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider {
         protected global::FiftyOne.Foundation.UI.Web.Stats LiteStats;
         
         /// <summary>
+        /// purchaseBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl purchaseBox;
+        
+        /// <summary>
+        /// PremiumStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::FiftyOne.Foundation.UI.Web.Stats PremiumStats;
+        
+        /// <summary>
+        /// PremiumUploadError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl PremiumUploadError;
+        
+        /// <summary>
+        /// PremiumUploadSuccess control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl PremiumUploadSuccess;
+        
+        /// <summary>
+        /// PremiumUpload control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::FiftyOne.Foundation.UI.Web.Upload PremiumUpload;
+        
+        /// <summary>
         /// NoResultsMessage control.
         /// </summary>
         /// <remarks>
@@ -47,6 +92,15 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox SearchTextBox;
+        
+        /// <summary>
+        /// RequiredFieldValidator1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator1;
         
         /// <summary>
         /// SearchButton control.
@@ -101,14 +155,5 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DotNetNuke.Providers.FiftyOneClientCapabilityProvider.DnnDeviceExplorer DeviceExplorer;
-        
-        /// <summary>
-        /// FooterStats control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::FiftyOne.Foundation.UI.Web.Stats FooterStats;
     }
 }

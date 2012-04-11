@@ -15,13 +15,16 @@
 // // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // // DEALINGS IN THE SOFTWARE.
+
+using System;
 using System.Web;
+using DotNetNuke.Entities.Modules;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
 
 namespace DotNetNuke.Web.Services
 {
-    public sealed class DnnModuleAuthorizeAttribute : AuthorizeAttributeBase, IOverrideDefaultAuthLevel
+    public class DnnModuleAuthorizeAttribute : AuthorizeAttributeBase, IOverrideDefaultAuthLevel
     {
         public DnnModuleAuthorizeAttribute()
         {
@@ -31,10 +34,15 @@ namespace DotNetNuke.Web.Services
         public string PermissionKey { get; set; }
         public SecurityAccessLevel AccessLevel { get; set; }
 
+        protected virtual ModuleInfo FindModuleInfo(HttpContextBase context)
+        {
+            return context.FindModuleInfo();
+        }
+
         // This method must be thread-safe since it is called by the caching module.
         protected override bool AuthorizeCore(HttpContextBase context)
         {
-            var activeModule = context.FindModuleInfo();
+            var activeModule = FindModuleInfo(context);
 
             if (activeModule != null)
             {

@@ -65,11 +65,10 @@ namespace DotNetNuke.Services.Social.Messaging
         }
 
         /// <summary>
-        /// The message type identifier.
+        /// portalID for the message
         /// </summary>
-        /// <remarks>-1 means the message is a standard message between users. Otherwise it is a notification.</remarks>
         [XmlAttribute]
-        public int MessageTypeID { get; set; }
+        public int PortalID { get; set; }
 
         /// <summary>
         /// To list for the message. This information is saved for faster display of To list in the message
@@ -152,7 +151,6 @@ namespace DotNetNuke.Services.Social.Messaging
         public void Fill(IDataReader dr)
         {
             MessageID = Convert.ToInt32(dr["MessageID"]);
-            //MessageTypeID = Convert.ToInt32(dr["MessageTypeID"]); //TODO: Commented for now until the stored procedures are modified.
             To = Null.SetNullString(dr["To"]);
             From = Null.SetNullString(dr["From"]);
             Subject = Null.SetNullString(dr["Subject"]);

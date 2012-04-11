@@ -1,25 +1,23 @@
-﻿/* *********************************************************************
- * The contents of this file are subject to the Mozilla Public License 
- * Version 1.1 (the "License"); you may not use this file except in 
- * compliance with the License. You may obtain a copy of the License at 
- * http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. 
- * See the License for the specific language governing rights and 
- * limitations under the License.
- *
- * The Original Code is named ClientCapabilityProvider, first 
- * released under this licence on 25th January 2012.
- * 
- * The Initial Developer of the Original Code is owned by 
- * 51 Degrees Mobile Experts Limited. Portions created by 51 Degrees
- * Mobile Experts Limited are Copyright (C) 2012. All Rights Reserved.
- * 
- * Contributor(s):
- *     James Rosewell <james@51degrees.mobi>
- * 
- * ********************************************************************* */
+﻿#region Copyright
+// 
+// DotNetNuke® - http://www.dotnetnuke.com
+// Copyright (c) 2002-2012
+// by DotNetNuke Corporation
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+// documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+// the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+// to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+// of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+// TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// DEALINGS IN THE SOFTWARE.
+#endregion
 
 #region Usings
 
@@ -113,8 +111,47 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
                             }
                         }
                     }
+
+                    _allClientCapabilityValues = _allClientCapabilityValues.OrderByDescending(kvp =>
+                                                              {
+                                                                  if (HighPiorityCapabilityValues.ContainsKey(kvp.Key))
+                                                                  {
+                                                                      return HighPiorityCapabilityValues[kvp.Key];
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                      return 0;
+                                                                  }
+                                                              }).ThenBy(kvp => kvp.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
                 }
+
                 return _allClientCapabilityValues;
+            }
+        }
+
+        private static IDictionary<string, int> _highPiorityCapabilityValues;
+        private static IDictionary<string, int> HighPiorityCapabilityValues
+        {
+            get
+            {
+                if (_highPiorityCapabilityValues == null)
+                {
+                    //add some common capability as high piority capability values, it will appear at the top of capability values list.
+                    _highPiorityCapabilityValues = new Dictionary<string, int>();
+
+                    _highPiorityCapabilityValues.Add("IsMobile", 100);
+                    _highPiorityCapabilityValues.Add("IsTablet", 95);
+                    _highPiorityCapabilityValues.Add("PlatformName", 90);
+                    _highPiorityCapabilityValues.Add("BrowserName", 85);
+                    _highPiorityCapabilityValues.Add("BrowserVersion", 80);
+                    _highPiorityCapabilityValues.Add("HasTouchScreen", 75);
+                    _highPiorityCapabilityValues.Add("PlatformVersion", 70);
+                    _highPiorityCapabilityValues.Add("ScreenPixelsWidth", 65);
+                    _highPiorityCapabilityValues.Add("ScreenPixelsHeight", 60);
+                    _highPiorityCapabilityValues.Add("HardwareVendor", 55);
+                }
+
+                return _highPiorityCapabilityValues;
             }
         }
 
@@ -193,7 +230,10 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
 
         #region Override Properties
 
-        public override bool SupportTabletDetect
+        /// <summary>
+        /// Indicates whether tablet detection is supported in the available data set.
+        /// </summary>
+        public override bool SupportsTabletDetection
         {
             get
             {

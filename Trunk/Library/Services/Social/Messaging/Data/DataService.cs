@@ -28,6 +28,7 @@ using System.Globalization;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Social.Messaging.Views;
 
@@ -41,39 +42,37 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region Messages CRUD
 
-        public int SaveSocialMessage(Message message, int createUpdateUserId)
+        public int SaveMessage(Message message, int portalId,int createUpdateUserId, DateTime messageDateTime)
         {
             //need to fix groupmail
-            return _provider.ExecuteScalar<int>("SaveSocialMessage", message.MessageID, message.To, message.From, message.Subject, message.Body, message.ConversationId, message.ReplyAllAllowed, message.SenderUserID, createUpdateUserId);
+            return _provider.ExecuteScalar<int>("CoreMessaging_SaveMessage", message.MessageID, portalId ,message.To, message.From, message.Subject, message.Body, message.ConversationId, message.ReplyAllAllowed, messageDateTime, message.SenderUserID, createUpdateUserId);
         }
 
-        public IDataReader GetSocialMessage()
+        public IDataReader GetMessage(int messageId)
         {
-            return _provider.ExecuteReader("GetSocialMessage");
+            return _provider.ExecuteReader("CoreMessaging_GetMessage", messageId);
         }
 
-        public IDataReader GetSocialMessagesBySender()
+        public IDataReader GetMessagesBySender(int messageId, int portalId)
         {
-            return _provider.ExecuteReader("GetSocialMessagesBySender");
+            return _provider.ExecuteReader("CoreMessaging_GetMessagesBySender", messageId, portalId);
         }
 
-        public void DeleteSocialMessage(int messageId)
+        public void DeleteMessage(int messageId)
         {
-            _provider.ExecuteNonQuery("DeleteSocialMessage", messageId);
+            _provider.ExecuteNonQuery("CoreMessaging_DeleteMessage", messageId);
         }
 
-        public int CreateMessageReply(int conversationId, string body, int senderUserId, string from, int createUpdateUserId)
+        public int CreateMessageReply(int conversationId, int portalId,string body, int senderUserId, string from, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("CreateSocialMessageReply", conversationId, body, senderUserId, from, createUpdateUserId);
+            return _provider.ExecuteScalar<int>("CoreMessaging_CreateMessageReply", conversationId, portalId,body, senderUserId, from, createUpdateUserId);
         }
 
-        public MessageBoxView GetMessageBoxView(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
+        public MessageBoxView GetMessageBoxView(int userId, int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
         {
             object read = null;
             object archived = null;
             object sent = null;
-
-            var messageBoxView = new MessageBoxView();
 
             switch (readStatus)
             {
@@ -105,21 +104,11 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                     break;
             }
 
-            var dr = _provider.ExecuteReader("GetMessageConversations", userId, pageIndex, pageSize, sortColumn, sortAscending, read, archived, sent);
+            var dr = _provider.ExecuteReader("CoreMessaging_GetMessageConversations", userId, portalId , pageIndex, pageSize, sortColumn, sortAscending, read, archived, sent);
+            var messageBoxView = new MessageBoxView();
 
             try
             {
-                while (dr.Read())
-                {
-                    messageBoxView.TotalNewThreads = Convert.ToInt32(dr["TotalNewThreads"]);
-                }
-                dr.NextResult();
-
-                while (dr.Read())
-                {
-                    messageBoxView.TotalConversations = Convert.ToInt32(dr["TotalRecords"]);
-                }
-                dr.NextResult();
                 messageBoxView.Conversations = CBO.FillCollection<MessageConversationView>(dr);
             }
             finally
@@ -134,28 +123,10 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         {
             var messageThreadsView = new MessageThreadsView();
 
-            var dr = _provider.ExecuteReader("GetMessageThread", conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending);
+            var dr = _provider.ExecuteReader("CoreMessaging_GetMessageThread", conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending);
 
             try
             {
-                while (dr.Read())
-                {
-                    messageThreadsView.TotalNewThreads = Convert.ToInt32(dr["TotalNewThreads"]);
-                }
-                dr.NextResult();
-
-                while (dr.Read())
-                {
-                    messageThreadsView.TotalThreads = Convert.ToInt32(dr["TotalRecords"]);
-                }
-                dr.NextResult();
-
-                while (dr.Read())
-                {
-                    messageThreadsView.TotalArchivedThreads = Convert.ToInt32(dr["TotalArchivedThreads"]);
-                }
-                dr.NextResult();
-
                 while (dr.Read())
                 {
                     var messageThreadView = new MessageThreadView { Conversation = new MessageConversationView() };
@@ -163,7 +134,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
                     if (messageThreadView.Conversation.AttachmentCount > 0)
                     {
-                        messageThreadView.Attachments = GetSocialMessageAttachmentsByMessage(messageThreadView.Conversation.MessageID);
+                        messageThreadView.Attachments = GetMessageAttachmentsByMessage(messageThreadView.Conversation.MessageID);
                     }
 
                     if (messageThreadsView.Conversations == null) messageThreadsView.Conversations = new List<MessageThreadView>();
@@ -179,74 +150,106 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return messageThreadsView;
         }
 
-        public void UpdateSocialMessageReadStatus(int conversationId, int userId, bool read)
+        public void UpdateMessageReadStatus(int conversationId, int userId, bool read)
         {
-            _provider.ExecuteNonQuery("UpdateSocialMessageReadStatus", conversationId, userId, read);
+            _provider.ExecuteNonQuery("CoreMessaging_UpdateMessageReadStatus", conversationId, userId, read);
         }
 
-        public void UpdateSocialMessageArchivedStatus(int conversationId, int userId, bool archived)
+        public void UpdateMessageArchivedStatus(int conversationId, int userId, bool archived)
         {
-            _provider.ExecuteNonQuery("UpdateSocialMessageArchivedStatus", conversationId, userId, archived);
+            _provider.ExecuteNonQuery("CoreMessaging_UpdateMessageArchivedStatus", conversationId, userId, archived);
         }
 
+        public int CountNewThreads(int userId, int portalId)
+        {
+            return _provider.ExecuteScalar<int>("CoreMessaging_CountNewThreads", userId, portalId);
+        }
+
+        public int CountTotalConversations(int userId, int portalId, bool? read, bool? archived, bool? sentOnly)
+        {
+            object objRead = DBNull.Value;
+            object objArchived = DBNull.Value;
+            object objSent = DBNull.Value;
+
+            if (read != null) objRead = read.Value;
+            if (archived != null) objArchived = archived.Value;
+            if (sentOnly != null) objSent = sentOnly.Value;
+
+            return _provider.ExecuteScalar<int>("CoreMessaging_CountTotalConversations", userId, portalId,objRead, objArchived, objSent);
+        }
+
+        public int CountMessagesByConversation(int conversationId)
+        {
+            return _provider.ExecuteScalar<int>("CoreMessaging_CountMessagesByConversation", conversationId);
+        }
+
+        public int CountArchivedMessagesByConversation(int conversationId)
+        {
+            return _provider.ExecuteScalar<int>("CoreMessaging_CountArchivedMessagesByConversation", conversationId);
+        }
 
         #endregion
 
         #region Message_Recipients CRUD
 
-        public int SaveSocialMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId)
+        public int SaveMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId, DateTime messageDateTime)
         {
-            return _provider.ExecuteScalar<int>("SaveSocialMessageRecipient", messageRecipient.RecipientID, messageRecipient.MessageID, messageRecipient.UserID, messageRecipient.Read, messageRecipient.Archived, createUpdateUserId);
+            return _provider.ExecuteScalar<int>("CoreMessaging_SaveMessageRecipient", messageRecipient.RecipientID, messageRecipient.MessageID, messageRecipient.UserID, messageRecipient.Read, messageRecipient.Archived, messageDateTime, createUpdateUserId);
         }
 
-        public void CreateSocialMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId)
+        public void CreateMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId, DateTime messageDateTime)
         {
-            _provider.ExecuteNonQuery("CreateSocialMessageRecipientsForRole", messageId, roleIds, createUpdateUserId);
+            _provider.ExecuteNonQuery("CoreMessaging_CreateMessageRecipientsForRole", messageId, roleIds, messageDateTime, createUpdateUserId);
         }
 
-        public IDataReader GetSocialMessageRecipient(int messageRecipientId)
+        public IDataReader GetMessageRecipient(int messageRecipientId)
         {
-            return _provider.ExecuteReader("GetSocialMessageRecipient", messageRecipientId);
+            return _provider.ExecuteReader("CoreMessaging_GetMessageRecipient", messageRecipientId);
         }
 
-        public IDataReader GetSocialMessageRecipientsByUser(int userId)
+        public IDataReader GetMessageRecipientsByUser(int userId)
         {
-            return _provider.ExecuteReader("GetSocialMessageRecipientsByUser", userId);
+            return _provider.ExecuteReader("CoreMessaging_GetMessageRecipientsByUser", userId);
         }
 
-        public IDataReader GetSocialMessageRecipientsByMessage(int messageId)
+        public IDataReader GetMessageRecipientsByMessage(int messageId)
         {
-            return _provider.ExecuteReader("GetSocialMessageRecipientsByMessage", messageId);
+            return _provider.ExecuteReader("CoreMessaging_GetMessageRecipientsByMessage", messageId);
         }
 
-        public IDataReader GetSocialMessageRecipientByMessageAndUser(int messageId, int userId)
+        public IDataReader GetMessageRecipientByMessageAndUser(int messageId, int userId)
         {
-            return _provider.ExecuteReader("GetSocialMessageRecipientsByMessageAndUser", messageId, userId);
+            return _provider.ExecuteReader("CoreMessaging_GetMessageRecipientsByMessageAndUser", messageId, userId);
         }
 
-        public void DeleteSocialMessageRecipient(int messageRecipientId)
+        public void DeleteMessageRecipient(int messageRecipientId)
         {
-            _provider.ExecuteNonQuery("DeleteSocialMessageRecipient", messageRecipientId);
+            _provider.ExecuteNonQuery("CoreMessaging_DeleteMessageRecipient", messageRecipientId);
+        }
+
+        public void DeleteMessageRecipientByMessageAndUser(int messageId, int userId)
+        {
+            _provider.ExecuteNonQuery("CoreMessaging_DeleteMessageRecipientByMessageAndUser", messageId, userId);
         }
 
         #endregion
 
         #region Message_Attachments CRUD
 
-        public int SaveSocialMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserId)
+        public int SaveMessageAttachment(MessageAttachment messageAttachment, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("SaveSocialMessageAttachment", messageAttachment.MessageAttachmentID, messageAttachment.MessageID, messageAttachment.FileID, createUpdateUserId);
+            return _provider.ExecuteScalar<int>("CoreMessaging_SaveMessageAttachment", messageAttachment.MessageAttachmentID, messageAttachment.MessageID, messageAttachment.FileID, createUpdateUserId);
         }
 
-        public IDataReader GetSocialMessageAttachment(int messageAttachmentId)
+        public IDataReader GetMessageAttachment(int messageAttachmentId)
         {
-            return _provider.ExecuteReader("GetSocialMessageAttachment", messageAttachmentId);
+            return _provider.ExecuteReader("CoreMessaging_GetMessageAttachment", messageAttachmentId);
         }
 
-        public IList<MessageFileView> GetSocialMessageAttachmentsByMessage(int messageId)
+        public IList<MessageFileView> GetMessageAttachmentsByMessage(int messageId)
         {
             var attachments = new List<MessageFileView>();
-            var dr = _provider.ExecuteReader("GetSocialMessageAttachmentsByMessage", messageId);
+            var dr = _provider.ExecuteReader("CoreMessaging_GetMessageAttachmentsByMessage", messageId);
 
             try
             {
@@ -275,34 +278,39 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return attachments;
         }
 
-        public void DeleteSocialMessageAttachment(int messageAttachmentId)
+        public void DeleteMessageAttachment(int messageAttachmentId)
         {
-            _provider.ExecuteNonQuery("DeleteSocialMessageAttachment", messageAttachmentId);
+            _provider.ExecuteNonQuery("CoreMessaging_DeleteMessageAttachment", messageAttachmentId);
         }
 
         #endregion
 
-        #region MessageTypes CRUD
+        #region Upgrade APIs
         
-        public int SaveMessageType(int messageTypeId, string name, string description, int timeToLive)
+        public void ConvertLegacyMessages(int pageIndex, int pageSize)
         {
-            return _provider.ExecuteScalar<int>("SaveMessageType", messageTypeId, name, _provider.GetNull(description), _provider.GetNull(timeToLive));
+            _provider.ExecuteNonQuery("CoreMessaging_ConvertLegacyMessages", pageIndex, pageSize);
         }
 
-        public void DeleteMessageType(int messageTypeId)
+        public IDataReader CountLegacyMessages()
         {
-            _provider.ExecuteNonQuery("DeleteMessageType", messageTypeId);
+            return _provider.ExecuteReader("CoreMessaging_CountLegacyMessages");
         }
 
-        public IDataReader GetMessageType(int messageTypeId)
+        #endregion    
+
+        #region Queued email API's
+
+        public IDataReader GetNextMessageForDispatch(Guid schedulerInstance)
         {
-            return _provider.ExecuteReader("GetMessageType", messageTypeId);
+            return _provider.ExecuteReader("CoreMessaging_GetNextMessageForDispatch", schedulerInstance);
         }
 
-        public IDataReader GetMessageTypeByName(string name)
+        public void MarkMessageAsDispatched(int messageId,int recipientId)
         {
-            return _provider.ExecuteReader("GetMessageTypeByName", name);
+            _provider.ExecuteNonQuery("CoreMessaging_MarkMessageAsDispatched", messageId, recipientId);
         }
+
 
         #endregion
     }

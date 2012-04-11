@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Web.Script.Serialization;
 
+using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Authentication.OAuth;
 
 #endregion
@@ -38,21 +39,15 @@ namespace DotNetNuke.Authentication.Google.Components
     {
         #region Constructors
 
-        public GoogleClient(int portalId)
+        public GoogleClient(int portalId, AuthMode mode) 
+            : base(portalId, mode, "Google")
         {
             TokenEndpoint = new Uri("https://accounts.google.com/o/oauth2/token");
             TokenMethod = HttpMethod.POST;
             AuthorizationEndpoint = new Uri("https://accounts.google.com/o/oauth2/auth");
             MeGraphEndpoint = new Uri("https://www.googleapis.com/oauth2/v1/userinfo");
 
-            Service = "Google";
-            Scope =
-                HttpContext.Current.Server.UrlEncode(
-                    "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email");
-
-            APIKey = OAuthConfigBase.GetConfig(Service, portalId).APIKey;
-            APISecret = OAuthConfigBase.GetConfig(Service, portalId).APISecret;
-            CallbackUri = new Uri(OAuthConfigBase.GetConfig(Service, portalId).SiteURL);
+            Scope = HttpUtility.UrlEncode("https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email");
 
             AuthTokenName = "GoogleUserToken";
 

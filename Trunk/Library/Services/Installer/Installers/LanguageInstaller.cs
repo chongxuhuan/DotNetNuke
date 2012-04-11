@@ -107,7 +107,7 @@ namespace DotNetNuke.Services.Installer.Installers
         {
             get
             {
-                return "resx, xml";
+                return "resx, xml, tdf";
             }
         }
 		

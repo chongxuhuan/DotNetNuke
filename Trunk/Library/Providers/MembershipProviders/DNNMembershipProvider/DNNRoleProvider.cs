@@ -173,7 +173,14 @@ namespace DotNetNuke.Security.Membership
 
         public override IDictionary<string, string> GetRoleSettings(int roleId)
         {
-            return CBO.FillDictionary<string, string>("SettingName", dataProvider.GetRoleSettings(roleId));
+            Dictionary<string, string> settings = new Dictionary<string, string> { };
+            using (IDataReader dr = dataProvider.GetRoleSettings(roleId)) {
+                while (dr.Read()) {
+                    settings.Add(dr["SettingName"].ToString(), dr["SettingValue"].ToString());
+                }
+                dr.Close();
+            }
+            return settings;
         }
 
         /// -----------------------------------------------------------------------------

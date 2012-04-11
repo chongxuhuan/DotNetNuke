@@ -372,7 +372,10 @@ namespace DotNetNuke.Entities.Users
             }
             set
             {
-                SetProfileProperty(cPreferredTimeZone, value.Id);                
+                if (value != null)
+                {
+                    SetProfileProperty(cPreferredTimeZone, value.Id);
+                }
             }
         }
 

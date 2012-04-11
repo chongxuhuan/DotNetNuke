@@ -104,10 +104,12 @@
     <Compile Include="ComponentModel\ComponentFactoryTests.cs" />
     <Compile Include="ComponentModel\SimpleContainerTests.cs" />
     <Compile Include="Controllers\ConfigurationSettingsComparer.cs" />
+    <Compile Include="Controllers\PortalControllerTests.cs" />
     <Compile Include="Controllers\PortalGroupControllerTests.cs" />
     <Compile Include="Controllers\HostControllerTest.cs" />
     <Compile Include="CBOTest.cs" />
     <Compile Include="Controllers\Social\MessagingControllerTests.cs" />
+    <Compile Include="Controllers\Social\NotificationsControllerTests.cs" />
     <Compile Include="Controllers\Social\RelationshipControllerTests.cs" />
     <Compile Include="Framework\ServicesFrameworkTests.cs" />
     <Compile Include="HttpModules\ServiceAuthContextTests.cs" />
@@ -122,6 +124,7 @@
     <Compile Include="HttpModules\ServicesModuleTests.cs" />
     <Compile Include="Services\ClientCapability\FacebookRequestControllerTests.cs" />
     <Compile Include="Services\Installer\XmlMergeTests.cs" />
+    <Compile Include="Services\Localization\LocalizationTests.cs" />
     <Compile Include="Services\Mail\MailTests.cs" />
     <Compile Include="Services\Mobile\PreviewProfileControllerTests.cs" />
     <Compile Include="Services\Mobile\RedirectionControllerTests.cs" />

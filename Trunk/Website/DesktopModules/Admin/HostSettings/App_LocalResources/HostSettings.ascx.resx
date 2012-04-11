@@ -889,7 +889,7 @@
     <value>Client Resource Management</value>
   </data>
   <data name="plCrmVersion.Help" xml:space="preserve">
-    <value>To manage browser caching, client resources are assigned a version number. This number is increased when an extension is installed, portal.css is updated, or when the server cache is cleared.  It applies to any processed file (combined amd/or minified).  You can manually increase the number below to force browsers to download new copies of the resource files.</value>
+    <value>To manage browser caching, client resources are assigned a version number. This number is increased when an extension is installed, portal.css is updated, or when the server cache is cleared.  It applies to any processed file (combined and/or minified).  You can manually increase the number below to force browsers to download new copies of the resource files.</value>
   </data>
   <data name="plCrmVersion.Text" xml:space="preserve">
     <value>Current Host Version</value>

@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -39,6 +39,11 @@ namespace DotNetNuke.Authentication.Facebook
             get { return "Facebook"; }
         }
 
+        public override bool SupportsRegistration
+        {
+            get { return true; }
+        }
+
         protected override UserData GetCurrentUser()
         {
             return OAuthClient.GetCurrentUser<FacebookUserData>();
@@ -50,7 +55,7 @@ namespace DotNetNuke.Authentication.Facebook
 
             loginButton.Click += loginButton_Click;
 
-            OAuthClient = new FacebookClient(PortalId);
+            OAuthClient = new FacebookClient(PortalId, Mode);
         }
 
         private void loginButton_Click(object sender, EventArgs e)

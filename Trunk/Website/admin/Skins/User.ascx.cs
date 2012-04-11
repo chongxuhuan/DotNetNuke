@@ -99,10 +99,10 @@ namespace DotNetNuke.UI.Skins.Controls
                                             ? URL 
                                             : Globals.RegisterURL(HttpUtility.UrlEncode(Globals.NavigateURL()), Null.NullString);
 
-                        if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger)
-                        {
-                            registerLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(registerLink.NavigateUrl, this, PortalSettings, true, false, 600, 950));
-                        }
+                        //if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger)
+                        //{
+                        //    registerLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(registerLink.NavigateUrl, this, PortalSettings, true, false, 600, 950));
+                        //}
 
                     }
                     else

@@ -23,70 +23,58 @@ using System;
 using System.Data;
 using System.Xml.Serialization;
 
-using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities;
 using DotNetNuke.Entities.Modules;
 
-namespace DotNetNuke.Services.Social.Messaging
+namespace DotNetNuke.Services.Social.Notifications
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
     /// Namespace:  DotNetNuke.Services.Social.Notifications
-    /// Class:      MessageType
+    /// Class:      NotificationAction
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageType class describes a single message type that can be associated to a message.
-    /// This message could be a notification or a standard message sent between users.
+    /// The NotificationAction class describes the entity that stores the extra information to be sent in the API call when a notification action is performed.
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageType : IHydratable
+    public class NotificationAction : BaseEntityInfo, IHydratable
     {
-        private int _messageTypeId = -1;
-        private int _timeToLive = -1;
+        private int _notificationActionId = -1;
 
         /// <summary>
-        /// The message type identifier.
+        /// The notification action identifier.
         /// </summary>
         [XmlAttribute]
-        public int MessageTypeId
+        public int NotificationActionId
         {
             get
             {
-                return _messageTypeId;
+                return _notificationActionId;
             }
             set
             {
-                _messageTypeId = value;
+                _notificationActionId = value;
             }
         }
 
         /// <summary>
-        /// The message type name.
+        /// The notification identifier.
         /// </summary>
         [XmlAttribute]
-        public string Name { get; set; }
+        public int NotificationId { get; set; }
 
         /// <summary>
-        /// The message type description.
+        /// The notification type action identifier.
         /// </summary>
         [XmlAttribute]
-        public string Description { get; set; }
+        public int NotificationTypeActionId { get; set; }
 
         /// <summary>
-        /// The number of minutes to add to the creation date of the message to calculate the expiration date.
+        /// The extra information to be sent to the API call when the notification action is performed.
         /// </summary>
         [XmlAttribute]
-        public int TimeToLive
-        {
-            get
-            {
-                return _timeToLive;
-            }
-            set
-            {
-                _timeToLive = value;
-            }
-        }
+        public string Key { get; set; }
 
         #region Implementation of IHydratable
 
@@ -96,8 +84,14 @@ namespace DotNetNuke.Services.Social.Messaging
         [XmlIgnore]
         public int KeyID
         {
-            get { return MessageTypeId; }
-            set { MessageTypeId = value; }
+            get
+            {
+                return NotificationActionId;
+            }
+            set
+            {
+                NotificationActionId = value;
+            }
         }
 
         /// <summary>
@@ -106,10 +100,13 @@ namespace DotNetNuke.Services.Social.Messaging
         /// <param name="dr">the data reader.</param>
         public void Fill(IDataReader dr)
         {
-            MessageTypeId = Convert.ToInt32(dr["MessageTypeID"]);
-            Name = dr["Name"].ToString();
-            Description = Null.SetNullString(dr["Description"]);
-            TimeToLive = Null.SetNullInteger(dr["TTL"]);
+            NotificationActionId = Convert.ToInt32(dr["NotificationActionID"]);
+            NotificationId = Convert.ToInt32(dr["MessageID"]);
+            NotificationTypeActionId = Convert.ToInt32(dr["NotificationTypeActionID"]);
+            Key = dr["Key"].ToString();
+
+            //add audit column data
+            FillInternal(dr);
         }
 
         #endregion

@@ -4,7 +4,7 @@ using System.Web.Routing;
 
 namespace DotNetNuke.Web.Services
 {
-    public interface IRouteMapper
+    public interface IMapRoute
     {
         /// <summary>
         /// Sets up the route(s) for DotNetNuke services

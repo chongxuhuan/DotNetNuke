@@ -231,6 +231,9 @@ namespace DotNetNuke.Entities.Modules.Definitions
                                 DefaultCacheTime = int.Parse(elementvalue);
                             }
                             break;
+                        case "permissions": //Ignore permissons node
+                            reader.Skip();
+                            break;
                     }
                 }
             }

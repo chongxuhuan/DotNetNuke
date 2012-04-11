@@ -33,6 +33,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Permissions;
@@ -250,6 +251,15 @@ namespace DesktopModules.Admin.Tabs
 
             try
             {
+                if (PortalSettings.Pages < PortalSettings.PageQuota || UserController.GetCurrentUserInfo().IsSuperUser || PortalSettings.PageQuota == 0)
+                {
+                    btnBulkCreate.Enabled = true;
+                }
+                else
+                {
+                    btnBulkCreate.Enabled = false;
+                    btnBulkCreate.ToolTip = Localization.GetString("ExceededQuota", LocalResourceFile);
+                }
                 CheckSecurity();
                 pnlHost.Visible = UserInfo.IsSuperUser;
 

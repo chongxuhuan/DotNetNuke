@@ -65,50 +65,24 @@ namespace DotNetNuke.Modules.Admin.Users
 
         protected int TotalPages = -1;
         protected int TotalRecords;
-        private int _currentPage = 1;
-        private string _filter = "";
-        private string _filterProperty = "";
-        private ArrayList _users = new ArrayList();
 
-		#endregion
+        public UserAccounts()
+        {
+            Users = new ArrayList();
+            FilterProperty = "";
+            Filter = "";
+            CurrentPage = 1;
+        }
+
+        #endregion
 
 		#region "Protected Members"
 
-        protected int CurrentPage
-        {
-            get
-            {
-                return _currentPage;
-            }
-            set
-            {
-                _currentPage = value;
-            }
-        }
+        protected int CurrentPage { get; set; }
 
-        protected string Filter
-        {
-            get
-            {
-                return _filter;
-            }
-            set
-            {
-                _filter = value;
-            }
-        }
+        protected string Filter { get; set; }
 
-        protected string FilterProperty
-        {
-            get
-            {
-                return _filterProperty;
-            }
-            set
-            {
-                _filterProperty = value;
-            }
-        }
+        protected string FilterProperty { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -181,18 +155,9 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
-        protected ArrayList Users
-        {
-            get
-            {
-                return _users;
-            }
-            set
-            {
-                _users = value;
-            }
-        }
-		#endregion
+        protected ArrayList Users { get; set; }
+
+        #endregion
 
         #region IActionable Members
 
@@ -210,7 +175,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 else
                 {
                     FilterParams.SetValue("filter=" + txtSearch.Text, 0);
-                    FilterParams.SetValue("filterproperty=" + ddlSearchType == null ? "" : ddlSearchType.SelectedValue, 1);
+                    FilterParams.SetValue("filterproperty=" + ((ddlSearchType == null) ? "" : ddlSearchType.SelectedValue), 1);
                     FilterParams.SetValue("currentpage=" + CurrentPage, 2);
                 }
                 Actions.Add(GetNextActionID(),
@@ -249,29 +214,6 @@ namespace DotNetNuke.Modules.Admin.Users
                                 true,
                                 false);
                 }
-                if (ProfileProviderConfig.CanEditProviderProperties)
-                {
-                    Actions.Add(GetNextActionID(),
-                                Localization.GetString("ManageProfile.Action", LocalResourceFile),
-                                ModuleActionType.AddContent,
-                                "",
-                                "icon_profile_16px.gif",
-                                EditUrl("ManageProfile"),
-                                false,
-                                SecurityAccessLevel.Edit,
-                                true,
-                                false);
-                }
-                Actions.Add(GetNextActionID(),
-                            Localization.GetString("UserSettings.Action", LocalResourceFile),
-                            ModuleActionType.AddContent,
-                            "",
-                            "settings.gif",
-                            EditUrl("UserSettings"),
-                            false,
-                            SecurityAccessLevel.Edit,
-                            true,
-                            false);
                 return Actions;
             }
         }
@@ -329,11 +271,6 @@ namespace DotNetNuke.Modules.Admin.Users
             }
             return li;
         }
-
-        //private void BindData()
-        //{
-        //    BindData(null, null);
-        //}
 
         /// -----------------------------------------------------------------------------
         /// <summary>

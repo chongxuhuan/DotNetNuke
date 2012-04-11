@@ -37,16 +37,16 @@ namespace DotNetNuke.Authentication.Twitter.Components
         #region Overrides
 
         [DataMember(Name = "screen_name")]
-        public override string DisplayName { get; set; }
+        public new string DisplayName { get; set; }
 
         [DataMember(Name = "lang")]
-        public virtual string Locale { get; set; }
+        public new string Locale { get; set; }
 
         [DataMember(Name = "profile_image_url")]
-        public virtual string ProfileImage { get; set; }
+        public new string ProfileImage { get; set; }
 
         [DataMember(Name = "url")]
-        public override string Website { get; set; }
+        public new string Website { get; set; }
 
         #endregion
     }

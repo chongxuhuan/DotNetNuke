@@ -39,6 +39,11 @@ namespace DotNetNuke.Authentication.LiveConnect
             get { return "Live"; }
         }
 
+        public override bool SupportsRegistration
+        {
+            get { return true; }
+        }
+
         protected override UserData GetCurrentUser()
         {
             return OAuthClient.GetCurrentUser<LiveUserData>();
@@ -50,7 +55,7 @@ namespace DotNetNuke.Authentication.LiveConnect
 
             loginButton.Click += loginButton_Click;
 
-            OAuthClient = new LiveClient(PortalId);
+            OAuthClient = new LiveClient(PortalId, Mode);
         }
 
         private void loginButton_Click(object sender, EventArgs e)

@@ -25,6 +25,7 @@
 using System;
 
 using DotNetNuke.Authentication.Twitter.Components;
+using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Authentication.OAuth;
 
 #endregion
@@ -38,6 +39,11 @@ namespace DotNetNuke.Authentication.Twitter
             get { return "Twitter"; }
         }
 
+        public override bool SupportsRegistration
+        {
+            get { return true; }
+        }
+
         protected override UserData GetCurrentUser()
         {
             return OAuthClient.GetCurrentUser<TwitterUserData>();
@@ -49,7 +55,7 @@ namespace DotNetNuke.Authentication.Twitter
 
             loginButton.Click += loginButton_Click;
 
-            OAuthClient = new TwitterClient(PortalId);
+            OAuthClient = new TwitterClient(PortalId, Mode);
         }
 
         private void loginButton_Click(object sender, EventArgs e)

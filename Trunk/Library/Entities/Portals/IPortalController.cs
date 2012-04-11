@@ -24,7 +24,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Web;
 using DotNetNuke.Entities.Users;
 
 namespace DotNetNuke.Entities.Portals
@@ -111,6 +110,25 @@ namespace DotNetNuke.Entities.Portals
         /// -----------------------------------------------------------------------------
         int CreatePortal(string portalName, string firstName, string lastName, string username, string password, string email, string description, string keyWords, string templatePath,
                          string templateFile, string homeDirectory, string portalAlias, string serverPath, string childPath, bool isChildPortal);
+
+        /// <summary>
+        /// Creates the portal.
+        /// </summary>
+        /// <param name="portalName">Name of the portal.</param>
+        /// <param name="adminUser">The obj admin user.</param>
+        /// <param name="description">The description.</param>
+        /// <param name="keyWords">The key words.</param>
+        /// <param name="template"> </param>
+        /// <param name="homeDirectory">The home directory.</param>
+        /// <param name="portalAlias">The portal alias.</param>
+        /// <param name="serverPath">The server path.</param>
+        /// <param name="childPath">The child path.</param>
+        /// <param name="isChildPortal">if set to <c>true</c> means the portal is child portal.</param>
+        /// <returns>Portal id.</returns>
+        int CreatePortal(string portalName, UserInfo adminUser, string description, string keyWords,
+                         PortalController.PortalTemplateInfo template,
+                         string homeDirectory, string portalAlias, string serverPath, string childPath,
+                         bool isChildPortal);
 
         /// -----------------------------------------------------------------------------
         /// <summary>
@@ -278,6 +296,20 @@ namespace DotNetNuke.Entities.Portals
         /// </summary>
         /// <returns>portal settings.</returns>
         PortalSettings GetCurrentPortalSettings();
+
+        /// <summary>
+        /// Get all the available portal templates grouped by culture
+        /// </summary>
+        /// <returns>List of PortalTemplateInfo objects</returns>
+        IList<PortalController.PortalTemplateInfo> GetAvailablePortalTemplates();
+
+        /// <summary>
+        /// Load info for a portal template
+        /// </summary>
+        /// <param name="templateFileName">The file name of the portal template</param>
+        /// <param name="cultureCode">the culture code if any for the localization of the portal template</param>
+        /// <returns>A portal template</returns>
+        PortalController.PortalTemplateInfo GetPortalTemplate(string templateFileName, string cultureCode);
     }
 }
         

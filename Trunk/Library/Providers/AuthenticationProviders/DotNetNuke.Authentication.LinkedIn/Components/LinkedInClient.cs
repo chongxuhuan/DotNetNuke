@@ -25,6 +25,7 @@
 
 using System;
 
+using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Authentication.OAuth;
 
 #endregion
@@ -33,18 +34,14 @@ namespace DotNetNuke.Authentication.LinkedIn.Components
 {
     public class LinkedInClient : OAuthClientBase
     {
-        public LinkedInClient(int portalId)
+        public LinkedInClient(int portalId, AuthMode mode) : base(portalId, mode, "LinkedIn")
         {
             AuthorizationEndpoint = new Uri("https://www.linkedin.com/uas/oauth/authorize");
             RequestTokenEndpoint = new Uri("https://api.linkedin.com/uas/oauth/requestToken");
+            RequestTokenMethod = HttpMethod.POST;
             TokenEndpoint = new Uri("https://api.linkedin.com/uas/oauth/accessToken");
             MeGraphEndpoint = new Uri("http://api.linkedin.com/v1/people/~");
 
-            Service = "LinkedIn";
-
-            APIKey = OAuthConfigBase.GetConfig(Service, portalId).APIKey;
-            APISecret = OAuthConfigBase.GetConfig(Service, portalId).APISecret;
-            CallbackUri = new Uri(OAuthConfigBase.GetConfig(Service, portalId).SiteURL);
             AuthTokenName = "LinkedInUserToken";
 
             OAuthVersion = "1.0";

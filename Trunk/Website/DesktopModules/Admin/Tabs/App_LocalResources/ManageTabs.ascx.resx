@@ -528,6 +528,9 @@
   <data name="PublishPage.Text" xml:space="preserve">
     <value>Click this button to publish the page.  This will copy the view permissions from the default culture version of the page, thus making the page visible to site visitors.</value>
   </data>
+  <data name="Publish.Text" xml:space="preserve">
+    <value>Publish</value>
+  </data>
   <data name="Publish.Confirm" xml:space="preserve">
     <value>You are about to publish this page.  This action will mark all the modules as translated and will automatically copy all the View permissions from the master/default language.  Are you sure you want to do this?</value>
   </data>

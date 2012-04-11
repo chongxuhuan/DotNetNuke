@@ -1,14 +1,14 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
     <package name="FiftyOneClientCapabilityProvider" type="Provider" version="06.02.00">
-      <friendlyName>FiftyOne Client Capability Providers</friendlyName>
-      <description>Device Detection Modules &amp; Client Capability Provider</description>
-      <iconFile>~/DesktopModules/Admin/FiftyOneClientCapabilityProvider/Images/51Degrees.mobi.png</iconFile>
+      <friendlyName>DotNetNuke Client Capability Provider</friendlyName>
+      <description>Device Detection / Client Capability Provider</description>
+      <iconFile>~/DesktopModules/Admin/FiftyOneClientCapabilityProvider/Images/mobiledevicedet_16X16.png</iconFile>
       <owner>
-        <name>51Degrees.mobi</name>
-        <organization>51 Degrees Mobile Experts Limited</organization>
-        <url>http://51Degrees.mobi</url>
-        <email>info@51degrees.mobi</email>
+        <name>DotNetNuke</name>
+        <organization>DotNetNuke Corporation</organization>
+        <url>www.dotnetnuke.com</url>
+        <email>support@dotnetnuke.com</email>
       </owner>
       <license src="License.txt"></license>
       <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
@@ -68,7 +68,7 @@
             <attributes>
               <businessControllerClass>DotNetNuke.Providers.FiftyOneClientCapabilityProvider.Components.FeatureController, DotNetNuke.Providers.FiftyOneClientCapabilityProvider</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>2.1.1.5</upgradeVersionsList>
+              <upgradeVersionsList>06.01.05</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>
@@ -98,6 +98,16 @@
                   </node>
                   <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
                     <add name="Detector" type="FiftyOne.Foundation.Mobile.Detection.DetectorModule, FiftyOne.Foundation" preCondition="managedHandler"/>
+                  </node>
+                  <node path="/configuration/configSections/sectionGroup[@name='dotnetnuke']" action="update" key="name" collision="ignore">
+                    <section name="clientcapability" requirePermission="false" type="DotNetNuke.Framework.Providers.ProviderConfigurationHandler, DotNetNuke" />
+                  </node>
+                  <node path="/configuration/dotnetnuke" action="update" targetpath="/configuration/dotnetnuke/clientcapability" collision="ignore">
+                    <clientcapability defaultProvider="FiftyOneClientCapabilityProvider">
+                      <providers>
+                        <clear />
+                      </providers>
+                    </clientcapability>
                   </node>
                   <node path="/configuration/dotnetnuke/clientcapability/providers" action="update" key="name" collision="overwrite">
                     <add name="FiftyOneClientCapabilityProvider" type="DotNetNuke.Providers.FiftyOneClientCapabilityProvider.FiftyOneClientCapabilityProvider, DotNetNuke.Providers.FiftyOneClientCapabilityProvider" providerPath="~\Providers\ClientCapabilityProviders\FiftyOneClientCapabilityProvider\" />

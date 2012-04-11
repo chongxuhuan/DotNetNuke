@@ -33,16 +33,16 @@ namespace DotNetNuke.Web.Services
 {
     public sealed class DnnAuthorizeAttribute : AuthorizeAttributeBase, IOverrideDefaultAuthLevel
     {
-        private string _roles;
+        private string _staticRoles;
         private string[] _rolesSplit = new string[0];
 
-        public string Roles
+        public string StaticRoles
         {
-            get { return _roles; }
+            get { return _staticRoles; }
             set
             {
-                _roles = value;
-                _rolesSplit = SplitString(_roles);
+                _staticRoles = value;
+                _rolesSplit = SplitString(_staticRoles);
             }
         }
 
@@ -55,7 +55,7 @@ namespace DotNetNuke.Web.Services
         /// Allows authorization of anonymous users
         /// <remarks>
         /// AllowAnonymous is used to allow anonymous access to specific methods in a controller that has a higher DefaultAuthLevel
-        /// This setting will be ignored if any of User, Roles or Host level access are also specified
+        /// This setting will be ignored if any of User, StaticRoles or Host level access are also specified
         /// </remarks>
         /// </summary>
         public bool AllowAnonymous { get; set; }

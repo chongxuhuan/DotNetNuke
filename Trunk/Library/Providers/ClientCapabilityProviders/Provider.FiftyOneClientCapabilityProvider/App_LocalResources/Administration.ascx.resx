@@ -121,19 +121,19 @@
     <value>Activate</value>
   </data>
   <data name="ActivateButtonText.Text" xml:space="preserve">
-    <value>Activate!</value>
+    <value>Activate</value>
   </data>
   <data name="ActivatedMessageHtml.Text" xml:space="preserve">
     <value>&lt;p class="{0}"&gt;Premium Data is active. Thank you.&lt;/p&gt;</value>
   </data>
   <data name="ActivateInstructionsHtml.Text" xml:space="preserve">
-    <value>&lt;p&gt;Paste your Premium Data licence key into the textbox below. Select "Activate" to use the licence key with this web site.&lt;/p&gt;</value>
+    <value>&lt;p&gt;Paste your Premium Data license key into the textbox below. Select "Activate" to use the license key with this web site.&lt;/p&gt;</value>
   </data>
   <data name="ActivationDataInvalidHtml.Text" xml:space="preserve">
     <value>&lt;div class="{0}"&gt;&lt;p&gt;The data source provided does not contain valid data.&lt;/p&gt;&lt;/div&gt;</value>
   </data>
   <data name="ActivationFailureCouldNotUpdateConfigHtml.Text" xml:space="preserve">
-    <value>&lt;div class="{0}"&gt;&lt;p&gt;The fiftyOne/detection element of the config file '{1}' could not be inserted. Please ensure the following text is present between the fiftyOne tags and try activating the licence key again.&lt;/p&gt;
+    <value>&lt;div class="{0}"&gt;&lt;p&gt;The fiftyOne/detection element of the config file '{1}' could not be inserted. Please ensure the following text is present between the fiftyOne tags and try activating the license key again.&lt;/p&gt;
 &lt;br/&gt;
 &lt;span style="margin-left: 0px !important;"&gt;&lt;code style="color: #000000;"&gt;&amp;lt;&lt;/code&gt;&lt;code&gt;&lt;span style="color: #006699;"&gt;&lt;strong&gt;detection&lt;/strong&gt;&lt;/span&gt;&lt;/code&gt;&amp;nbsp;&lt;code style="color: #808080;"&gt;binaryFilePath&lt;/code&gt;&lt;code style="color: #000000;"&gt;=&lt;/code&gt;&lt;code style="color: blue;"&gt;"~/App_Data/51Degrees-Premium.dat"&lt;/code&gt;&lt;code&gt;&lt;span style="color: #000000;"&gt;/&amp;gt;&lt;/span&gt;&lt;/div&gt;</value>
   </data>
@@ -143,13 +143,13 @@
 &lt;/div&gt;</value>
   </data>
   <data name="ActivationFailureCouldNotWriteLicenceFileHtml.Text" xml:space="preserve">
-    <value>&lt;div class="{0}"&gt;&lt;p&gt;The licence file '{1}' could not be written to this web sites bin folder '{2}'. Create a text file with the extension .lic and paste the licence key  into the file. Save the text file in the bin folder.&lt;/p&gt;&lt;/div&gt;</value>
+    <value>&lt;div class="{0}"&gt;&lt;p&gt;The license file '{1}' could not be written to this web sites bin folder '{2}'. Create a text file with the extension .lic and paste the license key  into the file. Save the text file in the bin folder.&lt;/p&gt;&lt;/div&gt;</value>
   </data>
   <data name="ActivationFailureGenericHtml.Text" xml:space="preserve">
-    <value>&lt;div class="{0}"&gt;&lt;p&gt;Whoops. There was a problem activating the licence key. We're unsure why the license key provided could not be activated. Please &lt;a href="http://51degrees.mobi/AboutUs/ContactUs.aspx"&gt;Contact Us&lt;/a&gt; providing details of your web site implementation and we'll try and help you.&lt;/p&gt;&lt;/div&gt;</value>
+    <value>&lt;div class="{0}"&gt;&lt;p&gt;Whoops. There was a problem activating the license key. We're unsure why the license key provided could not be activated. Please &lt;a href="http://51degrees.mobi/AboutUs/ContactUs.aspx"&gt;Contact Us&lt;/a&gt; providing details of your web site implementation and we'll try and help you.&lt;/p&gt;&lt;/div&gt;</value>
   </data>
   <data name="ActivationFailureHttpHtml.Text" xml:space="preserve">
-    <value>&lt;div class="{0}"&gt;&lt;p&gt;We were unable to reach the 51Degrees.mobi licence validation web site at the host '{1}'. This could be for one of the following reasons.&lt;/p&gt;
+    <value>&lt;div class="{0}"&gt;&lt;p&gt;We were unable to reach the 51Degrees.mobi license validation web site at the host '{1}'. This could be for one of the following reasons.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
 This web site is running in medium trust mode and the 
@@ -160,16 +160,16 @@ be seperated by | signs.&lt;/li&gt;
 The web servers firewall or another firewall is blocking access to the host or the SSL port 443. Check the firewall configuration.
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;When you've completed these checks try activating the licence key again.&lt;/p&gt;&lt;/div&gt;</value>
+&lt;p&gt;When you've completed these checks try activating the license key again.&lt;/p&gt;&lt;/div&gt;</value>
   </data>
   <data name="ActivationFailureInvalidHtml.Text" xml:space="preserve">
-    <value>&lt;div class="{0}"&gt;&lt;p&gt;The licence key provided failed validation. Please check the license key is validate with your reseller.&lt;/p&gt;&lt;/div&gt;</value>
+    <value>&lt;div class="{0}"&gt;&lt;p&gt;The license key provided failed validation. Please check the license key is validate with your reseller.&lt;/p&gt;&lt;/div&gt;</value>
   </data>
   <data name="ActivationStreamFailureHtml.Text" xml:space="preserve">
     <value>&lt;div class="{0}"&gt;&lt;p&gt;The data source provided could not be read from.&lt;/p&gt;&lt;/div&gt;</value>
   </data>
   <data name="ActivationSuccessHtml.Text" xml:space="preserve">
-    <value>&lt;div class="{0}"&gt;&lt;p&gt;Success. Select the "Refresh" button to reload the web page and and start using Premium Device Data.  Note: There may be a short delay as the application pool restarts.&lt;/p&gt;&lt;/div&gt;</value>
+    <value>&lt;div class="{0}"&gt;&lt;p&gt;Success. Select the "Refresh" button to reload the web page and and start using Premium Device Data.  Note: There may be a short delay as the application restarts.&lt;/p&gt;&lt;/div&gt;</value>
   </data>
   <data name="BackToExplorer.Text" xml:space="preserve">
     <value>Back to Device Explorer</value>
@@ -235,7 +235,7 @@ The web servers firewall or another firewall is blocking access to the host or t
     <value>.</value>
   </data>
   <data name="PurchaseInfoLink.Href" xml:space="preserve">
-    <value>http://store.dotnetnuke.com</value>
+    <value>http://store.dotnetnuke.com/home/product-details/premium-mobile-device-data---51degreesmobi</value>
   </data>
   <data name="PurchaseInfoLink.Text" xml:space="preserve">
     <value>DotNetNuke Store</value>
@@ -321,5 +321,11 @@ The web servers firewall or another firewall is blocking access to the host or t
   </data>
   <data name="BackButtonDeviceText.Text" xml:space="preserve">
     <value>Other {0} Devices</value>
+  </data>
+  <data name="PremiumUploadError.Text" xml:space="preserve">
+    <value>There was a problem uploading your data.</value>
+  </data>
+  <data name="PremiumUploadSuccess.Text" xml:space="preserve">
+    <value>Data has been uploaded successfully.</value>
   </data>
 </root>

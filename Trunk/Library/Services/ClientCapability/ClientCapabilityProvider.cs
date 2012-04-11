@@ -37,7 +37,7 @@ namespace DotNetNuke.Services.ClientCapability
         /// <summary>
         /// Support detect the device whether is a tablet.
         /// </summary>
-        public virtual bool SupportTabletDetect
+        public virtual bool SupportsTabletDetection
         {
             get
             {

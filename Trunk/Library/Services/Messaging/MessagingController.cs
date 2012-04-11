@@ -44,6 +44,7 @@ namespace DotNetNuke.Services.Messaging
     /// <history>
     /// </history>
     /// -----------------------------------------------------------------------------
+    [Obsolete("Deprecated in DNN 6.2.0, please use DotNetNuke.Services.Social.Messaging.MessagingController")]
     public class MessagingController : IMessagingController
     {
         private static TabInfo _MessagingPage;
@@ -77,8 +78,9 @@ namespace DotNetNuke.Services.Messaging
 
         #endregion
 
-        #region "Public Shared Methods"
+        #region "Obsolete Methods"
 
+        [Obsolete("Deprecated in DNN 6.2.0")]
         public static string DefaultMessagingURL(string ModuleFriendlyName)
         {
             TabInfo page = MessagingPage(ModuleFriendlyName);
@@ -92,6 +94,7 @@ namespace DotNetNuke.Services.Messaging
             }
         }
 
+        [Obsolete("Deprecated in DNN 6.2.0")]
         public static TabInfo MessagingPage(string ModuleFriendlyName)
         {
             if (((_MessagingPage != null)))
@@ -118,13 +121,10 @@ namespace DotNetNuke.Services.Messaging
             return _MessagingPage;
         }
 
-        #endregion
-
-        #region "Public Methods"
-
+        
         public Message GetMessageByID(int PortalID, int UserID, int messageId)
         {
-            return (Message) CBO.FillObject(_DataService.GetMessageByID(messageId), typeof (Message));
+            return (Message)CBO.FillObject(_DataService.GetMessageByID(messageId), typeof(Message));
         }
 
         public List<Message> GetUserInbox(int PortalID, int UserID, int PageNumber, int PageSize)
@@ -144,7 +144,7 @@ namespace DotNetNuke.Services.Messaging
 
         public Message GetNextMessageForDispatch(Guid SchedulerInstance)
         {
-            return (Message) CBO.FillObject(_DataService.GetNextMessageForDispatch(SchedulerInstance), typeof (Message));
+            return (Message)CBO.FillObject(_DataService.GetNextMessageForDispatch(SchedulerInstance), typeof(Message));
         }
 
 

@@ -39,17 +39,23 @@ namespace DotNetNuke.Services.Journal {
 
         #endregion
         #region "Public Methods"
-        public List<JournalItem> ListForProfile(int PortalId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows) {
-            return CBO.FillCollection<JournalItem>(_DataService.Journal_ListForProfile(PortalId, CurrentUserId, ProfileId, RowIndex, MaxRows));
+        public List<JournalItem> ListForProfile(int PortalId, int ModuleId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows) {
+            return CBO.FillCollection<JournalItem>(_DataService.Journal_ListForProfile(PortalId, ModuleId, CurrentUserId, ProfileId, RowIndex, MaxRows));
         }
-        public List<JournalItem> ListForSummary(int PortalId, int CurrentUserId, int RowIndex, int MaxRows) {
-            return CBO.FillCollection<JournalItem>(_DataService.Journal_ListForSummary(PortalId, CurrentUserId, RowIndex, MaxRows));
+        public List<JournalItem> ListForSummary(int PortalId, int ModuleId, int CurrentUserId, int RowIndex, int MaxRows) {
+            return CBO.FillCollection<JournalItem>(_DataService.Journal_ListForSummary(PortalId, ModuleId, CurrentUserId, RowIndex, MaxRows));
         }
-        public List<JournalItem> ListForGroup(int PortalId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows) {
-            return CBO.FillCollection<JournalItem>(_DataService.Journal_ListForGroup(PortalId, CurrentUserId, GroupId, RowIndex, MaxRows));
+        public List<JournalItem> ListForGroup(int PortalId, int ModuleId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows) {
+            return CBO.FillCollection<JournalItem>(_DataService.Journal_ListForGroup(PortalId, ModuleId, CurrentUserId, GroupId, RowIndex, MaxRows));
         }
         public JournalItem Journal_Get(int PortalId, int CurrentUserId, int JournalId) {
             return (JournalItem)CBO.FillObject(_DataService.Journal_Get(PortalId, CurrentUserId, JournalId), typeof(JournalItem));
+        }
+        public JournalItem Journal_GetByKey(int PortalId, string ObjectKey) {
+            if (string.IsNullOrEmpty(ObjectKey)) {
+                return null;
+            }
+            return (JournalItem)CBO.FillObject(_DataService.Journal_GetByKey(PortalId, ObjectKey), typeof(JournalItem));
         }
         public JournalItem CreateStatus(int PortalId, int TabId, int UserId, string Text, string SecuritySet) {
             var ji = new Services.Journal.JournalItem() {
@@ -168,9 +174,7 @@ namespace DotNetNuke.Services.Journal {
                             objJournalItem.SecuritySet = objJournalItem.SecuritySet.Replace("E,", String.Empty);
                         }
                     }
-                    
                 }
-
             }
             objJournalItem.JournalId = jds.Journal_Save(objJournalItem.PortalId, objJournalItem.UserId, objJournalItem.ProfileId, objJournalItem.SocialGroupId,
                     objJournalItem.JournalId, objJournalItem.JournalTypeId, objJournalItem.Title, objJournalItem.Summary, objJournalItem.Body, journalData, xml, 
@@ -186,11 +190,23 @@ namespace DotNetNuke.Services.Journal {
                 ci = cnt.CreateContentItem(objJournalItem, TabId);
                 jds.Journal_UpdateContentItemId(objJournalItem.JournalId, ci.ContentItemId);
             }
+            if (objJournalItem.SocialGroupId > 0) {
+                try {
+                    Journal_UpdateGroupStats(objJournalItem.PortalId, objJournalItem.SocialGroupId);
+                } catch (Exception exc) {
+                    Exceptions.Exceptions.LogException(exc);
+                }
+            }
             return objJournalItem;
         }
         public void Journal_Delete(int JournalId) {
             JournalDataService jds = new JournalDataService();
             jds.Journal_Delete(JournalId);
+
+        }
+        public void Journal_DeleteByKey(int PortalId, string ObjectKey) {
+            JournalDataService jds = new JournalDataService();
+            jds.Journal_DeleteByKey(PortalId, ObjectKey);
 
         }
         public void Journal_Like(int JournalId, int UserId, string DisplayName) {
@@ -209,7 +225,30 @@ namespace DotNetNuke.Services.Journal {
             }
             return list;
         }
-
+        public void Journal_UpdateGroupStats(int PortalId, int GroupId) {
+      
+                JournalDataService jds = new JournalDataService();
+                RoleInfo role = TestableRoleController.Instance.GetRole(PortalId, r => r.RoleID == GroupId);
+                if (role == null) {
+                    return;
+                }
+                using (IDataReader dr = jds.Journal_GetStatsForGroup(PortalId, GroupId)) {
+                    while (dr.Read()) {
+                        string settingName = "stat_" + dr["JournalType"].ToString();
+                        if (role.Settings.ContainsKey(settingName)) {
+                            role.Settings[settingName] = dr["JournalTypeCount"].ToString();
+                        } else {
+                            role.Settings.Add(settingName, dr["JournalTypeCount"].ToString());
+                        }
+                        
+                        
+                    }
+                    dr.Close();
+                }
+                TestableRoleController.Instance.UpdateRoleSettings(role, true);
+           
+            
+        }
     #endregion
         #region Journal Types
         public JournalTypeInfo JournalTypeGet(int JournalTypeId) {
@@ -227,6 +266,26 @@ namespace DotNetNuke.Services.Journal {
                 objJournalType.Options, objJournalType.SupportsNotify);
                 return JournalTypeGet(objJournalType.JournalTypeId);
         }
+        #endregion
+        #region Journal Type Filters
+        public Dictionary<int, string> FiltersList(int PortalId, int ModuleId) {
+            JournalDataService jds = new JournalDataService();
+            var filters = new Dictionary<int, string>{};
+            using (IDataReader dr = jds.Journal_TypeFilters_List(PortalId, ModuleId)) {
+                while (dr.Read()) {
+                    filters.Add(Convert.ToInt32(dr["JournalTypeId"].ToString()), dr["JournalType"].ToString());
+                }
+                dr.Close();
+            }
+            return filters;
+        }
+        public void FiltersDelete(int PortalId, int ModuleId) {
+            _DataService.Journal_TypeFilters_Delete(PortalId, ModuleId);
+        }
+        public void FiltersSave(int PortalId, int ModuleId, int JournalTypeId) {
+            _DataService.Journal_TypeFilters_Save(PortalId, ModuleId, JournalTypeId);
+        }
+
         #endregion
         #region Comments
         public CommentInfo CommentSave(CommentInfo objCommentInfo) {

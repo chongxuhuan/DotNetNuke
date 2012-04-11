@@ -614,6 +614,13 @@ namespace DotNetNuke.Security.Roles {
                     return PropertyAccess.FormatString(CreatedOnDate.ToString(), format);
                 case "photourl":
                     return PropertyAccess.FormatString(PhotoURL, format);
+                case "stat_status":
+                    return PropertyAccess.FormatString(GetString("stat_status", string.Empty), format);
+                case "stat_photo":
+                    return PropertyAccess.FormatString(GetString("stat_photo", string.Empty), format);
+                case "stat_file":
+                    return PropertyAccess.FormatString(GetString("stat_file", string.Empty), format);
+
 
 
             }

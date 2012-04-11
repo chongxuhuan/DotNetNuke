@@ -104,6 +104,11 @@ namespace DotNetNuke.Security.Membership
 		
         #region Virtual Methods
 
+        public virtual UserInfo GetUserByDisplayName(int portalId, string displayName)
+        {
+            return null;
+        }
+
         public virtual ArrayList GetUsers(int portalId, int pageIndex, int pageSize, ref int totalRecords, bool includeDeleted, bool superUsersOnly)
         {
             throw new NotImplementedException();

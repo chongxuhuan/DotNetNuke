@@ -21,6 +21,7 @@
 #region Usings
 
 using System;
+using System.Globalization;
 
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
@@ -48,6 +49,10 @@ namespace DotNetNuke.Modules.Admin.Users
                     {
                         txtTemplate.Text = (string) TabModuleSettings["ProfileTemplate"];
                     }
+                    if (Settings.ContainsKey("IncludeButton"))
+                    {
+                        IncludeButton.Checked = Convert.ToBoolean(Settings["IncludeButton"]);
+                    }
                 }
             }
             catch (Exception exc)
@@ -70,6 +75,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 var objModules = new ModuleController();
 
                 objModules.UpdateTabModuleSetting(TabModuleId, "ProfileTemplate", txtTemplate.Text);
+                objModules.UpdateTabModuleSetting(TabModuleId, "IncludeButton", IncludeButton.Checked.ToString(CultureInfo.InvariantCulture));
             }
             catch (Exception exc)
             {

@@ -660,7 +660,7 @@ namespace DotNetNuke.Security.Membership
             UserCreateStatus createStatus = UserCreateStatus.AddUser;
 
             Hashtable settings = UserController.GetUserSettings(user.PortalID);
-            bool useProfanityFilter =  Convert.ToBoolean(settings["Security_UseProfanityFilter"]);
+            bool useProfanityFilter = Convert.ToBoolean(settings["Registration_UseProfanityFilter"]);
 
             //Validate Profanity
             if (useProfanityFilter)
@@ -680,6 +680,21 @@ namespace DotNetNuke.Security.Membership
             return createStatus;
         }
 
+        private void ValidateForDuplicateDisplayName(UserInfo user, ref UserCreateStatus createStatus)
+        {
+            Hashtable settings = UserController.GetUserSettings(user.PortalID);
+            bool requireUniqueDisplayName = Convert.ToBoolean(settings["Registration_RequireUniqueDisplayName"]);
+
+            if (requireUniqueDisplayName)
+            {
+                UserInfo duplicateUser = GetUserByDisplayName(Null.NullInteger, user.DisplayName);
+                if (duplicateUser != null)
+                {
+                    createStatus = UserCreateStatus.DuplicateDisplayName;
+                }
+            }
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// CreateUser persists a User to the Data Store
@@ -692,6 +707,11 @@ namespace DotNetNuke.Security.Membership
         public override UserCreateStatus CreateUser(ref UserInfo user)
         {
             UserCreateStatus createStatus = ValidateForProfanity(user);
+
+            if (createStatus == UserCreateStatus.AddUser)
+            {
+                ValidateForDuplicateDisplayName(user, ref createStatus);
+            }
 
             if (createStatus == UserCreateStatus.AddUser)
             {
@@ -888,6 +908,23 @@ namespace DotNetNuke.Security.Membership
         public override UserInfo GetUser(int portalId, int userId)
         {
             IDataReader dr = _dataProvider.GetUser(portalId, userId);
+            UserInfo objUserInfo = FillUserInfo(portalId, dr, true);
+            return objUserInfo;
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// GetUserByDisplayName retrieves a User from the DataStore
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="portalId">The Id of the Portal</param>
+        /// <param name="displayName">The displayName of the user being retrieved from the Data Store.</param>
+        /// <returns>The User as a UserInfo object</returns>
+        /// -----------------------------------------------------------------------------
+        public override UserInfo GetUserByDisplayName(int portalId, string displayName)
+        {
+            IDataReader dr = _dataProvider.GetUserByDisplayName(portalId, displayName);
             UserInfo objUserInfo = FillUserInfo(portalId, dr, true);
             return objUserInfo;
         }

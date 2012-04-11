@@ -125,8 +125,9 @@
     <None Include="module.css" />
     <None Include="ReleaseNotes.txt" />
     <None Include="License.txt" />
-    <Content Include="Images\51Degrees.mobi.png" />
-    <Content Include="Images\51Degrees.mobi.Thumb.png" />
+    <Content Include="Images\mobiledevicedet_16X16.png" />
+    <Content Include="Images\mobiledevicedet_32X32.png" />
+    <Content Include="Images\mobiledevicedet_48X48.png" />
     <Content Include="Images\PremiumOnly.png" />
     <Content Include="Images\World.png" />
   </ItemGroup>

@@ -43,7 +43,6 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 .erAdvancedSettings .dnnFormItem input[type="text"], .dnnManageUsers .dnnFormItem input[type="text"]{width:35%;}
 .dnnManageUsers .dnnFormItem span.dnnFormMessage.dnnFormError{position:absolute;left:68%;top:0;z-index:9999;}
 .dnnEditProfileDef .dnnFormMessage{display:block;}
-.dnnUserSettings .dnnFormItem span {padding: 0px 10px 0px 5px;}
 
 .dnnManageSecurityRoles .dnnFormItem .dnnTooltip {width:100%; }
 .dnnManageSecurityRoles .dnnFormItem input {float:none;}
@@ -52,5 +51,7 @@ p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
 .dnnUser.register{ width: 750px;}
 
 div.dnnRegistrationForm { width: 96%;min-width: 620px;}
-div.dnnRegistrationForm .dnnForm {float: left;min-width: 50px; width: 60%;}
-.dnnSocialRegistration { float: none;height: 200px;}
+div.dnnRegistrationForm .dnnForm {float: left;min-width: 50px; width: 70%;}
+.dnnSocialRegistration { float: none;}
+div.dnnCaptcha {min-width: 50px; width: 70%;}
+span.dnnFormMessage.dnnFormError.dnnCaptcha { top: auto;}

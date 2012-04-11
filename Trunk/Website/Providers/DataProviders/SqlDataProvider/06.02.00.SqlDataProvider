@@ -1040,7 +1040,7 @@ AS
 	END
 GO
 
---Schema creation for Social Relationship
+--Schema creation for Relationships
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelationshipTypes]') AND type in (N'U'))
 	BEGIN
 		CREATE TABLE {databaseOwner}[{objectQualifier}RelationshipTypes]
@@ -1510,7 +1510,7 @@ AS
 			        
                     )
                     
-            SELECT  @RelationshipID = SCOPE_IDENTITY()
+            SELECT  @UserRelationshipID = SCOPE_IDENTITY()
         END
     ELSE 
         BEGIN
@@ -1793,52 +1793,62 @@ AS
 		WHERE PropertyDefinitionId = @PropertyDefinitionId
 GO
 
-/* Add objects for social messaging */
+/* Add objects for CoreMessaging messaging */
 /*************************************/
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]') AND type in (N'U')) BEGIN
-	CREATE TABLE {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes](
-		[MessageTypeID] [int] IDENTITY(1,1) NOT NULL,
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes](
+		[NotificationTypeID] [int] IDENTITY(1,1) NOT NULL,
 		[Name] [nvarchar](100) NOT NULL,
 		[Description] [nvarchar](2000) NULL,
 		[TTL] [int] NULL,
 		[DesktopModuleID] [int] NULL,
-		CONSTRAINT [PK_{objectQualifier}SocialMessages_MessageTypes] PRIMARY KEY CLUSTERED ([MessageTypeID] ASC)
+		[CreatedByUserID] [int] NULL,
+		[CreatedOnDate] [datetime] NULL,
+		[LastModifiedByUserID] [int] NULL,
+		[LastModifiedOnDate] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}CoreMessaging_NotificationTypes] PRIMARY KEY CLUSTERED ([NotificationTypeID] ASC)
 	)
 
-	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_MessageTypes] ON {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([Name] ASC)
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}CoreMessaging_NotificationTypes] ON {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name] ASC)
 
-	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
-	ADD CONSTRAINT [FK_{objectQualifier}SocialMessages_MessageTypes_{objectQualifier}DesktopModules]
+	ALTER TABLE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
+	ADD CONSTRAINT [FK_{objectQualifier}CoreMessaging_NotificationTypes_{objectQualifier}DesktopModules]
 	FOREIGN KEY([DesktopModuleID])
 	REFERENCES {databaseOwner}[{objectQualifier}DesktopModules] ([DesktopModuleID])
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessages_MessageTypeActions]') AND type in (N'U')) BEGIN
-	CREATE TABLE {databaseOwner}[{objectQualifier}SocialMessages_MessageTypeActions](
-		[MessageTypeActionID] [int] IDENTITY(1,1) NOT NULL,
-		[MessageTypeID] [int] NOT NULL,
-		[Name] [nvarchar](100) NOT NULL,
-		[Description] [nvarchar](2000) NULL,
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions](
+		[NotificationTypeActionID] [int] IDENTITY(1,1) NOT NULL,
+		[NotificationTypeID] [int] NOT NULL,
+		[NameResourceKey] [nvarchar](100) NOT NULL,
+		[DescriptionResourceKey] [nvarchar](100) NULL,
+		[ConfirmResourceKey] [nvarchar](100) NULL,
 		[Order] [int] NOT NULL,
 		[APICall] [nvarchar](500) NOT NULL,
-		CONSTRAINT [PK_{objectQualifier}SocialMessages_MessageTypeActions] PRIMARY KEY CLUSTERED ([MessageTypeActionID] ASC)
+		[CreatedByUserID] [int] NULL,
+		[CreatedOnDate] [datetime] NULL,
+		[LastModifiedByUserID] [int] NULL,
+		[LastModifiedOnDate] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}CoreMessaging_NotificationTypeActions] PRIMARY KEY CLUSTERED ([NotificationTypeActionID] ASC)
 	)
 
-	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessages_MessageTypeActions]
-	ADD CONSTRAINT [FK_{objectQualifier}SocialMessages_MessageTypeActions_{objectQualifier}SocialMessages_MessageTypes]
-	FOREIGN KEY([MessageTypeID])
-	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([MessageTypeID])
+	ALTER TABLE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	ADD CONSTRAINT [FK_{objectQualifier}CoreMessaging_NotificationTypeActions_{objectQualifier}CoreMessaging_NotificationTypes]
+	FOREIGN KEY([NotificationTypeID])
+	REFERENCES {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([NotificationTypeID])
 
-	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_MessageTypeActions] ON {databaseOwner}[{objectQualifier}SocialMessages_MessageTypeActions] ([MessageTypeID] ASC)
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}CoreMessaging_NotificationTypeActions] ON {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID] ASC)
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessages]') AND type in (N'U')) BEGIN
-	CREATE TABLE {databaseOwner}{objectQualifier}SocialMessages(
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_Messages]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}CoreMessaging_Messages(
 		[MessageID] [int] IDENTITY(1,1) NOT NULL,
-		[MessageTypeID] int NULL,
+		[PortalID] [int] NULL,
+		[NotificationTypeID] int NULL,
 		[To] [nvarchar](2000) NULL,
 		[From] [nvarchar](200) NULL,
 		[Subject] [nvarchar](400) NULL,
@@ -1851,66 +1861,73 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 		[CreatedOnDate] [datetime] NULL,
 		[LastModifiedByUserID] [int] NULL,
 		[LastModifiedOnDate] [datetime] NULL,
-		CONSTRAINT [PK_{objectQualifier}SocialMessages] PRIMARY KEY CLUSTERED ([MessageID] ASC)
+		CONSTRAINT [PK_{objectQualifier}CoreMessaging_Messages] PRIMARY KEY CLUSTERED ([MessageID] ASC)
 	)
 
-	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessages_SenderUserID] ON {databaseOwner}[{objectQualifier}SocialMessages] ([SenderUserID] ASC, [CreatedOnDate] DESC)
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}CoreMessaging_Messages_SenderUserID] ON {databaseOwner}[{objectQualifier}CoreMessaging_Messages] ([SenderUserID] ASC, [CreatedOnDate] DESC)
 
-	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessages]
-	ADD CONSTRAINT [FK_{objectQualifier}SocialMessages_{objectQualifier}SocialMessages_MessageTypes]
-	FOREIGN KEY([MessageTypeID])
-	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] ([MessageTypeID])
+	ALTER TABLE {databaseOwner}[{objectQualifier}CoreMessaging_Messages]
+	ADD CONSTRAINT [FK_{objectQualifier}CoreMessaging_Messages_{objectQualifier}CoreMessaging_NotificationTypes]
+	FOREIGN KEY([NotificationTypeID])
+	REFERENCES {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([NotificationTypeID])
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessageActions]') AND type in (N'U')) BEGIN
-	CREATE TABLE {databaseOwner}[{objectQualifier}SocialMessageActions](
-		[MessageActionID] [int] IDENTITY(1,1) NOT NULL,
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions](
+		[NotificationActionID] [int] IDENTITY(1,1) NOT NULL,
 		[MessageID] [int] NOT NULL,
-		[MessageTypeActionID] [int] NOT NULL,
+		[NotificationTypeActionID] [int] NOT NULL,
 		[Key] [nvarchar](500) NOT NULL,
-		CONSTRAINT [PK_{objectQualifier}SocialMessageActions] PRIMARY KEY CLUSTERED ([MessageActionID] ASC)
-	)
-
-	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageActions]
-	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageActions_{objectQualifier}SocialMessages]
-	FOREIGN KEY([MessageID])
-	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
-
-	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageActions]
-	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageActions_{objectQualifier}SocialMessages_MessageTypeActions]
-	FOREIGN KEY([MessageTypeActionID])
-	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages_MessageTypeActions] ([MessageTypeActionID]) ON DELETE CASCADE
-
-	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageActions] ON {databaseOwner}[{objectQualifier}SocialMessageActions] ([MessageID] ASC)
-END
-GO
-
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessageRecipients]') AND type in (N'U')) BEGIN
-	CREATE TABLE {databaseOwner}{objectQualifier}SocialMessageRecipients(
-		[RecipientID] [int] IDENTITY(1,1) NOT NULL,
-		[MessageID] [int] NOT NULL,
-		[UserID] [int] NOT NULL,
-		[Read] [bit] NOT NULL,
-		[Archived] [bit] NOT NULL,
 		[CreatedByUserID] [int] NULL,
 		[CreatedOnDate] [datetime] NULL,
 		[LastModifiedByUserID] [int] NULL,
 		[LastModifiedOnDate] [datetime] NULL,
-		CONSTRAINT [PK_{objectQualifier}SocialMessageRecipients] PRIMARY KEY CLUSTERED ([RecipientID] ASC)
+		CONSTRAINT [PK_{objectQualifier}CoreMessaging_NotificationActions] PRIMARY KEY CLUSTERED ([NotificationActionID] ASC)
 	)
 
-	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}SocialMessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC)
-
-	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageRecipients]
-	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageRecipients_{objectQualifier}SocialMessages]
+	ALTER TABLE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]
+	ADD CONSTRAINT [FK_{objectQualifier}CoreMessaging_NotificationActions_{objectQualifier}CoreMessaging_Messages]
 	FOREIGN KEY([MessageID])
-	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
+	REFERENCES {databaseOwner}[{objectQualifier}CoreMessaging_Messages] ([MessageID]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]
+	ADD CONSTRAINT [FK_{objectQualifier}CoreMessaging_NotificationActions_{objectQualifier}CoreMessaging_NotificationTypeActions]
+	FOREIGN KEY([NotificationTypeActionID])
+	REFERENCES {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeActionID]) ON DELETE CASCADE
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}CoreMessaging_NotificationActions] ON {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions] ([MessageID] ASC)
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialMessageAttachments]') AND type in (N'U')) BEGIN
-	CREATE TABLE {databaseOwner}{objectQualifier}SocialMessageAttachments(
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients(
+		[RecipientID] [int] IDENTITY(1,1) NOT NULL,
+		[MessageID] [int] NOT NULL,
+		[UserID] [int] NOT NULL,
+		[Read] [bit] NOT NULL DEFAULT 0,
+		[Archived] [bit] NOT NULL DEFAULT 0,
+		[EmailSent] [bit] NOT NULL DEFAULT 0,
+		[EmailSentDate] [datetime] NULL,
+		[EmailSchedulerInstance] [uniqueidentifier] NULL,
+		[CreatedByUserID] [int] NULL,
+		[CreatedOnDate] [datetime] NULL,
+		[LastModifiedByUserID] [int] NULL,
+		[LastModifiedOnDate] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}CoreMessaging_MessageRecipients] PRIMARY KEY CLUSTERED ([RecipientID] ASC)
+	)
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}CoreMessaging_MessageRecipients_UserID] ON {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] ([UserID] ASC, [Read] DESC, [Archived] ASC)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients]
+	ADD CONSTRAINT [FK_{objectQualifier}CoreMessaging_MessageRecipients_{objectQualifier}CoreMessaging_Messages]
+	FOREIGN KEY([MessageID])
+	REFERENCES {databaseOwner}[{objectQualifier}CoreMessaging_Messages] ([MessageID]) ON DELETE CASCADE
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_MessageAttachments]') AND type in (N'U')) BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments(
 		[MessageAttachmentID] [int] IDENTITY(1,1) NOT NULL,
 		[MessageID] [int] NOT NULL,
 		[FileID] [int] NULL,
@@ -1918,40 +1935,102 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 		[CreatedOnDate] [datetime] NULL,
 		[LastModifiedByUserID] [int] NULL,
 		[LastModifiedOnDate] [datetime] NULL,
-		CONSTRAINT [PK_{objectQualifier}SocialMessageAttachments] PRIMARY KEY CLUSTERED ([MessageAttachmentID] ASC)
+		CONSTRAINT [PK_{objectQualifier}CoreMessaging_MessageAttachments] PRIMARY KEY CLUSTERED ([MessageAttachmentID] ASC)
 	)
 
-	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialMessageAttachments_MessageID] ON {databaseOwner}[{objectQualifier}SocialMessageAttachments] ([MessageID] ASC)
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}CoreMessaging_MessageAttachments_MessageID] ON {databaseOwner}[{objectQualifier}CoreMessaging_MessageAttachments] ([MessageID] ASC)
 
-	ALTER TABLE {databaseOwner}[{objectQualifier}SocialMessageAttachments]
-	ADD CONSTRAINT [FK_{objectQualifier}SocialMessageAttachments_{objectQualifier}SocialMessages]
+	ALTER TABLE {databaseOwner}[{objectQualifier}CoreMessaging_MessageAttachments]
+	ADD CONSTRAINT [FK_{objectQualifier}CoreMessaging_MessageAttachments_{objectQualifier}CoreMessaging_Messages]
 	FOREIGN KEY([MessageID])
-	REFERENCES {databaseOwner}[{objectQualifier}SocialMessages] ([MessageID]) ON DELETE CASCADE
+	REFERENCES {databaseOwner}[{objectQualifier}CoreMessaging_Messages] ([MessageID]) ON DELETE CASCADE
 END
 GO
 
---CRUD for SocialMessages
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessage]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessage]
+--Seed data for Notification
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'FriendRequest')
+    BEGIN
+		DECLARE @NotificationTypeID INT		
+	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'FriendRequest', N'Friend Request',-1,NULL)
+		SELECT  @NotificationTypeID = SCOPE_IDENTITY()       
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Accept', N'AcceptFriend', '', 1, N'/DesktopModules/CoreServices/API/RelationshipService.ashx/AcceptFriend')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Reject', N'RejectFriend', '', 2, N'/DesktopModules/CoreServices/API/RelationshipService.ashx/RejectFriend')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Ignore', N'IgnoreFriend', '', 3, N'/DesktopModules/CoreServices/API/RelationshipService.ashx/IgnoreFriend')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Report', N'ReportFriend', '', 4, N'/DesktopModules/CoreServices/API/RelationshipService.ashx/ReportFriend')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Block', N'BlockFriend', '', 5, N'/DesktopModules/CoreServices/API/RelationshipService.ashx/BlockFriend')
+	END
+GO
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'FollowerRequest')
+    BEGIN
+		DECLARE @NotificationTypeID INT		  
+	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'FollowerRequest', N'Follower Request',-1,NULL)
+		SELECT  @NotificationTypeID = SCOPE_IDENTITY()   			
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Report', N'ReportFollower', '', 1, N'/DesktopModules/CoreServices/API/RelationshipService.ashx/ReportFollower')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Block', N'BlockFollower', '', 2, N'/DesktopModules/CoreServices/API/RelationshipService.ashx/BlockFollower')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Delete', N'DeleteNotification', N'DeleteItem', 3, N'/DesktopModules/CoreServices/API/NotificationsService.ashx/Delete')
+	END
+GO
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'FollowBackRequest')
+    BEGIN
+		DECLARE @NotificationTypeID INT		  
+	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'FollowBackRequest', N'Follow Back Request',-1,NULL)
+		SELECT  @NotificationTypeID = SCOPE_IDENTITY()   	
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'FollowBack', N'FollowBack', '', 1, N'/DesktopModules/CoreServices/API/RelationshipService.ashx/FollowBack')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Report', N'ReportFollower', '', 2, N'/DesktopModules/CoreServices/API/RelationshipService.ashx/ReportFollower')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Block', N'BlockFollower', '', 3, N'/DesktopModules/CoreServices/API/RelationshipService.ashx/BlockFollower')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Delete', N'DeleteNotification', N'DeleteItem', 4, N'/DesktopModules/CoreServices/API/NotificationsService.ashx/Delete')
+	END
+GO
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'TranslationSubmitted')
+	BEGIN
+		DECLARE @NotificationTypeID INT
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'TranslationSubmitted', N'Translation Submitted', -1, NULL)
+		SELECT @NotificationTypeID = SCOPE_IDENTITY()
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Delete', N'DeleteNotification', N'DeleteItem', 1, N'/DesktopModules/CoreServices/API/NotificationsService.ashx/Delete')
+	END
+GO
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'HtmlProWorkflow')
+	BEGIN
+		DECLARE @NotificationTypeID INT
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'HtmlProWorkflow', N'Html Pro Workflow Notification', -1, NULL)
+		SELECT @NotificationTypeID = SCOPE_IDENTITY()
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Delete', N'DeleteNotification', N'DeleteItem', 1, N'/DesktopModules/CoreServices/API/NotificationsService.ashx/Delete')
+	END
+GO
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'HtmlNotification')
+	BEGIN
+		DECLARE @NotificationTypeID INT
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'HtmlNotification', N'Html Module Notification', -1, NULL)
+		SELECT @NotificationTypeID = SCOPE_IDENTITY()
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Delete', N'DeleteNotification', N'DeleteItem', 1, N'/DesktopModules/CoreServices/API/NotificationsService.ashx/Delete')
+	END
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessage]
+--CRUD for CoreMessaging_Messages
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_SaveMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveMessage]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveMessage]
     @MessageID INT,
+	@PortalID INT,
 	@To nvarchar(2000),
 	@From nvarchar(200),
     @Subject nvarchar(400),
     @Body nvarchar(max),
     @ConversationID int,
     @ReplyAllAllowed bit,
+	@MessageDateTime DateTime,  
     @SenderUserID int,
 	@CreateUpdateUserID INT
     
 AS 
     IF ( @MessageID = -1 ) 
         BEGIN
-            INSERT {databaseOwner}{objectQualifier}SocialMessages(                    
-  					[To],
+            INSERT {databaseOwner}{objectQualifier}CoreMessaging_Messages(                    
+  					[PortalID],
+					[To],
 					[From],					
 					[Subject],
 					[Body],
@@ -1964,7 +2043,8 @@ AS
                     [LastModifiedOnDate]			        
                     )
             VALUES  (       
-     			    @To,
+     			    @PortalID,
+					@To,
 					@From,
 				    @Subject,			
 					@Body,
@@ -1972,17 +2052,17 @@ AS
 					@ReplyAllAllowed,
 					@SenderUserID,
                     @CreateUpdateUserID , -- CreatedBy - int
-                    GETDATE() , -- CreatedOn - datetime
+                    @MessageDateTime , -- CreatedOn - datetime
                     @CreateUpdateUserID , -- LastModifiedBy - int
                     GETDATE() -- LastModifiedOn - datetime			        
                     )
                     
             SELECT  @MessageID = SCOPE_IDENTITY()
-			UPDATE  {databaseOwner}{objectQualifier}SocialMessages SET [ConversationID] = @MessageID WHERE [MessageID] = @MessageID 
+			UPDATE  {databaseOwner}{objectQualifier}CoreMessaging_Messages SET [ConversationID] = @MessageID WHERE [MessageID] = @MessageID 
         END
     ELSE 
         BEGIN
-            UPDATE  {databaseOwner}{objectQualifier}SocialMessages
+            UPDATE  {databaseOwner}{objectQualifier}CoreMessaging_Messages
             SET     [To] = @To,
 					[From] = @From,
 					[Subject] = @Subject,			
@@ -1999,108 +2079,110 @@ AS
         
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessage]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessage]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessage]
 GO
 
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessage]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessage]
     @MessageID INT
 AS 
 	SELECT [MessageID], [To], [From], [Subject], [Body], [ConversationID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}[SocialMessages] 
+	FROM   {databaseOwner}[{objectQualifier}CoreMessaging_Messages] 
 	WHERE  [MessageID] = @MessageID 
 
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessagesBySender]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessagesBySender]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessagesBySender]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessagesBySender]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessagesBySender]
-    @SenderUserID INT
-AS 
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessagesBySender]
+    @SenderUserID INT,
+	@PortalID INT
+AS
+BEGIN
 	SELECT [MessageID], [To], [From], [Subject], [Body], [ConversationID], [ReplyAllAllowed], [SenderUserID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}[SocialMessages] 
-	WHERE  [SenderUserID] = @SenderUserID 
-
+	FROM   {databaseOwner}[{objectQualifier}CoreMessaging_Messages] 
+	WHERE  [SenderUserID] = @SenderUserID AND [PortalID] = @PortalID
+	AND [NotificationTypeID] IS NULL
+END
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteSocialMessage]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessage]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessage]
 GO
 
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessage]    
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessage]
 	@MessageID int
-AS 
-	DELETE FROM {databaseOwner}{objectQualifier}SocialMessages
+AS
+	DELETE FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages
 	WHERE  [MessageID] = @MessageID
 GO
 
---CRUD for SocialMessageRecipients
+--CRUD for CoreMessaging_MessageRecipients
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_SaveMessageRecipient]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveMessageRecipient]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageRecipient]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveMessageRecipient]
     @RecipientID int,
     @MessageID int,
     @UserID int,
     @Read bit,
-	@Archived bit,  	
-	@CreateUpdateUserID INT    
-AS 
-    IF ( @RecipientID = -1 ) 
+	@Archived bit,
+	@MessageDateTime DateTime,
+	@CreateUpdateUserID INT
+AS
+    IF ( @RecipientID = -1 )
         BEGIN
-            INSERT {databaseOwner}{objectQualifier}SocialMessageRecipients(                    
+            INSERT {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients(
 					[MessageID],
 					[UserID],
-					[Read],	
-					[Archived],				
+					[Read],
+					[Archived],
                     [CreatedByUserID],
                     [CreatedOnDate],
                     [LastModifiedByUserID],
-                    [LastModifiedOnDate]			        												        
+                    [LastModifiedOnDate]
                     )
-            VALUES  (       
+            VALUES  (
 					@MessageID,
 					@UserID,
-					@Read,            
-					@Archived,            								
+					@Read,
+					@Archived,
                     @CreateUpdateUserID , -- CreatedBy - int
-                    GETDATE() , -- CreatedOn - datetime
+                    @MessageDateTime , -- CreatedOn - datetime
                     @CreateUpdateUserID , -- LastModifiedBy - int
-                    GETDATE() -- LastModifiedOn - datetime			        
+                    GETDATE() -- LastModifiedOn - datetime
                     )
-                    
+
             SELECT  @RecipientID = SCOPE_IDENTITY()
         END
-    ELSE 
+    ELSE
         BEGIN
-            UPDATE  {databaseOwner}{objectQualifier}SocialMessageRecipients
+            UPDATE  {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients
             SET     [MessageID] = @MessageID,
 					[UserID] = @UserID,
 					[Read] = @Read,
-					[Archived] = @Archived,					
+					[Archived] = @Archived,
                     LastModifiedByUserID = @CreateUpdateUserID,
                     LastModifiedOnDate = GETDATE()
             WHERE   RecipientID = @RecipientID
         END
-        
-    SELECT  @RecipientID        
+
+    SELECT  @RecipientID
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageRecipientsForRole]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageRecipientsForRole]
 GO
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageRecipientsForRole]    
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageRecipientsForRole]
     @MessageID int,         -- message id
     @RoleIDs nvarchar(max), -- comma separated list of RoleIds
-	@CreateUpdateUserID INT -- create / update user id   
-AS 
+    @MessageDateTime DateTime,  
+	@CreateUpdateUserID INT -- create / update user id
+AS
     DECLARE @currentdate DATETIME
-    SET @currentdate = GETDATE()  
     
     ;WITH CTE_RoleIDs(RowNumber, RowValue)
     AS
@@ -2110,71 +2192,73 @@ AS
 	CTE_DistinctUserIDs(UserID)
     AS
     (
-  		SELECT DISTINCT UserID 
+  		SELECT DISTINCT UserID
 	    FROM {databaseOwner}{objectQualifier}vw_UserRoles ur
-        INNER JOIN CTE_RoleIDs cr ON ur.RoleID = cr.RowValue    
-    )        
-      
-    INSERT {databaseOwner}{objectQualifier}SocialMessageRecipients(                    
+        INNER JOIN CTE_RoleIDs cr ON ur.RoleID = cr.RowValue
+    )
+
+    INSERT {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients(
 			[MessageID],
 			[UserID],
-			[Read],	
-			[Archived],					
+			[Read],
+			[Archived],
             [CreatedByUserID],
             [CreatedOnDate],
             [LastModifiedByUserID],
-            [LastModifiedOnDate]			        												        
-            )            
+            [LastModifiedOnDate]
+            )
 			SELECT
-			  @MessageID, 	
+			  @MessageID,
 			  UserID,
-			  0,            
-			  0, 				      
+			  0,
+			  0,
               @CreateUpdateUserID , -- CreatedBy - int
-              @currentdate , -- CreatedOn - datetime
+              @MessageDateTime , -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
-              @currentdate -- LastModifiedOn - datetime			                                                
-           FROM CTE_DistinctUserIDs           
+              @currentdate -- LastModifiedOn - datetime
+           FROM CTE_DistinctUserIDs
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CreateSocialMessageReply]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CreateSocialMessageReply]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageReply]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageReply]
 GO
 
-CREATE PROC {databaseOwner}[{objectQualifier}CreateSocialMessageReply] 
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageReply]
     @ConversationID    INT,           -- parent message id
+	@PortalID			INT,			--portalID of message
     @Body               nvarchar(max), -- message body
-    @SenderUserID       INT,           -- create / update user id       
-    @From               nvarchar(200), -- message from     
-	@CreateUpdateUserID INT            -- create / update user id   
+    @SenderUserID       INT,           -- create / update user id
+    @From               nvarchar(200), -- message from
+	@CreateUpdateUserID INT            -- create / update user id
 AS
     DECLARE @ReplyAllAllowed BIT
     DECLARE @NewMessageID INT
     DECLARE @OriginalSenderUserID INT
-    DECLARE @OriginalTo nvarchar(2000)  
-    DECLARE @OriginalSubject nvarchar(400)           
-  
-	--Was Sender a Recipient in the Original Message. 
-	SELECT @ReplyAllAllowed = [ReplyAllAllowed], 
-	       @OriginalSenderUserID = [SenderUserID], 
-		   @OriginalTo = [TO],      
+    DECLARE @OriginalTo nvarchar(2000)
+    DECLARE @OriginalSubject nvarchar(400)
+
+	--Was Sender a Recipient in the Original Message.
+	SELECT @ReplyAllAllowed = [ReplyAllAllowed],
+	       @OriginalSenderUserID = [SenderUserID],
+		   @OriginalTo = [TO],
 		   @OriginalSubject = [Subject]
-	FROM {databaseOwner}{objectQualifier}SocialMessages m
-	INNER JOIN {databaseOwner}{objectQualifier}SocialMessageRecipients mr ON m.MessageID = mr.MessageID
+	FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages m
+	INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients mr ON m.MessageID = mr.MessageID
 	AND m.MessageID = @ConversationID
 	AND mr.UserID = @SenderUserID
-	
+
 	--Reply can only be create if Sender was Recipient of Orginial message
-	IF @ReplyAllAllowed IS NULL 
+	IF @ReplyAllAllowed IS NULL
 	BEGIN
 		SELECT -1
 		RETURN
-	END	
-	
+	END
+
 	--Create new message
-	INSERT {databaseOwner}{objectQualifier}SocialMessages(                    
+	INSERT {databaseOwner}{objectQualifier}CoreMessaging_Messages(
+					[PortalID],
   					[To],
-					[From],					
+					[From],
 					[Subject],
 					[Body],
 					[ConversationID],
@@ -2183,12 +2267,13 @@ AS
                     [CreatedByUserID],
                     [CreatedOnDate],
                     [LastModifiedByUserID],
-                    [LastModifiedOnDate]			        
+                    [LastModifiedOnDate]
                     )
-            VALUES  (       
+            VALUES  (
+					@PortalID,
      			    @OriginalTo,
 					@From,
-				    @OriginalSubject,			
+				    @OriginalSubject,
 					@Body,
 					@ConversationID,
 					@ReplyAllAllowed,
@@ -2196,14 +2281,14 @@ AS
                     @CreateUpdateUserID , -- CreatedBy - int
                     GETDATE() , -- CreatedOn - datetime
                     @CreateUpdateUserID , -- LastModifiedBy - int
-                    GETDATE() -- LastModifiedOn - datetime			        
+                    GETDATE() -- LastModifiedOn - datetime
                     )
-                    
+
 	SELECT @NewMessageID = SCOPE_IDENTITY()
-	
+
 	IF (@ReplyAllAllowed = 0) --original message was sent to a Role, reply will be sent to the original sender only
-	BEGIN		
-		INSERT INTO {databaseOwner}{objectQualifier}SocialMessageRecipients
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients
 		        ( [MessageID],
 		          [UserID],
 		          [Read],
@@ -2225,259 +2310,930 @@ AS
 	END
 	ELSE --Reply should be sent to all the original Recipients
 	BEGIN
-		INSERT {databaseOwner}{objectQualifier}SocialMessageRecipients(                    
+		INSERT {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients(
 			[MessageID],
 			[UserID],
-			[Read],	
-			[Archived],		
+			[Read],
+			[Archived],
             [CreatedByUserID],
             [CreatedOnDate],
             [LastModifiedByUserID],
-            [LastModifiedOnDate]			        												        
-            )            
+            [LastModifiedOnDate]
+            )
 			SELECT
-			  @NewMessageID, 	
+			  @NewMessageID,
 			  UserID,
-			  0,            
-			  0, 	  		      
+			  0,
+			  0,
               @CreateUpdateUserID , -- CreatedBy - int
               GETDATE() , -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
-              GETDATE() -- LastModifiedOn - datetime			                                                
-           FROM {databaseOwner}{objectQualifier}SocialMessageRecipients
+              GETDATE() -- LastModifiedOn - datetime
+           FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients
            WHERE MessageID = @ConversationID
 	END
 
-	SELECT  @NewMessageID        
+	SELECT  @NewMessageID
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipient]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageRecipient]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipient]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipient]
 GO
 
-CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipient] 
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipient]
     @RecipientID INT
-AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
-	WHERE  [RecipientID] = @RecipientID 
-
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser]
-GO
-
-CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByUser] 
-    @UserID INT
-AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
-	WHERE  [UserID] = @UserID 
-
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage]
-GO
-
-CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessage] 
-    @MessageID INT    
-AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
-	WHERE  [MessageID] = @MessageID 	 
-
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessageAndUser]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessageAndUser]
-GO
-
-CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageRecipientsByMessageAndUser] 
-    @MessageID INT,
-    @UserID INT
-AS 
-	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}SocialMessageRecipients
-	WHERE  [MessageID] = @MessageID 
-	 AND   [UserID] = @UserID 	 
-	 
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteSocialMessageRecipient]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessageRecipient]
-GO
-
-CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocialMessageRecipient] 
-    @RecipientID int
-AS 
-	DELETE FROM {databaseOwner}{objectQualifier}SocialMessageRecipients
+AS
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM   {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients
 	WHERE  [RecipientID] = @RecipientID
 GO
 
---CRUD for SocialMessageAttachments
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessageAttachment]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageAttachment]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipientsByUser]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipientsByUser]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageAttachment]
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipientsByUser]
+    @UserID INT
+AS
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM   {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients
+	WHERE  [UserID] = @UserID
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipientsByMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipientsByMessage]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipientsByMessage]
+    @MessageID INT
+AS
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM   {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients
+	WHERE  [MessageID] = @MessageID
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipientsByMessageAndUser]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipientsByMessageAndUser]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageRecipientsByMessageAndUser]
+    @MessageID INT,
+    @UserID INT
+AS
+	SELECT [RecipientID], [MessageID], [UserID], [Read], [Archived], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM   {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients
+	WHERE  [MessageID] = @MessageID
+	AND   [UserID] = @UserID
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessageRecipient]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessageRecipient]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessageRecipient]
+    @RecipientID int
+AS
+	DELETE FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients
+	WHERE  [RecipientID] = @RecipientID
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessageRecipientByMessageAndUser]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessageRecipientByMessageAndUser]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessageRecipientByMessageAndUser]
+    @MessageID int,
+    @UserID int
+AS
+BEGIN
+	DELETE
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients]
+	WHERE [MessageID] = @MessageID AND [UserID] = @UserID
+END
+GO
+
+--CRUD for CoreMessaging_MessageAttachments
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_SaveMessageAttachment]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveMessageAttachment]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveMessageAttachment]
     @MessageAttachmentID int,
     @MessageID int,
-    @FileID int,  
+    @FileID int,
 	@CreateUpdateUserID INT
-    
-AS 
-    IF ( @MessageAttachmentID = -1 ) 
+AS
+    IF ( @MessageAttachmentID = -1 )
         BEGIN
-            INSERT {databaseOwner}{objectQualifier}SocialMessageAttachments(                    
+            INSERT {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments(
 					[FileID],
 					[MessageID],
                     [CreatedByUserID],
                     [CreatedOnDate],
                     [LastModifiedByUserID],
-                    [LastModifiedOnDate]			        												        											        
+                    [LastModifiedOnDate]
                     )
-            VALUES  (       
+            VALUES  (
 					@FileID,
 					@MessageID,
                     @CreateUpdateUserID , -- CreatedBy - int
                     GETDATE() , -- CreatedOn - datetime
                     @CreateUpdateUserID , -- LastModifiedBy - int
-                    GETDATE() -- LastModifiedOn - datetime			        
+                    GETDATE() -- LastModifiedOn - datetime
                     )
-                    
+
             SELECT  @MessageAttachmentID = SCOPE_IDENTITY()
         END
-    ELSE 
+    ELSE
         BEGIN
-            UPDATE  {databaseOwner}{objectQualifier}SocialMessageAttachments
+            UPDATE  {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments
             SET     [FileID] = @FileID,
 					[MessageID] = @MessageID,
                     LastModifiedByUserID = @CreateUpdateUserID,
                     LastModifiedOnDate = GETDATE()
             WHERE   MessageAttachmentID = @MessageAttachmentID
         END
-        
+
     SELECT  @MessageAttachmentID
-        
 GO
 
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageAttachment]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageAttachment]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessageAttachment]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageAttachment]
 GO
 
-CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageAttachment] 
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageAttachment]
     @MessageAttachmentID INT
-AS 
-	SELECT [MessageID], [FileID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}SocialMessageAttachments
-	WHERE  [MessageAttachmentID] = @MessageAttachmentID 
-
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageAttachmentsByMessage]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageAttachmentsByMessage]
-GO
-
-CREATE PROC {databaseOwner}[{objectQualifier}GetSocialMessageAttachmentsByMessage] 
-    @MessageID INT
-AS 
-	SELECT [MessageID], [FileID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate] 
-	FROM   {databaseOwner}{objectQualifier}SocialMessageAttachments
-	WHERE  [MessageID] = @MessageID 
-
-GO
-
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteSocialMessageAttachment]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessageAttachment]
-GO
-
-CREATE PROC {databaseOwner}[{objectQualifier}DeleteSocialMessageAttachment] 
-    @MessageAttachmentID int
-AS 
-	DELETE FROM {databaseOwner}{objectQualifier}SocialMessageAttachments
+AS
+	SELECT [MessageID], [FileID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM   {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments
 	WHERE  [MessageAttachmentID] = @MessageAttachmentID
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveSocialMessageType]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageType]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessageAttachmentsByMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageAttachmentsByMessage]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}SaveSocialMessageType]
-	@MessageTypeID int,
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageAttachmentsByMessage]
+    @MessageID INT
+AS
+	SELECT [MessageID], [FileID], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM   {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments
+	WHERE  [MessageID] = @MessageID
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessageAttachment]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessageAttachment]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_DeleteMessageAttachment]
+    @MessageAttachmentID int
+AS
+	DELETE FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments
+	WHERE  [MessageAttachmentID] = @MessageAttachmentID
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteLegacyMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteLegacyMessage]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_DeleteLegacyMessage]
+    @MessageID int
+AS
+	DELETE FROM {databaseOwner}{objectQualifier}Messaging_Messages
+	WHERE  [MessageID] = @MessageID
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CountLegacyMessages]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountLegacyMessages]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_CountLegacyMessages]    
+AS
+	--Return total records
+	SELECT COUNT(*) AS TotalRecords
+	FROM {databaseOwner}[{objectQualifier}Messaging_Messages]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_ConvertLegacyMessages]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_ConvertLegacyMessages]
+GO
+
+CREATE PROC {databaseOwner}[{objectQualifier}CoreMessaging_ConvertLegacyMessages]    
+	@PageIndex       int,
+	@PageSize        int
+AS
+
+-- Set the page bounds
+DECLARE @PageLowerBound INT, @PageUpperBound INT;
+
+SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
+SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
+
+	DECLARE @MessageID bigint	
+	DECLARE @PortalID INT
+	DECLARE @FromUserName nvarchar(50)
+	DECLARE @FromUserID INT
+	DECLARE @ToUserName nvarchar(50)
+	DECLARE @ToUserID int
+	DECLARE @Status tinyint
+	DECLARE @Subject nvarchar(max)
+	DECLARE @Body nvarchar(max)
+	DECLARE @Date datetime
+	DECLARE @EmailSent bit
+	DECLARE @EmailSentDate datetime
+	DECLARE @EmailSchedulerInstance UNIQUEIDENTIFIER
+	DECLARE @RowNumber INT
+	
+	DECLARE @NewMessageID int	
+	DECLARE @Counter int		
+
+	DECLARE MessageList cursor FAST_FORWARD for
+
+	WITH messageItems  AS
+	(
+		SELECT  [MessageID], [PortalID],[FromUserName],[FromUserID], [ToUserName], [ToUserID], [Status], [Subject], [Body], [Date], [EmailSent], [EmailSentDate], [EmailSchedulerInstance] 
+				,ROW_NUMBER() OVER(ORDER BY MessageID ASC) AS RowNumber
+		FROM	{databaseOwner}[{objectQualifier}Messaging_Messages]
+	)
+	
+	SELECT * from messageItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound
+	ORDER BY RowNumber ASC
+	OPEN MessageList
+	FETCH NEXT FROM MessageList 
+		INTO @MessageID, @PortalID, @FromUserName, @FromUserID, @ToUserName, @ToUserID, @Status, @Subject, @Body, @Date, @EmailSent, @EmailSentDate, @EmailSchedulerInstance, @RowNumber 
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+			--Create SocialMessage Record
+            INSERT {databaseOwner}[{objectQualifier}CoreMessaging_Messages](                    
+  					[PortalID],
+					[To],
+					[From],					
+					[Subject],
+					[Body],
+					[ConversationID],
+					[ReplyAllAllowed],
+					[SenderUserID],
+                    [CreatedByUserID],
+                    [CreatedOnDate],
+                    [LastModifiedByUserID],
+                    [LastModifiedOnDate]			        
+                    )
+            VALUES  (       
+					@PortalID,
+					@ToUserName,
+					@FromUserName,
+					@Subject,
+					@Body,
+					NULL,
+					1, --ReplyAllAllowed,
+					@FromUserID,
+                    @FromUserID , -- CreatedBy - int
+                    @Date , -- CreatedOn - datetime
+                    @FromUserID , -- LastModifiedBy - int
+                    GETDATE() -- LastModifiedOn - datetime			        
+                    )
+            -- update conversation id                       
+            SELECT  @NewMessageID = SCOPE_IDENTITY()
+			UPDATE  {databaseOwner}[{objectQualifier}CoreMessaging_Messages] SET [ConversationID] = @NewMessageID WHERE [MessageID] = @NewMessageID 															
+			
+			--Create SocialRecipient Record for recipient and sender. 2 records total
+			Set @Counter = 0 
+			
+			--No need to create two records if message sent to self	
+			IF @ToUserID = @FromUserID BEGIN Set @Counter = 1 END
+					
+			WHILE @Counter < 2
+			BEGIN
+				SET @Counter = @Counter + 1
+			
+				INSERT {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients](
+						[MessageID],
+						[UserID],
+						[Read],
+						[Archived],
+						[CreatedByUserID],
+						[CreatedOnDate],
+						[LastModifiedByUserID],
+						[LastModifiedOnDate],
+						[EmailSent],
+						[EmailSentDate],
+						[EmailSchedulerInstance]                    
+						)
+				VALUES  (
+						@NewMessageID,
+						CASE @Counter
+							WHEN 1 THEN @ToUserID 
+							ELSE @FromUserID 
+						END,												
+						CASE @Status
+							WHEN 1 THEN 0 --Status 1 means Unread, 2 means Read, 3 means Deleted
+							ELSE 1
+						END,
+						CASE @Status
+							WHEN 3 THEN 1 --Status 1 means Unread, 2 means Read, 3 means Deleted
+							ELSE 0
+						END,
+						@FromUserID , -- CreatedBy - int
+						@Date , -- CreatedOn - datetime
+						@FromUserID , -- LastModifiedBy - int
+						@Date, -- LastModifiedOn - datetime
+						@EmailSent,
+						@EmailSentDate,
+						@EmailSchedulerInstance
+						)			
+			END
+		
+		--Delete the Legacy record
+		DELETE FROM {databaseOwner}[{objectQualifier}Messaging_Messages] WHERE MessageID = @MessageID
+		
+		FETCH NEXT FROM MessageList 
+			INTO @MessageID,@PortalID, @FromUserName, @FromUserID, @ToUserName, @ToUserID, @Status, @Subject, @Body, @Date, @EmailSent, @EmailSentDate, @EmailSchedulerInstance, @RowNumber 
+	END
+	CLOSE MessageList
+	DEALLOCATE MessageList
+
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationType]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationType]
+	@NotificationTypeID int,
 	@Name nvarchar(100),
 	@Description nvarchar(2000),
-	@TTL int
+	@TTL int,
+	@DesktopModuleId int,
+	@CreatedUpdatedUserID int
 AS
 BEGIN
-	IF (@MessageTypeID = -1) BEGIN
-		INSERT INTO {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes] (
+	IF (@NotificationTypeID = -1) BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] (
 			[Name],
 			[Description],
-			[TTL]
+			[TTL],
+			[DesktopModuleId],
+			[CreatedByUserID],
+			[CreatedOnDate],
+			[LastModifiedByUserID],
+			[LastModifiedOnDate]
 		) VALUES (
 			@Name,
 			@Description,
-			@TTL
+			@TTL,
+			@DesktopModuleId,
+			@CreatedUpdatedUserID,
+			GETDATE(),
+			@CreatedUpdatedUserID,
+			GETDATE()
 		)
 		
 		SELECT SCOPE_IDENTITY()
 	END
 	ELSE BEGIN
-		UPDATE {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
+		UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
 		SET
 			[Name] = @Name,
 			[Description] = @Description,
-			[TTL] = @TTL
-		WHERE [MessageTypeID] = @MessageTypeID
+			[TTL] = @TTL,
+			[DesktopModuleId] = @DesktopModuleId,
+			[LastModifiedByUserID] = @CreatedUpdatedUserID,
+			[LastModifiedOnDate] = GETDATE()
+		WHERE [NotificationTypeID] = @NotificationTypeID
 		
-		SELECT @MessageTypeID
+		SELECT @NotificationTypeID
 	END
 END
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteSocialMessageType]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessageType]
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationType]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteSocialMessageType]
-	@MessageTypeID int
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationType]
+	@NotificationTypeID int
 AS
 BEGIN
+	-- First delete related data
 	DELETE
-	FROM {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
-	WHERE [MessageTypeID] = @MessageTypeID
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages]
+	WHERE [NotificationTypeID] = @NotificationTypeID
+	
+	DELETE
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	WHERE [NotificationTypeID] = @NotificationTypeID
+
+	-- Finally delete the Notification type
+	DELETE
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
+	WHERE [NotificationTypeID] = @NotificationTypeID
 END
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageType]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageType]
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationType]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageType]
-	@MessageTypeID int
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationType]
+	@NotificationTypeID int
 AS
 BEGIN
-	SELECT [MessageTypeID], [Name], [Description], [TTL]
-	FROM {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
-	WHERE [MessageTypeID] = @MessageTypeID
+	SELECT [NotificationTypeID], [Name], [Description], [TTL], [DesktopModuleId], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
+	WHERE [NotificationTypeID] = @NotificationTypeID
 END
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetSocialMessageTypeByName]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageTypeByName]
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeByName]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeByName]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetSocialMessageTypeByName]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeByName]
 	@Name nvarchar(100)
 AS
 BEGIN
-	SELECT [MessageTypeID], [Name], [Description], [TTL]
-	FROM {databaseOwner}[{objectQualifier}SocialMessages_MessageTypes]
+	SELECT [NotificationTypeID], [Name], [Description], [TTL], [DesktopModuleId], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
 	WHERE [Name] LIKE @Name
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionToEnd]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionToEnd]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionToEnd]
+	@NotificationTypeID int,
+	@NameResourceKey nvarchar(100),
+	@DescriptionResourceKey nvarchar(100),
+	@ConfirmResourceKey nvarchar(100),
+	@APICall nvarchar(500),
+	@CreatedByUserID int
+AS
+BEGIN
+	DECLARE @Order int 
+	
+	SELECT @Order = MAX([Order])
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	WHERE [NotificationTypeID] = @NotificationTypeID
+	
+	IF @Order IS NULL
+		SET @Order = 1
+	ELSE
+		SET @Order = @Order + 2
+		
+	INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] (
+		[NotificationTypeID],
+		[NameResourceKey],
+		[DescriptionResourceKey],
+		[ConfirmResourceKey],
+		[Order],
+		[APICall],
+		[CreatedByUserID],
+		[CreatedOnDate],
+		[LastModifiedByUserID],
+		[LastModifiedOnDate]
+	) VALUES (
+		@NotificationTypeID,
+		@NameResourceKey,
+		@DescriptionResourceKey,
+		@ConfirmResourceKey,
+		@Order,
+		@APICall,
+		@CreatedByUserID,
+		GETDATE(),
+		@CreatedByUserID,
+		GETDATE()
+	)
+	
+	SELECT SCOPE_IDENTITY()
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionAfter]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionAfter]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionAfter]
+	@AfterNotificationTypeActionID int,
+	@NotificationTypeID int,
+	@NameResourceKey nvarchar(100),
+	@DescriptionResourceKey nvarchar(100),
+	@ConfirmResourceKey nvarchar(100),
+	@APICall nvarchar(500),
+	@CreatedByUserID int
+AS
+BEGIN
+	DECLARE @Order INT 
+	
+	SELECT @Order = [Order]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	WHERE [NotificationTypeActionID] = @AfterNotificationTypeActionID
+	
+	-- Update Orders for all Actions higher than @Order
+	UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	SET [Order] = [Order] + 2
+	WHERE [NotificationTypeID] = @NotificationTypeID AND [Order] > @Order
+	
+	SET @Order = @Order + 2
+		
+	INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] (
+		[NotificationTypeID],
+		[NameResourceKey],
+		[DescriptionResourceKey],
+		[ConfirmResourceKey],
+		[Order],
+		[APICall],
+		[CreatedByUserID],
+		[CreatedOnDate],
+		[LastModifiedByUserID],
+		[LastModifiedOnDate]
+	) VALUES (
+		@NotificationTypeID,
+		@NameResourceKey,
+		@DescriptionResourceKey,
+		@ConfirmResourceKey,
+		@Order,
+		@APICall,
+		@CreatedByUserID,
+		GETDATE(),
+		@CreatedByUserID,
+		GETDATE()
+	)
+	
+	SELECT SCOPE_IDENTITY()
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionBefore]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionBefore]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionBefore]
+	@BeforeNotificationTypeActionID int,
+	@NotificationTypeID int,
+	@NameResourceKey nvarchar(100),
+	@DescriptionResourceKey nvarchar(100),
+	@ConfirmResourceKey nvarchar(100),
+	@APICall nvarchar(500),
+	@CreatedByUserID int
+AS
+BEGIN
+	DECLARE @Order INT 
+	SELECT @Order = [Order]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	WHERE [NotificationTypeActionID] = @BeforeNotificationTypeActionID
+	
+	-- Update Orders for all Actions higher than @Order
+	UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	SET [Order] = [Order] + 2
+	WHERE [NotificationTypeID] = @NotificationTypeID AND [Order] >= @Order
+		
+	INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] (
+		[NotificationTypeID],
+		[NameResourceKey],
+		[DescriptionResourceKey],
+		[ConfirmResourceKey],
+		[Order],
+		[APICall],
+		[CreatedByUserID],
+		[CreatedOnDate],
+		[LastModifiedByUserID],
+		[LastModifiedOnDate]
+	) VALUES (
+		@NotificationTypeID,
+		@NameResourceKey,
+		@DescriptionResourceKey,
+		@ConfirmResourceKey,
+		@Order,
+		@APICall,
+		@CreatedByUserID,
+		GETDATE(),
+		@CreatedByUserID,
+		GETDATE()
+	)
+	
+	SELECT SCOPE_IDENTITY()
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_UpdateNotificationTypeAction]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_UpdateNotificationTypeAction]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_UpdateNotificationTypeAction]
+	@NotificationTypeActionID int,
+	@NameResourceKey nvarchar(100),
+	@DescriptionResourceKey nvarchar(100),
+	@ConfirmResourceKey nvarchar(100),
+	@APICall nvarchar(500),
+	@LastModifiedByUserID int
+AS
+BEGIN
+	UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	SET
+		[NameResourceKey] = @NameResourceKey,
+		[DescriptionResourceKey] = @DescriptionResourceKey,
+		[ConfirmResourceKey] = @ConfirmResourceKey,
+		[APICall] = @APICall,
+		[LastModifiedByUserID] = @LastModifiedByUserID,
+		[LastModifiedOnDate] = GETDATE()
+	WHERE [NotificationTypeActionID] = @NotificationTypeActionID
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationTypeAction]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationTypeAction]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationTypeAction]
+	@NotificationTypeActionID int
+AS
+BEGIN
+	DELETE 
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	WHERE [NotificationTypeActionID] = @NotificationTypeActionID
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeAction]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeAction]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeAction]
+	@NotificationTypeActionID int
+AS
+BEGIN
+	SELECT [NotificationTypeActionID], [NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	WHERE [NotificationTypeActionID] = @NotificationTypeActionID
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeActionByName]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeActionByName]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeActionByName]
+	@NotificationTypeID int,
+	@NameResourceKey nvarchar(100)
+AS
+BEGIN
+	SELECT [NotificationTypeActionID], [NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	WHERE [NotificationTypeID] = @NotificationTypeID AND [NameResourceKey] LIKE @NameResourceKey
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeActions]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeActions]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationTypeActions]
+	@NotificationTypeID int
+AS
+BEGIN
+	SELECT [NotificationTypeActionID], [NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
+	WHERE [NotificationTypeID] = @NotificationTypeID
+	ORDER BY [Order]
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationAction]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationAction]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationAction]
+	@NotificationActionID int,
+	@MessageID int,
+	@NotificationTypeActionID int,
+	@Key nvarchar(500),
+	@CreatedUpdatedUserID int
+AS
+BEGIN
+	IF (@NotificationActionID = -1) BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions] (
+			[MessageID],
+			[NotificationTypeActionID],
+			[Key],
+			[CreatedByUserID],
+			[CreatedOnDate],
+			[LastModifiedByUserID],
+			[LastModifiedOnDate]
+		) VALUES (
+			@MessageID,
+			@NotificationTypeActionID,
+			@Key,
+			@CreatedUpdatedUserID,
+			GETDATE(),
+			@CreatedUpdatedUserID,
+			GETDATE()
+		)
+		
+		SELECT SCOPE_IDENTITY()
+	END
+	ELSE BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]
+		SET
+			[Key] = @Key,
+			[LastModifiedByUserID] = @CreatedUpdatedUserID,
+			[LastModifiedOnDate] = GETDATE()
+		WHERE [NotificationActionID] = @NotificationActionID
+		
+		SELECT @NotificationActionID
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationAction]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationAction]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationAction]
+	@NotificationActionID int
+AS
+BEGIN
+	DELETE
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]
+	WHERE [NotificationActionID] = @NotificationActionID
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationAction]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationAction]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationAction]
+	@NotificationActionID int
+AS
+BEGIN
+	SELECT [NotificationActionID], [MessageID], [NotificationTypeActionID], [Key], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]
+	WHERE [NotificationActionID] = @NotificationActionID
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionsByMessageID]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionsByMessageID]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionsByMessageID]
+	@MessageID int
+AS
+BEGIN
+	SELECT NA.[NotificationActionID], NA.[MessageID], NA.[NotificationTypeActionID], NA.[Key], NA.[CreatedByUserID], NA.[CreatedOnDate], NA.[LastModifiedByUserID], NA.[LastModifiedOnDate]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions] NA
+	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] M ON NA.[MessageID] = M.[MessageID]
+	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] NTA ON M.[NotificationTypeID] = NTA.[NotificationTypeID]
+	WHERE NA.[MessageID] = @MessageID
+	ORDER BY NTA.[Order]
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionByMessageAndNotificationTypeAction]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionByMessageAndNotificationTypeAction]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionByMessageAndNotificationTypeAction]
+	@MessageID int,
+	@NotificationTypeActionID int
+AS
+BEGIN
+	SELECT NA.[NotificationActionID], NA.[MessageID], NA.[NotificationTypeActionID], NA.[Key], NA.[CreatedByUserID], NA.[CreatedOnDate], NA.[LastModifiedByUserID], NA.[LastModifiedOnDate]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions] NA
+	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] M ON NA.[MessageID] = M.[MessageID]
+	WHERE NA.[MessageID] = @MessageID AND NA.[NotificationTypeActionID] = @NotificationTypeActionID
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CreateNotification]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateNotification]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateNotification]
+	@NotificationTypeID int,
+	@PortalID INT,
+	@To nvarchar(2000),
+	@From nvarchar(200),
+    @Subject nvarchar(400),
+    @Body nvarchar(max),
+    @SenderUserID int,
+	@CreateUpdateUserID int,
+	@ExpirationDate datetime
+AS
+BEGIN
+	INSERT {databaseOwner}[{objectQualifier}CoreMessaging_Messages] (
+		[NotificationTypeID],
+		[PortalID],
+		[To],
+		[From],
+		[Subject],
+		[Body],
+		[SenderUserID],
+		[ExpirationDate],
+		[CreatedByUserID],
+		[CreatedOnDate],
+		[LastModifiedByUserID],
+		[LastModifiedOnDate]
+	) VALUES (
+		@NotificationTypeID,
+		@PortalID,
+		@To,
+		@From,
+		@Subject,
+		@Body,
+		@SenderUserID,
+		@ExpirationDate,
+		@CreateUpdateUserID, -- CreatedBy
+		GETDATE(), -- CreatedOn
+		@CreateUpdateUserID, -- LastModifiedBy
+		GETDATE() -- LastModifiedOn
+	)
+
+	SELECT  SCOPE_IDENTITY()
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotifications]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotifications]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotifications]
+	@UserID int,
+	@PortalID INT,
+	@PageIndex int,
+	@PageSize int
+AS
+BEGIN
+	-- Set the page bounds
+	DECLARE @PageLowerBound INT, @PageUpperBound INT;
+
+	SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
+	SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
+
+	--Get the top message for each conversation
+	;WITH Notifications AS
+	(
+		SELECT
+			M.[MessageID],
+			M.[NotificationTypeId],
+			M.[To],
+			M.[From],
+			M.[Subject],
+			M.[Body],
+			M.[SenderUserID],
+			M.[ExpirationDate],
+			M.[CreatedByUserID],
+			M.[CreatedOnDate],
+			M.[LastModifiedByUserID],
+			M.[LastModifiedOnDate],
+			ROW_NUMBER() OVER(ORDER BY M.[CreatedOnDate] DESC) AS RowNumber
+		FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] AS M
+		JOIN {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] MR ON M.MessageID = MR.MessageID
+		WHERE [NotificationTypeId] IS NOT NULL
+		AND MR.UserID = @UserID
+		AND M.PortalID = @PortalID
+		AND (M.[ExpirationDate] IS NULL OR (M.[ExpirationDate] IS NOT NULL AND M.[ExpirationDate] > GETDATE()))
+	)	
+	SELECT * FROM Notifications WHERE RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
+	ORDER BY RowNumber ASC
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotification]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotification]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotification]
+	@NotificationID int
+AS
+BEGIN
+	DELETE
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages]
+	WHERE [MessageID] = @NotificationID AND [NotificationTypeID] IS NOT NULL
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CountNotifications]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountNotifications]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountNotifications]
+	@UserID int,
+	@PortalID INT
+AS
+BEGIN
+	-- Return total notifications for user
+	SELECT COUNT(*) AS TotalNotifications
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] MR
+	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] M ON MR.MessageID = M.MessageID
+	WHERE M.NotificationTypeId IS NOT NULL
+	AND M.PortalID=@PortalID
+	AND MR.UserID = @UserID
+	AND (M.ExpirationDate IS NULL OR (M.ExpirationDate IS NOT NULL AND M.ExpirationDate > GETDATE())) -- Do not return expired notifications
 END
 GO
 
@@ -2747,12 +3503,18 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal_TypeFilters](
+	[JournalTypeFilterId] [int] IDENTITY(1,1) NOT NULL,
 	[PortalId] [int] NOT NULL,
-	[JournalMode] [int] NOT NULL,
-	[JournalTypeId] [int] NOT NULL
+	[ModuleId] [int] NOT NULL,
+	[JournalTypeId] [int] NOT NULL,
+ CONSTRAINT [PK_{objectQualifier}Journal_TypeFilters] PRIMARY KEY CLUSTERED 
+(
+	[JournalTypeFilterId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO
+
 
 SET ANSI_NULLS ON
 GO
@@ -3130,6 +3892,28 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_ListForGroup]') AND type in (N'P', N'PC'))
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForGroup]
 GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_GetStatsForGroup]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_GetStatsForGroup]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_TypeFilters_Save]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_TypeFilters_Save]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_TypeFilters_Delete]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_TypeFilters_Delete]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_TypeFilters_List]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_TypeFilters_List]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_DeleteByKey]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_DeleteByKey]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_GetByKey]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_GetByKey]
+GO
 
 SET ANSI_NULLS ON
 GO
@@ -3139,6 +3923,7 @@ GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForGroup]
 @PortalId int,
+@ModuleId int,
 @CurrentUserId int,
 @GroupId int,
 @RowIndex int,
@@ -3148,6 +3933,17 @@ DECLARE @EndRow int
 SET @EndRow = @RowIndex + @MaxRows;
 
 DECLARE @j TABLE(id int IDENTITY, journalid int, datecreated datetime)
+IF EXISTS(SELECT * from {databaseOwner}[{objectQualifier}Journal_TypeFilters] WHERE ModuleId = @ModuleId)
+INSERT INTO @j 
+	SELECT j.journalid, jt.datecreated from (
+		SELECT DISTINCT js.JournalId from {databaseOwner}[{objectQualifier}Journal] as j
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js ON js.JournalId = j.JournalId
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId ,1) as t ON t.seckey = js.SecurityKey AND js.SecurityKey = 'R' + CAST(@GroupId as nvarchar(100))
+			WHERE j.PortalId = @PortalId
+		) as j INNER JOIN {databaseOwner}[{objectQualifier}Journal] jt ON jt.JournalId = j.JournalId AND jt.PortalId = @PortalId
+		INNER JOIN {databaseOwner}[{objectQualifier}Journal_TypeFilters] as jf ON jf.JournalTypeId = jt.JournalTypeId AND jf.ModuleId = @ModuleId
+		ORDER BY jt.DateCreated DESC, jt.JournalId DESC;
+ELSE
 INSERT INTO @j 
 	SELECT j.journalid, jt.datecreated from (
 		SELECT DISTINCT js.JournalId from {databaseOwner}[{objectQualifier}Journal] as j
@@ -3187,6 +3983,7 @@ GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForSummary]
 @PortalId int,
+@ModuleId int,
 @CurrentUserId int,
 @RowIndex int,
 @MaxRows int
@@ -3195,6 +3992,18 @@ DECLARE @EndRow int
 SET @EndRow = @RowIndex + @MaxRows;
 
 DECLARE @j TABLE(id int IDENTITY, journalid int, datecreated datetime)
+IF EXISTS(SELECT * from {databaseOwner}[{objectQualifier}Journal_TypeFilters] WHERE ModuleId = @ModuleId)
+INSERT INTO @j 
+	SELECT j.journalid, jt.datecreated from (
+		SELECT DISTINCT js.JournalId from {databaseOwner}[{objectQualifier}Journal] as j
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js ON js.JournalId = j.JournalId
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId ,1) as t ON t.seckey = js.SecurityKey
+			WHERE j.PortalId = @PortalId
+		) as j INNER JOIN {databaseOwner}[{objectQualifier}Journal] jt ON jt.JournalId = j.JournalId AND jt.PortalId = @PortalId
+		INNER JOIN {databaseOwner}[{objectQualifier}Journal_TypeFilters] as jf ON jf.JournalTypeId = jt.JournalTypeId AND jf.ModuleId = @ModuleId
+		ORDER BY jt.DateCreated DESC, jt.JournalId DESC;
+
+ELSE
 INSERT INTO @j 
 	SELECT j.journalid, jt.datecreated from (
 		SELECT DISTINCT js.JournalId from {databaseOwner}[{objectQualifier}Journal] as j
@@ -3243,6 +4052,7 @@ GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForProfile]
 @PortalId int,
+@ModuleId int,
 @CurrentUserId int,
 @ProfileId int,
 @RowIndex int,
@@ -3252,6 +4062,18 @@ DECLARE @EndRow int
 SET @EndRow = @RowIndex + @MaxRows;
 
 DECLARE @j TABLE(id int IDENTITY, journalid int, datecreated datetime)
+IF EXISTS(SELECT * from {databaseOwner}[{objectQualifier}Journal_TypeFilters] WHERE ModuleId = @ModuleId)
+INSERT INTO @j 
+	SELECT j.journalid, jt.datecreated from (
+		SELECT DISTINCT js.JournalId from {databaseOwner}[{objectQualifier}Journal] as j
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js ON js.JournalId = j.JournalId
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId ,1) as t ON t.seckey = js.SecurityKey
+			WHERE j.ProfileId = @ProfileId AND j.PortalId = @PortalId
+		) as j INNER JOIN {databaseOwner}[{objectQualifier}Journal] jt ON jt.JournalId = j.JournalId AND jt.PortalId = @PortalId
+		INNER JOIN {databaseOwner}[{objectQualifier}Journal_TypeFilters] as jf ON jf.JournalTypeId = jt.JournalTypeId AND jf.ModuleId = @ModuleId
+		ORDER BY jt.DateCreated DESC, jt.JournalId DESC;
+
+ELSE
 INSERT INTO @j 
 	SELECT j.journalid, jt.datecreated from (
 		SELECT DISTINCT js.JournalId from {databaseOwner}[{objectQualifier}Journal] as j
@@ -3793,7 +4615,106 @@ WHERE u.UserID = x.value('@uid[1]','int')
 
 GO
 
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_GetStatsForGroup]
+@PortalId int,
+@GroupId int
+AS
+SELECT Count(j.JournalTypeId) as JournalTypeCount, jt.JournalType from {databaseOwner}[{objectQualifier}Journal] as j 
+	INNER JOIN {databaseOwner}[{objectQualifier}Journal_Types] as jt ON jt.JournalTypeId = j.JournalTypeId
+WHERE j.GroupId = @GroupId AND j.PortalId = @PortalId
+Group BY j.JournalTypeId, jt.JournalType
 
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_TypeFilters_Save]
+@PortalId int,
+@ModuleId int,
+@JournalTypeId int
+AS
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_TypeFilters] 
+	(PortalId, ModuleId, JournalTypeId)
+	VALUES
+	(@PortalId, @ModuleId, @JournalTypeId)
+
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_TypeFilters_Delete]
+@PortalId int,
+@ModuleId int
+AS
+DELETE FROM {databaseOwner}[{objectQualifier}Journal_TypeFilters] WHERE PortalId = @PortalId AND ModuleId=@ModuleId
+
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_TypeFilters_List]
+@PortalId int,
+@ModuleId int
+AS
+SELECT jt.JournalTypeId, jt.JournalType from {databaseOwner}[{objectQualifier}Journal_Types] as jt INNER JOIN
+	{databaseOwner}[{objectQualifier}Journal_TypeFilters] as jf ON jf.JournalTypeId = jt.JournalTypeId
+WHERE jt.PortalId = @PortalId AND jf.ModuleId = @ModuleId
+
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_GetByKey]
+@PortalId int,
+@ObjectKey nvarchar(255)
+AS
+SELECT     j.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated, j.PortalId,
+			j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey,
+			"JournalOwner" = '<entity><id>' + CAST(p.UserId as nvarchar(150)) + '</id><name>' + p.DisplayName + '</name></entity>',
+			"JournalAuthor" = CASE WHEN ISNULL(a.UserId,-1) >0 THEN '<entity><id>' + CAST(a.UserId as nvarchar(150)) + '</id><name>' + a.DisplayName + '</name></entity>' ELSE '' END,
+			"JournalOwnerId" = ISNULL(j.ProfileId,j.UserId),
+			 jt.Icon, jt.JournalType,
+			"Profile" = CASE WHEN j.ProfileId > 0 THEN '<entity><id>' + CAST(p.UserID as nvarchar(150)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>' ELSE '' END,
+			jd.JournalXML, ContentItemId, j.ItemData			
+FROM       	{databaseOwner}[{objectQualifier}Journal] AS j INNER JOIN
+			{databaseOwner}[{objectQualifier}Journal_Types] as jt ON jt.JournalTypeId = j.JournalTypeId LEFT OUTER JOIN
+			{databaseOwner}[{objectQualifier}Journal_Data] as jd on jd.JournalId = j.JournalId LEFT OUTER JOIN
+            {databaseOwner}[{objectQualifier}Users] AS p ON j.ProfileId = p.UserID LEFT OUTER JOIN
+            {databaseOwner}[{objectQualifier}Users] AS a ON j.UserId = a.UserID
+WHERE j.ObjectKey = @ObjectKey AND j.ObjectKey IS NOT NULL AND @ObjectKey <> ''
+
+
+GO
+
+
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_DeleteByKey]
+@PortalId int,
+@ObjectKey nvarchar(255) 
+AS
+DECLARE @JournalId int
+SET @JournalId = (SELECT JournalId FROM {databaseOwner}[{objectQualifier}Journal] WHERE PortalId = @PortalId AND ObjectKey = @ObjectKey AND @ObjectKey <> '' AND ObjectKey IS NOT NULL)
+IF @JournalId > 0
+BEGIN
+DELETE FROM {databaseOwner}[{objectQualifier}Journal_Security] WHERE JournalId = @JournalId
+DELETE FROM {databaseOwner}[{objectQualifier}Journal_Comments] WHERE JournalId = @JournalId
+DELETE FROM {databaseOwner}[{objectQualifier}Journal] WHERE JournalId = @JournalId
+END
+
+
+GO
 
 
 
@@ -3818,70 +4739,67 @@ INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
 	VALUES
 	(4, 'file', '', -1, 1, 1, 1, 1, null, 1)
 GO
-
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(5, 'forum_topic', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(6, 'forum_reply', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(7, 'blog', '', -1, 1, 1, 1, 1, null, 1)
+GO
 
 /* Add GetMessageItems Procedure */
 /************************************/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetMessageConversations]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetMessageConversations]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessageConversations]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageConversations]
 GO
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMessageConversations]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageConversations]
 	@UserID          int,
+	@PortalID		 int,
 	@PageIndex       int,
 	@PageSize        int,
 	@SortField       nvarchar(25) = 'CreatedOnDate',
-	@SortAscending   bit = 0, 		
+	@SortAscending   bit = 0,
 	@Read            bit = 0,
 	@Archived        bit = 0,
-	@SentOnly        bit = 0			
+	@SentOnly        bit = 0
 AS
 BEGIN
-
---Return Unread message count
-	SELECT COUNT(*) AS TotalNewThreads
-	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] 
-	WHERE UserID = @UserID
-	AND [Read] = 0
-	
---Return total conversation count
-;WITH ConversationIDs AS 
-(
-	SELECT ConversationID
-	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] mr 
-	INNER JOIN {databaseOwner}[{objectQualifier}SocialMessages] m ON mr.MessageID = m.MessageID
-	WHERE ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
-	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))		
-	AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is NULL AND UserID = @UserID) or (@SentOnly = 0 AND UserID = @UserID))		
-	GROUP BY ConversationID
-)
-SELECT COUNT(*) AS TotalRecords FROM ConversationIDs
 
 -- Set the page bounds
 DECLARE @PageLowerBound INT, @PageUpperBound INT;
 
 SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
-SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize	
+SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 
 --Get the top message for each conversation
-;WITH RollUpMessageIDs AS 
+;WITH RollUpMessageIDs AS
 (
-	SELECT MAX(m.MessageID) AS TopMessageID  
-	FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients] mr 
-	INNER JOIN {databaseOwner}[{objectQualifier}SocialMessages] m ON mr.MessageID = m.MessageID
+	SELECT MAX(m.MessageID) AS TopMessageID
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] mr
+	INNER JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] m ON mr.MessageID = m.MessageID
 	WHERE ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
-	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))		
-	AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is NULL AND UserID = @UserID) or (@SentOnly = 0 AND UserID = @UserID))		
+	AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))
+	AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is NULL AND UserID = @UserID) or (@SentOnly = 0 AND UserID = @UserID))
+	AND m.NotificationTypeID IS NULL AND m.PortalID=@PortalID
 	GROUP BY ConversationID
 )
 ,Conversations  AS
 (
 	SELECT  DISTINCT [MessageID], [ConversationID], [Subject], convert(nvarchar(50), [Body]) AS Body,
-			[To], [From], [ReplyAllAllowed], [SenderUserID], 			
-			[CreatedByUserID], [CreatedOnDate], 
+			[To], [From], [ReplyAllAllowed], [SenderUserID],
+			[CreatedByUserID], [CreatedOnDate],
 			[LastModifiedByUserID], [LastModifiedOnDate],
-			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageAttachments WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = m.ConversationID)) AS AttachmentCount,
-			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = m.ConversationID) AND UserID = @UserID AND [READ] = 0) AS NewThreadCount,	
-			ROW_NUMBER() OVER(ORDER BY 
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages WHERE ConversationID = m.ConversationID)) AS AttachmentCount,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages WHERE ConversationID = m.ConversationID) AND UserID = @UserID AND [READ] = 0) AS NewThreadCount,
+			ROW_NUMBER() OVER(ORDER BY
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN [CreatedOnDate] END ASC,
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN [CreatedOnDate] END DESC,
 				 CASE WHEN @SortField = 'From' AND @SortAscending = 1 THEN [From] END ASC,
@@ -3889,20 +4807,20 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
 				) AS RowNumber
-	FROM {databaseOwner}{objectQualifier}SocialMessages AS m  	                                                                          
+	FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages AS m
 	WHERE MessageID IN (SELECT TopMessageID FROM RollUpMessageIDs)
-)	
-SELECT * from Conversations where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
+)
+SELECT * from Conversations where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound
 order by RowNumber ASC
 END
 GO
 
 /* Add GetMessageThread Procedure */
 /************************************/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetMessageThread]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetMessageThread]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessageThread]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageThread]
 GO
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetMessageThread]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageThread]
     @ConversationID  int,
 	@UserID          int,
 	@PageIndex       int,
@@ -3913,27 +4831,10 @@ AS
 BEGIN
 
 --Cannot return thread if user was not a recipient
-IF NOT EXISTS (SELECT RecipientID FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE UserID = @UserID) BEGIN
+IF NOT EXISTS (SELECT MR.RecipientID FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] MR JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] M ON MR.MessageID = M.MessageID WHERE MR.UserID = @UserID AND M.NotificationTypeID IS NULL) BEGIN
 	SELECT 0
 	RETURN
 END
-
---Return Unread message count
-SELECT COUNT(*) AS TotalNewThreads
-FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients]
-WHERE UserID = @UserID
-AND [Read] = 0
-
---Return total message count
-SELECT COUNT(*) AS TotalRecords
-FROM {databaseOwner}{objectQualifier}SocialMessages
-WHERE (ConversationID = @ConversationID)
-
---Return Archived message count
-SELECT COUNT(*) AS TotalArchivedThreads
-FROM {databaseOwner}[{objectQualifier}SocialMessageRecipients]
-WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = @ConversationID)
-AND [Archived] = 1
 
 -- Set the page bounds
 DECLARE @PageLowerBound INT, @PageUpperBound INT;
@@ -3948,8 +4849,8 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 			mr.[MessageID],
 			mr.[CreatedByUserID], mr.[CreatedOnDate],
 			mr.[LastModifiedByUserID], mr.[LastModifiedOnDate],
-			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageAttachments WHERE MessageID = mr.MessageID) AS AttachmentCount,
-			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}SocialMessageRecipients WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}SocialMessages WHERE ConversationID = m.ConversationID) AND UserID = @UserID AND [READ] = 0) AS NewThreadCount,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments WHERE MessageID = mr.MessageID) AS AttachmentCount,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages WHERE ConversationID = m.ConversationID) AND UserID = @UserID AND [READ] = 0) AS NewThreadCount,
 			ROW_NUMBER() OVER(ORDER BY
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN mr.[CreatedOnDate] END ASC,
 				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN mr.[CreatedOnDate] END DESC,
@@ -3958,8 +4859,8 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
 				) AS RowNumber
-	FROM	{databaseOwner}{objectQualifier}SocialMessageRecipients AS mr
-	INNER JOIN {databaseOwner}{objectQualifier}SocialMessages AS m ON mr.MessageID = m.MessageID
+	FROM	{databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients AS mr
+	INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_Messages AS m ON mr.MessageID = m.MessageID
 	WHERE mr.UserID = @UserID
 	AND ConversationID = @ConversationID
 )
@@ -3969,37 +4870,120 @@ ORDER BY RowNumber ASC
 END
 GO
 
-/* Add UpdateSocialMessageReadStatus Procedure */
-/***********************************************/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]
+/* Add CountNewThreads Procedure */
+/*********************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CountNewThreads]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountNewThreads]
 GO
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageReadStatus]
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountNewThreads]
+	@UserID int,
+	@PortalID INT
+AS
+BEGIN
+	SELECT COUNT(*) AS TotalNewThreads
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] MR
+	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] M ON MR.MessageID = M.MessageID
+	WHERE MR.UserID = @UserID
+	AND MR.[Read] = 0
+	AND M.PortalID=@PortalID
+	AND M.NotificationTypeID IS NULL
+END
+GO
+
+/* Add CountTotalConversations Procedure */
+/*****************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CountTotalConversations]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountTotalConversations]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountTotalConversations]
+	@UserID          int,
+	@PortalID		 INT,
+	@Read            bit = 0,
+	@Archived        bit = 0,
+	@SentOnly        bit = 0
+AS
+BEGIN
+	;WITH ConversationIDs AS
+	(
+		SELECT ConversationID
+		FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] mr
+		INNER JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] m ON mr.MessageID = m.MessageID
+		WHERE ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
+		AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))
+		AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is NULL AND UserID = @UserID) or (@SentOnly = 0 AND UserID = @UserID))
+		AND m.NotificationTypeID IS NULL AND m.PortalID=@PortalID
+		GROUP BY ConversationID
+	)
+	SELECT COUNT(*) AS TotalRecords FROM ConversationIDs
+END
+GO
+
+/* Add CountMessagesByConversation Procedure */
+/*********************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CountMessagesByConversation]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountMessagesByConversation]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountMessagesByConversation]
+	@ConversationID int
+AS
+BEGIN
+	SELECT COUNT(*) AS TotalRecords
+	FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages
+	WHERE (ConversationID = @ConversationID)
+END
+GO
+
+/* Add CountArchivedMessagesByConversation Procedure */
+/*****************************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CountArchivedMessagesByConversation]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountArchivedMessagesByConversation]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountArchivedMessagesByConversation]
+	@ConversationID int
+AS
+BEGIN
+	SELECT COUNT(*) AS TotalArchivedThreads
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients]
+	WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] WHERE ConversationID = @ConversationID)
+	AND [Archived] = 1
+END
+GO
+
+/* Add UpdateMessageReadStatus Procedure */
+/***********************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_UpdateMessageReadStatus]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_UpdateMessageReadStatus]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_UpdateMessageReadStatus]
 	@ConversationID int,
 	@UserID          int,
 	@Read			 bit
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}SocialMessageRecipients] SET [Read]=@Read 
+UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] SET [Read]=@Read 
 WHERE UserID = @UserID
-AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}SocialMessages] WHERE ConversationID=@ConversationID)
+AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] WHERE ConversationID=@ConversationID)
 END
 GO
 
-/* Add UpdateSocialMessageArchivedStatus Procedure */
+/* Add UpdateMessageArchivedStatus Procedure */
 /***************************************************/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_UpdateMessageArchivedStatus]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_UpdateMessageArchivedStatus]
 GO
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateSocialMessageArchivedStatus]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_UpdateMessageArchivedStatus]
 	@ConversationID int,
 	@UserID	         int,
 	@Archived		 bit
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}SocialMessageRecipients] SET [Archived]=@Archived 
+UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] SET [Archived]=@Archived 
 WHERE UserID = @UserID
-AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}SocialMessages] WHERE ConversationID=@ConversationID)
+AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] WHERE ConversationID=@ConversationID)
 END
 GO
 
@@ -4290,7 +5274,7 @@ AS
 		SET @roleFilter = ' JOIN {objectQualifier}UserRoles UR ON U.UserID = UR.UserID AND UR.RoleID = ' + CONVERT(nvarchar(20), @FilterRoleId)
 	END
 	-- Filter by Relationship
-	IF @FilterUserId <> -1 AND @RelationshipTypeId <> -1  
+	IF @RelationshipTypeId <> -1  
 	BEGIN
 		SET @roleAndRelationshipFlag = 1
 		SET @relationshipFilter = ' JOIN {objectQualifier}Relationships REL ON REL.PortalID = ' + CONVERT(nvarchar(20), @PortalID)
@@ -4752,7 +5736,7 @@ GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateRoleSetting]
 	@RoleID				int,
-	@SettingName		nvarchar(5),
+	@SettingName		nvarchar(50),
 	@SettingValue		nvarchar(2000),
 	@UserID				int
 
@@ -4985,6 +5969,151 @@ UPDATE {databaseOwner}{objectQualifier}ModuleControls
 	WHERE ControlSrc = 'DesktopModules/Admin/Security/ManageUsers.ascx'
 		AND ModuleDefID IS NULL
 		AND ControlKey = 'Register'
+GO
+
+/* Add GetUserByDisplayName */
+/****************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetUserByDisplayName]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetUserByDisplayName]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetUserByDisplayName]
+
+	@PortalID int,
+	@DisplayName nvarchar(128)
+
+AS
+	SELECT * FROM {databaseOwner}{objectQualifier}vw_Users
+	WHERE  DisplayName = @DisplayName
+		AND  ((@PortalId IS NULL) OR (PortalId = @PortalID) OR IsSuperUser = 1)
+GO
+
+/*Add CoreMessaging_GetNextMessageForDispatch */
+/*******************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNextMessageForDispatch]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}CoreMessaging_GetNextMessageForDispatch
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNextMessageForDispatch] 
+	@SchedulerInstance uniqueidentifier
+AS
+	Declare  @target_messageID int
+
+	SELECT @target_messageID =  MessageID FROM {objectQualifier}CoreMessaging_MessageRecipients WHERE EmailSent = 0  AND  
+	(EmailSchedulerInstance is NULL or EmailSchedulerInstance= '00000000-0000-0000-0000-000000000000') 
+	ORDER BY CreatedOnDate DESC
+
+Update {objectQualifier}CoreMessaging_MessageRecipients set EmailSchedulerInstance = @SchedulerInstance  where MessageID = @target_messageID
+select * from {objectQualifier}CoreMessaging_MessageRecipients where MessageID = @target_messageID 
+
+GO
+
+/* Add CoreMessaging_MarkMessageAsDispatched */
+/*******************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}CoreMessaging_MarkMessageAsDispatched]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}CoreMessaging_MarkMessageAsDispatched
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_MarkMessageAsDispatched]
+	@MessageId int,
+	@RecipientId int
+AS
+BEGIN
+	Update {objectQualifier}CoreMessaging_MessageRecipients set EmailSent = 1, EmailSentDate =GETDATE()   where MessageID =@MessageId AND RecipientId=@RecipientId
+END
+
+GO
+
+/* Update to move UserSettings and Profile Proeprties */
+/******************************************************/
+
+UPDATE {databaseOwner}{objectQualifier}ModuleControls
+	SET ControlKey = 'Settings'
+	WHERE ControlSrc = 'DesktopModules/Admin/Security/UserSettings.ascx'
+		AND ControlKey = 'UserSettings'
+GO
+
+DELETE FROM {databaseOwner}{objectQualifier}ModuleControls
+	WHERE ControlSrc = 'DesktopModules/Admin/Security/ProfileDefinitions.ascx'
+		AND ControlKey = 'ManageProfile'
+GO
+
+UPDATE {databaseOwner}{objectQualifier}ModuleControls
+	SET ModuleDefID = NULL
+	WHERE ControlSrc = 'DesktopModules/Admin/Security/EditProfileDefinition.ascx'
+		AND ControlKey = 'EditProfileProperty'
+GO
+
+/* Update legacy messaging scheduler to use CoreMessagingScheduler */
+/******************************************************/
+
+UPDATE {databaseOwner}[{objectQualifier}Schedule] SET  [TypeFullName]='DotNetNuke.Services.Social.Messaging.Scheduler.CoreMessagingScheduler, DotNetNuke' WHERE [TypeFullName]='DotNetNuke.Services.Messaging.Scheduler.MessagingScheduler, DotNetNuke'
+GO
+
+/* Update DeleteUserPortal */
+/***************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}DeleteUserPortal]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}DeleteUserPortal
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}DeleteUserPortal]
+	@UserID		int,
+	@PortalID   int
+AS
+	IF @PortalID IS NULL
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}Users
+				SET
+					IsDeleted = 1
+				WHERE  UserId = @UserID
+		END
+	ELSE
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}UserPortals
+				SET
+					IsDeleted = 1
+				WHERE  UserId = @UserID
+					AND PortalId = @PortalID
+		END
+GO
+
+/* Update RemoveUser */
+/*********************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}RemoveUser]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}RemoveUser
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}RemoveUser]
+	@UserID		int,
+	@PortalID   int
+AS
+	IF @PortalID IS NULL
+		BEGIN
+			-- Delete SuperUser
+			DELETE FROM {databaseOwner}{objectQualifier}Users
+				WHERE  UserId = @UserID
+		END
+	ELSE
+		BEGIN
+			-- Remove User from Portal			
+			DELETE FROM {databaseOwner}{objectQualifier}UserPortals
+				WHERE  UserId = @UserID
+                 AND PortalId = @PortalID
+			IF NOT EXISTS (SELECT 1 FROM {databaseOwner}{objectQualifier}UserPortals WHERE  UserId = @UserID) 
+				-- Delete User (but not if SuperUser)
+				BEGIN
+					DELETE FROM {databaseOwner}{objectQualifier}Users
+						WHERE  UserId = @UserID
+							AND IsSuperUser = 0
+					DELETE FROM {databaseOwner}{objectQualifier}UserRoles
+						WHERE  UserID = @UserID
+				END								
+		END
 GO
 
 /************************************************************/

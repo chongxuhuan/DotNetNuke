@@ -159,3 +159,7 @@ jQuery Tokeninput
 Used throughout UI
 License Type: MIT or GPL
 License Link: http://loopj.com/jquery-tokeninput/
+
+history.js
+Used in social messaging module
+License link: https://github.com/balupton/history.js/blob/master/license.txt

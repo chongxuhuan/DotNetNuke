@@ -4,13 +4,35 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="ListEntries" Src="~/DesktopModules/Admin/Lists/ListEntries.ascx" %>
 <asp:Wizard ID="Wizard" runat="server" DisplaySideBar="false" ActiveStepIndex="0" CellPadding="0" CellSpacing="0" CssClass="dnnEditProfileDef" DisplayCancelButton="True" CancelButtonType="Link" StartNextButtonType="Link" StepNextButtonType="Link" FinishCompleteButtonType="Link">
+    <CancelButtonStyle CssClass="dnnSecondaryAction" />
+    <StartNextButtonStyle CssClass="dnnPrimaryAction" />
+    <StepNextButtonStyle CssClass="dnnPrimaryAction" />
+    <FinishCompleteButtonStyle CssClass="dnnPrimaryAction" />
     <StepStyle VerticalAlign="Top" />
-    <NavigationButtonStyle CssClass="dnnSecondaryAction" BorderStyle="None" BackColor="Transparent" />
+    <NavigationButtonStyle BorderStyle="None" BackColor="Transparent" />
     <HeaderTemplate>
         <h2 class="dnnFormSectionHead"><asp:Label ID="lblTitle" runat="server"><% =GetText("Title") %></asp:Label></h2>
         <div class="dnnFormItem dnnFormHelp dnnClear"><p class="dnnFormRequired"><span><%=LocalizeString("RequiredFields")%></span></p></div>
         <div class="dnnFormItem dnnClear"><asp:Label ID="lblHelp" CssClass="dnnFormMessage dnnFormInfo" runat="server"><% =GetText("Help") %></asp:Label></div>
     </HeaderTemplate>
+    <StartNavigationTemplate>
+        <ul class="dnnActions dnnClear">
+    	    <li><asp:LinkButton id="nextButtonStart" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveNext" resourcekey="Next" /></li>
+            <li><asp:LinkButton id="cancelButtonStart" runat="server" CssClass="dnnSecondaryAction" CommandName="Cancel" resourcekey="Cancel" Causesvalidation="False" /></li>
+        </ul>
+    </StartNavigationTemplate>
+    <StepNavigationTemplate>
+        <ul class="dnnActions dnnClear">
+    	    <li><asp:LinkButton id="nextButtonStep" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveNext" resourcekey="Next" /></li>
+            <li><asp:LinkButton id="cancelButtonStep" runat="server" CssClass="dnnSecondaryAction" CommandName="Cancel" resourcekey="Cancel" Causesvalidation="False" /></li>
+        </ul>
+    </StepNavigationTemplate>
+    <FinishNavigationTemplate>
+        <ul class="dnnActions dnnClear">
+    	    <li><asp:LinkButton id="finishButtonStep" runat="server" CssClass="dnnPrimaryAction" CommandName="MoveComplete" resourcekey="Return" /></li>
+        </ul>
+    </FinishNavigationTemplate>
+
     <WizardSteps>
         <asp:WizardStep ID="wizIntroduction" runat="server" Title="Introduction" StepType="Start" AllowReturn="false">
             <dnn:propertyeditorcontrol id="Properties" runat="Server" SortMode="SortOrderAttribute" 

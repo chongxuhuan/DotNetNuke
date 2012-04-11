@@ -28,6 +28,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Web;
 using System.Xml;
 using System.Xml.XPath;
@@ -42,6 +43,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Definitions;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
@@ -59,7 +61,9 @@ using DotNetNuke.Services.Installer;
 using DotNetNuke.Services.Installer.Log;
 using DotNetNuke.Services.Installer.Packages;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.Services.Localization.Internal;
 using DotNetNuke.Services.Log.EventLog;
+using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.UI.Internals;
 using DotNetNuke.Web.Client.ClientResourceManagement;
 
@@ -2900,7 +2904,7 @@ namespace DotNetNuke.Services.Upgrade
                     string email = XmlUtils.GetNodeValue(adminNode.CreateNavigator(), "email");
                     string description = XmlUtils.GetNodeValue(node.CreateNavigator(), "description");
                     string keyWords = XmlUtils.GetNodeValue(node.CreateNavigator(), "keywords");
-                    string template = XmlUtils.GetNodeValue(node.CreateNavigator(), "templatefile");
+                    string templateFileName = XmlUtils.GetNodeValue(node.CreateNavigator(), "templatefile");
                     string serverPath = Globals.ApplicationMapPath + "\\";
                     bool isChild = bool.Parse(XmlUtils.GetNodeValue(node.CreateNavigator(), "ischild"));
                     string homeDirectory = XmlUtils.GetNodeValue(node.CreateNavigator(), "homedirectory");
@@ -2935,16 +2939,14 @@ namespace DotNetNuke.Services.Upgrade
                         childPath = strPortalAlias.Substring(strPortalAlias.LastIndexOf("/") + 1);
                     }
 
+                    var template = FindBestTemplate(templateFileName);
+                    var userInfo = CreateUserInfo(firstName, lastName, username, password, email);
+
                     //Create Portal
-                    portalId = portalController.CreatePortal(portalName,
-                                                             firstName,
-                                                             lastName,
-                                                             username,
-                                                             password,
-                                                             email,
+                    portalId = portalController.CreatePortal(portalName, 
+                                                             userInfo,
                                                              description,
                                                              keyWords,
-                                                             hostMapPath,
                                                              template,
                                                              homeDirectory,
                                                              strPortalAlias,
@@ -2996,6 +2998,52 @@ namespace DotNetNuke.Services.Upgrade
                 portalId = - 1;
             }
             return portalId;
+        }
+
+        private static UserInfo CreateUserInfo(string firstName, string lastName, string userName, string password, string email)
+        {
+            var adminUser = new UserInfo
+                                {
+                                    FirstName = firstName,
+                                    LastName = lastName,
+                                    Username = userName,
+                                    DisplayName = firstName + " " + lastName,
+                                    Membership = {Password = password},
+                                    Email = email,
+                                    IsSuperUser = false
+                                };
+            adminUser.Membership.Approved = true;
+            adminUser.Profile.FirstName = firstName;
+            adminUser.Profile.LastName = lastName;
+            return adminUser;
+        }
+
+        private static PortalController.PortalTemplateInfo FindBestTemplate(string templateFileName)
+        {
+            var templates = TestablePortalController.Instance.GetAvailablePortalTemplates();
+
+            var codes = templates.Where(x => !string.IsNullOrEmpty(x.CultureCode)).Select(x => x.CultureCode).Distinct();
+            string currentCulture = TestableLocalization.Instance.BestCultureCodeBasedOnBrowserLanguages(codes);
+
+            var defaultTemplates =
+                templates.Where(x => Path.GetFileName(x.TemplateFilePath) == templateFileName).ToList();
+
+            var match = defaultTemplates.FirstOrDefault(x => x.CultureCode == currentCulture);
+            if (match == null)
+            {
+                match = defaultTemplates.FirstOrDefault(x => x.CultureCode.StartsWith(currentCulture.Substring(0, 2)));
+            }
+            if (match == null)
+            {
+                match = defaultTemplates.FirstOrDefault(x => string.IsNullOrEmpty(x.CultureCode));
+            }
+
+            if (match == null)
+            {
+                throw new Exception("Unable to locate specified portal template: " + templateFileName);
+            }
+
+            return match;
         }
 
         public static string BuildUserTable(IDataReader dr, string header, string message)
@@ -4096,8 +4144,6 @@ namespace DotNetNuke.Services.Upgrade
 			}
             listController.AddListEntry(entry);
 
-            var relationshipController = new RelationshipController();
-
             //add same list to each portal
             var portalController = new PortalController();
             foreach (PortalInfo portal in portalController.GetPortals())
@@ -4110,6 +4156,42 @@ namespace DotNetNuke.Services.Upgrade
                 //also create default social relationship entries for the portal
                 RelationshipController.Instance.CreateDefaultRelationshipsForPortal(portal.PortalID);
             }
+
+            ConvertOldMessages();            
+        }
+
+        private static void ConvertOldMessages()
+        {
+            //Move old messages to new format. Do this in smaller batches so we can send feedback to browser and don't time out
+            var messagesToConvert = MessagingController.Instance.CountLegacyMessages();
+            var messagesRemaining = messagesToConvert;
+            const int batchSize = 500;
+
+            if (messagesRemaining > 0)
+            {
+                //Create an empty line
+                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "<br/>", false);            
+            }
+
+            while (messagesRemaining > 0)
+            {
+                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, string.Format("Converting old Messages to new format. Total: {0} [Remaining: {1}]<br/>", messagesToConvert, messagesRemaining));            
+                try
+                {
+                    MessagingController.Instance.ConvertLegacyMessages(0, batchSize);
+                }
+                catch (Exception ex)
+                {                    
+                    Exceptions.Exceptions.LogException(ex);
+                }
+                
+                messagesRemaining -= batchSize;
+            }
+
+            if (messagesToConvert > 0)
+            {
+                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, string.Format("Conversion of old Messages Completed. Total Converted: {0}<br/>", messagesToConvert));
+            }            
         }
 
         public static string UpdateConfig(string providerPath, Version version, bool writeFeedback)

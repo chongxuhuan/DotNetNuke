@@ -1119,7 +1119,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
 						AuthenticationType = e.AuthenticationType;
 						ProfileProperties = e.Profile;
 						UpdateProfile(e.User, true);
-						ValidateUser(e.User, false);
+						ValidateUser(e.User, (e.AuthenticationType != "DNN"));
 					}
 					break;
 			}

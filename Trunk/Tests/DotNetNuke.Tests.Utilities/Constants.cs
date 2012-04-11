@@ -373,18 +373,27 @@ namespace DotNetNuke.Tests.Utilities
 
         #region SocialMessaging constants
 
-        public const bool SocialMessaging_ReadMessage = true;
-        public const bool SocialMessaging_UnReadMessage = false;
-        public const bool SocialMessaging_ArchivedMessage = true;
-        public const bool SocialMessaging_UnArchivedMessage = false;
-        public const int SocialMessaging_RecipientId_1 = 1;
-        public const int SocialMessaging_RecipientId_2 = 2;
-        public const int SocialMessaging_MessageId_1 = 1;
-        public const int SocialMessaging_MessageTypeId = 1;
-        public const string SocialMessaging_MessageTypeName = "AcceptFriend";
-        public const string SocialMessaging_MessageTypeDescription = "Accept Friend Notification";
-        public const int SocialMessaging_MessageTypeTTL = 1440; // This is one day in minutes
-        public const bool SocialMessaging_MessageTypeIsNotification = true;
+        public const bool Messaging_ReadMessage = true;
+        public const bool Messaging_UnReadMessage = false;
+        public const bool Messaging_ArchivedMessage = true;
+        public const bool Messaging_UnArchivedMessage = false;
+        public const int Messaging_RecipientId_1 = 1;
+        public const int Messaging_RecipientId_2 = 2;
+        public const int Messaging_MessageId_1 = 1;
+        public const int Messaging_NotificationTypeId = 1;
+        public const string Messaging_NotificationTypeName = "AcceptFriend";
+        public const string Messaging_NotificationTypeDescription = "Accept Friend Notification";
+        public const int Messaging_NotificationTypeTTL = 1440; // This is one day in minutes
+        public const int Messaging_NotificationTypeDesktopModuleId = 3;
+        public const int Messaging_NotificationTypeActionId = 6;
+        public const string Messaging_NotificationTypeActionNameResourceKey = "Accept";
+        public const string Messaging_NotificationTypeActionDescriptionResourceKey = "Accept a friend request";
+        public const string Messaging_NotificationTypeActionConfirmResourceKey = "Are you sure you want to accept this friend?";
+        public const string Messaging_NotificationTypeActionAPICall = "~/DesktopModules/ModuleName/API/ModuleService.ashx/Accept";
+        public const int Messaging_NotificationActionId = 4;
+        public const string Messaging_NotificationActionKey = "{F:1}{U:2}";
+        public const string Messaging_NotificationSubject = "Friend Request Received";
+        public const string Messaging_NotificationBody = "You've received a new friend request from {0}";
 
         #endregion
 

@@ -18,32 +18,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-
 using System;
-using System.Runtime.Serialization;
+using DotNetNuke.Framework;
 
-namespace DotNetNuke.Services.Social.Messaging.Exceptions
+namespace DotNetNuke.Services.Localization.Internal
 {
-    [Serializable]
-    public class MessageOrRecipientNotFound : Exception
+    public class TestableLocalization : ServiceLocator<ILocalization, TestableLocalization>
     {
-        public MessageOrRecipientNotFound()
+        protected override Func<ILocalization> GetFactory()
         {
-        }
-
-        public MessageOrRecipientNotFound(string message)
-            : base(message)
-        {
-        }
-
-        public MessageOrRecipientNotFound(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
-
-        public MessageOrRecipientNotFound(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
+            return () => new LocalizationImpl();
         }
     }
 }

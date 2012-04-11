@@ -46,6 +46,7 @@ using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Cache;
+using DotNetNuke.Services.Localization.Internal;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Tokens;
 using DotNetNuke.UI.Modules;
@@ -669,6 +670,16 @@ namespace DotNetNuke.Services.Localization
             }
 
             return browserCulture;
+        }
+
+        public static string BestCultureCodeBasedOnBrowserLanguages(IEnumerable<string> cultureCodes, string fallback)
+        {
+            return TestableLocalization.Instance.BestCultureCodeBasedOnBrowserLanguages(cultureCodes, fallback);
+        }
+
+        public static string BestCultureCodeBasedOnBrowserLanguages(IEnumerable<string> cultureCodes)
+        {
+            return TestableLocalization.Instance.BestCultureCodeBasedOnBrowserLanguages(cultureCodes);
         }
 
         #region GetExceptionMessage

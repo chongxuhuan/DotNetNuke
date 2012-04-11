@@ -38,10 +38,10 @@ namespace DotNetNuke.Authentication.Facebook.Components
         #region Overrides
 
         [DataMember(Name = "first_name")]
-        public override string FirstName { get; set; }
+        public new string FirstName { get; set; }
 
         [DataMember(Name = "last_name")]
-        public override string LastName { get; set; }
+        public new string LastName { get; set; }
 
         #endregion
 

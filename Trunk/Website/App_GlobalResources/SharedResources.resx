@@ -1509,10 +1509,61 @@
   <data name="OAuthConfigBase_Enabled.Text" xml:space="preserve">
     <value>Enabled</value>
   </data>
-  <data name="OAuthConfigBase_SiteURL.Help" xml:space="preserve">
-    <value>Enter the Site URL/Redirect URL you configured for this authentication provider.</value>
+  <data name="OAuthConfigBase_LoginURL.Help" xml:space="preserve">
+    <value>Enter the URL for the Login page for your site.</value>
   </data>
-  <data name="OAuthConfigBase_SiteURL.Text" xml:space="preserve">
-    <value>Redirect</value>
+  <data name="OAuthConfigBase_LoginURL.Text" xml:space="preserve">
+    <value>Login URL:</value>
+  </data>
+  <data name="OAuthConfigBase_RegisterURL.Help" xml:space="preserve">
+    <value>Enter the URL for the Registration page for your site.</value>
+  </data>
+  <data name="OAuthConfigBase_RegisterURL.Text" xml:space="preserve">
+    <value>Registration URL:</value>
+  </data>
+  <data name="Follow.Text" xml:space="preserve">
+    <value>Follow</value>
+  </data>
+  <data name="Accept.Text" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="AcceptFriend.Text" xml:space="preserve">
+    <value>Accept Friend Request</value>
+  </data>
+  <data name="Block.Text" xml:space="preserve">
+    <value>Block</value>
+  </data>
+  <data name="BlockFollower.Text" xml:space="preserve">
+    <value>Block Follower Request</value>
+  </data>
+  <data name="BlockFriend.Text" xml:space="preserve">
+    <value>Block Friend Request</value>
+  </data>
+  <data name="DeleteNotification.Text" xml:space="preserve">
+    <value>Delete this Notification</value>
+  </data>
+  <data name="FollowBack.Text" xml:space="preserve">
+    <value>Follow Back</value>
+  </data>
+  <data name="Ignore.Text" xml:space="preserve">
+    <value>Ignore</value>
+  </data>
+  <data name="IgnoreFriend.Text" xml:space="preserve">
+    <value>Ignore Friend Request</value>
+  </data>
+  <data name="Reject.Text" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="RejectFriend.Text" xml:space="preserve">
+    <value>Reject Friend Request</value>
+  </data>
+  <data name="Report.Text" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="ReportFollower.Text" xml:space="preserve">
+    <value>Report Follower Request</value>
+  </data>
+  <data name="ReportFriend.Text" xml:space="preserve">
+    <value>Report Friend Request</value>
   </data>
 </root>

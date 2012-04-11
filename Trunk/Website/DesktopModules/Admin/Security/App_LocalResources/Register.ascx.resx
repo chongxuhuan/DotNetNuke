@@ -126,4 +126,13 @@
   <data name="ControlTitle_register.Text" xml:space="preserve">
     <value>Register</value>
   </data>
+  <data name="captchaLabel.Help" xml:space="preserve">
+    <value>Enter the security code</value>
+  </data>
+  <data name="captchaLabel.Text" xml:space="preserve">
+    <value>Security Code:</value>
+  </data>
+  <data name="NoEmail.Text" xml:space="preserve">
+    <value>The Authentication provider used to register did not provide an email address.  Please enter a valid email address and click the Register button to complete your registration.</value>
+  </data>
 </root>

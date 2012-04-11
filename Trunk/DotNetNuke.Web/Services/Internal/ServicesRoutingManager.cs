@@ -30,7 +30,7 @@ using DotNetNuke.Instrumentation;
 
 namespace DotNetNuke.Web.Services.Internal
 {
-    public sealed class ServicesRoutingManager : IRouteMapper
+    public sealed class ServicesRoutingManager : IMapRoute
     {
         private readonly RouteCollection _routes;
         private IList<string> _prefixes;

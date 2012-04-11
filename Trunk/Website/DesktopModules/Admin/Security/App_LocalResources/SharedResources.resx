@@ -172,7 +172,7 @@
     <value>Last name is invalid</value>
   </data>
   <data name="Username.RegExError" xml:space="preserve">
-    <value>Invalid:Letters and numbers only (no spaces), must be 5 characters long.</value>
+    <value>The User name entered is invalid.</value>
   </data>
   <data name="PasswordAnswer.Help" xml:space="preserve">
     <value>Enter an Answer to the Password Question.</value>
@@ -227,5 +227,8 @@
   </data>
   <data name="PasswordMismatch_Detail.Text" xml:space="preserve">
     <value>The password and password confirmation did not match.</value>
+  </data>
+  <data name="DisplayName.RegExError" xml:space="preserve">
+    <value>The Display Name is invalid</value>
   </data>
 </root>

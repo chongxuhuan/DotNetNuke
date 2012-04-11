@@ -274,11 +274,6 @@
     <value>Add Capability</value>
   </data>
   <data name="TrialFiftyOneProvider.Text" xml:space="preserve">
-    <value>&lt;p&gt;Thank you for using Lite device data from 51Degrees.mobi. You can now upgrade to Premium data whenever you want, giving you a range of benefits that include:&lt;/p&gt;
-&lt;p&gt;- Automatically redirecting users to optimised web pages, enabling you to create separate sites for tablets, feature phones and smartphones.&lt;/p&gt;
-&lt;p&gt;- Enhancing the IsMobile and Screen Size properties in Lite data with over 50 device properties including IsTablet, screen size in millimetres, vendor, model, platform details, input methods and levels of javascript support.&lt;/p&gt;
-&lt;p&gt;- Regular weekly updates of device data&lt;/p&gt;
-&lt;p&gt;- An option to automatically install new updates&lt;/p&gt;
-&lt;p&gt;&lt;a href="http://store.dotnetnuke.com/" target="_blank" title="Buy a Licence Key for 51Degrees.mobi Premium Data Now"&gt;DotNetNuke Store&lt;/a&gt;&amp;nbsp;|&amp;nbsp;&lt;a href="http://51degrees.mobi/Products/DeviceData" target="_blank" title="Learn More"&gt;Learn More&lt;/a&gt;&lt;/p&gt;</value>
+    <value>The device redirection rules are dependent on the device data available in your system. To upgrade to the premium data go to Host | Device Detection Management.</value>
   </data>
 </root>

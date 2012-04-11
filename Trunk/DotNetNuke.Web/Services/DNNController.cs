@@ -71,14 +71,14 @@ namespace DotNetNuke.Web.Services
             var alias = TestablePortalAliasController.Instance.GetPortalAliasInfo(domainName);
 
             int tabId;
-            VaidateTabAndModuleContext(context, alias.PortalID, out tabId);
+            ValidateTabAndModuleContext(context, alias.PortalID, out tabId);
 
             var portalSettings = new PortalSettings(tabId, alias);
             
             context.Items["PortalSettings"] = portalSettings;
         }
 
-        protected void VaidateTabAndModuleContext(HttpContextBase context, int portalId, out int tabId)
+        protected void ValidateTabAndModuleContext(HttpContextBase context, int portalId, out int tabId)
         {
             tabId = context.FindTabId();
 

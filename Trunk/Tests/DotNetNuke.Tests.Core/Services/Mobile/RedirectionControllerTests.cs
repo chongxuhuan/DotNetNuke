@@ -687,7 +687,7 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 
         private IDataReader GetPortalsCallBack(string culture)
         {
-            return this.GetPortalCallBack(Portal0, Localization.SystemLocale);
+            return GetPortalCallBack(Portal0, DotNetNuke.Services.Localization.Localization.SystemLocale);
         }
 
 		private IDataReader GetPortalCallBack(int portalId, string culture)

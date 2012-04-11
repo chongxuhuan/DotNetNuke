@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DNN_LinkedInAuthentication" type="Auth_System" version="01.00.00">
+    <package name="DNN_LinkedInAuthentication" type="Auth_System" version="06.02.00">
       <friendlyName>DotNetNuke LinkedIn Authentication Project</friendlyName>
       <description>
         The DotNetNuke LinkedIn Authentication Project is an Authentication provider for DotNetNuke that uses

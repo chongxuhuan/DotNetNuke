@@ -16,7 +16,7 @@
 	.dnnSiteSettings div.dnnssStat{border-top:1px #ccc solid;padding:1em 0 4em;overflow:hidden;}
 	.dnnssStat p{float:left;padding-right:2em;}
 		p.dnnFormRequired span{border-left:5px #F00 solid;padding-left:0.5em;}
-	.dnnGrid{float:right;}
+
 	.dnnGrid.dnnPermissionsGrid{float:none;}
 		.dnnGrid label{width:auto;font-weight:normal;text-align:left;margin-top:0;}
 			.dnnGrid td input.dnnFormInput{width:42%;}
@@ -32,4 +32,7 @@
 
 .dnnPortalSignup .dnnFormItem textarea { min-height: 40px;}
 .crmHostSettingsSummary ul {padding: 10px 0px 0px 40px;}
+.aspNetDisabled .dnnTooltip label span { color: #999;}
+
+fieldset .dnnForm { width: inherit;}
 /* ===========   End Admin Settings Module Styling   =========== */

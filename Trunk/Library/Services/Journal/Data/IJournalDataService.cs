@@ -31,11 +31,13 @@ using System.Data;
 namespace DotNetNuke.Services.Journal {
     public interface IJournalDataService {
 
-        IDataReader Journal_ListForSummary(int PortalId, int CurrentUserId, int RowIndex, int MaxRows);
-        IDataReader Journal_ListForProfile(int PortalId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows);
-        IDataReader Journal_ListForGroup(int PortalId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows);
+        IDataReader Journal_ListForSummary(int PortalId, int ModuleId, int CurrentUserId, int RowIndex, int MaxRows);
+        IDataReader Journal_ListForProfile(int PortalId, int ModuleId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows);
+        IDataReader Journal_ListForGroup(int PortalId, int ModuleId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows);
         void Journal_Delete(int JournalId);
+        void Journal_DeleteByKey(int PortalId, string ObjectKey);
         IDataReader Journal_Get(int PortalId, int CurrentUserId, int JournalId);
+        IDataReader Journal_GetByKey(int PortalId, string ObjectKey);
         int Journal_Save(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalId, int JournalTypeId, string Title, string Summary,
             string Body, string ItemData, string xml, string ObjectKey, Guid AccessKey, string SecuritySet);
         void Journal_UpdateContentItemId(int JournalId, int ContentItemId);
@@ -53,6 +55,10 @@ namespace DotNetNuke.Services.Journal {
         IDataReader Journal_Types_Get(int JournalTypeId);
         void Journal_Types_Delete(int JournalTypeId, int PortalId);
         int Journal_Types_Save(int JournalTypeId, string JournalType, string icon, int PortalId, bool IsEnabled, bool AppliesToProfile, bool AppliesToGroup, bool AppliesToStream, string Options, bool SupportsNotify);
+        IDataReader Journal_GetStatsForGroup(int PortalId, int GroupId);
 
+        IDataReader Journal_TypeFilters_List(int PortalId, int ModuleId);
+        void Journal_TypeFilters_Delete(int PortalId, int ModuleId);
+        void Journal_TypeFilters_Save(int PortalId, int ModuleId, int JournalTypeId);
     }
 }

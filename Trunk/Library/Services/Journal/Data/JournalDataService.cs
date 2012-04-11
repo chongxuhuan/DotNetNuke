@@ -39,17 +39,20 @@ namespace DotNetNuke.Services.Journal {
         private readonly DataProvider provider = DataProvider.Instance();
 
         #region IJournalDataService Members
-        public IDataReader Journal_ListForSummary(int PortalId, int CurrentUserId, int RowIndex, int MaxRows) {
-            return provider.ExecuteReader("Journal_ListForSummary", PortalId, CurrentUserId, RowIndex, MaxRows);
+        public IDataReader Journal_ListForSummary(int PortalId, int ModuleId, int CurrentUserId, int RowIndex, int MaxRows) {
+            return provider.ExecuteReader("Journal_ListForSummary", PortalId, ModuleId, CurrentUserId, RowIndex, MaxRows);
         }
-        public IDataReader Journal_ListForProfile(int PortalId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows) {
-            return provider.ExecuteReader("Journal_ListForProfile", PortalId, CurrentUserId, ProfileId, RowIndex, MaxRows);
+        public IDataReader Journal_ListForProfile(int PortalId, int ModuleId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows) {
+            return provider.ExecuteReader("Journal_ListForProfile", PortalId, ModuleId, CurrentUserId, ProfileId, RowIndex, MaxRows);
         }
-        public IDataReader Journal_ListForGroup(int PortalId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows) {
-            return provider.ExecuteReader("Journal_ListForGroup", PortalId, CurrentUserId, GroupId, RowIndex, MaxRows);
+        public IDataReader Journal_ListForGroup(int PortalId, int ModuleId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows) {
+            return provider.ExecuteReader("Journal_ListForGroup", PortalId, ModuleId, CurrentUserId, GroupId, RowIndex, MaxRows);
         }
         public void Journal_Delete(int JournalId) {
             provider.ExecuteNonQuery("Journal_Delete", JournalId);
+        }
+        public void Journal_DeleteByKey(int PortalId, string ObjectKey) {
+            provider.ExecuteNonQuery("Journal_DeleteByKey", PortalId, ObjectKey);
         }
         public void Journal_Like(int JournalId, int UserId, string DisplayName) {
             provider.ExecuteNonQuery("Journal_Like", JournalId, UserId, DisplayName);
@@ -62,6 +65,9 @@ namespace DotNetNuke.Services.Journal {
         }
         public IDataReader Journal_Get(int PortalId, int CurrentUserId, int JournalId) {
             return provider.ExecuteReader("Journal_Get", PortalId, CurrentUserId, JournalId);
+        }
+        public IDataReader Journal_GetByKey(int PortalId, string ObjectKey) {
+            return provider.ExecuteReader("Journal_GetByKey", PortalId, ObjectKey);
         }
         public int Journal_Save(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalId, int JournalTypeId, string Title,
                 string Summary, string Body, string ItemData, string xml, string ObjectKey, Guid AccessKey, string SecuritySet) {  
@@ -107,6 +113,19 @@ namespace DotNetNuke.Services.Journal {
         public int Journal_Types_Save(int JournalTypeId, string JournalType, string icon, int PortalId, bool IsEnabled, bool AppliesToProfile, bool AppliesToGroup, bool AppliesToStream, string Options, bool SupportsNotify) {
             JournalTypeId = (int)provider.ExecuteScalar("Journal_Types_Save", JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify);
             return JournalTypeId;
+        }
+        public IDataReader Journal_GetStatsForGroup(int PortalId, int GroupId) {
+            return provider.ExecuteReader("Journal_GetStatsForGroup", PortalId, GroupId);
+        }
+
+        public IDataReader Journal_TypeFilters_List(int PortalId, int ModuleId) {
+            return provider.ExecuteReader("Journal_TypeFilters_List", PortalId, ModuleId);
+        }
+        public void Journal_TypeFilters_Delete(int PortalId, int ModuleId) {
+            provider.ExecuteNonQuery("Journal_TypeFilters_Delete", PortalId, ModuleId);
+        }
+        public void Journal_TypeFilters_Save(int PortalId, int ModuleId, int JournalTypeId) {
+            provider.ExecuteNonQuery("Journal_TypeFilters_Save", PortalId, ModuleId, JournalTypeId);
         }
         #endregion
     }

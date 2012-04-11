@@ -108,6 +108,7 @@
     </Reference>
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Telerik.Web.UI, Version=2010.2.713.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Components\Telerik\bin\Telerik.Web.UI.dll</HintPath>
@@ -191,7 +192,10 @@
     <Compile Include="ComponentModel\ComponentType.cs" />
     <Compile Include="ComponentModel\ComponentTypeCollection.cs" />
     <Compile Include="Entities\Portals\Internal\IPortalAliasController.cs" />
+    <Compile Include="Entities\Portals\Internal\IPortalTemplateIO.cs" />
     <Compile Include="Entities\Portals\Internal\PortalAliasControllerImpl.cs" />
+    <Compile Include="Entities\Portals\Internal\PortalTemplateIO.cs" />
+    <Compile Include="Entities\Portals\Internal\PortalTemplateIOImpl.cs" />
     <Compile Include="Entities\Portals\Internal\TestablePortalAliasController.cs" />
     <Compile Include="Entities\Portals\Internal\TestablePortalController.cs" />
     <Compile Include="Entities\Users\Internal\IUserController.cs" />
@@ -241,6 +245,7 @@
     <Compile Include="Security\Roles\Internal\RoleControllerImpl.cs" />
     <Compile Include="Security\Roles\Internal\TestableRoleController.cs" />
     <Compile Include="Security\Roles\RoleStatus.cs" />
+    <Compile Include="Services\Authentication\AuthMode.cs" />
     <Compile Include="Services\Authentication\OAuth\AuthExtensions.cs" />
     <Compile Include="Services\Authentication\OAuth\AuthorisationResult.cs" />
     <Compile Include="Services\Authentication\OAuth\HttpMethod.cs" />
@@ -266,15 +271,22 @@
     <Compile Include="Services\Journal\JournalItem.cs" />
     <Compile Include="Services\Journal\JournalTypeInfo.cs" />
     <Compile Include="Services\Localization\ILocalizationProvider.cs" />
+    <Compile Include="Services\Localization\Internal\ILocalization.cs" />
+    <Compile Include="Services\Localization\Internal\LocalizationImpl.cs" />
+    <Compile Include="Services\Localization\Internal\TestableLocalization.cs" />
     <Compile Include="Services\Localization\LocalizationProvider.cs" />
     <Compile Include="Services\Log\EventLog\IEventLogController.cs" />
     <Compile Include="Services\Social\Messaging\MessageSentStatus.cs" />
     <Compile Include="Services\Social\Messaging\Exceptions\AttachmentsNotAllowedException.cs" />
-    <Compile Include="Services\Social\Messaging\Exceptions\MessageOrRecipientNotFound.cs" />
-    <Compile Include="Services\Social\Messaging\Exceptions\RecipientLimitExceeded.cs" />
+    <Compile Include="Services\Social\Messaging\Exceptions\MessageOrRecipientNotFoundException.cs" />
+    <Compile Include="Services\Social\Messaging\Exceptions\RecipientLimitExceededException.cs" />
     <Compile Include="Services\Social\Messaging\Exceptions\ThrottlingIntervalNotMetException.cs" />
     <Compile Include="Services\Social\Messaging\MessageArchivedStatus.cs" />
     <Compile Include="Services\Social\Messaging\MessageReadStatus.cs" />
+    <Compile Include="Services\Social\Messaging\Scheduler\CoreMessagingScheduler.cs" />
+    <Compile Include="Services\Social\Notifications\Notification.cs" />
+    <Compile Include="Services\Social\Notifications\NotificationAction.cs" />
+    <Compile Include="Services\Social\Notifications\NotificationTypeAction.cs" />
     <Compile Include="Services\Social\Messaging\MessagingController.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageThreadsView.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageBoxView.cs" />
@@ -634,7 +646,7 @@
     <Compile Include="Services\Social\Notifications\Data\IDataService.cs" />
     <Compile Include="Services\Social\Notifications\Internal\INotificationsController.cs" />
     <Compile Include="Services\Social\Notifications\Internal\NotificationsControllerImpl.cs" />
-    <Compile Include="Services\Social\Messaging\MessageType.cs" />
+    <Compile Include="Services\Social\Notifications\NotificationType.cs" />
     <Compile Include="Services\Social\Notifications\NotificationsController.cs" />
     <Compile Include="Services\SystemDateTime\SystemDateTime.cs" />
     <Compile Include="Services\EventQueue\Config\EventQueueConfiguration.cs" />

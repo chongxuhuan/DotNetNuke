@@ -122,7 +122,7 @@ namespace DotNetNuke.Entities.Users
         ///     [cnurse]	02/24/2006	Documented
         /// </history>
         /// -----------------------------------------------------------------------------
-        [SortOrder(1), MaxLength(50), Required(true)]
+        [SortOrder(1), MaxLength(50)]
         public string FirstName
         {
             get { return Profile.FirstName; }
@@ -170,7 +170,7 @@ namespace DotNetNuke.Entities.Users
         ///     [cnurse]	02/24/2006	Documented
         /// </history>
         /// -----------------------------------------------------------------------------
-        [SortOrder(2), MaxLength(50), Required(true)]
+        [SortOrder(2), MaxLength(50)]
         public string LastName
         {
             get { return Profile.LastName; }

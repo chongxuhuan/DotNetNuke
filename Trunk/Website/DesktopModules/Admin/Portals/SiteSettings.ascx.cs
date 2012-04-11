@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Lists;
@@ -34,9 +35,11 @@ using DotNetNuke.Entities.Controllers;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
+using DotNetNuke.Security.Membership;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Installer;
@@ -48,6 +51,7 @@ using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.UI.WebControls;
 using DotNetNuke.Web.Client.ClientResourceManagement;
+using DotNetNuke.Web.UI.WebControls;
 using DotNetNuke.Web.UI.WebControls.Extensions;
 
 using Calendar = DotNetNuke.Common.Utilities.Calendar;
@@ -478,6 +482,52 @@ namespace DotNetNuke.Modules.Admin.Portals
             optControlPanelSecurity.Select(PortalController.GetPortalSetting("ControlPanelSecurity", portal.PortalID, "MODULE"), false);
         }
 
+        private void BindUserAccountSettings(int portalId)
+        {
+            if (!Page.IsPostBack)
+            {
+                var settings = UserController.GetUserSettings(portalId);
+                var providerConfig = new MembershipProviderConfig();
+                standardProviderSettings.DataSource = providerConfig;
+                standardProviderSettings.DataBind();
+
+
+                basicRegistrationSettings.DataSource = settings;
+                basicRegistrationSettings.DataBind();
+
+                int setting = PortalController.GetPortalSettingAsInteger("Registration_RegistrationFormType", portalId, 0);
+                registrationFormType.Select(setting.ToString(CultureInfo.InvariantCulture));
+
+                standardRegistrationSettings.DataSource = settings;
+                standardRegistrationSettings.DataBind();
+
+                validationRegistrationSettings.DataSource = settings;
+                validationRegistrationSettings.DataBind();
+
+                registrationFields.Text = PortalController.GetPortalSetting("Registration_RegistrationFields", portalId, String.Empty);
+
+                passwordRegistrationSettings.DataSource = settings;
+                passwordRegistrationSettings.DataBind();
+
+                otherRegistrationSettings.DataSource = settings;
+                otherRegistrationSettings.DataBind();
+
+                passwordProviderSettings.DataSource = providerConfig;
+                passwordProviderSettings.DataBind();
+
+                loginSettings.DataSource = settings;
+                loginSettings.DataBind();
+
+                userVisiblity.EnumType = "DotNetNuke.Entities.Users.UserVisibilityMode, DotNetNuke";
+                profileSettings.DataSource = settings;
+                profileSettings.DataBind();
+            }
+            passwordSettings.EditMode = UserInfo.IsSuperUser ? PropertyEditorMode.Edit : PropertyEditorMode.View;
+            passwordSettings.LocalResourceFile = LocalResourceFile;
+            passwordSettings.DataSource = new PasswordConfig();
+            passwordSettings.DataBind();
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// LoadStyleSheet loads the stylesheet
@@ -729,6 +779,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                     BindPortal(_portalId, SelectedCultureCode);
                 }
 
+                BindUserAccountSettings(_portalId);
+
                 if (UserInfo.IsSuperUser)
                 {
                     hostSections.Visible = true;
@@ -739,6 +791,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                     hostSections.Visible = false;
                     cmdDelete.Visible = false;
                 }
+
             }
             catch (Exception exc)
             {
@@ -1096,6 +1149,108 @@ namespace DotNetNuke.Modules.Admin.Portals
                         PortalController.UpdatePortalSetting(_portalId, "SSLURL", AddPortalAlias(txtSSLURL.Text, _portalId), false);
                         PortalController.UpdatePortalSetting(_portalId, "STDURL", AddPortalAlias(txtSTDURL.Text, _portalId), false);
                     }
+
+                    PortalController.UpdatePortalSetting(_portalId, "Registration_RegistrationFormType", registrationFormType.SelectedValue, false);
+
+                    foreach (DnnFormItemBase item in basicRegistrationSettings.Items)
+                    {
+                        PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
+                    }
+
+                    foreach (DnnFormItemBase item in standardRegistrationSettings.Items)
+                    {
+                        PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
+                    }
+
+                    foreach (DnnFormItemBase item in validationRegistrationSettings.Items)
+                    {
+                        try
+                        {
+                            var regex = new Regex(item.Value.ToString());
+                            PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
+                        }
+                        catch (Exception exc)
+                        {
+
+                            string message = String.Format(Localization.GetString("InvalidRegularExpression", LocalResourceFile),
+                                                           Localization.GetString(item.DataField, LocalResourceFile), item.Value);
+                            UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.RedError);
+                            return;
+                        }
+                    }
+
+                    if(registrationFormType.SelectedValue == "1")
+                    {
+                        var setting = registrationFields.Text;
+                        if (!setting.Contains("Email"))
+                        {
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("NoEmail", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                            return;
+                        }
+                        string invalidFields = String.Empty;
+                        if (!String.IsNullOrEmpty(setting))
+                        {
+                            string[] fields = setting.Split(',');
+                            foreach (string field in fields)
+                            {
+                                var trimmedField = field.Trim();
+                                ProfilePropertyDefinition property = ProfileController.GetPropertyDefinitionByName(PortalId, trimmedField);
+                                if (property == null)
+                                {
+                                    switch (trimmedField)
+                                    {
+                                        case "Username":
+                                        case "Email":
+                                        case "Password":
+                                        case "PasswordConfirm":
+                                        case "PasswordQuestion":
+                                        case "PasswordAnswer":
+                                        case "DisplayName":
+                                            break;
+                                        default:
+                                            invalidFields += trimmedField + ",";
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                        if (String.IsNullOrEmpty(invalidFields))
+                        {
+                            PortalController.UpdatePortalSetting(_portalId, "Registration_RegistrationFields", setting);
+                        }
+                        else
+                        {
+                            string message = String.Format(Localization.GetString("InvalidFields", LocalResourceFile), invalidFields);
+                            UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.RedError);
+                            return;
+                        }
+                    }
+
+                    foreach (DnnFormItemBase item in passwordRegistrationSettings.Items)
+                    {
+                        PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
+                    }
+
+                    foreach (DnnFormItemBase item in otherRegistrationSettings.Items)
+                    {
+                        PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
+                    }
+
+                    foreach (DnnFormItemBase item in loginSettings.Items)
+                    {
+                        PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
+                    }
+
+                    foreach (DnnFormItemBase item in profileSettings.Items)
+                    {
+                        PortalController.UpdatePortalSetting(_portalId, item.DataField,
+                                                                item.Value.GetType().IsEnum
+                                                                    ? Convert.ToInt32(item.Value).ToString(CultureInfo.InvariantCulture)
+                                                                    : item.Value.ToString()
+                                                                );
+                    }
+
+                    profileDefinitions.Update();
 
                     DataCache.ClearPortalCache(PortalId, false);
 

@@ -24,6 +24,7 @@ using System;
 using System.Data;
 using System.Xml.Serialization;
 
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities;
 using DotNetNuke.Entities.Modules;
@@ -60,7 +61,19 @@ namespace DotNetNuke.Services.Social.Messaging.Views
         /// Count of Total New (Unread) Threads in a Conversation. It is calculated by inspecting all the threads in a conversation and counting the ones that are not read yet.
         /// </summary>
         [XmlAttribute]
-        public int NewThreadCount { get; set; }        
+        public int NewThreadCount { get; set; }
+
+        /// <summary>
+        /// The Sender User Profile URL
+        /// </summary>
+        [XmlIgnore]
+        public string SenderProfileUrl
+        {
+            get
+            {
+                return Globals.UserProfileURL(SenderUserID);
+            }
+        }
 
         /// <summary>
         /// Fill the object with data from database.
