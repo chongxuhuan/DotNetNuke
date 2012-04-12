@@ -102,14 +102,14 @@ namespace DotNetNuke.Security.Membership.Data
 
         // Roles
         public abstract int AddRole(int portalId, int roleGroupId, string roleName, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,
-                                    string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int createdByUserID, int status, bool isSecurityRole);
+                                    string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int createdByUserID, int status, int securityMode);
         public abstract void DeleteRole(int roleId);
         public abstract IDataReader GetPortalRoles(int portalId);
         public abstract IDataReader GetRoles();
         public abstract IDataReader GetRolesBasicSearch(int portalID,int pageSize,string filterBy);
         public abstract IDataReader GetRoleSettings(int roleId);
         public abstract void UpdateRole(int roleId, int roleGroupId, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,
-                                        string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int lastModifiedByUserID, int status, bool isSecurityRole);
+                                        string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int lastModifiedByUserID, int status, int securityMode);
         public abstract void UpdateRoleSetting(int roleId, string settingName, string settingValue, int lastModifiedByUserID);
 
         // RoleGroups

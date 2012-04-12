@@ -260,7 +260,7 @@ namespace DotNetNuke.Security.Membership.Data
 
         //Roles
         public override int AddRole(int portalId, int roleGroupId, string roleName, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,
-                                    string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int createdByUserID, int status, bool isSecurityRole)
+                                    string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int createdByUserID, int status, int securityMode)
         {
             return
                 Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString,
@@ -281,7 +281,7 @@ namespace DotNetNuke.Security.Membership.Data
                                                         iconFile,
                                                         createdByUserID,
                                                         status,
-                                                        isSecurityRole));
+                                                        securityMode));
         }
 
         public override void DeleteRole(int roleId)
@@ -311,7 +311,7 @@ namespace DotNetNuke.Security.Membership.Data
         }
 
         public override void UpdateRole(int roleId, int roleGroupId, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,
-                                        string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int lastModifiedByUserID, int status, bool isSecurityRole)
+                                        string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int lastModifiedByUserID, int status, int securityMode)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString,
                                       GetFullyQualifiedName("UpdateRole"),
@@ -330,7 +330,7 @@ namespace DotNetNuke.Security.Membership.Data
                                       iconFile,
                                       lastModifiedByUserID,
                                       status,
-                                      isSecurityRole);
+                                      securityMode);
         }
 
         public override void UpdateRoleSetting(int roleId, string settingName, string settingValue, int lastModifiedByUserID)

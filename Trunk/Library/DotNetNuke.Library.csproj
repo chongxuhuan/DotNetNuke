@@ -241,6 +241,7 @@
     <Compile Include="Framework\IServicesFramework.cs" />
     <Compile Include="Framework\ServicesFramework.cs" />
     <Compile Include="Framework\ServicesFrameworkImpl.cs" />
+    <Compile Include="Security\Roles\SecurityMode.cs" />
     <Compile Include="Security\Roles\Internal\IRoleController.cs" />
     <Compile Include="Security\Roles\Internal\RoleControllerImpl.cs" />
     <Compile Include="Security\Roles\Internal\TestableRoleController.cs" />

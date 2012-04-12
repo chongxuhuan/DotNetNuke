@@ -148,6 +148,55 @@ namespace DotNetNuke.Security.Roles
 
         #endregion
 
+        #region Role Methods
+
+        public int AddRole(RoleInfo role)
+        {
+            return TestableRoleController.Instance.AddRole(role);
+        }
+
+        public void DeleteRole(int roleId, int portalId)
+        {
+            RoleInfo role = TestableRoleController.Instance.GetRole(portalId, r => r.RoleID == roleId);
+            if (role != null)
+            {
+                TestableRoleController.Instance.DeleteRole(role);
+            }
+        }
+
+        public ArrayList GetPortalRoles(int portalId)
+        {
+            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId).ToArray());
+        }
+
+        public RoleInfo GetRole(int roleId, int portalId)
+        {
+            return TestableRoleController.Instance.GetRole(portalId, r => r.RoleID == roleId);
+        }
+
+        public RoleInfo GetRoleByName(int portalId, string roleName)
+        {
+            return TestableRoleController.Instance.GetRoles(portalId).SingleOrDefault(r => r.RoleName == roleName);
+        }
+
+        public ArrayList GetRoles()
+        {
+            return new ArrayList(TestableRoleController.Instance.GetRoles(Null.NullInteger).ToArray());
+        }
+
+        public ArrayList GetRolesByGroup(int portalId, int roleGroupId)
+        {
+            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId, r => r.RoleGroupID == roleGroupId).ToArray());
+        }
+
+        public void UpdateRole(RoleInfo role)
+        {
+            TestableRoleController.Instance.UpdateRole(role);
+        }
+
+
+        #endregion
+
         #region UserRoleInfo Methods
 
         /// -----------------------------------------------------------------------------
@@ -684,26 +733,10 @@ namespace DotNetNuke.Security.Roles
 
         #region Obsoleted Methods, retained for Binary Compatability
 
-        [Obsolete("Deprecated in DotNetNuke 6.2. This function has been replaced by TestableRoleController.Instance.AddRole(role)")]
-        public int AddRole(RoleInfo role)
-        {
-            return TestableRoleController.Instance.AddRole(role);
-        }
-
         [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by AddRole(objRoleInfo)")]
         public int AddRole(RoleInfo role, bool synchronizationMode)
         {
             return TestableRoleController.Instance.AddRole(role);
-        }
-
-        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.AddRole(role)")]
-        public void DeleteRole(int roleId, int portalId)
-        {
-            RoleInfo role = TestableRoleController.Instance.GetRole(portalId, r => r.RoleID == roleId);
-            if (role != null)
-            {
-                TestableRoleController.Instance.DeleteRole(role);
-            }
         }
 
         [Obsolete("Deprecated in DotNetNuke 6.2.")]
@@ -732,24 +765,6 @@ namespace DotNetNuke.Security.Roles
             return new ArrayList(TestableRoleController.Instance.GetRoles(portalId).ToArray());
         }
 
-        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRoles(portalId, predicate)")]
-        public ArrayList GetPortalRoles(int portalId)
-        {
-            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId).ToArray());
-        }
-
-        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRole(portalId, predicate)")]
-        public RoleInfo GetRole(int roleId, int portalId)
-        {
-            return TestableRoleController.Instance.GetRole(portalId, r => r.RoleID == roleId);
-        }
-
-        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRole(portalId, predicate)")]
-        public RoleInfo GetRoleByName(int portalId, string roleName)
-        {
-            return TestableRoleController.Instance.GetRoles(portalId).SingleOrDefault(r => r.RoleName == roleName);
-        }
-
         [Obsolete("Deprecated in DotNetNuke 6.2.")]
         public string[] GetRoleNames(int portalId)
         {
@@ -761,18 +776,6 @@ namespace DotNetNuke.Security.Roles
                 roles = strRoles.Substring(0, strRoles.Length - 1).Split('|');
             }
             return roles;
-        }
-
-        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRoles(portalId, predicate)")]
-        public ArrayList GetRoles()
-        {
-            return new ArrayList(TestableRoleController.Instance.GetRoles(Null.NullInteger).ToArray());
-        }
-
-        [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by TestableRoleController.Instance.GetRoles(portalId, predicate)")]
-        public ArrayList GetRolesByGroup(int portalId, int roleGroupId)
-        {
-            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId, r => r.RoleGroupID == roleGroupId).ToArray());
         }
 
         [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by GetRolesByUser")]
@@ -845,12 +848,6 @@ namespace DotNetNuke.Security.Roles
                 CBO.SerializeObject(role, writer);
             }
             writer.WriteEndElement();
-        }
-
-        [Obsolete("Deprecated in DotNetNuke 6.2. This function has been replaced by TestableRoleController.Instance.UpdateRole(role)")]
-        public void UpdateRole(RoleInfo role)
-        {
-            TestableRoleController.Instance.UpdateRole(role);
         }
 
         [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by UpdateUserRole")]

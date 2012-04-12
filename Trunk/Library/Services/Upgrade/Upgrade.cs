@@ -4157,7 +4157,11 @@ namespace DotNetNuke.Services.Upgrade
                 RelationshipController.Instance.CreateDefaultRelationshipsForPortal(portal.PortalID);
             }
 
-            ConvertOldMessages();            
+            //Convert old Messages to new schema
+            ConvertOldMessages();
+
+            //Replace old Messaging module on User Profile with new 
+            ReplaceMessagingModule();
         }
 
         private static void ConvertOldMessages()
@@ -4192,6 +4196,42 @@ namespace DotNetNuke.Services.Upgrade
             {
                 HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, string.Format("Conversion of old Messages Completed. Total Converted: {0}<br/>", messagesToConvert));
             }            
+        }
+
+        private static void ReplaceMessagingModule()
+        {
+            var portalController = new PortalController();
+            var moduleController = new ModuleController();
+            var tabController = new TabController();
+
+            var moduleDefinition = ModuleDefinitionController.GetModuleDefinitionByFriendlyName("Message Center");
+            if (moduleDefinition == null) return;
+
+            var portals = portalController.GetPortals();
+            foreach (PortalInfo portal in portals)
+            {
+                if(portal.UserTabId > Null.NullInteger)
+                {
+                    //Find TabInfo
+                    TabInfo tab = tabController.GetTab(portal.UserTabId, portal.PortalID, true);
+                    if (tab != null)
+                    {
+                        //Add new module to the page
+                        AddModuleToPage(tab, moduleDefinition.ModuleDefID, "Message Center", "", true);
+                    }
+
+                    foreach (KeyValuePair<int, ModuleInfo> kvp in moduleController.GetTabModules(portal.UserTabId))
+                    {
+                        var module = kvp.Value;
+                        if (module.DesktopModule.FriendlyName == "Messaging")
+                        {
+                            //Delete the Module from the Modules list
+                            moduleController.DeleteTabModule(module.TabID, module.ModuleID, false);
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         public static string UpdateConfig(string providerPath, Version version, bool writeFeedback)

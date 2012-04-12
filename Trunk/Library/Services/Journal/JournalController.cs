@@ -166,7 +166,7 @@ namespace DotNetNuke.Services.Journal {
                 objJournalItem.SecuritySet += "U" + objJournalItem.UserId.ToString() + ",";
             }
             if (objJournalItem.SocialGroupId > 0) {
-                RoleInfo role = TestableRoleController.Instance.GetRole(objJournalItem.PortalId, r => r.IsSecurityRole == false && r.RoleID == objJournalItem.SocialGroupId);
+                RoleInfo role = TestableRoleController.Instance.GetRole(objJournalItem.PortalId, r => r.SecurityMode != SecurityMode.SecurityRole && r.RoleID == objJournalItem.SocialGroupId);
                 if (role != null) {
                     if (currentUser.IsInRole(role.RoleName)) {
                         objJournalItem.SecuritySet += "R" + objJournalItem.SocialGroupId.ToString() + ",";

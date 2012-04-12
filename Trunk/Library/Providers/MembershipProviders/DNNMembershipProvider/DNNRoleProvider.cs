@@ -127,7 +127,7 @@ namespace DotNetNuke.Security.Membership
                                                          role.IconFile,
                                                          UserController.GetCurrentUserInfo().UserID,
                                                          (int)role.Status,
-                                                         role.IsSecurityRole));
+                                                         (int)role.SecurityMode));
             }
             catch (SqlException e)
             {
@@ -206,7 +206,7 @@ namespace DotNetNuke.Security.Membership
                                     role.IconFile,
                                     UserController.GetCurrentUserInfo().UserID,
                                     (int)role.Status,
-                                    role.IsSecurityRole);
+                                    (int)role.SecurityMode);
         }
 
         /// -----------------------------------------------------------------------------

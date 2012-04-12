@@ -5574,10 +5574,10 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objec
 	END
 GO
 
-IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Roles' AND COLUMN_NAME='IsSecurityRole')
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Roles' AND COLUMN_NAME='SecurityMode')
 	BEGIN
 		ALTER TABLE {databaseOwner}{objectQualifier}Roles
-			ADD IsSecurityRole bit NOT NULL CONSTRAINT DF_{objectQualifier}Roles_IsSecurityRole DEFAULT 1
+			ADD SecurityMode int NOT NULL CONSTRAINT DF_{objectQualifier}Roles_SecurityMode DEFAULT 0
 	END
 GO
 
@@ -5624,7 +5624,7 @@ AS
 		   R.RSVPCode,
 		   R.IconFile,
 		   R.Status,
-		   R.IsSecurityRole,
+		   R.SecurityMode,
 		   (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}UserRoles U WHERE U.RoleID = R.RoleID) AS UserCount,
 		   R.CreatedByUserID,
 		   R.CreatedOnDate,
@@ -5801,7 +5801,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateRole]
 	@IconFile				nvarchar(100),
 	@LastModifiedByUserID	int,
 	@Status					int,
-	@IsSecurityRole			bit
+	@SecurityMode			int
 AS
 
 	UPDATE {databaseOwner}{objectQualifier}Roles
@@ -5820,7 +5820,7 @@ AS
 		   LastModifiedByUserID = @LastModifiedByUserID,
 		   LastModifiedOnDate		= getdate(),
 		   Status				= @Status,
-		   IsSecurityRole		= @IsSecurityRole
+		   SecurityMode			= @SecurityMode
 	WHERE  RoleId = @RoleId
 GO
 
@@ -5851,7 +5851,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddRole]
 	@IconFile         nvarchar(100),
 	@CreatedByUserID  int,
 	@Status			  int,
-	@IsSecurityRole   bit
+	@SecurityMode   bit
 AS
 
 	INSERT INTO {databaseOwner}{objectQualifier}Roles (
@@ -5874,7 +5874,7 @@ AS
 	  LastModifiedByUserID,
 	  LastModifiedOnDate,
 	  Status,
-	  IsSecurityRole
+	  SecurityMode
 	)
 
 	VALUES (
@@ -5897,7 +5897,7 @@ AS
 	  @CreatedByUserID,
 	  getdate(),
 	  @Status,
-	  @IsSecurityRole
+	  @SecurityMode
 	)
 
 	SELECT SCOPE_IDENTITY()
@@ -5953,7 +5953,7 @@ BEGIN
 				WHERE fileid = CAST((RIGHT(LOWER(IconFile), Len(IconFile) - 7)) AS int)
 			) ELSE ''
 			END AS IconFile,
-			CreatedByUserID,CreatedOnDate,LastModifiedByUserID,LastModifiedOnDate, Status, IsSecurityRole
+			CreatedByUserID,CreatedOnDate,LastModifiedByUserID,LastModifiedOnDate, Status, SecurityMode
 	FROM {databaseOwner}[{objectQualifier}Roles]
 	WHERE RoleName LIKE '%' + @FilterBy + '%'
 	AND (PortalID = @PortalID OR (@PortalID is null))

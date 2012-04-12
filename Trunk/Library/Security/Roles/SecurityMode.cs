@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,20 +18,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
 
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System;
 
-#endregion
-
-[assembly: AssemblyTitle("DotNetNuke Module Caching Memory Provider")]
-[assembly: AssemblyDescription("DotNetNuke Module Caching Memory Provider")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: ComVisible(false)]
-[assembly: Guid("4fb53b48-4f4f-4259-9f96-0b207a26436c")]
-[assembly: AssemblyVersion("6.2.0.1088")]
-[assembly: AssemblyFileVersion("6.2.0.1088")]
+namespace DotNetNuke.Security.Roles
+{
+    public enum SecurityMode
+    {
+        SecurityRole = 0,
+        SocialGroup = 1,
+        Both = 2
+    }
+}
