@@ -14,6 +14,7 @@ using DotNetNuke.Modules.MobileManagement.Presenters;
 using DotNetNuke.Modules.MobileManagement.Views;
 using DotNetNuke.Modules.MobileManagement.ViewModels;
 using DotNetNuke.Services.ClientCapability;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Mobile;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
@@ -47,7 +48,7 @@ namespace DotNetNuke.Modules.MobileManagement
                 Model.Redirections = redirectController.GetRedirectionsByPortal(ModuleContext.PortalId);
 
                 BindRedirectionList(Model.Redirections);
-
+                Localization.LocalizeDataGrid(ref RedirectionsGrid, LocalResourceFile);
                 if(Model.ModeType != null)
                 {
                     optSimpleAdvanced.SelectedValue = Model.ModeType;

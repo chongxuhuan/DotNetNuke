@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Console.ViewConsole" CodeFile="ViewConsole.ascx.cs" %>
+<%@ Control Language="C#" AutoEventWireup="false" Inherits="DesktopModules.Admin.Console.ViewConsole" CodeFile="ViewConsole.ascx.cs" %>
 
 <script type="text/javascript">
 	jQuery(document).ready(function($) {

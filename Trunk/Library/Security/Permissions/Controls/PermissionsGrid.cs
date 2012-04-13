@@ -507,11 +507,11 @@ namespace DotNetNuke.Security.Permissions.Controls
             }
             if (roleGroupId > -2)
             {
-                Roles = new ArrayList(TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.RoleGroupID == roleGroupId).ToArray());
+                Roles = new ArrayList(TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.RoleGroupID == roleGroupId && r.SecurityMode != SecurityMode.SocialGroup).ToArray());
             }
             else
             {
-                Roles = new ArrayList(TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId).ToArray());
+                Roles = new ArrayList(TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.SecurityMode != SecurityMode.SocialGroup).ToArray());
             }
             if (roleGroupId < 0)
             {
@@ -1181,7 +1181,7 @@ namespace DotNetNuke.Security.Permissions.Controls
         /// </summary>
         /// <history>
         /// </history>
-        protected void AddUser(object sender, EventArgs e)
+        protected virtual void AddUser(object sender, EventArgs e)
         {
             UpdatePermissions();
             if (!String.IsNullOrEmpty(txtUser.Text))

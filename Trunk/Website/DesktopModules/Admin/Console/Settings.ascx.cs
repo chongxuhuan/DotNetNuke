@@ -21,7 +21,9 @@
 #region Usings
 
 using System;
+using System.Globalization;
 using System.Web.UI.WebControls;
+
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Tabs;
@@ -33,7 +35,7 @@ using DotNetNuke.Services.Localization;
 
 #endregion
 
-namespace DotNetNuke.Modules.Admin.Console
+namespace DesktopModules.Admin.Console
 {
 
     public partial class Settings : ModuleSettingsBase
@@ -58,7 +60,7 @@ namespace DotNetNuke.Modules.Admin.Console
                     {
                         if ((TabPermissionController.CanViewPage(t)))
                         {
-                            ParentTab.Items.Add(new ListItem(t.IndentedTabName, t.TabID.ToString()));
+                            ParentTab.Items.Add(new ListItem(t.IndentedTabName, t.TabID.ToString(CultureInfo.InvariantCulture)));
                         }
                     }
                     ParentTab.Items.Insert(0, "");
@@ -77,6 +79,10 @@ namespace DotNetNuke.Modules.Admin.Console
                         DefaultView.Items.Add(new ListItem(Localization.GetString(val, LocalResourceFile), val));
                     }
                     SelectDropDownListItem(ref DefaultView, "DefaultView");
+                    if (Settings.ContainsKey("IncludeParent"))
+                    {
+                        IncludeParent.Checked = Convert.ToBoolean(Settings["IncludeParent"]);
+                    }
                     if (Settings.ContainsKey("AllowViewChange"))
                     {
                         AllowViewChange.Checked = Convert.ToBoolean(Settings["AllowViewChange"]);
@@ -127,10 +133,11 @@ namespace DotNetNuke.Modules.Admin.Console
                     objModules.UpdateModuleSetting(ModuleId, "ParentTabID", ParentTab.SelectedValue);
                 }
                 objModules.UpdateModuleSetting(ModuleId, "DefaultSize", DefaultSize.SelectedValue);
-                objModules.UpdateModuleSetting(ModuleId, "AllowSizeChange", AllowResize.Checked.ToString());
+                objModules.UpdateModuleSetting(ModuleId, "AllowSizeChange", AllowResize.Checked.ToString(CultureInfo.InvariantCulture));
                 objModules.UpdateModuleSetting(ModuleId, "DefaultView", DefaultView.SelectedValue);
-                objModules.UpdateModuleSetting(ModuleId, "AllowViewChange", AllowViewChange.Checked.ToString());
-                objModules.UpdateModuleSetting(ModuleId, "ShowTooltip", ShowTooltip.Checked.ToString());
+                objModules.UpdateModuleSetting(ModuleId, "AllowViewChange", AllowViewChange.Checked.ToString(CultureInfo.InvariantCulture));
+                objModules.UpdateModuleSetting(ModuleId, "ShowTooltip", ShowTooltip.Checked.ToString(CultureInfo.InvariantCulture));
+                objModules.UpdateModuleSetting(ModuleId, "IncludeParent", IncludeParent.Checked.ToString(CultureInfo.InvariantCulture)); 
                 objModules.UpdateModuleSetting(ModuleId, "ConsoleWidth", wdth);
             }
             catch (Exception exc)

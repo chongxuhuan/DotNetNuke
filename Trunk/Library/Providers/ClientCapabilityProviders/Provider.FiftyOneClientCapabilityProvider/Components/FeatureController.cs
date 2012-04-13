@@ -57,7 +57,7 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider.Components
     {
         #region Constants
 
-        private const string ResourceFileRelativePath = "~/DesktopModules/Admin/FiftyOneClientCapabilityProvider/App_LocalResources/FeatureController.cs.resx";
+        private const string ResourceFileRelativePath = "~/DesktopModules/Admin/FiftyOneClientCapabilityProvider/App_LocalResources/SharedResources.resx";
 
         #endregion
 

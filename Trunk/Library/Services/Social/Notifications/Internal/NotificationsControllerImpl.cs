@@ -36,15 +36,15 @@ using DotNetNuke.Services.Social.Notifications.Data;
 
 namespace DotNetNuke.Services.Social.Notifications.Internal
 {
+    /// <summary>
+    /// Provides the methods to work with Notifications, NotificationTypes, NotificationTypeActions and NotificationActions.
+    /// </summary>
     public class NotificationsControllerImpl : INotificationsController
     {
         #region Constants
 
         internal const int ConstMaxSubject = 400;
         internal const int ConstMaxTo = 2000;
-
-        internal const string FriendRquest = "FriendRequest";
-        internal const string FollowerRquest = "FollowerRequest";
 
         #endregion
 
@@ -75,6 +75,17 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
 
         #region Public API
 
+        /// <summary>
+        /// Creates a new notification type action and adds it after the specified notification type action in the actions list for the specified notification type.
+        /// </summary>
+        /// <param name="afterNotificationTypeActionId">The notification type action identifier after which the new action will be placed.</param>
+        /// <param name="notificationTypeId">The notification type action identifier.</param>
+        /// <param name="nameResourceKey">The resource key used to localize the action name.</param>
+        /// <param name="descriptionResourceKey">The resource key used to localize the action description.</param>
+        /// <param name="confirmResourceKey">The resource key used to localize the action confirmation message. Leave it empty if no confirmation is needed.</param>
+        /// <param name="apiCall">The service framework url to be called to perform the notification action.</param>
+        /// <returns>The new notification type action.</returns>
+        /// <exception cref="System.ArgumentException">Thrown when nameResourceKey or apiCall are null or empty.</exception>
         public virtual NotificationTypeAction AddNotificationTypeActionAfter(int afterNotificationTypeActionId, int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall)
         {
             Requires.NotNullOrEmpty("nameResourceKey", nameResourceKey);
@@ -84,6 +95,17 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             return GetNotificationTypeAction(notificationTypeActionId);
         }
 
+        /// <summary>
+        /// Creates a new notification type action and adds it before the specified notification type action in the actions list for the specified notification type.
+        /// </summary>
+        /// <param name="beforeNotificationTypeActionId">The notification type action identifier before which the new action will be placed.</param>
+        /// <param name="notificationTypeId">The notification type action identifier.</param>
+        /// <param name="nameResourceKey">The resource key used to localize the action name.</param>
+        /// <param name="descriptionResourceKey">The resource key used to localize the description name.</param>
+        /// <param name="confirmResourceKey">The resource key used to localize the action confirmation message. Leave it empty if no confirmation is needed.</param>
+        /// <param name="apiCall">The service framework url to be called to perform the notification action.</param>
+        /// <returns>The new notification type action.</returns>
+        /// <exception cref="System.ArgumentException">Thrown when nameResourceKey or apiCall are null or empty.</exception>
         public virtual NotificationTypeAction AddNotificationTypeActionBefore(int beforeNotificationTypeActionId, int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall)
         {
             Requires.NotNullOrEmpty("nameResourceKey", nameResourceKey);
@@ -93,6 +115,16 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             return GetNotificationTypeAction(notificationTypeActionId);
         }
 
+        /// <summary>
+        /// Creates a new notification type action and adds it to the end of the actions list for the specified notification type.
+        /// </summary>
+        /// <param name="notificationTypeId">The notification type identifier.</param>
+        /// <param name="nameResourceKey">The resource key used to localize the action name.</param>
+        /// <param name="descriptionResourceKey">The resource key used to localize the action description.</param>
+        /// <param name="confirmResourceKey">The resource key used to localize the action confirmation message. Leave it empty if no confirmation is needed.</param>
+        /// <param name="apiCall">The service framework url to be called to perform the notification action.</param>
+        /// <returns>The new notification type action.</returns>
+        /// <exception cref="System.ArgumentException">Thrown when nameResourceKey or apiCall are null or empty.</exception>
         public virtual NotificationTypeAction AddNotificationTypeActionToEnd(int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall)
         {
             Requires.NotNullOrEmpty("nameResourceKey", nameResourceKey);
@@ -102,17 +134,47 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             return GetNotificationTypeAction(notificationTypeActionId);
         }
 
+        /// <summary>
+        /// Counts the notifications sent to the provided user in the specified portal.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="portalId">The portal identifier.</param>
+        /// <returns>The number of notifications sent to the provided user in the specified portal.</returns>
         public virtual int CountNotifications(int userId,int portalId)
         {
             return _dataService.CountNotifications(userId, portalId);
         }
 
+        /// <summary>
+        /// Creates a new notification and sets is sender as the portal administrator.
+        /// </summary>
+        /// <param name="notificationTypeId">The notification type identifier.</param>
+        /// <param name="portalId">The portal identifier.</param>
+        /// <param name="subject">The notification subject.</param>
+        /// <param name="body">The notification body.</param>
+        /// <param name="roles">The list of roles to send the notification to. Leave it as null to send only to individual users.</param>
+        /// <param name="users">The list of users to send the notification to. Leave it as null to send only to roles.</param>
+        /// <returns>The new notification.</returns>
         public virtual Notification CreateNotification(int notificationTypeId, int portalId,string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users)
         {
             var sender = GetAdminUser();
             return CreateNotification(notificationTypeId,portalId, subject, body, roles, users, sender);
         }
 
+        /// <summary>
+        /// Creates a new notification.
+        /// </summary>
+        /// <param name="notificationTypeId">The notification type identifier.</param>
+        /// <param name="portalId">The portal identifier.</param>
+        /// <param name="subject">The notification subject.</param>
+        /// <param name="body">The notification body.</param>
+        /// <param name="roles">The list of roles to send the notification to. Leave it as null to send only to individual users.</param>
+        /// <param name="users">The list of users to send the notification to. Leave it as null to send only to roles.</param>
+        /// <param name="sender">The notification sender.</param>
+        /// <returns>The new notification.</returns>
+        /// <exception cref="System.ArgumentNullException">Thrown when sender is null.</exception>
+        /// <exception cref="System.ArgumentException">Thrown when subject and body are null or empty, or when roles and users are both null, or when the subject length is too large, or when there are no recipients.</exception>
+        /// <exception cref="DotNetNuke.Services.Social.Messaging.Exceptions.RecipientLimitExceededException">Thrown when there are too much recipients.</exception>
         public virtual Notification CreateNotification(int notificationTypeId, int portalId,string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, UserInfo sender)
         {
             Requires.NotNull("sender", sender);
@@ -237,6 +299,14 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             return notification;
         }
 
+        /// <summary>
+        /// Creates a new notification action.
+        /// </summary>
+        /// <param name="notificationId">The notification identifier.</param>
+        /// <param name="notificationTypeActionId">The notification type action identifier.</param>
+        /// <param name="key">The custom information to be stored for this particular action.</param>
+        /// <returns>The new notification action.</returns>
+        /// <exception cref="System.ArgumentException">Thrown when key is null or empty.</exception>
         public virtual NotificationAction CreateNotificationAction(int notificationId, int notificationTypeActionId, string key)
         {
             Requires.NotNullOrEmpty("key", key);
@@ -252,6 +322,15 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             return notificationAction;
         }
 
+        /// <summary>
+        /// Creates a new notification type.
+        /// </summary>
+        /// <param name="name">The name of the notification type.</param>
+        /// <param name="description">The description of the notification type.</param>
+        /// <param name="timeToLive">The number of minutes to be added to the creation time of new notifications of this type to calculate the expiration date.</param>
+        /// <param name="desktopModuleId">Indicates the module that will include the resource file (named SharedResources.resx) used localize NotificationTypeActions. If the value is 0 or negative, the resource file used will be ~/App_GlobalResources/SharedResources.resx.</param>
+        /// <returns>The new notification type.</returns>
+        /// <exception cref="System.ArgumentException">Thrown when name is null or empty.</exception>
         public virtual NotificationType CreateNotificationType(string name, string description, TimeSpan timeToLive, int desktopModuleId)
         {
             Requires.NotNullOrEmpty("name", name);
@@ -276,16 +355,30 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             return messageType;
         }
 
+        /// <summary>
+        /// Deletes an existing notification.
+        /// </summary>
+        /// <param name="notificationId">The notification identifier.</param>
         public virtual void DeleteNotification(int notificationId)
         {
             _dataService.DeleteNotification(notificationId);
         }
 
+        /// <summary>
+        /// Deletes an existing notification action.
+        /// </summary>
+        /// <param name="notificationActionId">The notification action identifier.</param>
         public virtual void DeleteNotificationAction(int notificationActionId)
         {
             _dataService.DeleteNotificationAction(notificationActionId);
         }
 
+        /// <summary>
+        /// Deletes an individual notification recipient.
+        /// </summary>
+        /// <remarks>It also deletes the notification if there are no more recipients.</remarks>
+        /// <param name="notificationId">The notification identifier.</param>
+        /// <param name="userId">The user identifier.</param>
         public virtual void DeleteNotificationRecipient(int notificationId, int userId)
         {
             MessagingController.Instance.DeleteMessageRecipient(notificationId, userId);
@@ -296,6 +389,10 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             }
         }
 
+        /// <summary>
+        /// Deletes an existing notification type.
+        /// </summary>
+        /// <param name="notificationTypeId">The notification type identifier.</param>
         public virtual void DeleteNotificationType(int notificationTypeId)
         {
             _dataService.DeleteNotificationType(notificationTypeId);
@@ -303,6 +400,10 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             RemoveNotificationTypeCache();
         }
 
+        /// <summary>
+        /// Deletes an existing notification type action.
+        /// </summary>
+        /// <param name="notificationTypeActionId">The notification type action identifier.</param>
         public virtual void DeleteNotificationTypeAction(int notificationTypeActionId)
         {
             _dataService.DeleteNotificationTypeAction(notificationTypeActionId);
@@ -310,26 +411,55 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             RemoveNotificationTypeActionCache();
         }
 
+        /// <summary>
+        /// Gets a notification action by identifier.
+        /// </summary>
+        /// <param name="notificationActionId">The notification action identifier.</param>
+        /// <returns>The notification action with the provided identifier.</returns>
         public virtual NotificationAction GetNotificationAction(int notificationActionId)
         {
             return CBO.FillObject<NotificationAction>(_dataService.GetNotificationAction(notificationActionId));
         }
 
+        /// <summary>
+        /// Gets a notification action by notification and notification type action.
+        /// </summary>
+        /// <param name="notificationId">The notification identifier.</param>
+        /// <param name="notificationTypeActionId">The notification type action identifier.</param>
+        /// <returns>The notification action with the provided notification and notification type action.</returns>
         public virtual NotificationAction GetNotificationAction(int notificationId, int notificationTypeActionId)
         {
             return CBO.FillObject<NotificationAction>(_dataService.GetNotificationActionByMessageAndNotificationTypeAction(notificationId, notificationTypeActionId));
         }
 
+        /// <summary>
+        /// Gets the list of notification actions for the provided notification.
+        /// </summary>
+        /// <param name="notificationId">The notification identifier.</param>
+        /// <returns>A list of notification actions for the provided notification.</returns>
         public virtual IList<NotificationAction> GetNotificationActionsByNotificationId(int notificationId)
         {
             return CBO.FillCollection<NotificationAction>(_dataService.GetNotificationActionsByMessageId(notificationId));
         }
 
+        /// <summary>
+        /// Gets a list of notifications sent to the provided user in the specified portal.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="portalId">The portal identifier.</param>
+        /// <param name="pageIndex">The page index (starting at 0) used to filter the list to a particular number of results.</param>
+        /// <param name="pageSize">The page size used to filter the list to a particular number of results.</param>
+        /// <returns>The filtered list of notifications sent to the provided user in the specified portal.</returns>
         public virtual IList<Notification> GetNotifications(int userId, int portalId,int pageIndex, int pageSize)
         {
             return CBO.FillCollection<Notification>(_dataService.GetNotifications(userId, portalId, pageIndex, pageSize));
         }
 
+        /// <summary>
+        /// Gets a notification type by identifier.
+        /// </summary>
+        /// <param name="notificationTypeId">The notification type identifier.</param>
+        /// <returns>The notification type with the provided identifier.</returns>
         public virtual NotificationType GetNotificationType(int notificationTypeId)
         {
             var notificationTypeCacheKey = string.Format(DataCache.NotificationTypesCacheKey, notificationTypeId);
@@ -337,6 +467,12 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             return CBO.GetCachedObject<NotificationType>(cacheItemArgs, GetNotificationTypeCallBack);
         }
 
+        /// <summary>
+        /// Gets a notification type by name.
+        /// </summary>
+        /// <param name="name">The notification type name.</param>
+        /// <returns>The notification type with the provided name.</returns>
+        /// <exception cref="System.ArgumentException">Thrown when name is null or empty.</exception>
         public virtual NotificationType GetNotificationType(string name)
         {
             Requires.NotNullOrEmpty("name", name);
@@ -346,6 +482,11 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             return CBO.GetCachedObject<NotificationType>(cacheItemArgs, GetNotificationTypeByNameCallBack);
         }
 
+        /// <summary>
+        /// Gets a notification type action by identifier.
+        /// </summary>
+        /// <param name="notificationTypeActionId">The notification type action identifier.</param>
+        /// <returns>The notification type action with the provided identifier.</returns>
         public virtual NotificationTypeAction GetNotificationTypeAction(int notificationTypeActionId)
         {
             var notificationTypeActionCacheKey = string.Format(DataCache.NotificationTypeActionsCacheKey, notificationTypeActionId);
@@ -353,6 +494,13 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             return CBO.GetCachedObject<NotificationTypeAction>(cacheItemArgs, GetNotificationTypeActionCallBack);
         }
 
+        /// <summary>
+        /// Gets a notification type action by notification type and name.
+        /// </summary>
+        /// <param name="notificationTypeId">The notification type identifier.</param>
+        /// <param name="name">The notification type action name.</param>
+        /// <returns>The notification type action with the provided notification type and name.</returns>
+        /// <exception cref="System.ArgumentException">Thrown when name is null or empty.</exception>
         public virtual NotificationTypeAction GetNotificationTypeAction(int notificationTypeId, string name)
         {
             Requires.NotNullOrEmpty("name", name);
@@ -362,11 +510,21 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             return CBO.GetCachedObject<NotificationTypeAction>(cacheItemArgs, GetNotificationTypeActionByNameCallBack);
         }
 
+        /// <summary>
+        /// Gets the list of notification type actions for the provided notification type.
+        /// </summary>
+        /// <param name="notificationTypeId">The notification type identifier.</param>
+        /// <returns>An ordered list of notification type actions for the provided notification type.</returns>
         public virtual IList<NotificationTypeAction> GetNotificationTypeActions(int notificationTypeId)
         {
             return CBO.FillCollection<NotificationTypeAction>(_dataService.GetNotificationTypeActions(notificationTypeId));
         }
 
+        /// <summary>
+        /// Updates an existing notification action.
+        /// </summary>
+        /// <param name="notificationAction">The existing notification action.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown when notificationAction is null.</exception>
         public virtual void UpdateNotificationAction(NotificationAction notificationAction)
         {
             Requires.NotNull("notificationAction", notificationAction);
@@ -379,6 +537,11 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
                 GetCurrentUserId());
         }
 
+        /// <summary>
+        /// Updates an existing notification type.
+        /// </summary>
+        /// <param name="notificationType">The existing notification type</param>
+        /// <exception cref="System.ArgumentNullException">Thrown when notificationType is null.</exception>
         public virtual void UpdateNotificationType(NotificationType notificationType)
         {
             Requires.NotNull("NotificationType", notificationType);
@@ -397,6 +560,11 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             RemoveNotificationTypeCache();
         }
 
+        /// <summary>
+        /// Updates an existing notificaiton type action.
+        /// </summary>
+        /// <param name="notificationTypeAction">The existing notification type action.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown when notificationTypeAction is null.</exception>
         public virtual void UpdateNotificationTypeAction(NotificationTypeAction notificationTypeAction)
         {
             Requires.NotNull("notificationTypeAction", notificationTypeAction);

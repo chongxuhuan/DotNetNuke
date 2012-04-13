@@ -27,6 +27,7 @@ using System.Xml;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Security.Roles.Internal;
 
 #endregion
@@ -64,7 +65,7 @@ namespace DotNetNuke.Modules.Dashboard.Components.Portals
             {
                 if (_Roles < 0)
                 {
-                    _Roles = TestableRoleController.Instance.GetRoles(PortalID).Count;
+                    _Roles = TestableRoleController.Instance.GetRoles(PortalID, r => r.SecurityMode != SecurityMode.SocialGroup).Count;
                 }
                 return _Roles;
             }

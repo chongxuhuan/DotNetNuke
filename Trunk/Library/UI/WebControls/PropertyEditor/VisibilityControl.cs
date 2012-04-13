@@ -34,6 +34,7 @@ using System.Web.UI.WebControls;
 using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
 
@@ -225,9 +226,8 @@ namespace DotNetNuke.UI.WebControls
 
         private void RenderGroups(HtmlTextWriter writer)
         {
-            foreach (var group in User.Social.Roles)
+            foreach (var group in User.Social.Roles.Where((role) => role.SecurityMode != SecurityMode.SecurityRole))
             {
-
                 RenderCheckboxItem(writer, ":group_", group.RoleID.ToString(CultureInfo.InvariantCulture), 
                                         group.RoleName,
                                         Visibility.RoleVisibilities.Count(r => r.RoleID == group.RoleID) == 1);

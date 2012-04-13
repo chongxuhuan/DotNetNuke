@@ -108,11 +108,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App_LocalResources\Edit.ascx.resx" />
-    <None Include="App_LocalResources\Settings.ascx.resx">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="App_LocalResources\View.ascx.resx" />
     <Content Include="Administration.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
@@ -132,7 +127,7 @@
     <Content Include="Images\World.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_LocalResources\FeatureController.cs.resx" />
+    <Content Include="App_LocalResources\SharedResources.resx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\DotNetNuke.Library.csproj">

@@ -300,16 +300,15 @@ namespace DotNetNuke.UI.WebControls
 		/// </summary>
 		private void GetRoles()
 		{
-			var roleController = new RoleController();
 			int roleGroupId = -2;
 			if ((cboRoleGroups != null) && (cboRoleGroups.SelectedValue != null))
 			{
 				roleGroupId = int.Parse(cboRoleGroups.SelectedValue);
 			}
 
-			_roles = roleGroupId > -2 
-                    ? TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.RoleGroupID == roleGroupId)
-                    : TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId);
+			_roles = roleGroupId > -2
+                    ? TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.RoleGroupID == roleGroupId && r.SecurityMode != SecurityMode.SocialGroup)
+                    : TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.SecurityMode != SecurityMode.SocialGroup);
 
 			if (roleGroupId < 0)
 			{

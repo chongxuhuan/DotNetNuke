@@ -56,7 +56,7 @@
 				    </asp:TemplateColumn>
 				    <asp:TemplateColumn HeaderText="Device Type">
 					    <ItemTemplate>
-						    <%#Eval("Type") %>
+						    <%#this.LocalizeString(Eval("Type").ToString()) %>
 					    </ItemTemplate>
 				    </asp:TemplateColumn>
 				    <asp:TemplateColumn HeaderText="Enabled">

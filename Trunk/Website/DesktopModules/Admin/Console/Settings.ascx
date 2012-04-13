@@ -1,9 +1,13 @@
-<%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Console.Settings" CodeFile="Settings.ascx.cs" %>
+<%@ Control Language="C#" AutoEventWireup="false" Inherits="DesktopModules.Admin.Console.Settings" CodeFile="Settings.ascx.cs" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <div class="dnnForm dnnConsole dnnClear">
 	<div class="dnnFormItem">
 		<dnn:label id="lblParentTab" runat="server" ControlName="ParentTab" ResourceKey="ParentTab" Suffix=":" />
 		<asp:DropDownList ID="ParentTab" runat="server" />
+	</div>
+	<div class="dnnFormItem">
+		<dnn:label id="lblIncludeParent" runat="server" ControlName="IncludeParent" ResourceKey="IncludeParent" Suffix=":" />
+		 <asp:Checkbox ID="IncludeParent" runat="server" />
 	</div>
 	<div class="dnnFormItem">
 		<dnn:label id="lblDefaultSize" runat="server" ControlName="DefaultSize" ResourceKey="DefaultSize" Suffix=":" />

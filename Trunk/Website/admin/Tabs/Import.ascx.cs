@@ -210,7 +210,18 @@ namespace DotNetNuke.Modules.Admin.Tabs
                 }
                 var xmlDoc = new XmlDocument();
                 xmlDoc.Load(PortalSettings.HomeDirectoryMapPath + cboFolders.SelectedValue + cboTemplate.SelectedValue);
-                XmlNode nodeTab = xmlDoc.SelectSingleNode("//portal/tabs/tab");
+
+                var tabNodes = new List<XmlNode>();
+                foreach (XmlNode tabNode in xmlDoc.SelectSingleNode("//portal/tabs").ChildNodes)
+                {
+                    tabNodes.Add(tabNode);
+                }
+                if (tabNodes.Count == 0)
+                {
+                    UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("NoTabsInTemplate", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                    return;
+                }
+
                 TabInfo objTab;
                 if (optMode.SelectedValue == "ADD")
                 {
@@ -262,13 +273,33 @@ namespace DotNetNuke.Modules.Admin.Tabs
                     }
                     objEventLog.AddLog(objTab, PortalSettings, UserId, "", EventLogController.EventLogType.TAB_CREATED);
 
-                    //Update Tab properties from template
-                    objTab = TabController.DeserializeTab(nodeTab, objTab, PortalId, PortalTemplateModuleAction.Replace);
+                    //Update Tab properties from template - for the first tab only
+                    objTab = TabController.DeserializeTab(tabNodes[0], objTab, PortalId, PortalTemplateModuleAction.Replace);
+
+                    var exceptions = string.Empty;
+                    //Create second tabs onwards. For firs tab, we like to use tab details from text box, for rest it'll come from template
+                    for(var tab=1; tab < tabNodes.Count; tab++)
+                    {
+                        try
+                        {
+                            TabController.DeserializeTab(tabNodes[tab], null, PortalId, PortalTemplateModuleAction.Replace);
+                        }
+                        catch (Exception ex)
+                        {
+                            Exceptions.LogException(ex);
+                            exceptions += string.Format("Template Tab # {0}. Error {1}<br/>", tab + 1, ex.Message);                            
+                        }                        
+                    }
+                    if(!string.IsNullOrEmpty(exceptions))
+                    {
+                        UI.Skins.Skin.AddModuleMessage(this, exceptions, ModuleMessage.ModuleMessageType.RedError);
+                        return;
+                    }
                 }
                 else
                 {
 					//Replace Existing Tab
-                    objTab = TabController.DeserializeTab(nodeTab, Tab, PortalId, PortalTemplateModuleAction.Replace);
+                    objTab = TabController.DeserializeTab(tabNodes[0], Tab, PortalId, PortalTemplateModuleAction.Replace);
                 }
                 switch (optRedirect.SelectedValue)
                 {

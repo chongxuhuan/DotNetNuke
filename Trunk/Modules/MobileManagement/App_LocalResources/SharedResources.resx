@@ -240,23 +240,11 @@
   <data name="EnableItem.Text" xml:space="preserve">
     <value>Are you sure you want to Toggle the Enable Setting for this Item?</value>
   </data>
-  <data name="AllMobile" xml:space="preserve">
-    <value>All Mobile Devices</value>
-  </data>
   <data name="chkChildPages.Text" xml:space="preserve">
     <value>Include all child pages</value>
   </data>
-  <data name="MobilePhone" xml:space="preserve">
-    <value>Mobile Phone</value>
-  </data>
-  <data name="Other" xml:space="preserve">
-    <value>Advanced</value>
-  </data>
   <data name="RedirectTooltipSource.Text" xml:space="preserve">
     <value>Source: {0}</value>
-  </data>
-  <data name="Tablet" xml:space="preserve">
-    <value>Tablet</value>
   </data>
   <data name="lblNoCapabilities.Text" xml:space="preserve">
     <value>No Capabilities Added</value>
@@ -275,5 +263,26 @@
   </data>
   <data name="TrialFiftyOneProvider.Text" xml:space="preserve">
     <value>The device redirection rules are dependent on the device data available in your system. To upgrade to the premium data go to Host | Device Detection Management.</value>
+  </data>
+  <data name="AllMobile.Text" xml:space="preserve">
+    <value>All Mobile Devices</value>
+  </data>
+  <data name="Device Type.Header" xml:space="preserve">
+    <value>Device Type</value>
+  </data>
+  <data name="Enabled.Header" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="MobilePhone.Text" xml:space="preserve">
+    <value>Mobile Phone</value>
+  </data>
+  <data name="Other.Text" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="Redirection Rule.Header" xml:space="preserve">
+    <value>Redirection Rule</value>
+  </data>
+  <data name="Tablet.Text" xml:space="preserve">
+    <value>Tablet</value>
   </data>
 </root>

@@ -1,4 +1,5 @@
 #region Copyright
+
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -17,19 +18,24 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
+
 #endregion
+
 #region Usings
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Entities.Tabs.Internal;
 using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Modules.Console.Components;
@@ -41,21 +47,28 @@ using DotNetNuke.Web.Client.ClientResourceManagement;
 
 #endregion
 
-namespace DotNetNuke.Modules.Admin.Console
+namespace DesktopModules.Admin.Console
 {
 	public partial class ViewConsole : PortalModuleBase
 	{
-		private object _allowSizeChange;
-		private object _allowViewChange;
-		private ConsoleController _consoleCtrl;
-		private int _consoleTabID = Null.NullInteger;
-		private object _consoleWidth;
+	    private ConsoleController _consoleCtrl;
 		private string _defaultSize = string.Empty;
 		private string _defaultView = string.Empty;
-		private object _showTooltip;
-		private int _groupTabID = -1;
+	    private int _groupTabID = -1;
 
-		public ConsoleController ConsoleCtrl
+        #region Public Properties
+
+        public bool AllowSizeChange
+        {
+            get { return !Settings.ContainsKey("AllowSizeChange") || bool.Parse(Settings["AllowSizeChange"].ToString()); }
+        }
+
+        public bool AllowViewChange
+        {
+            get { return !Settings.ContainsKey("AllowViewChange") || bool.Parse(Settings["AllowViewChange"].ToString()); }
+        }
+
+        public ConsoleController ConsoleCtrl
 		{
 			get
 			{
@@ -69,106 +82,16 @@ namespace DotNetNuke.Modules.Admin.Console
 
 		public int ConsoleTabID
 		{
-			get
-			{
-				if ((_consoleTabID == Null.NullInteger))
-				{
-					if (Settings.ContainsKey("ParentTabID"))
-					{
-						_consoleTabID = int.Parse(Settings["ParentTabID"].ToString());
-					}
-					else
-					{
-						_consoleTabID = TabId;
-					}
-				}
-				return _consoleTabID;
-			}
+			get { return Settings.ContainsKey("ParentTabID") ? int.Parse(Settings["ParentTabID"].ToString()) : TabId; }
 		}
 
-		public bool AllowSizeChange
-		{
-			get
-			{
-				if ((_allowSizeChange == null))
-				{
-					if (Settings.ContainsKey("AllowSizeChange"))
-					{
-						try
-						{
-							_allowSizeChange = bool.Parse(Settings["AllowSizeChange"].ToString());
-						}
-						catch (Exception exc)
-						{
-							DnnLog.Error(exc);
-
-							_allowSizeChange = true;
-						}
-					}
-					else
-					{
-						_allowSizeChange = true;
-					}
-				}
-				return Convert.ToBoolean(_allowSizeChange);
-			}
-		}
-
-		public bool AllowViewChange
-		{
-			get
-			{
-				if ((_allowViewChange == null))
-				{
-					if (Settings.ContainsKey("AllowViewChange"))
-					{
-						try
-						{
-							_allowViewChange = bool.Parse(Settings["AllowViewChange"].ToString());
-						}
-						catch (Exception exc)
-						{
-							DnnLog.Error(exc);
-
-							_allowViewChange = true;
-						}
-					}
-					else
-					{
-						_allowViewChange = true;
-					}
-				}
-				return Convert.ToBoolean(_allowViewChange);
-			}
-		}
-
-		public bool ShowTooltip
-		{
-			get
-			{
-				if ((_showTooltip == null))
-				{
-					if (Settings.ContainsKey("ShowTooltip"))
-					{
-						try
-						{
-							_showTooltip = bool.Parse(Settings["ShowTooltip"].ToString());
-						}
-						catch (Exception exc)
-						{
-							DnnLog.Error(exc);
-
-							_showTooltip = true;
-						}
-					}
-					else
-					{
-						_showTooltip = true;
-					}
-				}
-				return Convert.ToBoolean(_showTooltip);
-			}
-		}
+        public string ConsoleWidth
+        {
+            get
+            {
+                return Settings.ContainsKey("ConsoleWidth") ? Settings["ConsoleWidth"].ToString() : String.Empty; ;
+            }
+        }
 
 		public string DefaultSize
 		{
@@ -184,14 +107,7 @@ namespace DotNetNuke.Modules.Admin.Console
 				}
 				if ((_defaultSize == string.Empty))
 				{
-					if (Settings.ContainsKey("DefaultSize"))
-					{
-						_defaultSize = Convert.ToString(Settings["DefaultSize"]);
-					}
-					else
-					{
-						_defaultSize = "IconFile";
-					}
+					_defaultSize = Settings.ContainsKey("DefaultSize") ? Convert.ToString(Settings["DefaultSize"]) : "IconFile";
 				}
 				return _defaultSize;
 			}
@@ -211,55 +127,176 @@ namespace DotNetNuke.Modules.Admin.Console
 				}
 				if ((_defaultView == string.Empty))
 				{
-					if (Settings.ContainsKey("DefaultView"))
-					{
-						_defaultView = Convert.ToString(Settings["DefaultView"]);
-					}
-					else
-					{
-						_defaultView = "Hide";
-					}
+					_defaultView = Settings.ContainsKey("DefaultView") ? Convert.ToString(Settings["DefaultView"]) : "Hide";
 				}
 				return _defaultView;
 			}
 		}
 
-		public string ConsoleWidth
-		{
-			get
-			{
-				if ((_consoleWidth == null))
-				{
-					if (Settings.ContainsKey("ConsoleWidth"))
-					{
-						try
-						{
-							_consoleWidth = Unit.Parse(Settings["ConsoleWidth"].ToString());
-						}
-						catch (Exception exc)
-						{
-							DnnLog.Error(exc);
+        public int GroupId
+        {
+            get
+            {
+                var groupId = Null.NullInteger;
+                if (!string.IsNullOrEmpty(Request.Params["GroupId"]))
+                {
+                    groupId = Int32.Parse(Request.Params["GroupId"]);
+                }
+                return groupId;
+            }
+        }
 
-							_consoleWidth = "";
-						}
-					}
-					else
-					{
-						_consoleWidth = "";
-					}
-				}
-				return Convert.ToString(_consoleWidth);
-			}
-		}
+        public bool IncludeParent
+        {
+            get { return Settings.ContainsKey("IncludeParent") && bool.Parse(Settings["IncludeParent"].ToString()); }
+        }
 
-		protected override void OnInit(EventArgs e)
+        public int ProfileUserId
+        {
+            get
+            {
+                var userId = Null.NullInteger;
+                if (!string.IsNullOrEmpty(Request.Params["UserId"]))
+                {
+                    userId = Int32.Parse(Request.Params["UserId"]);
+                }
+                return userId;
+            }
+        }
+
+        public bool ShowTooltip
+        {
+            get { return !Settings.ContainsKey("ShowTooltip") || bool.Parse(Settings["ShowTooltip"].ToString()); }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private bool CanShowTab(TabInfo tab)
+        {
+            bool canShowTab = TabPermissionController.CanViewPage(tab) &&
+                                !tab.IsDeleted &&
+                                (tab.StartDate < DateTime.Now || tab.StartDate == Null.NullDate);
+
+            //Custom logic if module is on profile page
+            if (canShowTab && (tab.TabID == PortalSettings.UserTabId || tab.ParentId == PortalSettings.UserTabId))
+            {
+                var moduleController = new ModuleController();
+                foreach (var module in moduleController.GetTabModules(tab.TabID).Values)
+                {
+                    if ((module.DesktopModule.ModuleName == "DotNetNuke.Modules.CoreMessaging" || module.DesktopModule.ModuleName == "Security") && (UserId != ProfileUserId || UserId == -1))
+                    {
+                        canShowTab = false;
+                    }
+                }
+            }
+
+            return canShowTab;
+        }
+
+        private string GetIconUrl(object dataItem, string size)
+        {
+            string iconURL = Convert.ToString(DataBinder.Eval(dataItem, size));
+            if ((iconURL == string.Empty))
+            {
+                iconURL = (size == "IconFile") ? "~/images/icon_unknown_16px.gif" : "~/images/icon_unknown_32px.gif";
+            }
+            if (iconURL.Contains("~") == false)
+            {
+                iconURL = Path.Combine(PortalSettings.HomeDirectory, iconURL);
+            }
+            return ResolveUrl(iconURL);
+        }
+
+        private object GetUserSetting(string key)
+        {
+            return Personalization.GetProfile(ModuleConfiguration.ModuleDefinition.FriendlyName, PersonalizationKey(key));
+        }
+
+        private bool IsHostTab()
+        {
+            var returnValue = false;
+            if (ConsoleTabID != TabId)
+            {
+                if (UserInfo != null && UserInfo.IsSuperUser)
+                {
+                    var hostTabs = new TabController().GetTabsByPortal(Null.NullInteger);
+                    if (hostTabs.Keys.Any(key => key == ConsoleTabID))
+                    {
+                        returnValue = true;
+                    }
+                }
+            }
+            else
+            {
+                returnValue = PortalSettings.ActiveTab.IsSuperTab;
+            }
+            return returnValue;
+        }
+
+        private string PersonalizationKey(string key)
+        {
+            return string.Format("{0}_{1}_{2}", PortalId, TabModuleId, key);
+        }
+
+        private void SavePersonalizedSettings()
+        {
+            if ((UserId > -1))
+            {
+                int consoleModuleID = -1;
+                try
+                {
+                    if (Request.QueryString["CTMID"] != null)
+                    {
+                        consoleModuleID = Convert.ToInt32(Request.QueryString["CTMID"]);
+                    }
+                }
+                catch (Exception exc)
+                {
+                    DnnLog.Error(exc);
+
+                    consoleModuleID = -1;
+                }
+                if ((consoleModuleID == TabModuleId))
+                {
+                    string consoleSize = string.Empty;
+                    if (Request.QueryString["CS"] != null)
+                    {
+                        consoleSize = Request.QueryString["CS"];
+                    }
+                    string consoleView = string.Empty;
+                    if (Request.QueryString["CV"] != null)
+                    {
+                        consoleView = Request.QueryString["CV"];
+                    }
+                    if ((consoleSize != string.Empty && ConsoleController.GetSizeValues().Contains(consoleSize)))
+                    {
+                        SaveUserSetting("DefaultSize", consoleSize);
+                    }
+                    if ((consoleView != string.Empty && ConsoleController.GetViewValues().Contains(consoleView)))
+                    {
+                        SaveUserSetting("DefaultView", consoleView);
+                    }
+                }
+            }
+        }
+
+        private void SaveUserSetting(string key, object val)
+        {
+            Personalization.SetProfile(ModuleConfiguration.ModuleDefinition.FriendlyName, PersonalizationKey(key), val);
+        }
+
+        #endregion
+
+        protected override void OnInit(EventArgs e)
 		{
 			base.OnInit(e);
 
 			try
 			{
 				jQuery.RequestRegistration();
-                ClientResourceManager.RegisterScript(this.Page, "~/desktopmodules/admin/console/jquery.console.js");
+                ClientResourceManager.RegisterScript(Page, "~/desktopmodules/admin/console/jquery.console.js");
 
 				//Save User Preferences
 				SavePersonalizedSettings();
@@ -293,20 +330,23 @@ namespace DotNetNuke.Modules.Admin.Console
 
 					SettingsBreak.Visible = (IconSize.Visible && View.Visible);
 
-					List<TabInfo> tempTabs;
-					if ((IsHostTab()))
-					{
-                        tempTabs = TabController.GetTabsBySortOrder(Null.NullInteger).OrderBy(t => t.Level).ThenBy(t => t.HasChildren).ToList();
-					}
-					else
-					{
-                        tempTabs = TabController.GetTabsBySortOrder(PortalId).OrderBy(t => t.Level).ThenBy(t => t.HasChildren).ToList();
-					}
+				    List<TabInfo> tempTabs = (IsHostTab()) 
+                                        ? TabController.GetTabsBySortOrder(Null.NullInteger).OrderBy(t => t.Level).ThenBy(t => t.HasChildren).ToList() 
+                                        : TabController.GetTabsBySortOrder(PortalId).OrderBy(t => t.Level).ThenBy(t => t.HasChildren).ToList();
 
 					IList<TabInfo> tabs = new List<TabInfo>();
 
-					IList<int> parentIDList = new List<int>();
-					parentIDList.Add(ConsoleTabID);
+					IList<int> tabIdList = new List<int>();
+					tabIdList.Add(ConsoleTabID);
+
+                    if(IncludeParent)
+                    {
+                        TabInfo consoleTab = TestableTabController.Instance.GetTab(ConsoleTabID, PortalId);
+                        if (consoleTab != null)
+                        {
+                            tabs.Add(consoleTab);
+                        }
+                    }
 
 					foreach (TabInfo tab in tempTabs)
 					{
@@ -314,13 +354,13 @@ namespace DotNetNuke.Modules.Admin.Console
 						{
 							continue;
 						}
-						if ((parentIDList.Contains(tab.ParentId)))
+						if ((tabIdList.Contains(tab.ParentId)))
 						{
-							if ((!parentIDList.Contains(tab.TabID)))
+							if ((!tabIdList.Contains(tab.TabID)))
 							{
-								parentIDList.Add(tab.TabID);
+								tabIdList.Add(tab.TabID);
 							}
-							tabs.Add(tab);
+							tabs.Add(tab);  
 						}
 					}
 					DetailView.DataSource = tabs;
@@ -358,40 +398,26 @@ namespace DotNetNuke.Modules.Admin.Console
 			else
 			{
                 const string contentHtml = "<div>" + "<a href=\"{0}\"><img src=\"{1}\" alt=\"{3}\" width=\"16px\" height=\"16px\"/><img src=\"{2}\" alt=\"{3}\" width=\"32px\" height=\"32px\"/></a>" + "<h3>{3}</h3>" + "<div>{4}</div>" + "</div>";
+
+			    var tabUrl = Globals.NavigateURL(tab.TabID);
+                if (ProfileUserId > -1)
+                {
+                    tabUrl = Globals.NavigateURL(tab.TabID, "", "UserId=" + ProfileUserId.ToString(CultureInfo.InvariantCulture));
+                }
+
+                if (GroupId > -1)
+                {
+                    tabUrl = Globals.NavigateURL(tab.TabID, "", "GroupId=" + GroupId.ToString(CultureInfo.InvariantCulture));
+                }
+
 				returnValue += string.Format(contentHtml,
-											 DataBinder.Eval(dataItem, "FullUrl"),
+                                             tabUrl,
 											 GetIconUrl(dataItem, "IconFile"),
 											 GetIconUrl(dataItem, "IconFileLarge"),
-											 DataBinder.Eval(dataItem, "LocalizedTabName"),
-											 DataBinder.Eval(dataItem, "Description"));
+											 tab.LocalizedTabName,
+											 tab.Description);
 			}
 			return returnValue;
-		}
-
-		private bool CanShowTab(TabInfo tab)
-		{
-			return (!tab.IsDeleted && (tab.StartDate < DateTime.Now || tab.StartDate == Null.NullDate)) && TabPermissionController.CanViewPage(tab);
-		}
-
-		protected string GetIconUrl(object dataItem, string size)
-		{
-			string iconURL = Convert.ToString(DataBinder.Eval(dataItem, size));
-			if ((iconURL == string.Empty))
-			{
-				if ((size == "IconFile"))
-				{
-					iconURL = "~/images/icon_unknown_16px.gif";
-				}
-				else
-				{
-					iconURL = "~/images/icon_unknown_32px.gif";
-				}
-			}
-			if (iconURL.Contains("~") == false)
-			{
-				iconURL = Path.Combine(PortalSettings.HomeDirectory, iconURL);
-			}
-			return ResolveUrl(iconURL);
 		}
 
 		protected string GetClientSideSettings()
@@ -399,97 +425,16 @@ namespace DotNetNuke.Modules.Admin.Console
 			string tmid = "-1";
 			if ((UserId > -1))
 			{
-				tmid = TabModuleId.ToString();
+				tmid = TabModuleId.ToString(CultureInfo.InvariantCulture);
 			}
 			return string.Format("allowIconSizeChange: {0}, allowDetailChange: {1}, selectedSize: '{2}', showDetails: '{3}', tabModuleID: {4}, showTooltip: {5}",
-								 AllowSizeChange.ToString().ToLower(),
-								 AllowViewChange.ToString().ToLower(),
+								 AllowSizeChange.ToString(CultureInfo.InvariantCulture).ToLower(),
+								 AllowViewChange.ToString(CultureInfo.InvariantCulture).ToLower(),
 								 DefaultSize,
 								 DefaultView,
 								 tmid,
-								 ShowTooltip.ToString().ToLower());
+								 ShowTooltip.ToString(CultureInfo.InvariantCulture).ToLower());
 		}
 
-		protected void SavePersonalizedSettings()
-		{
-			if ((UserId > -1))
-			{
-				int consoleModuleID = -1;
-				try
-				{
-					if (Request.QueryString["CTMID"] != null)
-					{
-						consoleModuleID = Convert.ToInt32(Request.QueryString["CTMID"]);
-					}
-				}
-				catch (Exception exc)
-				{
-					DnnLog.Error(exc);
-
-					consoleModuleID = -1;
-				}
-				if ((consoleModuleID == TabModuleId))
-				{
-					string consoleSize = string.Empty;
-					if (Request.QueryString["CS"] != null)
-					{
-						consoleSize = Request.QueryString["CS"];
-					}
-					string consoleView = string.Empty;
-					if (Request.QueryString["CV"] != null)
-					{
-						consoleView = Request.QueryString["CV"];
-					}
-					if ((consoleSize != string.Empty && ConsoleController.GetSizeValues().Contains(consoleSize)))
-					{
-						SaveUserSetting("DefaultSize", consoleSize);
-					}
-					if ((consoleView != string.Empty && ConsoleController.GetViewValues().Contains(consoleView)))
-					{
-						SaveUserSetting("DefaultView", consoleView);
-					}
-				}
-			}
-		}
-
-		public object GetUserSetting(string key)
-		{
-			return Personalization.GetProfile(ModuleConfiguration.ModuleDefinition.FriendlyName, PersonalizationKey(key));
-		}
-
-		public void SaveUserSetting(string key, object val)
-		{
-			Personalization.SetProfile(ModuleConfiguration.ModuleDefinition.FriendlyName, PersonalizationKey(key), val);
-		}
-
-		public string PersonalizationKey(string key)
-		{
-			return string.Format("{0}_{1}_{2}", PortalId, TabModuleId, key);
-		}
-
-		public bool IsHostTab()
-		{
-			bool returnValue = false;
-			if (ConsoleTabID != TabId)
-			{
-				if (UserInfo != null && UserInfo.IsSuperUser)
-				{
-					TabCollection hostTabs = new TabController().GetTabsByPortal(Null.NullInteger);
-					foreach (int key in hostTabs.Keys)
-					{
-						if (key == ConsoleTabID)
-						{
-							returnValue = true;
-							break;
-						}
-					}
-				}
-			}
-			else
-			{
-				returnValue = PortalSettings.ActiveTab.IsSuperTab;
-			}
-			return returnValue;
-		}
 	}
 }

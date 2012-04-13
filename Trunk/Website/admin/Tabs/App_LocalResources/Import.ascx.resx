@@ -186,6 +186,9 @@
   <data name="SpecifyMode.Text" xml:space="preserve">
     <value>Please specify the import mode.</value>
   </data>
+  <data name="NoTabsInTemplate.Text" xml:space="preserve">
+    <value>Template does not contain any tabs.</value>
+  </data>
   <data name="valTemplate.ErrorMessage" xml:space="preserve">
     <value>Please select a Template</value>
   </data>
