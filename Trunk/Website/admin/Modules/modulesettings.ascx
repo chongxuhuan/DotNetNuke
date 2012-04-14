@@ -278,27 +278,27 @@
         function setUpDnnModuleSettings() {
             $('#dnnModuleSettings').dnnTabs().dnnPanels();
             $('#msModuleSettings .dnnFormExpandContent a').dnnExpandAll({
-                expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
-                collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+                expandText: '<%=Localization.GetSafeJSString("ExpandAll", Localization.SharedResourceFile)%>',
+                collapseText: '<%=Localization.GetSafeJSString("CollapseAll", Localization.SharedResourceFile)%>',
                 targetArea: '#msModuleSettings'
             });
             $('#msPageSettings .dnnFormExpandContent a').dnnExpandAll({
-                expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
-                collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+                expandText: '<%=Localization.GetSafeJSString("ExpandAll", Localization.SharedResourceFile)%>',
+                collapseText: '<%=Localization.GetSafeJSString("CollapseAll", Localization.SharedResourceFile)%>',
                 targetArea: '#msPageSettings'
             });
             $('#<%= cmdDelete.ClientID %>').dnnConfirm({
-                text: '<%= Localization.GetString("DeleteItem.Text", Localization.SharedResourceFile) %>',
-                yesText: '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
-                noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
-                title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
+                text: '<%= Localization.GetSafeJSString("DeleteItem.Text", Localization.SharedResourceFile) %>',
+                yesText: '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>',
+                noText: '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>',
+                title: '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>'
             });
             $('.dnnContainerPreview').dnnPreview({
                 containerSelector: 'select',
                 baseUrl: '<%= DotNetNuke.Common.Globals.NavigateURL(this.TabId) %>',
-                noSelectionMessage: '<%= LocalizeString("PreviewNoSelectionMessage.Text") %>',
-                alertCloseText: '<%= Localization.GetString("Close.Text", Localization.SharedResourceFile)%>',
-                alertOkText: '<%= Localization.GetString("Ok.Text", Localization.SharedResourceFile)%>'
+                noSelectionMessage: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("PreviewNoSelectionMessage.Text")) %>',
+                alertCloseText: '<%= Localization.GetSafeJSString("Close.Text", Localization.SharedResourceFile)%>',
+                alertOkText: '<%= Localization.GetSafeJSString("Ok.Text", Localization.SharedResourceFile)%>'
             });
         }
 

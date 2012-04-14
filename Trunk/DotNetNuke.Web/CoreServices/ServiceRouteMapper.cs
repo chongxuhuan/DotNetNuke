@@ -35,7 +35,7 @@ namespace DotNetNuke.Web.CoreServices
 
         public void RegisterRoutes(IMapRoute mapRouteManager)
         {
-            mapRouteManager.MapRoute("CoreServices", "DEFAULT", "{controller}.ashx/{action}", new[] { "DotNetNuke.Web.CoreServices" });
+            mapRouteManager.MapRoute("CoreServices", "{controller}.ashx/{action}", new[] { "DotNetNuke.Web.CoreServices" });
         }
 
         #endregion

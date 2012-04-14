@@ -3869,6 +3869,9 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Types_Get]') AND type in (N'P', N'PC'))
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_Types_Get]
 GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Types_GetById]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_Types_GetById]
+GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_UpdateContentItemId]') AND type in (N'P', N'PC'))
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_UpdateContentItemId]
@@ -4468,13 +4471,10 @@ GO
 
 
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_Types_Get]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_Types_GetById]
 @JournalTypeId int
 AS
 SELECT * from {databaseOwner}[{objectQualifier}Journal_Types] WHERE JournalTypeId = @JournalTypeId
-
-
-
 GO
 
 SET ANSI_NULLS ON
@@ -4482,7 +4482,17 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_Types_Get]
+@JournalType nvarchar(25)
+AS
+SELECT * from {databaseOwner}[{objectQualifier}Journal_Types] WHERE JournalType = @JournalType
+GO
 
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_UpdateContentItemId]
 @JournalId int,
@@ -4753,6 +4763,21 @@ INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
 	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
 	VALUES
 	(7, 'blog', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(8, 'friend', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(9, 'groupcreate', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(10, 'groupjoin', '', -1, 1, 1, 1, 1, null, 1)
 GO
 
 /* Add GetMessageItems Procedure */
@@ -5570,7 +5595,7 @@ GO
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Roles' AND COLUMN_NAME='Status')
 	BEGIN
 		ALTER TABLE {databaseOwner}{objectQualifier}Roles
-			ADD [Status] int NOT NULL CONSTRAINT DF_{objectQualifier}Roles_Status DEFAULT (1)
+			ADD [Status] int NOT NULL CONSTRAINT DF_{objectQualifier}Roles_Status DEFAULT 1
 	END
 GO
 

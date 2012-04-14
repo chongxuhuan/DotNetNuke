@@ -13,13 +13,13 @@
 			//$('#dnnExtensions').dnnTabs().tabs('select', window.location.hash).dnnPanels();
 			$('#dnnExtensions').dnnTabs().tabs().dnnPanels();
 			$('#availableExtensions .dnnFormExpandContent a').dnnExpandAll({
-				expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
-				collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+			    expandText: '<%=Localization.GetSafeJSString("ExpandAll", Localization.SharedResourceFile)%>',
+			    collapseText: '<%=Localization.GetSafeJSString("CollapseAll", Localization.SharedResourceFile)%>',
 				targetArea: '#availableExtensions'
 			});
 			$('#installedExtensions .dnnFormExpandContent a').dnnExpandAll({
-				expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>',
-				collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>',
+			    expandText: '<%=Localization.GetSafeJSString("ExpandAll", Localization.SharedResourceFile)%>',
+			    collapseText: '<%=Localization.GetSafeJSString("CollapseAll", Localization.SharedResourceFile)%>',
 				targetArea: '#installedExtensions'
 			});
 		}

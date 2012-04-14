@@ -70,6 +70,9 @@ namespace DesktopModules.Admin.Console
                         DefaultSize.Items.Add(new ListItem(Localization.GetString(val, LocalResourceFile), val));
                     }
                     SelectDropDownListItem(ref DefaultSize, "DefaultSize");
+
+                    SelectDropDownListItem(ref modeList, "Mode");
+
                     if (Settings.ContainsKey("AllowSizeChange"))
                     {
                         AllowResize.Checked = Convert.ToBoolean(Settings["AllowSizeChange"]);
@@ -132,6 +135,7 @@ namespace DesktopModules.Admin.Console
                 {
                     objModules.UpdateModuleSetting(ModuleId, "ParentTabID", ParentTab.SelectedValue);
                 }
+                objModules.UpdateModuleSetting(ModuleId, "Mode", modeList.SelectedValue);
                 objModules.UpdateModuleSetting(ModuleId, "DefaultSize", DefaultSize.SelectedValue);
                 objModules.UpdateModuleSetting(ModuleId, "AllowSizeChange", AllowResize.Checked.ToString(CultureInfo.InvariantCulture));
                 objModules.UpdateModuleSetting(ModuleId, "DefaultView", DefaultView.SelectedValue);

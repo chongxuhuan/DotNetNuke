@@ -94,11 +94,11 @@
 /*globals jQuery, window, Sys */
 (function ($, Sys) {
 	function setUpDnnEditBanner() {
-		var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
-		var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
-		var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
+	    var yesText = '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>';
+	    var noText = '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>';
+	    var titleText = '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>';
 		$('#<%= cmdDelete.ClientID %>').dnnConfirm({
-			text: '<%= Localization.GetString("DeleteItem.Text", Localization.SharedResourceFile) %>',
+		    text: '<%= Localization.GetSafeJSString("DeleteItem.Text", Localization.SharedResourceFile) %>',
 			yesText: yesText,
 			noText: noText,
 			title: titleText

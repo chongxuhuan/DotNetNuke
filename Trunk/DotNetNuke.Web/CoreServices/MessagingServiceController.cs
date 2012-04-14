@@ -37,15 +37,16 @@ using DotNetNuke.Web.Services;
 
 namespace DotNetNuke.Web.CoreServices
 {
+    [DnnAuthorize]
     public class MessagingServiceController : DnnController
     {
-        [DnnAuthorize]
         public ActionResult WaitTimeForNextMessage()
         {
-            return Json(MessagingController.Instance.WaitTimeForNextMessage(UserInfo), JsonRequestBehavior.AllowGet);
+            var response = new { Value = MessagingController.Instance.WaitTimeForNextMessage(UserInfo), Result = "success" };
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
 
-        [DnnAuthorize]
+        [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Create(string subject, string body, string roleIds, string userIds, string fileIds)
         {
             var roleIdsList = string.IsNullOrEmpty(roleIds) ? null : roleIds.FromJson<IList<int>>();
@@ -64,12 +65,11 @@ namespace DotNetNuke.Web.CoreServices
             }
 
             var message = MessagingController.Instance.CreateMessage(HttpUtility.UrlDecode(subject), HttpUtility.UrlDecode(body), roles, users, fileIdsList);
+            var response = new { Value = message.MessageID, Result = "success" };
 
-            return Json(message.MessageID);
+            return Json(response);
         }
 
-        [DnnAuthorize]
-        [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Search(string q)
         {
             var portalId = PortalController.GetEffectivePortalId(PortalSettings.PortalId);

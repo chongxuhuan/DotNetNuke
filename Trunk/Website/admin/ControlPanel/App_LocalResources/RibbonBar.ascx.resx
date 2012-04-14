@@ -432,4 +432,7 @@
   <data name="ModeMobilePreview.Text" xml:space="preserve">
     <value>Preview</value>
   </data>
+  <data name="lblUILanguage.Text" xml:space="preserve">
+    <value>Interface:</value>
+  </data>
 </root>

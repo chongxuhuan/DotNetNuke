@@ -18,6 +18,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
@@ -123,12 +124,9 @@ namespace DotNetNuke.Entities.Users
         {
             var roleController = new RoleController();
 
-            foreach (var role in TestableRoleController.Instance.GetRoles(portalId))
+            foreach (var role in TestableRoleController.Instance.GetRoles(portalId, role => role.AutoAssignment && role.Status == RoleStatus.Approved))
             {
-                if (role.AutoAssignment)
-                {
-                    roleController.AddUserRole(portalId, user.UserID, role.RoleID, Null.NullDate, Null.NullDate);
-                }
+                roleController.AddUserRole(portalId, user.UserID, role.RoleID, Null.NullDate, Null.NullDate);
             }
 
             //Clear the roles cache - so the usercount is correct

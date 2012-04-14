@@ -4383,7 +4383,7 @@ namespace DotNetNuke.Services.Upgrade
         public static string UpgradeIndicator(Version version, string packageType, string packageName, string culture, bool isLocal, bool isSecureConnection)
         {
             string url = "";
-            if (Host.CheckUpgrade && version != new Version(0, 0, 0) && (isLocal == false || Config.GetSetting("ForceUpdateService") == "Y"))
+            if (Host.CheckUpgrade && version != new Version(0, 0, 0))
             {
                 url = DotNetNukeContext.Current.Application.UpgradeUrl + "/update.aspx";
                 if (isSecureConnection)
@@ -4402,6 +4402,7 @@ namespace DotNetNuke.Services.Upgrade
                         url += "&no=" + moduleType.Instances;
                     }
                 }
+                url += "&id=" + Host.GUID;
                 if (packageType.ToUpper() == DotNetNukeContext.Current.Application.Type.ToUpper())
                 {
                     var portals = new PortalController().GetPortals();

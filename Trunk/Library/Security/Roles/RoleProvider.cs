@@ -157,7 +157,7 @@ namespace DotNetNuke.Security.Roles
         public virtual string[] GetRoleNames(int portalId)
         {
             string[] roles = { };
-            var roleList = TestableRoleController.Instance.GetRoles(portalId, r => r.SecurityMode != SecurityMode.SocialGroup);
+            var roleList = TestableRoleController.Instance.GetRoles(portalId, r => r.SecurityMode != SecurityMode.SocialGroup && r.Status == RoleStatus.Approved);
             var strRoles = roleList.Aggregate("", (current, role) => current + (role.RoleName + "|"));
             if (strRoles.IndexOf("|", StringComparison.Ordinal) > 0)
             {

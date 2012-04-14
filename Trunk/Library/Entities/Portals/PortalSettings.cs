@@ -381,6 +381,25 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		/// Allows users to select their own UI culture.
+		/// When set to false (default) framework will allways same culture for both
+		/// CurrentCulture (content) and CurrentUICulture (interface)
+		/// </summary>
+		/// <remarks>Defaults to False</remarks>
+		/// <history>
+		/// 	[vmasanas]	03/22/2012   Created
+		/// </history>
+		/// -----------------------------------------------------------------------------
+		public bool AllowUserUICulture
+		{
+			get
+			{
+				return PortalController.GetPortalSettingAsBoolean("AllowUserUICulture", PortalId, false);
+			}
+		}
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets whether to use the popup.

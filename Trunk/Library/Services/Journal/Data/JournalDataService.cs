@@ -104,8 +104,11 @@ namespace DotNetNuke.Services.Journal {
         public IDataReader Journal_Types_List(int PortalId) {
             return provider.ExecuteReader("Journal_Types_List", PortalId);
         }
-        public IDataReader Journal_Types_Get(int JournalTypeId) {
-            return provider.ExecuteReader("Journal_Types_Get", JournalTypeId);
+        public IDataReader Journal_Types_GetById(int JournalTypeId) {
+            return provider.ExecuteReader("Journal_Types_GetById", JournalTypeId);
+        }
+        public IDataReader Journal_Types_Get(string JournalType) {
+            return provider.ExecuteReader("Journal_Types_Get", JournalType);
         }
         public void Journal_Types_Delete(int JournalTypeId, int PortalId) {
             provider.ExecuteNonQuery("Journal_Types_Delete", JournalTypeId, PortalId);

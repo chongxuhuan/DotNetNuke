@@ -507,11 +507,11 @@ namespace DotNetNuke.Security.Permissions.Controls
             }
             if (roleGroupId > -2)
             {
-                Roles = new ArrayList(TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.RoleGroupID == roleGroupId && r.SecurityMode != SecurityMode.SocialGroup).ToArray());
+                Roles = new ArrayList(TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.RoleGroupID == roleGroupId && r.SecurityMode != SecurityMode.SocialGroup && r.Status == RoleStatus.Approved).ToArray());
             }
             else
             {
-                Roles = new ArrayList(TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.SecurityMode != SecurityMode.SocialGroup).ToArray());
+                Roles = new ArrayList(TestableRoleController.Instance.GetRoles(PortalController.GetCurrentPortalSettings().PortalId, r => r.SecurityMode != SecurityMode.SocialGroup && r.Status == RoleStatus.Approved).ToArray());
             }
             if (roleGroupId < 0)
             {

@@ -35,10 +35,10 @@
     (function ($, Sys) {
         function setUpDnnEditVocab() {
             $('.dnnDeleteItem').dnnConfirm({
-                text: '<%= LocalizeString("DeleteItem") %>',
-                yesText: '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
-                noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
-                title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
+                text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("DeleteItem")) %>',
+                yesText: '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>',
+                noText: '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>',
+                title: '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>'
             });
         }
 

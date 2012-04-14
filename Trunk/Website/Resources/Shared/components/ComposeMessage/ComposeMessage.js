@@ -41,12 +41,16 @@
         html += "</fieldset>";
 
         function getWaitTimeForNextMessage() {
-            var returnValue = 0;
+            var returnValue = 0; // If the request fails, just return 0
             $.ajax({
                 url: opts.serviceurlbase + "WaitTimeForNextMessage",
                 async: false,
                 cache: false // Important. IE is caching this call, so we need to explicitly set it to false
-            }).done(function (data) { returnValue = data; });
+            }).done(function (data) {
+                if (data.Result === "success") {
+                    returnValue = data.Value;
+                }
+            });
             return returnValue;
         };
         function updateSendButtonStatus() {
@@ -56,7 +60,18 @@
             } else {
                 sendButton.attr('disabled', 'disabled').addClass('disabled');
             }
-        }
+        };
+        function displayMessage(placeHolderElement, message) {
+            var messageNode = $("<div/>")
+                .addClass('dnnFormMessage dnnFormWarning')
+                .text(message);
+
+            placeHolderElement.prepend(messageNode);
+
+            messageNode.fadeOut(3000, 'easeInExpo', function () {
+                messageNode.remove();
+            });
+        };
         $wrap.delegate(opts.openTriggerSelector, 'click', function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -112,6 +127,9 @@
                         array.splice(index, 1);
                     }
                     updateSendButtonStatus();
+                },
+                onError: function (xhr, status) {
+                    displayMessage(composeMessageDialog, opts.autoSuggestErrorText + status);
                 }
             });
 
@@ -181,25 +199,29 @@
                                 fileIds: (attachments.length > 0 ? JSON.stringify(attachments) : {})
                             };
                             $.post(opts.serviceurlbase + "Create", params, function (data) {
-                                composeMessageDialog.dialog("option", "title", opts.messageSentTitle);
-                                var dismissThis = $('<a href="#"/>')
-                                    .text(' ' + opts.dismissThisText)
-                                    .click(function () {
-                                        composeMessageDialog.dialog("close");
-                                    });
-                                var messageSent = $('<div/>')
-                                    .addClass('MessageSent dnnFormMessage dnnFormSuccess')
-                                    .text(opts.messageSentText)
-                                    .append(dismissThis);
-                                composeMessageDialog.html(messageSent);
-                                composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane button').remove();
+                                if (data.Result === "success") {
+                                    composeMessageDialog.dialog("option", "title", opts.messageSentTitle);
+                                    var dismissThis = $('<a href="#"/>')
+                                        .text(' ' + opts.dismissThisText)
+                                        .click(function () {
+                                            composeMessageDialog.dialog("close");
+                                        });
+                                    var messageSent = $('<div/>')
+                                        .addClass('MessageSent dnnFormMessage dnnFormSuccess')
+                                        .text(opts.messageSentText)
+                                        .append(dismissThis);
+                                    composeMessageDialog.html(messageSent);
+                                    composeMessageDialog.dialog("widget").find('.ui-dialog-buttonpane button').remove();
 
-                                messageId = data;
-                                autoclose = setInterval(function () {
-                                    composeMessageDialog.dialog("close");
-                                }, opts.msgSentAutoCloseTimeout);
-                            }).fail(function (xhr, status, error) {
-                                alert(error);
+                                    messageId = data.Value;
+                                    autoclose = setInterval(function () {
+                                        composeMessageDialog.dialog("close");
+                                    }, opts.msgSentAutoCloseTimeout);
+                                } else {
+                                    displayMessage(composeMessageDialog, opts.createMessageErrorText);
+                                }
+                            }).fail(function (xhr, status) {
+                                displayMessage(composeMessageDialog, opts.createMessageErrorWithDescriptionText + status);
                             });
                         }
                     },
@@ -245,6 +267,9 @@
         throttlingText: 'Please wait before sending a new message.',
         noResultsText: 'No results',
         searchingText: 'Searching...',
+        createMessageErrorText: 'An error occurred while creating the message. Please try again later.',
+        createMessageErrorWithDescriptionText: 'An error occurred while creating the message: ',
+        autoSuggestErrorText: 'An error occurred while getting suggestions: ',
         dialogClass: 'dnnFormPopup dnnClear',
         autoOpen: false,
         showAttachments: false,

@@ -92,7 +92,7 @@ namespace DotNetNuke.Services.Journal {
             if (objJournalItem.UserId < 1) {
                 return null;
             }
-            UserInfo currentUser = UserController.GetUser(objJournalItem.PortalId, objJournalItem.UserId, false, true);
+            UserInfo currentUser = UserController.GetUserById(objJournalItem.PortalId, objJournalItem.UserId);
             if (currentUser == null) {
                 return null;
             }
@@ -199,6 +199,43 @@ namespace DotNetNuke.Services.Journal {
             }
             return objJournalItem;
         }
+        public void CreateFriend() {
+        }
+        public void RemoveFriend() {
+        }
+        public void CreateGroup(RoleInfo roleInfo, UserInfo createdBy) {
+            JournalItem ji = new JournalItem();
+            string url = "";
+            if (roleInfo.Settings.ContainsKey("URL")) {
+                url = roleInfo.Settings["URL"];
+            }
+            ji.PortalId = roleInfo.PortalID;
+            ji.ProfileId = createdBy.UserID;
+            ji.UserId = createdBy.UserID;
+            ji.Title = roleInfo.RoleName;
+            ji.ItemData = new ItemData();
+            ji.ItemData.Url = url;
+            ji.SocialGroupId = roleInfo.RoleID;
+            ji.Summary = roleInfo.Description;
+            ji.Body = null;
+            ji.JournalTypeId = JournalTypeGet("groupcreate").JournalTypeId;
+            ji.ObjectKey = string.Format("groupcreate:{0}:{1}", roleInfo.RoleID.ToString(), createdBy.UserID.ToString());
+            if ((Journal_GetByKey(roleInfo.PortalID, ji.ObjectKey) != null)) {
+                Journal_DeleteByKey(roleInfo.PortalID, ji.ObjectKey);
+            }
+            ji.SecuritySet = string.Empty;
+            if (roleInfo.IsPublic) {
+                ji.SecuritySet += "E,";
+            }
+            Journal_Save(ji, -1);
+        }
+        public void RemoveGroup(RoleInfo roleInfo) {
+        }
+        public void CreateGroupMember(RoleInfo roleInfo, UserInfo userInfo) {
+        }
+        public void RemoveGroupMember(RoleInfo roleInfo, UserInfo userInfo) {
+        }
+
         public void Journal_Delete(int JournalId) {
             JournalDataService jds = new JournalDataService();
             jds.Journal_Delete(JournalId);
@@ -251,8 +288,11 @@ namespace DotNetNuke.Services.Journal {
         }
     #endregion
         #region Journal Types
-        public JournalTypeInfo JournalTypeGet(int JournalTypeId) {
-            return (JournalTypeInfo)CBO.FillObject(_DataService.Journal_Types_Get(JournalTypeId), typeof(JournalTypeInfo));
+        public JournalTypeInfo JournalTypeGetById(int JournalTypeId) {
+            return (JournalTypeInfo)CBO.FillObject(_DataService.Journal_Types_GetById(JournalTypeId), typeof(JournalTypeInfo));
+        }
+        public JournalTypeInfo JournalTypeGet(string JournalType) {
+            return (JournalTypeInfo)CBO.FillObject(_DataService.Journal_Types_Get(JournalType), typeof(JournalTypeInfo));
         }
         public void JournalTypeDelete(int JournalTypeId, int PortalId) {
             _DataService.Journal_Types_Delete(JournalTypeId, PortalId);
@@ -264,7 +304,7 @@ namespace DotNetNuke.Services.Journal {
             objJournalType.JournalTypeId = _DataService.Journal_Types_Save(objJournalType.JournalTypeId, objJournalType.JournalType, objJournalType.icon,
                 objJournalType.PortalId, objJournalType.IsEnabled, objJournalType.AppliesToProfile, objJournalType.AppliesToGroup, objJournalType.AppliesToStream,
                 objJournalType.Options, objJournalType.SupportsNotify);
-                return JournalTypeGet(objJournalType.JournalTypeId);
+                return JournalTypeGetById(objJournalType.JournalTypeId);
         }
         #endregion
         #region Journal Type Filters

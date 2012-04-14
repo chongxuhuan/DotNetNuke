@@ -166,7 +166,7 @@ namespace DotNetNuke.Security.Roles
 
         public ArrayList GetPortalRoles(int portalId)
         {
-            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId, r => r.SecurityMode != SecurityMode.SocialGroup).ToArray());
+            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId, r => r.SecurityMode != SecurityMode.SocialGroup && r.Status == RoleStatus.Approved).ToArray());
         }
 
         public RoleInfo GetRole(int roleId, int portalId)
@@ -181,12 +181,12 @@ namespace DotNetNuke.Security.Roles
 
         public ArrayList GetRoles()
         {
-            return new ArrayList(TestableRoleController.Instance.GetRoles(Null.NullInteger, r => r.SecurityMode != SecurityMode.SocialGroup).ToArray());
+            return new ArrayList(TestableRoleController.Instance.GetRoles(Null.NullInteger, r => r.SecurityMode != SecurityMode.SocialGroup && r.Status == RoleStatus.Approved).ToArray());
         }
 
         public ArrayList GetRolesByGroup(int portalId, int roleGroupId)
         {
-            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId, r => r.RoleGroupID == roleGroupId && r.SecurityMode != SecurityMode.SocialGroup).ToArray());
+            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId, r => r.RoleGroupID == roleGroupId && r.SecurityMode != SecurityMode.SocialGroup && r.Status == RoleStatus.Approved).ToArray());
         }
 
         public void UpdateRole(RoleInfo role)
@@ -735,6 +735,8 @@ namespace DotNetNuke.Security.Roles
         [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by AddRole(objRoleInfo)")]
         public int AddRole(RoleInfo role, bool synchronizationMode)
         {
+            role.SecurityMode = SecurityMode.SecurityRole;
+            role.Status = RoleStatus.Approved;
             return TestableRoleController.Instance.AddRole(role);
         }
 
@@ -761,14 +763,14 @@ namespace DotNetNuke.Security.Roles
         [Obsolete("Deprecated in DotNetNuke 5.0. This function has been replaced by GetPortalRoles(PortalId)")]
         public ArrayList GetPortalRoles(int portalId, bool synchronizeRoles)
         {
-            return new ArrayList(TestableRoleController.Instance.GetRoles(portalId).ToArray());
+            return GetPortalRoles(portalId);
         }
 
         [Obsolete("Deprecated in DotNetNuke 6.2.")]
         public string[] GetRoleNames(int portalId)
         {
             string[] roles = { };
-            var roleList = TestableRoleController.Instance.GetRoles(portalId);
+            var roleList = TestableRoleController.Instance.GetRoles(portalId, role => role.SecurityMode != SecurityMode.SocialGroup && role.Status == RoleStatus.Approved);
             var strRoles = roleList.Aggregate("", (current, role) => current + (role.RoleName + "|"));
             if (strRoles.IndexOf("|", StringComparison.Ordinal) > 0)
             {

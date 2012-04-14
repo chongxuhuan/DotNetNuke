@@ -11,6 +11,9 @@
     <div class="dnnCPHeader dnnClear">
         <div class="dnnCPHMode dnnLeft"><dnn:MENU ID="adminMenus" MenuStyle="admin/Menus/DNNAdmin" IncludeHidden="True" runat="server" OnInit="DetermineNodesToInclude" /></div>
         <div class="dnnCPHNav dnnRight">
+			<asp:Label ID="lblUILanguage" runat="server" ResourceKey="lblUILanguage" Visible="false" />
+			<asp:DropDownList ID="ddlUICulture" runat="server" AutoPostBack="true" Visible="false" Width="100px" />
+
             <asp:Label id="lblMode" runat="server" ResourceKey="Mode" />
             <asp:DropDownList ID="ddlMode" runat="server" AutoPostBack="true">
                 <asp:listitem value="VIEW" ResourceKey="ModeView" />
@@ -18,8 +21,6 @@
                 <asp:listitem value="LAYOUT" ResourceKey="ModeLayout" />
 				<asp:listitem value="PREVIEW" ResourceKey="ModeMobilePreview" />
             </asp:DropDownList>
-            <asp:LinkButton ID="cmdVisibility" runat="server" CausesValidation="False">
-			<asp:Image ID="imgVisibility" runat="server" /></asp:LinkButton>
         </div>
         <asp:HyperLink ID="hypMessage" runat="server" Target="_new" CssClass="dnnCPHMessage" />
     </div>
@@ -85,9 +86,9 @@
 	<script type="text/javascript">
 		jQuery(document).ready(function ($) {
 			if (!$(".dnnControlPanel").data("loaded")) {
-				var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
-				var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
-				var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
+				var yesText = '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(Localization.GetString("Yes.Text", Localization.SharedResourceFile)) %>';
+				var noText = '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(Localization.GetString("No.Text", Localization.SharedResourceFile)) %>';
+				var titleText = '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(Localization.GetString("Confirm.Text", Localization.SharedResourceFile)) %>';
 
 				// Client IDs for the following three have _CPCommandBtn appended as a rule
 				$('#<%= DeletePage.ClientID %>_CPCommandBtn').dnnConfirm({

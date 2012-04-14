@@ -50,6 +50,7 @@ using DotNetNuke.Services.Localization.Internal;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Tokens;
 using DotNetNuke.UI.Modules;
+using System.Text.RegularExpressions;
 
 #endregion
 
@@ -471,6 +472,8 @@ namespace DotNetNuke.Services.Localization
                 role.PortalID = portalID;
                 role.RoleName = roleName;
                 role.Description = string.Format("A role for {0} translators", language.EnglishName);
+                role.SecurityMode = SecurityMode.SecurityRole;
+                role.Status = RoleStatus.Approved;
                 TestableRoleController.Instance.AddRole(role);
             }
 
@@ -616,62 +619,7 @@ namespace DotNetNuke.Services.Localization
             DataCache.ClearHostCache(true);
         }
 
-        public static CultureInfo GetBrowserCulture(int portalId)
-        {
-            CultureInfo browserCulture = null;
-            Dictionary<string, Locale> enabledLocales = null;
-            if (portalId > Null.NullInteger)
-            {
-                enabledLocales = _localeController.GetLocales(portalId);
-            }
-
-            // use Request.UserLanguages to get the preferred language
-            if ((HttpContext.Current != null))
-            {
-                if ((HttpContext.Current.Request.UserLanguages != null))
-                {
-                    try
-                    {
-                        foreach (string userLang in HttpContext.Current.Request.UserLanguages)
-                        {
-                            //split userlanguage by ";"... all but the first language will contain a preferrence index eg. ;q=.5
-                            string userlanguage = userLang.Split(';')[0];
-                            if (_localeController.IsEnabled(ref userlanguage, portalId))
-                            {
-                                browserCulture = new CultureInfo(userlanguage);
-                            }
-                            else if (userLang.Split(';')[0].IndexOf("-") != -1)
-                            {
-                                //if userLang is neutral we don't need to do this part since
-                                //it has already been done in LocaleIsEnabled( )
-                                string templang = userLang.Split(';')[0];
-                                foreach (string localeCode in enabledLocales.Keys)
-                                {
-                                    if (localeCode.Split('-')[0] == templang.Split('-')[0])
-                                    {
-                                        //the preferredLanguage was found in the enabled locales collection, so we are going to use this one
-                                        //eg, requested locale is en-GB, requested language is en, enabled locale is en-US, so en is a match for en-US
-                                        browserCulture = new CultureInfo(localeCode);
-                                        break;
-                                    }
-                                }
-                            }
-                            if ((browserCulture != null))
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        DnnLog.Error(ex);
-                    }
-                }
-            }
-
-            return browserCulture;
-        }
-
+        
         public static string BestCultureCodeBasedOnBrowserLanguages(IEnumerable<string> cultureCodes, string fallback)
         {
             return TestableLocalization.Instance.BestCultureCodeBasedOnBrowserLanguages(cultureCodes, fallback);
@@ -774,132 +722,205 @@ namespace DotNetNuke.Services.Localization
             return name;
         }
 
-        public static CultureInfo GetPageLocale(PortalSettings portalSettings)
-        {
-            CultureInfo pageCulture = null;
-            Dictionary<string, Locale> enabledLocales = null;
-            if (portalSettings != null)
-            {
-                enabledLocales = _localeController.GetLocales(portalSettings.PortalId);
-            }
+		#region Language detection
+		/// <summary>
+		/// Detects the current language for the request.
+		/// The order in which the language is being detect is:
+		///		1. QueryString
+		///		2. Cookie
+		///		3. User profile (if request is authenticated)
+		///		4. Browser preference (if portal has this option enabled)
+		///		5. Portal default
+		///		6. System default (en-US)
+		///	At any point, if a valid language is detected nothing else should be done
+		/// </summary>
+		/// <param name="portalSettings">Current PortalSettings</param>
+		/// <returns>A valid CultureInfo</returns>
+		public static CultureInfo GetPageLocale(PortalSettings portalSettings)
+		{
+			CultureInfo pageCulture = null;
 
-            //used as temporary variable to get info about the preferred locale
-            string preferredLocale = "";
-            //used as temporary variable where the language part of the preferred locale will be saved
-            string preferredLanguage = "";
+			// 1. querystring
+			if (portalSettings != null)
+				pageCulture = GetCultureFromQs(portalSettings);
 
-            //first try if a specific language is requested by cookie or qs param
-            if (HttpContext.Current != null && portalSettings != null)
-            {
-                try
-                {
-                    if (portalSettings.ContentLocalizationEnabled && HttpContext.Current.Request.IsAuthenticated && portalSettings.UserMode == PortalSettings.Mode.Edit)
-                    {
-                        //use user's prefer locale if user is in edit mode so that the static text will be shown with the user's understand language.
-                        preferredLocale = UserController.GetCurrentUserInfo().Profile.PreferredLocale;
-                    }
-                    else
-                    {
-                        //Check Cookie or Qs
-                        preferredLocale = HttpContext.Current.Request["language"];
-                    }
+			// 2. cookie
+			if (portalSettings != null && pageCulture == null)
+				pageCulture = GetCultureFromCookie(portalSettings);
 
-                    if (!String.IsNullOrEmpty(preferredLocale))
-                    {
-                        if (_localeController.IsEnabled(ref preferredLocale, portalSettings.PortalId))
-                        {
-                            pageCulture = new CultureInfo(preferredLocale);
-                        }
-                        else
-                        {
-                            preferredLanguage = preferredLocale.Split('-')[0];
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    DnnLog.Error(ex);
-                }
-            }
-            if (pageCulture == null && portalSettings != null)
-            {
-                //next try to get the preferred language of the logged on user
-                UserInfo objUserInfo = UserController.GetCurrentUserInfo();
-                if (objUserInfo.UserID != -1)
-                {
-                    if (!String.IsNullOrEmpty(objUserInfo.Profile.PreferredLocale))
-                    {
-                        if (_localeController.IsEnabled(ref preferredLocale, portalSettings.PortalId))
-                        {
-                            pageCulture = new CultureInfo(objUserInfo.Profile.PreferredLocale);
-                        }
-                        else
-                        {
-                            if (String.IsNullOrEmpty(preferredLanguage))
-                            {
-                                preferredLanguage = objUserInfo.Profile.PreferredLocale.Split('-')[0];
-                            }
-                        }
-                    }
-                }
-            }
-            if (pageCulture == null && portalSettings != null && portalSettings.EnableBrowserLanguage)
-            {
-                pageCulture = GetBrowserCulture(portalSettings.PortalId);
-            }
-            if (pageCulture == null && !String.IsNullOrEmpty(preferredLanguage))
-            {
-                //we still don't have a good culture, so we are going to try to get a culture with the preferredlanguage instead
-                foreach (string localeCode in enabledLocales.Keys)
-                {
-                    if (localeCode.Split('-')[0] == preferredLanguage)
-                    {
-                        //the preferredLanguage was found in the enabled locales collection, so we are going to use this one
-                        //eg, requested locale is en-GB, requested language is en, enabled locale is en-US, so en is a match for en-US
-                        pageCulture = new CultureInfo(localeCode);
-                        break;
-                    }
-                }
-            }
+			// 3. user preference
+			if (portalSettings != null && pageCulture == null)
+				pageCulture = GetCultureFromProfile(portalSettings);
 
-            //we still have no culture info set, so we are going to use the fallback method
-            if (pageCulture == null && portalSettings != null)
-            {
-                if (String.IsNullOrEmpty(portalSettings.DefaultLanguage))
-                {
-                    //this is a last resort, as the portal default language should always be set
-                    //however if its not set, return the first enabled locale
-                    //if there are no enabled locales, return the systemlocale
-                    if (enabledLocales.Count > 0)
-                    {
-                        foreach (string localeCode in enabledLocales.Keys)
-                        {
-                            pageCulture = new CultureInfo(localeCode);
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        pageCulture = new CultureInfo(SystemLocale);
-                    }
-                }
-                else
-                {
-                    //as the portal default language can never be disabled, we know this language is available and enabled
-                    pageCulture = new CultureInfo(portalSettings.DefaultLanguage);
-                }
-            }
-            if (pageCulture == null)
-            {
-                //just a safeguard, to make sure we return something
-                pageCulture = new CultureInfo(SystemLocale);
-            }
+			// 4. browser
+			if (portalSettings != null && pageCulture == null)
+				pageCulture = GetCultureFromBrowser(portalSettings);
 
-            //finally set the cookie
-            SetLanguage(pageCulture.Name);
+			// 5. portal default
+			if (portalSettings != null && pageCulture == null)
+				pageCulture = GetCultureFromPortal(portalSettings);
 
-            return pageCulture;
-        }
+			// 6. system default
+			if (pageCulture == null)
+				pageCulture = new CultureInfo(SystemLocale);
+
+			// finally set the cookie
+			SetLanguage(pageCulture.Name);
+			return pageCulture;
+		}
+
+		/// <summary>
+		/// Tries to get a valid language from the querystring
+		/// </summary>
+		/// <param name="portalSettings">Current PortalSettings</param>
+		/// <returns>A valid CultureInfo if any is found</returns>
+		private static CultureInfo GetCultureFromQs(PortalSettings portalSettings)
+		{
+			if (HttpContext.Current == null || HttpContext.Current.Request["language"] == null)
+				return null;
+
+			string language = HttpContext.Current.Request["language"];
+			CultureInfo culture = GetCultureFromString(portalSettings.PortalId, language);
+			return culture;
+		}
+
+		/// <summary>
+		/// Tries to get a valid language from the cookie
+		/// </summary>
+		/// <param name="portalSettings">Current PortalSettings</param>
+		/// <returns>A valid CultureInfo if any is found</returns>
+		private static CultureInfo GetCultureFromCookie(PortalSettings portalSettings)
+		{
+			CultureInfo culture;
+			if (HttpContext.Current == null || HttpContext.Current.Request.Cookies["language"] == null)
+				return null;
+
+			string language = HttpContext.Current.Request.Cookies["language"].Value;
+			culture = GetCultureFromString(portalSettings.PortalId, language);
+			return culture;
+		}
+
+		/// <summary>
+		/// Tries to get a valid language from the user profile
+		/// </summary>
+		/// <param name="portalSettings">Current PortalSettings</param>
+		/// <returns>A valid CultureInfo if any is found</returns>
+		private static CultureInfo GetCultureFromProfile(PortalSettings portalSettings)
+		{
+			UserInfo objUserInfo = UserController.GetCurrentUserInfo();
+
+			if (HttpContext.Current == null || !HttpContext.Current.Request.IsAuthenticated || objUserInfo.UserID == -1)
+				return null;
+
+			string language = objUserInfo.Profile.PreferredLocale;
+			CultureInfo culture = GetCultureFromString(portalSettings.PortalId, language);
+			return culture;
+		}
+
+		/// <summary>
+		/// Tries to get a valid language from the browser preferences if the portal has the setting 
+		/// to use browser languages enabled.
+		/// </summary>
+		/// <param name="portalSettings">Current PortalSettings</param>
+		/// <returns>A valid CultureInfo if any is found</returns>
+		private static CultureInfo GetCultureFromBrowser(PortalSettings portalSettings)
+		{
+			if (!portalSettings.EnableBrowserLanguage)
+				return null;
+			else
+				return GetBrowserCulture(portalSettings.PortalId);
+		}
+
+		/// <summary>
+		/// Tries to get a valid language from the portal default preferences
+		/// </summary>
+		/// <param name="portalSettings">Current PortalSettings</param>
+		/// <returns>A valid CultureInfo if any is found</returns>
+		private static CultureInfo GetCultureFromPortal(PortalSettings portalSettings)
+		{
+			CultureInfo culture = null;
+			if (!String.IsNullOrEmpty(portalSettings.DefaultLanguage))
+			{
+				// As the portal default language can never be disabled, we know this language is available and enabled
+				culture = new CultureInfo(portalSettings.DefaultLanguage);
+			}
+			else
+			{
+				// Get the first enabled locale on the portal
+				Dictionary<string, Locale> enabledLocales = new Dictionary<string, Locale>();
+				if (portalSettings.PortalId > Null.NullInteger)
+					enabledLocales = _localeController.GetLocales(portalSettings.PortalId);
+
+				if (enabledLocales.Count > 0)
+				{
+					foreach (string localeCode in enabledLocales.Keys)
+					{
+						culture = new CultureInfo(localeCode);
+						break;
+					}
+				}
+			}
+			return culture;
+		}
+
+		/// <summary>
+		/// Tries to get a valid language from the browser preferences
+		/// </summary>
+		/// <param name="portalId">Id of the current portal</param>
+		/// <returns>A valid CultureInfo if any is found</returns>
+		public static CultureInfo GetBrowserCulture(int portalId)
+		{
+			if (HttpContext.Current == null || HttpContext.Current.Request.UserLanguages != null)
+				return null;
+
+			CultureInfo culture = null;
+			foreach (string userLang in HttpContext.Current.Request.UserLanguages)
+			{
+				//split userlanguage by ";"... all but the first language will contain a preferrence index eg. ;q=.5
+				string language = userLang.Split(';')[0];
+				culture = GetCultureFromString(portalId, language);
+				if (culture != null)
+					break;
+			}
+			return culture;
+		}
+
+		/// <summary>
+		/// Parses the language parameter into a valid and enabled language in the current portal.
+		/// If an exact match is not found (language-region), it will try to find a match for the language only.
+		/// Ex: requested locale is "en-GB", requested language is "en", enabled locale is "en-US", so "en" is a match for "en-US".
+		/// </summary>
+		/// <param name="portalId">Id of current portal</param>
+		/// <param name="language">Language to be parsed</param>
+		/// <returns>A valid and enabled CultureInfo that matches the language passed if any.</returns>
+		private static CultureInfo GetCultureFromString(int portalId, string language)
+		{
+			CultureInfo culture = null;
+			if (!String.IsNullOrEmpty(language))
+			{
+				if (_localeController.IsEnabled(ref language, portalId))
+					culture = new CultureInfo(language);
+				else
+				{
+					string preferredLanguage = language.Split('-')[0];
+
+					Dictionary<string, Locale> enabledLocales = new Dictionary<string, Locale>();
+					if (portalId > Null.NullInteger)
+						enabledLocales = _localeController.GetLocales(portalId);
+
+					foreach (string localeCode in enabledLocales.Keys)
+					{
+						if (localeCode.Split('-')[0] == preferredLanguage.Split('-')[0])
+						{
+							culture = new CultureInfo(localeCode);
+							break;
+						}
+					}
+				}
+			}
+			return culture;
+		}
+		#endregion
 
         public static string GetResourceFileName(string resourceFileName, string language, string mode, int portalId)
         {
@@ -1106,6 +1127,32 @@ namespace DotNetNuke.Services.Localization
         public static string GetStringUrl(string key, string resourceFileRoot)
         {
             return GetString(key, resourceFileRoot, PortalController.GetCurrentPortalSettings(), null, true);
+        }
+
+        #endregion
+
+        #region GetSafeJSString
+        
+        /// <summary>
+        /// this function will escape reserved character fields to their "safe" javascript equivalents
+        /// </summary>
+        /// <param name="unsafeString">The string to be parsed for unsafe characters</param>
+        /// <returns>the string that is safe to use in a javascript function</returns>
+        public static string GetSafeJSString(string unsafeString)
+        {
+            return unsafeString.Length > 0 ? Regex.Replace(unsafeString, "(['\"\\\\])", "\\$1") : unsafeString;
+        }
+
+        /// <summary>
+        /// this function will escape reserved character fields to their "safe" javascript equivalents
+        /// </summary>
+        /// <param name="key">localization key</param>
+        /// <param name="resourceFileRoot">file for localization key</param>
+        /// <returns>the string that is safe to use in a javascript function</returns>
+        public static string GetSafeJSString(string key, string resourceFileRoot)
+        {
+            var unsafeString = GetString(key, resourceFileRoot);
+            return GetSafeJSString(unsafeString);
         }
 
         #endregion
@@ -1794,21 +1841,49 @@ namespace DotNetNuke.Services.Localization
                 throw new ArgumentNullException("cultureInfo");
             }
 
-            Thread.CurrentThread.CurrentUICulture = cultureInfo;
-            if (portalSettings != null && portalSettings.ContentLocalizationEnabled &&
-                        HttpContext.Current.Request.IsAuthenticated &&
-                        portalSettings.UserMode == PortalSettings.Mode.Edit)
-            {
-                Locale locale = _localeController.GetCurrentLocale(portalSettings.PortalId);
-                Thread.CurrentThread.CurrentCulture = new CultureInfo(locale.Code);
-            }
-            else
-            {
-                Thread.CurrentThread.CurrentCulture = cultureInfo;
-            }
-        }
+			Thread.CurrentThread.CurrentCulture = cultureInfo;
 
-        #endregion
+			if (portalSettings != null && portalSettings.ContentLocalizationEnabled &&
+						HttpContext.Current.Request.IsAuthenticated &&
+						portalSettings.AllowUserUICulture)
+			{
+				Thread.CurrentThread.CurrentUICulture = GetUserUICulture(cultureInfo, portalSettings);
+			}
+			else
+			{
+				Thread.CurrentThread.CurrentUICulture = cultureInfo;
+			}
+		}
+
+		/// <summary>
+		/// When portal allows users to select their preferred UI language, this method
+		/// will return the user ui preferred language if defined. Otherwise defaults
+		/// to the current culture
+		/// </summary>
+		/// <param name="currentCulture">Current culture</param>
+		/// <param name="portalSettings">PortalSettings for the current request</param>
+		/// <returns></returns>
+		private static CultureInfo GetUserUICulture(CultureInfo currentCulture, PortalSettings portalSettings)
+		{
+			CultureInfo uiCulture = currentCulture;
+			try
+			{
+				object oCulture = Personalization.Personalization.GetProfile("Usability", "UICulture");
+				if (oCulture != null)
+				{
+					CultureInfo ci = GetCultureFromString(portalSettings.PortalId, oCulture.ToString());
+					if (ci != null)
+						uiCulture = ci;
+				}
+			}
+			catch
+			{
+				// UserCulture seems not valid anymore, update to current culture
+				Personalization.Personalization.SetProfile("Usability", "UICulture", currentCulture.Name);
+			}
+			return uiCulture;
+		}
+		#endregion
 
         #region Obsolete
 

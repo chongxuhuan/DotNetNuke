@@ -264,4 +264,10 @@
   <data name="Publish.Confirm" xml:space="preserve">
     <value>All translated pages in the {0} language have been published.</value>
   </data>
+  <data name="allowUserCulture.Help" xml:space="preserve">
+    <value>When enabled will allow user to select a diffent language for the interface than the one used for content</value>
+  </data>
+  <data name="allowUserCulture.Text" xml:space="preserve">
+    <value>Allow users to choose interface language?</value>
+  </data>
 </root>

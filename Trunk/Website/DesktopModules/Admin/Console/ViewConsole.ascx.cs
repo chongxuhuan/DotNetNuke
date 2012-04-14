@@ -82,14 +82,21 @@ namespace DesktopModules.Admin.Console
 
 		public int ConsoleTabID
 		{
-			get { return Settings.ContainsKey("ParentTabID") ? int.Parse(Settings["ParentTabID"].ToString()) : TabId; }
+			get
+			{
+                return (Mode == "Profile")
+                                   ? PortalSettings.UserTabId
+                                   : (Settings.ContainsKey("ParentTabID")
+                                        ? int.Parse(Settings["ParentTabID"].ToString())
+                                        : TabId);
+			}
 		}
 
         public string ConsoleWidth
         {
             get
             {
-                return Settings.ContainsKey("ConsoleWidth") ? Settings["ConsoleWidth"].ToString() : String.Empty; ;
+                return Settings.ContainsKey("ConsoleWidth") ? Settings["ConsoleWidth"].ToString() : String.Empty;
             }
         }
 
@@ -148,7 +155,18 @@ namespace DesktopModules.Admin.Console
 
         public bool IncludeParent
         {
-            get { return Settings.ContainsKey("IncludeParent") && bool.Parse(Settings["IncludeParent"].ToString()); }
+            get
+            {
+                return (Mode == "Profile") || (Settings.ContainsKey("IncludeParent") && bool.Parse(Settings["IncludeParent"].ToString()));
+            }
+        }
+
+        public string Mode
+        {
+            get
+            {
+                return Settings.ContainsKey("Mode") ? Settings["Mode"].ToString() : "Normal";
+            }
         }
 
         public int ProfileUserId
@@ -363,6 +381,7 @@ namespace DesktopModules.Admin.Console
 							tabs.Add(tab);  
 						}
 					}
+
 					DetailView.DataSource = tabs;
 					DetailView.DataBind();
 				}

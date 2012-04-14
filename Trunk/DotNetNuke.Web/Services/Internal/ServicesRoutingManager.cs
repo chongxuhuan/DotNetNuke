@@ -20,6 +20,7 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -34,6 +35,7 @@ namespace DotNetNuke.Web.Services.Internal
     {
         private readonly RouteCollection _routes;
         private IList<string> _prefixes;
+        private Dictionary<string, int> _moduleUsage = new Dictionary<string, int>();
 
         public ServicesRoutingManager() : this(RouteTable.Routes) {}
 
@@ -57,6 +59,7 @@ namespace DotNetNuke.Web.Services.Internal
         {
             RegisterSystemRoutes();
 
+            _moduleUsage.Clear();
             foreach (var routeMapper in GetServiceRouteMappers())
             {
                 try
@@ -113,7 +116,7 @@ namespace DotNetNuke.Web.Services.Internal
             return t != null && t.IsClass && !t.IsAbstract && t.IsVisible && typeof(IServiceRouteMapper).IsAssignableFrom(t);
         }
 
-        public IList<Route> MapRoute(string moduleFolderName, string name, string url, object defaults, object constraints, string[] namespaces)
+        public IList<Route> MapRoute(string moduleFolderName, string url, object defaults, object constraints, string[] namespaces)
         {
             if(namespaces == null || namespaces.Length == 0 || String.IsNullOrEmpty(namespaces[0]))
             {
@@ -130,12 +133,16 @@ namespace DotNetNuke.Web.Services.Internal
             var prefixes = GetRoutePrefixes();
             var routes = new List<Route>();
 
+            string formattedRouteName = GetFormattedRouteName(moduleFolderName);
+
             int i = 0;
             foreach (var prefix in prefixes)
             {
-                var routeName = moduleFolderName + "-" + name + "-" + i;
+                var routeName = string.Format(formattedRouteName, i);
                 var routeUrl = string.Format("{0}DesktopModules/{1}/API/{2}", prefix, moduleFolderName, url);
-                routes.Add(_routes.MapRoute(routeName, routeUrl, defaults, constraints, namespaces));
+                var route = _routes.MapRoute(routeName, routeUrl, defaults, constraints, namespaces);
+                route.DataTokens["Name"] = routeName;
+                routes.Add(route);
                 DnnLog.Trace("Mapping route: " + routeName + " @ " + routeUrl);
 
                 i++;
@@ -144,14 +151,31 @@ namespace DotNetNuke.Web.Services.Internal
             return routes;
         }
 
-        public IList<Route> MapRoute(string moduleFolderName, string name, string url, object defaults, string[] namespaces)
+        private string GetFormattedRouteName(string moduleFolderName)
         {
-            return MapRoute(moduleFolderName, name, url, defaults, null, namespaces);
+            string routesInFolder;
+            if(_moduleUsage.ContainsKey(moduleFolderName))
+            {
+                _moduleUsage[moduleFolderName]++;
+                routesInFolder = _moduleUsage[moduleFolderName].ToString(CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                _moduleUsage[moduleFolderName] = 0;
+                routesInFolder = "0";
+            }
+
+            return moduleFolderName + "-route" + routesInFolder + "-instance{0}";
         }
 
-        public IList<Route> MapRoute(string moduleFolderName, string name, string url, string[] namespaces)
+        public IList<Route> MapRoute(string moduleFolderName, string url, object defaults, string[] namespaces)
         {
-            return MapRoute(moduleFolderName, name, url, null, null, namespaces);
+            return MapRoute(moduleFolderName, url, defaults, null, namespaces);
+        }
+
+        public IList<Route> MapRoute(string moduleFolderName, string url, string[] namespaces)
+        {
+            return MapRoute(moduleFolderName, url, null, null, namespaces);
         }
 
         private IEnumerable<string> GetRoutePrefixes()

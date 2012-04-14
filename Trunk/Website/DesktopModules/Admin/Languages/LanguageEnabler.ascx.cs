@@ -254,41 +254,40 @@ namespace DotNetNuke.Modules.Admin.Languages
         {
             base.OnLoad(e);
 
-            try
-            {
-                _PortalDefault = PortalSettings.DefaultLanguage;
-                if (!Page.IsPostBack)
-                {
-                    BindDefaultLanguageSelector();
-                    BindGrid();
-                    chkBrowser.Checked = ModuleContext.PortalSettings.EnableBrowserLanguage;
-                }
+			try
+			{
+				_PortalDefault = PortalSettings.DefaultLanguage;
+				if (!Page.IsPostBack)
+				{
+					BindDefaultLanguageSelector();
+					BindGrid();
+					chkBrowser.Checked = ModuleContext.PortalSettings.EnableBrowserLanguage;
+					chkUserCulture.Checked = ModuleContext.PortalSettings.AllowUserUICulture;
+				}
 
                 if (!UserInfo.IsSuperUser)
                 {
                     UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("HostOnlyMessage", LocalResourceFile), ModuleMessage.ModuleMessageType.BlueInfo);
                 }
 
-                systemDefaultLanguageLabel.Language = Localization.SystemLocale;
-                if (PortalSettings.ContentLocalizationEnabled)
-                {
-                    defaultLanguageLabel.Language = PortalSettings.DefaultLanguage;
-                    defaultLanguageLabel.Visible = true;
-                    languagesComboBox.Visible = false;
-                    updateButton.Visible = false;
-                    cmdEnableLocalizedContent.Visible = false;
-                    defaultPortalMessage.Text = Localization.GetString("PortalDefaultPublished.Text", LocalResourceFile);
-                    enabledPublishedPlaceHolder.Visible = true;
-                }
-                else
-                {
-                    defaultLanguageLabel.Visible = false;
-                    languagesComboBox.Visible = true;
-                    updateButton.Visible = true;
-                    cmdEnableLocalizedContent.Visible = Host.EnableContentLocalization;
-                    defaultPortalMessage.Text = Localization.GetString("PortalDefaultEnabled.Text", LocalResourceFile);
-                    enabledPublishedPlaceHolder.Visible = false;
-                }
+				systemDefaultLanguageLabel.Language = Localization.SystemLocale;
+				if (PortalSettings.ContentLocalizationEnabled)
+				{
+					defaultLanguageLabel.Language = PortalSettings.DefaultLanguage;
+					defaultLanguageLabel.Visible = true;
+					languagesComboBox.Visible = false;
+					cmdEnableLocalizedContent.Visible = false;
+					defaultPortalMessage.Text = Localization.GetString("PortalDefaultPublished.Text", LocalResourceFile);
+					enabledPublishedPlaceHolder.Visible = true;
+				}
+				else
+				{
+					defaultLanguageLabel.Visible = false;
+					languagesComboBox.Visible = true;
+					cmdEnableLocalizedContent.Visible = Host.EnableContentLocalization;
+					defaultPortalMessage.Text = Localization.GetString("PortalDefaultEnabled.Text", LocalResourceFile);
+					enabledPublishedPlaceHolder.Visible = false;
+				}
 
                 addLanguageLink.Visible = UserInfo.IsSuperUser;
                 addLanguageLink.NavigateUrl = ModuleContext.EditUrl("Edit");
@@ -460,21 +459,24 @@ namespace DotNetNuke.Modules.Admin.Languages
             Response.Redirect(Globals.NavigateURL(), true);
         }
 
-        protected void updateButton_Click(object sender, EventArgs e)
-        {
-            Locale language = null;
+		protected void updateButton_Click(object sender, EventArgs e)
+		{
+			PortalController.UpdatePortalSetting(ModuleContext.PortalId, "EnableBrowserLanguage", chkBrowser.Checked.ToString());
+			PortalController.UpdatePortalSetting(ModuleContext.PortalId, "AllowUserUICulture", chkUserCulture.Checked.ToString());
 
-            PortalController.UpdatePortalSetting(ModuleContext.PortalId, "EnableBrowserLanguage", chkBrowser.Checked.ToString());
-
-            // first check whether or not portal default language has changed
-            string newDefaultLanguage = languagesComboBox.SelectedValue;
-            if (newDefaultLanguage != PortalSettings.DefaultLanguage)
-            {
-                if (!IsLanguageEnabled(newDefaultLanguage))
-                {
-                    language = LocaleController.Instance.GetLocale(newDefaultLanguage);
-                    Localization.AddLanguageToPortal(ModuleContext.PortalId, language.LanguageId, true);
-                }
+			// if contentlocalization is enabled, default language cannot be changed
+			if (!PortalSettings.ContentLocalizationEnabled)
+			{
+				// first check whether or not portal default language has changed
+				string newDefaultLanguage = languagesComboBox.SelectedValue;
+				if (newDefaultLanguage != PortalSettings.DefaultLanguage)
+				{
+					if (!IsLanguageEnabled(newDefaultLanguage))
+					{
+						Locale language = null;
+						language = LocaleController.Instance.GetLocale(newDefaultLanguage);
+						Localization.AddLanguageToPortal(ModuleContext.PortalId, language.LanguageId, true);
+					}
 
                 // update portal default language
                 var objPortalController = new PortalController();
@@ -482,12 +484,12 @@ namespace DotNetNuke.Modules.Admin.Languages
                 objPortal.DefaultLanguage = newDefaultLanguage;
                 objPortalController.UpdatePortalInfo(objPortal);
 
-                _PortalDefault = newDefaultLanguage;
-            }
-
-            BindDefaultLanguageSelector();
-            BindGrid();
-        }
+					_PortalDefault = newDefaultLanguage;
+				}
+			}
+			BindDefaultLanguageSelector();
+			BindGrid();
+		}
 
         #endregion
     }

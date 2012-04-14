@@ -30,10 +30,10 @@
 (function ($, Sys) {
     function setUpEditMessage() {
         $('#<%= deleteMessage.ClientID %>').dnnConfirm({
-            text: '<%= Localization.GetString("DeleteItem.Text", Localization.SharedResourceFile) %>',
-            yesText: '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
-            noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
-            title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
+            text: '<%= Localization.GetSafeJSString("DeleteItem.Text", Localization.SharedResourceFile) %>',
+            yesText: '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>',
+            noText: '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>',
+            title: '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>'
         });
     }
     $(document).ready(function () {

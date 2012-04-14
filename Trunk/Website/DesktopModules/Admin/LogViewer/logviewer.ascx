@@ -14,18 +14,18 @@
 		});
 		$('#dnnLogViewer').dnnPanels();
 		$('#<%= btnClear.ClientID %>').dnnConfirm({
-			text: '<%= LocalizeString("ClearLog.Text") %>',
-			yesText: '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>',
-			noText: '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>',
-			title: '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>'
+		    text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("ClearLog.Text")) %>',
+			yesText: '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>',
+			noText: '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>',
+			title: '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>'
 		});
 		$('#<%= btnEmail.ClientID %>,#<%= btnDelete.ClientID %>').click(function (e) {
 			var checked = $('#dnnLogViewer input').is(':checked');
 			if (!checked) {
 				e.preventDefault();
 				$.dnnAlert({
-					closeText: '<%= Localization.GetString("Close.Text", Localization.SharedResourceFile)%>',
-					text: '<%= Localization.GetString("SelectException", this.LocalResourceFile) %>'
+				    closeText: '<%= Localization.GetSafeJSString("Close.Text", Localization.SharedResourceFile)%>',
+				    text: '<%= Localization.GetSafeJSString("SelectException", this.LocalResourceFile) %>'
 				});
 			}
 			return checked;

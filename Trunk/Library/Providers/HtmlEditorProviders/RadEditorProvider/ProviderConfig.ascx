@@ -71,12 +71,12 @@
 	(function ($, Sys) {
 		function setupDnnProviderConfig() {
 			$('#<%=pnlEditor.ClientID%>').dnnTabs().dnnPanels();
-			$('#dnnProviderConfig .dnnFormExpandContent a').dnnExpandAll({ expandText: '<%=Localization.GetString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", Localization.SharedResourceFile)%>', targetArea: '#dnnProviderConfig' });
+			$('#dnnProviderConfig .dnnFormExpandContent a').dnnExpandAll({ expandText: '<%=Localization.GetSafeJSString("ExpandAll", Localization.SharedResourceFile)%>', collapseText: '<%=Localization.GetSafeJSString("CollapseAll", Localization.SharedResourceFile)%>', targetArea: '#dnnProviderConfig' });
 			$('.dnnDeleteTab').dnnConfirm({
-				text: '<%=LocalizeString("DeleteItem")%>',
-				yesText: '<%=Localization.GetString("Yes.Text", Localization.SharedResourceFile)%>',
-				noText: '<%=Localization.GetString("No.Text", Localization.SharedResourceFile)%>',
-				title: '<%=Localization.GetString("Confirm.Text", Localization.SharedResourceFile)%>'
+			    text: '<%=DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("DeleteItem"))%>',
+				yesText: '<%=Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile)%>',
+				noText: '<%=Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile)%>',
+				title: '<%=Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile)%>'
 			});
 		}
 

@@ -70,7 +70,6 @@ namespace DotNetNuke.Security.Roles.Internal
                     {
                         //user already belongs to role
                         DnnLog.Error(exc);
-
                     }
                 }
             }

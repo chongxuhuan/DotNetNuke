@@ -50,23 +50,23 @@
 		var setUpRecycleBin = function () {
 			$('#dnnRecycleBin').dnnTabs();
 
-			var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
-			var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
-			var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
+			var yesText = '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>';
+			var noText = '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>';
+			var titleText = '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>';
 			$('#<%= cmdEmpty.ClientID %>').dnnConfirm({
-				text: '<%= LocalizeString("DeleteAll") %>',
+			    text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("DeleteAll")) %>',
 				yesText: yesText,
 				noText: noText,
 				title: titleText
 			});
 			$('#<%= cmdDeleteTab.ClientID %>').dnnConfirm({
-				text: '<%= LocalizeString("DeleteTab") %>',
+			    text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("DeleteTab")) %>',
 				yesText: yesText,
 				noText: noText,
 				title: titleText
 			});
 			$('#<%= cmdDeleteModule.ClientID %>').dnnConfirm({
-				text: '<%= LocalizeString("DeleteModule") %>',
+			    text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("DeleteModule")) %>',
 				yesText: yesText,
 				noText: noText,
 				title: titleText

@@ -715,6 +715,7 @@ namespace DotNetNuke.Entities.Portals
                 {
                     role.PortalID = portalID;
                     role.RoleGroupID = roleGroup.RoleGroupID;
+                    role.Status = RoleStatus.Approved;
                     switch (role.RoleType)
                     {
                         case RoleType.Administrator:

@@ -34,6 +34,14 @@
                     <dnn:Label ID="plAutoAssignment" runat="server" ResourceKey="AutoAssignment" ControlName="chkAutoAssignment" />
                     <asp:CheckBox ID="chkAutoAssignment" runat="server" />
                 </div>
+                <div class="dnnFormItem">
+                    <dnn:Label ID="securityModeListLabel" runat="server" Suffix="" ControlName="securityModeList" />
+                    <asp:DropDownList ID="securityModeList" runat="server"/>
+                </div>
+                <div class="dnnFormItem">
+                    <dnn:Label ID="statusListLabel" runat="server" Suffix="" ControlName="statusList" />
+                    <asp:DropDownList ID="statusList" runat="server"/>
+                </div>
             </fieldset>
         </div>
     </div>
@@ -95,11 +103,11 @@
 (function ($, Sys) {
     function setUpDnnEditRoles() {
         $('#dnnEditRole').dnnTabs();
-        var yesText = '<%= Localization.GetString("Yes.Text", Localization.SharedResourceFile) %>';
-        var noText = '<%= Localization.GetString("No.Text", Localization.SharedResourceFile) %>';
-        var titleText = '<%= Localization.GetString("Confirm.Text", Localization.SharedResourceFile) %>';
+        var yesText = '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>';
+        var noText = '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>';
+        var titleText = '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>';
         $('#<%= cmdDelete.ClientID %>').dnnConfirm({
-            text: '<%= LocalizeString("DeleteItem") %>',
+            text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("DeleteItem")) %>',
             yesText: yesText,
             noText: noText,
             title: titleText

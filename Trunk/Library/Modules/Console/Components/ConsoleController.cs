@@ -38,7 +38,7 @@ namespace DotNetNuke.Modules.Console.Components
 {
     public class ConsoleController : IPortable
     {
-        private readonly string[] _SettingKeys = new[] {"ParentTabID", "DefaultSize", "AllowSizeChange", "DefaultView", "AllowViewChange", "ShowTooltip", "ConsoleWidth"};
+        private readonly string[] _SettingKeys = new[] {"Mode", "ParentTabID", "IncludeParent", "DefaultSize", "AllowSizeChange", "DefaultView", "AllowViewChange", "ShowTooltip", "ConsoleWidth"};
 
         #region IPortable Members
 

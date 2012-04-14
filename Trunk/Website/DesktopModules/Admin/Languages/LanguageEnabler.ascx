@@ -22,6 +22,10 @@
             <dnn:Label ID="detectBrowserLable" runat="server" />
             <asp:CheckBox ID="chkBrowser" runat="server" />
         </div>
+        <div class="dnnFormItem">
+            <dnn:Label ID="allowUserCulture" runat="server" />
+            <asp:CheckBox ID="chkUserCulture" runat="server" />
+        </div>
         <ul class="dnnActions dnnClear">
     	    <li><asp:LinkButton id="updateButton" runat="server" CssClass="dnnPrimaryAction" resourcekey="Update" /></li>
         </ul>
