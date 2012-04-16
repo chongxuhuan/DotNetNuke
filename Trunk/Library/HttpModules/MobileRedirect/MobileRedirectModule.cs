@@ -76,7 +76,13 @@ namespace DotNetNuke.HttpModules
             //First check if we are upgrading/installing
             if (app.Request.Url.LocalPath.ToLower().EndsWith("install.aspx")
                     || app.Request.Url.LocalPath.ToLower().EndsWith("upgradewizard.aspx")
-                    || app.Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx"))
+                    || app.Request.Url.LocalPath.ToLower().EndsWith("installwizard.aspx")
+                    || app.Request.Url.LocalPath.ToLower().EndsWith("captcha.aspx")
+                    || app.Request.Url.LocalPath.ToLower().EndsWith("scriptresource.axd")
+                    || app.Request.Url.LocalPath.ToLower().EndsWith("webresource.axd")
+                    || app.Request.Url.LocalPath.ToLower().EndsWith(".asmx")
+                    || app.Request.Url.LocalPath.ToLower().EndsWith(".ashx")
+                    || app.Request.Url.LocalPath.ToLower().EndsWith(".svc"))
             {
                 return;
             } 

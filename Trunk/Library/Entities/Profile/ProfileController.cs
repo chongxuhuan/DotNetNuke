@@ -133,7 +133,10 @@ namespace DotNetNuke.Entities.Profile
                 definition.PropertyCategory = Convert.ToString(Null.SetNull(dr["PropertyCategory"], definition.PropertyCategory));
                 definition.PropertyName = Convert.ToString(Null.SetNull(dr["PropertyName"], definition.PropertyName));
                 definition.Length = Convert.ToInt32(Null.SetNull(dr["Length"], definition.Length));
-                definition.ReadOnly = Convert.ToBoolean(Null.SetNull(dr["ReadOnly"], definition.ReadOnly));
+                if (dr.GetSchemaTable().Columns.Contains("ReadOnly"))
+                {
+                    definition.ReadOnly = Convert.ToBoolean(Null.SetNull(dr["ReadOnly"], definition.ReadOnly));
+                }
                 definition.Required = Convert.ToBoolean(Null.SetNull(dr["Required"], definition.Required));
                 definition.ValidationExpression = Convert.ToString(Null.SetNull(dr["ValidationExpression"], definition.ValidationExpression));
                 definition.ViewOrder = Convert.ToInt32(Null.SetNull(dr["ViewOrder"], definition.ViewOrder));

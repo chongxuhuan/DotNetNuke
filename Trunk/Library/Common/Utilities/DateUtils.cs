@@ -14,8 +14,7 @@ namespace DotNetNuke.Common.Utilities
         /// </summary>
         public static string CalculateDateForDisplay(DateTime date)
         {
-            var utcDate = date.ToUniversalTime();
-            var utcTimeDifference = Services.SystemDateTime.SystemDateTime.GetCurrentTimeUtc() - utcDate;
+            var utcTimeDifference = Services.SystemDateTime.SystemDateTime.GetCurrentTimeUtc() - date;
 
             if (utcTimeDifference.TotalSeconds < 60)
             {

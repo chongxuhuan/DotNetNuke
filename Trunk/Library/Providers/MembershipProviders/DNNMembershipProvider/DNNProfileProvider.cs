@@ -166,7 +166,12 @@ namespace DotNetNuke.Security.Profile
                         if (profProperty != null)
                         {
                             profProperty.PropertyValue = Convert.ToString(dr["PropertyValue"]);
-                            profProperty.ProfileVisibility = new ProfileVisibility(portalId, Convert.ToString(dr["ExtendedVisibility"]))
+                            var extendedVisibility = string.Empty;
+                            if (dr.GetSchemaTable().Columns.Contains("ExtendedVisibility"))
+                            {
+                                extendedVisibility = Convert.ToString(dr["ExtendedVisibility"]);
+                            }
+                            profProperty.ProfileVisibility = new ProfileVisibility(portalId, extendedVisibility)
                                                                  {
                                                                      VisibilityMode = (UserVisibilityMode)dr["Visibility"]
                                                                  };

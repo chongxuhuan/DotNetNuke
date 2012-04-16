@@ -201,13 +201,13 @@
   <data name="//Host.String" xml:space="preserve">
     <value>Host</value>
   </data>
-  <data name="//Host//Host Settings.String" xml:space="preserve">
+  <data name="//Host//HostSettings.String" xml:space="preserve">
     <value>Host Settings</value>
   </data>
-  <data name="//Host//Portals.String" xml:space="preserve">
+  <data name="//Host//SiteManagement.String" xml:space="preserve">
     <value>Site Management</value>
   </data>
-  <data name="//Host//Module Definitions.String" xml:space="preserve">
+  <data name="//Host//ModuleDefinitions.String" xml:space="preserve">
     <value>Module Definitions</value>
   </data>
   <data name="//Host//SQL.String" xml:space="preserve">
@@ -240,13 +240,13 @@
   <data name="BannerType.Script.String" xml:space="preserve">
     <value>Script</value>
   </data>
-  <data name="//Host//Search Admin.String" xml:space="preserve">
+  <data name="//Host//SearchAdmin.String" xml:space="preserve">
     <value>Search Admin</value>
   </data>
   <data name="//Host//Lists.String" xml:space="preserve">
     <value>Lists</value>
   </data>
-  <data name="//Host//Superuser Accounts.String" xml:space="preserve">
+  <data name="//Host//SuperuserAccounts.String" xml:space="preserve">
     <value>SuperUser Accounts</value>
   </data>
   <data name="//Admin//Solutions.String" xml:space="preserve">
@@ -976,7 +976,7 @@ Operation Completed:  [Custom:3]
   <data name="//Admin//Skins.String" xml:space="preserve">
     <value>Skins</value>
   </data>
-  <data name="//Host//File Manager.String" xml:space="preserve">
+  <data name="//Host//FileManager.String" xml:space="preserve">
     <value>File Manager</value>
   </data>
   <data name="//Host//Vendors.String" xml:space="preserve">
@@ -1027,7 +1027,7 @@ Thank you, we appreciate your support...
 [Portal:PortalName]
 </value>
   </data>
-  <data name="//Host//WhatsNew.String" xml:space="preserve">
+  <data name="//Host//What'sNew.String" xml:space="preserve">
     <value>What's New</value>
   </data>
   <data name="PurgeCacheUnsupported.Text" xml:space="preserve">
@@ -1197,8 +1197,8 @@ Sincerely,
   <data name="//Admin//GoogleAnalyticsPro.String" xml:space="preserve">
     <value>Google Analytics Pro</value>
   </data>
-  <data name="//Admin//PreviewProfileManagement.String" xml:space="preserve">
-    <value>Preview Profile Management</value>
+  <data name="//Admin//DevicePreviewManagement.String" xml:space="preserve">
+    <value>Device Preview Management</value>
   </data>
   <data name="//Admin//SiteRedirectionManagement.String" xml:space="preserve">
     <value>Site Redirection Management</value>
@@ -1256,5 +1256,8 @@ Sincerely,
   </data>
   <data name="AddFollowerRequestBody.Text" xml:space="preserve">
     <value>{0} is now following with you</value>
+  </data>
+  <data name="//Host//DeviceDetectionManagement.String" xml:space="preserve">
+    <value>Device Detection Management</value>
   </data>
 </root>
