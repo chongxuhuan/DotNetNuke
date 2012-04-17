@@ -123,6 +123,9 @@
   <data name="Edit.Text" xml:space="preserve">
     <value>Edit Profile</value>
   </data>
+  <data name="MyAccount.Text" xml:space="preserve">
+    <value>My Account</value>
+  </data>
   <data name="NoProperties.Text" xml:space="preserve">
     <value>This user has elected to hide his/her profile.</value>
   </data>

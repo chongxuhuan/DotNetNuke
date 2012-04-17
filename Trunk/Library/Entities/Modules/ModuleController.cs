@@ -504,10 +504,19 @@ namespace DotNetNuke.Entities.Modules
                                                           RoleID = roleID,
                                                           AllowAccess = Convert.ToBoolean(XmlUtils.GetNodeValue(node.CreateNavigator(), "allowaccess"))
                                                       };
-                        module.ModulePermissions.Add(modulePermission);
+                        // do not add duplicate ModulePermissions
+                        if (!FindModulePermission(modulePermission, module))
+                        {
+                            module.ModulePermissions.Add(modulePermission);
+                        }
                     }
                 }
             }
+        }
+
+        private static bool FindModulePermission(ModulePermissionInfo modulePermission, ModuleInfo module)
+        {
+            return module.ModulePermissions.Cast<ModulePermissionInfo>().Any(mp => (mp.ModuleID == modulePermission.ModuleID) && (mp.PermissionID == modulePermission.PermissionID) && (mp.RoleID == modulePermission.RoleID));
         }
 
         private static bool FindModule(XmlNode nodeModule, int tabId, PortalTemplateModuleAction mergeTabs)

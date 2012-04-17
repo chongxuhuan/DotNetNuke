@@ -2005,7 +2005,46 @@ IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_Noti
 		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Delete', N'DeleteNotification', N'DeleteItem', 1, N'/DesktopModules/CoreServices/API/NotificationsService.ashx/Delete')
 	END
 GO
-
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupPendingNotification')
+    BEGIN
+		DECLARE @NotificationTypeID INT		
+	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupPendingNotification', N'Group Pending Notification',-1,NULL)
+		SELECT  @NotificationTypeID = SCOPE_IDENTITY()       
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID],[NameResourceKey],[DescriptionResourceKey],[Order],[APICall])
+			VALUES (@NotificationTypeID,N'Approve',N'ApproveGroup',1,N'/DesktopModules/SocialGroups/API/ModerationService.ashx/ApproveGroup')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID],[NameResourceKey],[DescriptionResourceKey],[Order],[APICall])
+			VALUES (@NotificationTypeID,N'Reject',N'RejectGroup',2,  N'/DesktopModules/SocialGroups/API/ModerationService.ashx/RejectGroup')
+	END
+GO
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupApprovedNotification')
+    BEGIN
+		DECLARE @NotificationTypeID INT		
+	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupApprovedNotification', N'Group Approved Notification',-1,NULL)
+		SELECT  @NotificationTypeID = SCOPE_IDENTITY()       
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) 
+			VALUES (@NotificationTypeID, N'Delete', N'DeleteNotification', 'DeleteItem', 1, N'/DesktopModules/CoreServices/API/NotificationsService.ashx/Delete')
+	END
+GO
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupCreatedNotification')
+    BEGIN
+		DECLARE @NotificationTypeID INT		
+	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupCreatedNotification', N'Group Created Notification',-1,NULL)
+		SELECT  @NotificationTypeID = SCOPE_IDENTITY()   
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) 
+			VALUES (@NotificationTypeID, N'Remove', N'RemoveGroup', 'DeleteItem', 1, N'/DesktopModules/SocialGroups/API/ModerationService.ashx/RemoveGroup')    
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) 
+			VALUES (@NotificationTypeID, N'Delete', N'DeleteNotification', 'DeleteItem', 2, N'/DesktopModules/CoreServices/API/NotificationsService.ashx/Delete')
+	END
+GO
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupRejectedNotification')
+    BEGIN
+		DECLARE @NotificationTypeID INT		
+	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupRejectedNotification', N'Group Rejected Notification',-1,NULL)
+		SELECT  @NotificationTypeID = SCOPE_IDENTITY()   
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) 
+			VALUES (@NotificationTypeID, N'Delete', N'DeleteNotification', 'DeleteItem', 1, N'/DesktopModules/CoreServices/API/NotificationsService.ashx/Delete')
+	END
+GO
 --CRUD for CoreMessaging_Messages
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_SaveMessage]') AND type in (N'P', N'PC'))
@@ -3940,9 +3979,10 @@ IF EXISTS(SELECT * from {databaseOwner}[{objectQualifier}Journal_TypeFilters] WH
 INSERT INTO @j 
 	SELECT j.journalid, jt.datecreated from (
 		SELECT DISTINCT js.JournalId from {databaseOwner}[{objectQualifier}Journal] as j
-			INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js ON js.JournalId = j.JournalId
-			INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId ,1) as t ON t.seckey = js.SecurityKey AND js.SecurityKey = 'R' + CAST(@GroupId as nvarchar(100))
-			WHERE j.PortalId = @PortalId
+				INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js ON js.JournalId = j.JournalId
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId ,1) as t 
+				ON t.seckey = js.SecurityKey AND (js.SecurityKey = 'R' + CAST(@GroupId as nvarchar(100)) OR js.SecurityKey = 'E')
+				WHERE j.PortalId = @PortalId
 		) as j INNER JOIN {databaseOwner}[{objectQualifier}Journal] jt ON jt.JournalId = j.JournalId AND jt.PortalId = @PortalId
 		INNER JOIN {databaseOwner}[{objectQualifier}Journal_TypeFilters] as jf ON jf.JournalTypeId = jt.JournalTypeId AND jf.ModuleId = @ModuleId
 		ORDER BY jt.DateCreated DESC, jt.JournalId DESC;
@@ -3951,8 +3991,9 @@ INSERT INTO @j
 	SELECT j.journalid, jt.datecreated from (
 		SELECT DISTINCT js.JournalId from {databaseOwner}[{objectQualifier}Journal] as j
 			INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js ON js.JournalId = j.JournalId
-			INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId ,1) as t ON t.seckey = js.SecurityKey AND js.SecurityKey = 'R' + CAST(@GroupId as nvarchar(100))
-			WHERE j.PortalId = @PortalId
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId ,1) as t 
+				ON t.seckey = js.SecurityKey AND (js.SecurityKey = 'R' + CAST(@GroupId as nvarchar(100)) OR js.SecurityKey = 'E')
+				WHERE j.PortalId = @PortalId
 		) as j INNER JOIN {databaseOwner}[{objectQualifier}Journal] jt ON jt.JournalId = j.JournalId AND jt.PortalId = @PortalId
 		ORDER BY jt.DateCreated DESC, jt.JournalId DESC;
 
@@ -3966,7 +4007,7 @@ WITH journalItems  AS
 )
 SELECT	j.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated, j.PortalId,
 			j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey,
-			"JournalOwner" = '<entity><id>' + CAST(p.UserId as nvarchar(150)) + '</id><name>' + p.DisplayName + '</name></entity>',
+			"JournalOwner" = '<entity><id>' + CAST(r.RoleId as nvarchar(150)) + '</id><name>' + r.RoleName + '</name></entity>',
 			"JournalAuthor" = CASE WHEN ISNULL(a.UserId,-1) >0 THEN '<entity><id>' + CAST(a.UserId as nvarchar(150)) + '</id><name>' + a.DisplayName + '</name></entity>' ELSE '' END,
 			"JournalOwnerId" = ISNULL(j.ProfileId,j.UserId),
 			 jt.Icon, jt.JournalType,
@@ -3974,7 +4015,8 @@ SELECT	j.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated
 			jd.JournalXML, j.ContentItemId, j.ItemData, RowNumber
 FROM	journalItems as ji INNER JOIN 
 	{databaseOwner}[{objectQualifier}Journal] as j ON j.JournalId = ji.JournalId INNER JOIN
-	{databaseOwner}[{objectQualifier}Journal_Types] as jt ON jt.JournalTypeId = j.JournalTypeId LEFT OUTER JOIN
+	{databaseOwner}[{objectQualifier}Journal_Types] as jt ON jt.JournalTypeId = j.JournalTypeId INNER JOIN
+	{databaseOwner}[{objectQualifier}Roles] as r ON j.GroupId = r.RoleId LEFT OUTER JOIN
 			{databaseOwner}[{objectQualifier}Journal_Data] as jd on jd.JournalId = j.JournalId LEFT OUTER JOIN
             {databaseOwner}[{objectQualifier}Users] AS p ON j.ProfileId = p.UserID LEFT OUTER JOIN
             {databaseOwner}[{objectQualifier}Users] AS a ON j.UserId = a.UserID
@@ -6159,7 +6201,8 @@ AS
 		U.Username, 
 		R.Description, 
 		U.DisplayName, 
-		U.Email, 
+		U.Email,
+		R.Status, 
 		R.SecurityMode,
 		R.ServiceFee, 
 		R.BillingFrequency, 

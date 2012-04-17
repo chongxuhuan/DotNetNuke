@@ -31,6 +31,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users.Social;
 using DotNetNuke.Security;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.SystemDateTime;
 using DotNetNuke.Services.Tokens;
 using DotNetNuke.UI.WebControls;
@@ -241,7 +242,7 @@ namespace DotNetNuke.Entities.Users
         [Browsable(false)]
         public string[] Roles
         {
-            get { return Social.Roles.Select(r => r.RoleName).ToArray(); }
+            get { return Social.Roles.Where(r => r.Status == RoleStatus.Approved).Select(r => r.RoleName).ToArray(); }
             set { }
         }
 

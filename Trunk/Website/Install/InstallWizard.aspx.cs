@@ -924,7 +924,6 @@ namespace DotNetNuke.Services.Install
 
         private bool InstallPortal()
         {
-            bool success = false;
             string strErrorMessage = usrAdmin.Validate();
 
             if (!string.IsNullOrEmpty(strErrorMessage))
@@ -935,57 +934,65 @@ namespace DotNetNuke.Services.Install
                     strError = string.Format(strError, MembershipProviderConfig.MinPasswordLength);
                 }
                 adminUserErrorLabel.Text = string.Format(LocalizeString("AdminUserError"), strError);
+                return false;
             }
-            else
+
+            if(cboPortalTemplate.SelectedIndex == 0)
             {
-                try
-                {
-                    string strServerPath = Globals.ApplicationMapPath + "\\";
-                    string strPortalAlias = Globals.GetDomainName(HttpContext.Current.Request, true).Replace("/Install", "");
-                    PortalController.PortalTemplateInfo template = LoadPortalTemplateInfoForSelectedItem();
-
-                    UserInfo adminUser = CreateUserInfo();
-
-                    //Create Portal
-                    PortalId = TestablePortalController.Instance.CreatePortal(txtPortalTitle.Text,
-                                                                              adminUser,
-                                                                              "",
-                                                                              "", 
-                                                                              template,
-                                                                              "",
-                                                                              strPortalAlias,
-                                                                              strServerPath,
-                                                                              "",
-                                                                              false);
-                    success = (PortalId > Null.NullInteger);
-
-                    //Set admin user to be a superuser
-                    adminUser = UserController.GetUserByName(PortalId, usrAdmin.UserName);
-                    adminUser.IsSuperUser = true;
-                    UserController.UpdateUser(PortalId, adminUser);
-
-                    //Log user in to site
-                    UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
-                    UserController.UserLogin(PortalId, usrAdmin.UserName, usrAdmin.Password, "", "", "", ref loginStatus, false);
-
-                    Config.Touch();
-                    Response.Redirect("~/Default.aspx", true);
-                }
-                catch (ThreadAbortException)
-                {
-                    //do nothing - we swallow this exception - becuase of redirect
-                }
-                catch (Exception ex)
-                {
-                    DnnLog.Error(ex);
-                    success = false;
-                    strErrorMessage = ex.Message;
-                }
-                if (!success)
-                {
-                    adminUserErrorLabel.Text = string.Format(LocalizeString("InstallPortalError"), strErrorMessage);
-                }
+                string error = LocalizeString("MustSelecteATemplate");
+                adminUserErrorLabel.Text = error;
+                return false;
             }
+
+            bool success = false;
+            try
+            {
+                string strServerPath = Globals.ApplicationMapPath + "\\";
+                string strPortalAlias = Globals.GetDomainName(HttpContext.Current.Request, true).Replace("/Install", "");
+                PortalController.PortalTemplateInfo template = LoadPortalTemplateInfoForSelectedItem();
+
+                UserInfo adminUser = CreateUserInfo();
+
+                //Create Portal
+                PortalId = TestablePortalController.Instance.CreatePortal(txtPortalTitle.Text,
+                                                                            adminUser,
+                                                                            "",
+                                                                            "", 
+                                                                            template,
+                                                                            "",
+                                                                            strPortalAlias,
+                                                                            strServerPath,
+                                                                            "",
+                                                                            false);
+                success = (PortalId > Null.NullInteger);
+
+                //Set admin user to be a superuser
+                adminUser = UserController.GetUserByName(PortalId, usrAdmin.UserName);
+                adminUser.IsSuperUser = true;
+                UserController.UpdateUser(PortalId, adminUser);
+
+                //Log user in to site
+                UserLoginStatus loginStatus = UserLoginStatus.LOGIN_FAILURE;
+                UserController.UserLogin(PortalId, usrAdmin.UserName, usrAdmin.Password, "", "", "", ref loginStatus, false);
+
+                Config.Touch();
+                Response.Redirect("~/Default.aspx", true);
+            }
+            catch (ThreadAbortException)
+            {
+                //do nothing - we swallow this exception - becuase of redirect
+            }
+            catch (Exception ex)
+            {
+                DnnLog.Error(ex);
+                success = false;
+                strErrorMessage = ex.Message;
+            }
+            if (!success)
+            {
+                adminUserErrorLabel.Text = string.Format(LocalizeString("InstallPortalError"), strErrorMessage);
+            }
+            
             return success;
         }
 

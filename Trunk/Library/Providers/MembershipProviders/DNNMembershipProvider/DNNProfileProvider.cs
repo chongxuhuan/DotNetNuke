@@ -167,7 +167,7 @@ namespace DotNetNuke.Security.Profile
                         {
                             profProperty.PropertyValue = Convert.ToString(dr["PropertyValue"]);
                             var extendedVisibility = string.Empty;
-                            if (dr.GetSchemaTable().Columns.Contains("ExtendedVisibility"))
+                            if (dr.GetSchemaTable().Select("ColumnName = 'ExtendedVisibility'").Length > 0)
                             {
                                 extendedVisibility = Convert.ToString(dr["ExtendedVisibility"]);
                             }

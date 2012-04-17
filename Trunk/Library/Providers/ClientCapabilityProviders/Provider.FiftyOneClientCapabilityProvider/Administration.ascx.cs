@@ -141,7 +141,7 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-
+            PremiumUpload.Visible = DataProvider.IsPremium;
             purchaseBox.Visible = !DataProvider.IsPremium;
         }
 

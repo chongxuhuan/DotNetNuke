@@ -612,4 +612,7 @@ Using Windows Explorer, browse to the folders of your website ( {0} ). Right-cli
   <data name="NoAuthSystems.Text" xml:space="preserve">
     <value>There are no authentication system to install.</value>
   </data>
+  <data name="MustSelecteATemplate.Text" xml:space="preserve">
+    <value>&lt;b&gt;&lt;font color='red'&gt;You must select a site template.&lt;/font&gt;&lt;/b&gt;</value>
+  </data>
 </root>

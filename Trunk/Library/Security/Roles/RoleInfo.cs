@@ -475,6 +475,17 @@ namespace DotNetNuke.Security.Roles
                     return PropertyAccess.FormatString(GetString("stat_photo", string.Empty), format);
                 case "stat_file":
                     return PropertyAccess.FormatString(GetString("stat_file", string.Empty), format);
+                case "url":
+                    return PropertyAccess.FormatString(GetString("URL", string.Empty), format);
+                case "grouptype":
+                    if (IsPublic) {
+                        return "Public.Text";
+                    } else {
+                        return "Private.Text";
+                    }
+                case "groupcreatorname":
+                    return PropertyAccess.FormatString(GetString("GroupCreatorName", string.Empty), format);
+
             }
 
             propertyNotFound = true;

@@ -82,14 +82,15 @@ namespace DotNetNuke.Modules.Admin.Users
                 var template = (ModuleContext.Settings["ProfileTemplate"] != null) 
                             ? Convert.ToString(ModuleContext.Settings["ProfileTemplate"]) 
                             : Localization.GetString("DefaultTemplate", LocalResourceFile);
-                var editUrl = Globals.NavigateURL(ModuleContext.PortalSettings.ActiveTab.TabID, "Profile", "userId=" + ProfileUserId, "pageno=3");
+                var editUrl = Globals.NavigateURL(ModuleContext.PortalSettings.ActiveTab.TabID, "Profile", "userId=" + ProfileUserId, "pageno=1");
+                var profileUrl = Globals.NavigateURL(ModuleContext.PortalSettings.ActiveTab.TabID, "Profile", "userId=" + ProfileUserId, "pageno=3");
 
-                if (template.Contains("[HYPERLINK:EDITPROFILE]"))
+                if (template.Contains("[BUTTON:EDITPROFILE]"))
                 {
                     if (IncludeButton && IsUser)
                     {
-                        string editHyperLink = String.Format("<a href=\"{0}\" class=\"dnnPrimaryAction\">{1}</a>", editUrl, LocalizeString("Edit"));
-                        template = template.Replace("[HYPERLINK:EDITPROFILE]", editHyperLink);
+                        string editHyperLink = String.Format("<a href=\"{0}\" class=\"dnnPrimaryAction\">{1}</a>", profileUrl, LocalizeString("Edit"));
+                        template = template.Replace("[BUTTON:EDITPROFILE]", editHyperLink);
                     }
                     buttonPanel.Visible = false;
                 }
@@ -97,6 +98,23 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     buttonPanel.Visible = IncludeButton;
                     editLink.NavigateUrl = editUrl;
+                }
+                if (template.Contains("[HYPERLINK:EDITPROFILE]"))
+                {
+                    if (IsUser)
+                    {
+                        string editHyperLink = String.Format("<a href=\"{0}\" class=\"dnnSecondaryAction\">{1}</a>", profileUrl, LocalizeString("Edit"));
+                        template = template.Replace("[HYPERLINK:EDITPROFILE]", editHyperLink);
+                    }
+                }
+                if (template.Contains("[HYPERLINK:MYACCOUNT]"))
+                {
+                    if (IsUser)
+                    {
+                        string editHyperLink = String.Format("<a href=\"{0}\" class=\"dnnSecondaryAction\">{1}</a>", editUrl, LocalizeString("MyAccount"));
+                        template = template.Replace("[HYPERLINK:MYACCOUNT]", editHyperLink);
+                    }
+                    buttonPanel.Visible = false;
                 }
 
                 if (!IsUser && buttonPanel.Visible)

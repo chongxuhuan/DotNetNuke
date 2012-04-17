@@ -59,6 +59,7 @@ namespace DotNetNuke.Services.Journal {
         public string SecuritySet { get; set; }
         public int ContentItemId { get; set; }
         public JournalEntity JournalAuthor { get; set; }
+        public JournalEntity JournalOwner { get; set; }
         public string TimeFrame { get; set; }
         public bool CurrentUserLikes { get; set; }
         public string JournalType { get; set; }
@@ -110,6 +111,7 @@ namespace DotNetNuke.Services.Journal {
             }
             ContentItemId = Null.SetNullInteger(dr["ContentItemId"]);
             JournalAuthor = new JournalEntity(dr["JournalAuthor"].ToString());
+            JournalOwner = new JournalEntity(dr["JournalOwner"].ToString());
             JournalType = Null.SetNullString(dr["JournalType"]);
     
             

@@ -160,6 +160,7 @@
   </Target>
   <Target Name="DebugProject">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\FiftyOne.Foundation.dll" DestinationFolder="../../../../Website/bin$(Providers)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin$(Providers)" />
   </Target>

@@ -133,7 +133,7 @@ namespace DotNetNuke.Entities.Profile
                 definition.PropertyCategory = Convert.ToString(Null.SetNull(dr["PropertyCategory"], definition.PropertyCategory));
                 definition.PropertyName = Convert.ToString(Null.SetNull(dr["PropertyName"], definition.PropertyName));
                 definition.Length = Convert.ToInt32(Null.SetNull(dr["Length"], definition.Length));
-                if (dr.GetSchemaTable().Columns.Contains("ReadOnly"))
+                if (dr.GetSchemaTable().Select("ColumnName = 'ReadOnly'").Length > 0)
                 {
                     definition.ReadOnly = Convert.ToBoolean(Null.SetNull(dr["ReadOnly"], definition.ReadOnly));
                 }
