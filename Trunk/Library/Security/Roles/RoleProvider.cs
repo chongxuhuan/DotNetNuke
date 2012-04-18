@@ -105,7 +105,7 @@ namespace DotNetNuke.Security.Roles
 
         public abstract UserRoleInfo GetUserRole(int PortalId, int UserId, int RoleId);
 
-        public abstract ArrayList GetUserRoles(int PortalId, string Username, string Rolename);
+        public abstract ArrayList GetUserRoles(int portalId, string Username, string Rolename);
 
         public abstract ArrayList GetUsersByRoleName(int portalId, string roleName);
 
@@ -123,6 +123,8 @@ namespace DotNetNuke.Security.Roles
         public virtual IList<UserRoleInfo> GetUserRoles(UserInfo user, bool includePrivate)
         {
 #pragma warning disable 612,618
+            //The virtual implmenetations of GetUserRoles(UserInfo, bool) and GetUserRoles(int, int, bool)
+            //are recursive.  A concrete provider will override one of these methods and break the inifinite recursion
             return GetUserRoles(user.PortalID, user.UserID, includePrivate).Cast<UserRoleInfo>().ToList();
 #pragma warning restore 612,618
         }
@@ -179,10 +181,18 @@ namespace DotNetNuke.Security.Roles
         }
 
         [Obsolete("Deprecated in DotNetNuke 6.2. Replaced by overload that returns IList")]
-        public virtual ArrayList GetUserRoles(int PortalId, int UserId, bool includePrivate)
+        public virtual ArrayList GetUserRoles(int portalId, int userId, bool includePrivate)
         {
-            UserController userController = new UserController();
-            UserInfo user = userController.GetUser(PortalId, UserId);
+            UserInfo user;
+            if(userId != -1)
+            {
+                var userController = new UserController();
+                user = userController.GetUser(portalId, userId);
+            }
+            else
+            {
+                user = new UserInfo() {UserID = -1, PortalID = portalId};
+            }
 
             return new ArrayList(GetUserRoles(user, includePrivate).ToArray());
         }

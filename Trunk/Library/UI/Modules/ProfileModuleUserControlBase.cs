@@ -96,7 +96,9 @@ namespace DotNetNuke.UI.Modules
 
         protected override void OnInit(EventArgs e)
         {
-            if (ProfileUserId == Null.NullInteger)
+            if (ProfileUserId == Null.NullInteger && 
+                            (ModuleContext.PortalSettings.ActiveTab.TabID == ModuleContext.PortalSettings.UserTabId 
+                                || ModuleContext.PortalSettings.ActiveTab.ParentId == ModuleContext.PortalSettings.UserTabId))
             {
                 //Clicked on breadcrumb - don't know which user
                 Response.Redirect(Request.IsAuthenticated

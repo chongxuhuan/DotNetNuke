@@ -36,8 +36,10 @@ namespace DotNetNuke.Web.CoreServices
         #region Friend APIs
 
         [DnnAuthorize]
-        public ActionResult AcceptFriend(int notificationId, string key)
+        public ActionResult AcceptFriend(int notificationId)
         {
+            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Accept");
+            var key = action.Key;
             int initiatingUserId;
             if (int.TryParse(key, out initiatingUserId))
             {
@@ -59,8 +61,10 @@ namespace DotNetNuke.Web.CoreServices
         }
 
         [DnnAuthorize]
-        public ActionResult RejectFriend(int notificationId, string key)
+        public ActionResult RejectFriend(int notificationId)
         {
+            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Reject");
+            var key = action.Key;
             int initiatingUserId;
             if (int.TryParse(key, out initiatingUserId))
             {
@@ -82,8 +86,10 @@ namespace DotNetNuke.Web.CoreServices
         }
 
         [DnnAuthorize]
-        public ActionResult IgnoreFriend(int notificationId, string key)
+        public ActionResult IgnoreFriend(int notificationId)
         {
+            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Ignore");
+            var key = action.Key;
             int initiatingUserId;
             if (int.TryParse(key, out initiatingUserId))
             {
@@ -105,8 +111,10 @@ namespace DotNetNuke.Web.CoreServices
         }
 
         [DnnAuthorize]
-        public ActionResult ReportFriend(int notificationId, string key)
+        public ActionResult ReportFriend(int notificationId)
         {
+            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Report");
+            var key = action.Key;
             int initiatingUserId;
             if (int.TryParse(key, out initiatingUserId))
             {
@@ -128,8 +136,10 @@ namespace DotNetNuke.Web.CoreServices
         }
 
         [DnnAuthorize]
-        public ActionResult BlockFriend(int notificationId, string key)
+        public ActionResult BlockFriend(int notificationId)
         {
+            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Block");
+            var key = action.Key;
             int initiatingUserId;
             if (int.TryParse(key, out initiatingUserId))
             {
@@ -155,8 +165,10 @@ namespace DotNetNuke.Web.CoreServices
         #region Follower APIs
 
         [DnnAuthorize]
-        public ActionResult ReportFollower(int notificationId, string key)
+        public ActionResult ReportFollower(int notificationId)
         {
+            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Report");
+            var key = action.Key;
             int initiatingUserId;
             if (int.TryParse(key, out initiatingUserId))
             {
@@ -178,8 +190,10 @@ namespace DotNetNuke.Web.CoreServices
         }
 
         [DnnAuthorize]
-        public ActionResult BlockFollower(int notificationId, string key)
+        public ActionResult BlockFollower(int notificationId)
         {
+            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Block");
+            var key = action.Key;
             int initiatingUserId;
             if (int.TryParse(key, out initiatingUserId))
             {
@@ -205,8 +219,10 @@ namespace DotNetNuke.Web.CoreServices
         #region FollowBack APIS
 
         [DnnAuthorize]
-        public ActionResult FollowBack(int notificationId, string key)
+        public ActionResult FollowBack(int notificationId)
         {
+            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "FollowBack");
+            var key = action.Key;
             int targetUserId;
             if (int.TryParse(key, out targetUserId))
             {

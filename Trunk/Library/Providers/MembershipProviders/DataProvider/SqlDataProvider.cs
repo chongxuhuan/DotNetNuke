@@ -258,6 +258,11 @@ namespace DotNetNuke.Security.Membership.Data
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetSuperUsers"));
         }
 
+        public override IDataReader GetUsers(int portalId)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsers"), GetNull(portalId));
+        }
+
         //Roles
         public override int AddRole(int portalId, int roleGroupId, string roleName, string description, float serviceFee, string billingPeriod, string billingFrequency, float trialFee, int trialPeriod,
                                     string trialFrequency, bool isPublic, bool autoAssignment, string rsvpCode, string iconFile, int createdByUserID, int status, int securityMode)
@@ -375,6 +380,21 @@ namespace DotNetNuke.Security.Membership.Data
         }
 
         //User Roles
+        public override int AddUserRole(int portalId, int userId, int roleId, int status, bool isOwner, DateTime effectiveDate, DateTime expiryDate, int createdByUserID)
+        {
+            return Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, GetFullyQualifiedName("AddUserRole"), portalId, userId, roleId, status, isOwner, GetNull(effectiveDate), GetNull(expiryDate), createdByUserID));
+        }
+
+        public override void DeleteUserRole(int userId, int roleId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("DeleteUserRole"), userId, roleId);
+        }
+
+        public override IDataReader GetServices(int portalId, int userId)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetServices"), portalId, GetNull(userId));
+        }
+
         public override IDataReader GetUserRole(int portalID, int userId, int roleId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUserRole"), portalID, userId, roleId);
@@ -390,35 +410,9 @@ namespace DotNetNuke.Security.Membership.Data
             return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUserRolesByUsername"), portalID, GetNull(username), GetNull(rolename));
         }
 
-        public int AddUserRole(int portalId, int roleId, DateTime effectiveDate, DateTime expiryDate, int createdByUserID)
+        public override void UpdateUserRole(int userRoleId, int status, bool isOwner, DateTime effectiveDate, DateTime expiryDate, int lastModifiedByUserID)
         {
-            return AddUserRole(portalId, 0, roleId, effectiveDate, expiryDate, createdByUserID);
-        }
-
-        public override int AddUserRole(int portalId, int userId, int roleId, DateTime effectiveDate, DateTime expiryDate, int createdByUserID)
-        {
-            return
-                Convert.ToInt32(SqlHelper.ExecuteScalar(ConnectionString, GetFullyQualifiedName("AddUserRole"), portalId, userId, roleId, GetNull(effectiveDate), GetNull(expiryDate), createdByUserID));
-        }
-
-        public override void UpdateUserRole(int userRoleId, DateTime effectiveDate, DateTime expiryDate, int lastModifiedByUserID)
-        {
-            SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("UpdateUserRole"), userRoleId, GetNull(effectiveDate), GetNull(expiryDate), lastModifiedByUserID);
-        }
-
-        public override void DeleteUserRole(int userId, int roleId)
-        {
-            SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("DeleteUserRole"), userId, roleId);
-        }
-
-        public override IDataReader GetServices(int portalId, int userId)
-        {
-            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetServices"), portalId, GetNull(userId));
-        }
-
-        public override IDataReader GetUsers(int portalId)
-        {
-            return SqlHelper.ExecuteReader(ConnectionString, GetFullyQualifiedName("GetUsers"), GetNull(portalId));
+            SqlHelper.ExecuteNonQuery(ConnectionString, GetFullyQualifiedName("UpdateUserRole"), userRoleId, status, isOwner, GetNull(effectiveDate), GetNull(expiryDate), lastModifiedByUserID);
         }
 
         //Profile

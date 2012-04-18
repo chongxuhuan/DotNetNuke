@@ -712,7 +712,7 @@ namespace DotNetNuke.Entities.Modules
                         GetModuleContent(nodeModule, intModuleId, tabId, portalId);
                     }
                     //Process permissions only once
-                    if (!isInstance)
+                    if (!isInstance && portalId != Null.NullInteger)
                     {
                         XmlNodeList nodeModulePermissions = nodeModule.SelectNodes("modulepermissions/permission");
                         DeserializeModulePermissions(nodeModulePermissions, portalId, module);

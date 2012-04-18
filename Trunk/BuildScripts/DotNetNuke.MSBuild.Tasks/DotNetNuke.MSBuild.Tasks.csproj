@@ -105,6 +105,8 @@
   <ItemGroup>
     <Compile Include="BuildSignatureDatabaseTask.cs" />
     <Compile Include="CodePlexDelete.cs" />
+    <Compile Include="CheckForOptimize.cs" />
+    <Compile Include="ProcessTemplates.cs" />
     <Compile Include="ProcessStoreProjectFile.cs" />
     <Compile Include="DeleteIISSite.cs" />
     <Compile Include="DotNetNukeDeployWebClient.cs">

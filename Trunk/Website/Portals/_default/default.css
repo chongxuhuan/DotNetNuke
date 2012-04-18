@@ -367,6 +367,8 @@ div.SearchIcon img{margin-top:3px;}
 	        background: -webkit-linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* Chrome10+,Safari5.1+ */
 	        background: -o-linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* Opera 11.10+ */
 	        background: linear-gradient(top, rgba(243,243,243,1) 0%,rgba(231,231,231,1) 100%); /* W3C */
+			
+			background: #e7e7e7 url(../../images/dnnTertiaryButtonBG.png) repeat-x 0 0; 
 		
 	        -webkit-border-radius: 	3px;
 	        -moz-border-radius: 	3px;
@@ -382,6 +384,7 @@ div.SearchIcon img{margin-top:3px;}
 	        background:#666;
 	        color:#ddd;
 	        text-shadow:none;
+			text-decoration:none;
 		
 	        -webkit-box-shadow: 	inset 0px 0px 5px 0px #555;
 	        -moz-box-shadow: 		inset 0px 0px 5px 0px #555;
@@ -392,6 +395,7 @@ div.SearchIcon img{margin-top:3px;}
         /* Disabled Hover */
         .dnnTertiaryAction.disabled:hover{
 	        background: rgb(243,243,243); /* Old browsers */ cursor:default; color:#0091E1;/*baby blue*/ text-shadow:none;
+			text-decoration:none;
 			
 	        /*CSS3*/
 	        -webkit-box-shadow: 	1px 1px 0px 0px #ccc;

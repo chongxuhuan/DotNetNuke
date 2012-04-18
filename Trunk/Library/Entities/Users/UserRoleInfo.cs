@@ -59,6 +59,8 @@ namespace DotNetNuke.Entities.Users
 
         public DateTime ExpiryDate { get; set; }
 
+        public bool IsOwner { get; set; }
+        
         public bool IsTrialUsed { get; set; }
 
         public bool Subscribed { get; set; }
@@ -77,6 +79,7 @@ namespace DotNetNuke.Entities.Users
             Email = Null.SetNullString(dr["Email"]);
             EffectiveDate = Null.SetNullDateTime(dr["EffectiveDate"]);
             ExpiryDate = Null.SetNullDateTime(dr["ExpiryDate"]);
+            IsOwner = Null.SetNullBoolean(dr["IsOwner"]);
             IsTrialUsed = Null.SetNullBoolean(dr["IsTrialUsed"]);
             if (UserRoleID > Null.NullInteger)
             {

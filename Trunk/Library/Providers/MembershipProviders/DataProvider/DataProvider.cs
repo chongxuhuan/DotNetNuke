@@ -121,12 +121,12 @@ namespace DotNetNuke.Security.Membership.Data
         public abstract void UpdateRoleGroup(int roleGroupId, string groupName, string description, int lastModifiedByUserID);
 
         // User Roles
+        public abstract int AddUserRole(int portalID, int userId, int roleId, int status, bool isOwner, DateTime effectiveDate, DateTime expiryDate, int createdByUserID);
+        public abstract void DeleteUserRole(int userId, int roleId);
         public abstract IDataReader GetUserRole(int portalID, int userId, int roleId);
         public abstract IDataReader GetUserRoles(int portalID, int userId);
         public abstract IDataReader GetUserRolesByUsername(int portalID, string username, string rolename);
-        public abstract int AddUserRole(int portalID, int userId, int roleId, DateTime effectiveDate, DateTime expiryDate, int createdByUserID);
-        public abstract void UpdateUserRole(int userRoleId, DateTime effectiveDate, DateTime expiryDate, int lastModifiedByUserID);
-        public abstract void DeleteUserRole(int userId, int roleId);
+        public abstract void UpdateUserRole(int userRoleId, int status, bool isOwner, DateTime effectiveDate, DateTime expiryDate, int lastModifiedByUserID);
 
         // Services
         public abstract IDataReader GetServices(int portalId, int userId);

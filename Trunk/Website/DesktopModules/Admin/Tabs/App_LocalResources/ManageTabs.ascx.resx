@@ -235,7 +235,7 @@
     <value>Keywords</value>
   </data>
   <data name="KeyWordsHelp.Text" xml:space="preserve">
-    <value>Enter some keywords for this page (separated by commas).  These keywords are used by search engines to help index your site's pages.</value>
+    <value>Enter some keywords for this page (separated by commas).  These keywords are used by some internet search engines like Google to help index your site's pages.</value>
   </data>
   <data name="plSecure.Text" xml:space="preserve">
     <value>Secure?</value>

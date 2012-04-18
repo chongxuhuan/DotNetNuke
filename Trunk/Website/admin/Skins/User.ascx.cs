@@ -21,14 +21,20 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Web;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Modules.Definitions;
+using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Messaging;
+using DotNetNuke.Services.Social.Notifications;
 
 #endregion
 
@@ -112,14 +118,14 @@ namespace DotNetNuke.UI.Skins.Controls
                 }
                 else
                 {
-                    var objUserInfo = UserController.GetCurrentUserInfo();
-                    if (objUserInfo.UserID != -1)
+                    var userInfo = UserController.GetCurrentUserInfo();
+                    if (userInfo.UserID != -1)
                     {
                         var messagingController = new MessagingController();
 
-                        int messageCount = messagingController.GetNewMessageCount(PortalSettings.PortalId, objUserInfo.UserID);
+                        int messageCount = messagingController.GetNewMessageCount(PortalSettings.PortalId, userInfo.UserID);
 
-                        registerLink.Text = objUserInfo.DisplayName;
+                        registerLink.Text = userInfo.DisplayName;
 
                         if ((ShowUnreadMessages && messageCount > 0))
                         {
@@ -134,9 +140,24 @@ namespace DotNetNuke.UI.Skins.Controls
                             registerLink.ToolTip = Localization.GetString("ToolTip", Localization.GetResourceFile(this, MyFileName));
                         }
 
-                        if (objUserInfo.UserID != -1)
+                        if (userInfo.UserID != -1)
                         {
-                            registerLink.NavigateUrl =Globals.UserProfileURL(objUserInfo.UserID);
+                            registerLink.NavigateUrl =Globals.UserProfileURL(userInfo.UserID);
+                        }
+
+                        var unreadMessages = Services.Social.Messaging.MessagingController.Instance.CountUnreadMessages(userInfo.UserID, userInfo.PortalID);
+                        var unreadAlerts = NotificationsController.Instance.CountNotifications(userInfo.UserID, userInfo.PortalID);
+
+                        if (ShowUnreadMessages)
+                        {                         
+                            messageLink.Text = string.Format("Inbox ({0})", unreadMessages);
+                            notificationLink.Text = string.Format("Alerts ({0})", unreadAlerts);
+                            //TODO - Tooltip and Localize the texts
+
+                            var messageTabUrl = Globals.NavigateURL(GetMessageTab());
+                            messageLink.NavigateUrl = messageTabUrl;
+                            notificationLink.NavigateUrl = messageTabUrl;
+
                         }
                     }
                 }
@@ -145,6 +166,34 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+        }
+
+        private int GetMessageTab()
+        {            
+            var tabController = new TabController();            
+            var moduleController = new ModuleController();
+
+            //On brand new install the new Message Center Module is on the child page of User Profile Page 
+            //On Upgrade to 6.2.0, the Message Center module is on the User Profile Page
+            var profileTab = tabController.GetTab(PortalSettings.UserTabId, PortalSettings.PortalId, true);
+            if (profileTab != null)
+            {
+                var childTabs = tabController.GetTabsByPortal(profileTab.PortalID).DescendentsOf(profileTab.TabID);
+                foreach (TabInfo tab in childTabs)
+                {
+                    foreach (KeyValuePair<int, ModuleInfo> kvp in moduleController.GetTabModules(tab.TabID))
+                    {
+                        var module = kvp.Value;
+                        if (module.DesktopModule.FriendlyName == "Message Center")
+                        {
+                            return tab.TabID;
+                        }
+                    }
+                }                  
+            }                        
+
+            //still can't find, just hookup with the User Profile Page
+            return PortalSettings.UserTabId;
         }
     }
 }

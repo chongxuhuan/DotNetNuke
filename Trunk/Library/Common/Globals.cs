@@ -3824,6 +3824,35 @@ namespace DotNetNuke.Common
             return isHostTab;
         }
 
+
+        /// <summary>
+        /// Return User Profile Picture Formatted Url. UserId, width and height can be passed to build a formatted Avatar Url.
+        /// </summary>        
+        /// <returns>Formatted url, e.g. http://www.mysite.com/profilepic.ashx?userid={0}&h={1}&w={2}</returns>
+        /// <remarks>Usage: ascx - <asp:Image ID="avatar" runat="server" CssClass="SkinObject" />
+        /// code behind - avatar.ImageUrl = string.Format(Globals.UserProfilePicFormattedUrl(), userInfo.UserID, 32, 32)
+        /// </remarks>
+        public static string UserProfilePicFormattedUrl()
+        {
+            var avatarUrl = PortalController.GetCurrentPortalSettings().DefaultPortalAlias;
+            if (string.IsNullOrEmpty(avatarUrl))
+            {
+                avatarUrl = HttpContext.Current.Request.Url.Host;
+            }
+            if (HttpContext.Current.Request.IsSecureConnection)
+            {
+                avatarUrl = "https://" + avatarUrl;
+            }
+            else
+            {
+                avatarUrl = "http://" + avatarUrl;
+            }
+
+            avatarUrl += "/profilepic.ashx?userid={0}&h={1}&w={2}";            
+
+            return avatarUrl;
+        }
+
         #region "Obsolete - retained for Binary Compatability"
 
         // TODO:  These constants are deprecated but cannot be removed until the next batch of breaking change

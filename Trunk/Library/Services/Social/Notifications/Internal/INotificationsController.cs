@@ -182,6 +182,14 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
         /// <param name="notificationTypeActionId">The notification type action identifier.</param>
         /// <returns>The notification action with the provided notification and notification type action.</returns>
         NotificationAction GetNotificationAction(int notificationId, int notificationTypeActionId);
+
+        /// <summary>
+        /// Gets a notification action by notification and notification type action name.
+        /// </summary>
+        /// <param name="notificationId">The notification identifier.</param>
+        /// <param name="notificationTypeActionName">The notification type action name.</param>
+        /// <returns>The notification action with the provided notification and notification type action name.</returns>
+        NotificationAction GetNotificationAction(int notificationId, string notificationTypeActionName);
         
         /// <summary>
         /// Gets the list of notification actions for the provided notification.

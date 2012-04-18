@@ -55,6 +55,7 @@ namespace DotNetNuke.Services.Social.Notifications.Data
         IDataReader GetNotificationAction(int notificationActionId);
         IDataReader GetNotificationActionsByMessageId(int messageId);
         IDataReader GetNotificationActionByMessageAndNotificationTypeAction(int messageId, int notificationTypeActionId);
+        IDataReader GetNotificationActionByMessageAndNotificationTypeActionName(int messageId, string nameResourceKey);
 
         #endregion
 

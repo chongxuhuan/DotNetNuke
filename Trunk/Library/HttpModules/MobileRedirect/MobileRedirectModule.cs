@@ -80,6 +80,7 @@ namespace DotNetNuke.HttpModules
                     || app.Request.Url.LocalPath.ToLower().EndsWith("captcha.aspx")
                     || app.Request.Url.LocalPath.ToLower().EndsWith("scriptresource.axd")
                     || app.Request.Url.LocalPath.ToLower().EndsWith("webresource.axd")
+                    || app.Request.Url.LocalPath.ToLower().EndsWith("sitemap.aspx")
                     || app.Request.Url.LocalPath.ToLower().EndsWith(".asmx")
                     || app.Request.Url.LocalPath.ToLower().EndsWith(".ashx")
                     || app.Request.Url.LocalPath.ToLower().EndsWith(".svc"))

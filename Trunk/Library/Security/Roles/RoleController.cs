@@ -206,15 +206,10 @@ namespace DotNetNuke.Security.Roles
         /// <param name="userId">The Id of the User</param>
         /// <param name="roleId">The Id of the Role</param>
         /// <param name="expiryDate">The expiry Date of the Role membership</param>
-        /// <history>
-        /// 	[cnurse]	05/24/2005	Documented
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        ///     [cnurse]    05/12/2006  Now calls new overload with EffectiveDate = Now()
-        /// </history>
         /// -----------------------------------------------------------------------------
         public void AddUserRole(int portalId, int userId, int roleId, DateTime expiryDate)
         {
-            AddUserRole(portalId, userId, roleId, Null.NullDate, expiryDate);
+            AddUserRole(portalId, userId, roleId, RoleStatus.Approved, false, Null.NullDate, expiryDate);
         }
 
         /// -----------------------------------------------------------------------------
@@ -227,31 +222,37 @@ namespace DotNetNuke.Security.Roles
         /// <param name="roleId">The Id of the Role</param>
         /// <param name="effectiveDate">The expiry Date of the Role membership</param>
         /// <param name="expiryDate">The expiry Date of the Role membership</param>
-        /// <history>
-        ///     [cnurse]    05/12/2006  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public void AddUserRole(int portalId, int userId, int roleId, DateTime effectiveDate, DateTime expiryDate)
+        {
+            AddUserRole(portalId, userId, roleId, RoleStatus.Approved, false, effectiveDate, expiryDate);
+        }
+
+        public void AddUserRole(int portalId, int userId, int roleId, RoleStatus status, bool isOwner, DateTime effectiveDate, DateTime expiryDate)
         {
             UserInfo user = UserController.GetUserById(portalId, userId);
             UserRoleInfo userRole = GetUserRole(portalId, userId, roleId);
             var eventLogController = new EventLogController();
             if (userRole == null)
             {
-				//Create new UserRole
+                //Create new UserRole
                 userRole = new UserRoleInfo
-                               {
-                                   UserID = userId, 
-                                   RoleID = roleId, 
-                                   PortalID = portalId, 
-                                   EffectiveDate = effectiveDate, 
-                                   ExpiryDate = expiryDate
-                               };
+                {
+                    UserID = userId,
+                    RoleID = roleId,
+                    PortalID = portalId,
+                    Status = status,
+                    IsOwner = isOwner,
+                    EffectiveDate = effectiveDate,
+                    ExpiryDate = expiryDate
+                };
                 provider.AddUserToRole(portalId, user, userRole);
                 eventLogController.AddLog(userRole, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.USER_ROLE_CREATED);
             }
             else
             {
+                userRole.Status = status;
+                userRole.IsOwner = isOwner;
                 userRole.EffectiveDate = effectiveDate;
                 userRole.ExpiryDate = expiryDate;
                 provider.UpdateUserRole(userRole);
@@ -273,9 +274,6 @@ namespace DotNetNuke.Security.Roles
         /// <param name="expiryDate">The expiry Date of the Role membership</param>
         /// <param name="userId">The Id of the User assigning the role</param>
         /// <param name="notifyUser">A flag that indicates whether the user should be notified</param>
-        /// <history>
-        ///     [cnurse]    10/17/2007  Created  (Refactored code from Security Roles user control)
-        /// </history>
         /// -----------------------------------------------------------------------------
         public static void AddUserRole(UserInfo user, RoleInfo role, PortalSettings portalSettings, DateTime effectiveDate, DateTime expiryDate, int userId, bool notifyUser)
         {
@@ -443,13 +441,10 @@ namespace DotNetNuke.Security.Roles
 		/// <param name="portalId">The Id of the Portal</param>
 		/// <param name="userId">The Id of the User</param>
 		/// <param name="roleId">The Id of the Role</param>
-        /// <history>
-        /// 	[Nik Kalyani]	10/15/2004	Created multiple signatures to eliminate Optional parameters
-        /// </history>
         /// -----------------------------------------------------------------------------
         public void UpdateUserRole(int portalId, int userId, int roleId)
         {
-			UpdateUserRole(portalId, userId, roleId, false);
+            UpdateUserRole(portalId, userId, roleId, RoleStatus.Approved, false, false);
         }
 
         /// -----------------------------------------------------------------------------
@@ -460,12 +455,13 @@ namespace DotNetNuke.Security.Roles
         /// <param name="userId">The Id of the User</param>
         /// <param name="roleId">The Id of the Role</param>
         /// <param name="cancel">A flag that indicates whether to cancel (delete) the userrole</param>
-        /// <history>
-        /// 	[Nik Kalyani]	10/15/2004	Created multiple signatures to eliminate Optional parameters
-        ///     [cnurse]    12/15/2005  Abstracted to MembershipProvider
-        /// </history>
         /// -----------------------------------------------------------------------------
         public void UpdateUserRole(int portalId, int userId, int roleId, bool cancel)
+        {
+            UpdateUserRole(portalId, userId, roleId, RoleStatus.Approved, false, cancel);
+        }
+
+        public void UpdateUserRole(int portalId, int userId, int roleId, RoleStatus status, bool isOwner, bool cancel)
         {
             UserInfo user = UserController.GetUserById(portalId, userId);
             UserRoleInfo userRole = GetUserRole(portalId, userId, roleId);
@@ -474,14 +470,16 @@ namespace DotNetNuke.Security.Roles
             {
                 if (userRole != null && userRole.ServiceFee > 0.0 && userRole.IsTrialUsed)
                 {
-					//Expire Role so we retain trial used data
+                    //Expire Role so we retain trial used data
                     userRole.ExpiryDate = DateTime.Now.AddDays(-1);
+                    userRole.Status = status;
+                    userRole.IsOwner = isOwner;
                     provider.UpdateUserRole(userRole);
                     eventLogController.AddLog(userRole, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.USER_ROLE_UPDATED);
                 }
                 else
                 {
-					//Delete Role
+                    //Delete Role
                     DeleteUserRoleInternal(portalId, userId, roleId);
                     eventLogController.AddLog("UserId",
                                        userId.ToString(CultureInfo.InvariantCulture),
@@ -545,7 +543,7 @@ namespace DotNetNuke.Security.Roles
                             ExpiryDate = ExpiryDate.AddDays(Period);
                             break;
                         case "W":
-                            ExpiryDate = ExpiryDate.AddDays(Period*7);
+                            ExpiryDate = ExpiryDate.AddDays(Period * 7);
                             break;
                         case "M":
                             ExpiryDate = ExpiryDate.AddMonths(Period);
@@ -558,12 +556,14 @@ namespace DotNetNuke.Security.Roles
                 if (UserRoleId != -1 && userRole != null)
                 {
                     userRole.ExpiryDate = ExpiryDate;
+                    userRole.Status = status;
+                    userRole.IsOwner = isOwner;
                     provider.UpdateUserRole(userRole);
                     eventLogController.AddLog(userRole, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.USER_ROLE_UPDATED);
                 }
                 else
                 {
-                    AddUserRole(portalId, userId, roleId, EffectiveDate, ExpiryDate);
+                    AddUserRole(portalId, userId, roleId, status, isOwner, EffectiveDate, ExpiryDate);
                 }
             }
 

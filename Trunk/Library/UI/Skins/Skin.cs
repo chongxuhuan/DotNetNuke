@@ -897,7 +897,7 @@ namespace DotNetNuke.UI.Skins
             //try to inject the module into the pane
             try
             {
-                if(PortalSettings.ActiveTab.TabID == PortalSettings.UserTabId)
+                if(PortalSettings.ActiveTab.TabID == PortalSettings.UserTabId || PortalSettings.ActiveTab.ParentId == PortalSettings.UserTabId)
                 {
                     var profileModule = ModuleControlFactory.LoadModuleControl(Page, module) as IProfileModule;
                     if (profileModule == null || profileModule.DisplayModule)

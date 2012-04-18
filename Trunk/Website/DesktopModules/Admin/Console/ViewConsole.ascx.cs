@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -416,7 +417,24 @@ namespace DesktopModules.Admin.Console
 			}
 			else
 			{
-                const string contentHtml = "<div>" + "<a href=\"{0}\"><img src=\"{1}\" alt=\"{3}\" width=\"16px\" height=\"16px\"/><img src=\"{2}\" alt=\"{3}\" width=\"32px\" height=\"32px\"/></a>" + "<h3>{3}</h3>" + "<div>{4}</div>" + "</div>";
+			    var sb = new StringBuilder();
+                if(tab.TabID == PortalSettings.ActiveTab.TabID)
+                {
+                    sb.Append("<div class=\"active\">");
+                }
+                else
+                {
+                    sb.Append("<div>");
+                }
+                sb.Append("<a href=\"{0}\">");
+			    sb.Append("<img src=\"{1}\" alt=\"{3}\" width=\"16px\" height=\"16px\"/>");
+                sb.Append("<img src=\"{2}\" alt=\"{3}\" width=\"32px\" height=\"32px\"/>");
+                sb.Append("</a>");
+                sb.Append("<h3>{3}</h3>");
+                sb.Append("<div>{4}</div>");
+			    sb.Append("</div>");
+
+                //const string contentHtml = "<div>" + "<a href=\"{0}\"><img src=\"{1}\" alt=\"{3}\" width=\"16px\" height=\"16px\"/><img src=\"{2}\" alt=\"{3}\" width=\"32px\" height=\"32px\"/></a>" + "<h3>{3}</h3>" + "<div>{4}</div>" + "</div>";
 
 			    var tabUrl = Globals.NavigateURL(tab.TabID);
                 if (ProfileUserId > -1)
@@ -429,7 +447,7 @@ namespace DesktopModules.Admin.Console
                     tabUrl = Globals.NavigateURL(tab.TabID, "", "GroupId=" + GroupId.ToString(CultureInfo.InvariantCulture));
                 }
 
-				returnValue += string.Format(contentHtml,
+				returnValue += string.Format(sb.ToString(),
                                              tabUrl,
 											 GetIconUrl(dataItem, "IconFile"),
 											 GetIconUrl(dataItem, "IconFileLarge"),

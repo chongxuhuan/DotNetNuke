@@ -433,6 +433,17 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
         }
 
         /// <summary>
+        /// Gets a notification action by notification and notification type action name.
+        /// </summary>
+        /// <param name="notificationId">The notification identifier.</param>
+        /// <param name="notificationTypeActionName">The notification type action name.</param>
+        /// <returns>The notification action with the provided notification and notification type action name.</returns>
+        public virtual NotificationAction GetNotificationAction(int notificationId, string notificationTypeActionName)
+        {
+            return CBO.FillObject<NotificationAction>(_dataService.GetNotificationActionByMessageAndNotificationTypeActionName(notificationId, notificationTypeActionName));
+        }
+
+        /// <summary>
         /// Gets the list of notification actions for the provided notification.
         /// </summary>
         /// <param name="notificationId">The notification identifier.</param>

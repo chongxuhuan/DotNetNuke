@@ -29,6 +29,7 @@ using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Users;
@@ -88,7 +89,8 @@ namespace DotNetNuke.Security.Membership
         private void AddDNNUserRole(UserRoleInfo userRole)
         {
             //Add UserRole to DNN
-            userRole.UserRoleID = Convert.ToInt32(dataProvider.AddUserRole(userRole.PortalID, userRole.UserID, userRole.RoleID, 
+            userRole.UserRoleID = Convert.ToInt32(dataProvider.AddUserRole(userRole.PortalID, userRole.UserID, userRole.RoleID,
+                                                                (int)userRole.Status, userRole.IsOwner,
                                                                 userRole.EffectiveDate, userRole.ExpiryDate, 
                                                                 UserController.GetCurrentUserInfo().UserID));
         }
@@ -168,8 +170,6 @@ namespace DotNetNuke.Security.Membership
         {
             return CBO.FillCollection<RoleInfo>(dataProvider.GetRolesBasicSearch(portalID, pageSize, filterBy));
         }
-
-      
 
         public override IDictionary<string, string> GetRoleSettings(int roleId)
         {
@@ -286,6 +286,8 @@ namespace DotNetNuke.Security.Membership
         /// <returns>A list of UserRoleInfo objects</returns>
         public override IList<UserRoleInfo> GetUserRoles(UserInfo user, bool includePrivate)
         {
+            Requires.NotNull("user", user);
+            
             return CBO.FillCollection<UserRoleInfo>(includePrivate 
                     ? dataProvider.GetUserRoles(user.PortalID, user.UserID) 
                     : dataProvider.GetServices(user.PortalID, user.UserID));
@@ -356,7 +358,10 @@ namespace DotNetNuke.Security.Membership
         /// -----------------------------------------------------------------------------
         public override void UpdateUserRole(UserRoleInfo userRole)
         {
-            dataProvider.UpdateUserRole(userRole.UserRoleID, userRole.EffectiveDate, userRole.ExpiryDate, UserController.GetCurrentUserInfo().UserID);
+            dataProvider.UpdateUserRole(userRole.UserRoleID,
+                                        (int)userRole.Status, userRole.IsOwner,
+                                        userRole.EffectiveDate, userRole.ExpiryDate, 
+                                        UserController.GetCurrentUserInfo().UserID);
 		}
 
 		#endregion
