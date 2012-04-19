@@ -86,6 +86,7 @@ namespace DotNetNuke.UI.Skins.Controls
                     else
                     {
                         loginLink.Text = Localization.GetString("Logout", Localization.GetResourceFile(this, MyFileName));
+                        loginLink.ToolTip = loginLink.Text;
                     }
                     loginLink.NavigateUrl = Globals.NavigateURL(PortalSettings.ActiveTab.TabID, "Logoff");
                 }
@@ -102,6 +103,7 @@ namespace DotNetNuke.UI.Skins.Controls
                     else
                     {
                         loginLink.Text = Localization.GetString("Login", Localization.GetResourceFile(this, MyFileName));
+                        loginLink.ToolTip = loginLink.Text;
                     }
 
                     string returnUrl = HttpContext.Current.Request.RawUrl;

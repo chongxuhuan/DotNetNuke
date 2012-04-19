@@ -96,8 +96,6 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender);
 
-        Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender, DateTime messageDateTime);
-
         int ReplyMessage(int conversationId, string body, IList<int> fileIDs);
 
         int ReplyMessage(int conversationId, string body, IList<int> fileIDs, UserInfo sender);
@@ -114,7 +112,7 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         #region Queued email API's
 
-        MessageRecipient GetNextMessageForDispatch(Guid schedulerInstance);
+        IList<MessageRecipient> GetNextMessagesForDispatch(Guid schedulerInstance,int batchSize);
         void MarkMessageAsDispatched(int messageId, int recipientId);
 
         #endregion

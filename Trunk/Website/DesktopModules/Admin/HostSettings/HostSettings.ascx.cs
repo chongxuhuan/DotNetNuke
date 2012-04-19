@@ -390,6 +390,7 @@ namespace DotNetNuke.Modules.Admin.Host
             chkEnableHelp.Checked = Entities.Host.Host.EnableModuleOnLineHelp;
             chkAutoSync.Checked = Entities.Host.Host.EnableFileAutoSync;
             chkEnableContentLocalization.Checked = Entities.Host.Host.EnableContentLocalization;
+            txtBatch.Text = Entities.Host.Host.MessageSchedulerBatchSize.ToString();
 
             ViewState["SelectedSchedulerMode"] = cboSchedulerMode.SelectedItem.Value;
             ViewState["SelectedLogBufferEnabled"] = chkLogBuffer.Checked;
@@ -813,7 +814,8 @@ namespace DotNetNuke.Modules.Admin.Host
                     HostController.Instance.Update("EnableFileAutoSync", chkAutoSync.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("HelpURL", txtHelpURL.Text, false);
                     HostController.Instance.Update("EnableContentLocalization", chkEnableContentLocalization.Checked ? "Y" : "N", false);
-
+                    HostController.Instance.Update("MessageSchedulerBatchSize", txtBatch.Text, false);
+                    
                     HostController.Instance.Update("EventLogBuffer", chkLogBuffer.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("DefaultPortalSkin", hostSkinCombo.SelectedValue, false);
                     HostController.Instance.Update("DefaultAdminSkin", editSkinCombo.SelectedValue, false);

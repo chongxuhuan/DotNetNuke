@@ -1277,8 +1277,6 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                     }
                             };
 
-            //DataService.RegisterInstance(_mockDataService.Object);
-
             _mockDataService
                 .Setup(ds => ds.CreateNotification(
                     Constants.Messaging_NotificationTypeId,
@@ -1297,6 +1295,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockNotificationsController.Setup(mc => mc.InputFilter(Constants.Messaging_NotificationSubject)).Returns(expectedSubjectFiltered);
             _mockNotificationsController.Setup(mc => mc.InputFilter(Constants.Messaging_NotificationBody)).Returns(expectedBodyFiltered);
+            _mockNotificationsController.Setup(nc => nc.GetExpirationDate(It.IsAny<int>())).Returns(DateTime.MinValue);
 
             var notification = _mockNotificationsController.Object.CreateNotification(
                 Constants.Messaging_NotificationTypeId,
@@ -1333,8 +1332,6 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                     }
                             };
 
-            //DataService.RegisterInstance(_mockDataService.Object);
-
             _mockDataService
                 .Setup(ds => ds.CreateNotification(
                     Constants.Messaging_NotificationTypeId,
@@ -1347,6 +1344,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     It.IsAny<int>(),
                     It.IsAny<DateTime>()))
                 .Verifiable();
+
+            _mockNotificationsController.Setup(nc => nc.GetExpirationDate(It.IsAny<int>())).Returns(DateTime.MinValue);
 
             _mockNotificationsController.Object.CreateNotification(
                 Constants.Messaging_NotificationTypeId,
@@ -1382,9 +1381,6 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                             };
             var users = new List<UserInfo>();
 
-            //DataService.RegisterInstance(_mockDataService.Object);
-            //DotNetNuke.Services.Social.Messaging.Data.DataService.RegisterInstance(_mockMessagingDataService.Object);
-
             _mockDataService
                 .Setup(ds => ds.CreateNotification(
                     Constants.Messaging_NotificationTypeId,
@@ -1402,9 +1398,10 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 .Setup(mds => mds.CreateMessageRecipientsForRole(
                     Constants.Messaging_MessageId_1,
                     Constants.RoleID_RegisteredUsers.ToString(CultureInfo.InvariantCulture),
-                    It.IsAny<int>(),
-                    It.IsAny<DateTime>()))
+                    It.IsAny<int>()))
                 .Verifiable();
+
+            _mockNotificationsController.Setup(nc => nc.GetExpirationDate(It.IsAny<int>())).Returns(DateTime.MinValue);
 
             _mockNotificationsController.Object.CreateNotification(
                 Constants.Messaging_NotificationTypeId,
@@ -1440,9 +1437,6 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                     }
                             };
 
-            //DataService.RegisterInstance(_mockDataService.Object);
-            //DotNetNuke.Services.Social.Messaging.Data.DataService.RegisterInstance(_mockMessagingDataService.Object);
-
             _mockDataService
                 .Setup(ds => ds.CreateNotification(
                     Constants.Messaging_NotificationTypeId,
@@ -1465,13 +1459,14 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _mockMessagingDataService
                 .Setup(mds => mds.SaveMessageRecipient(
                     It.Is<MessageRecipient>(mr => 
-                        mr.MessageID == Constants.Messaging_MessageId_1 && 
-                        mr.UserID == Constants.UserID_User12 && 
-                        mr.Read == false && 
-                        mr.RecipientID == Null.NullInteger),
-                    It.IsAny<int>(),
-                    It.IsAny<DateTime>()))
+                                            mr.MessageID == Constants.Messaging_MessageId_1 && 
+                                            mr.UserID == Constants.UserID_User12 && 
+                                            mr.Read == false && 
+                                            mr.RecipientID == Null.NullInteger),
+                    It.IsAny<int>()))
                 .Verifiable();
+
+            _mockNotificationsController.Setup(nc => nc.GetExpirationDate(It.IsAny<int>())).Returns(DateTime.MinValue);
 
             _mockNotificationsController.Object.CreateNotification(
                 Constants.Messaging_NotificationTypeId,
@@ -1509,9 +1504,6 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                     }
                             };
 
-            //DataService.RegisterInstance(_mockDataService.Object);
-            //DotNetNuke.Services.Social.Messaging.Data.DataService.RegisterInstance(_mockMessagingDataService.Object);
-
             _mockDataService
                 .Setup(ds => ds.CreateNotification(
                     Constants.Messaging_NotificationTypeId,
@@ -1529,8 +1521,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 .Setup(mds => mds.CreateMessageRecipientsForRole(
                     Constants.Messaging_MessageId_1,
                     Constants.RoleID_RegisteredUsers.ToString(CultureInfo.InvariantCulture),
-                    It.IsAny<int>(),
-                    It.IsAny<DateTime>()));
+                    It.IsAny<int>()));
 
             _mockMessagingController
                 .Setup(mc => mc.GetMessageRecipient(
@@ -1541,12 +1532,13 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _mockMessagingDataService
                 .Setup(mds => mds.SaveMessageRecipient(
                     It.Is<MessageRecipient>(mr =>
-                        mr.MessageID == Constants.Messaging_MessageId_1 &&
-                        mr.UserID == Constants.UserID_User12 &&
-                        mr.Read == false &&
-                        mr.RecipientID == Null.NullInteger),
-                    It.IsAny<int>(),
-                    It.IsAny<DateTime>()));
+                                            mr.MessageID == Constants.Messaging_MessageId_1 &&
+                                            mr.UserID == Constants.UserID_User12 &&
+                                            mr.Read == false &&
+                                            mr.RecipientID == Null.NullInteger),
+                    It.IsAny<int>()));
+
+            _mockNotificationsController.Setup(nc => nc.GetExpirationDate(It.IsAny<int>())).Returns(DateTime.MinValue);
 
             var actualNotification = _mockNotificationsController.Object.CreateNotification(
                 Constants.Messaging_NotificationTypeId,

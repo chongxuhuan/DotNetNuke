@@ -18,8 +18,13 @@
   </Target>
   <Target Name="PortalTemplate">
     <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Blank Website.template" DestinationFolder="../Website/Portals/_default" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Blank Website.template.en-US.resx" DestinationFolder="../Website/Portals/_default" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Default Website.template" DestinationFolder="../Website/Portals/_default" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Default Website.template.en-US.resx" DestinationFolder="../Website/Portals/_default" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Default Website.template.resources" DestinationFolder="../Website/Portals/_default" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Mobile Website.template" DestinationFolder="../Website/Portals/_default" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Mobile Website.template.en-US.resx" DestinationFolder="../Website/Portals/_default" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\Community\Templates\Mobile Website.template.resources" DestinationFolder="../Website/Portals/_default" />
   </Target>
   <Target Name="PackageProvider" DependsOnTargets="DDRMenu;PortalTemplate" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </Target>

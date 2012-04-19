@@ -578,6 +578,10 @@
                         runat="server" />
                     <asp:CheckBox ID="chkEnableContentLocalization" runat="server" />
                 </div>
+                 <div class="dnnFormItem">
+						<dnn:Label ID="plBatch" runat="server" ControlName="txtBatch" />
+						<asp:TextBox ID="txtBatch" runat="server" MaxLength="6" />
+					</div>
             </fieldset>
         </div>
     </div>

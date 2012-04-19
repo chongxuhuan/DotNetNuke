@@ -765,6 +765,22 @@ namespace DotNetNuke.Entities.Host
 
         /// -----------------------------------------------------------------------------
         /// <summary>
+        ///   Returns size of the batch used to determine how many emails are sent per CoreMessaging Scheduler run
+        /// </summary>
+        /// <remarks>
+        ///   Defaults to 50
+        /// </remarks>
+        /// -----------------------------------------------------------------------------
+        public static int MessageSchedulerBatchSize
+        {
+            get
+            {
+                return HostController.Instance.GetInteger("MessageSchedulerBatchSize",50);
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
         ///   Gets the Module Caching method
         /// </summary>
         /// <history>

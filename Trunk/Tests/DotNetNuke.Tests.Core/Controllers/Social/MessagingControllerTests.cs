@@ -456,12 +456,11 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             //Assert
             _mockDataService.Verify(ds => ds.SaveMessage(It.Is<Message>(v => v.PortalID == Constants.PORTAL_Zero && v.Subject == "subject"
-                                                                && v.Body == "body"
-                                                                && v.To == "role1,user1"
-                                                                && v.SenderUserID == _adminUserInfo.UserID)
+                                                                             && v.Body == "body"
+                                                                             && v.To == "role1,user1"
+                                                                             && v.SenderUserID == _adminUserInfo.UserID)
                                                                , It.IsAny<int>()
-                                                               , It.IsAny<int>()
-                                                               , It.IsAny<DateTime>()));
+                                                               , It.IsAny<int>()));
         }
 
         [Test]
@@ -510,8 +509,8 @@ namespace DotNetNuke.Tests.Core.Controllers
             var callingSequence = 0;
 
             //Arrange for Assert
-            _mockDataService.Setup(ds => ds.CreateMessageRecipientsForRole(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>())).Callback(() => Assert.That(callingSequence++, Is.EqualTo(0)));
-            _mockDataService.Setup(ds => ds.SaveMessageRecipient(It.IsAny<MessageRecipient>(), It.IsAny<int>(), It.IsAny<DateTime>())).Callback(() => Assert.That(callingSequence++, Is.GreaterThan(0)));
+            _mockDataService.Setup(ds => ds.CreateMessageRecipientsForRole(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>())).Callback(() => Assert.That(callingSequence++, Is.EqualTo(0)));
+            _mockDataService.Setup(ds => ds.SaveMessageRecipient(It.IsAny<MessageRecipient>(), It.IsAny<int>())).Callback(() => Assert.That(callingSequence++, Is.GreaterThan(0)));
 
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
@@ -651,7 +650,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var message = _mockMessagingController.Object.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { _user12UserInfo }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
-            _mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers.ToString(), It.IsAny<int>(), It.IsAny<DateTime>()));
+            _mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers.ToString(), It.IsAny<int>()));
         }
 
         [Test]
@@ -675,7 +674,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var message = messagingController.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { _user12UserInfo }, new List<int> { Constants.FOLDER_ValidFileId }, _hostUserInfo);
 
             //Assert
-            mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers.ToString(), It.IsAny<int>(), It.IsAny<DateTime>()));
+            mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers.ToString(), It.IsAny<int>()));
         }
 
         [Test]
@@ -700,7 +699,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var message = _mockMessagingController.Object.CreateMessage("subject", "body", new List<RoleInfo> { role1, role2 }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
-            _mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers + "," + Constants.RoleID_Administrators, It.IsAny<int>(), It.IsAny<DateTime>()));
+            _mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers + "," + Constants.RoleID_Administrators, It.IsAny<int>()));
         }
 
         [Test]
@@ -724,7 +723,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var message = _mockMessagingController.Object.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
 
             //Assert
-            _mockDataService.Verify(ds => ds.SaveMessageRecipient(It.Is<MessageRecipient>(v => v.MessageID == message.MessageID && v.UserID == user.UserID), It.IsAny<int>(), It.IsAny<DateTime>()));
+            _mockDataService.Verify(ds => ds.SaveMessageRecipient(It.Is<MessageRecipient>(v => v.MessageID == message.MessageID && v.UserID == user.UserID), It.IsAny<int>()));
         }
 
         [Test]

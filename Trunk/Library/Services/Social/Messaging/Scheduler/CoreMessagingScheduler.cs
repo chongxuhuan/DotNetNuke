@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
@@ -65,17 +66,21 @@ namespace DotNetNuke.Services.Social.Messaging.Scheduler
                     bool _messageLeft = true;
                     int _messagesSent = 0;
 
-
+                   
                     while (_messageLeft)
                     {
-                        MessageRecipient currentMessage = MessagingController.Instance.GetNextMessageForDispatch(_schedulerInstance);
+                        IList<MessageRecipient> batchMessages = MessagingController.Instance.GetNextMessagesForDispatch(_schedulerInstance, Convert.ToInt32(Entities.Host.Host.MessageSchedulerBatchSize.ToString()));
                         
-                        if ((currentMessage != null))
+                        if ((batchMessages != null))
                         {
                             try
                             {
-                                SendMessage(currentMessage);
-                                _messagesSent = _messagesSent + 1;
+                                foreach (var messageRecipient in batchMessages)
+                                {
+                                    SendMessage(messageRecipient);
+                                    _messagesSent = _messagesSent + 1;   
+                                }
+                              
                             }
                             catch (Exception e)
                             {

@@ -113,7 +113,7 @@ namespace DotNetNuke.Security.Roles.Internal
 
         public RoleInfo GetRole(int portalId, Func<RoleInfo, bool> predicate)
         {
-            return GetRoles(portalId).Where(predicate).SingleOrDefault();
+            return GetRoles(portalId).Where(predicate).FirstOrDefault();
         }
 
         public IList<RoleInfo> GetRoles(int portalId)

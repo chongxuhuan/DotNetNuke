@@ -937,4 +937,10 @@
   <data name="MinificationSettingsInfo.Title" xml:space="preserve">
     <value>Important note regarding minification settings</value>
   </data>
+  <data name="txtBatch.Text" xml:space="preserve">
+    <value>Number of messages sent in each batch:</value>
+  </data>
+  <data name="txtBatch.Help" xml:space="preserve">
+    <value>The number of messages sent by the messaging scheduler in each batch.</value>
+  </data>
 </root>

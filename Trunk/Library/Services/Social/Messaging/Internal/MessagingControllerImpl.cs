@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -36,7 +35,6 @@ using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Social.Messaging.Data;
 using DotNetNuke.Services.Social.Messaging.Exceptions;
 using DotNetNuke.Services.Social.Messaging.Views;
-using DotNetNuke.Services.Social.Notifications;
 
 #endregion
 
@@ -105,11 +103,6 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
         }
 
         public virtual Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender)
-        {
-            return CreateMessage(subject, body, roles, users, fileIDs, sender, DateTime.Now);
-        }
-
-        public virtual Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender, DateTime messageDateTime)
         {
             if (sender == null || sender.UserID <= 0)
             {
@@ -196,7 +189,7 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
             var message = new Message { Body = body, Subject = subject, To = sbTo.ToString().Trim(','), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName };
 
-            message.MessageID = _dataService.SaveMessage(message, UserController.GetCurrentUserInfo().PortalID,UserController.GetCurrentUserInfo().UserID, messageDateTime);
+            message.MessageID = _dataService.SaveMessage(message, UserController.GetCurrentUserInfo().PortalID,UserController.GetCurrentUserInfo().UserID);
 
             //associate attachments
             if (fileIDs != null)
@@ -216,7 +209,7 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
                     .Aggregate(roleIds, (current, roleId) => current + (roleId + ","))
                     .Trim(',');
 
-                _dataService.CreateMessageRecipientsForRole(message.MessageID, roleIds, UserController.GetCurrentUserInfo().UserID, messageDateTime);
+                _dataService.CreateMessageRecipientsForRole(message.MessageID, roleIds, UserController.GetCurrentUserInfo().UserID);
             }
 
             //send message to each User - this should be called after CreateMessageRecipientsForRole.
@@ -230,7 +223,7 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
             foreach (var recipient in from user in users where GetMessageRecipient(message.MessageID, user.UserID) == null select new MessageRecipient { MessageID = message.MessageID, UserID = user.UserID, Read = false, RecipientID = Null.NullInteger })
             {
-                _dataService.SaveMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID, messageDateTime);
+                _dataService.SaveMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
             }
 
             // Mark the conversation as read by the sender of the message.
@@ -540,9 +533,9 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         #region Queued email API's
 
-        public MessageRecipient GetNextMessageForDispatch(Guid schedulerInstance)
+        public IList<MessageRecipient> GetNextMessagesForDispatch(Guid schedulerInstance,int batchSize)
         {
-            return (MessageRecipient)CBO.FillObject(_dataService.GetNextMessageForDispatch(schedulerInstance), typeof(MessageRecipient));
+            return CBO.FillCollection<MessageRecipient>(_dataService.GetNextMessagesForDispatch(schedulerInstance,batchSize));
         }
 
         public void MarkMessageAsDispatched(int messageId, int recipientId)

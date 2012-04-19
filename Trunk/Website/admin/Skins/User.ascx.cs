@@ -27,14 +27,12 @@ using System.Web;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
-using DotNetNuke.Entities.Modules.Definitions;
-using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
-using DotNetNuke.Services.Messaging;
 using DotNetNuke.Services.Social.Notifications;
+using DotNetNuke.Services.Social.Messaging;
 
 #endregion
 
@@ -55,11 +53,14 @@ namespace DotNetNuke.UI.Skins.Controls
         public User()
         {
             ShowUnreadMessages = true;
+            ShowAvatar = true;
         }
 
         public string CssClass { get; set; }
 
         public bool ShowUnreadMessages { get; set; }
+
+        public bool ShowAvatar { get; set; }
 
         public string Text { get; set; }
 
@@ -91,14 +92,16 @@ namespace DotNetNuke.UI.Skins.Controls
                         else
                         {
                             registerLink.Text = Localization.GetString("Register", Localization.GetResourceFile(this, MyFileName));
+                            registerLink.ToolTip = registerLink.Text;
                         }
                         if (PortalSettings.Users < PortalSettings.UserQuota || PortalSettings.UserQuota == 0)
                         {
+                            SetVisibility(false);
                             registerLink.Visible = true;
                         }
                         else
-                        {
-                            registerLink.Visible = false;
+                        {                         
+                            SetVisibility(false);
                         }
 
                         registerLink.NavigateUrl = !String.IsNullOrEmpty(URL) 
@@ -113,7 +116,7 @@ namespace DotNetNuke.UI.Skins.Controls
                     }
                     else
                     {
-                        registerLink.Visible = false;
+                        SetVisibility(false);
                     }
                 }
                 else
@@ -121,43 +124,42 @@ namespace DotNetNuke.UI.Skins.Controls
                     var userInfo = UserController.GetCurrentUserInfo();
                     if (userInfo.UserID != -1)
                     {
-                        var messagingController = new MessagingController();
-
-                        int messageCount = messagingController.GetNewMessageCount(PortalSettings.PortalId, userInfo.UserID);
-
-                        registerLink.Text = userInfo.DisplayName;
-
-                        if ((ShowUnreadMessages && messageCount > 0))
-                        {
-                            registerLink.Text = registerLink.Text + string.Format(Localization.GetString("NewMessages", Localization.GetResourceFile(this, MyFileName)), messageCount);
-                        }
-                        if (ShowUnreadMessages && messageCount > 0)
-                        {
-                            registerLink.ToolTip = String.Format(Localization.GetString("ToolTipNewMessages", Localization.GetResourceFile(this, MyFileName)), messageCount);
-                        }
-                        else
-                        {
-                            registerLink.ToolTip = Localization.GetString("ToolTip", Localization.GetResourceFile(this, MyFileName));
-                        }
-
-                        if (userInfo.UserID != -1)
-                        {
-                            registerLink.NavigateUrl =Globals.UserProfileURL(userInfo.UserID);
-                        }
-
-                        var unreadMessages = Services.Social.Messaging.MessagingController.Instance.CountUnreadMessages(userInfo.UserID, userInfo.PortalID);
-                        var unreadAlerts = NotificationsController.Instance.CountNotifications(userInfo.UserID, userInfo.PortalID);
+                        registerLink.Text = userInfo.DisplayName;                                                
+                        registerLink.NavigateUrl = Globals.UserProfileURL(userInfo.UserID);                        
+                        registerLink.ToolTip = Localization.GetString("VisitMyProfile", Localization.GetResourceFile(this, MyFileName));
 
                         if (ShowUnreadMessages)
-                        {                         
-                            messageLink.Text = string.Format("Inbox ({0})", unreadMessages);
-                            notificationLink.Text = string.Format("Alerts ({0})", unreadAlerts);
-                            //TODO - Tooltip and Localize the texts
+                        {
+                            var unreadMessages = MessagingController.Instance.CountUnreadMessages(userInfo.UserID, userInfo.PortalID);
+                            var unreadAlerts = NotificationsController.Instance.CountNotifications(userInfo.UserID, userInfo.PortalID);
 
+                            messageLink.Text = unreadMessages > 0 ? string.Format(Localization.GetString("Messages", Localization.GetResourceFile(this, MyFileName)), unreadMessages) : Localization.GetString("NoMessages", Localization.GetResourceFile(this, MyFileName));
+                            notificationLink.Text = unreadAlerts > 0 ? string.Format(Localization.GetString("Notifications", Localization.GetResourceFile(this, MyFileName)), unreadAlerts) : Localization.GetString("NoNotifications", Localization.GetResourceFile(this, MyFileName));
+                            
                             var messageTabUrl = Globals.NavigateURL(GetMessageTab());
                             messageLink.NavigateUrl = messageTabUrl;
                             notificationLink.NavigateUrl = messageTabUrl;
+                            notificationLink.ToolTip = Localization.GetString("CheckNotifications", Localization.GetResourceFile(this, MyFileName));
+                            messageLink.ToolTip = Localization.GetString("CheckMessages", Localization.GetResourceFile(this, MyFileName));
+                            notificationLink.Visible = true;
+                            messageLink.Visible = true;
+                        }
+                        else
+                        {
+                            notificationLink.Visible = false;
+                            messageLink.Visible = false;                            
+                        }
 
+                        if (ShowAvatar)
+                        {
+                            avatar.ImageUrl = string.Format(Globals.UserProfilePicFormattedUrl(), userInfo.UserID, 35, 35);
+                            avatar.NavigateUrl = registerLink.NavigateUrl;
+                            avatar.ToolTip = Localization.GetString("ProfileAvatar", Localization.GetResourceFile(this, MyFileName));                                                    
+                            avatar.Visible = true;                            
+                        }
+                        else
+                        {
+                            avatar.Visible = false;
                         }
                     }
                 }
@@ -168,9 +170,34 @@ namespace DotNetNuke.UI.Skins.Controls
             }
         }
 
+        private void SetVisibility(bool visible)
+        {
+            registerLink.Visible = visible;
+            avatar.Visible = visible;
+            notificationLink.Visible = visible;
+            messageLink.Visible = visible;   
+        }
+
         private int GetMessageTab()
-        {            
-            var tabController = new TabController();            
+        {
+            var cacheKey = string.Format("MessageCenterTab:{0}", PortalSettings.PortalId);
+            var messageTabId = DataCache.GetCache<int>(cacheKey);
+            if (messageTabId > 0)
+                return messageTabId;
+
+            //Find the Message Tab
+            messageTabId = FindMessageTab();
+
+            //save in cache
+            //NOTE - This cache is not being cleared. There is no easy way to clear this, except Tools->Clear Cache
+            DataCache.SetCache(cacheKey, messageTabId, TimeSpan.FromMinutes(20));
+
+            return messageTabId;
+        }
+
+        private int FindMessageTab()
+        {
+            var tabController = new TabController();
             var moduleController = new ModuleController();
 
             //On brand new install the new Message Center Module is on the child page of User Profile Page 
@@ -186,14 +213,14 @@ namespace DotNetNuke.UI.Skins.Controls
                         var module = kvp.Value;
                         if (module.DesktopModule.FriendlyName == "Message Center")
                         {
-                            return tab.TabID;
+                            return tab.TabID;                            
                         }
                     }
-                }                  
-            }                        
+                }
+            }
 
-            //still can't find, just hookup with the User Profile Page
-            return PortalSettings.UserTabId;
+            //default to User Profile Page
+            return PortalSettings.UserTabId;            
         }
     }
 }

@@ -142,8 +142,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Community", "Community", "{649E7B07-2170-4471-97C5-0941FBA12159}"
 	ProjectSection(SolutionItems) = preProject
 		Community\Templates\Blank Website.template = Community\Templates\Blank Website.template
+		Community\Templates\Blank Website.template.en-US.resx = Community\Templates\Blank Website.template.en-US.resx
 		Community\Templates\Default Website.template = Community\Templates\Default Website.template
+		Community\Templates\Default Website.template.en-US.resx = Community\Templates\Default Website.template.en-US.resx
 		Community\Templates\Default Website.template.resources = Community\Templates\Default Website.template.resources
+		Community\Templates\Mobile Website.template.en-US.resx = Community\Templates\Mobile Website.template.en-US.resx
+		Community\Templates\Mobile Website.template.resources = Community\Templates\Mobile Website.template.resources		
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Externally.Sourced", "Externally Sourced\Externally.Sourced.csproj", "{31106CA4-52E9-4C43-9B47-EB23EEE9AB58}"

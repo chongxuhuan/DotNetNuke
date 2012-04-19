@@ -5,7 +5,7 @@
       <xs:sequence>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />
         <xs:element name="settings" maxOccurs="1" minOccurs="0">
-          <xs:complexType>
+          <xs:complexType>		  
             <xs:all>
               <xs:element name="enableskinwidgets" type="xs:string" minOccurs="0" maxOccurs="1" />
               <xs:element name="logofile" type="xs:string" minOccurs="0" maxOccurs="1" />
@@ -31,7 +31,8 @@
               <xs:element name="portalaliasmapping" type="xs:string" minOccurs="0" maxOccurs="1" />
               <xs:element name="contentlocalizationenabled" type="xs:string" minOccurs="0" maxOccurs="1" />
             </xs:all>
-          </xs:complexType>
+		    <xs:attribute name="sku" type="xs:string"/>
+		  </xs:complexType>
         </xs:element>
         <xs:element name="profiledefinitions" maxOccurs="1" minOccurs="0">
           <xs:complexType>
@@ -54,7 +55,7 @@
           <xs:complexType>
             <xs:sequence>
               <xs:element name="portalDesktopModule" minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
+                <xs:complexType>				
                   <xs:all>
                     <xs:element name="friendlyname" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="portalDesktopModulePermissions" maxOccurs="1" minOccurs="0">
@@ -74,7 +75,8 @@
                       </xs:complexType>
                     </xs:element>
                   </xs:all>
-                </xs:complexType>
+				  <xs:attribute name="sku" type="xs:string"/>
+				</xs:complexType>
               </xs:element>
             </xs:sequence>
           </xs:complexType>
@@ -358,7 +360,8 @@
                       </xs:complexType>
                     </xs:element>
                   </xs:all>
-                </xs:complexType>
+				  <xs:attribute name="sku" type="xs:string"/>
+				</xs:complexType>				
               </xs:element>
             </xs:sequence>
           </xs:complexType>

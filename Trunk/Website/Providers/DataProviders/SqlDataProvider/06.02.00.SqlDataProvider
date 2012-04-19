@@ -2060,7 +2060,6 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveMessage]
     @Body nvarchar(max),
     @ConversationID int,
     @ReplyAllAllowed bit,
-	@MessageDateTime DateTime,  
     @SenderUserID int,
 	@CreateUpdateUserID INT
     
@@ -2091,7 +2090,7 @@ AS
 					@ReplyAllAllowed,
 					@SenderUserID,
                     @CreateUpdateUserID , -- CreatedBy - int
-                    @MessageDateTime , -- CreatedOn - datetime
+                    GETUTCDATE(), -- CreatedOn - datetime
                     @CreateUpdateUserID , -- LastModifiedBy - int
                     GETDATE() -- LastModifiedOn - datetime			        
                     )
@@ -2170,9 +2169,9 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveMessageRecip
     @UserID int,
     @Read bit,
 	@Archived bit,
-	@MessageDateTime DateTime,
 	@CreateUpdateUserID INT
 AS
+BEGIN
     IF ( @RecipientID = -1 )
         BEGIN
             INSERT {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients(
@@ -2191,7 +2190,7 @@ AS
 					@Read,
 					@Archived,
                     @CreateUpdateUserID , -- CreatedBy - int
-                    @MessageDateTime , -- CreatedOn - datetime
+                    GETDATE(), -- CreatedOn - datetime
                     @CreateUpdateUserID , -- LastModifiedBy - int
                     GETDATE() -- LastModifiedOn - datetime
                     )
@@ -2211,18 +2210,19 @@ AS
         END
 
     SELECT  @RecipientID
+END
 GO
+
+
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageRecipientsForRole]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageRecipientsForRole]
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageRecipientsForRole]
     @MessageID int,         -- message id
     @RoleIDs nvarchar(max), -- comma separated list of RoleIds
-    @MessageDateTime DateTime,  
 	@CreateUpdateUserID INT -- create / update user id
 AS
-    DECLARE @currentdate DATETIME
-    
+BEGIN    
     ;WITH CTE_RoleIDs(RowNumber, RowValue)
     AS
     (
@@ -2252,10 +2252,11 @@ AS
 			  0,
 			  0,
               @CreateUpdateUserID , -- CreatedBy - int
-              @MessageDateTime , -- CreatedOn - datetime
+              GETDATE(), -- CreatedOn - datetime
               @CreateUpdateUserID , -- LastModifiedBy - int
-              @currentdate -- LastModifiedOn - datetime
+              GETDATE() -- LastModifiedOn - datetime
            FROM CTE_DistinctUserIDs
+END
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageReply]') AND type in (N'P', N'PC'))
@@ -2318,7 +2319,7 @@ AS
 					@ReplyAllAllowed,
 					@SenderUserID,
                     @CreateUpdateUserID , -- CreatedBy - int
-                    GETDATE() , -- CreatedOn - datetime
+                    GETUTCDATE() , -- CreatedOn - datetime
                     @CreateUpdateUserID , -- LastModifiedBy - int
                     GETDATE() -- LastModifiedOn - datetime
                     )
@@ -2629,7 +2630,7 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 					1, --ReplyAllAllowed,
 					@FromUserID,
                     @FromUserID , -- CreatedBy - int
-                    @Date , -- CreatedOn - datetime
+                    dateadd(second,datediff(second,getutcdate(),getdate()), @Date), -- CreatedOn - utc datetime
                     @FromUserID , -- LastModifiedBy - int
                     GETDATE() -- LastModifiedOn - datetime			        
                     )
@@ -3204,7 +3205,7 @@ BEGIN
 		@SenderUserID,
 		@ExpirationDate,
 		@CreateUpdateUserID, -- CreatedBy
-		GETDATE(), -- CreatedOn
+		GETUTCDATE(), -- CreatedOn
 		@CreateUpdateUserID, -- LastModifiedBy
 		GETDATE() -- LastModifiedOn
 	)
@@ -3252,7 +3253,7 @@ BEGIN
 		WHERE [NotificationTypeId] IS NOT NULL
 		AND MR.UserID = @UserID
 		AND M.PortalID = @PortalID
-		AND (M.[ExpirationDate] IS NULL OR (M.[ExpirationDate] IS NOT NULL AND M.[ExpirationDate] > GETDATE()))
+		AND (M.[ExpirationDate] IS NULL OR (M.[ExpirationDate] IS NOT NULL AND M.[ExpirationDate] > GETUTCDATE()))
 	)	
 	SELECT * FROM Notifications WHERE RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
 	ORDER BY RowNumber ASC
@@ -4930,14 +4931,14 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 (
 	SELECT  DISTINCT [RecipientID], [Subject], [Body], [SenderUserID],
 			[Read], [Archived], [UserID], [To], [From], [ReplyAllAllowed], [ConversationID],
-			mr.[MessageID],
-			mr.[CreatedByUserID], mr.[CreatedOnDate],
-			mr.[LastModifiedByUserID], mr.[LastModifiedOnDate],
+			m.[MessageID],
+			m.[CreatedByUserID], m.[CreatedOnDate],
+			m.[LastModifiedByUserID], m.[LastModifiedOnDate],
 			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments WHERE MessageID = mr.MessageID) AS AttachmentCount,
 			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages WHERE ConversationID = m.ConversationID) AND UserID = @UserID AND [READ] = 0) AS NewThreadCount,
 			ROW_NUMBER() OVER(ORDER BY
-				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN mr.[CreatedOnDate] END ASC,
-				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN mr.[CreatedOnDate] END DESC,
+				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN m.[CreatedOnDate] END ASC,
+				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN m.[CreatedOnDate] END DESC,
 				 CASE WHEN @SortField = 'From' AND @SortAscending = 1 THEN [From] END ASC,
 				 CASE WHEN @SortField = 'From' AND @SortAscending = 0 THEN [From] END DESC,
 				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
@@ -6073,24 +6074,29 @@ AS
 		AND  ((@PortalId IS NULL) OR (PortalId = @PortalID) OR IsSuperUser = 1)
 GO
 
-/*Add CoreMessaging_GetNextMessageForDispatch */
+/*Add CoreMessaging_GetNextMessagesForDispatch */
 /*******************************/
 
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNextMessageForDispatch]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
-  DROP PROCEDURE {databaseOwner}{objectQualifier}CoreMessaging_GetNextMessageForDispatch
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNextMessagesForDispatch]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}CoreMessaging_GetNextMessagesForDispatch
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNextMessageForDispatch] 
-	@SchedulerInstance uniqueidentifier
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNextMessagesForDispatch] 
+	@SchedulerInstance uniqueidentifier,
+	@BatchSize int
 AS
-	Declare  @target_messageID int
 
-	SELECT @target_messageID =  MessageID FROM {objectQualifier}CoreMessaging_MessageRecipients WHERE EmailSent = 0  AND  
+WITH CTE AS  
+(  
+SELECT TOP (@BatchSize) *
+FROM  {objectQualifier}CoreMessaging_MessageRecipients
+WHERE EmailSent = 0  AND  
 	(EmailSchedulerInstance is NULL or EmailSchedulerInstance= '00000000-0000-0000-0000-000000000000') 
 	ORDER BY CreatedOnDate DESC
+)  	
+UPDATE CTE set EmailSchedulerInstance = @SchedulerInstance  
 
-Update {objectQualifier}CoreMessaging_MessageRecipients set EmailSchedulerInstance = @SchedulerInstance  where MessageID = @target_messageID
-select * from {objectQualifier}CoreMessaging_MessageRecipients where MessageID = @target_messageID 
+select * from {objectQualifier}CoreMessaging_MessageRecipients where EmailSchedulerInstance = @SchedulerInstance 
 
 GO
 

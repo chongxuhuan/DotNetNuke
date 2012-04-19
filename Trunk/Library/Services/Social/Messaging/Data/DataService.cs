@@ -42,10 +42,10 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region Messages CRUD
 
-        public int SaveMessage(Message message, int portalId,int createUpdateUserId, DateTime messageDateTime)
+        public int SaveMessage(Message message, int portalId, int createUpdateUserId)
         {
             //need to fix groupmail
-            return _provider.ExecuteScalar<int>("CoreMessaging_SaveMessage", message.MessageID, portalId ,message.To, message.From, message.Subject, message.Body, message.ConversationId, message.ReplyAllAllowed, messageDateTime, message.SenderUserID, createUpdateUserId);
+            return _provider.ExecuteScalar<int>("CoreMessaging_SaveMessage", message.MessageID, portalId ,message.To, message.From, message.Subject, message.Body, message.ConversationId, message.ReplyAllAllowed, message.SenderUserID, createUpdateUserId);
         }
 
         public IDataReader GetMessage(int messageId)
@@ -192,14 +192,14 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region Message_Recipients CRUD
 
-        public int SaveMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId, DateTime messageDateTime)
+        public int SaveMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>("CoreMessaging_SaveMessageRecipient", messageRecipient.RecipientID, messageRecipient.MessageID, messageRecipient.UserID, messageRecipient.Read, messageRecipient.Archived, messageDateTime, createUpdateUserId);
+            return _provider.ExecuteScalar<int>("CoreMessaging_SaveMessageRecipient", messageRecipient.RecipientID, messageRecipient.MessageID, messageRecipient.UserID, messageRecipient.Read, messageRecipient.Archived, createUpdateUserId);
         }
 
-        public void CreateMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId, DateTime messageDateTime)
+        public void CreateMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId)
         {
-            _provider.ExecuteNonQuery("CoreMessaging_CreateMessageRecipientsForRole", messageId, roleIds, messageDateTime, createUpdateUserId);
+            _provider.ExecuteNonQuery("CoreMessaging_CreateMessageRecipientsForRole", messageId, roleIds, createUpdateUserId);
         }
 
         public IDataReader GetMessageRecipient(int messageRecipientId)
@@ -301,9 +301,9 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region Queued email API's
 
-        public IDataReader GetNextMessageForDispatch(Guid schedulerInstance)
+        public IDataReader GetNextMessagesForDispatch(Guid schedulerInstance,int batchSize)
         {
-            return _provider.ExecuteReader("CoreMessaging_GetNextMessageForDispatch", schedulerInstance);
+            return _provider.ExecuteReader("CoreMessaging_GetNextMessagesForDispatch", schedulerInstance,batchSize);
         }
 
         public void MarkMessageAsDispatched(int messageId,int recipientId)

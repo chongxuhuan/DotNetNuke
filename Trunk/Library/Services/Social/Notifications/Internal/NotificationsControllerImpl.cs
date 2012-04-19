@@ -242,7 +242,8 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
                                        Subject = subject,
                                        To = sbTo.ToString().Trim(','),
                                        SenderUserID = sender.UserID,
-                                       From = sender.DisplayName
+                                       From = sender.DisplayName,
+                                       ExpirationDate = GetExpirationDate(notificationTypeId)
                                    };
 
             notification.NotificationID = _dataService.CreateNotification(
@@ -254,7 +255,7 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
                 notification.Body,
                 notification.SenderUserID,
                 UserController.GetCurrentUserInfo().UserID,
-                DateTime.MinValue);
+                notification.ExpirationDate);
 
             //send message to Roles
             if (roles != null)
@@ -268,8 +269,7 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
                 _messagingDataService.CreateMessageRecipientsForRole(
                     notification.NotificationID,
                     roleIds,
-                    UserController.GetCurrentUserInfo().UserID,
-                    DateTime.Now);
+                    UserController.GetCurrentUserInfo().UserID);
             }
 
             //send message to each User - this should be called after CreateMessageRecipientsForRole.
@@ -292,8 +292,7 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
             {
                 _messagingDataService.SaveMessageRecipient(
                     recipient,
-                    UserController.GetCurrentUserInfo().UserID,
-                    DateTime.Now);
+                    UserController.GetCurrentUserInfo().UserID);
             }
 
             return notification;
@@ -603,6 +602,15 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
         internal virtual int GetCurrentUserId()
         {
             return UserController.GetCurrentUserInfo().UserID;
+        }
+
+        internal virtual DateTime GetExpirationDate(int notificationTypeId)
+        {
+            var notificationType = GetNotificationType(notificationTypeId);
+            
+            return notificationType.TimeToLive.TotalMinutes > 0 
+                ? DateTime.UtcNow.AddMinutes(notificationType.TimeToLive.TotalMinutes) 
+                : DateTime.MinValue;
         }
 
         internal virtual object GetNotificationTypeActionCallBack(CacheItemArgs cacheItemArgs)

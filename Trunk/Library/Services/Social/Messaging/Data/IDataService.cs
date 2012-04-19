@@ -33,7 +33,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
     {
         #region Messages CRUD
 
-        int SaveMessage(Message message,int portalId, int createUpdateUserId, DateTime messageDateTime);
+        int SaveMessage(Message message, int portalId, int createUpdateUserId);
         IDataReader GetMessage(int messageId);
         IDataReader GetMessagesBySender(int messageId, int portalId);
         void DeleteMessage(int messageId);
@@ -52,8 +52,8 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region Message_Recipients CRUD
 
-        int SaveMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId, DateTime messageDateTime);
-        void CreateMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId, DateTime messageDateTime);
+        int SaveMessageRecipient(MessageRecipient messageRecipient, int createUpdateUserId);
+        void CreateMessageRecipientsForRole(int messageId, string roleIds, int createUpdateUserId);
         IDataReader GetMessageRecipient(int messageRecipientId);
         IDataReader GetMessageRecipientsByUser(int userId);
         IDataReader GetMessageRecipientsByMessage(int messageId);
@@ -82,7 +82,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         #region Queued email API's
 
-        IDataReader GetNextMessageForDispatch(Guid schedulerInstance);
+        IDataReader GetNextMessagesForDispatch(Guid schedulerInstance, int batchSize);
         void MarkMessageAsDispatched(int messageId,int recipientId);
 
         #endregion
