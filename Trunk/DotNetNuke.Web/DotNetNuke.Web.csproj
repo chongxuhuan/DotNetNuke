@@ -116,7 +116,6 @@
     <Compile Include="CoreServices\RelationshipServiceController.cs" />
     <Compile Include="CoreServices\MessagingServiceController.cs" />
     <Compile Include="CoreServices\ServiceRouteMapper.cs" />
-    <Compile Include="CoreServices\SampleServiceController.cs" />
     <Compile Include="Mvp\ModuleSettingsPresenterOfT.cs" />
     <Compile Include="Mvp\ISettingsViewOfT.cs" />
     <Compile Include="Mvp\ProfileModuleViewBase.cs">

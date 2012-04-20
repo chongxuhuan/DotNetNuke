@@ -21,12 +21,15 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Web.UI.WebControls;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Entities.Tabs.Internal;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Modules.Console.Components;
 using DotNetNuke.Security.Permissions;
@@ -40,6 +43,80 @@ namespace DesktopModules.Admin.Console
 
     public partial class Settings : ModuleSettingsBase
     {
+
+        private void BindTabs(int tabId, bool includeParent)
+        {
+            List<TabInfo> tempTabs = TabController.GetTabsBySortOrder(PortalId).OrderBy(t => t.Level).ThenBy(t => t.HasChildren).ToList();
+
+            IList<TabInfo> tabList = new List<TabInfo>();
+
+            IList<int> tabIdList = new List<int>();
+            tabIdList.Add(tabId);
+
+            if (includeParent)
+            {
+                TabInfo consoleTab = TestableTabController.Instance.GetTab(tabId, PortalId);
+                if (consoleTab != null)
+                {
+                    tabList.Add(consoleTab);
+                }
+            }
+
+
+            foreach (TabInfo tab in tempTabs)
+            {
+                bool canShowTab = TabPermissionController.CanViewPage(tab) &&
+                        !tab.IsDeleted &&
+                        (tab.StartDate < DateTime.Now || tab.StartDate == Null.NullDate);
+
+                if (!canShowTab)
+                {
+                    continue;
+                }
+                if ((tabIdList.Contains(tab.ParentId)))
+                {
+                    if ((!tabIdList.Contains(tab.TabID)))
+                    {
+                        tabIdList.Add(tab.TabID);
+                    }
+                    tabList.Add(tab);
+                }
+            }
+
+            tabs.DataSource = tabList;
+            tabs.DataBind();
+        }
+
+        private void SwitchMode()
+        {
+            int parentTabId = -1;
+            if (Settings.ContainsKey("ParentTabID"))
+            {
+                parentTabId = Convert.ToInt32(Settings["ParentTabID"]);
+            }
+            switch (modeList.SelectedValue)
+            {
+                case "Normal":
+                    parentTabRow.Visible = true;
+                    includeParentRow.Visible = true;
+                    tabVisibilityRow.Visible = false;
+                    break;
+                case "Profile":
+                    parentTabRow.Visible = false;
+                    includeParentRow.Visible = false;
+                    tabVisibilityRow.Visible = true;
+                    parentTabId = PortalSettings.UserTabId;
+                    break;
+                case "Group":
+                    parentTabRow.Visible = true;
+                    includeParentRow.Visible = true;
+                    tabVisibilityRow.Visible = true;
+                   break;
+            }
+
+            SelectDropDownListItem(ref ParentTab, parentTabId.ToString(CultureInfo.InvariantCulture));
+            BindTabs(parentTabId, IncludeParent.Checked);
+        }
 
         public override void LoadSettings()
         {
@@ -98,7 +175,10 @@ namespace DesktopModules.Admin.Console
                     {
                         ConsoleWidth.Text = Convert.ToString(Settings["ConsoleWidth"]);
                     }
+
+                    SwitchMode();
                 }
+
             }
             catch (Exception exc) //Module failed to load
             {
@@ -110,7 +190,7 @@ namespace DesktopModules.Admin.Console
         {
             try
             {
-                var objModules = new ModuleController();
+                var moduleController = new ModuleController();
 
 				//validate console width value
                 var wdth = string.Empty;
@@ -129,26 +209,90 @@ namespace DesktopModules.Admin.Console
                 }
                 if ((ParentTab.SelectedValue == string.Empty))
                 {
-                    objModules.DeleteModuleSetting(ModuleId, "ParentTabID");
+                    moduleController.DeleteModuleSetting(ModuleId, "ParentTabID");
                 }
                 else
                 {
-                    objModules.UpdateModuleSetting(ModuleId, "ParentTabID", ParentTab.SelectedValue);
+                    moduleController.UpdateModuleSetting(ModuleId, "ParentTabID", ParentTab.SelectedValue);
                 }
-                objModules.UpdateModuleSetting(ModuleId, "Mode", modeList.SelectedValue);
-                objModules.UpdateModuleSetting(ModuleId, "DefaultSize", DefaultSize.SelectedValue);
-                objModules.UpdateModuleSetting(ModuleId, "AllowSizeChange", AllowResize.Checked.ToString(CultureInfo.InvariantCulture));
-                objModules.UpdateModuleSetting(ModuleId, "DefaultView", DefaultView.SelectedValue);
-                objModules.UpdateModuleSetting(ModuleId, "AllowViewChange", AllowViewChange.Checked.ToString(CultureInfo.InvariantCulture));
-                objModules.UpdateModuleSetting(ModuleId, "ShowTooltip", ShowTooltip.Checked.ToString(CultureInfo.InvariantCulture));
-                objModules.UpdateModuleSetting(ModuleId, "IncludeParent", IncludeParent.Checked.ToString(CultureInfo.InvariantCulture)); 
-                objModules.UpdateModuleSetting(ModuleId, "ConsoleWidth", wdth);
+                moduleController.UpdateModuleSetting(ModuleId, "Mode", modeList.SelectedValue);
+                moduleController.UpdateModuleSetting(ModuleId, "DefaultSize", DefaultSize.SelectedValue);
+                moduleController.UpdateModuleSetting(ModuleId, "AllowSizeChange", AllowResize.Checked.ToString(CultureInfo.InvariantCulture));
+                moduleController.UpdateModuleSetting(ModuleId, "DefaultView", DefaultView.SelectedValue);
+                moduleController.UpdateModuleSetting(ModuleId, "AllowViewChange", AllowViewChange.Checked.ToString(CultureInfo.InvariantCulture));
+                moduleController.UpdateModuleSetting(ModuleId, "ShowTooltip", ShowTooltip.Checked.ToString(CultureInfo.InvariantCulture));
+                moduleController.UpdateModuleSetting(ModuleId, "IncludeParent", IncludeParent.Checked.ToString(CultureInfo.InvariantCulture)); 
+                moduleController.UpdateModuleSetting(ModuleId, "ConsoleWidth", wdth);
+
+                foreach (RepeaterItem item in tabs.Items)
+                {
+                    if (item.ItemType == ListItemType.Item || item.ItemType == ListItemType.AlternatingItem)
+                    {
+                        var tabPath = ((HiddenField)item.Controls[3]).Value;
+                        var visibility = ((DropDownList)item.Controls[5]).SelectedValue;
+
+                        var key = String.Format("TabVisibility{0}", tabPath.Replace("//","-"));
+                        moduleController.UpdateModuleSetting(ModuleId, key, visibility);
+                    }
+                }
             }
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            tabs.ItemDataBound +=  tabs_ItemDataBound;
+            ParentTab.SelectedIndexChanged += parentTab_SelectedIndexChanged;
+            modeList.SelectedIndexChanged += modeList_SelectedIndexChanged;
+        }
+
+        private void modeList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SwitchMode();
+
+        }
+
+        protected void parentTab_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            BindTabs(Int32.Parse(ParentTab.SelectedValue), IncludeParent.Checked);
+        }
+
+        void tabs_ItemDataBound(Object Sender, RepeaterItemEventArgs e)
+        {
+
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                var tab = (TabInfo) e.Item.DataItem;
+                DropDownList visibilityDropDown = (DropDownList)e.Item.FindControl("tabVisibility");
+
+                var tabLabel = (Label) e.Item.FindControl("tabLabel");
+                var tabPathField = (HiddenField) e.Item.FindControl("tabPath");
+
+                visibilityDropDown.Items.Clear();
+                visibilityDropDown.Items.Add(new ListItem(LocalizeString("AllUsers"), "AllUsers"));
+                if (modeList.SelectedValue == "Profile")
+                {
+                    visibilityDropDown.Items.Add(new ListItem(LocalizeString("Friends"), "Friends"));
+                    visibilityDropDown.Items.Add(new ListItem(LocalizeString("User"), "User"));
+                }
+                else
+                {
+                    visibilityDropDown.Items.Add(new ListItem(LocalizeString("Owner"), "Owner"));
+                    visibilityDropDown.Items.Add(new ListItem(LocalizeString("Members"), "Members"));
+                }
+
+                tabLabel.Text = tab.TabName;
+                tabPathField.Value = tab.TabPath;
+
+                var key = String.Format("TabVisibility{0}", tab.TabPath.Replace("//", "-"));
+                SelectDropDownListItem(ref visibilityDropDown, key);
+            }
+        }    
 
         private void SelectDropDownListItem(ref DropDownList ddl, string key)
         {

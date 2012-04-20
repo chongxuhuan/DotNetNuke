@@ -99,7 +99,7 @@
                 theme: "facebook",
                 resultsFormatter: function (item) {
                     if (item.id.startsWith("user-")) {
-                        return "<li class='user'><img src='profilepic.ashx?UserId=" + item.id.substring(5) + "&w=32&h=32' title='" + item.name + "' height='25px' width='25px' /><span>" + item.name + "</span></li>";
+                        return "<li class='user'><img src='" + item.iconfile + "' title='" + item.name + "' height='25px' width='25px' /><span>" + item.name + "</span></li>";
                     } else if (item.id.startsWith("role-")) {
                         return "<li class='role'><img src='" + item.iconfile + "' title='" + item.name + "' height='25px' width='25px' /><span>" + item.name + "</span></li>";
                     }
@@ -198,7 +198,7 @@
                                 userIds: (users.length > 0 ? JSON.stringify(users) : {}),
                                 fileIds: (attachments.length > 0 ? JSON.stringify(attachments) : {})
                             };
-                            $.post(opts.serviceurlbase + "Create", params, function (data) {
+                            $.post(opts.serviceurlbase + "Create", opts.servicesFramework.getAntiForgeryProperty(params), function (data) {
                                 if (data.Result === "success") {
                                     composeMessageDialog.dialog("option", "title", opts.messageSentTitle);
                                     var dismissThis = $('<a href="#"/>')

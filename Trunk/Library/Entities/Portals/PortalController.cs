@@ -1733,6 +1733,25 @@ namespace DotNetNuke.Entities.Portals
             UpdatePortalInfo(targetPortal);
         }
 
+        /// <summary>
+        /// Processess a template file for the new portal.
+        /// </summary>
+        /// <param name="portalId">PortalId of the new portal</param>
+        /// <param name="template">The template</param>
+        /// <param name="administratorId">UserId for the portal administrator. This is used to assign roles to this user</param>
+        /// <param name="mergeTabs">Flag to determine whether Module content is merged.</param>
+        /// <param name="isNewPortal">Flag to determine is the template is applied to an existing portal or a new one.</param>
+        /// <remarks>
+        /// The roles and settings nodes will only be processed on the portal template file.
+        /// </remarks>
+        public void ParseTemplate(int portalId, PortalTemplateInfo template, int administratorId, PortalTemplateModuleAction mergeTabs, bool isNewPortal)
+        {
+            string templatePath, templateFile;
+            PrepareLocalizedPortalTemplate(template, out templatePath, out templateFile);
+            
+            ParseTemplate(portalId, templatePath, templateFile, administratorId, mergeTabs, isNewPortal);
+        }
+
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Processess a template file for the new portal. This method will be called twice: for the portal template and for the admin template

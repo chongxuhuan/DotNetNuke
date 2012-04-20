@@ -37,10 +37,12 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Tabs.Internal;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Modules.Console.Components;
 using DotNetNuke.Security.Permissions;
+using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Personalization;
@@ -198,18 +200,32 @@ namespace DesktopModules.Admin.Console
                                 !tab.IsDeleted &&
                                 (tab.StartDate < DateTime.Now || tab.StartDate == Null.NullDate);
 
-            //Custom logic if module is on profile page
-            if (canShowTab && (tab.TabID == PortalSettings.UserTabId || tab.ParentId == PortalSettings.UserTabId))
+            if (canShowTab)
             {
-                var moduleController = new ModuleController();
-                foreach (var module in moduleController.GetTabModules(tab.TabID).Values)
+                var key = String.Format("TabVisibility{0}", tab.TabPath.Replace("//", "-"));
+                var visibility = Settings.ContainsKey(key) ? Settings[key].ToString() : "AllUsers";
+
+                switch (visibility)
                 {
-                    if ((module.DesktopModule.ModuleName == "DotNetNuke.Modules.CoreMessaging" || module.DesktopModule.ModuleName == "Security") && (UserId != ProfileUserId || UserId == -1))
-                    {
-                        canShowTab = false;
-                    }
+                    case "Owner":
+                        canShowTab = (UserInfo.Social.Roles.SingleOrDefault(ur => ur.RoleID == GroupId && ur.IsOwner) != null);
+                        break;
+                    case "Members":
+                        var group = TestableRoleController.Instance.GetRole(PortalId, (r) => r.RoleID == GroupId);
+                        canShowTab = (group != null) && UserInfo.IsInRole(group.RoleName);
+                        break;
+                    case "Friends":
+                        var profileUser = UserController.GetUserById(PortalId, ProfileUserId);
+                        canShowTab = (profileUser != null) && (profileUser.Social.Friend != null) || (UserId == ProfileUserId);
+                        break;
+                    case "User":
+                        canShowTab = (UserId == ProfileUserId);
+                        break;
+                    case "AllUsers":
+                        break;
                 }
             }
+
 
             return canShowTab;
         }

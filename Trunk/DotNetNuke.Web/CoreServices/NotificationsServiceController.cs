@@ -30,9 +30,9 @@ using DotNetNuke.Web.Services;
 
 namespace DotNetNuke.Web.CoreServices
 {
+    [DnnAuthorize]
     public class NotificationsServiceController : DnnController
     {
-        [DnnAuthorize]
         public ActionResult Delete(int notificationId)
         {
             try

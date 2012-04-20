@@ -3,20 +3,32 @@
 <div class="dnnForm dnnConsole dnnClear">
 	<div class="dnnFormItem">
 		<dnn:label id="Label1" runat="server" ControlName="ParentTab" ResourceKey="Mode" Suffix=":" />
-		<asp:DropDownList ID="modeList" runat="server">
+		<asp:DropDownList ID="modeList" runat="server" AutoPostBack="True">
 		    <asp:ListItem Value="Normal" ResourceKey="Normal" />
 		    <asp:ListItem Value="Profile" ResourceKey="Profile" />
 		    <asp:ListItem Value="Group" ResourceKey="Group" />
 		</asp:DropDownList>
 	</div>
-	<div id="parentTabRow" class="dnnFormItem">
+	<div id="parentTabRow" runat="server" class="dnnFormItem">
 		<dnn:label id="lblParentTab" runat="server" ControlName="ParentTab" ResourceKey="ParentTab" Suffix=":" />
-		<asp:DropDownList ID="ParentTab" runat="server" />
+		<asp:DropDownList ID="ParentTab" runat="server" AutoPostBack="True" />
 	</div>
-	<div id="includeParentRow" class="dnnFormItem">
+	<div id="includeParentRow" runat="server" class="dnnFormItem">
 		<dnn:label id="lblIncludeParent" runat="server" ControlName="IncludeParent" ResourceKey="IncludeParent" Suffix=":" />
-		 <asp:Checkbox ID="IncludeParent" runat="server" />
+		<asp:Checkbox ID="IncludeParent" runat="server" />
 	</div>
+    <div id="tabVisibilityRow" runat="server" class="dnnFormItem">
+		<dnn:label id="tabsLabel" runat="server" ControlName="groupTabs" /><br/>
+        <asp:Repeater ID="tabs" runat="server">
+            <ItemTemplate>
+	            <div>
+		            <asp:label id="tabLabel" runat="server" CssClass="dnnTooltip"></asp:label>
+	                <asp:HiddenField id="tabPath" runat="server"></asp:HiddenField>
+	                <asp:DropDownList ID="tabVisibility" runat="server" />
+	            </div>
+            </ItemTemplate>
+        </asp:Repeater>
+    </div>
 	<div class="dnnFormItem">
 		<dnn:label id="lblDefaultSize" runat="server" ControlName="DefaultSize" ResourceKey="DefaultSize" Suffix=":" />
 		<asp:DropDownList ID="DefaultSize" runat="server" />
@@ -42,34 +54,3 @@
 		<asp:TextBox ID="ConsoleWidth" runat="server" Text="" />
 	</div>
 </div>
-<script language="javascript" type="text/javascript">
-    /*globals jQuery, window, Sys */
-    (function ($, Sys) {
-        function toggleMode(animation) {
-            var mode = $('#<%= modeList.ClientID %>').val(); /*0,1*/
-            if (mode !== "Profile") {
-                animation ? $('#parentTabRow').slideDown() : $('#parentTabRow').show();
-                animation ? $('#includeParentRow').slideDown() : $('#includeParentRow').show();
-            }
-            else {
-                animation ? $('#parentTabRow').slideUp('fast') : $('#parentTabRow').hide();
-                animation ? $('#includeParentRow').slideUp('fast') : $('#includeParentRow').hide();
-            }
-        }
-
-        function setupSettings() {
-            toggleMode(false);
-            $('#<%= modeList.ClientID %>').change(function () {
-                toggleMode(true);
-            });
-        }
-
-        $(document).ready(function () {
-            setupSettings();
-            Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-                setupSettings();
-            });
-        });
-
-    } (jQuery, window.Sys));
-</script>   

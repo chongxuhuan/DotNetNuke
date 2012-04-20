@@ -135,8 +135,8 @@ namespace DotNetNuke.UI.Skins.Controls
 
                             messageLink.Text = unreadMessages > 0 ? string.Format(Localization.GetString("Messages", Localization.GetResourceFile(this, MyFileName)), unreadMessages) : Localization.GetString("NoMessages", Localization.GetResourceFile(this, MyFileName));
                             notificationLink.Text = unreadAlerts > 0 ? string.Format(Localization.GetString("Notifications", Localization.GetResourceFile(this, MyFileName)), unreadAlerts) : Localization.GetString("NoNotifications", Localization.GetResourceFile(this, MyFileName));
-                            
-                            var messageTabUrl = Globals.NavigateURL(GetMessageTab());
+
+                            var messageTabUrl = Globals.NavigateURL(GetMessageTab(), "", string.Format("userId={0}", userInfo.UserID));
                             messageLink.NavigateUrl = messageTabUrl;
                             notificationLink.NavigateUrl = messageTabUrl;
                             notificationLink.ToolTip = Localization.GetString("CheckNotifications", Localization.GetResourceFile(this, MyFileName));

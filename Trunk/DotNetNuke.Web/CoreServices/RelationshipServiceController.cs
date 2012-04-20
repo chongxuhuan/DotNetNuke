@@ -26,223 +26,241 @@ using System.Web.Mvc;
 
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Social;
+using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Services.Social.Notifications;
 using DotNetNuke.Web.Services;
 
 namespace DotNetNuke.Web.CoreServices
 {
+    [DnnAuthorize]
     public class RelationshipServiceController : DnnController
     {
         #region Friend APIs
 
-        [DnnAuthorize]
         public ActionResult AcceptFriend(int notificationId)
         {
-            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Accept");
-            var key = action.Key;
-            int initiatingUserId;
-            if (int.TryParse(key, out initiatingUserId))
+            try
             {
-                try
+                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
+                if (recipient != null)
                 {
-                    RelationshipController.Instance.AcceptUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
-                    
-                    NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
-                    
-                    return Json(new { Result = "success" });
-                }
-                catch (Exception)
-                {
-                    return Json(new { Result = "error" });
-                }
-            }
+                    var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Accept");
+                    var key = action.Key;
+                    int initiatingUserId;
+                    if (int.TryParse(key, out initiatingUserId))
+                    {
+                        RelationshipController.Instance.AcceptUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
+                        NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
 
-            return Json(new { Result = "error" });
+                        return Json(new { Result = "success" });
+                    }
+                }
+
+                return Json(new { Result = "error" });
+            }
+            catch (Exception)
+            {
+                return Json(new { Result = "error" });
+            }
         }
 
-        [DnnAuthorize]
         public ActionResult RejectFriend(int notificationId)
         {
-            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Reject");
-            var key = action.Key;
-            int initiatingUserId;
-            if (int.TryParse(key, out initiatingUserId))
+            try
             {
-                try
+                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
+                if (recipient != null)
                 {
-                    RelationshipController.Instance.RejectUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
+                    var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Reject");
+                    var key = action.Key;
+                    int initiatingUserId;
+                    if (int.TryParse(key, out initiatingUserId))
+                    {
+                        RelationshipController.Instance.RejectUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
+                        NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
 
-                    NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
-                    
-                    return Json(new { Result = "success" });
+                        return Json(new { Result = "success" });
+                    }
                 }
-                catch (Exception)
-                {
-                    return Json(new { Result = "error" });
-                }
+
+                return Json(new { Result = "error" });
             }
-
-            return Json(new { Result = "error" });
+            catch (Exception)
+            {
+                return Json(new { Result = "error" });
+            }
         }
 
-        [DnnAuthorize]
         public ActionResult IgnoreFriend(int notificationId)
         {
-            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Ignore");
-            var key = action.Key;
-            int initiatingUserId;
-            if (int.TryParse(key, out initiatingUserId))
+            try
             {
-                try
+                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
+                if (recipient != null)
                 {
-                    RelationshipController.Instance.IgnoreUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
+                    var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Ignore");
+                    var key = action.Key;
+                    int initiatingUserId;
+                    if (int.TryParse(key, out initiatingUserId))
+                    {
+                        RelationshipController.Instance.IgnoreUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
+                        NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
 
-                    NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
+                        return Json(new { Result = "success" });
+                    }
+                }
 
-                    return Json(new { Result = "success" });
-                }
-                catch (Exception)
-                {
-                    return Json(new { Result = "error" });
-                }
+                return Json(new { Result = "error" });
             }
-
-            return Json(new { Result = "error" });
+            catch (Exception)
+            {
+                return Json(new { Result = "error" });
+            }
         }
 
-        [DnnAuthorize]
         public ActionResult ReportFriend(int notificationId)
         {
-            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Report");
-            var key = action.Key;
-            int initiatingUserId;
-            if (int.TryParse(key, out initiatingUserId))
+            try
             {
-                try
+                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
+                if (recipient != null)
                 {
-                    RelationshipController.Instance.ReportUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
+                    var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Report");
+                    var key = action.Key;
+                    int initiatingUserId;
+                    if (int.TryParse(key, out initiatingUserId))
+                    {
+                        RelationshipController.Instance.ReportUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
+                        NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
 
-                    NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
+                        return Json(new { Result = "success" });
+                    }
+                }
 
-                    return Json(new { Result = "success" });
-                }
-                catch (Exception)
-                {
-                    return Json(new { Result = "error" });
-                }
+                return Json(new { Result = "error" });
             }
-
-            return Json(new { Result = "error" });
+            catch (Exception)
+            {
+                return Json(new { Result = "error" });
+            }
         }
 
-        [DnnAuthorize]
         public ActionResult BlockFriend(int notificationId)
         {
-            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Block");
-            var key = action.Key;
-            int initiatingUserId;
-            if (int.TryParse(key, out initiatingUserId))
+            try
             {
-                try
+                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
+                if (recipient != null)
                 {
-                    RelationshipController.Instance.BlockUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
+                    var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Block");
+                    var key = action.Key;
+                    int initiatingUserId;
+                    if (int.TryParse(key, out initiatingUserId))
+                    {
+                        RelationshipController.Instance.BlockUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
+                        NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
 
-                    NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
+                        return Json(new { Result = "success" });
+                    }
+                }
 
-                    return Json(new { Result = "success" });
-                }
-                catch (Exception)
-                {
-                    return Json(new { Result = "error" });
-                }
+                return Json(new { Result = "error" });
             }
-
-            return Json(new { Result = "error" });
+            catch (Exception)
+            {
+                return Json(new { Result = "error" });
+            }
         }
 
         #endregion
 
         #region Follower APIs
 
-        [DnnAuthorize]
         public ActionResult ReportFollower(int notificationId)
         {
-            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Report");
-            var key = action.Key;
-            int initiatingUserId;
-            if (int.TryParse(key, out initiatingUserId))
+            try
             {
-                try
+                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
+                if (recipient != null)
                 {
-                    RelationshipController.Instance.ReportUserRelationship(GetFollowerUserRelationship(initiatingUserId).UserRelationshipId);
+                    var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Report");
+                    var key = action.Key;
+                    int initiatingUserId;
+                    if (int.TryParse(key, out initiatingUserId))
+                    {
+                        RelationshipController.Instance.ReportUserRelationship(GetFollowerUserRelationship(initiatingUserId).UserRelationshipId);
+                        NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
 
-                    NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
+                        return Json(new { Result = "success" });
+                    }
+                }
 
-                    return Json(new { Result = "success" });
-                }
-                catch (Exception)
-                {
-                    return Json(new { Result = "error" });
-                }
+                return Json(new { Result = "error" });
             }
-
-            return Json(new { Result = "error" });
+            catch (Exception)
+            {
+                return Json(new { Result = "error" });
+            }
         }
 
-        [DnnAuthorize]
         public ActionResult BlockFollower(int notificationId)
         {
-            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Block");
-            var key = action.Key;
-            int initiatingUserId;
-            if (int.TryParse(key, out initiatingUserId))
+            try
             {
-                try
+                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
+                if (recipient != null)
                 {
-                    RelationshipController.Instance.BlockUserRelationship(GetFollowerUserRelationship(initiatingUserId).UserRelationshipId);
+                    var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Block");
+                    var key = action.Key;
+                    int initiatingUserId;
+                    if (int.TryParse(key, out initiatingUserId))
+                    {
+                        RelationshipController.Instance.BlockUserRelationship(GetFollowerUserRelationship(initiatingUserId).UserRelationshipId);
+                        NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
 
-                    NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
+                        return Json(new { Result = "success" });
+                    }
+                }
 
-                    return Json(new { Result = "success" });
-                }
-                catch (Exception)
-                {
-                    return Json(new { Result = "error" });
-                }
+                return Json(new { Result = "error" });
             }
-
-            return Json(new { Result = "error" });
+            catch (Exception)
+            {
+                return Json(new { Result = "error" });
+            }
         }
 
         #endregion
 
         #region FollowBack APIS
 
-        [DnnAuthorize]
         public ActionResult FollowBack(int notificationId)
         {
-            var action = NotificationsController.Instance.GetNotificationAction(notificationId, "FollowBack");
-            var key = action.Key;
-            int targetUserId;
-            if (int.TryParse(key, out targetUserId))
+            try
             {
-                try
-                {                    
-                    var targetUser = UserController.GetUserById(PortalSettings.PortalId, targetUserId);
-
-                    RelationshipController.Instance.FollowUser(targetUser);
-
-                    NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
-
-                    return Json(new { Result = "success" });
-                }
-                catch (Exception)
+                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
+                if (recipient != null)
                 {
-                    return Json(new { Result = "error" });
-                }
-            }
+                    var action = NotificationsController.Instance.GetNotificationAction(notificationId, "FollowBack");
+                    var key = action.Key;
+                    int targetUserId;
+                    if (int.TryParse(key, out targetUserId))
+                    {
+                        var targetUser = UserController.GetUserById(PortalSettings.PortalId, targetUserId);
 
-            return Json(new { Result = "error" });
+                        RelationshipController.Instance.FollowUser(targetUser);
+                        NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
+
+                        return Json(new {Result = "success"});
+                    }
+                }
+
+                return Json(new { Result = "error" });
+            }
+            catch (Exception)
+            {
+                return Json(new { Result = "error" });
+            }
         }
 
         #endregion
@@ -253,7 +271,7 @@ namespace DotNetNuke.Web.CoreServices
         {
             var initiatingUser = UserController.GetUserById(PortalSettings.PortalId, initiatingUserId);
 
-            return RelationshipController.Instance.GetFriendRelationship(initiatingUser);            
+            return RelationshipController.Instance.GetFriendRelationship(initiatingUser);
         }
 
         private UserRelationship GetFollowerUserRelationship(int initiatingUserId)

@@ -27,6 +27,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
@@ -46,6 +47,7 @@ namespace DotNetNuke.Web.CoreServices
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
+        [ValidateAntiForgeryToken]
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Create(string subject, string body, string roleIds, string userIds, string fileIds)
         {
@@ -81,7 +83,12 @@ namespace DotNetNuke.Web.CoreServices
             if (q.Length == 0) return Json(null, JsonRequestBehavior.AllowGet);
 
             var results = TestableUserController.Instance.GetUsersAdvancedSearch(portalId, UserInfo.UserID, -1, -1, -1, isAdmin, -1, numResults, "DisplayName", true, "DisplayName", q)
-                .Select(user => new SearchResult { id = "user-" + user.UserID, name = user.DisplayName }).ToList();
+                .Select(user => new SearchResult
+                { 
+                    id = "user-" + user.UserID,
+                    name = user.DisplayName,
+                    iconfile = string.Format(Globals.UserProfilePicFormattedUrl(), user.UserID, 32, 32),
+                }).ToList();
 
             var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, numResults, q);
             results.AddRange(roles.Select(ri => new SearchResult

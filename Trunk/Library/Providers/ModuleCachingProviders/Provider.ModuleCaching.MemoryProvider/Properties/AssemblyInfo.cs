@@ -33,5 +33,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("DotNetNuke")]
 [assembly: ComVisible(false)]
 [assembly: Guid("4fb53b48-4f4f-4259-9f96-0b207a26436c")]
-[assembly: AssemblyVersion("6.2.0.1211")]
-[assembly: AssemblyFileVersion("6.2.0.1211")]
+[assembly: AssemblyVersion("6.2.0.1231")]
+[assembly: AssemblyFileVersion("6.2.0.1231")]

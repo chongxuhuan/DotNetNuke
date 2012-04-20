@@ -225,4 +225,16 @@
   <data name="Mode.Text" xml:space="preserve">
     <value>Mode</value>
   </data>
+  <data name="tabsLabel.Help" xml:space="preserve">
+    <value>You can manage the visibility of individual pages.</value>
+  </data>
+  <data name="tabsLabel.Text" xml:space="preserve">
+    <value>Page Visibility Settings:</value>
+  </data>
+  <data name="Friends.Text" xml:space="preserve">
+    <value>Friends</value>
+  </data>
+  <data name="User.Text" xml:space="preserve">
+    <value>User</value>
+  </data>
 </root>

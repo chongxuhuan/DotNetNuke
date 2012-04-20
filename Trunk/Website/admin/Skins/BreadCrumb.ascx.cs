@@ -25,6 +25,8 @@ using System;
 using DotNetNuke.Common;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.Common.Utilities;
+using System.Globalization;
 
 #endregion
 
@@ -50,6 +52,24 @@ namespace DotNetNuke.UI.Skins.Controls
 
         public bool UseTitle { get; set; }
 
+        public int ProfileUserId {
+            get {
+                var userId = Null.NullInteger;
+                if (!string.IsNullOrEmpty(Request.Params["UserId"])) {
+                    userId = Int32.Parse(Request.Params["UserId"]);
+                }
+                return userId;
+            }
+        }
+        public int GroupId {
+            get {
+                var groupId = Null.NullInteger;
+                if (!string.IsNullOrEmpty(Request.Params["GroupId"])) {
+                    groupId = Int32.Parse(Request.Params["GroupId"]);
+                }
+                return groupId;
+            }
+        }
         private void InitializeComponent()
         {
         }
@@ -122,13 +142,21 @@ namespace DotNetNuke.UI.Skins.Controls
                 {
                     strLabel = objTab.Title;
                 }
+                var tabUrl = objTab.FullUrl;
+                if (ProfileUserId > -1) {
+                    tabUrl = Globals.NavigateURL(objTab.TabID, "", "UserId=" + ProfileUserId.ToString(CultureInfo.InvariantCulture));
+                }
+
+                if (GroupId > -1) {
+                    tabUrl = Globals.NavigateURL(objTab.TabID, "", "GroupId=" + GroupId.ToString(CultureInfo.InvariantCulture));
+                }
                 if (objTab.DisableLink)
                 {
                     strBreadCrumbs += "<span class=\"" + strCssClass + "\">" + strLabel + "</span>";
                 }
                 else
                 {
-                    strBreadCrumbs += "<a href=\"" + objTab.FullUrl + "\" class=\"" + strCssClass + "\">" + strLabel + "</a>";
+                    strBreadCrumbs += "<a href=\"" + tabUrl + "\" class=\"" + strCssClass + "\">" + strLabel + "</a>";
                 }
             }
             lblBreadCrumb.Text = strBreadCrumbs;

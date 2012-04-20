@@ -278,4 +278,7 @@
   <data name="lblTemplateMessage.Text" xml:space="preserve">
     <value>Build your site from a template</value>
   </data>
+  <data name="ModulesNotInstalled.Text" xml:space="preserve">
+    <value>This template has the following modules that are not installed.&lt;br /&gt;{0}</value>
+  </data>
 </root>

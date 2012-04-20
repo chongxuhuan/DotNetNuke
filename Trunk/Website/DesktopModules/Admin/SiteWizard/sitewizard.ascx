@@ -46,6 +46,7 @@
                 <div class="dnnFormItem">
                     <dnn:Label ID="lblTemplateList" runat="server" ControlName="lstTemplate" />
                     <asp:ListBox ID="lstTemplate" runat="server" Rows="8" Width="350" AutoPostBack="True" />
+                    <asp:Label ID="lblTemplateDescription" runat="server"></asp:Label>
                 </div>
                 <div class="dnnFormItem dnnSWMergeModules">
                     <dnn:Label ID="lblMergeModule" runat="server" ControlName="optMerge" />    
