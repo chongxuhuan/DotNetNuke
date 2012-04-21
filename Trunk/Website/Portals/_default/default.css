@@ -178,48 +178,6 @@ a.OtherTabs:active{text-decoration:none;color:#eee;}
 .LoginTabHover{float:left;background:url("../../images/tablogin_gray.gif") left top;margin:0 3px 3px 0;padding:5px 5px 4px 5px;text-decoration:none;color:#555;border:1px #C00 solid;cursor:pointer;}
 .LoginContainerGroup{clear:both;padding-top:5px;}
 
-#Login{text-align:right; min-height:45px;}
-#Login *{vertical-align:middle;}
-#Login li{list-style:none; float:left;}
-#Login ul{padding-bottom:0;}
-#Login li img{max-height:35px;max-width:35px;}
-
-#Login .registerGroup{margin-left:7px;float:left;}
-#Login .registerGroup li{margin-left:5px;}
-#Login .userMessages,
-#Login .userNotifications{margin-top:7px;}
-#Login .userDisplayName{ margin-top:10px; font-weight:bold; }
-#Login .registerGroup a span{
-	display:inline-block;
-	min-height:12px; min-width:7px;
-	text-align:center;
-	padding: 0.3em 5px;
-	margin-right:5px;
-	background: rgb(31,152,241); /* Old browsers */
-	font-weight:normal;
-	font-size:10px;
-	color:#fff;
-	text-shadow:0px 1px 0px #333;
-	
-	/*CSS3*/	
-	background: -moz-linear-gradient(top, rgba(31,152,241,1) 0%, rgba(2,111,196,1) 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(31,152,241,1)), color-stop(100%,rgba(2,111,196,1))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, rgba(31,152,241,1) 0%,rgba(2,111,196,1) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, rgba(31,152,241,1) 0%,rgba(2,111,196,1) 100%); /* Opera 11.10+ */
-	background: linear-gradient(top, rgba(31,152,241,1) 0%,rgba(2,111,196,1) 100%); /* W3C */
-	
-	-webkit-border-radius: 	3px;
-	-moz-border-radius: 	3px;
-	border-radius: 			3px; 
-	
-	-webkit-box-shadow: 0px 1px 0px 0px #222222;
-	-moz-box-shadow: 0px 1px 0px 0px #222222;
-	box-shadow: 0px 1px 0px 0px #222222; 
-}
-#Login .loginGroup{margin:11px 0 0 7px; width:auto; float:left;}
-
-
-
 /* Search SkinObject Styles */
 div.SearchContainer{position:relative;white-space:nowrap;}
 div.SearchBorder{width:200px;height:20px;border:solid 1px #e0e0e0;position:relative;background-color:White;white-space:nowrap;float:left;margin-top:2px;}
@@ -401,7 +359,7 @@ div.SearchIcon img{margin-top:3px;}
 	        display:inline-block;
 	        padding: 9px 15px; margin: 0 7px 0 0;
 	        background: rgb(243,243,243); /* Old browsers */
-	        font-size:11px; font-weight:bold; text-shadow: 0px 1px 0px rgba(255,255,255,0.9);
+	        font-size:11px; font-weight:bold; color:#0091E1;/*baby blue*/ text-shadow: 0px 1px 0px rgba(255,255,255,0.9);
 		
 	        /*CSS3*/
 	        background: -moz-linear-gradient(top, rgba(243,243,243,1) 0%, rgba(231,231,231,1) 100%); /* FF3.6+ */
@@ -419,6 +377,7 @@ div.SearchIcon img{margin-top:3px;}
 	        -moz-box-shadow: 		1px 1px 0px 0px #ccc;
 	        box-shadow: 			1px 1px 0px 0px #ccc; 
         }
+        .dnnTertiaryAction:active, .dnnTertiaryAction:focus{color:#0091E1;/*baby blue*/}
         /* Active / Hover State */
         .dnnTertiaryAction:hover, .dnnTertiaryAction.active{
 	        background:#666;
@@ -434,7 +393,7 @@ div.SearchIcon img{margin-top:3px;}
         .dnnTertiaryAction.disabled{-moz-opacity:.50; filter:alpha(opacity=50); opacity:.50;}
         /* Disabled Hover */
         .dnnTertiaryAction.disabled:hover{
-	        background: rgb(243,243,243); /* Old browsers */ cursor:default; color:inherit; text-shadow:none;
+	        background: rgb(243,243,243); /* Old browsers */ cursor:default; color:#0091E1;/*baby blue*/ text-shadow:none;
 			text-decoration:none;
 			
 	        /*CSS3*/

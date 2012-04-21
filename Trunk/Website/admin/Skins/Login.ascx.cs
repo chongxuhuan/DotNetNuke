@@ -45,6 +45,12 @@ namespace DotNetNuke.UI.Skins.Controls
     /// -----------------------------------------------------------------------------
     public partial class Login : SkinObjectBase
     {
+
+        public Login()
+        {
+            LegacyMode = true;
+        }
+
 		#region Private Members
 
         private const string MyFileName = "Login.ascx";
@@ -58,6 +64,11 @@ namespace DotNetNuke.UI.Skins.Controls
 
         public string LogoffText { get; set; }
 
+        /// <summary>
+        /// Set this to false in the skin to take advantage of the enhanced markup
+        /// </summary>
+        public bool LegacyMode { get; set; }
+
 		#endregion
 
 		#region Event Handlers
@@ -68,9 +79,21 @@ namespace DotNetNuke.UI.Skins.Controls
 
             try
             {
+                if (LegacyMode)
+                {
+                    loginLink.Visible = true;
+                    loginGroup.Visible = false;
+                }
+                else
+                {
+                    loginLink.Visible = false;
+                    loginGroup.Visible = true;
+                }
+
                 if (!String.IsNullOrEmpty(CssClass))
                 {
                     loginLink.CssClass = CssClass;
+                    enhancedLoginLink.CssClass = CssClass;
                 }
 
                 if (Request.IsAuthenticated)
@@ -82,13 +105,17 @@ namespace DotNetNuke.UI.Skins.Controls
                             LogoffText = LogoffText.Replace("src=\"", "src=\"" + PortalSettings.ActiveTab.SkinPath);
                         }
                         loginLink.Text = LogoffText;
+                        enhancedLoginLink.Text = LogoffText;
                     }
                     else
                     {
                         loginLink.Text = Localization.GetString("Logout", Localization.GetResourceFile(this, MyFileName));
+                        enhancedLoginLink.Text = loginLink.Text;
                         loginLink.ToolTip = loginLink.Text;
+                        enhancedLoginLink.ToolTip = loginLink.Text;
                     }
                     loginLink.NavigateUrl = Globals.NavigateURL(PortalSettings.ActiveTab.TabID, "Logoff");
+                    enhancedLoginLink.NavigateUrl = loginLink.NavigateUrl;
                 }
                 else
                 {
@@ -99,11 +126,14 @@ namespace DotNetNuke.UI.Skins.Controls
                             Text = Text.Replace("src=\"", "src=\"" + PortalSettings.ActiveTab.SkinPath);
                         }
                         loginLink.Text = Text;
+                        enhancedLoginLink.Text = Text;
                     }
                     else
                     {
                         loginLink.Text = Localization.GetString("Login", Localization.GetResourceFile(this, MyFileName));
+                        enhancedLoginLink.Text = loginLink.Text;
                         loginLink.ToolTip = loginLink.Text;
+                        enhancedLoginLink.ToolTip = loginLink.Text;
                     }
 
                     string returnUrl = HttpContext.Current.Request.RawUrl;
@@ -114,6 +144,7 @@ namespace DotNetNuke.UI.Skins.Controls
                     returnUrl = HttpUtility.UrlEncode(returnUrl);
 
                     loginLink.NavigateUrl = Globals.LoginURL(returnUrl, (Request.QueryString["override"] != null));
+                    enhancedLoginLink.NavigateUrl = loginLink.NavigateUrl;
 
                     //if (PortalSettings.EnablePopUps && PortalSettings.LoginTabId == Null.NullInteger)
                     //{

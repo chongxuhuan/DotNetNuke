@@ -278,7 +278,7 @@ namespace DotNetNuke.Web.CoreServices
         {
             var initiatingUser = UserController.GetUserById(PortalSettings.PortalId, initiatingUserId);
 
-            return RelationshipController.Instance.GetFollowerRelationship(initiatingUser);
+            return RelationshipController.Instance.GetFollowerRelationship(initiatingUser, UserInfo);
         }
 
         #endregion

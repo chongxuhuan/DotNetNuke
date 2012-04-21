@@ -54,6 +54,7 @@ namespace DotNetNuke.UI.Skins.Controls
         {
             ShowUnreadMessages = true;
             ShowAvatar = true;
+            LegacyMode = true;
         }
 
         public string CssClass { get; set; }
@@ -61,6 +62,11 @@ namespace DotNetNuke.UI.Skins.Controls
         public bool ShowUnreadMessages { get; set; }
 
         public bool ShowAvatar { get; set; }
+
+        /// <summary>
+        /// Set this to false in the skin to take advantage of the enhanced markup
+        /// </summary>
+        public bool LegacyMode { get; set; }
 
         public string Text { get; set; }
 
@@ -72,13 +78,23 @@ namespace DotNetNuke.UI.Skins.Controls
 
             try
             {
+                if (LegacyMode)
+                    registerGroup.Visible = false;
+                else
+                    registerLink.Visible = false;
+
                 if (!String.IsNullOrEmpty(CssClass))
                 {
                     registerLink.CssClass = CssClass;
+                    enhancedRegisterLink.CssClass = CssClass;
                 }
 
                 if (Request.IsAuthenticated == false)
                 {
+                    messageGroup.Visible = false;
+                    notificationGroup.Visible = false;
+                    avatarGroup.Visible = false;
+
                     if (PortalSettings.UserRegistration != (int) Globals.PortalRegistrationType.NoRegistration)
                     {
                         if (!String.IsNullOrEmpty(Text))
@@ -88,25 +104,30 @@ namespace DotNetNuke.UI.Skins.Controls
                                 Text = Text.Replace("src=\"", "src=\"" + PortalSettings.ActiveTab.SkinPath);
                             }
                             registerLink.Text = Text;
+                            enhancedRegisterLink.Text = Text;
                         }
                         else
                         {
                             registerLink.Text = Localization.GetString("Register", Localization.GetResourceFile(this, MyFileName));
+                            enhancedRegisterLink.Text = registerLink.Text;
                             registerLink.ToolTip = registerLink.Text;
+                            enhancedRegisterLink.ToolTip = registerLink.Text;
                         }
                         if (PortalSettings.Users < PortalSettings.UserQuota || PortalSettings.UserQuota == 0)
-                        {
-                            SetVisibility(false);
-                            registerLink.Visible = true;
+                        {                            
+                            if (LegacyMode) registerLink.Visible = true;
+                            else  enhancedRegisterLink.Visible = true;
                         }
                         else
-                        {                         
-                            SetVisibility(false);
+                        {
+                            registerGroup.Visible = false;
+                            registerLink.Visible = false;
                         }
 
                         registerLink.NavigateUrl = !String.IsNullOrEmpty(URL) 
                                             ? URL 
                                             : Globals.RegisterURL(HttpUtility.UrlEncode(Globals.NavigateURL()), Null.NullString);
+                        enhancedRegisterLink.NavigateUrl = registerLink.NavigateUrl;
 
                         //if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger)
                         //{
@@ -116,7 +137,8 @@ namespace DotNetNuke.UI.Skins.Controls
                     }
                     else
                     {
-                        SetVisibility(false);
+                        registerGroup.Visible = false;
+                        registerLink.Visible = false;
                     }
                 }
                 else
@@ -128,6 +150,10 @@ namespace DotNetNuke.UI.Skins.Controls
                         registerLink.NavigateUrl = Globals.UserProfileURL(userInfo.UserID);                        
                         registerLink.ToolTip = Localization.GetString("VisitMyProfile", Localization.GetResourceFile(this, MyFileName));
 
+                        enhancedRegisterLink.Text = registerLink.Text;
+                        enhancedRegisterLink.NavigateUrl = registerLink.NavigateUrl;
+                        enhancedRegisterLink.ToolTip = registerLink.ToolTip;
+
                         if (ShowUnreadMessages)
                         {
                             var unreadMessages = MessagingController.Instance.CountUnreadMessages(userInfo.UserID, userInfo.PortalID);
@@ -138,28 +164,33 @@ namespace DotNetNuke.UI.Skins.Controls
 
                             var messageTabUrl = Globals.NavigateURL(GetMessageTab(), "", string.Format("userId={0}", userInfo.UserID));
                             messageLink.NavigateUrl = messageTabUrl;
-                            notificationLink.NavigateUrl = messageTabUrl;
+                            notificationLink.NavigateUrl = messageTabUrl + "?view=notifications&action=notifications";
                             notificationLink.ToolTip = Localization.GetString("CheckNotifications", Localization.GetResourceFile(this, MyFileName));
                             messageLink.ToolTip = Localization.GetString("CheckMessages", Localization.GetResourceFile(this, MyFileName));
-                            notificationLink.Visible = true;
-                            messageLink.Visible = true;
+                            messageGroup.Visible = true;
+                            notificationGroup.Visible = true;
+
+                            if (LegacyMode && unreadMessages > 0)
+                            {
+                                registerLink.Text = registerLink.Text + string.Format(Localization.GetString("NewMessages", Localization.GetResourceFile(this, MyFileName)), unreadMessages);
+                            }
                         }
                         else
                         {
-                            notificationLink.Visible = false;
-                            messageLink.Visible = false;                            
+                            messageGroup.Visible = false;
+                            notificationGroup.Visible = false;
                         }
 
                         if (ShowAvatar)
                         {
                             avatar.ImageUrl = string.Format(Globals.UserProfilePicFormattedUrl(), userInfo.UserID, 35, 35);
-                            avatar.NavigateUrl = registerLink.NavigateUrl;
-                            avatar.ToolTip = Localization.GetString("ProfileAvatar", Localization.GetResourceFile(this, MyFileName));                                                    
-                            avatar.Visible = true;                            
+                            avatar.NavigateUrl = enhancedRegisterLink.NavigateUrl;
+                            avatar.ToolTip = Localization.GetString("ProfileAvatar", Localization.GetResourceFile(this, MyFileName));
+                            avatarGroup.Visible = true;                            
                         }
                         else
                         {
-                            avatar.Visible = false;
+                            avatarGroup.Visible = false;
                         }
                     }
                 }
@@ -168,14 +199,6 @@ namespace DotNetNuke.UI.Skins.Controls
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
-        }
-
-        private void SetVisibility(bool visible)
-        {
-            registerLink.Visible = visible;
-            avatar.Visible = visible;
-            notificationLink.Visible = visible;
-            messageLink.Visible = visible;   
         }
 
         private int GetMessageTab()
