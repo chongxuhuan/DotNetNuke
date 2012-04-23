@@ -278,6 +278,20 @@ namespace DotNetNuke.Modules.Admin.Portals
 
             cboUserTabId.DataSource = listTabs;
             cboUserTabId.DataBind(portal.UserTabId.ToString());
+
+            DisableInvalidLoginTabs();
+        }
+
+        private void DisableInvalidLoginTabs()
+        {
+            foreach (ListItem item in cboLoginTabId.Items)
+            {
+                var tabId = int.Parse(item.Value);
+                if(tabId != Null.NullInteger && !Globals.ValidateLoginTabID(tabId))
+                {
+                    item.Attributes.Add("disabled", "disabled");
+                }
+            }
         }
 
         private void BindPaymentProcessor(PortalInfo portal)

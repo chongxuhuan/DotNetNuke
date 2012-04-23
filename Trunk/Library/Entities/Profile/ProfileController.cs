@@ -239,11 +239,11 @@ namespace DotNetNuke.Entities.Profile
             AddDefaultDefinition(portalId, "Contact Info", "Fax", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
             AddDefaultDefinition(portalId, "Contact Info", "Website", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
             AddDefaultDefinition(portalId, "Contact Info", "IM", "Text", 50, UserVisibilityMode.AdminOnly, dataTypes);
-            AddDefaultDefinition(portalId, "Preferences", "Photo", "Image", 0, UserVisibilityMode.AllUsers, dataTypes);
             AddDefaultDefinition(portalId, "Preferences", "Biography", "RichText", 0, UserVisibilityMode.AdminOnly, dataTypes);
             AddDefaultDefinition(portalId, "Preferences", "TimeZone", "TimeZone", 0, UserVisibilityMode.AdminOnly, dataTypes);
             AddDefaultDefinition(portalId, "Preferences", "PreferredTimeZone", "TimeZoneInfo", 0, UserVisibilityMode.AdminOnly, dataTypes);
             AddDefaultDefinition(portalId, "Preferences", "PreferredLocale", "Locale", 0, UserVisibilityMode.AdminOnly, dataTypes);
+            AddDefaultDefinition(portalId, "Preferences", "Photo", "Image", 0, UserVisibilityMode.AllUsers, dataTypes);
 
             //6.0 requires the old TimeZone property to be marked as Deleted
             ProfilePropertyDefinition pdf = GetPropertyDefinitionByName(portalId, "TimeZone");

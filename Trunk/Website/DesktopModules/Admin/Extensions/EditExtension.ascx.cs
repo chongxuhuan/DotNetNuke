@@ -22,6 +22,7 @@
 
 using System;
 using System.IO;
+using System.Web;
 using System.Web.UI;
 
 using DotNetNuke.Common;
@@ -260,6 +261,14 @@ namespace DotNetNuke.Modules.Admin.Extensions
             cmdDelete.Click += OnDeleteClick;
             cmdPackage.Click += OnPackageClick;
             cmdUpdate.Click += OnUpdateClick;
+            Page.PreRenderComplete += (sender, args) =>
+                                          {
+                                              if (HttpContext.Current.Request.Url.ToString().Contains("popUp=true"))
+                                              {
+                                                  var title = string.Format("{0} > {1}", Page.Title, Package.FriendlyName);
+                                                  Page.Title = title;
+                                              }
+                                          };
 
             BindData();
         }

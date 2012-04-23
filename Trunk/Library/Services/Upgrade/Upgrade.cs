@@ -4163,6 +4163,9 @@ namespace DotNetNuke.Services.Upgrade
 
             //Replace old Messaging module on User Profile with new 
             ReplaceMessagingModule();
+
+            //Move Photo Property to the end of the propert list.
+            MovePhotoProperty();
         }
 
         private static void ConvertOldMessages()
@@ -4230,6 +4233,30 @@ namespace DotNetNuke.Services.Upgrade
                             moduleController.DeleteTabModule(module.TabID, module.ModuleID, false);
                             break;
                         }
+                    }
+                }
+            }
+        }
+
+        private static void MovePhotoProperty()
+        {
+            var portalController = new PortalController();
+            foreach (PortalInfo portal in portalController.GetPortals())
+            {
+                var properties = ProfileController.GetPropertyDefinitionsByPortal(portal.PortalID).Cast<ProfilePropertyDefinition>();
+                var propPhoto = properties.FirstOrDefault(p => p.PropertyName == "Photo");
+                if(propPhoto != null)
+                {
+                    var maxOrder = properties.Max(p => p.ViewOrder);
+                    if(propPhoto.ViewOrder != maxOrder)
+                    {
+                        properties.Where(p => p.ViewOrder > propPhoto.ViewOrder).ToList().ForEach(p =>
+                                                                                                      { 
+                                                                                                          p.ViewOrder -= 2;
+                                                                                                          ProfileController.UpdatePropertyDefinition(p);
+                                                                                                      });
+                        propPhoto.ViewOrder = maxOrder;
+                        ProfileController.UpdatePropertyDefinition(propPhoto);
                     }
                 }
             }

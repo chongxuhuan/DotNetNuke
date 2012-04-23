@@ -277,7 +277,7 @@
     <value>Login Page:</value>
   </data>
   <data name="plLoginTabId.Help" xml:space="preserve">
-    <value>The Login Page for your site.</value>
+    <value>The Login Page for your site, pages which disabled to select in the list because there is no Account Login module on those pages.</value>
   </data>
   <data name="plUserTabId.Text" xml:space="preserve">
     <value>User Profile Page:</value>

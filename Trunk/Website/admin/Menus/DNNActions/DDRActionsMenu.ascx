@@ -13,7 +13,7 @@
 			$("a[href*=\"" + confirmString +"\"]").attr("href", function () {
 				return $(this).attr("href").replace( /if\(.+?\)\{(.+?)\}/ , "$1");//remove its original confirm function
 			}).dnnConfirm({
-				text: '<%= Localization.GetSafeJSString("DeleteModule.Confirm"), Localization.SharedResourceFile %>',
+				text: '<%= Localization.GetSafeJSString("DeleteModule.Confirm", Localization.SharedResourceFile) %>',
 				yesText: '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>',
 				noText: '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>',
 				title: '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>'
