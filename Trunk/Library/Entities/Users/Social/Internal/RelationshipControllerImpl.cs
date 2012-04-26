@@ -18,10 +18,11 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
+
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 
 using DotNetNuke.Common;
@@ -48,8 +49,8 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         #region Private Variables
 
-        private readonly IDataService _dataService;
-        private readonly IEventLogController _eventLogController;
+        private readonly IDataService dataService;
+        private readonly IEventLogController eventLogController;
 
         #endregion
 
@@ -65,8 +66,8 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             Requires.NotNull("dataService", dataService);
             Requires.NotNull("eventLogController", eventLogController);
 
-            _dataService = dataService;
-            _eventLogController = eventLogController;
+            this.dataService = dataService;
+            this.eventLogController = eventLogController;
         }
 
         #endregion
@@ -79,7 +80,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         {
             Requires.NotNull("relationshipType", relationshipType);
 
-            _dataService.DeleteRelationshipType(relationshipType.RelationshipTypeId);
+            dataService.DeleteRelationshipType(relationshipType.RelationshipTypeId);
 
             //log event
             string logContent =
@@ -99,7 +100,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             return CBO.GetCachedObject<IList<RelationshipType>>(cacheArgs,
                                                                 c =>
                                                                 CBO.FillCollection<RelationshipType>(
-                                                                    _dataService.GetAllRelationshipTypes()));
+                                                                    dataService.GetAllRelationshipTypes()));
         }
 
         public RelationshipType GetRelationshipType(int relationshipTypeId)
@@ -115,7 +116,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                                          ? "RelationshipType_Added"
                                          : "RelationshipType_Updated";
 
-            relationshipType.RelationshipTypeId = _dataService.SaveRelationshipType(relationshipType,
+            relationshipType.RelationshipTypeId = dataService.SaveRelationshipType(relationshipType,
                                                                                     UserController.GetCurrentUserInfo().
                                                                                         UserID);
 
@@ -136,7 +137,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         {
             Requires.NotNull("relationship", relationship);
 
-            _dataService.DeleteRelationship(relationship.RelationshipId);
+            dataService.DeleteRelationship(relationship.RelationshipId);
 
             //log event
             string logContent =
@@ -150,12 +151,12 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         public Relationship GetRelationship(int relationshipId)
         {
-            return CBO.FillCollection<Relationship>(_dataService.GetRelationship(relationshipId)).FirstOrDefault();
+            return CBO.FillCollection<Relationship>(dataService.GetRelationship(relationshipId)).FirstOrDefault();
         }
 
         public IList<Relationship> GetRelationshipsByUserId(int userId)
         {
-            return CBO.FillCollection<Relationship>(_dataService.GetRelationshipsByUserId(userId));
+            return CBO.FillCollection<Relationship>(dataService.GetRelationshipsByUserId(userId));
         }
 
         public IList<Relationship> GetRelationshipsByPortalId(int portalId)
@@ -167,7 +168,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             return CBO.GetCachedObject<IList<Relationship>>(cacheArgs,
                                                             c =>
                                                             CBO.FillCollection<Relationship>(
-                                                                _dataService.GetRelationshipsByPortalId(
+                                                                dataService.GetRelationshipsByPortalId(
                                                                     (int) c.ParamList[0])));
         }
 
@@ -179,7 +180,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                                          ? "Relationship_Added"
                                          : "Relationship_Updated";
 
-            relationship.RelationshipId = _dataService.SaveRelationship(relationship,
+            relationship.RelationshipId = dataService.SaveRelationship(relationship,
                                                                         UserController.GetCurrentUserInfo().UserID);
 
             //log event
@@ -199,7 +200,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         {
             Requires.NotNull("userRelationship", userRelationship);
 
-            _dataService.DeleteUserRelationship(userRelationship.UserRelationshipId);
+            dataService.DeleteUserRelationship(userRelationship.UserRelationshipId);
 
             //log event
             string logContent =
@@ -214,7 +215,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         public UserRelationship GetUserRelationship(int userRelationshipId)
         {
-            return CBO.FillObject<UserRelationship>(_dataService.GetUserRelationship(userRelationshipId));
+            return CBO.FillObject<UserRelationship>(dataService.GetUserRelationship(userRelationshipId));
         }
 
         public UserRelationship GetUserRelationship(UserInfo user, UserInfo relatedUser, Relationship relationship)
@@ -222,7 +223,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             UserRelationship userRelationship = null;
             if (relationship != null)
             {
-                userRelationship = CBO.FillObject<UserRelationship>(_dataService.GetUserRelationship(user.UserID, relatedUser.UserID,
+                userRelationship = CBO.FillObject<UserRelationship>(dataService.GetUserRelationship(user.UserID, relatedUser.UserID,
                                                                                   relationship.RelationshipId,
                                                                                   GetRelationshipType(
                                                                                       relationship.RelationshipTypeId).
@@ -234,7 +235,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         public IList<UserRelationship> GetUserRelationships(UserInfo user)
         {
-            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationships(user.UserID));
+            return CBO.FillCollection<UserRelationship>(dataService.GetUserRelationships(user.UserID));
         }
 
         public void SaveUserRelationship(UserRelationship userRelationship)
@@ -245,7 +246,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                                          ? "UserRelationship_Added"
                                          : "UserRelationship_Updated";
 
-            userRelationship.UserRelationshipId = _dataService.SaveUserRelationship(userRelationship,
+            userRelationship.UserRelationshipId = dataService.SaveUserRelationship(userRelationship,
                                                                                     UserController.GetCurrentUserInfo().
                                                                                         UserID);
 
@@ -267,7 +268,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         {
             Requires.NotNull("userRelationshipPreference", userRelationshipPreference);
 
-            _dataService.DeleteUserRelationshipPreference(userRelationshipPreference.PreferenceId);
+            dataService.DeleteUserRelationshipPreference(userRelationshipPreference.PreferenceId);
 
             //log event
             string logContent =
@@ -281,13 +282,13 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         public UserRelationshipPreference GetUserRelationshipPreference(int preferenceId)
         {
             return
-                CBO.FillObject<UserRelationshipPreference>(_dataService.GetUserRelationshipPreferenceById(preferenceId));
+                CBO.FillObject<UserRelationshipPreference>(dataService.GetUserRelationshipPreferenceById(preferenceId));
         }
 
         public UserRelationshipPreference GetUserRelationshipPreference(int userId, int relationshipId)
         {
             return
-                CBO.FillObject<UserRelationshipPreference>(_dataService.GetUserRelationshipPreference(userId,
+                CBO.FillObject<UserRelationshipPreference>(dataService.GetUserRelationshipPreference(userId,
                                                                                                       relationshipId));
         }
 
@@ -300,7 +301,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                                          : "UserRelationshipPreference_Updated";
 
             userRelationshipPreference.PreferenceId =
-                _dataService.SaveUserRelationshipPreference(userRelationshipPreference,
+                dataService.SaveUserRelationshipPreference(userRelationshipPreference,
                                                             UserController.GetCurrentUserInfo().UserID);
 
             //log event            
@@ -393,7 +394,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
             if (status == RelationshipStatus.None)
             {
-                status = RelationshipStatus.Initiated;
+                status = RelationshipStatus.Pending;
             }
 
             var userRelationship = new UserRelationship
@@ -422,62 +423,6 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         public void AcceptUserRelationship(int userRelationshipId)
         {
             ManageUserRelationshipStatus(userRelationshipId, RelationshipStatus.Accepted);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Reject an existing UserRelationship Request
-        /// </summary>
-        /// <param name="userRelationshipId">UserRelationshipId of the UserRelationship</param>        
-        /// <remarks>
-        /// Method updates the status of the UserRelationship to Rejected.
-        /// </remarks>
-        /// -----------------------------------------------------------------------------
-        public void RejectUserRelationship(int userRelationshipId)
-        {
-            ManageUserRelationshipStatus(userRelationshipId, RelationshipStatus.Rejected);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Report an existing UserRelationship Request
-        /// </summary>
-        /// <param name="userRelationshipId">UserRelationshipId of the UserRelationship</param>        
-        /// <remarks>
-        /// Method updates the status of the UserRelationship to Reported.
-        /// </remarks>
-        /// -----------------------------------------------------------------------------        
-        public void ReportUserRelationship(int userRelationshipId)
-        {
-            ManageUserRelationshipStatus(userRelationshipId, RelationshipStatus.Reported);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Ignore an existing UserRelationship Request
-        /// </summary>
-        /// <param name="userRelationshipId">UserRelationshipId of the UserRelationship</param>        
-        /// <remarks>
-        /// Method updates the status of the UserRelationship to Ignored.
-        /// </remarks>
-        /// ----------------------------------------------------------------------------- 
-        public void IgnoreUserRelationship(int userRelationshipId)
-        {
-            ManageUserRelationshipStatus(userRelationshipId, RelationshipStatus.Ignored);
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// Block an existing UserRelationship Request
-        /// </summary>
-        /// <param name="userRelationshipId">UserRelationshipId of the UserRelationship</param>        
-        /// <remarks>
-        /// Method updates the status of the UserRelationship to Blocked.
-        /// </remarks>
-        /// ----------------------------------------------------------------------------- 
-        public void BlockUserRelationship(int userRelationshipId)
-        {
-            ManageUserRelationshipStatus(userRelationshipId, RelationshipStatus.Blocked);
         }
 
         /// -----------------------------------------------------------------------------
@@ -1003,7 +948,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         private void AddLog(string logContent)
         {
-            _eventLogController.AddLog("Message", logContent, EventLogController.EventLogType.ADMIN_ALERT);
+            eventLogController.AddLog("Message", logContent, EventLogController.EventLogType.ADMIN_ALERT);
         }
 
         private void ClearRelationshipCache(Relationship relationship)
@@ -1056,22 +1001,10 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                 case RelationshipStatus.None:
                     save = true;
                     break;
-                case RelationshipStatus.Initiated:
+                case RelationshipStatus.Pending:
                     save = true;
                     break;
                 case RelationshipStatus.Accepted:
-                    save = true;
-                    break;
-                case RelationshipStatus.Rejected:
-                    save = true;
-                    break;
-                case RelationshipStatus.Ignored:
-                    save = true;
-                    break;
-                case RelationshipStatus.Reported:
-                    save = true;
-                    break;
-                case RelationshipStatus.Blocked:
                     save = true;
                     break;
             }

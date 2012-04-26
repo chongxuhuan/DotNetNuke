@@ -18,6 +18,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
@@ -27,7 +28,7 @@ using DotNetNuke.Entities.Modules;
 
 #endregion
 
-namespace DotNetNuke.Entities.Users
+namespace DotNetNuke.Entities.Users.Social
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
@@ -44,23 +45,16 @@ namespace DotNetNuke.Entities.Users
     [Serializable]
     public class UserRelationship : BaseEntityInfo, IHydratable
     {
-        private int _userRelationshipId = -1;
+        public UserRelationship()
+        {
+            this.UserRelationshipId = -1;
+        }
 
         /// <summary>
         /// UserRelationshipId - The primary key
         /// </summary>
         [XmlAttribute]
-        public int UserRelationshipId
-        {
-            get
-            {
-                return _userRelationshipId;
-            }
-            set
-            {
-                _userRelationshipId = value;
-            }
-        }
+        public int UserRelationshipId { get; set; }
 
         /// <summary>
         /// UserId of the User that owns the relationship
@@ -85,7 +79,6 @@ namespace DotNetNuke.Entities.Users
         /// </summary>
         [XmlAttribute]
         public RelationshipStatus Status { get; set; }
-
 
         /// <summary>
         /// IHydratable.KeyID.

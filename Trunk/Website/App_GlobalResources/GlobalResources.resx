@@ -1252,10 +1252,10 @@ Sincerely,
     <value>{0} wants to be friends with you</value>
   </data>
   <data name="AddFollowerRequestSubject.Text" xml:space="preserve">
-    <value>{0} is now following</value>
+    <value>{0} is now following you</value>
   </data>
   <data name="AddFollowerRequestBody.Text" xml:space="preserve">
-    <value>{0} is now following with you</value>
+    <value>You are now being followed by {0}</value>
   </data>
   <data name="//Host//DeviceDetectionManagement.String" xml:space="preserve">
     <value>Device Detection Management</value>

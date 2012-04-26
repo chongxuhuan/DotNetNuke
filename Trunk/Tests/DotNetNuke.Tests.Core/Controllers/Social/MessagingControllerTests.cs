@@ -66,7 +66,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         private DataTable _dtMessageRecipients;
         private DataTable _dtPortalSettings;
         private DataTable _dtMessageConversationView;
-        
+
         private UserInfo _adminUserInfo;
         private UserInfo _hostUserInfo;
         private UserInfo _user12UserInfo;
@@ -174,7 +174,7 @@ namespace DotNetNuke.Tests.Core.Controllers
                 .Verifiable();
 
             _mockMessagingController.Object.GetArchivedMessages(Constants.UserID_User12, 0, 0);
-            
+
             _mockMessagingController.Verify();
         }
 
@@ -197,9 +197,9 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController
                 .Setup(mc => mc.GetMessageThread(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), MessagingControllerImpl.ConstSortColumnDate, !MessagingControllerImpl.ConstAscending, ref totalRecords[0]))
                 .Verifiable();
-            
+
             _mockMessagingController.Object.GetMessageThread(0, 0, 0, 0, ref totalRecords[0]);
-            
+
             _mockMessagingController.Verify();
         }
 
@@ -215,7 +215,7 @@ namespace DotNetNuke.Tests.Core.Controllers
                 .Verifiable();
 
             _mockMessagingController.Object.GetRecentSentbox(Constants.UserID_User12);
-            
+
             _mockMessagingController.Verify();
         }
 
@@ -225,9 +225,9 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController
                 .Setup(mc => mc.GetSentbox(Constants.UserID_User12, It.IsAny<int>(), It.IsAny<int>(), MessagingControllerImpl.ConstSortColumnDate, !MessagingControllerImpl.ConstAscending))
                 .Verifiable();
-            
+
             _mockMessagingController.Object.GetRecentSentbox(Constants.UserID_User12);
-            
+
             _mockMessagingController.Verify();
         }
 
@@ -356,7 +356,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             //Arrange
             var roles = new List<RoleInfo>();
             var users = new List<UserInfo>();
-            
+
             for (var i = 0; i <= 100; i++)
             {
                 roles.Add(new RoleInfo() { RoleName = "1234567890" });
@@ -483,7 +483,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            var message = _mockMessagingController.Object.CreateMessage("subject", "body", new List<RoleInfo> {role}, new List<UserInfo> {user}, null, _adminUserInfo);
+            var message = _mockMessagingController.Object.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
 
             //Assert
             Assert.AreEqual("subject_filtered", message.Subject);
@@ -622,7 +622,7 @@ namespace DotNetNuke.Tests.Core.Controllers
                 .Returns(_dtMessageRecipients.CreateDataReader());
 
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
-            
+
             //Act
             var message = _mockMessagingController.Object.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
@@ -852,7 +852,7 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             _mockMessagingController.Object.ReplyMessage(0, "body", null, sender);
 
-            _mockDataService.Verify(ds => ds.CreateMessageReply(It.IsAny<int>(), It.IsAny<int>(),It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()));
+            _mockDataService.Verify(ds => ds.CreateMessageReply(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()));
         }
 
         #endregion
@@ -1002,7 +1002,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var messageBoxView = new MessageBoxView { TotalConversations = 1 };
 
             _dtMessageConversationView.Clear();
-            _dtMessageConversationView.Rows.Add(-1, -1, -1, -1, "", "", "", "", -1, false, -1, -1, lastMessageDate, -1, Null.NullDate);
+            _dtMessageConversationView.Rows.Add(-1, -1, -1, -1, -1, "", "", "", "", -1, false, -1, -1, lastMessageDate, -1, Null.NullDate);
 
             var dr = _dtMessageConversationView.CreateDataReader();
 
@@ -1041,9 +1041,9 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController
                 .Setup(mc => mc.GetInbox(Constants.UserID_User12, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), MessageReadStatus.Any, MessageArchivedStatus.UnArchived))
                 .Verifiable();
-            
+
             _mockMessagingController.Object.GetInbox(Constants.UserID_User12, 0, 0, "", false);
-            
+
             _mockMessagingController.Verify();
         }
 
@@ -1106,7 +1106,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         [Test]
         public void CountConversations_Calls_DataService_CountTotalConversations()
         {
-            _mockDataService.Setup(ds => ds.CountTotalConversations(It.IsAny<int>(),It.IsAny<int>(), It.IsAny<bool?>(), It.IsAny<bool?>(), It.IsAny<bool?>())).Verifiable();
+            _mockDataService.Setup(ds => ds.CountTotalConversations(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool?>(), It.IsAny<bool?>(), It.IsAny<bool?>())).Verifiable();
             _messagingController.CountConversations(Constants.UserID_User12, Constants.PORTAL_Zero, MessageReadStatus.Any, MessageArchivedStatus.Any, MessageSentStatus.Any);
             _mockDataService.Verify();
         }
@@ -1228,6 +1228,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtMessageConversationView.Columns.Add("RowNumber", typeof(int));
             _dtMessageConversationView.Columns.Add("AttachmentCount", typeof(int));
             _dtMessageConversationView.Columns.Add("NewThreadCount", typeof(int));
+            _dtMessageConversationView.Columns.Add("ThreadCount", typeof(int));
             _dtMessageConversationView.Columns.Add("MessageID", typeof(int));
             _dtMessageConversationView.Columns.Add("To", typeof(string));
             _dtMessageConversationView.Columns.Add("From", typeof(string));

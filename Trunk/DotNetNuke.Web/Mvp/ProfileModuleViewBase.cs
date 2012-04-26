@@ -19,6 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 using System;
+using System.Globalization;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
@@ -94,20 +95,16 @@ namespace DotNetNuke.Web.Mvp
 
         protected override void OnInit(EventArgs e)
         {
-            if (ModuleContext.TabId != ModuleContext.PortalSettings.UserTabId)
+            if (ProfileUserId == Null.NullInteger &&
+                            (ModuleContext.PortalSettings.ActiveTab.TabID == ModuleContext.PortalSettings.UserTabId
+                                || ModuleContext.PortalSettings.ActiveTab.ParentId == ModuleContext.PortalSettings.UserTabId))
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("ModuleNotIntended", Localization.SharedResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                //Clicked on breadcrumb - don't know which user
+                Response.Redirect(Request.IsAuthenticated
+                                      ? Globals.NavigateURL(ModuleContext.PortalSettings.ActiveTab.TabID, "", "UserId=" + ModuleContext.PortalSettings.UserId.ToString(CultureInfo.InvariantCulture))
+                                      : GetRedirectUrl(), true);
             }
-            else
-            {
-                if (ProfileUserId == Null.NullInteger)
-                {
-                    //Clicked on breadcrumb - don't know which user
-                    Response.Redirect(Request.IsAuthenticated
-                            ? Globals.UserProfileURL(ModuleContext.PortalSettings.UserId)
-                            : GetRedirectUrl(), true);
-                }
-            }
+
             base.OnInit(e);
         }
 

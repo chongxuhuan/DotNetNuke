@@ -208,14 +208,6 @@ namespace DotNetNuke.Entities.Users.Social.Internal
        
         void AcceptUserRelationship(int userRelationshipId);
 
-        void RejectUserRelationship(int userRelationshipId);
-
-        void IgnoreUserRelationship(int userRelationshipId);
-
-        void ReportUserRelationship(int userRelationshipId);
-
-        void BlockUserRelationship(int userRelationshipId);
-
         void RemoveUserRelationship(int userRelationshipId);
                       
         #endregion

@@ -788,6 +788,10 @@ namespace DotNetNuke.Security.Roles
         [Obsolete("Deprecated in DotNetNuke 6.2.")]
         public string[] GetRolesByUser(int UserId, int PortalId)
         {
+            if(UserId == -1)
+            {
+                return new string[0];
+            }
             return UserController.GetUserById(PortalId, UserId).Roles;
         }
 

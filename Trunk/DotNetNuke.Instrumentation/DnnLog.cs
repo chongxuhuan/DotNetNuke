@@ -172,9 +172,8 @@ namespace DotNetNuke.Instrumentation
             var log = DnnLogger.GetClassLogger(CallingType);
             if (log.Logger.IsEnabledFor(DnnLogger.LevelTrace))
             {
-
                 SetupThreadContext();
-                log.TraceFormat(message);
+                log.Trace(message);
             }
         }
 

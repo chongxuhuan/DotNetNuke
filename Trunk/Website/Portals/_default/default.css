@@ -178,6 +178,34 @@ a.OtherTabs:active{text-decoration:none;color:#eee;}
 .LoginTabHover{float:left;background:url("../../images/tablogin_gray.gif") left top;margin:0 3px 3px 0;padding:5px 5px 4px 5px;text-decoration:none;color:#555;border:1px #C00 solid;cursor:pointer;}
 .LoginContainerGroup{clear:both;padding-top:5px;}
 
+/* NEW LOGIN STYLES*/
+#Login .registerGroup,
+#Login .registerGroup *,
+#Login .loginGroup,
+#Login .loginGroup *{
+	display:inline;
+	text-decoration:none;
+	text-transform:capitalize;
+	font-size:11px;
+	font-weight:bold;
+	vertical-align:bottom;
+}
+	#Login .registerGroup a,
+	#Login .loginGroup a{ text-decoration:none; }
+	#Login .registerGroup a:hover,
+	#Login .loginGroup a:hover{ text-decoration:underline;	}
+	
+	/* REGISTER GROUP STYLES */
+	#Login .registerGroup ul{padding-bottom:0;}
+	#Login .registerGroup li{ border-right:1px solid #ddd; }
+	#Login .registerGroup li.userProfileImg{border:none;}
+	#Login .registerGroup a{ padding:0 5px 0 5px; }
+	#Login .registerGroup a{ padding:0 5px 0 5px; }
+	#Login .registerGroup a img{width:25px; height:25px;} 
+	
+	/* LOGIN GROUP STYLES */
+	#Login .loginGroup a.LoginLink{text-transform:capitalize;}
+
 /* Search SkinObject Styles */
 div.SearchContainer{position:relative;white-space:nowrap;}
 div.SearchBorder{width:200px;height:20px;border:solid 1px #e0e0e0;position:relative;background-color:White;white-space:nowrap;float:left;margin-top:2px;}

@@ -232,7 +232,7 @@ namespace DotNetNuke.Modules.Admin.Security
             {
                 if (cboRoles.Items.Count == 0)
                 {
-                    var roles = TestableRoleController.Instance.GetRoles(PortalId);
+                    var roles = TestableRoleController.Instance.GetRoles(PortalId, x => x.Status == RoleStatus.Approved);
 
                     //Remove access to Admin Role if use is not a member of the role
                     int roleIndex = Null.NullInteger;

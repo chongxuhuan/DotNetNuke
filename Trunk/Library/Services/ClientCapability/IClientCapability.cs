@@ -104,5 +104,15 @@ namespace DotNetNuke.Services.ClientCapability
         /// </summary>
         string SSLOffload { get; set; }
 
+        /// <summary>
+        /// The device name.
+        /// </summary>
+        string Name { get; set; }
+
+        /// <summary>
+        /// The device version.
+        /// </summary>
+        double Version { get; set; }
+
     }
 }

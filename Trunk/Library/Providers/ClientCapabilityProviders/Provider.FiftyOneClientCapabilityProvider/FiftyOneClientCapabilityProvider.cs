@@ -167,15 +167,19 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
             var request = HttpContext.Current != null ? HttpContext.Current.Request : null;
             if (request != null && request.UserAgent == userAgent &&
                 request.Browser.Capabilities.Contains(FiftyOne.Foundation.Mobile.Detection.Constants.FiftyOneDegreesProperties))
+            {
                 // The useragent has already been processed by 51Degrees.mobi when the request
                 // was processed by the detector module. Uses the values obtained then.
-                return new FiftyOneClientCapability(request.Browser);
+                var clientCapability = new FiftyOneClientCapability(request.Browser);
+                clientCapability.UserAgent = request.UserAgent;
+                return clientCapability;
+            }
             else
             {
                 // The useragent has not already been processed. Therefore process it now
                 // and then set the properties.
                 var deviceInfo = Factory.ActiveProvider.GetDeviceInfo(userAgent);
-                if(deviceInfo != null)
+                if (deviceInfo != null)
                 {
                     return new FiftyOneClientCapability(deviceInfo);
                 }
@@ -200,7 +204,7 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
                 throw new MobileException(string.Format("Can't get device capability for the id '{0}'", deviceId));
 			}
 
-            return new FiftyOneClientCapability(device.GetAllProperties());
+            return new FiftyOneClientCapability(device);
         }
 
         /// <summary>

@@ -64,6 +64,12 @@ namespace DotNetNuke.Services.Social.Messaging.Views
         public int NewThreadCount { get; set; }
 
         /// <summary>
+        /// Count of Total Threads in a Conversation.
+        /// </summary>
+        [XmlAttribute]
+        public int ThreadCount { get; set; }
+
+        /// <summary>
         /// The Sender User Profile URL
         /// </summary>
         [XmlIgnore]
@@ -81,9 +87,10 @@ namespace DotNetNuke.Services.Social.Messaging.Views
         /// <param name="dr">the data reader.</param>
         public new void Fill(IDataReader dr)
         {
-            this.RowNumber = Convert.ToInt32(dr["RowNumber"]);
-            this.AttachmentCount = Convert.ToInt32(dr["AttachmentCount"]);
-            this.NewThreadCount = Convert.ToInt32(dr["NewThreadCount"]);
+            RowNumber = Convert.ToInt32(dr["RowNumber"]);
+            AttachmentCount = Convert.ToInt32(dr["AttachmentCount"]);
+            NewThreadCount = Convert.ToInt32(dr["NewThreadCount"]);
+            ThreadCount = Convert.ToInt32(dr["ThreadCount"]);
 
             base.Fill(dr);            
         }

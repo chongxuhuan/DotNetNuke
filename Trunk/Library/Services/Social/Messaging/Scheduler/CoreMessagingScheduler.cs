@@ -21,13 +21,10 @@
 #region Usings
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
-using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Services.Scheduling;
 
 #endregion
@@ -36,9 +33,7 @@ namespace DotNetNuke.Services.Social.Messaging.Scheduler
 {
     public class CoreMessagingScheduler : SchedulerClient
     {
-      
         private readonly PortalController _pController = new PortalController();
-
         private readonly UserController _uController = new UserController();
 
         public CoreMessagingScheduler(ScheduleHistoryItem objScheduleHistoryItem)
@@ -50,37 +45,33 @@ namespace DotNetNuke.Services.Social.Messaging.Scheduler
         {
             try
             {
-                Guid _schedulerInstance = Guid.NewGuid();
-                ScheduleHistoryItem.AddLogNote("MessagingScheduler DoWork Starting " + _schedulerInstance);
+                var schedulerInstance = Guid.NewGuid();
+                ScheduleHistoryItem.AddLogNote("MessagingScheduler DoWork Starting " + schedulerInstance);
 
-                if ((string.IsNullOrEmpty(Host.SMTPServer)))
+                if (string.IsNullOrEmpty(Host.SMTPServer))
                 {
                     ScheduleHistoryItem.AddLogNote("No SMTP Servers have been configured for this host. Terminating task.");
                     ScheduleHistoryItem.Succeeded = true;
-                    //'Return
                 }
                 else
                 {
-                    Hashtable settings = ScheduleHistoryItem.GetSettings();
+                    var messageLeft = true;
+                    var messagesSent = 0;
 
-                    bool _messageLeft = true;
-                    int _messagesSent = 0;
-
-                   
-                    while (_messageLeft)
+                    while (messageLeft)
                     {
-                        IList<MessageRecipient> batchMessages = MessagingController.Instance.GetNextMessagesForDispatch(_schedulerInstance, Convert.ToInt32(Entities.Host.Host.MessageSchedulerBatchSize.ToString()));
-                        
-                        if ((batchMessages != null))
+                        var batchMessages = MessagingController.Instance.GetNextMessagesForDispatch(schedulerInstance, Convert.ToInt32(Host.MessageSchedulerBatchSize.ToString()));
+
+                        if (batchMessages != null && batchMessages.Count > 0)
                         {
                             try
                             {
                                 foreach (var messageRecipient in batchMessages)
                                 {
                                     SendMessage(messageRecipient);
-                                    _messagesSent = _messagesSent + 1;   
+                                    messagesSent = messagesSent + 1;
                                 }
-                              
+
                             }
                             catch (Exception e)
                             {
@@ -89,11 +80,11 @@ namespace DotNetNuke.Services.Social.Messaging.Scheduler
                         }
                         else
                         {
-                            _messageLeft = false;
+                            messageLeft = false;
                         }
                     }
 
-                    ScheduleHistoryItem.AddLogNote(string.Format("Message Scheduler '{0}' sent a total of {1} message(s)", _schedulerInstance, _messagesSent));
+                    ScheduleHistoryItem.AddLogNote(string.Format("Message Scheduler '{0}' sent a total of {1} message(s)", schedulerInstance, messagesSent));
                     ScheduleHistoryItem.Succeeded = true;
                 }
             }
@@ -107,17 +98,17 @@ namespace DotNetNuke.Services.Social.Messaging.Scheduler
 
         private void SendMessage(MessageRecipient objMessage)
         {
-            //MessagingController.Instance.g
             //todo: check if host user can send to multiple portals...
-            Message messageDetails =MessagingController.Instance.GetMessage(objMessage.MessageID);
+            var messageDetails = MessagingController.Instance.GetMessage(objMessage.MessageID);
 
-            string senderAddress = UserController.GetUserById(messageDetails.PortalID, PortalSettings.Current.AdministratorId).Email;
-            string fromAddress = _pController.GetPortal(messageDetails.PortalID).Email;
-            string toAddress = _uController.GetUser(messageDetails.PortalID, objMessage.RecipientID).Email;
+            var portalController = new PortalController();
+            var portal = portalController.GetPortal(messageDetails.PortalID);
 
+            var senderAddress = UserController.GetUserById(messageDetails.PortalID, portal.AdministratorId).Email;
+            var fromAddress = _pController.GetPortal(messageDetails.PortalID).Email;
+            var toAddress = _uController.GetUser(messageDetails.PortalID, objMessage.UserID).Email;
 
             Mail.Mail.SendEmail(fromAddress, senderAddress, toAddress, messageDetails.Subject, messageDetails.Body);
-
 
             MessagingController.Instance.MarkMessageAsDispatched(objMessage.MessageID, objMessage.RecipientID);
         }

@@ -33,7 +33,7 @@ namespace DotNetNuke.Web.CoreServices
     [DnnAuthorize]
     public class NotificationsServiceController : DnnController
     {
-        public ActionResult Delete(int notificationId)
+        public ActionResult Dismiss(int notificationId)
         {
             try
             {

@@ -25,11 +25,13 @@ using System.Data;
 using System.Xml.Serialization;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Users.Social;
 
 #endregion
 
-namespace DotNetNuke.Entities.Users
+namespace DotNetNuke.Entities.Users.Social
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
@@ -47,23 +49,16 @@ namespace DotNetNuke.Entities.Users
     [Serializable]
     public class Relationship : BaseEntityInfo, IHydratable
     {
-        private int _relationshipId = -1;
+        public Relationship()
+        {
+            RelationshipId = -1;
+        }
 
         /// <summary>
         /// RelationshipId - The primary key
         /// </summary>
         [XmlAttribute]
-        public int RelationshipId
-        {
-            get
-            {
-                return _relationshipId;
-            }
-            set
-            {
-                _relationshipId = value;
-            }
-        }
+        public int RelationshipId { get; set; }
 
         /// <summary>
         /// Relationship Name.

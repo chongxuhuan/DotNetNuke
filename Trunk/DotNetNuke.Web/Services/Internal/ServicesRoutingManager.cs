@@ -82,8 +82,6 @@ namespace DotNetNuke.Web.Services.Internal
         {
             var types = GetAllServiceRouteMapperTypes();
 
-            DnnLog.Trace("Located {0} types that implement IServiceRouteMapper");
-
             foreach (var routeMapperType in types)
             {
                 IServiceRouteMapper routeMapper;

@@ -45,6 +45,7 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
         public FiftyOneClientCapability(BaseDeviceInfo device)
         {
             Initialise(device.GetAllProperties());
+            UserAgent = device.UserAgent;
         }
 
         /// <summary>
@@ -85,12 +86,16 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
                 IsMobile = GetBoolValue(properties, "IsMobile");
                 ScreenResolutionWidthInPixels = GetIntValue(properties, "ScreenPixelsWidth");
                 ScreenResolutionHeightInPixels = GetIntValue(properties, "ScreenPixelsHeight");
-
+                Name = string.Format("{0} {1}", 
+                    GetStringValue(properties, "HardwareVendor"), 
+                    GetStringValue(properties, "HardwareModel"));
+                Version = GetDoubleValue(properties, "PlatformVersion");
                 // Set Premium properties
                 IsTablet = GetBoolValue(properties, "IsTablet");
                 IsTouchScreen = GetBoolValue(properties, "HasTouchScreen");
                 BrowserName = GetStringValue(properties, "BrowserName");
                 Capabilities = GetCapabilities(properties);
+
 
                 // The following properties are not provided by 51Degrees.mobi and
                 // are therefore set to default values.
@@ -155,6 +160,36 @@ namespace DotNetNuke.Providers.FiftyOneClientCapabilityProvider
             if (properties.ContainsKey(property) &&
                 int.TryParse(properties[property][0], out value))
                 return value;
+            return 0;
+        }
+
+        /// <summary>
+        /// Returns the property of the HttpBrowserCapabilities collection 
+        /// as a double.
+        /// </summary>
+        /// <param name="properties">A collection of device related capabilities.</param>
+        /// <param name="property">The name of the property to return as a double.</param>
+        /// <returns>The double value of the property, or 0 if the property is not found or it's value is not an integer.</returns>
+        private static double GetDoubleValue(SortedList<string, List<string>> properties, string property)
+        {
+            double retValue;
+            if (properties.ContainsKey(property))
+            {
+                var value = properties[property][0];
+                //convert format x.x.x to x.xx
+                if(value.IndexOf(".") != value.LastIndexOf("."))
+                {
+                    value = string.Format("{0}.{1}", 
+                        value.Substring(0, value.IndexOf(".")), 
+                        value.Substring(value.IndexOf(".") + 1).Replace(".", ""));
+                }
+
+                if (double.TryParse(value, out retValue))
+                {
+                    return retValue;
+                }
+            }
+
             return 0;
         }
 

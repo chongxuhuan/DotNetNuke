@@ -1530,17 +1530,8 @@
   <data name="AcceptFriend.Text" xml:space="preserve">
     <value>Accept Friend Request</value>
   </data>
-  <data name="Block.Text" xml:space="preserve">
-    <value>Block</value>
-  </data>
-  <data name="BlockFollower.Text" xml:space="preserve">
-    <value>Block Follower Request</value>
-  </data>
-  <data name="BlockFriend.Text" xml:space="preserve">
-    <value>Block Friend Request</value>
-  </data>
-  <data name="DeleteNotification.Text" xml:space="preserve">
-    <value>Delete this Notification</value>
+  <data name="DismissNotification.Text" xml:space="preserve">
+    <value>Dismiss this Notification</value>
   </data>
   <data name="FollowBack.Text" xml:space="preserve">
     <value>Follow Back</value>
@@ -1551,19 +1542,7 @@
   <data name="IgnoreFriend.Text" xml:space="preserve">
     <value>Ignore Friend Request</value>
   </data>
-  <data name="Reject.Text" xml:space="preserve">
-    <value>Reject</value>
-  </data>
-  <data name="RejectFriend.Text" xml:space="preserve">
-    <value>Reject Friend Request</value>
-  </data>
-  <data name="Report.Text" xml:space="preserve">
-    <value>Report</value>
-  </data>
-  <data name="ReportFollower.Text" xml:space="preserve">
-    <value>Report Follower Request</value>
-  </data>
-  <data name="ReportFriend.Text" xml:space="preserve">
-    <value>Report Friend Request</value>
+  <data name="Dismiss.Text" xml:space="preserve">
+    <value>Dismiss</value>
   </data>
 </root>

@@ -24,7 +24,7 @@ using System;
 
 #endregion
 
-namespace DotNetNuke.Entities.Users
+namespace DotNetNuke.Entities.Users.Social
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
@@ -32,44 +32,24 @@ namespace DotNetNuke.Entities.Users
     /// Enum:      RelationshipStatus
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The RelationshipStatus enum describes various UserRelationship statuses. E.g. Accepted, Blocked, Initiated.
+    /// The RelationshipStatus enum describes various UserRelationship statuses. E.g. Accepted, Pending.
     /// </summary>
     /// -----------------------------------------------------------------------------
-	public enum RelationshipStatus
-	{
+    public enum RelationshipStatus
+    {
         /// <summary>
         /// Relationship Request is not present (lack of any other status)
         /// </summary>
         None = 0,
 
-		/// <summary>
-		/// Relationship Request is Initiated. E.g. User 1 sent a friend request to User 2.
-		/// </summary>
-		Initiated = 1,
+        /// <summary>
+        /// Relationship Request is Initiated. E.g. User 1 sent a friend request to User 2.
+        /// </summary>
+        Pending = 1,
 
-		/// <summary>
+        /// <summary>
         /// Relationship Request is Accepted. E.g. User 2 has accepted User 1's friend request.
-		/// </summary>
-		Accepted = 2,
-
-		/// <summary>
-        /// Relationship Request is Rejected. E.g. User 2 has rejected User 1's friend request.
-		/// </summary>
-		Rejected = 3,
-
-        /// <summary>
-        /// Relationship Request is Ignored. E.g. User 2 has ignored User 1's friend request.
         /// </summary>
-        Ignored = 4,
-
-        /// <summary>
-        /// Relationship Request is Reported (for spam). E.g. User 2 has reported User 1's friend request for spam.
-        /// </summary>
-        Reported = 5,
-
-		/// <summary>
-        /// Relationship Request is Blocked. E.g. User 2 has blocked User 1's ability to send any request.
-		/// </summary>
-		Blocked = 6        
-	}
+        Accepted = 2,
+    }
 }

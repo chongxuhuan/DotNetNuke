@@ -36,8 +36,8 @@ using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Entities.Users.Social;
 using DotNetNuke.Security;
-using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Tokens;
 
 #endregion
@@ -49,7 +49,7 @@ namespace DotNetNuke.Entities.Users
     public class ProfilePropertyAccess : IPropertyAccess
     {
         private readonly UserInfo user;
-        private string _administratorRoleName;
+        private string administratorRoleName;
 
         public ProfilePropertyAccess(UserInfo user)
         {
@@ -60,13 +60,13 @@ namespace DotNetNuke.Entities.Users
 
         private static string DisplayDataType(ProfilePropertyDefinition definition)
         {
-            string CacheKey = string.Format("DisplayDataType:{0}", definition.DataType);
-            string strDataType = Convert.ToString(DataCache.GetCache(CacheKey)) + "";
+            string cacheKey = string.Format("DisplayDataType:{0}", definition.DataType);
+            string strDataType = Convert.ToString(DataCache.GetCache(cacheKey)) + "";
             if (strDataType == string.Empty)
             {
                 var objListController = new ListController();
                 strDataType = objListController.GetListEntryInfo(definition.DataType).Value;
-                DataCache.SetCache(CacheKey, strDataType);
+                DataCache.SetCache(cacheKey, strDataType);
             }
             return strDataType;
         }
@@ -135,13 +135,13 @@ namespace DotNetNuke.Entities.Users
                 if (!isAdmin)
                 {
                     //Is Administrator
-                    if (String.IsNullOrEmpty(_administratorRoleName))
+                    if (String.IsNullOrEmpty(administratorRoleName))
                     {
                         PortalInfo ps = new PortalController().GetPortal(user.PortalID);
-                        _administratorRoleName = ps.AdministratorRoleName;
+                        administratorRoleName = ps.AdministratorRoleName;
                     }
 
-                    isAdmin = accessingUser.IsInRole(_administratorRoleName);
+                    isAdmin = accessingUser.IsInRole(administratorRoleName);
                 }
             }
 
@@ -221,14 +221,14 @@ namespace DotNetNuke.Entities.Users
                         result = int.Parse(property.PropertyValue).ToString(formatString, formatProvider);
                         break;
                     case "page":
-                        var TabCtrl = new TabController();
+                        var tabCtrl = new TabController();
                         int tabid;
                         if (int.TryParse(property.PropertyValue, out tabid))
                         {
-                            TabInfo Tab = TabCtrl.GetTab(tabid, Null.NullInteger, false);
-                            if (Tab != null)
+                            TabInfo tab = tabCtrl.GetTab(tabid, Null.NullInteger, false);
+                            if (tab != null)
                             {
-                                result = string.Format("<a href='{0}'>{1}</a>", Globals.NavigateURL(tabid), Tab.LocalizedTabName);
+                                result = string.Format("<a href='{0}'>{1}</a>", Globals.NavigateURL(tabid), tab.LocalizedTabName);
                             }
                         }
                         break;

@@ -155,7 +155,7 @@ namespace DotNetNuke.Services.Social.Messaging
             From = Null.SetNullString(dr["From"]);
             Subject = Null.SetNullString(dr["Subject"]);
             Body = Null.SetNullString(dr["Body"]);
-            ConversationId = Convert.ToInt32(dr["ConversationID"]);
+            ConversationId = Null.SetNullInteger(dr["ConversationID"]);
             ReplyAllAllowed = Null.SetNullBoolean(dr["ReplyAllAllowed"]);
             SenderUserID = Convert.ToInt32(dr["SenderUserID"]);
             

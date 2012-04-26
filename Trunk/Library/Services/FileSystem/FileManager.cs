@@ -394,7 +394,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             DnnLog.MethodEntry();
 
-            Requires.NotNullOrEmpty("extension", extension);
+            if (string.IsNullOrEmpty(extension)) return "application/octet-stream";
 
             var key = extension.TrimStart('.').ToLowerInvariant();
             return ContentTypes.ContainsKey(key) ? ContentTypes[key] : "application/octet-stream";

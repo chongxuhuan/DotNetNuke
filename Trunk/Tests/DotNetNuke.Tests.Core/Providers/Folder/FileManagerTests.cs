@@ -867,6 +867,7 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             _fileInfo.Setup(fi => fi.FolderId).Returns(Constants.FOLDER_ValidFolderId);
 
             _folderManager.Setup(fm => fm.GetFolder(Constants.FOLDER_ValidFolderId)).Returns(_folderInfo.Object);
+            _mockFileManager.Setup(fm => fm.IsAllowedExtension(It.IsAny<string>())).Returns(false);
 
             _mockFileManager.Object.RenameFile(_fileInfo.Object, Constants.FOLDER_OtherInvalidFileNameExtension);
         }
@@ -1066,15 +1067,6 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
         #endregion
 
         #region GetContentType
-
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
-        [ExpectedException(typeof(ArgumentException))]
-        public void GetContentType_Throws_On_Null_Or_Empty_Extension(string extension)
-        {
-            _fileManager.GetContentType(extension);
-        }
 
         [Test]
         public void GetContentType_Returns_Known_Value_When_Extension_Is_Not_Managed()

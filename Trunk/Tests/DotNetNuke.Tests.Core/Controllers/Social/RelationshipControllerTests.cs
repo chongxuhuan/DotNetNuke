@@ -25,13 +25,11 @@ using System.Data;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
-using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Social;
 using DotNetNuke.Entities.Users.Social.Data;
 using DotNetNuke.Entities.Users.Social.Internal;
 using DotNetNuke.Services.Cache;
-using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
@@ -52,10 +50,10 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         private Mock<CachingProvider> mockCachingProvider;
 
-        private DataTable _dtRelationshipTypes;
-        private DataTable _dtRelationships;
-        private DataTable _dtUserRelationships;
-        private DataTable _dtUserRelationshipPreferences;		
+        private DataTable dtRelationshipTypes;
+        private DataTable dtRelationships;
+        private DataTable dtUserRelationships;
+        private DataTable dtUserRelationshipPreferences;		
 
 		#endregion
 
@@ -378,9 +376,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            _dtRelationships.Clear();
-            _dtRelationships.Rows.Add(relationshipId, defaultType, defaultType.ToString(), defaultType.ToString(), Constants.PORTAL_Zero, Constants.USER_Null, RelationshipStatus.None);
-            mockDataService.Setup(md => md.GetRelationship(relationshipId)).Returns(_dtRelationships.CreateDataReader());
+            dtRelationships.Clear();
+            dtRelationships.Rows.Add(relationshipId, defaultType, defaultType.ToString(), defaultType.ToString(), Constants.PORTAL_Zero, Constants.USER_Null, RelationshipStatus.None);
+            mockDataService.Setup(md => md.GetRelationship(relationshipId)).Returns(dtRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -395,8 +393,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            _dtRelationships.Clear();
-            mockDataService.Setup(md => md.GetRelationship(It.IsAny<int>())).Returns(_dtRelationships.CreateDataReader());
+            dtRelationships.Clear();
+            mockDataService.Setup(md => md.GetRelationship(It.IsAny<int>())).Returns(dtRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -411,16 +409,16 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            _dtRelationships.Clear();
+            dtRelationships.Clear();
             for (int i = 1; i <= 5; i ++)
             {
-                _dtRelationships.Rows.Add(i, DefaultRelationshipTypes.Friends, DefaultRelationshipTypes.Friends.ToString(), 
+                dtRelationships.Rows.Add(i, DefaultRelationshipTypes.Friends, DefaultRelationshipTypes.Friends.ToString(), 
                                             DefaultRelationshipTypes.Friends.ToString(), 
                                             Constants.PORTAL_Zero, 
                                             Constants.USER_ValidId, 
                                             RelationshipStatus.None);
             }
-            mockDataService.Setup(md => md.GetRelationshipsByUserId(Constants.USER_ValidId)).Returns(_dtRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetRelationshipsByUserId(Constants.USER_ValidId)).Returns(dtRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -436,8 +434,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            _dtRelationships.Clear();
-            mockDataService.Setup(md => md.GetRelationshipsByUserId(Constants.USER_InValidId)).Returns(_dtRelationships.CreateDataReader());
+            dtRelationships.Clear();
+            mockDataService.Setup(md => md.GetRelationshipsByUserId(Constants.USER_InValidId)).Returns(dtRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -453,16 +451,16 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            _dtRelationships.Clear();
+            dtRelationships.Clear();
             for (int i = 1; i <= 5; i++)
             {
-                _dtRelationships.Rows.Add(i, DefaultRelationshipTypes.Friends, DefaultRelationshipTypes.Friends.ToString(),
+                dtRelationships.Rows.Add(i, DefaultRelationshipTypes.Friends, DefaultRelationshipTypes.Friends.ToString(),
                                             DefaultRelationshipTypes.Friends.ToString(),
                                             Constants.PORTAL_Zero,
                                             Constants.USER_Null,
                                             RelationshipStatus.None);
             }
-            mockDataService.Setup(md => md.GetRelationshipsByPortalId(Constants.PORTAL_Zero)).Returns(_dtRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetRelationshipsByPortalId(Constants.PORTAL_Zero)).Returns(dtRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -478,8 +476,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            _dtRelationships.Clear();
-            mockDataService.Setup(md => md.GetRelationshipsByPortalId(Constants.PORTAL_Null)).Returns(_dtRelationships.CreateDataReader());
+            dtRelationships.Clear();
+            mockDataService.Setup(md => md.GetRelationshipsByPortalId(Constants.PORTAL_Null)).Returns(dtRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -619,9 +617,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            _dtUserRelationships.Clear();
-            _dtUserRelationships.Rows.Add(userRelationshipId, userId, relatedUserId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
-            mockDataService.Setup(md => md.GetUserRelationship(userRelationshipId)).Returns(_dtUserRelationships.CreateDataReader());
+            dtUserRelationships.Clear();
+            dtUserRelationships.Rows.Add(userRelationshipId, userId, relatedUserId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
+            mockDataService.Setup(md => md.GetUserRelationship(userRelationshipId)).Returns(dtUserRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -636,8 +634,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            _dtUserRelationships.Clear();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+            dtUserRelationships.Clear();
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(dtUserRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -652,13 +650,13 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            _dtUserRelationships.Clear();
+            dtUserRelationships.Clear();
             for (int i = 1; i <= 5; i++)
             {
-                _dtUserRelationships.Rows.Add(i, Constants.USER_ValidId, Constants.USER_TenId,
+                dtUserRelationships.Rows.Add(i, Constants.USER_ValidId, Constants.USER_TenId,
                                                 Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
             }
-            mockDataService.Setup(md => md.GetUserRelationships(Constants.USER_ValidId)).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationships(Constants.USER_ValidId)).Returns(dtUserRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -675,9 +673,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockDataService = new Mock<IDataService>();
-            _dtUserRelationships.Clear();
+            dtUserRelationships.Clear();
 
-            mockDataService.Setup(md => md.GetUserRelationships(Constants.USER_InValidId)).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationships(Constants.USER_InValidId)).Returns(dtUserRelationships.CreateDataReader());
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -804,7 +802,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
             var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetUserRelationshipPreferenceById(It.IsAny<int>()))
-                            .Returns(_dtUserRelationshipPreferences.CreateDataReader);
+                            .Returns(dtUserRelationshipPreferences.CreateDataReader);
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -820,7 +818,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
             var mockDataService = new Mock<IDataService>();
             mockDataService.Setup(ds => ds.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>()))
-                            .Returns(_dtUserRelationshipPreferences.CreateDataReader); 
+                            .Returns(dtUserRelationshipPreferences.CreateDataReader); 
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
@@ -1003,11 +1001,11 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
 
             //Any UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
+            dtUserRelationships.Rows.Clear();
+            dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
 
             //setup mock DataService            
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(dtUserRelationships.CreateDataReader());
 
             //Act, Assert
             relationshipController.AddFriend(initiatingUser, targetUser);
@@ -1039,14 +1037,14 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
             var relationship = new Relationship { RelationshipId = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
            
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationshipPreferences.Rows.Clear();
+            dtUserRelationships.Rows.Clear();
+            dtUserRelationshipPreferences.Rows.Clear();
 
             //setup mock DataService
             var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(_dtUserRelationships.CreateDataReader());
-            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationshipPreferences.CreateDataReader());
-            mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(_dtRelationshipTypes.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(dtUserRelationshipPreferences.CreateDataReader());
+            mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(dtRelationshipTypes.CreateDataReader());
 
             var relationshipController = CreateRelationshipController(mockDataService);
 
@@ -1065,14 +1063,14 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
             var relationship = new Relationship { RelationshipId = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.None };
 
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationshipPreferences.Rows.Clear();
+            dtUserRelationships.Rows.Clear();
+            dtUserRelationshipPreferences.Rows.Clear();
 
             //setup mock DataService
             var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(_dtUserRelationships.CreateDataReader());
-            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationshipPreferences.CreateDataReader());
-            mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(_dtRelationshipTypes.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(dtUserRelationshipPreferences.CreateDataReader());
+            mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(dtRelationshipTypes.CreateDataReader());
 
             var relationshipController = CreateRelationshipController(mockDataService);
 
@@ -1080,7 +1078,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var userRelationship = relationshipController.InitiateUserRelationship(initiatingUser, targetUser, relationship);
 
             //Assert
-            Assert.AreEqual(userRelationship.Status, RelationshipStatus.Initiated);
+            Assert.AreEqual(userRelationship.Status, RelationshipStatus.Pending);
         }
 
         [Test]
@@ -1091,15 +1089,15 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
             var relationship = new Relationship { RelationshipId = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
 
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationshipPreferences.Rows.Clear();
-            _dtUserRelationshipPreferences.Rows.Add(Constants.SOCIAL_PrefereceIDForUser11, Constants.USER_TenId, Constants.USER_ElevenId, RelationshipStatus.Accepted);
+            dtUserRelationships.Rows.Clear();
+            dtUserRelationshipPreferences.Rows.Clear();
+            dtUserRelationshipPreferences.Rows.Add(Constants.SOCIAL_PrefereceIDForUser11, Constants.USER_TenId, Constants.USER_ElevenId, RelationshipStatus.Accepted);
 
             //setup mock DataService
             var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(_dtUserRelationships.CreateDataReader());
-            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationshipPreferences.CreateDataReader());
-            mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(_dtRelationshipTypes.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(dtUserRelationshipPreferences.CreateDataReader());
+            mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(dtRelationshipTypes.CreateDataReader());
 
             var relationshipController = CreateRelationshipController(mockDataService);
 
@@ -1118,15 +1116,15 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
             var relationship = new Relationship { RelationshipId = Constants.SOCIAL_FollowerRelationshipID, RelationshipTypeId = Constants.SOCIAL_FollowerRelationshipTypeID, DefaultResponse = RelationshipStatus.Accepted };
 
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationshipPreferences.Rows.Clear();
-            _dtUserRelationshipPreferences.Rows.Add(Constants.SOCIAL_PrefereceIDForUser11, Constants.USER_TenId, Constants.USER_ElevenId, RelationshipStatus.None);
+            dtUserRelationships.Rows.Clear();
+            dtUserRelationshipPreferences.Rows.Clear();
+            dtUserRelationshipPreferences.Rows.Add(Constants.SOCIAL_PrefereceIDForUser11, Constants.USER_TenId, Constants.USER_ElevenId, RelationshipStatus.None);
 
             //setup mock DataService
             var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(_dtUserRelationships.CreateDataReader());
-            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtUserRelationshipPreferences.CreateDataReader());
-            mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(_dtRelationshipTypes.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationshipPreference(It.IsAny<int>(), It.IsAny<int>())).Returns(dtUserRelationshipPreferences.CreateDataReader());
+            mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(dtRelationshipTypes.CreateDataReader());
 
             var relationshipController = CreateRelationshipController(mockDataService);
 
@@ -1134,7 +1132,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var userRelationship = relationshipController.InitiateUserRelationship(initiatingUser, targetUser, relationship);
 
             //Assert
-            Assert.AreEqual(userRelationship.Status, RelationshipStatus.Initiated);
+            Assert.AreEqual(userRelationship.Status, RelationshipStatus.Pending);
         }
 
         #endregion
@@ -1150,11 +1148,11 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
 
             //No UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
+            dtUserRelationships.Rows.Clear();
 
             //setup mock DataService
             var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(dtUserRelationships.CreateDataReader());
 
             var relationshipController = CreateRelationshipController(mockDataService);
 
@@ -1169,92 +1167,16 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
 
             //No UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
+            dtUserRelationships.Rows.Clear();
 
             //setup mock DataService
             var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(dtUserRelationships.CreateDataReader());
 
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act, Assert
             relationshipController.AcceptUserRelationship(Constants.SOCIAL_UserRelationshipIDUser10User11);
-        }
-
-        [Test]
-        [ExpectedException(typeof(UserRelationshipDoesNotExistException))]
-        public void RelationshipController_IgnoreRelationship_Throws_On_NonExistent_Relationship()
-        {
-            //Arrange
-
-            //No UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-
-            //setup mock DataService
-            var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
-
-            var relationshipController = CreateRelationshipController(mockDataService);
-
-            //Act, Assert
-            relationshipController.IgnoreUserRelationship(Constants.SOCIAL_UserRelationshipIDUser10User11);
-        }
-
-        [Test]
-        [ExpectedException(typeof(UserRelationshipDoesNotExistException))]
-        public void RelationshipController_RejectRelationship_Throws_On_NonExistent_Relationship()
-        {
-            //Arrange
-
-            //No UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-
-            //setup mock DataService
-            var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
-
-            var relationshipController = CreateRelationshipController(mockDataService);
-
-            //Act, Assert
-            relationshipController.RejectUserRelationship(Constants.SOCIAL_UserRelationshipIDUser10User11);
-        }
-
-        [Test]
-        [ExpectedException(typeof(UserRelationshipDoesNotExistException))]
-        public void RelationshipController_BlockRelationship_Throws_On_NonExistent_Relationship()
-        {
-            //Arrange
-
-            //No UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-
-            //setup mock DataService
-            var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
-
-            var relationshipController = CreateRelationshipController(mockDataService);
-
-            //Act, Assert
-            relationshipController.BlockUserRelationship(Constants.SOCIAL_UserRelationshipIDUser10User11);
-        }
-
-        [Test]
-        [ExpectedException(typeof(UserRelationshipDoesNotExistException))]
-        public void RelationshipController_ReportRelationship_Throws_On_NonExistent_Relationship()
-        {
-            //Arrange
-
-            //No UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-
-            //setup mock DataService
-            var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
-
-            var relationshipController = CreateRelationshipController(mockDataService);
-
-            //Act, Assert
-            relationshipController.ReportUserRelationship(Constants.SOCIAL_UserRelationshipIDUser10User11);
         }
 
         #endregion
@@ -1262,115 +1184,23 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         #region Verify Update of UserRelationship Status calls Data Layer
         
         [Test]
-        public void RelationshipController_BlockUserRelationship_Calls_DataService_On_Valid_RelationshipID()
-        {
-            //Arrange
-
-            //Any UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
-
-            //setup mock DataService
-            var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
-            mockDataService.Setup(md => md.SaveUserRelationship(It.IsAny<UserRelationship>(),It.IsAny<int>()));
-
-            var relationshipController = CreateRelationshipController(mockDataService);
-
-            //Act
-            relationshipController.BlockUserRelationship(Constants.SOCIAL_UserRelationshipIDUser10User11);
-
-            //Assert
-            mockDataService.Verify(ds => ds.SaveUserRelationship(It.IsAny<UserRelationship>(),It.IsAny<int>()));            
-        }
-
-        [Test]
         public void RelationshipController_AcceptUserRelationship_Calls_DataService_On_Valid_RelationshipID()
         {
             //Arrange
 
             //Any UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
+            dtUserRelationships.Rows.Clear();
+            dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
 
             //setup mock DataService
             var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(dtUserRelationships.CreateDataReader());
             mockDataService.Setup(md => md.SaveUserRelationship(It.IsAny<UserRelationship>(), It.IsAny<int>()));
 
             var relationshipController = CreateRelationshipController(mockDataService);
 
             //Act
             relationshipController.AcceptUserRelationship(Constants.SOCIAL_UserRelationshipIDUser10User11);
-
-            //Assert
-            mockDataService.Verify(ds => ds.SaveUserRelationship(It.IsAny<UserRelationship>(), It.IsAny<int>()));
-        }
-
-        [Test]
-        public void RelationshipController_RejectUserRelationship_Calls_DataService_On_Valid_RelationshipID()
-        {
-            //Arrange
-
-            //Any UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
-
-            //setup mock DataService
-            var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
-            mockDataService.Setup(md => md.SaveUserRelationship(It.IsAny<UserRelationship>(), It.IsAny<int>()));
-
-            var relationshipController = CreateRelationshipController(mockDataService);
-
-            //Act
-            relationshipController.RejectUserRelationship(Constants.SOCIAL_UserRelationshipIDUser10User11);
-
-            //Assert
-            mockDataService.Verify(ds => ds.SaveUserRelationship(It.IsAny<UserRelationship>(), It.IsAny<int>()));
-        }
-
-        [Test]
-        public void RelationshipController_IgnoreUserRelationship_Calls_DataService_On_Valid_RelationshipID()
-        {
-            //Arrange
-
-            //Any UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
-
-            //setup mock DataService
-            var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
-            mockDataService.Setup(md => md.SaveUserRelationship(It.IsAny<UserRelationship>(), It.IsAny<int>()));
-
-            var relationshipController = CreateRelationshipController(mockDataService);
-
-            //Act
-            relationshipController.IgnoreUserRelationship(Constants.SOCIAL_UserRelationshipIDUser10User11);
-
-            //Assert
-            mockDataService.Verify(ds => ds.SaveUserRelationship(It.IsAny<UserRelationship>(), It.IsAny<int>()));
-        }
-
-        [Test]
-        public void RelationshipController_ReportUserRelationship_Calls_DataService_On_Valid_RelationshipID()
-        {
-            //Arrange
-
-            //Any UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
-
-            //setup mock DataService
-            var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
-            mockDataService.Setup(md => md.SaveUserRelationship(It.IsAny<UserRelationship>(), It.IsAny<int>()));
-
-           var relationshipController = CreateRelationshipController(mockDataService);
-
-            //Act
-            relationshipController.ReportUserRelationship(Constants.SOCIAL_UserRelationshipIDUser10User11);
 
             //Assert
             mockDataService.Verify(ds => ds.SaveUserRelationship(It.IsAny<UserRelationship>(), It.IsAny<int>()));
@@ -1382,12 +1212,12 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Arrange
 
             //Any UserRelationship between user10 and user11
-            _dtUserRelationships.Rows.Clear();
-            _dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
+            dtUserRelationships.Rows.Clear();
+            dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
 
             //setup mock DataService
             var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(_dtUserRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>())).Returns(dtUserRelationships.CreateDataReader());
             mockDataService.Setup(md => md.DeleteUserRelationship(It.IsAny<int>()));
 
             var relationshipController = CreateRelationshipController(mockDataService);
@@ -1410,8 +1240,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         private Mock<IDataService> CreateMockDataServiceWithRelationshipTypes()
         {
             var mockDataService = new Mock<IDataService>();
-            mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(_dtRelationshipTypes.CreateDataReader());
-            mockDataService.Setup(md => md.GetRelationshipsByPortalId(It.IsAny<int>())).Returns(_dtRelationships.CreateDataReader());
+            mockDataService.Setup(md => md.GetAllRelationshipTypes()).Returns(dtRelationshipTypes.CreateDataReader());
+            mockDataService.Setup(md => md.GetRelationshipsByPortalId(It.IsAny<int>())).Returns(dtRelationships.CreateDataReader());
             return mockDataService;
         }
 
@@ -1463,64 +1293,64 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         private void SetupDataTables()
         {
             //RelationshipTypes
-            _dtRelationshipTypes = new DataTable("RelationshipTypes");
-            var pkRelationshipTypeID = _dtRelationshipTypes.Columns.Add("RelationshipTypeID", typeof(int));
-            _dtRelationshipTypes.Columns.Add("Name", typeof(string));
-            _dtRelationshipTypes.Columns.Add("Description", typeof(string));
-            _dtRelationshipTypes.Columns.Add("Direction", typeof(int));
-            _dtRelationshipTypes.Columns.Add("CreatedByUserID", typeof(int));
-            _dtRelationshipTypes.Columns.Add("CreatedOnDate", typeof(DateTime));
-            _dtRelationshipTypes.Columns.Add("LastModifiedByUserID", typeof(int));
-            _dtRelationshipTypes.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+            dtRelationshipTypes = new DataTable("RelationshipTypes");
+            var pkRelationshipTypeID = dtRelationshipTypes.Columns.Add("RelationshipTypeID", typeof(int));
+            dtRelationshipTypes.Columns.Add("Name", typeof(string));
+            dtRelationshipTypes.Columns.Add("Description", typeof(string));
+            dtRelationshipTypes.Columns.Add("Direction", typeof(int));
+            dtRelationshipTypes.Columns.Add("CreatedByUserID", typeof(int));
+            dtRelationshipTypes.Columns.Add("CreatedOnDate", typeof(DateTime));
+            dtRelationshipTypes.Columns.Add("LastModifiedByUserID", typeof(int));
+            dtRelationshipTypes.Columns.Add("LastModifiedOnDate", typeof(DateTime));
 
-            _dtRelationshipTypes.PrimaryKey = new[] { pkRelationshipTypeID };
+            dtRelationshipTypes.PrimaryKey = new[] { pkRelationshipTypeID };
 
-            _dtRelationshipTypes.Rows.Add(DefaultRelationshipTypes.Friends, DefaultRelationshipTypes.Friends.ToString(), DefaultRelationshipTypes.Friends.ToString(), RelationshipDirection.TwoWay);
-            _dtRelationshipTypes.Rows.Add(DefaultRelationshipTypes.Followers, DefaultRelationshipTypes.Followers.ToString(), DefaultRelationshipTypes.Followers.ToString(), RelationshipDirection.OneWay);
+            dtRelationshipTypes.Rows.Add(DefaultRelationshipTypes.Friends, DefaultRelationshipTypes.Friends.ToString(), DefaultRelationshipTypes.Friends.ToString(), RelationshipDirection.TwoWay);
+            dtRelationshipTypes.Rows.Add(DefaultRelationshipTypes.Followers, DefaultRelationshipTypes.Followers.ToString(), DefaultRelationshipTypes.Followers.ToString(), RelationshipDirection.OneWay);
 
             //Relationships
-            _dtRelationships = new DataTable("Relationships");
-            var pkRelationshipID = _dtRelationships.Columns.Add("RelationshipID", typeof(int));
-            _dtRelationships.Columns.Add("RelationshipTypeID", typeof(int));
-            _dtRelationships.Columns.Add("Name", typeof(string));
-            _dtRelationships.Columns.Add("Description", typeof(string));
-            _dtRelationships.Columns.Add("PortalID", typeof(int));
-            _dtRelationships.Columns.Add("UserID", typeof(int));
-            _dtRelationships.Columns.Add("DefaultResponse", typeof(int));
-            _dtRelationships.Columns.Add("CreatedByUserID", typeof(int));
-            _dtRelationships.Columns.Add("CreatedOnDate", typeof(DateTime));
-            _dtRelationships.Columns.Add("LastModifiedByUserID", typeof(int));
-            _dtRelationships.Columns.Add("LastModifiedOnDate", typeof(DateTime));
-            _dtRelationships.PrimaryKey = new[] { pkRelationshipID };
+            dtRelationships = new DataTable("Relationships");
+            var pkRelationshipID = dtRelationships.Columns.Add("RelationshipID", typeof(int));
+            dtRelationships.Columns.Add("RelationshipTypeID", typeof(int));
+            dtRelationships.Columns.Add("Name", typeof(string));
+            dtRelationships.Columns.Add("Description", typeof(string));
+            dtRelationships.Columns.Add("PortalID", typeof(int));
+            dtRelationships.Columns.Add("UserID", typeof(int));
+            dtRelationships.Columns.Add("DefaultResponse", typeof(int));
+            dtRelationships.Columns.Add("CreatedByUserID", typeof(int));
+            dtRelationships.Columns.Add("CreatedOnDate", typeof(DateTime));
+            dtRelationships.Columns.Add("LastModifiedByUserID", typeof(int));
+            dtRelationships.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+            dtRelationships.PrimaryKey = new[] { pkRelationshipID };
 
             //Create default Friend and Social Relationships
-            _dtRelationships.Rows.Add(Constants.SOCIAL_FriendRelationshipID, DefaultRelationshipTypes.Friends, DefaultRelationshipTypes.Friends.ToString(), DefaultRelationshipTypes.Friends.ToString(), Constants.PORTAL_Zero, Constants.USER_Null, RelationshipStatus.None);
-            _dtRelationships.Rows.Add(Constants.SOCIAL_FollowerRelationshipID, DefaultRelationshipTypes.Followers, DefaultRelationshipTypes.Followers.ToString(), DefaultRelationshipTypes.Followers.ToString(), Constants.PORTAL_Zero, Constants.USER_Null, RelationshipStatus.None);
+            dtRelationships.Rows.Add(Constants.SOCIAL_FriendRelationshipID, DefaultRelationshipTypes.Friends, DefaultRelationshipTypes.Friends.ToString(), DefaultRelationshipTypes.Friends.ToString(), Constants.PORTAL_Zero, Constants.USER_Null, RelationshipStatus.None);
+            dtRelationships.Rows.Add(Constants.SOCIAL_FollowerRelationshipID, DefaultRelationshipTypes.Followers, DefaultRelationshipTypes.Followers.ToString(), DefaultRelationshipTypes.Followers.ToString(), Constants.PORTAL_Zero, Constants.USER_Null, RelationshipStatus.None);
 
             //UserRelationships
-            _dtUserRelationships = new DataTable("UserRelationships");
-            var pkUserRelationshipID = _dtUserRelationships.Columns.Add("UserRelationshipID", typeof(int));
-            _dtUserRelationships.Columns.Add("UserID", typeof(int));
-            _dtUserRelationships.Columns.Add("RelatedUserID", typeof(int));
-            _dtUserRelationships.Columns.Add("RelationshipID", typeof(int));
-            _dtUserRelationships.Columns.Add("Status", typeof(int));
-            _dtUserRelationships.Columns.Add("CreatedByUserID", typeof(int));
-            _dtUserRelationships.Columns.Add("CreatedOnDate", typeof(DateTime));
-            _dtUserRelationships.Columns.Add("LastModifiedByUserID", typeof(int));
-            _dtUserRelationships.Columns.Add("LastModifiedOnDate", typeof(DateTime));
-            _dtUserRelationships.PrimaryKey = new[] { pkUserRelationshipID };
+            dtUserRelationships = new DataTable("UserRelationships");
+            var pkUserRelationshipID = dtUserRelationships.Columns.Add("UserRelationshipID", typeof(int));
+            dtUserRelationships.Columns.Add("UserID", typeof(int));
+            dtUserRelationships.Columns.Add("RelatedUserID", typeof(int));
+            dtUserRelationships.Columns.Add("RelationshipID", typeof(int));
+            dtUserRelationships.Columns.Add("Status", typeof(int));
+            dtUserRelationships.Columns.Add("CreatedByUserID", typeof(int));
+            dtUserRelationships.Columns.Add("CreatedOnDate", typeof(DateTime));
+            dtUserRelationships.Columns.Add("LastModifiedByUserID", typeof(int));
+            dtUserRelationships.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+            dtUserRelationships.PrimaryKey = new[] { pkUserRelationshipID };
 
             //UserRelationshipPreferences
-            _dtUserRelationshipPreferences = new DataTable("UserRelationshipPreferences");
-            var pkPreferenceID = _dtUserRelationshipPreferences.Columns.Add("PreferenceID", typeof(int));
-            _dtUserRelationshipPreferences.Columns.Add("UserID", typeof(int));
-            _dtUserRelationshipPreferences.Columns.Add("RelationshipID", typeof(int));
-            _dtUserRelationshipPreferences.Columns.Add("DefaultResponse", typeof(int));
-            _dtUserRelationshipPreferences.Columns.Add("CreatedByUserID", typeof(int));
-            _dtUserRelationshipPreferences.Columns.Add("CreatedOnDate", typeof(DateTime));
-            _dtUserRelationshipPreferences.Columns.Add("LastModifiedByUserID", typeof(int));
-            _dtUserRelationshipPreferences.Columns.Add("LastModifiedOnDate", typeof(DateTime));
-            _dtUserRelationshipPreferences.PrimaryKey = new[] { pkPreferenceID };
+            dtUserRelationshipPreferences = new DataTable("UserRelationshipPreferences");
+            var pkPreferenceID = dtUserRelationshipPreferences.Columns.Add("PreferenceID", typeof(int));
+            dtUserRelationshipPreferences.Columns.Add("UserID", typeof(int));
+            dtUserRelationshipPreferences.Columns.Add("RelationshipID", typeof(int));
+            dtUserRelationshipPreferences.Columns.Add("DefaultResponse", typeof(int));
+            dtUserRelationshipPreferences.Columns.Add("CreatedByUserID", typeof(int));
+            dtUserRelationshipPreferences.Columns.Add("CreatedOnDate", typeof(DateTime));
+            dtUserRelationshipPreferences.Columns.Add("LastModifiedByUserID", typeof(int));
+            dtUserRelationshipPreferences.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+            dtUserRelationshipPreferences.PrimaryKey = new[] { pkPreferenceID };
 
         }
 

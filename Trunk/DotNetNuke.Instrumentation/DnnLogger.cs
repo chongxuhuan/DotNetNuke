@@ -286,6 +286,11 @@ namespace DotNetNuke.Instrumentation
             Logger.Log(_stackBoundary, LevelTrace, new SystemStringFormat(CultureInfo.InvariantCulture, format, args), null);
         }
 
+        internal void Trace(string message)
+        {
+            Logger.Log(_stackBoundary, LevelTrace, message, null);
+        }
+
         internal void TraceFormat(IFormatProvider provider, string format, params object[] args)
         {
             Logger.Log(_stackBoundary, LevelTrace, new SystemStringFormat(provider, format, args), null);
