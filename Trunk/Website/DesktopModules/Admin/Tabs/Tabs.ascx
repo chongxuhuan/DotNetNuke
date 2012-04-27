@@ -130,8 +130,6 @@
 						<dnnweb:DnnMenuItem Text="View" Value="view" />
 						<dnnweb:DnnMenuItem Text="Edit" Value="edit" />
 						<dnnweb:DnnMenuItem Text="Delete" Value="delete" />
-						<dnnweb:DnnMenuItem Text="MoveUp" Value="moveup" />
-						<dnnweb:DnnMenuItem Text="MoveDown" Value="movedown" />
 						<dnnweb:DnnMenuItem Text="Add" Value="add" />
 						<dnnweb:DnnMenuItem Text="Hide Page in Menu" Value="hide" />
 						<dnnweb:DnnMenuItem Text="Show Page in Menu" Value="show" />

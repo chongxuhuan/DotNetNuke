@@ -919,7 +919,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			{
 				if (_UserFolders == null)
 				{
-					_UserFolders = new Dictionary<string, FolderInfo>();
+					_UserFolders = new Dictionary<string, FolderInfo>(StringComparer.InvariantCultureIgnoreCase);
 
                     var folders = FileSystemUtils.GetFoldersByUser(PortalSettings.PortalId, true, true, "READ");
 
