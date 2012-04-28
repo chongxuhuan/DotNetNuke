@@ -99,7 +99,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 string regex = String.Empty;
                 if (!String.IsNullOrEmpty(excludeTerms))
                 {
-                    regex = @"^(?:(?!" + excludeTerms.Replace(",", "|") + @").)*$\r?\n?";
+                    regex = @"^(?:(?!" + excludeTerms.Replace(" ", "").Replace(",", "|") + @").)*$\r?\n?";
                 }
                 return regex;
             }
@@ -450,23 +450,23 @@ namespace DotNetNuke.Modules.Admin.Users
                 }
             }
 
-            //Validate Exclude Terms
-            if (!String.IsNullOrEmpty(ExcludeTerms))
-            {
-                string[] excludeTerms = ExcludeTerms.Split(',');
-                foreach (string term in excludeTerms)
-                {
-                    var trimmedTerm = term.Trim().ToLowerInvariant();
-                    if (User.Username.ToLowerInvariant().Contains(trimmedTerm))
-                    {
-                        CreateStatus = UserCreateStatus.InvalidUserName;
-                    }
-                    if (User.DisplayName.ToLowerInvariant().Contains(trimmedTerm))
-                    {
-                        CreateStatus = UserCreateStatus.InvalidDisplayName;
-                    }
-                }
-            }
+            ////Validate Exclude Terms
+            //if (!String.IsNullOrEmpty(ExcludeTerms))
+            //{
+            //    string[] excludeTerms = ExcludeTerms.Split(',');
+            //    foreach (string term in excludeTerms)
+            //    {
+            //        var trimmedTerm = term.Trim().ToLowerInvariant();
+            //        if (User.Username.ToLowerInvariant().Contains(trimmedTerm))
+            //        {
+            //            CreateStatus = UserCreateStatus.InvalidUserName;
+            //        }
+            //        if (User.DisplayName.ToLowerInvariant().Contains(trimmedTerm))
+            //        {
+            //            CreateStatus = UserCreateStatus.InvalidDisplayName;
+            //        }
+            //    }
+            //}
 
             //Validate Profanity
             if (UseProfanityFilter)
@@ -582,7 +582,7 @@ namespace DotNetNuke.Modules.Admin.Users
                 //DisplayName
                 if (String.IsNullOrEmpty(DisplayNameFormat))
                 {
-                    AddField("DisplayName", ExcludeTerms, true, String.Empty, TextBoxMode.SingleLine);
+                    AddField("DisplayName", String.Empty, true, String.Empty, TextBoxMode.SingleLine);
                 }
 
                 if (RequireValidProfile)

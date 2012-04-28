@@ -122,9 +122,11 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             var adminRoleInfo = new UserRoleInfo { RoleName = Constants.RoleName_Administrators, RoleID = Constants.RoleID_Administrators, UserID = Constants.UserID_Admin };
             var user12RoleInfo = new UserRoleInfo { RoleName = Constants.RoleName_RegisteredUsers, RoleID = Constants.RoleID_RegisteredUsers, UserID = Constants.UserID_User12 };
+            var userFirstSocialGroupOwner = new UserRoleInfo { RoleName = Constants.RoleName_FirstSocialGroup, RoleID = Constants.RoleID_FirstSocialGroup, UserID = Constants.UserID_FirstSocialGroupOwner, IsOwner = true};
 
             _mockRoleProvider.Setup(rp => rp.GetUserRoles(It.Is<UserInfo>(u => u.UserID == Constants.UserID_Admin), It.IsAny<bool>())).Returns(new List<UserRoleInfo> { adminRoleInfo });
             _mockRoleProvider.Setup(rp => rp.GetUserRoles(It.Is<UserInfo>(u => u.UserID == Constants.UserID_User12), It.IsAny<bool>())).Returns(new List<UserRoleInfo> { user12RoleInfo });
+            _mockRoleProvider.Setup(rp => rp.GetUserRoles(It.Is<UserInfo>(u => u.UserID == Constants.UserID_FirstSocialGroupOwner), It.IsAny<bool>())).Returns(new List<UserRoleInfo> { userFirstSocialGroupOwner });
         }
 
         #endregion
@@ -694,6 +696,29 @@ namespace DotNetNuke.Tests.Core.Controllers
                 .Returns(_dtMessageRecipients.CreateDataReader());
 
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
+
+            //Act
+            var message = _mockMessagingController.Object.CreateMessage("subject", "body", new List<RoleInfo> { role1, role2 }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
+
+            //Assert
+            _mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers + "," + Constants.RoleID_Administrators, It.IsAny<int>()));
+        }
+
+        [Test]
+        public void MessagingController_CreateMessage_Calls_DataService_CreateSocialMessageRecipientsForRole_On_Passing_Roles_ByRoleOwner()
+        {
+            //Arrange
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId};            
+            var role1 = new RoleInfo { RoleName = "role1", RoleID = Constants.RoleID_RegisteredUsers};
+            var role2 = new RoleInfo { RoleName = "role2", RoleID = Constants.RoleID_Administrators };
+      
+            _mockDataService.Setup(md => md.GetMessageRecipientByMessageAndUser(It.IsAny<int>(), Constants.USER_TenId))
+                .Callback(SetupDataTables)
+                .Returns(_dtMessageRecipients.CreateDataReader());
+
+            _mockDataService.Setup(md => md.GetMessageRecipientByMessageAndUser(It.IsAny<int>(), _adminUserInfo.UserID))
+                .Callback(SetupDataTables)
+                .Returns(_dtMessageRecipients.CreateDataReader());            
 
             //Act
             var message = _mockMessagingController.Object.CreateMessage("subject", "body", new List<RoleInfo> { role1, role2 }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);

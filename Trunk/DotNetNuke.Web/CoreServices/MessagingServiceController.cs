@@ -28,6 +28,7 @@ using System.Web;
 using System.Web.Mvc;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Internal;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
@@ -90,13 +91,13 @@ namespace DotNetNuke.Web.CoreServices
                     iconfile = string.Format(Globals.UserProfilePicFormattedUrl(), user.UserID, 32, 32),
                 }).ToList();
 
+            //Roles should be visible to Administrators or Group Owner
             var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, numResults, q);
-            results.AddRange(roles.Select(ri => new SearchResult
-                                                    {
-                                                        id = "role-" + ri.RoleID,
-                                                        name = ri.RoleName,
-                                                        iconfile = string.IsNullOrEmpty(ri.IconFile) ? "/images/no_avatar.gif" : PortalSettings.HomeDirectory + "/" + ri.IconFile
-                                                    }));
+            results.AddRange(from roleInfo in roles where isAdmin || UserInfo.Social.Roles.SingleOrDefault(ur => ur.RoleID == roleInfo.RoleID && ur.IsOwner) != null 
+                             select new SearchResult 
+                             {id = "role-" + roleInfo.RoleID, 
+                              name = roleInfo.RoleName, 
+                              iconfile = TestableGlobals.Instance.ResolveUrl(string.IsNullOrEmpty(roleInfo.IconFile) ? "/images/no_avatar.gif" : PortalSettings.HomeDirectory.TrimEnd('/') + "/" + roleInfo.IconFile)});
 
             return Json(results.OrderBy(sr => sr.name), JsonRequestBehavior.AllowGet);
         }

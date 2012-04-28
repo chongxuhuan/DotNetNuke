@@ -1,6 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Modules.Admin.Users.ManageUsers" CodeFile="ManageUsers.ascx.cs" %>
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
-<%@ Register TagPrefix="dnn" TagName="SectionHead" Src="~/controls/SectionHeadControl.ascx" %>
 <%@ Register TagPrefix="dnn" Assembly="DotNetNuke" Namespace="DotNetNuke.UI.WebControls"%>
 <%@ Register TagPrefix="dnn" TagName="Membership" Src="~/DesktopModules/Admin/Security/Membership.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="User" Src="~/DesktopModules/Admin/Security/User.ascx" %>
@@ -18,6 +17,10 @@
 
     $(document).ready(function () {
         setUpDnnManageUsers();
+        var pageNo = <%=PageNo %>;
+        if(pageNo > 0) {
+            $('#dnnManageUsers > ul > li:nth-child(' + pageNo + ')').find('a').click();
+        }
         Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
             setUpDnnManageUsers();
         });

@@ -1121,6 +1121,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     Constants.PORTAL_Zero,
                     Constants.Messaging_NotificationSubject,
                     Constants.Messaging_NotificationBody,
+                    Constants.Messaging_IncludeDismissAction,
                     It.IsAny<IList<RoleInfo>>(),
                     It.IsAny<IList<UserInfo>>(),
                     adminUser))
@@ -1131,6 +1132,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 Constants.Messaging_NotificationSubject,
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction,
                 new List<RoleInfo>(),
                 new List<UserInfo>());
 
@@ -1150,6 +1152,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 subject,
                 body,
+                Constants.Messaging_IncludeDismissAction,
                 new List<RoleInfo>(),
                 new List<UserInfo>(),
                 new UserInfo());
@@ -1164,6 +1167,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 Constants.Messaging_NotificationSubject,
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction,
                 null,
                 null,
                 new UserInfo());
@@ -1184,6 +1188,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 subject.ToString(),
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction,
                 new List<RoleInfo>(),
                 new List<UserInfo>(),
                 new UserInfo());
@@ -1198,6 +1203,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 Constants.Messaging_NotificationSubject,
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction,
                 new List<RoleInfo>(),
                 new List<UserInfo>(),
                 new UserInfo());
@@ -1221,6 +1227,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 Constants.Messaging_NotificationSubject,
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction,
                 roles,
                 users,
                 new UserInfo());
@@ -1247,6 +1254,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 Constants.Messaging_NotificationSubject,
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction,
                 roles,
                 null,
                 new UserInfo());
@@ -1285,8 +1293,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     Constants.UserDisplayName_Admin,
                     Constants.Messaging_NotificationSubject,
                     Constants.Messaging_NotificationBody,
-                    Constants.UserID_Admin,
-                    It.IsAny<int>(),
+                    Constants.Messaging_IncludeDismissAction, 
+                    Constants.UserID_Admin, 
+                    It.IsAny<int>(), 
                     It.IsAny<DateTime>()));
 
             _mockNotificationsController
@@ -1302,6 +1311,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 Constants.Messaging_NotificationSubject,
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction,
                 roles,
                 users,
                 adminUser);
@@ -1340,8 +1350,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     Constants.UserDisplayName_Admin,
                     Constants.Messaging_NotificationSubject,
                     Constants.Messaging_NotificationBody,
-                    Constants.UserID_Admin,
-                    It.IsAny<int>(),
+                    Constants.Messaging_IncludeDismissAction, 
+                    Constants.UserID_Admin, 
+                    It.IsAny<int>(), 
                     It.IsAny<DateTime>()))
                 .Verifiable();
 
@@ -1352,6 +1363,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 Constants.Messaging_NotificationSubject,
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction,
                 roles,
                 users,
                 adminUser);
@@ -1389,8 +1401,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     Constants.UserDisplayName_Admin,
                     Constants.Messaging_NotificationSubject,
                     Constants.Messaging_NotificationBody,
-                    Constants.UserID_Admin,
-                    It.IsAny<int>(),
+                    Constants.Messaging_IncludeDismissAction, 
+                    Constants.UserID_Admin, 
+                    It.IsAny<int>(), 
                     It.IsAny<DateTime>()))
                 .Returns(Constants.Messaging_MessageId_1);
 
@@ -1408,6 +1421,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 Constants.Messaging_NotificationSubject,
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction,
                 roles,
                 users,
                 adminUser);
@@ -1445,8 +1459,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     Constants.UserDisplayName_Admin,
                     Constants.Messaging_NotificationSubject,
                     Constants.Messaging_NotificationBody,
-                    Constants.UserID_Admin,
-                    It.IsAny<int>(),
+                    Constants.Messaging_IncludeDismissAction, 
+                    Constants.UserID_Admin, 
+                    It.IsAny<int>(), 
                     It.IsAny<DateTime>()))
                 .Returns(Constants.Messaging_MessageId_1);
 
@@ -1473,6 +1488,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 Constants.Messaging_NotificationSubject,
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction,
                 roles,
                 users,
                 adminUser);
@@ -1512,8 +1528,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     Constants.UserDisplayName_Admin,
                     Constants.Messaging_NotificationSubject,
                     Constants.Messaging_NotificationBody,
-                    Constants.UserID_Admin,
-                    It.IsAny<int>(),
+                    Constants.Messaging_IncludeDismissAction, 
+                    Constants.UserID_Admin, 
+                    It.IsAny<int>(), 
                     It.IsAny<DateTime>()))
                 .Returns(Constants.Messaging_MessageId_1);
 
@@ -1545,6 +1562,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 Constants.PORTAL_Zero,
                 Constants.Messaging_NotificationSubject,
                 Constants.Messaging_NotificationBody,
+                Constants.Messaging_IncludeDismissAction, 
                 roles,
                 users,
                 adminUser);

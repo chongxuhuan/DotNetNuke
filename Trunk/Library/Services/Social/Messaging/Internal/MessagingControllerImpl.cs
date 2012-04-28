@@ -126,9 +126,12 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
             if (roles != null && roles.Count > 0)
             {
-                if (!IsAdminOrHost(sender))
+                foreach (var roleInfo in roles)
                 {
-                    throw new ArgumentException(Localization.Localization.GetString("MsgOnlyHostOrAdminCanSendToRoleError", Localization.Localization.ExceptionsResourceFile));
+                    if (!IsAdminOrHost(sender) && sender.Social.Roles.SingleOrDefault(ur => ur.RoleID == roleInfo.RoleID && ur.IsOwner) != null)
+                    {
+                        throw new ArgumentException(Localization.Localization.GetString("MsgOnlyHostOrAdminOrGroupOwnerCanSendToRoleError", Localization.Localization.ExceptionsResourceFile));
+                    }
                 }
             }
 

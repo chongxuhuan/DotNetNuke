@@ -152,13 +152,14 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
         /// <param name="portalId">The portal identifier.</param>
         /// <param name="subject">The notification subject.</param>
         /// <param name="body">The notification body.</param>
+        /// <param name="includeDismissAction">Include a dismiss action?</param>
         /// <param name="roles">The list of roles to send the notification to. Leave it as null to send only to individual users.</param>
         /// <param name="users">The list of users to send the notification to. Leave it as null to send only to roles.</param>
         /// <returns>The new notification.</returns>
-        public virtual Notification CreateNotification(int notificationTypeId, int portalId,string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users)
+        public virtual Notification CreateNotification(int notificationTypeId, int portalId,string subject, string body, bool includeDismissAction, IList<RoleInfo> roles, IList<UserInfo> users)
         {
             var sender = GetAdminUser();
-            return CreateNotification(notificationTypeId,portalId, subject, body, roles, users, sender);
+            return CreateNotification(notificationTypeId,portalId, subject, body, includeDismissAction, roles, users, sender);
         }
 
         /// <summary>
@@ -168,6 +169,7 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
         /// <param name="portalId">The portal identifier.</param>
         /// <param name="subject">The notification subject.</param>
         /// <param name="body">The notification body.</param>
+        /// /// <param name="includeDismissAction">Include a dismiss action?</param>
         /// <param name="roles">The list of roles to send the notification to. Leave it as null to send only to individual users.</param>
         /// <param name="users">The list of users to send the notification to. Leave it as null to send only to roles.</param>
         /// <param name="sender">The notification sender.</param>
@@ -175,7 +177,7 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
         /// <exception cref="System.ArgumentNullException">Thrown when sender is null.</exception>
         /// <exception cref="System.ArgumentException">Thrown when subject and body are null or empty, or when roles and users are both null, or when the subject length is too large, or when there are no recipients.</exception>
         /// <exception cref="DotNetNuke.Services.Social.Messaging.Exceptions.RecipientLimitExceededException">Thrown when there are too much recipients.</exception>
-        public virtual Notification CreateNotification(int notificationTypeId, int portalId,string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, UserInfo sender)
+        public virtual Notification CreateNotification(int notificationTypeId, int portalId,string subject, string body, bool includeDismissAction, IList<RoleInfo> roles, IList<UserInfo> users, UserInfo sender)
         {
             Requires.NotNull("sender", sender);
 
@@ -243,7 +245,8 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
                                        To = sbTo.ToString().Trim(','),
                                        SenderUserID = sender.UserID,
                                        From = sender.DisplayName,
-                                       ExpirationDate = GetExpirationDate(notificationTypeId)
+                                       ExpirationDate = GetExpirationDate(notificationTypeId),
+                                       IncludeDismissAction = includeDismissAction
                                    };
 
             notification.NotificationID = _dataService.CreateNotification(
@@ -253,8 +256,9 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
                 notification.From,
                 notification.Subject,
                 notification.Body,
-                notification.SenderUserID,
-                UserController.GetCurrentUserInfo().UserID,
+                notification.IncludeDismissAction, 
+                notification.SenderUserID, 
+                UserController.GetCurrentUserInfo().UserID, 
                 notification.ExpirationDate);
 
             //send message to Roles

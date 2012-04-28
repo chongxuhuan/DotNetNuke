@@ -1042,7 +1042,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             var body = string.Format(Localization.GetString("AddFriendRequestBody", Localization.GlobalResourceFile),
                               initiatingUser.DisplayName);
 
-            var notification = NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId,initiatingUser.PortalID, subject, body, null,
+            var notification = NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId,initiatingUser.PortalID, subject, body, true, null,
                                                   new List<UserInfo> { targetUser }, initiatingUser);
 
             var notificationTypeActions = NotificationsController.Instance.GetNotificationTypeActions(notification.NotificationTypeID);
@@ -1064,7 +1064,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             var body = string.Format(Localization.GetString("AddFollowerRequestBody", Localization.GlobalResourceFile),
                               initiatingUser.DisplayName);
 
-            var notification = NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId,initiatingUser.PortalID, subject, body, null,
+            var notification = NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId,initiatingUser.PortalID, subject, body, true, null,
                                                   new List<UserInfo> { targetUser }, initiatingUser);
 
             var notificationTypeActions = NotificationsController.Instance.GetNotificationTypeActions(notification.NotificationTypeID);

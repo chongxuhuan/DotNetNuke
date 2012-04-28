@@ -1784,6 +1784,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 		[ReplyAllAllowed] [bit] NULL,
 		[SenderUserID] [int] NULL,
 		[ExpirationDate] [datetime] NULL,
+    [IncludeDismissAction] [bit] NULL,
 		[CreatedByUserID] [int] NULL,
 		[CreatedOnDate] [datetime] NULL,
 		[LastModifiedByUserID] [int] NULL,
@@ -1881,15 +1882,12 @@ IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_Noti
 	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'FriendRequest', N'Friend Request',-1,NULL)
 		SELECT  @NotificationTypeID = SCOPE_IDENTITY()       
 		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Accept', N'AcceptFriend', '', 1, N'DesktopModules/CoreServices/API/RelationshipService.ashx/AcceptFriend')
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Dismiss', N'DismissNotification', '', 2, N'DesktopModules/CoreServices/API/NotificationsService.ashx/Dismiss')
 	END
 GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'FollowerRequest')
     BEGIN
 		DECLARE @NotificationTypeID INT		  
-	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'FollowerRequest', N'Follower Request',-1,NULL)
-		SELECT  @NotificationTypeID = SCOPE_IDENTITY()   			
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Dismiss', N'DismissNotification', N'', 1, N'DesktopModules/CoreServices/API/NotificationsService.ashx/Dismiss')
+	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'FollowerRequest', N'Follower Request',-1,NULL)		
 	END
 GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'FollowBackRequest')
@@ -1898,31 +1896,24 @@ IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_Noti
 	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'FollowBackRequest', N'Follow Back Request',-1,NULL)
 		SELECT  @NotificationTypeID = SCOPE_IDENTITY()   	
 		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'FollowBack', N'FollowBack', '', 1, N'DesktopModules/CoreServices/API/RelationshipService.ashx/FollowBack')
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Dismiss', N'DismissNotification', N'', 2, N'DesktopModules/CoreServices/API/NotificationsService.ashx/Dismiss')
 	END
 GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'TranslationSubmitted')
 	BEGIN
 		DECLARE @NotificationTypeID INT
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'TranslationSubmitted', N'Translation Submitted', -1, NULL)
-		SELECT @NotificationTypeID = SCOPE_IDENTITY()
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Dismiss', N'DismissNotification', N'', 1, N'DesktopModules/CoreServices/API/NotificationsService.ashx/Dismiss')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'TranslationSubmitted', N'Translation Submitted', -1, NULL)		
 	END
 GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'HtmlProWorkflow')
 	BEGIN
 		DECLARE @NotificationTypeID INT
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'HtmlProWorkflow', N'Html Pro Workflow Notification', -1, NULL)
-		SELECT @NotificationTypeID = SCOPE_IDENTITY()
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Dismiss', N'DismissNotification', N'', 1, N'DesktopModules/CoreServices/API/NotificationsService.ashx/Dismiss')
+		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'HtmlProWorkflow', N'Html Pro Workflow Notification', -1, NULL)		
 	END
 GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'HtmlNotification')
 	BEGIN
 		DECLARE @NotificationTypeID INT
 		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'HtmlNotification', N'Html Module Notification', -1, NULL)
-		SELECT @NotificationTypeID = SCOPE_IDENTITY()
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Dismiss', N'DismissNotification', N'', 1, N'DesktopModules/CoreServices/API/NotificationsService.ashx/Dismiss')
 	END
 GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupPendingNotification')
@@ -1939,10 +1930,7 @@ GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupApprovedNotification')
     BEGIN
 		DECLARE @NotificationTypeID INT		
-	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupApprovedNotification', N'Group Approved Notification',-1,NULL)
-		SELECT  @NotificationTypeID = SCOPE_IDENTITY()       
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) 
-			VALUES (@NotificationTypeID, N'Dismiss', N'DismissNotification', '', 1, N'DesktopModules/CoreServices/API/NotificationsService.ashx/Dismiss')
+	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupApprovedNotification', N'Group Approved Notification',-1,NULL)		
 	END
 GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupCreatedNotification')
@@ -1951,18 +1939,13 @@ IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_Noti
 	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupCreatedNotification', N'Group Created Notification',-1,NULL)
 		SELECT  @NotificationTypeID = SCOPE_IDENTITY()   
 		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) 
-			VALUES (@NotificationTypeID, N'Remove', N'RemoveGroup', 'DeleteItem', 1, N'DesktopModules/SocialGroups/API/ModerationService.ashx/RemoveGroup')    
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) 
-			VALUES (@NotificationTypeID, N'Dismiss', N'DismissNotification', '', 2, N'DesktopModules/CoreServices/API/NotificationsService.ashx/Dismiss')
+			VALUES (@NotificationTypeID, N'Remove', N'RemoveGroup', 'DeleteItem', 1, N'DesktopModules/SocialGroups/API/ModerationService.ashx/RemoveGroup')		
 	END
 GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupRejectedNotification')
     BEGIN
 		DECLARE @NotificationTypeID INT		
-	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupRejectedNotification', N'Group Rejected Notification',-1,NULL)
-		SELECT  @NotificationTypeID = SCOPE_IDENTITY()   
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) 
-			VALUES (@NotificationTypeID, N'Dismiss', N'DismissNotification', '', 1, N'DesktopModules/CoreServices/API/NotificationsService.ashx/Dismiss')
+	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupRejectedNotification', N'Group Rejected Notification',-1,NULL)		
 	END
 GO
 --CRUD for CoreMessaging_Messages
@@ -3095,11 +3078,12 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateNotificati
 	@PortalID INT,
 	@To nvarchar(2000),
 	@From nvarchar(200),
-    @Subject nvarchar(400),
-    @Body nvarchar(max),
-    @SenderUserID int,
+  @Subject nvarchar(400),
+  @Body nvarchar(max),
+  @SenderUserID int,
 	@CreateUpdateUserID int,
-	@ExpirationDate datetime
+	@ExpirationDate datetime,
+  @IncludeDismissAction bit
 AS
 BEGIN
 	INSERT {databaseOwner}[{objectQualifier}CoreMessaging_Messages] (
@@ -3111,6 +3095,7 @@ BEGIN
 		[Body],
 		[SenderUserID],
 		[ExpirationDate],
+    [IncludeDismissAction],
 		[CreatedByUserID],
 		[CreatedOnDate],
 		[LastModifiedByUserID],
@@ -3124,6 +3109,7 @@ BEGIN
 		@Body,
 		@SenderUserID,
 		@ExpirationDate,
+    @IncludeDismissAction,
 		@CreateUpdateUserID, -- CreatedBy
 		GETUTCDATE(), -- CreatedOn
 		@CreateUpdateUserID, -- LastModifiedBy
@@ -3163,6 +3149,7 @@ BEGIN
 			M.[Body],
 			M.[SenderUserID],
 			M.[ExpirationDate],
+            M.[IncludeDismissAction],
 			M.[CreatedByUserID],
 			M.[CreatedOnDate],
 			M.[LastModifiedByUserID],
@@ -4984,13 +4971,22 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_UpdateMessageArchivedStatus]
 	@ConversationID int,
-	@UserID	         int,
-	@Archived		 bit
+	@UserID int,
+	@Archived bit
 AS
 BEGIN
-UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] SET [Archived]=@Archived 
-WHERE UserID = @UserID
-AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] WHERE ConversationID=@ConversationID)
+	UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients]
+	SET [Archived] = @Archived
+	WHERE UserID = @UserID
+	AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] WHERE ConversationID = @ConversationID)
+
+	IF @Archived = 1 BEGIN
+		-- If archiving, set also as read
+		UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients]
+		SET [Read] = 1
+		WHERE [UserID] = @UserID
+		AND MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] WHERE ConversationID = @ConversationID)
+	END
 END
 GO
 

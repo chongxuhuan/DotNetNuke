@@ -71,7 +71,7 @@ namespace DotNetNuke.Modules.Html
             var portalSettings = PortalController.GetCurrentPortalSettings();
             var sender = UserController.GetUserById(portalSettings.PortalId, portalSettings.AdministratorId);
 
-            NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId, portalSettings.PortalId, subject, body, null, new List<UserInfo> { user }, sender);
+            NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId, portalSettings.PortalId, subject, body, true, null, new List<UserInfo> { user }, sender);
         }
 
         private void ClearModuleSettings(ModuleInfo objModule)

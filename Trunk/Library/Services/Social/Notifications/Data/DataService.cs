@@ -146,9 +146,9 @@ namespace DotNetNuke.Services.Social.Notifications.Data
 
         #region Notifications Public Methods
 
-        public int CreateNotification(int notificationTypeId, int portalId, string to, string @from, string subject, string body, int senderUserId, int createUpdateUserId, DateTime expirationDate)
+        public int CreateNotification(int notificationTypeId, int portalId, string to, string @from, string subject, string body, bool includeDismissAction, int senderUserId, int createUpdateUserId, DateTime expirationDate)
         {
-            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("CreateNotification"), notificationTypeId, portalId ,to, from, subject, body, senderUserId, createUpdateUserId, _provider.GetNull(expirationDate));
+            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("CreateNotification"), notificationTypeId, portalId ,to, from, subject, body, senderUserId, createUpdateUserId, _provider.GetNull(expirationDate), includeDismissAction);
         }
 
         public void DeleteNotification(int notificationId)

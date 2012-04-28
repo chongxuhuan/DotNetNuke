@@ -237,8 +237,8 @@
   <data name="MsgSenderRequiredError.Text" xml:space="preserve">
     <value>Either Sender is null or Sender.UserID is negative.</value>
   </data>
-  <data name="MsgOnlyHostOrAdminCanSendToRoleError.Text" xml:space="preserve">
-    <value>Only SuperUsers and Site Administrators can send message to Role.</value>
+  <data name="MsgOnlyHostOrAdminOrGroupOwnerCanSendToRoleError.Text" xml:space="preserve">
+    <value>Only SuperUsers, Site Administrators or Group Owners can send message to Role.</value>
   </data>
   <data name="MsgThrottlingIntervalNotMet.Text" xml:space="preserve">
     <value>Message cannot be sent as Minimum Interval between two messages by the same user is not.</value>

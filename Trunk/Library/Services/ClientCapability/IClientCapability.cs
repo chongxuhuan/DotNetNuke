@@ -103,16 +103,5 @@ namespace DotNetNuke.Services.ClientCapability
         ///   Http server variable used for SSL offloading - if this value is empty offloading is not enabled
         /// </summary>
         string SSLOffload { get; set; }
-
-        /// <summary>
-        /// The device name.
-        /// </summary>
-        string Name { get; set; }
-
-        /// <summary>
-        /// The device version.
-        /// </summary>
-        double Version { get; set; }
-
     }
 }

@@ -61,7 +61,7 @@ namespace DotNetNuke.Services.Social.Notifications.Data
 
         #region Notifications
 
-        int CreateNotification(int notificationTypeId, int portalId,string to, string from, string subject, string body, int senderUserId, int createUpdateUserId, DateTime expirationDate);
+        int CreateNotification(int notificationTypeId, int portalId, string to, string @from, string subject, string body, bool includeDismissAction, int senderUserId, int createUpdateUserId, DateTime expirationDate);
         void DeleteNotification(int notificationId);
         int CountNotifications(int userId, int portalId);
         IDataReader GetNotifications(int userId, int portalId, int pageIndex, int pageSize);

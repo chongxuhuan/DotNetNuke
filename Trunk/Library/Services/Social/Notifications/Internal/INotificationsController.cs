@@ -209,10 +209,11 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
         /// <param name="portalId">The portal identifier.</param>
         /// <param name="subject">The notification subject.</param>
         /// <param name="body">The notification body.</param>
+        /// <param name="includeDismissAction">Include a dismiss action?</param>
         /// <param name="roles">The list of roles to send the notification to. Leave it as null to send only to individual users.</param>
         /// <param name="users">The list of users to send the notification to. Leave it as null to send only to roles.</param>
         /// <returns>The new notification.</returns>
-        Notification CreateNotification(int notificationTypeId, int portalId,string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users);
+        Notification CreateNotification(int notificationTypeId, int portalId,string subject, string body, bool includeDismissAction, IList<RoleInfo> roles, IList<UserInfo> users);
         
         /// <summary>
         /// Creates a new notification.
@@ -221,11 +222,12 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
         /// <param name="portalId">The portal identifier.</param>
         /// <param name="subject">The notification subject.</param>
         /// <param name="body">The notification body.</param>
+        /// <param name="includeDismissAction">Include a dismiss action?</param>
         /// <param name="roles">The list of roles to send the notification to. Leave it as null to send only to individual users.</param>
         /// <param name="users">The list of users to send the notification to. Leave it as null to send only to roles.</param>
         /// <param name="sender">The notification sender.</param>
         /// <returns>The new notification.</returns>
-        Notification CreateNotification(int notificationTypeId, int portalId, string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, UserInfo sender);
+        Notification CreateNotification(int notificationTypeId, int portalId, string subject, string body, bool includeDismissAction, IList<RoleInfo> roles, IList<UserInfo> users, UserInfo sender);
         
         /// <summary>
         /// Counts the notifications sent to the provided user in the specified portal.

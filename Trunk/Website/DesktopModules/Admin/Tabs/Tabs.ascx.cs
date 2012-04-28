@@ -815,14 +815,12 @@ namespace DesktopModules.Admin.Tabs
             ctlPages.ContextMenus[0].Items[0].Text = LocalizeString("ViewPage");
             ctlPages.ContextMenus[0].Items[1].Text = LocalizeString("EditPage");
             ctlPages.ContextMenus[0].Items[2].Text = LocalizeString("DeletePage");
-            ctlPages.ContextMenus[0].Items[3].Text = LocalizeString("MovePageUp");
-            ctlPages.ContextMenus[0].Items[4].Text = LocalizeString("MovePageDown");
-            ctlPages.ContextMenus[0].Items[5].Text = LocalizeString("AddPage");
-            ctlPages.ContextMenus[0].Items[6].Text = LocalizeString("HidePage");
-            ctlPages.ContextMenus[0].Items[7].Text = LocalizeString("ShowPage");
-            ctlPages.ContextMenus[0].Items[8].Text = LocalizeString("EnablePage");
-            ctlPages.ContextMenus[0].Items[9].Text = LocalizeString("DisablePage");
-            ctlPages.ContextMenus[0].Items[10].Text = LocalizeString("MakeHome");
+            ctlPages.ContextMenus[0].Items[3].Text = LocalizeString("AddPage");
+            ctlPages.ContextMenus[0].Items[4].Text = LocalizeString("HidePage");
+            ctlPages.ContextMenus[0].Items[5].Text = LocalizeString("ShowPage");
+            ctlPages.ContextMenus[0].Items[6].Text = LocalizeString("EnablePage");
+            ctlPages.ContextMenus[0].Items[7].Text = LocalizeString("DisablePage");
+            ctlPages.ContextMenus[0].Items[8].Text = LocalizeString("MakeHome");
 
             lblBulkIntro.Text = LocalizeString("BulkCreateIntro");
             btnBulkCreate.Text = LocalizeString("btnBulkCreate");
@@ -830,14 +828,12 @@ namespace DesktopModules.Admin.Tabs
             ctlPages.ContextMenus[0].Items[0].ImageUrl = IconView;
             ctlPages.ContextMenus[0].Items[1].ImageUrl = IconEdit;
             ctlPages.ContextMenus[0].Items[2].ImageUrl = IconDelete;
-            ctlPages.ContextMenus[0].Items[3].ImageUrl = IconUp;
-            ctlPages.ContextMenus[0].Items[4].ImageUrl = IconDown;
-            ctlPages.ContextMenus[0].Items[5].ImageUrl = IconAdd;
-            ctlPages.ContextMenus[0].Items[6].ImageUrl = IconPageHidden;
-            ctlPages.ContextMenus[0].Items[7].ImageUrl = IconPageHidden;
-            ctlPages.ContextMenus[0].Items[8].ImageUrl = IconPageDisabled;
-            ctlPages.ContextMenus[0].Items[9].ImageUrl = IconPageDisabled;
-            ctlPages.ContextMenus[0].Items[10].ImageUrl = IconHome;
+            ctlPages.ContextMenus[0].Items[3].ImageUrl = IconAdd;
+            ctlPages.ContextMenus[0].Items[4].ImageUrl = IconPageHidden;
+            ctlPages.ContextMenus[0].Items[5].ImageUrl = IconPageHidden;
+            ctlPages.ContextMenus[0].Items[6].ImageUrl = IconPageDisabled;
+            ctlPages.ContextMenus[0].Items[7].ImageUrl = IconPageDisabled;
+            ctlPages.ContextMenus[0].Items[8].ImageUrl = IconHome;
 
             rblMode.Items[0].Text = LocalizeString("ShowPortalTabs");
             rblMode.Items[1].Text = LocalizeString("ShowHostTabs");

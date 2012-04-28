@@ -47,12 +47,14 @@ namespace DotNetNuke.Tests.Utilities
         public const int UserID_Host = 1;
         public const int UserID_Admin = 2;
         public const int UserID_User12 = 12;
+        public const int UserID_FirstSocialGroupOwner = 13;
         public const string UserName_Admin = "admin";
         public const string UserName_Host = "host";
         public const string UserName_User12 = "user12";
         public const string UserDisplayName_Host = "SuperUser Account";
         public const string UserDisplayName_Admin = "Administrator Account";
         public const string UserDisplayName_User12 = "User 12";
+        public const string UserDisplayName_FirstSocialGroupOwner = "First Social Group Owner";
         
 
         #endregion
@@ -63,11 +65,13 @@ namespace DotNetNuke.Tests.Utilities
         public const int RoleID_RegisteredUsers = 1;
         public const int RoleID_Subscribers = 2;
         public const int RoleID_Translator_EN_US = 3;
+        public const int RoleID_FirstSocialGroup = 4;
 
         public const string RoleName_Administrators = "Administrators";
         public const string RoleName_RegisteredUsers = "RegisteredUsers";
         public const string RoleName_Subscribers = "Subscribers";
-        public const string RoleName_Translator_EN_US = "ranslator_EN_US";
+        public const string RoleName_Translator_EN_US = "translator_EN_US";
+        public const string RoleName_FirstSocialGroup = "First Social Group";
 
         #endregion
 
@@ -394,6 +398,7 @@ namespace DotNetNuke.Tests.Utilities
         public const string Messaging_NotificationActionKey = "{F:1}{U:2}";
         public const string Messaging_NotificationSubject = "Friend Request Received";
         public const string Messaging_NotificationBody = "You've received a new friend request from {0}";
+        public const bool Messaging_IncludeDismissAction = true;
 
         #endregion
 

@@ -135,6 +135,12 @@ namespace DotNetNuke.Services.Social.Notifications
         }
 
         /// <summary>
+        /// Should this notification support a dismiss action
+        /// </summary>
+        [XmlAttribute]
+        public bool IncludeDismissAction { get; set; }
+
+        /// <summary>
         /// Fill the object with data from database.
         /// </summary>
         /// <param name="dr">the data reader.</param>
@@ -148,6 +154,7 @@ namespace DotNetNuke.Services.Social.Notifications
             Body = Null.SetNullString(dr["Body"]);
             SenderUserID = Convert.ToInt32(dr["SenderUserID"]);
             ExpirationDate = Null.SetNullDateTime(dr["ExpirationDate"]);
+            IncludeDismissAction = Null.SetNullBoolean(dr["IncludeDismissAction"]);
 
             //add audit column data
             FillInternal(dr);
