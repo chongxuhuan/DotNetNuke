@@ -1164,35 +1164,6 @@ namespace DotNetNuke.Modules.Admin.Portals
                         PortalController.UpdatePortalSetting(_portalId, "STDURL", AddPortalAlias(txtSTDURL.Text, _portalId), false);
                     }
 
-                    PortalController.UpdatePortalSetting(_portalId, "Registration_RegistrationFormType", registrationFormType.SelectedValue, false);
-
-                    foreach (DnnFormItemBase item in basicRegistrationSettings.Items)
-                    {
-                        PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
-                    }
-
-                    foreach (DnnFormItemBase item in standardRegistrationSettings.Items)
-                    {
-                        PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
-                    }
-
-                    foreach (DnnFormItemBase item in validationRegistrationSettings.Items)
-                    {
-                        try
-                        {
-                            var regex = new Regex(item.Value.ToString());
-                            PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
-                        }
-                        catch (Exception exc)
-                        {
-
-                            string message = String.Format(Localization.GetString("InvalidRegularExpression", LocalResourceFile),
-                                                           Localization.GetString(item.DataField, LocalResourceFile), item.Value);
-                            UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.RedError);
-                            return;
-                        }
-                    }
-
                     if(registrationFormType.SelectedValue == "1")
                     {
                         var setting = registrationFields.Text;
@@ -1201,6 +1172,14 @@ namespace DotNetNuke.Modules.Admin.Portals
                             UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("NoEmail", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
                             return;
                         }
+
+                        if (!setting.Contains("DisplayName") && Convert.ToBoolean(requireUniqueDisplayName.Value))
+                        {
+                            PortalController.UpdatePortalSetting(_portalId, "Registration_RegistrationFormType", "0", false);
+                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("NoDisplayName", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                            return;
+                        }
+
                         string invalidFields = String.Empty;
                         if (!String.IsNullOrEmpty(setting))
                         {
@@ -1228,6 +1207,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                                 }
                             }
                         }
+
                         if (String.IsNullOrEmpty(invalidFields))
                         {
                             PortalController.UpdatePortalSetting(_portalId, "Registration_RegistrationFields", setting);
@@ -1235,6 +1215,35 @@ namespace DotNetNuke.Modules.Admin.Portals
                         else
                         {
                             string message = String.Format(Localization.GetString("InvalidFields", LocalResourceFile), invalidFields);
+                            UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.RedError);
+                            return;
+                        }
+                    }
+
+                    PortalController.UpdatePortalSetting(_portalId, "Registration_RegistrationFormType", registrationFormType.SelectedValue, false);
+
+                    foreach (DnnFormItemBase item in basicRegistrationSettings.Items)
+                    {
+                        PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
+                    }
+
+                    foreach (DnnFormItemBase item in standardRegistrationSettings.Items)
+                    {
+                        PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
+                    }
+
+                    foreach (DnnFormItemBase item in validationRegistrationSettings.Items)
+                    {
+                        try
+                        {
+                            var regex = new Regex(item.Value.ToString());
+                            PortalController.UpdatePortalSetting(_portalId, item.DataField, item.Value.ToString());
+                        }
+                        catch (Exception exc)
+                        {
+
+                            string message = String.Format(Localization.GetString("InvalidRegularExpression", LocalResourceFile),
+                                                           Localization.GetString(item.DataField, LocalResourceFile), item.Value);
                             UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.RedError);
                             return;
                         }

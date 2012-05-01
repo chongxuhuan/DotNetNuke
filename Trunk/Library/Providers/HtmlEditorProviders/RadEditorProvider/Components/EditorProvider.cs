@@ -352,6 +352,14 @@ namespace DotNetNuke.Providers.RadEditorProvider
             }
         }
 
+        public override bool EnableRelativeUrl
+        {
+            get
+            {
+                return _linksUseRelativeUrls;
+            }
+        }
+
         #endregion
 
         #region Private Helper Methods

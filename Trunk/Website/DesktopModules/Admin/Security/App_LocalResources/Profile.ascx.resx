@@ -327,4 +327,13 @@
   <data name="RequireProfile.Text" xml:space="preserve">
     <value>Your Profile</value>
   </data>
+  <data name="ProfileProperties_Email.Text" xml:space="preserve">
+    <value>Email Address:</value>
+  </data>
+  <data name="ProfileProperties_Username.Text" xml:space="preserve">
+    <value>Username:</value>
+  </data>
+  <data name="ProfileProperties_DisplayName.Text" xml:space="preserve">
+    <value>Display Name:</value>
+  </data>
 </root>

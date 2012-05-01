@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 using DotNetNuke.Common;
@@ -35,7 +36,7 @@ using DotNetNuke.Services.Social.Notifications;
 
 #endregion
 
-namespace DotNetNuke.Entities.Users.Social.Internal
+namespace DotNetNuke.Entities.Users.Social
 {
     internal class RelationshipControllerImpl : IRelationshipController
     {
@@ -49,8 +50,8 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         #region Private Variables
 
-        private readonly IDataService dataService;
-        private readonly IEventLogController eventLogController;
+        private readonly IDataService _dataService;
+        private readonly IEventLogController _eventLogController;
 
         #endregion
 
@@ -66,8 +67,8 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             Requires.NotNull("dataService", dataService);
             Requires.NotNull("eventLogController", eventLogController);
 
-            this.dataService = dataService;
-            this.eventLogController = eventLogController;
+            _dataService = dataService;
+            _eventLogController = eventLogController;
         }
 
         #endregion
@@ -80,7 +81,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         {
             Requires.NotNull("relationshipType", relationshipType);
 
-            dataService.DeleteRelationshipType(relationshipType.RelationshipTypeId);
+            _dataService.DeleteRelationshipType(relationshipType.RelationshipTypeId);
 
             //log event
             string logContent =
@@ -100,7 +101,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             return CBO.GetCachedObject<IList<RelationshipType>>(cacheArgs,
                                                                 c =>
                                                                 CBO.FillCollection<RelationshipType>(
-                                                                    dataService.GetAllRelationshipTypes()));
+                                                                    _dataService.GetAllRelationshipTypes()));
         }
 
         public RelationshipType GetRelationshipType(int relationshipTypeId)
@@ -116,7 +117,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                                          ? "RelationshipType_Added"
                                          : "RelationshipType_Updated";
 
-            relationshipType.RelationshipTypeId = dataService.SaveRelationshipType(relationshipType,
+            relationshipType.RelationshipTypeId = _dataService.SaveRelationshipType(relationshipType,
                                                                                     UserController.GetCurrentUserInfo().
                                                                                         UserID);
 
@@ -137,7 +138,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         {
             Requires.NotNull("relationship", relationship);
 
-            dataService.DeleteRelationship(relationship.RelationshipId);
+            _dataService.DeleteRelationship(relationship.RelationshipId);
 
             //log event
             string logContent =
@@ -151,12 +152,12 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         public Relationship GetRelationship(int relationshipId)
         {
-            return CBO.FillCollection<Relationship>(dataService.GetRelationship(relationshipId)).FirstOrDefault();
+            return CBO.FillCollection<Relationship>(_dataService.GetRelationship(relationshipId)).FirstOrDefault();
         }
 
         public IList<Relationship> GetRelationshipsByUserId(int userId)
         {
-            return CBO.FillCollection<Relationship>(dataService.GetRelationshipsByUserId(userId));
+            return CBO.FillCollection<Relationship>(_dataService.GetRelationshipsByUserId(userId));
         }
 
         public IList<Relationship> GetRelationshipsByPortalId(int portalId)
@@ -168,7 +169,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             return CBO.GetCachedObject<IList<Relationship>>(cacheArgs,
                                                             c =>
                                                             CBO.FillCollection<Relationship>(
-                                                                dataService.GetRelationshipsByPortalId(
+                                                                _dataService.GetRelationshipsByPortalId(
                                                                     (int) c.ParamList[0])));
         }
 
@@ -180,7 +181,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                                          ? "Relationship_Added"
                                          : "Relationship_Updated";
 
-            relationship.RelationshipId = dataService.SaveRelationship(relationship,
+            relationship.RelationshipId = _dataService.SaveRelationship(relationship,
                                                                         UserController.GetCurrentUserInfo().UserID);
 
             //log event
@@ -200,7 +201,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         {
             Requires.NotNull("userRelationship", userRelationship);
 
-            dataService.DeleteUserRelationship(userRelationship.UserRelationshipId);
+            _dataService.DeleteUserRelationship(userRelationship.UserRelationshipId);
 
             //log event
             string logContent =
@@ -215,7 +216,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         public UserRelationship GetUserRelationship(int userRelationshipId)
         {
-            return CBO.FillObject<UserRelationship>(dataService.GetUserRelationship(userRelationshipId));
+            return CBO.FillObject<UserRelationship>(_dataService.GetUserRelationship(userRelationshipId));
         }
 
         public UserRelationship GetUserRelationship(UserInfo user, UserInfo relatedUser, Relationship relationship)
@@ -223,7 +224,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             UserRelationship userRelationship = null;
             if (relationship != null)
             {
-                userRelationship = CBO.FillObject<UserRelationship>(dataService.GetUserRelationship(user.UserID, relatedUser.UserID,
+                userRelationship = CBO.FillObject<UserRelationship>(_dataService.GetUserRelationship(user.UserID, relatedUser.UserID,
                                                                                   relationship.RelationshipId,
                                                                                   GetRelationshipType(
                                                                                       relationship.RelationshipTypeId).
@@ -235,7 +236,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         public IList<UserRelationship> GetUserRelationships(UserInfo user)
         {
-            return CBO.FillCollection<UserRelationship>(dataService.GetUserRelationships(user.UserID));
+            return CBO.FillCollection<UserRelationship>(_dataService.GetUserRelationships(user.UserID));
         }
 
         public void SaveUserRelationship(UserRelationship userRelationship)
@@ -246,7 +247,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                                          ? "UserRelationship_Added"
                                          : "UserRelationship_Updated";
 
-            userRelationship.UserRelationshipId = dataService.SaveUserRelationship(userRelationship,
+            userRelationship.UserRelationshipId = _dataService.SaveUserRelationship(userRelationship,
                                                                                     UserController.GetCurrentUserInfo().
                                                                                         UserID);
 
@@ -268,7 +269,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         {
             Requires.NotNull("userRelationshipPreference", userRelationshipPreference);
 
-            dataService.DeleteUserRelationshipPreference(userRelationshipPreference.PreferenceId);
+            _dataService.DeleteUserRelationshipPreference(userRelationshipPreference.PreferenceId);
 
             //log event
             string logContent =
@@ -282,13 +283,13 @@ namespace DotNetNuke.Entities.Users.Social.Internal
         public UserRelationshipPreference GetUserRelationshipPreference(int preferenceId)
         {
             return
-                CBO.FillObject<UserRelationshipPreference>(dataService.GetUserRelationshipPreferenceById(preferenceId));
+                CBO.FillObject<UserRelationshipPreference>(_dataService.GetUserRelationshipPreferenceById(preferenceId));
         }
 
         public UserRelationshipPreference GetUserRelationshipPreference(int userId, int relationshipId)
         {
             return
-                CBO.FillObject<UserRelationshipPreference>(dataService.GetUserRelationshipPreference(userId,
+                CBO.FillObject<UserRelationshipPreference>(_dataService.GetUserRelationshipPreference(userId,
                                                                                                       relationshipId));
         }
 
@@ -301,7 +302,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                                          : "UserRelationshipPreference_Updated";
 
             userRelationshipPreference.PreferenceId =
-                dataService.SaveUserRelationshipPreference(userRelationshipPreference,
+                _dataService.SaveUserRelationshipPreference(userRelationshipPreference,
                                                             UserController.GetCurrentUserInfo().UserID);
 
             //log event            
@@ -680,63 +681,6 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         /// -----------------------------------------------------------------------------
         /// <summary>
-        /// GetFriends - Get List of Friends (UserRelationship with status as Accepted) for an User
-        /// </summary>        
-        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
-        /// <returns>List of UserRelationship objects</returns>
-        /// <remarks>This method can bring huge set of data.         
-        /// </remarks>
-        /// -----------------------------------------------------------------------------
-        public IList<UserRelationship> GetFriends(UserInfo initiatingUser)
-        {
-            Requires.NotNull("user1", initiatingUser);
-
-            IList<UserRelationship> friends;
-            Relationship relationship = GetFriendsRelationshipByPortal(initiatingUser.PortalID);
-            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipId.ToString(), out friends);
-
-            return friends;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetFollowers - Get List of Followers (UserRelationship with status as Accepted) for an User
-        /// </summary>        
-        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
-        /// <returns>List of UserRelationship objects</returns>
-        /// <remarks>This method can bring huge set of data. Followers means the User is being Followed by x other Users        
-        /// </remarks>
-        /// -----------------------------------------------------------------------------
-        public IList<UserRelationship> GetFollowers(UserInfo initiatingUser)
-        {
-            Requires.NotNull("user1", initiatingUser);
-
-            IList<UserRelationship> followers;
-            Relationship relationship = GetFollowersRelationshipByPortal(initiatingUser.PortalID);
-            initiatingUser.Social.UserRelationships.TryGetValue(relationship.RelationshipId.ToString(), out followers);
-
-            return followers;
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
-        /// GetFriends - Get List of Following (UserRelationship with status as Accepted) for an User
-        /// </summary>        
-        /// <param name="initiatingUser">UserInfo for Initiating User</param>        
-        /// <returns>List of UserRelationship objects</returns>
-        /// <remarks>This method can bring huge set of data. Following means the User is Following x other Users        
-        /// </remarks>
-        /// -----------------------------------------------------------------------------
-        public IList<UserRelationship> GetFollowing(UserInfo initiatingUser)
-        {
-            Requires.NotNull("user1", initiatingUser);
-
-            Relationship relationship = GetFollowersRelationshipByPortal(initiatingUser.PortalID);
-            return new List<UserRelationship>();
-        }
-
-        /// -----------------------------------------------------------------------------
-        /// <summary>
         /// IsFriend - Are the Current User and the Target Users in Friend Relationship
         /// </summary>        
         /// <param name="targetUser">UserInfo for Target User</param>        
@@ -948,7 +892,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         private void AddLog(string logContent)
         {
-            eventLogController.AddLog("Message", logContent, EventLogController.EventLogType.ADMIN_ALERT);
+            _eventLogController.AddLog("Message", logContent, EventLogController.EventLogType.ADMIN_ALERT);
         }
 
         private void ClearRelationshipCache(Relationship relationship)
@@ -1042,16 +986,18 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             var body = string.Format(Localization.GetString("AddFriendRequestBody", Localization.GlobalResourceFile),
                               initiatingUser.DisplayName);
 
-            var notification = NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId,initiatingUser.PortalID, subject, body, true, null,
-                                                  new List<UserInfo> { targetUser }, initiatingUser);
-
-            var notificationTypeActions = NotificationsController.Instance.GetNotificationTypeActions(notification.NotificationTypeID);
-            foreach (var notificationTypeAction in notificationTypeActions)
-            {
-                NotificationsController.Instance.CreateNotificationAction(notification.NotificationID, notificationTypeAction.NotificationTypeActionId,
-                                         initiatingUser.UserID.ToString());
-            }
-
+            var notification = new Notification
+                                   {
+                                       NotificationTypeID = notificationType.NotificationTypeId,
+                                       Subject = subject,
+                                       Body = body,
+                                       IncludeDismissAction = true,
+                                       Context = initiatingUser.UserID.ToString(CultureInfo.InvariantCulture),
+                                       SenderUserID = initiatingUser.UserID
+                                   };
+            
+            NotificationsController.Instance.CreateNotification(notification, initiatingUser.PortalID, null, new List<UserInfo> { targetUser });
+            
             return notification;
         }
 
@@ -1064,15 +1010,18 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             var body = string.Format(Localization.GetString("AddFollowerRequestBody", Localization.GlobalResourceFile),
                               initiatingUser.DisplayName);
 
-            var notification = NotificationsController.Instance.CreateNotification(notificationType.NotificationTypeId,initiatingUser.PortalID, subject, body, true, null,
-                                                  new List<UserInfo> { targetUser }, initiatingUser);
-
-            var notificationTypeActions = NotificationsController.Instance.GetNotificationTypeActions(notification.NotificationTypeID);
-            foreach (var notificationTypeAction in notificationTypeActions)
-            {                
-                NotificationsController.Instance.CreateNotificationAction(notification.NotificationID, notificationTypeAction.NotificationTypeActionId, initiatingUser.UserID.ToString());
-            }
-
+            var notification = new Notification
+                                   {
+                                       NotificationTypeID = notificationType.NotificationTypeId,
+                                       Subject = subject,
+                                       Body = body,
+                                       IncludeDismissAction = true,
+                                       Context = initiatingUser.UserID.ToString(CultureInfo.InvariantCulture),
+                                       SenderUserID = initiatingUser.UserID
+                                   };
+            
+            NotificationsController.Instance.CreateNotification(notification, initiatingUser.PortalID, null, new List<UserInfo> { targetUser });
+            
             return notification;
         }
 

@@ -48,24 +48,16 @@ namespace DotNetNuke.Services.Social.Notifications.Data
 
         #endregion
 
-        #region NotificationActions CRUD
-
-        int SaveNotificationAction(int notificationActionId, int messageId, int notificationTypeActionId, string key, int createUpdateUserId);
-        void DeleteNotificationAction(int notificationActionId);
-        IDataReader GetNotificationAction(int notificationActionId);
-        IDataReader GetNotificationActionsByMessageId(int messageId);
-        IDataReader GetNotificationActionByMessageAndNotificationTypeAction(int messageId, int notificationTypeActionId);
-        IDataReader GetNotificationActionByMessageAndNotificationTypeActionName(int messageId, string nameResourceKey);
-
-        #endregion
-
         #region Notifications
 
-        int CreateNotification(int notificationTypeId, int portalId, string to, string @from, string subject, string body, bool includeDismissAction, int senderUserId, int createUpdateUserId, DateTime expirationDate);
+        int CreateNotification(Notification notification, int portalId);
         void DeleteNotification(int notificationId);
         int CountNotifications(int userId, int portalId);
         IDataReader GetNotifications(int userId, int portalId, int pageIndex, int pageSize);
+        IDataReader GetNotification(int notificationId);
 
         #endregion
+
+        
     }
 }

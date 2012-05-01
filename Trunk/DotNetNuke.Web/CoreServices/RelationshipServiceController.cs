@@ -44,10 +44,9 @@ namespace DotNetNuke.Web.CoreServices
                 var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
                 if (recipient != null)
                 {
-                    var action = NotificationsController.Instance.GetNotificationAction(notificationId, "Accept");
-                    var key = action.Key;
+                    Notification notification = NotificationsController.Instance.GetNotification(notificationId);
                     int initiatingUserId;
-                    if (int.TryParse(key, out initiatingUserId))
+                    if (int.TryParse(notification.Context, out initiatingUserId))
                     {
                         RelationshipController.Instance.AcceptUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
                         NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
@@ -75,10 +74,9 @@ namespace DotNetNuke.Web.CoreServices
                 var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
                 if (recipient != null)
                 {
-                    var action = NotificationsController.Instance.GetNotificationAction(notificationId, "FollowBack");
-                    var key = action.Key;
+                    Notification notification = NotificationsController.Instance.GetNotification(notificationId);
                     int targetUserId;
-                    if (int.TryParse(key, out targetUserId))
+                    if (int.TryParse(notification.Context, out targetUserId))
                     {
                         var targetUser = UserController.GetUserById(PortalSettings.PortalId, targetUserId);
 

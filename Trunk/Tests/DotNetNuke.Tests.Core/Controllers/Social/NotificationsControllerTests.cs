@@ -32,10 +32,8 @@ using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Services.Social.Messaging.Exceptions;
-using DotNetNuke.Services.Social.Messaging.Internal;
 using DotNetNuke.Services.Social.Notifications;
 using DotNetNuke.Services.Social.Notifications.Data;
-using DotNetNuke.Services.Social.Notifications.Internal;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;
 
@@ -881,230 +879,10 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         #endregion
 
-        #region CreateNotificationAction
-
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
-        [ExpectedException(typeof(ArgumentException))]
-        public void CreateNotificationAction_Throws_On_Null_Or_Empty_Key(string key)
-        {
-            _notificationsController.CreateNotificationAction(
-                Constants.Messaging_MessageId_1,
-                Constants.Messaging_NotificationTypeActionId,
-                key);
-        }
-
-        [Test]
-        public void CreateNotificationAction_Calls_DataService_SaveNotificationAction()
-        {
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockDataService
-                .Setup(ds => ds.SaveNotificationAction(
-                    Null.NullInteger,
-                    Constants.Messaging_MessageId_1,
-                    Constants.Messaging_NotificationTypeActionId,
-                    Constants.Messaging_NotificationActionKey,
-                    Constants.UserID_User12))
-                .Verifiable();
-
-            _mockNotificationsController.Object.CreateNotificationAction(
-                Constants.Messaging_MessageId_1,
-                Constants.Messaging_NotificationTypeActionId,
-                Constants.Messaging_NotificationActionKey);
-
-            _mockDataService.Verify();
-        }
-
-        [Test]
-        public void CreateNotificationAction_Returns_Valid_Object()
-        {
-            var expectedNotificationAction = CreateValidNotificationAction();
-
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockDataService
-                .Setup(ds => ds.SaveNotificationAction(
-                    Null.NullInteger,
-                    Constants.Messaging_MessageId_1,
-                    Constants.Messaging_NotificationTypeActionId,
-                    Constants.Messaging_NotificationActionKey,
-                    Constants.UserID_User12))
-                .Returns(Constants.Messaging_NotificationActionId);
-
-            var actualNotificationAction = _mockNotificationsController.Object.CreateNotificationAction(
-                Constants.Messaging_MessageId_1,
-                Constants.Messaging_NotificationTypeActionId,
-                Constants.Messaging_NotificationActionKey);
-
-            Assert.IsTrue(new NotificationActionComparer().Equals(expectedNotificationAction, actualNotificationAction));
-        }
-
-        #endregion
-
-        #region UpdateNotificationAction
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void UpdateNotificationAction_Throws_On_Null_NotificationAction()
-        {
-            _notificationsController.UpdateNotificationAction(null);
-        }
-
-        [Test]
-        public void UpdateNotificationAction_Calls_DataService_SaveNotificationAction()
-        {
-            var notificationAction = CreateValidNotificationAction();
-
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockDataService
-                .Setup(ds => ds.SaveNotificationAction(
-                    notificationAction.NotificationActionId,
-                    notificationAction.NotificationId,
-                    notificationAction.NotificationTypeActionId,
-                    notificationAction.Key,
-                    Constants.UserID_User12))
-                .Verifiable();
-
-            _mockNotificationsController.Object.UpdateNotificationAction(notificationAction);
-
-            _mockDataService.Verify();
-        }
-
-        #endregion
-
-        #region DeleteNotificationAction
-
-        [Test]
-        public void DeleteNotificationAction_Calls_DataService_DeleteNotificationAction()
-        {
-            _mockDataService.Setup(ds => ds.DeleteNotificationAction(Constants.Messaging_NotificationActionId)).Verifiable();
-            _notificationsController.DeleteNotificationAction(Constants.Messaging_NotificationActionId);
-            _mockDataService.Verify();
-        }
-
-        #endregion
-
-        #region GetNotificationAction
-
-        [Test]
-        public void GetNotificationAction_Calls_DataService_GetNotificationAction()
-        {
-            _mockDataService
-                .Setup(ds => ds.GetNotificationAction(Constants.Messaging_NotificationActionId))
-                .Returns(_dtNotificationActions.CreateDataReader())
-                .Verifiable();
-
-            _notificationsController.GetNotificationAction(Constants.Messaging_NotificationActionId);
-
-            _mockDataService.Verify();
-        }
-
-        [Test]
-        public void GetNotificationAction_Returns_Valid_Object()
-        {
-            var expectedNotificationAction = CreateValidNotificationAction();
-
-            _dtNotificationActions.Clear();
-
-            _dtNotificationActions.Rows.Add(
-                expectedNotificationAction.NotificationActionId,
-                expectedNotificationAction.NotificationId,
-                expectedNotificationAction.NotificationTypeActionId,
-                expectedNotificationAction.Key);
-
-            _mockDataService
-                .Setup(ds => ds.GetNotificationAction(Constants.Messaging_NotificationActionId))
-                .Returns(_dtNotificationActions.CreateDataReader());
-
-            var actualNotificationAction = _notificationsController.GetNotificationAction(Constants.Messaging_NotificationActionId);
-
-            Assert.IsTrue(new NotificationActionComparer().Equals(expectedNotificationAction, actualNotificationAction));
-        }
-
-        [Test]
-        public void GetNotificationAction_Overload_Calls_DataService_GetNotificationActionByMessageAndNotificationTypeAction()
-        {
-            _mockDataService
-                .Setup(ds => ds.GetNotificationActionByMessageAndNotificationTypeAction(Constants.Messaging_MessageId_1, Constants. Messaging_NotificationTypeActionId))
-                .Returns(_dtNotificationActions.CreateDataReader())
-                .Verifiable();
-
-            _notificationsController.GetNotificationAction(Constants.Messaging_MessageId_1, Constants.Messaging_NotificationTypeActionId);
-
-            _mockDataService.Verify();
-        }
-
-        [Test]
-        public void GetNotificationAction_Overload_Returns_Valid_Object()
-        {
-            var expectedNotificationAction = CreateValidNotificationAction();
-
-            _dtNotificationActions.Clear();
-
-            _dtNotificationActions.Rows.Add(
-                expectedNotificationAction.NotificationActionId,
-                expectedNotificationAction.NotificationId,
-                expectedNotificationAction.NotificationTypeActionId,
-                expectedNotificationAction.Key);
-
-            _mockDataService
-                .Setup(ds => ds.GetNotificationActionByMessageAndNotificationTypeAction(Constants.Messaging_MessageId_1, Constants.Messaging_NotificationTypeActionId))
-                .Returns(_dtNotificationActions.CreateDataReader());
-
-            var actualNotificationAction = _notificationsController.GetNotificationAction(Constants.Messaging_MessageId_1, Constants.Messaging_NotificationTypeActionId);
-
-            Assert.IsTrue(new NotificationActionComparer().Equals(expectedNotificationAction, actualNotificationAction));
-        }
-
-        #endregion
-
-        #region GetNotificationActionsByNotificationId
-
-        [Test]
-        public void GetNotificationActionsByMessageId_Calls_DataService_GetNotificationActionsByMessageId()
-        {
-            _mockDataService
-                .Setup(ds => ds.GetNotificationActionsByMessageId(Constants.Messaging_MessageId_1))
-                .Returns(_dtNotificationActions.CreateDataReader())
-                .Verifiable();
-
-            _notificationsController.GetNotificationActionsByNotificationId(Constants.Messaging_MessageId_1);
-
-            _mockDataService.Verify();
-        }
-
-        [Test]
-        public void GetNotificationActionsByMessageId_Returns_Valid_Object()
-        {
-            var expectedNotificationAction = CreateValidNotificationAction();
-
-            _dtNotificationActions.Clear();
-
-            _dtNotificationActions.Rows.Add(
-                expectedNotificationAction.NotificationActionId,
-                expectedNotificationAction.NotificationId,
-                expectedNotificationAction.NotificationTypeActionId,
-                expectedNotificationAction.Key);
-
-            _mockDataService
-                .Setup(ds => ds.GetNotificationActionsByMessageId(Constants.Messaging_MessageId_1))
-                .Returns(_dtNotificationActions.CreateDataReader());
-
-            var actualNotificationActions = _notificationsController.GetNotificationActionsByNotificationId(Constants.Messaging_MessageId_1);
-
-            Assert.AreEqual(1, actualNotificationActions.Count);
-            Assert.IsTrue(new NotificationActionComparer().Equals(expectedNotificationAction, actualNotificationActions[0]));
-        }
-
-        #endregion
-
         #region CreateNotification
 
         [Test]
-        public void CreateNotification_Calls_Overload_With_Admin_Sender()
+        public void CreateNotification_Sets_Empty_SenderUserId_With_Admin()
         {
             var adminUser = new UserInfo
             {
@@ -1117,26 +895,20 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockNotificationsController
                 .Setup(nc => nc.CreateNotification(
-                    Constants.Messaging_NotificationTypeId,
+                    It.IsAny<Notification>(),
                     Constants.PORTAL_Zero,
-                    Constants.Messaging_NotificationSubject,
-                    Constants.Messaging_NotificationBody,
-                    Constants.Messaging_IncludeDismissAction,
                     It.IsAny<IList<RoleInfo>>(),
-                    It.IsAny<IList<UserInfo>>(),
-                    adminUser))
-                .Verifiable();
+                    It.IsAny<IList<UserInfo>>()));
+
+            var notification = CreateUnsavedNotification();
 
             _mockNotificationsController.Object.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+                notification,
                 Constants.PORTAL_Zero,
-                Constants.Messaging_NotificationSubject,
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction,
                 new List<RoleInfo>(),
                 new List<UserInfo>());
 
-            _mockNotificationsController.Verify();
+            Assert.AreEqual(adminUser.UserID, notification.SenderUserID);
         }
 
         [Test]
@@ -1147,15 +919,15 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         [ExpectedException(typeof(ArgumentException))]
         public void CreateNotification_Throws_On_Null_Or_Empty_Subject_And_Body(string subject, string body)
         {
+            var notification = CreateUnsavedNotification();
+            notification.Subject = subject;
+            notification.Body = body;
+
             _notificationsController.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+                notification, 
                 Constants.PORTAL_Zero,
-                subject,
-                body,
-                Constants.Messaging_IncludeDismissAction,
                 new List<RoleInfo>(),
-                new List<UserInfo>(),
-                new UserInfo());
+                new List<UserInfo>());
         }
 
         [Test]
@@ -1163,35 +935,29 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         public void CreateNotification_Throws_On_Null_Roles_And_Users()
         {
             _notificationsController.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+                CreateUnsavedNotification(),
                 Constants.PORTAL_Zero,
-                Constants.Messaging_NotificationSubject,
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction,
                 null,
-                null,
-                new UserInfo());
+                null);
         }
 
         [Test]
         [ExpectedException(typeof(ArgumentException))]
         public void CreateNotification_Throws_On_Large_Subject()
         {
+            var notification = CreateUnsavedNotification();
             var subject = new StringBuilder();
             for (var i = 0; i <= 40; i++)
             {
                 subject.Append("1234567890");
             }
+            notification.Subject = subject.ToString();
 
             _notificationsController.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+                notification,
                 Constants.PORTAL_Zero,
-                subject.ToString(),
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction,
                 new List<RoleInfo>(),
-                new List<UserInfo>(),
-                new UserInfo());
+                new List<UserInfo>());
         }
 
         [Test]
@@ -1199,14 +965,10 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         public void CreateNotification_Throws_On_Roles_And_Users_With_No_DisplayNames()
         {
             _notificationsController.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+                CreateUnsavedNotification(),
                 Constants.PORTAL_Zero,
-                Constants.Messaging_NotificationSubject,
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction,
                 new List<RoleInfo>(),
-                new List<UserInfo>(),
-                new UserInfo());
+                new List<UserInfo>());
         }
 
         [Test]
@@ -1223,14 +985,10 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             }
 
             _notificationsController.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+                CreateUnsavedNotification(),
                 Constants.PORTAL_Zero,
-                Constants.Messaging_NotificationSubject,
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction,
                 roles,
-                users,
-                new UserInfo());
+                users);
         }
 
         [Test]
@@ -1250,14 +1008,10 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(1);
 
             _mockNotificationsController.Object.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+                CreateUnsavedNotification(),
                 Constants.PORTAL_Zero,
-                Constants.Messaging_NotificationSubject,
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction,
                 roles,
-                null,
-                new UserInfo());
+                null);
         }
 
         [Test]
@@ -1270,7 +1024,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             {
                 UserID = Constants.UserID_Admin,
                 DisplayName = Constants.UserDisplayName_Admin,
-                PortalID = Constants.CONTENT_ValidPortalId
+                PortalID = Constants.PORTAL_Zero
             };
 
             _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
@@ -1285,18 +1039,12 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                     }
                             };
 
+
+
             _mockDataService
                 .Setup(ds => ds.CreateNotification(
-                    Constants.Messaging_NotificationTypeId,
-                    Constants.PORTAL_Zero,
-                    Constants.UserDisplayName_User12,
-                    Constants.UserDisplayName_Admin,
-                    Constants.Messaging_NotificationSubject,
-                    Constants.Messaging_NotificationBody,
-                    Constants.Messaging_IncludeDismissAction, 
-                    Constants.UserID_Admin, 
-                    It.IsAny<int>(), 
-                    It.IsAny<DateTime>()));
+                    It.IsAny<Notification>(),
+                    Constants.PORTAL_Zero));
 
             _mockNotificationsController
                 .Setup(mc => mc.GetPortalSetting("MessagingProfanityFilters", It.IsAny<int>(), It.IsAny<string>()))
@@ -1306,15 +1054,14 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _mockNotificationsController.Setup(mc => mc.InputFilter(Constants.Messaging_NotificationBody)).Returns(expectedBodyFiltered);
             _mockNotificationsController.Setup(nc => nc.GetExpirationDate(It.IsAny<int>())).Returns(DateTime.MinValue);
 
-            var notification = _mockNotificationsController.Object.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+            var notification = CreateUnsavedNotification();
+            notification.SenderUserID = adminUser.UserID;
+
+            _mockNotificationsController.Object.CreateNotification(
+                notification,
                 Constants.PORTAL_Zero,
-                Constants.Messaging_NotificationSubject,
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction,
                 roles,
-                users,
-                adminUser);
+                users);
 
             Assert.AreEqual(expectedSubjectFiltered, notification.Subject);
             Assert.AreEqual(expectedBodyFiltered, notification.Body);
@@ -1327,7 +1074,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                 {
                                     UserID = Constants.UserID_Admin,
                                     DisplayName = Constants.UserDisplayName_Admin,
-                                    PortalID = Constants.CONTENT_ValidPortalId
+                                    PortalID = Constants.PORTAL_Zero
                                 };
 
             _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
@@ -1344,29 +1091,20 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockDataService
                 .Setup(ds => ds.CreateNotification(
-                    Constants.Messaging_NotificationTypeId,
-                    Constants.PORTAL_Zero,
-                    Constants.UserDisplayName_User12,
-                    Constants.UserDisplayName_Admin,
-                    Constants.Messaging_NotificationSubject,
-                    Constants.Messaging_NotificationBody,
-                    Constants.Messaging_IncludeDismissAction, 
-                    Constants.UserID_Admin, 
-                    It.IsAny<int>(), 
-                    It.IsAny<DateTime>()))
+                    It.IsAny<Notification>(),
+                    Constants.PORTAL_Zero))
                 .Verifiable();
 
             _mockNotificationsController.Setup(nc => nc.GetExpirationDate(It.IsAny<int>())).Returns(DateTime.MinValue);
 
+            var notification = CreateUnsavedNotification();
+            notification.SenderUserID = adminUser.UserID;
+
             _mockNotificationsController.Object.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+                notification,
                 Constants.PORTAL_Zero,
-                Constants.Messaging_NotificationSubject,
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction,
                 roles,
-                users,
-                adminUser);
+                users);
 
             _mockDataService.Verify();
         }
@@ -1378,7 +1116,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             {
                 UserID = Constants.UserID_Admin,
                 DisplayName = Constants.UserDisplayName_Admin,
-                PortalID = Constants.CONTENT_ValidPortalId
+                PortalID = Constants.PORTAL_Zero
             };
 
             _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
@@ -1395,16 +1133,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockDataService
                 .Setup(ds => ds.CreateNotification(
-                    Constants.Messaging_NotificationTypeId,
-                    Constants.PORTAL_Zero,
-                    Constants.RoleName_RegisteredUsers,
-                    Constants.UserDisplayName_Admin,
-                    Constants.Messaging_NotificationSubject,
-                    Constants.Messaging_NotificationBody,
-                    Constants.Messaging_IncludeDismissAction, 
-                    Constants.UserID_Admin, 
-                    It.IsAny<int>(), 
-                    It.IsAny<DateTime>()))
+                    It.IsAny<Notification>(),
+                    Constants.PORTAL_Zero))
                 .Returns(Constants.Messaging_MessageId_1);
 
             _mockMessagingDataService
@@ -1416,15 +1146,14 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockNotificationsController.Setup(nc => nc.GetExpirationDate(It.IsAny<int>())).Returns(DateTime.MinValue);
 
+            var notification = CreateUnsavedNotification();
+            notification.SenderUserID = adminUser.UserID;
+
             _mockNotificationsController.Object.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+                notification,
                 Constants.PORTAL_Zero,
-                Constants.Messaging_NotificationSubject,
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction,
                 roles,
-                users,
-                adminUser);
+                users);
 
             _mockMessagingDataService.Verify();
         }
@@ -1436,7 +1165,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             {
                 UserID = Constants.UserID_Admin,
                 DisplayName = Constants.UserDisplayName_Admin,
-                PortalID = Constants.CONTENT_ValidPortalId
+                PortalID = Constants.PORTAL_Zero
             };
 
             _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
@@ -1453,16 +1182,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockDataService
                 .Setup(ds => ds.CreateNotification(
-                    Constants.Messaging_NotificationTypeId,
-                    Constants.PORTAL_Zero,
-                    Constants.UserDisplayName_User12,
-                    Constants.UserDisplayName_Admin,
-                    Constants.Messaging_NotificationSubject,
-                    Constants.Messaging_NotificationBody,
-                    Constants.Messaging_IncludeDismissAction, 
-                    Constants.UserID_Admin, 
-                    It.IsAny<int>(), 
-                    It.IsAny<DateTime>()))
+                    It.IsAny<Notification>(),
+                    Constants.PORTAL_Zero))
                 .Returns(Constants.Messaging_MessageId_1);
 
             _mockMessagingController
@@ -1483,15 +1204,14 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockNotificationsController.Setup(nc => nc.GetExpirationDate(It.IsAny<int>())).Returns(DateTime.MinValue);
 
+            var notification = CreateUnsavedNotification();
+            notification.SenderUserID = adminUser.UserID;
+
             _mockNotificationsController.Object.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
+                notification,
                 Constants.PORTAL_Zero,
-                Constants.Messaging_NotificationSubject,
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction,
                 roles,
-                users,
-                adminUser);
+                users);
 
             _mockMessagingDataService.Verify();
         }
@@ -1505,7 +1225,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             {
                 UserID = Constants.UserID_Admin,
                 DisplayName = Constants.UserDisplayName_Admin,
-                PortalID = Constants.CONTENT_ValidPortalId
+                PortalID = Constants.PORTAL_Zero
             };
 
             _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
@@ -1522,16 +1242,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockDataService
                 .Setup(ds => ds.CreateNotification(
-                    Constants.Messaging_NotificationTypeId,
-                    Constants.PORTAL_Zero,
-                    Constants.UserDisplayName_User12,
-                    Constants.UserDisplayName_Admin,
-                    Constants.Messaging_NotificationSubject,
-                    Constants.Messaging_NotificationBody,
-                    Constants.Messaging_IncludeDismissAction, 
-                    Constants.UserID_Admin, 
-                    It.IsAny<int>(), 
-                    It.IsAny<DateTime>()))
+                    It.IsAny<Notification>(),
+                    Constants.PORTAL_Zero))
                 .Returns(Constants.Messaging_MessageId_1);
 
             _mockMessagingDataService
@@ -1557,17 +1269,16 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockNotificationsController.Setup(nc => nc.GetExpirationDate(It.IsAny<int>())).Returns(DateTime.MinValue);
 
-            var actualNotification = _mockNotificationsController.Object.CreateNotification(
-                Constants.Messaging_NotificationTypeId,
-                Constants.PORTAL_Zero,
-                Constants.Messaging_NotificationSubject,
-                Constants.Messaging_NotificationBody,
-                Constants.Messaging_IncludeDismissAction, 
-                roles,
-                users,
-                adminUser);
+            var notification = CreateUnsavedNotification();
+            notification.SenderUserID = adminUser.UserID;
 
-            Assert.IsTrue(new NotificationComparer().Equals(expectedNotification, actualNotification));
+            _mockNotificationsController.Object.CreateNotification(
+                notification,
+                Constants.PORTAL_Zero, 
+                roles,
+                users);
+
+            Assert.IsTrue(new NotificationComparer().Equals(expectedNotification, notification));
         }
 
         #endregion
@@ -1651,18 +1362,26 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         #region Private Methods
 
-        private static Notification CreateValidNotification()
+        private static Notification CreateUnsavedNotification()
         {
             return new Notification
-            {
-                NotificationID = Constants.Messaging_MessageId_1,
-                NotificationTypeID = Constants.Messaging_NotificationTypeId,
-                Subject = Constants.Messaging_NotificationSubject,
-                Body = Constants.Messaging_NotificationBody,
-                To = Constants.UserDisplayName_User12,
-                From = Constants.UserDisplayName_Admin,
-                SenderUserID = Constants.UserID_Admin
-            };
+                       {
+                           NotificationTypeID = Constants.Messaging_NotificationTypeId,
+                           Subject = Constants.Messaging_NotificationSubject,
+                           Body = Constants.Messaging_NotificationBody,
+                           To = Constants.UserDisplayName_User12,
+                           From = Constants.UserDisplayName_Admin,
+                           SenderUserID = Constants.UserID_Admin,
+                           Context = Constants.Messaging_NotificationContext
+                       };
+        }
+
+        private static Notification CreateValidNotification()
+        {
+            var notification = CreateUnsavedNotification();
+            notification.NotificationID = Constants.Messaging_MessageId_1;
+
+            return notification;
         }
 
         private static NotificationType CreateValidNotificationType()
@@ -1687,17 +1406,6 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 DescriptionResourceKey = Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
                 ConfirmResourceKey =  Constants.Messaging_NotificationTypeActionConfirmResourceKey,
                 APICall = Constants.Messaging_NotificationTypeActionAPICall
-            };
-        }
-
-        private static NotificationAction CreateValidNotificationAction()
-        {
-            return new NotificationAction
-            {
-                NotificationActionId = Constants.Messaging_NotificationActionId,
-                NotificationId = Constants.Messaging_MessageId_1,
-                NotificationTypeActionId = Constants.Messaging_NotificationTypeActionId,
-                Key = Constants.Messaging_NotificationActionKey
             };
         }
 
@@ -1784,27 +1492,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 throw new NotImplementedException();
             }
         }
-
-        private class NotificationActionComparer : IEqualityComparer<NotificationAction>
-        {
-            public bool Equals(NotificationAction x, NotificationAction y)
-            {
-                if (x == null) return y == null;
-                if (y == null) return false;
-
-                return
-                    x.NotificationActionId == y.NotificationActionId &&
-                    x.NotificationId == y.NotificationId &&
-                    x.NotificationTypeActionId == y.NotificationTypeActionId &&
-                    x.Key == y.Key;
-            }
-
-            public int GetHashCode(NotificationAction obj)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
+        
         private class NotificationComparer : IEqualityComparer<Notification>
         {
             public bool Equals(Notification x, Notification y)
@@ -1819,7 +1507,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     x.Body == y.Body &&
                     x.To == y.To &&
                     x.From == y.From &&
-                    x.SenderUserID == y.SenderUserID;
+                    x.SenderUserID == y.SenderUserID &&
+                    x.Context == y.Context &&
+                    x.IncludeDismissAction == y.IncludeDismissAction;
             }
 
             public int GetHashCode(Notification obj)

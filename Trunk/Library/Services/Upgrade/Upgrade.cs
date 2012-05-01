@@ -4438,6 +4438,11 @@ namespace DotNetNuke.Services.Upgrade
                     url += "&os=" + Globals.FormatVersion(Globals.OperatingSystemVersion, "00", 2, "");
                     url += "&net=" + Globals.FormatVersion(Globals.NETFrameworkVersion, "00", 2, "");
                     url += "&db=" + Globals.FormatVersion(Globals.DatabaseEngineVersion, "00", 2, "");
+                    var source = Config.GetSetting("Source");
+                    if (!string.IsNullOrEmpty(source))
+                    {
+                        url += "&src=" + source;
+                    }
                 }
                 if (!string.IsNullOrEmpty(culture))
                 {

@@ -201,8 +201,8 @@
     <Compile Include="Entities\Users\Internal\IUserController.cs" />
     <Compile Include="Entities\Users\Internal\TestableUserController.cs" />
     <Compile Include="Entities\Users\Internal\UserControllerImpl.cs" />
-    <Compile Include="Entities\Users\Social\Internal\IRelationshipController.cs" />
-    <Compile Include="Entities\Users\Social\Internal\RelationshipControllerImpl.cs" />
+    <Compile Include="Entities\Users\Social\IRelationshipController.cs" />
+    <Compile Include="Entities\Users\Social\RelationshipControllerImpl.cs" />
     <Compile Include="Framework\ServiceLocator.cs" />
     <Compile Include="ComponentModel\IComponentBuilder.cs" />
     <Compile Include="ComponentModel\IComponentInstaller.cs" />
@@ -286,7 +286,6 @@
     <Compile Include="Services\Social\Messaging\MessageReadStatus.cs" />
     <Compile Include="Services\Social\Messaging\Scheduler\CoreMessagingScheduler.cs" />
     <Compile Include="Services\Social\Notifications\Notification.cs" />
-    <Compile Include="Services\Social\Notifications\NotificationAction.cs" />
     <Compile Include="Services\Social\Notifications\NotificationTypeAction.cs" />
     <Compile Include="Services\Social\Messaging\MessagingController.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageThreadsView.cs" />
@@ -294,10 +293,10 @@
     <Compile Include="Services\Social\Messaging\Views\MessageFileView.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageThreadView.cs" />
     <Compile Include="Services\Social\Messaging\Views\MessageConversationView.cs" />
-    <Compile Include="Services\Social\Messaging\Internal\MessagingControllerImpl.cs" />
+    <Compile Include="Services\Social\Messaging\MessagingControllerImpl.cs" />
     <Compile Include="Services\Social\Messaging\Data\DataService.cs" />
     <Compile Include="Services\Social\Messaging\Data\IDataService.cs" />
-    <Compile Include="Services\Social\Messaging\Internal\IMessagingController.cs" />
+    <Compile Include="Services\Social\Messaging\IMessagingController.cs" />
     <Compile Include="Services\Social\Messaging\MessageAttachment.cs" />
     <Compile Include="Services\Social\Messaging\MessageRecipient.cs" />
     <Compile Include="Services\Social\Messaging\Message.cs" />
@@ -645,8 +644,8 @@
     <Compile Include="Services\Mobile\TargetType.cs" />
     <Compile Include="Services\Social\Notifications\Data\DataService.cs" />
     <Compile Include="Services\Social\Notifications\Data\IDataService.cs" />
-    <Compile Include="Services\Social\Notifications\Internal\INotificationsController.cs" />
-    <Compile Include="Services\Social\Notifications\Internal\NotificationsControllerImpl.cs" />
+    <Compile Include="Services\Social\Notifications\INotificationsController.cs" />
+    <Compile Include="Services\Social\Notifications\NotificationsControllerImpl.cs" />
     <Compile Include="Services\Social\Notifications\NotificationType.cs" />
     <Compile Include="Services\Social\Notifications\NotificationsController.cs" />
     <Compile Include="Services\SystemDateTime\SystemDateTime.cs" />

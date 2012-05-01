@@ -401,13 +401,19 @@
                     <dnn:DnnFormEditor id="standardRegistrationSettings" runat="Server" FormMode="Short">
                         <Items>
                             <dnn:DnnFormToggleButtonItem runat="server" DataField="Registration_UseEmailAsUserName" />
-                            <dnn:DnnFormToggleButtonItem runat="server" DataField="Registration_RequireUniqueDisplayName" />
-                            <dnn:DnnFormTextBoxItem runat="server" DataField="Security_DisplayNameFormat" />
                         </Items>
                     </dnn:DnnFormEditor>
                 </div>
+                <fieldset id="customRegistrationFieldSet">
+					<div class="dnnFormItem">
+						<dnn:Label ID="registrationFieldsLabel" runat="server" ControlName="registrationFields" />
+						<asp:TextBox ID="registrationFields" runat="server" />
+					</div>
+                </fieldset>
                 <dnn:DnnFormEditor id="validationRegistrationSettings" runat="Server" FormMode="Short">
                     <Items>
+                        <dnn:DnnFormToggleButtonItem ID="requireUniqueDisplayName" runat="server" DataField="Registration_RequireUniqueDisplayName" />
+                        <dnn:DnnFormTextBoxItem runat="server" DataField="Security_DisplayNameFormat" />
                         <dnn:DnnFormTextBoxItem runat="server" DataField="Security_UserNameValidation" />
                         <dnn:DnnFormTextBoxItem runat="server" DataField="Security_EmailValidation" />
                     </Items>
@@ -420,12 +426,6 @@
                         </Items>
                     </dnn:DnnFormEditor>
                 </div>
-                <fieldset id="customRegistrationFieldSet">
-					<div class="dnnFormItem">
-						<dnn:Label ID="registrationFieldsLabel" runat="server" ControlName="registrationFields" />
-						<asp:TextBox ID="registrationFields" runat="server" />
-					</div>
-                </fieldset>
                 <fieldset id="passwordRegistrationFieldSet">
                     <dnn:DnnFormEditor id="passwordRegistrationSettings" runat="Server" FormMode="Short">
                         <Items>

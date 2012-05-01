@@ -895,7 +895,7 @@
     <value>Current Host Version</value>
   </data>
   <data name="plCrmEnableCompositeFiles.Help" xml:space="preserve">
-    <value>Composite files are combinations of resources (JavaScript and CSS) created to reduce the number of file requests by the browser. This will significantly lower the page loading speed.</value>
+    <value>Composite files are combinations of resources (JavaScript and CSS) created to reduce the number of file requests by the browser. This will significantly increase the page loading speed.</value>
   </data>
   <data name="plCrmEnableCompositeFiles.Text" xml:space="preserve">
     <value>Enable Composite Files</value>

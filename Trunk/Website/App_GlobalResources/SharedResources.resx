@@ -1545,4 +1545,7 @@
   <data name="Dismiss.Text" xml:space="preserve">
     <value>Dismiss</value>
   </data>
+  <data name="UserFolderTitle.Text" xml:space="preserve">
+    <value>My Files</value>
+  </data>
 </root>

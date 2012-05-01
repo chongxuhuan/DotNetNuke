@@ -655,7 +655,7 @@
     <value>Client Resource Management</value>
   </data>
   <data name="plEnableCompositeFiles.Help" xml:space="preserve">
-    <value>Composite files are combinations of resources (JavaScript and CSS) created to reduce the number of file requests by the browser. This will significantly lower the page loading speed.</value>
+    <value>Composite files are combinations of resources (JavaScript and CSS) created to reduce the number of file requests by the browser. This will significantly increase the page loading speed.</value>
   </data>
   <data name="plEnableCompositeFiles.Text" xml:space="preserve">
     <value>Enable Composite Files</value>
@@ -989,5 +989,8 @@ The host-level settings are currently set as follows:
   </data>
   <data name="NoEmail.Text" xml:space="preserve">
     <value>You must, at a minimum, include the "Email" field.</value>
+  </data>
+  <data name="NoDisplayName.Text" xml:space="preserve">
+    <value>You have selected the Require Unique Display Name option but you have not included the Display Name in the list of fields.</value>
   </data>
 </root>

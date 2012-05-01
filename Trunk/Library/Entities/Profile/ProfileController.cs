@@ -94,7 +94,7 @@ namespace DotNetNuke.Entities.Profile
             ProfilePropertyDefinition definition = null;
             try
             {
-                definition = FillPropertyDefinitionInfo(dr, false);
+                definition = FillPropertyDefinitionInfo(dr, true);
             }
 			catch (Exception ex)
 			{

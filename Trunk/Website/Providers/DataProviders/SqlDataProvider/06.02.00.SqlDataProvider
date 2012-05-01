@@ -1784,7 +1784,8 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 		[ReplyAllAllowed] [bit] NULL,
 		[SenderUserID] [int] NULL,
 		[ExpirationDate] [datetime] NULL,
-    [IncludeDismissAction] [bit] NULL,
+        [Context] [nvarchar](200) NULL,
+        [IncludeDismissAction] [bit] NULL,
 		[CreatedByUserID] [int] NULL,
 		[CreatedOnDate] [datetime] NULL,
 		[LastModifiedByUserID] [int] NULL,
@@ -1798,33 +1799,6 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 	ADD CONSTRAINT [FK_{objectQualifier}CoreMessaging_Messages_{objectQualifier}CoreMessaging_NotificationTypes]
 	FOREIGN KEY([NotificationTypeID])
 	REFERENCES {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([NotificationTypeID])
-END
-GO
-
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]') AND type in (N'U')) BEGIN
-	CREATE TABLE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions](
-		[NotificationActionID] [int] IDENTITY(1,1) NOT NULL,
-		[MessageID] [int] NOT NULL,
-		[NotificationTypeActionID] [int] NOT NULL,
-		[Key] [nvarchar](500) NOT NULL,
-		[CreatedByUserID] [int] NULL,
-		[CreatedOnDate] [datetime] NULL,
-		[LastModifiedByUserID] [int] NULL,
-		[LastModifiedOnDate] [datetime] NULL,
-		CONSTRAINT [PK_{objectQualifier}CoreMessaging_NotificationActions] PRIMARY KEY CLUSTERED ([NotificationActionID] ASC)
-	)
-
-	ALTER TABLE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]
-	ADD CONSTRAINT [FK_{objectQualifier}CoreMessaging_NotificationActions_{objectQualifier}CoreMessaging_Messages]
-	FOREIGN KEY([MessageID])
-	REFERENCES {databaseOwner}[{objectQualifier}CoreMessaging_Messages] ([MessageID]) ON DELETE CASCADE
-
-	ALTER TABLE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]
-	ADD CONSTRAINT [FK_{objectQualifier}CoreMessaging_NotificationActions_{objectQualifier}CoreMessaging_NotificationTypeActions]
-	FOREIGN KEY([NotificationTypeActionID])
-	REFERENCES {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeActionID]) ON DELETE CASCADE
-
-	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}CoreMessaging_NotificationActions] ON {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions] ([MessageID] ASC)
 END
 GO
 
@@ -2945,130 +2919,6 @@ BEGIN
 END
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationAction]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationAction]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationAction]
-	@NotificationActionID int,
-	@MessageID int,
-	@NotificationTypeActionID int,
-	@Key nvarchar(500),
-	@CreatedUpdatedUserID int
-AS
-BEGIN
-	IF (@NotificationActionID = -1) BEGIN
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions] (
-			[MessageID],
-			[NotificationTypeActionID],
-			[Key],
-			[CreatedByUserID],
-			[CreatedOnDate],
-			[LastModifiedByUserID],
-			[LastModifiedOnDate]
-		) VALUES (
-			@MessageID,
-			@NotificationTypeActionID,
-			@Key,
-			@CreatedUpdatedUserID,
-			GETDATE(),
-			@CreatedUpdatedUserID,
-			GETDATE()
-		)
-		
-		SELECT SCOPE_IDENTITY()
-	END
-	ELSE BEGIN
-		UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]
-		SET
-			[Key] = @Key,
-			[LastModifiedByUserID] = @CreatedUpdatedUserID,
-			[LastModifiedOnDate] = GETDATE()
-		WHERE [NotificationActionID] = @NotificationActionID
-		
-		SELECT @NotificationActionID
-	END
-END
-GO
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationAction]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationAction]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotificationAction]
-	@NotificationActionID int
-AS
-BEGIN
-	DELETE
-	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]
-	WHERE [NotificationActionID] = @NotificationActionID
-END
-GO
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationAction]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationAction]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationAction]
-	@NotificationActionID int
-AS
-BEGIN
-	SELECT [NotificationActionID], [MessageID], [NotificationTypeActionID], [Key], [CreatedByUserID], [CreatedOnDate], [LastModifiedByUserID], [LastModifiedOnDate]
-	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions]
-	WHERE [NotificationActionID] = @NotificationActionID
-END
-GO
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionsByMessageID]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionsByMessageID]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionsByMessageID]
-	@MessageID int
-AS
-BEGIN
-	SELECT NA.[NotificationActionID], NA.[MessageID], NA.[NotificationTypeActionID], NA.[Key], NA.[CreatedByUserID], NA.[CreatedOnDate], NA.[LastModifiedByUserID], NA.[LastModifiedOnDate]
-	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions] NA
-	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] M ON NA.[MessageID] = M.[MessageID]
-	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] NTA ON M.[NotificationTypeID] = NTA.[NotificationTypeID]
-	WHERE NA.[MessageID] = @MessageID
-	ORDER BY NTA.[Order]
-END
-GO
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionByMessageAndNotificationTypeAction]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionByMessageAndNotificationTypeAction]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionByMessageAndNotificationTypeAction]
-	@MessageID int,
-	@NotificationTypeActionID int
-AS
-BEGIN
-	SELECT NA.[NotificationActionID], NA.[MessageID], NA.[NotificationTypeActionID], NA.[Key], NA.[CreatedByUserID], NA.[CreatedOnDate], NA.[LastModifiedByUserID], NA.[LastModifiedOnDate]
-	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions] NA
-	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] M ON NA.[MessageID] = M.[MessageID]
-	WHERE NA.[MessageID] = @MessageID AND NA.[NotificationTypeActionID] = @NotificationTypeActionID
-END
-GO
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionByMessageAndNotificationTypeActionName]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionByMessageAndNotificationTypeActionName]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationActionByMessageAndNotificationTypeActionName]
-	@MessageID int,
-	@NotificationTypeActionName nvarchar(100)
-AS
-BEGIN
-	SELECT NA.[NotificationActionID], NA.[MessageID], NA.[NotificationTypeActionID], NA.[Key], NA.[CreatedByUserID], NA.[CreatedOnDate], NA.[LastModifiedByUserID], NA.[LastModifiedOnDate]
-	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationActions] NA
-	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] M ON NA.[MessageID] = M.[MessageID]
-	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] NTA ON NTA.[NotificationTypeID] = M.[NotificationTypeID] AND NTA.[NameResourceKey] = @NotificationTypeActionName
-	WHERE NA.[MessageID] = @MessageID AND NA.[NotificationTypeActionID] = NTA.[NotificationTypeActionID]
-END
-GO
-
 IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CreateNotification]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateNotification]
 GO
@@ -3078,12 +2928,13 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateNotificati
 	@PortalID INT,
 	@To nvarchar(2000),
 	@From nvarchar(200),
-  @Subject nvarchar(400),
-  @Body nvarchar(max),
-  @SenderUserID int,
+    @Subject nvarchar(400),
+    @Body nvarchar(max),
+    @SenderUserID int,
 	@CreateUpdateUserID int,
 	@ExpirationDate datetime,
-  @IncludeDismissAction bit
+    @IncludeDismissAction bit,
+    @Context nvarchar(200)
 AS
 BEGIN
 	INSERT {databaseOwner}[{objectQualifier}CoreMessaging_Messages] (
@@ -3095,7 +2946,8 @@ BEGIN
 		[Body],
 		[SenderUserID],
 		[ExpirationDate],
-    [IncludeDismissAction],
+        [IncludeDismissAction],
+        [Context],
 		[CreatedByUserID],
 		[CreatedOnDate],
 		[LastModifiedByUserID],
@@ -3109,7 +2961,8 @@ BEGIN
 		@Body,
 		@SenderUserID,
 		@ExpirationDate,
-    @IncludeDismissAction,
+        @IncludeDismissAction,
+        @Context,
 		@CreateUpdateUserID, -- CreatedBy
 		GETUTCDATE(), -- CreatedOn
 		@CreateUpdateUserID, -- LastModifiedBy
@@ -3154,6 +3007,7 @@ BEGIN
 			M.[CreatedOnDate],
 			M.[LastModifiedByUserID],
 			M.[LastModifiedOnDate],
+            M.[Context],
 			ROW_NUMBER() OVER(ORDER BY M.[CreatedOnDate] DESC) AS RowNumber
 		FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] AS M
 		JOIN {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] MR ON M.MessageID = MR.MessageID
@@ -3164,6 +3018,35 @@ BEGIN
 	)	
 	SELECT * FROM Notifications WHERE RowNumber BETWEEN @PageLowerBound AND @PageUpperBound 
 	ORDER BY RowNumber ASC
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotification]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotification]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotification]
+	@NotificationId int
+AS
+BEGIN
+	SELECT
+		M.[MessageID],
+		M.[NotificationTypeId],
+		M.[To],
+		M.[From],
+		M.[Subject],
+		M.[Body],
+		M.[SenderUserID],
+		M.[ExpirationDate],
+        M.[IncludeDismissAction],
+		M.[CreatedByUserID],
+		M.[CreatedOnDate],
+		M.[LastModifiedByUserID],
+		M.[LastModifiedOnDate],
+        M.[Context]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] AS M
+	WHERE [NotificationTypeId] IS NOT NULL
+	AND M.MessageID = @NotificationId
 END
 GO
 

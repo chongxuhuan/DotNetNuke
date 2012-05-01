@@ -430,7 +430,9 @@ namespace DotNetNuke.Modules.Admin.Users
                 //Set DisplayName
                 if (String.IsNullOrEmpty(User.DisplayName))
                 {
-                    User.DisplayName = User.Email.Substring(0, User.Email.IndexOf("@", StringComparison.Ordinal));
+                    User.DisplayName = String.IsNullOrEmpty(User.FirstName + " " + User.LastName)
+                                           ? User.Email.Substring(0, User.Email.IndexOf("@", StringComparison.Ordinal))
+                                           : User.FirstName + " " + User.LastName;
                 }
                 
                 //Random Password
@@ -488,6 +490,12 @@ namespace DotNetNuke.Modules.Admin.Users
             UserInfo user = UserController.GetUserByName(PortalId, User.Username);
             if (user != null)
             {
+                if(UseEmailAsUserName)
+                {
+                    CreateStatus = UserCreateStatus.DuplicateEmail;
+                }
+                else
+                {
                 CreateStatus = UserCreateStatus.DuplicateUserName;
                 int i = 1;
                 string userName = null;
@@ -498,6 +506,7 @@ namespace DotNetNuke.Modules.Admin.Users
                     i++;
                 }
                 User.Username = userName;
+                }
             }
 
             //Validate Unique Display Name
@@ -559,9 +568,6 @@ namespace DotNetNuke.Modules.Admin.Users
                             TextBoxMode.SingleLine);
                 }
 
-                //Email
-                AddField("Email", String.Empty, true, EmailValidator, TextBoxMode.SingleLine);
-
                 //Password
                 if (!RandomPassword)
                 {
@@ -584,6 +590,14 @@ namespace DotNetNuke.Modules.Admin.Users
                 {
                     AddField("DisplayName", String.Empty, true, String.Empty, TextBoxMode.SingleLine);
                 }
+                else
+                {
+                    AddField("FirstName", String.Empty, true, String.Empty, TextBoxMode.SingleLine);
+                    AddField("LastName", String.Empty, true, String.Empty, TextBoxMode.SingleLine);
+                }
+
+                //Email
+                AddField("Email", String.Empty, true, EmailValidator, TextBoxMode.SingleLine);
 
                 if (RequireValidProfile)
                 {

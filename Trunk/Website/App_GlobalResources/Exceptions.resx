@@ -208,7 +208,7 @@
     <value>Portal ID '{0}' of Initiating User is different from Portal ID '{1}' of Target  User.</value>
   </data>
   <data name="UserRelationshipBlockedError.Text" xml:space="preserve">
-    <value>Target User '{0}' has Blcoked Relationship '{1}' from Target User '{2}'.</value>
+    <value>Target User '{0}' has Blocked Relationship '{1}' from Target User '{2}'.</value>
   </data>
   <data name="UserRelationshipExistsError.Text" xml:space="preserve">
     <value>Relationship already exists for Initiating User '{0}' Target User '{1}' RelationshipID '{2}'.</value>
@@ -241,7 +241,7 @@
     <value>Only SuperUsers, Site Administrators or Group Owners can send message to Role.</value>
   </data>
   <data name="MsgThrottlingIntervalNotMet.Text" xml:space="preserve">
-    <value>Message cannot be sent as Minimum Interval between two messages by the same user is not.</value>
+    <value>The message cannot be sent at this time, as the site administrator requires a minimum of {0} minute(s) between messages from the same user.</value>
   </data>
   <data name="MsgAttachmentsNotAllowed.Text" xml:space="preserve">
     <value>Attachments are not allowed.</value>
@@ -250,6 +250,6 @@
     <value>Either Message is not found or Recipient is not present for the Message.</value>
   </data>
   <data name="MsgRecipientLimitExceeded.Text" xml:space="preserve">
-    <value>Maximum Recipient Limit Reached. Remove Recipients from To List.</value>
+    <value>Maximum Recipient Limit Reached. To send the message, please remove some recipients from the To List.</value>
   </data>
 </root>

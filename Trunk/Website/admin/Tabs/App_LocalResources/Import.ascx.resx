@@ -12,7 +12,7 @@
     
     Example:
     
-    ... ado.net/XML headers && schema ...
+    ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
@@ -187,7 +187,7 @@
     <value>Please specify the import mode.</value>
   </data>
   <data name="NoTabsInTemplate.Text" xml:space="preserve">
-    <value>Template does not contain any tabs.</value>
+    <value>Template does not contain any pages.</value>
   </data>
   <data name="valTemplate.ErrorMessage" xml:space="preserve">
     <value>Please select a Template</value>
@@ -216,10 +216,10 @@
   <data name="InsertAtEnd.Text" xml:space="preserve">
     <value>Add to End</value>
   </data>
-	<data name="TabExists.Text" xml:space="preserve">
+  <data name="TabExists.Text" xml:space="preserve">
     <value>The Page Name you chose is already being used for another page at the same level of the page heirarchy.</value>
   </data>
-	<data name="TabRecycled.Text" xml:space="preserve">
+  <data name="TabRecycled.Text" xml:space="preserve">
     <value>A page with this name exists in the Recycle Bin.  To restore this page use the Recycle Bin.</value>
   </data>
 </root>

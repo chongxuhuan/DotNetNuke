@@ -22,7 +22,6 @@
 using System;
 
 using DotNetNuke.Framework;
-using DotNetNuke.Services.Social.Notifications.Internal;
 
 namespace DotNetNuke.Services.Social.Notifications
 {

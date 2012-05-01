@@ -91,6 +91,12 @@ namespace DotNetNuke.Services.Social.Notifications
         public string Body { get; set; }
 
         /// <summary>
+        /// Context set by creator of the notification
+        /// </summary>
+        [XmlAttribute]
+        public string Context { get; set; }
+
+        /// <summary>
         /// The UserID of the sender of the message
         /// </summary>
         [XmlAttribute]
@@ -152,6 +158,7 @@ namespace DotNetNuke.Services.Social.Notifications
             From = Null.SetNullString(dr["From"]);
             Subject = Null.SetNullString(dr["Subject"]);
             Body = Null.SetNullString(dr["Body"]);
+            Context = Null.SetNullString(dr["Context"]);
             SenderUserID = Convert.ToInt32(dr["SenderUserID"]);
             ExpirationDate = Null.SetNullDateTime(dr["ExpirationDate"]);
             IncludeDismissAction = Null.SetNullBoolean(dr["IncludeDismissAction"]);

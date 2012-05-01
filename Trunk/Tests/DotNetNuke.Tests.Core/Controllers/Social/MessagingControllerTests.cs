@@ -34,7 +34,6 @@ using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Social.Messaging.Data;
 using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Services.Social.Messaging.Exceptions;
-using DotNetNuke.Services.Social.Messaging.Internal;
 using DotNetNuke.Services.Social.Messaging.Views;
 using DotNetNuke.Tests.Utilities;
 using DotNetNuke.Tests.Utilities.Mocks;

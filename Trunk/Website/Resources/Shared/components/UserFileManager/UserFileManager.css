@@ -24,7 +24,7 @@
 		.fm-file-preview {margin-bottom:10px;}
 		.fm-file-preview img{border:1px #ccc solid;padding:6px;background:#fff;max-width:180px;}
 		.fm-file-info{margin-top:0;}
-
+.dnnFileManager .fm-explorer{ height: 350px;overflow: auto;}
 .dnnFileManager .fm-explorer table th{background:#e1e4e6;border-right:1px #cfd2d4 solid;border-left:1px #fff solid;padding:10px;text-align:left;font-family:inherit;}
 .dnnFileManager .fm-explorer table th.fm-number{border-left:none;}
 .dnnFileManager .fm-explorer table th.fm-last-modified{border-right:none;}

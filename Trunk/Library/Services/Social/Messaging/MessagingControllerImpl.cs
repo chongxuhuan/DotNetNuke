@@ -38,7 +38,7 @@ using DotNetNuke.Services.Social.Messaging.Views;
 
 #endregion
 
-namespace DotNetNuke.Services.Social.Messaging.Internal
+namespace DotNetNuke.Services.Social.Messaging
 {
     /// -----------------------------------------------------------------------------
     /// <summary>
@@ -49,7 +49,7 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
     /// <history>
     /// </history>
     /// -----------------------------------------------------------------------------
-    public class MessagingControllerImpl : IMessagingController
+    internal class MessagingControllerImpl : IMessagingController
     {
         #region Constants
 
@@ -162,9 +162,10 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             }
 
             //Cannot send message if within ThrottlingInterval
-            if (WaitTimeForNextMessage(sender) > 0)
+            var waitTime = WaitTimeForNextMessage(sender);
+            if (waitTime > 0)
             {
-                throw new ThrottlingIntervalNotMetException(Localization.Localization.GetString("MsgThrottlingIntervalNotMet", Localization.Localization.ExceptionsResourceFile));
+                throw new ThrottlingIntervalNotMetException(string.Format(Localization.Localization.GetString("MsgThrottlingIntervalNotMet", Localization.Localization.ExceptionsResourceFile), waitTime));
             }
 
             //Cannot have attachments if it's not enabled

@@ -399,6 +399,7 @@ namespace DotNetNuke.Tests.Utilities
         public const string Messaging_NotificationSubject = "Friend Request Received";
         public const string Messaging_NotificationBody = "You've received a new friend request from {0}";
         public const bool Messaging_IncludeDismissAction = true;
+        public const string Messaging_NotificationContext = "context";
 
         #endregion
 

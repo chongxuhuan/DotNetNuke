@@ -1027,7 +1027,7 @@ Thank you, we appreciate your support...
 [Portal:PortalName]
 </value>
   </data>
-  <data name="//Host//What'sNew.String" xml:space="preserve">
+  <data name="//Host//WhatsNew.String" xml:space="preserve">
     <value>What's New</value>
   </data>
   <data name="PurgeCacheUnsupported.Text" xml:space="preserve">

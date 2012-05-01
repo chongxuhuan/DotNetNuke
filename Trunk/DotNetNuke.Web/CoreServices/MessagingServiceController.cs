@@ -97,7 +97,7 @@ namespace DotNetNuke.Web.CoreServices
                              select new SearchResult 
                              {id = "role-" + roleInfo.RoleID, 
                               name = roleInfo.RoleName, 
-                              iconfile = TestableGlobals.Instance.ResolveUrl(string.IsNullOrEmpty(roleInfo.IconFile) ? "/images/no_avatar.gif" : PortalSettings.HomeDirectory.TrimEnd('/') + "/" + roleInfo.IconFile)});
+                              iconfile = TestableGlobals.Instance.ResolveUrl(string.IsNullOrEmpty(roleInfo.IconFile) ? "~/images/no_avatar.gif" : PortalSettings.HomeDirectory.TrimEnd('/') + "/" + roleInfo.IconFile)});
 
             return Json(results.OrderBy(sr => sr.name), JsonRequestBehavior.AllowGet);
         }

@@ -110,45 +110,23 @@ namespace DotNetNuke.Services.Social.Notifications.Data
 
         #endregion
 
-        #region NotificationActions CRUD
-
-        public int SaveNotificationAction(int notificationActionId, int messageId, int notificationTypeId, string key, int createUpdateUserId)
-        {
-            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("SaveNotificationAction"), notificationActionId, messageId, notificationTypeId, key, createUpdateUserId);
-        }
-
-        public void DeleteNotificationAction(int notificationActionId)
-        {
-            _provider.ExecuteNonQuery(GetFullyQualifiedName("DeleteNotificationAction"), notificationActionId);
-        }
-
-        public IDataReader GetNotificationAction(int notificationActionId)
-        {
-            return _provider.ExecuteReader(GetFullyQualifiedName("GetNotificationAction"), notificationActionId);
-        }
-
-        public IDataReader GetNotificationActionsByMessageId(int messageId)
-        {
-            return _provider.ExecuteReader(GetFullyQualifiedName("GetNotificationActionsByMessageID"), messageId);
-        }
-
-        public IDataReader GetNotificationActionByMessageAndNotificationTypeAction(int messageId, int notificationTypeActionId)
-        {
-            return _provider.ExecuteReader(GetFullyQualifiedName("GetNotificationActionByMessageAndNotificationTypeAction"), messageId, notificationTypeActionId);
-        }
-
-        public IDataReader GetNotificationActionByMessageAndNotificationTypeActionName(int messageId, string nameResourceKey)
-        {
-            return _provider.ExecuteReader(GetFullyQualifiedName("GetNotificationActionByMessageAndNotificationTypeActionName"), messageId, nameResourceKey);
-        }
-
-        #endregion
-
         #region Notifications Public Methods
 
-        public int CreateNotification(int notificationTypeId, int portalId, string to, string @from, string subject, string body, bool includeDismissAction, int senderUserId, int createUpdateUserId, DateTime expirationDate)
+        public int CreateNotification(Notification notification, int portalId)
         {
-            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("CreateNotification"), notificationTypeId, portalId ,to, from, subject, body, senderUserId, createUpdateUserId, _provider.GetNull(expirationDate), includeDismissAction);
+            int createdByUserId = UserController.GetCurrentUserInfo().UserID;
+            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("CreateNotification"),
+                                                notification.NotificationTypeID,
+                                                portalId,
+                                                notification.To,
+                                                notification.From,
+                                                notification.Subject,
+                                                notification.Body,
+                                                notification.SenderUserID,
+                                                createdByUserId,
+                                                _provider.GetNull(notification.ExpirationDate),
+                                                notification.IncludeDismissAction,
+                                                notification.Context);
         }
 
         public void DeleteNotification(int notificationId)
@@ -164,6 +142,11 @@ namespace DotNetNuke.Services.Social.Notifications.Data
         public IDataReader GetNotifications(int userId, int portalId,int pageIndex, int pageSize)
         {
             return _provider.ExecuteReader(GetFullyQualifiedName("GetNotifications"), userId, portalId, pageIndex, pageSize);
+        }
+
+        public IDataReader GetNotification(int notificationId)
+        {
+            return _provider.ExecuteReader(GetFullyQualifiedName("GetNotification"), notificationId);
         }
 
         #endregion

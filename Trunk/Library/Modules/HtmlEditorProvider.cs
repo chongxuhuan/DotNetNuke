@@ -41,6 +41,14 @@ namespace DotNetNuke.Modules.HTMLEditorProvider
         public abstract Unit Width { get; set; }
         public abstract Unit Height { get; set; }
 
+        public virtual bool EnableRelativeUrl
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         //return the provider
 		public static HtmlEditorProvider Instance()
         {

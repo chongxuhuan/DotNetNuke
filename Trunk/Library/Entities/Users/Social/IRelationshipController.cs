@@ -21,7 +21,7 @@
 
 using System.Collections.Generic;
 
-namespace DotNetNuke.Entities.Users.Social.Internal
+namespace DotNetNuke.Entities.Users.Social
 {
     public interface IRelationshipController
     {
@@ -234,15 +234,12 @@ namespace DotNetNuke.Entities.Users.Social.Internal
 
         UserRelationship GetFollowerRelationship(UserInfo targetUser);
         UserRelationship GetFollowerRelationship(UserInfo initiatingUser, UserInfo targetUser);
-        IList<UserRelationship> GetFollowers(UserInfo initiatingUser);
 
         UserRelationship GetFollowingRelationship(UserInfo targetUser);
         UserRelationship GetFollowingRelationship(UserInfo initiatingUser, UserInfo targetUser);
-        IList<UserRelationship> GetFollowing(UserInfo initiatingUser);
 
         UserRelationship GetFriendRelationship(UserInfo targetUser);
         UserRelationship GetFriendRelationship(UserInfo initiatingUser, UserInfo targetUser);
-        IList<UserRelationship> GetFriends(UserInfo initiatingUser);
 
         Relationship AddUserList(string listName, string listDescription);
         Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus);

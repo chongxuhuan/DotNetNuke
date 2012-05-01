@@ -135,4 +135,7 @@
   <data name="VerificationSuccess.Text" xml:space="preserve">
     <value>Your account has been successfully verified</value>
   </data>
+  <data name="Email.Text" xml:space="preserve">
+    <value>Email Address:</value>
+  </data>
 </root>

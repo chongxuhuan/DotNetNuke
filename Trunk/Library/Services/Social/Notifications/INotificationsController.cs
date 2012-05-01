@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
 
-namespace DotNetNuke.Services.Social.Notifications.Internal
+namespace DotNetNuke.Services.Social.Notifications
 {
     /// <summary>
     /// Defines the methods to work with Notifications, NotificationTypes, NotificationTypeActions and NotificationActions.
@@ -145,89 +145,17 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
 
         #endregion
 
-        #region NotificationActions Methods
-
-        /// <summary>
-        /// Creates a new notification action.
-        /// </summary>
-        /// <param name="notificationId">The notification identifier.</param>
-        /// <param name="notificationTypeActionId">The notification type action identifier.</param>
-        /// <param name="key">The custom information to be stored for this particular action.</param>
-        /// <returns>The new notification action.</returns>
-        NotificationAction CreateNotificationAction(int notificationId, int notificationTypeActionId, string key);
-        
-        /// <summary>
-        /// Updates an existing notification action.
-        /// </summary>
-        /// <param name="notificationAction">The existing notification action.</param>
-        void UpdateNotificationAction(NotificationAction notificationAction);
-        
-        /// <summary>
-        /// Deletes an existing notification action.
-        /// </summary>
-        /// <param name="notificationActionId">The notification action identifier.</param>
-        void DeleteNotificationAction(int notificationActionId);
-        
-        /// <summary>
-        /// Gets a notification action by identifier.
-        /// </summary>
-        /// <param name="notificationActionId">The notification action identifier.</param>
-        /// <returns>The notification action with the provided identifier.</returns>
-        NotificationAction GetNotificationAction(int notificationActionId);
-        
-        /// <summary>
-        /// Gets a notification action by notification and notification type action.
-        /// </summary>
-        /// <param name="notificationId">The notification identifier.</param>
-        /// <param name="notificationTypeActionId">The notification type action identifier.</param>
-        /// <returns>The notification action with the provided notification and notification type action.</returns>
-        NotificationAction GetNotificationAction(int notificationId, int notificationTypeActionId);
-
-        /// <summary>
-        /// Gets a notification action by notification and notification type action name.
-        /// </summary>
-        /// <param name="notificationId">The notification identifier.</param>
-        /// <param name="notificationTypeActionName">The notification type action name.</param>
-        /// <returns>The notification action with the provided notification and notification type action name.</returns>
-        NotificationAction GetNotificationAction(int notificationId, string notificationTypeActionName);
-        
-        /// <summary>
-        /// Gets the list of notification actions for the provided notification.
-        /// </summary>
-        /// <param name="notificationId">The notification identifier.</param>
-        /// <returns>A list of notification actions for the provided notification.</returns>
-        IList<NotificationAction> GetNotificationActionsByNotificationId(int notificationId);
-
-        #endregion
-
         #region Notifications Methods
 
         /// <summary>
         /// Creates a new notification and sets is sender as the portal administrator.
         /// </summary>
-        /// <param name="notificationTypeId">The notification type identifier.</param>
-        /// <param name="portalId">The portal identifier.</param>
-        /// <param name="subject">The notification subject.</param>
-        /// <param name="body">The notification body.</param>
-        /// <param name="includeDismissAction">Include a dismiss action?</param>
+        /// <param name="notification">The notification</param>
+        /// <param name="portalId">The portalId</param>
         /// <param name="roles">The list of roles to send the notification to. Leave it as null to send only to individual users.</param>
         /// <param name="users">The list of users to send the notification to. Leave it as null to send only to roles.</param>
         /// <returns>The new notification.</returns>
-        Notification CreateNotification(int notificationTypeId, int portalId,string subject, string body, bool includeDismissAction, IList<RoleInfo> roles, IList<UserInfo> users);
-        
-        /// <summary>
-        /// Creates a new notification.
-        /// </summary>
-        /// <param name="notificationTypeId">The notification type identifier.</param>
-        /// <param name="portalId">The portal identifier.</param>
-        /// <param name="subject">The notification subject.</param>
-        /// <param name="body">The notification body.</param>
-        /// <param name="includeDismissAction">Include a dismiss action?</param>
-        /// <param name="roles">The list of roles to send the notification to. Leave it as null to send only to individual users.</param>
-        /// <param name="users">The list of users to send the notification to. Leave it as null to send only to roles.</param>
-        /// <param name="sender">The notification sender.</param>
-        /// <returns>The new notification.</returns>
-        Notification CreateNotification(int notificationTypeId, int portalId, string subject, string body, bool includeDismissAction, IList<RoleInfo> roles, IList<UserInfo> users, UserInfo sender);
+        void CreateNotification(Notification notification, int portalId, IList<RoleInfo> roles, IList<UserInfo> users);
         
         /// <summary>
         /// Counts the notifications sent to the provided user in the specified portal.
@@ -261,6 +189,16 @@ namespace DotNetNuke.Services.Social.Notifications.Internal
         /// <param name="userId">The user identifier.</param>
         void DeleteNotificationRecipient(int notificationId, int userId);
 
+
+        /// <summary>
+        /// Get a Notification
+        /// </summary>
+        /// <param name="notificationId">The notificationId</param>
+        /// <returns>A notification</returns>
+        Notification GetNotification(int notificationId);
+
         #endregion
+
+        
     }
 }

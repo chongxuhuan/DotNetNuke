@@ -9,6 +9,7 @@
         </p>
         </div>
         <div class="fm-explorer">
+            <!--[if lt ie 8]><div style="zoom:1;"><![endif]-->
             <table data-bind="with: chosenFolderData" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <thead>
                     <tr>
@@ -19,24 +20,25 @@
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: children, updateRowNumbers: children">
-                <!-- ko if: folder === true -->
+                    <!-- ko if: folder === true -->
                     <tr data-bind="event: { dblclick: $root.goToFolder }">
                         <td class="fm-number"></td>
                         <td><span data-bind="visible: folder" class="fm-folder"></span><span data-bind="text: name"></span></td>
                         <td data-bind="text: type" class="fm-file-type"></td>
                         <td data-bind="text: modified" class="fm-modified-time"></td>
                     </tr>
-                <!-- /ko -->
-                <!-- ko if: folder === false -->
+                    <!-- /ko -->
+                    <!-- ko if: folder === false -->
                     <tr data-bind="event: { click: $root.showFilePreview, dblclick: $root.attachFile }">
                         <td class="fm-number"></td>
                         <td><span data-bind="visible: folder" class="fm-folder"></span><span data-bind="text: name"></span></td>
                         <td data-bind="text: type" class="fm-file-type"></td>
                         <td data-bind="text: modified" class="fm-modified-time"></td>
                     </tr>
-                <!-- /ko -->
+                    <!-- /ko -->
                 </tbody>
             </table>
+            <!--[if lt ie 8]></div><![endif]-->
         </div>
     </div>
     <div class="fm-preview-area dnnRight" data-bind="with: chosenFileData">

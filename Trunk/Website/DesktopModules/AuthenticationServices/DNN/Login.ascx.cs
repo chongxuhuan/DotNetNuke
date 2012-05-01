@@ -24,6 +24,7 @@ using System;
 using System.Net;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership;
@@ -93,15 +94,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 
 		#region Event Handlers
 
-		/// <summary>
-		/// Page_Load runs when the control is loaded
-		/// </summary>
-		/// <remarks>
-		/// </remarks>
-		/// <history>
-		/// 	[cnurse]	9/8/2004	Updated to reflect design changes for Help, 508 support
-		///                       and localisation
-		/// </history>
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
@@ -175,22 +167,31 @@ namespace DotNetNuke.Modules.Admin.Authentication
 					DnnLog.Error(ex);
 				}
 			}
+
+		    var registrationType = PortalController.GetPortalSettingAsInteger("Registration_RegistrationFormType", PortalId, 0);
+		    bool useEmailAsUserName;
+            if (registrationType == 0)
+            {
+                useEmailAsUserName = PortalController.GetPortalSettingAsBoolean("Registration_UseEmailAsUserName", PortalId, false);
+            }
+            else
+            {
+                var registrationFields = PortalController.GetPortalSetting("Registration_RegistrationFields", PortalId, String.Empty);
+                useEmailAsUserName = !registrationFields.Contains("Username");
+            }
+
+            if (useEmailAsUserName)
+            {
+                plUsername.Text = LocalizeString("Email");
+            }
+            else
+            {
+                plUsername.Text = LocalizeString("Username");
+            }
 			divCaptcha1.Visible = UseCaptcha;
 			divCaptcha2.Visible = UseCaptcha;
 		}
 
-
-		/// <summary>
-		/// cmdLogin_Click runs when the login button is clicked
-		/// </summary>
-		/// <remarks>
-		/// </remarks>
-		/// <history>
-		/// 	[cnurse]	9/24/2004	Updated to reflect design changes for Help, 508 support
-		///                       and localisation
-		///     [cnurse]    12/11/2005  Updated to reflect abstraction of Membership
-		///     [cnurse]    07/03/2007  Moved from Sign.ascx.vb
-		/// </history>
 		private void OnLoginClick(object sender, EventArgs e)
 		{
 			if ((UseCaptcha && ctlCaptcha.IsValid) || !UseCaptcha)

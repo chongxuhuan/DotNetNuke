@@ -28,7 +28,6 @@ using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Social;
 using DotNetNuke.Entities.Users.Social.Data;
-using DotNetNuke.Entities.Users.Social.Internal;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Tests.Utilities;

@@ -61,6 +61,7 @@ namespace DotNetNuke.Entities.Users
         //Name properties
         private const string cFirstName = "FirstName";
         private const string cLastName = "LastName";
+        private const string cTitle = "Title";
 
         //Address Properties
         private const string cUnit = "Unit";
@@ -450,6 +451,23 @@ namespace DotNetNuke.Entities.Users
             set
             {
                 SetProfileProperty(cTelephone, value);
+            }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the Title
+        /// </summary>
+        /// -----------------------------------------------------------------------------
+        public string Title
+        {
+            get
+            {
+                return GetPropertyValue(cTitle);
+            }
+            set
+            {
+                SetProfileProperty(cTitle, value);
             }
         }
 
