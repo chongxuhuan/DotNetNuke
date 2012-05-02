@@ -28,12 +28,13 @@ using System.IO;
 using System.Web.Mvc;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Icons;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Web.Services;
 
-namespace DotNetNuke.Modules.Journal
+namespace DotNetNuke.Web.CoreServices
 {
 
     public class UserFileController : DnnController
@@ -170,14 +171,17 @@ namespace DotNetNuke.Modules.Journal
 
         private IFolderInfo GetUserFolder()
         {
+            int portalId;
+            portalId = UserInfo.IsSuperUser ? -1 : PortalSettings.PortalId;
+
             string userFolderPath = _pathUtils.GetUserFolderPath(UserInfo);
-            IFolderInfo folder = _folderManager.GetFolder(PortalSettings.PortalId, userFolderPath);
+            IFolderInfo folder = _folderManager.GetFolder(portalId, userFolderPath);
             if (folder == null)
             {
                 // this line will take care of creating the user's folder
                 _folderManager.GetFileSystemFolders(UserInfo, "READ");
             }
-            return _folderManager.GetFolder(PortalSettings.PortalId, userFolderPath);
+            return _folderManager.GetFolder(portalId, userFolderPath);
         }
 
         class Item

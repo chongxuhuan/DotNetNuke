@@ -214,24 +214,6 @@ namespace DotNetNuke.Entities.Users.Social
 
         #region Easy Wrapper APIs
 
-        UserRelationship AddFriend(UserInfo targetUser);
-        UserRelationship AddFriend(UserInfo initiatingUser, UserInfo targetUser);
-
-        bool IsFriend(UserInfo targetUser);
-        bool AreFriends(UserInfo initiatingUser, UserInfo targetUser);
-        
-        bool IsFollower(UserInfo targetUser);
-        bool IsFollower(UserInfo user1, UserInfo user2);
-
-        bool IsFollowing(UserInfo targetUser);
-        bool IsFollowing(UserInfo user1, UserInfo user2);
-
-        void DeleteFriend(UserInfo targetUser);
-        void DeleteFriend(UserInfo initiatingUser, UserInfo targetUser);
-
-        UserRelationship FollowUser(UserInfo targetUser);
-        UserRelationship FollowUser(UserInfo initiatingUser, UserInfo targetUser);
-
         UserRelationship GetFollowerRelationship(UserInfo targetUser);
         UserRelationship GetFollowerRelationship(UserInfo initiatingUser, UserInfo targetUser);
 
@@ -241,12 +223,12 @@ namespace DotNetNuke.Entities.Users.Social
         UserRelationship GetFriendRelationship(UserInfo targetUser);
         UserRelationship GetFriendRelationship(UserInfo initiatingUser, UserInfo targetUser);
 
-        Relationship AddUserList(string listName, string listDescription);
-        Relationship AddUserList(UserInfo owningUser, string listName, string listDescription, RelationshipStatus defaultStatus);
-        Relationship AddPortalRelationship(int portalId, string listName, string listDescription, RelationshipStatus defaultStatus, int relationshipTypeId);
-
         #endregion
 
         void CreateDefaultRelationshipsForPortal(int portalId);
+
+        Relationship GetFriendsRelationshipByPortal(int portalId);
+
+        Relationship GetFollowersRelationshipByPortal(int portalId);
     }
 }

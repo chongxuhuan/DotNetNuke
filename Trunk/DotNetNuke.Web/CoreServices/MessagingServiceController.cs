@@ -92,12 +92,37 @@ namespace DotNetNuke.Web.CoreServices
                 }).ToList();
 
             //Roles should be visible to Administrators or Group Owner
-            var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, numResults, q);
-            results.AddRange(from roleInfo in roles where isAdmin || UserInfo.Social.Roles.SingleOrDefault(ur => ur.RoleID == roleInfo.RoleID && ur.IsOwner) != null 
-                             select new SearchResult 
-                             {id = "role-" + roleInfo.RoleID, 
-                              name = roleInfo.RoleName, 
-                              iconfile = TestableGlobals.Instance.ResolveUrl(string.IsNullOrEmpty(roleInfo.IconFile) ? "~/images/no_avatar.gif" : PortalSettings.HomeDirectory.TrimEnd('/') + "/" + roleInfo.IconFile)});
+            var checkRoles = false;
+            if (isAdmin)
+                checkRoles = true;
+            else
+            {
+                if (UserInfo.Social.Roles.Any(role => role.IsOwner))
+                {
+                    checkRoles = true;
+                }                                
+            }
+
+            if (checkRoles)
+            {
+                var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, numResults, q);
+                results.AddRange(from roleInfo in roles
+                                 where
+                                     isAdmin ||
+                                     UserInfo.Social.Roles.SingleOrDefault(
+                                         ur => ur.RoleID == roleInfo.RoleID && ur.IsOwner) != null
+                                 select new SearchResult
+                                            {
+                                                id = "role-" + roleInfo.RoleID,
+                                                name = roleInfo.RoleName,
+                                                iconfile =
+                                                    TestableGlobals.Instance.ResolveUrl(
+                                                        string.IsNullOrEmpty(roleInfo.IconFile)
+                                                            ? "~/images/no_avatar.gif"
+                                                            : PortalSettings.HomeDirectory.TrimEnd('/') + "/" +
+                                                              roleInfo.IconFile)
+                                            });
+            }
 
             return Json(results.OrderBy(sr => sr.name), JsonRequestBehavior.AllowGet);
         }

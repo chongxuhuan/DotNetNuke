@@ -2,6 +2,14 @@
 .console { width:95%; height:95%; }
 .console select { margin-left:0px;margin-bottom:4px; }
 
+.console-none div { height:30px; margin:2px; width:180px; padding:5px; cursor:pointer; text-align:left; float:left; }
+.console-none h3 { margin: 0px 2px 2px 28px; padding-top:5px; font-size:1em; }
+.console-none div div { display:none; }
+
+.console-none-detail div { padding:10px; clear:both; cursor:pointer; }
+.console-none-detail h3 { margin: 2px 2px 2px 28px; padding:0px; font-size:1em; }
+.console-none-detail div div { margin: 2px 2px 2px 28px; padding:0px; clear:none; }
+
 .console-small div { height:30px; margin:2px; width:180px; padding:5px; cursor:pointer; text-align:left; float:left; }
 .console-small img { padding:4px; float:left; }
 .console-small h3 { margin: 0px 2px 2px 28px; padding-top:5px; font-size:1em; }

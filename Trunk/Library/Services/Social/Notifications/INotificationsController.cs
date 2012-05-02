@@ -37,18 +37,8 @@ namespace DotNetNuke.Services.Social.Notifications
         /// <summary>
         /// Creates a new notification type.
         /// </summary>
-        /// <param name="name">The name of the notification type.</param>
-        /// <param name="description">The description of the notification type.</param>
-        /// <param name="timeToLive">The number of minutes to be added to the creation time of new notifications of this type to calculate the expiration date.</param>
-        /// <param name="desktopModuleId">Indicates the module that will include the resource file (named SharedResources.resx) used localize NotificationTypeActions. If the value is 0 or negative, the resource file used will be ~/App_GlobalResources/SharedResources.resx.</param>
-        /// <returns>The new notification type.</returns>
-        NotificationType CreateNotificationType(string name, string description, TimeSpan timeToLive, int desktopModuleId);
-        
-        /// <summary>
-        /// Updates an existing notification type.
-        /// </summary>
-        /// <param name="notificationType">The existing notification type</param>
-        void UpdateNotificationType(NotificationType notificationType);
+        /// <param name="notificationType"> </param>
+        void CreateNotificationType(NotificationType notificationType);
         
         /// <summary>
         /// Deletes an existing notification type.
@@ -73,47 +63,6 @@ namespace DotNetNuke.Services.Social.Notifications
         #endregion
 
         #region NotificationTypeActions Methods
-
-        /// <summary>
-        /// Creates a new notification type action and adds it to the end of the actions list for the specified notification type.
-        /// </summary>
-        /// <param name="notificationTypeId">The notification type identifier.</param>
-        /// <param name="nameResourceKey">The resource key used to localize the action name.</param>
-        /// <param name="descriptionResourceKey">The resource key used to localize the action description.</param>
-        /// <param name="confirmResourceKey">The resource key used to localize the action confirmation message. Leave it empty if no confirmation is needed.</param>
-        /// <param name="apiCall">The service framework url to be called to perform the notification action.</param>
-        /// <returns>The new notification type action.</returns>
-        NotificationTypeAction AddNotificationTypeActionToEnd(int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall);
-        
-        /// <summary>
-        /// Creates a new notification type action and adds it after the specified notification type action in the actions list for the specified notification type.
-        /// </summary>
-        /// <param name="afterNotificationTypeActionId">The notification type action identifier after which the new action will be placed.</param>
-        /// <param name="notificationTypeId">The notification type action identifier.</param>
-        /// <param name="nameResourceKey">The resource key used to localize the action name.</param>
-        /// <param name="descriptionResourceKey">The resource key used to localize the action description.</param>
-        /// <param name="confirmResourceKey">The resource key used to localize the action confirmation message. Leave it empty if no confirmation is needed.</param>
-        /// <param name="apiCall">The service framework url to be called to perform the notification action.</param>
-        /// <returns>The new notification type action.</returns>
-        NotificationTypeAction AddNotificationTypeActionAfter(int afterNotificationTypeActionId, int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall);
-        
-        /// <summary>
-        /// Creates a new notification type action and adds it before the specified notification type action in the actions list for the specified notification type.
-        /// </summary>
-        /// <param name="beforeNotificationTypeActionId">The notification type action identifier before which the new action will be placed.</param>
-        /// <param name="notificationTypeId">The notification type action identifier.</param>
-        /// <param name="nameResourceKey">The resource key used to localize the action name.</param>
-        /// <param name="descriptionResourceKey">The resource key used to localize the description name.</param>
-        /// <param name="confirmResourceKey">The resource key used to localize the action confirmation message. Leave it empty if no confirmation is needed.</param>
-        /// <param name="apiCall">The service framework url to be called to perform the notification action.</param>
-        /// <returns>The new notification type action.</returns>
-        NotificationTypeAction AddNotificationTypeActionBefore(int beforeNotificationTypeActionId, int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall);
-        
-        /// <summary>
-        /// Updates an existing notificaiton type action.
-        /// </summary>
-        /// <param name="notificationTypeAction">The existing notification type action.</param>
-        void UpdateNotificationTypeAction(NotificationTypeAction notificationTypeAction);
         
         /// <summary>
         /// Deletes an existing notification type action.
@@ -142,6 +91,13 @@ namespace DotNetNuke.Services.Social.Notifications
         /// <param name="notificationTypeId">The notification type identifier.</param>
         /// <returns>An ordered list of notification type actions for the provided notification type.</returns>
         IList<NotificationTypeAction> GetNotificationTypeActions(int notificationTypeId);
+
+        /// <summary>
+        /// Set the actions for a NotificationType
+        /// </summary>
+        /// <param name="actions">The actions</param>
+        /// <param name="notificationTypeId">Id of the notification type</param>
+        void SetNotificationTypeActions(IList<NotificationTypeAction> actions, int notificationTypeId);
 
         #endregion
 
@@ -198,7 +154,5 @@ namespace DotNetNuke.Services.Social.Notifications
         Notification GetNotification(int notificationId);
 
         #endregion
-
-        
     }
 }

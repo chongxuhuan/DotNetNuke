@@ -36,9 +36,11 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         int SaveMessage(Message message, int portalId, int createUpdateUserId);
         IDataReader GetMessage(int messageId);
         IDataReader GetMessagesBySender(int messageId, int portalId);
+        IDataReader GetLastSentMessage(int userId, int portalId);
         void DeleteMessage(int messageId);
 
         MessageBoxView GetMessageBoxView(int userId, int portalId,int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
+        IDataReader GetSentBoxView(int userId, int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending);
         MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);        
         void UpdateMessageReadStatus(int conversationId, int userId, bool read);
         void UpdateMessageArchivedStatus(int conversationId, int userId, bool archived);

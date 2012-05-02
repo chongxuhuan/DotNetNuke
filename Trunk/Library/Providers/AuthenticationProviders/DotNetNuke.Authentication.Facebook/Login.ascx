@@ -1,5 +1,12 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Login.ascx.cs" Inherits="DotNetNuke.Authentication.Facebook.Login" %>
 
-<div>
-    <asp:ImageButton runat="server" ID="loginButton" ImageUrl="Images/facebook_32X32.jpg" resourcekey="LoginFacebook" CausesValidation="False"  />
+<div id="loginPanel" runat="server" class="facebook" >
+    <asp:LinkButton runat="server" ID="loginButton" CausesValidation="False">
+        <span><%=LocalizeString("LoginFacebook")%></span>
+    </asp:LinkButton>
 </div>
+<li id="registerItem" runat="Server" class="facebook">
+    <asp:LinkButton ID="registerButton" runat="server" CausesValidation="False">
+        <span><%=LocalizeString("RegisterFacebook") %></span>
+    </asp:LinkButton>
+</li>

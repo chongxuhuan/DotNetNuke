@@ -729,8 +729,7 @@ The host-level settings are currently set as follows:
     <value>Increment Site Version</value>
   </data>
   <data name="IncrementCrmVersionConfirm.Text" xml:space="preserve">
-    <value>&lt;p&gt;This action will force all site visitors to download new versions of CSS and JavaScript files. You should only do this if you are certain that the files have changed and you want those changes to be reflected on the client\'s browser.&lt;/p&gt;&lt;p&gt;Are you sure you want to increment the version number for your site?&lt;/p&gt;</value>
-    <comment>This will be used from JS, make sure to escape any quotes.</comment>
+    <value>&lt;p&gt;This action will force all site visitors to download new versions of CSS and JavaScript files. You should only do this if you are certain that the files have changed and you want those changes to be reflected on the client's browser.&lt;/p&gt;&lt;p&gt;Are you sure you want to increment the version number for your site?&lt;/p&gt;</value>
   </data>
   <data name="IncrementCrmVersionError.Text" xml:space="preserve">
     <value>There was an error incrementing the Client Resource version.</value>
@@ -985,7 +984,7 @@ The host-level settings are currently set as follows:
     <value>The Regular Expression - {1} - entered for {0} is invalid</value>
   </data>
   <data name="InvalidFields.Text" xml:space="preserve">
-    <value>The fields - {0} - are not valid in the list of Registration Fields.</value>
+    <value>The field(s) - {0} - are not valid in the list of Registration Fields.  This is either because the field is an image type or you have spelt the field name incorrectly.</value>
   </data>
   <data name="NoEmail.Text" xml:space="preserve">
     <value>You must, at a minimum, include the "Email" field.</value>

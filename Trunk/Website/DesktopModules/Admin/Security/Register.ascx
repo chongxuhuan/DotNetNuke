@@ -12,7 +12,11 @@
     <div class="dnnFormItem dnnClear">
         <dnn:DnnFormEditor id="userForm" runat="Server" FormMode="Short" />
         <div class="dnnSocialRegistration">
-            <asp:PlaceHolder ID="socialLoginControls" runat="server"/>
+            <div id="mainContainer">
+                <ul class="buttonList">
+                    <asp:PlaceHolder ID="socialLoginControls" runat="server"/>
+                </ul>
+            </div>
         </div>
     </div>
     <div id="captchaRow" runat="server" visible="false" class="dnnFormItem dnnCaptcha">

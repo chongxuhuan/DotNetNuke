@@ -1,5 +1,12 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Login.ascx.cs" Inherits="DotNetNuke.Authentication.LiveConnect.Login" %>
 
-<div>
-    <asp:ImageButton runat="server" ID="loginButton" ImageUrl="Images/live_32X32.jpg" resourcekey="SignInLive" CausesValidation="False" />
+<div id="loginPanel" runat="server" class="windowslive" >
+    <asp:LinkButton runat="server" ID="loginButton" CausesValidation="False">
+        <span><%=LocalizeString("SignInLive")%></span>
+    </asp:LinkButton>
 </div>
+<li id="registerItem" runat="Server" class="windowslive">
+    <asp:LinkButton ID="registerButton" runat="server" CausesValidation="False">
+        <span><%=LocalizeString("RegisterLive") %></span>
+    </asp:LinkButton>
+</li>

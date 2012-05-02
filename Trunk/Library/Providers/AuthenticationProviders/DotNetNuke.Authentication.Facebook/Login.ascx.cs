@@ -26,6 +26,7 @@
 using System;
 
 using DotNetNuke.Authentication.Facebook.Components;
+using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Authentication.OAuth;
 
 #endregion
@@ -54,8 +55,12 @@ namespace DotNetNuke.Authentication.Facebook
             base.OnInit(e);
 
             loginButton.Click += loginButton_Click;
+            registerButton.Click += loginButton_Click;
 
             OAuthClient = new FacebookClient(PortalId, Mode);
+
+            loginPanel.Visible = (Mode == AuthMode.Login);
+            registerItem.Visible = (Mode == AuthMode.Register);
         }
 
         private void loginButton_Click(object sender, EventArgs e)

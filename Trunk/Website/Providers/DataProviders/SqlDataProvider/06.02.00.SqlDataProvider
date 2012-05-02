@@ -1849,79 +1849,6 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{database
 END
 GO
 
---Seed data for Notification
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'FriendRequest')
-    BEGIN
-		DECLARE @NotificationTypeID INT		
-	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'FriendRequest', N'Friend Request',-1,NULL)
-		SELECT  @NotificationTypeID = SCOPE_IDENTITY()       
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'Accept', N'AcceptFriend', '', 1, N'DesktopModules/CoreServices/API/RelationshipService.ashx/AcceptFriend')
-	END
-GO
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'FollowerRequest')
-    BEGIN
-		DECLARE @NotificationTypeID INT		  
-	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'FollowerRequest', N'Follower Request',-1,NULL)		
-	END
-GO
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'FollowBackRequest')
-    BEGIN
-		DECLARE @NotificationTypeID INT		  
-	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'FollowBackRequest', N'Follow Back Request',-1,NULL)
-		SELECT  @NotificationTypeID = SCOPE_IDENTITY()   	
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) VALUES (@NotificationTypeID, N'FollowBack', N'FollowBack', '', 1, N'DesktopModules/CoreServices/API/RelationshipService.ashx/FollowBack')
-	END
-GO
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'TranslationSubmitted')
-	BEGIN
-		DECLARE @NotificationTypeID INT
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'TranslationSubmitted', N'Translation Submitted', -1, NULL)		
-	END
-GO
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'HtmlProWorkflow')
-	BEGIN
-		DECLARE @NotificationTypeID INT
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'HtmlProWorkflow', N'Html Pro Workflow Notification', -1, NULL)		
-	END
-GO
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'HtmlNotification')
-	BEGIN
-		DECLARE @NotificationTypeID INT
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'HtmlNotification', N'Html Module Notification', -1, NULL)
-	END
-GO
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupPendingNotification')
-    BEGIN
-		DECLARE @NotificationTypeID INT		
-	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupPendingNotification', N'Group Pending Notification',-1,NULL)
-		SELECT  @NotificationTypeID = SCOPE_IDENTITY()       
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID],[NameResourceKey],[DescriptionResourceKey],[Order],[APICall])
-			VALUES (@NotificationTypeID,N'Approve',N'ApproveGroup',1,N'DesktopModules/SocialGroups/API/ModerationService.ashx/ApproveGroup')
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID],[NameResourceKey],[DescriptionResourceKey],[Order],[APICall])
-			VALUES (@NotificationTypeID,N'Reject',N'RejectGroup',2,  N'DesktopModules/SocialGroups/API/ModerationService.ashx/RejectGroup')
-	END
-GO
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupApprovedNotification')
-    BEGIN
-		DECLARE @NotificationTypeID INT		
-	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupApprovedNotification', N'Group Approved Notification',-1,NULL)		
-	END
-GO
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupCreatedNotification')
-    BEGIN
-		DECLARE @NotificationTypeID INT		
-	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupCreatedNotification', N'Group Created Notification',-1,NULL)
-		SELECT  @NotificationTypeID = SCOPE_IDENTITY()   
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] ([NotificationTypeID], [NameResourceKey], [DescriptionResourceKey], [ConfirmResourceKey], [Order], [APICall]) 
-			VALUES (@NotificationTypeID, N'Remove', N'RemoveGroup', 'DeleteItem', 1, N'DesktopModules/SocialGroups/API/ModerationService.ashx/RemoveGroup')		
-	END
-GO
-IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = N'GroupRejectedNotification')
-    BEGIN
-		DECLARE @NotificationTypeID INT		
-	    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] ([Name], [Description], [TTL], [DesktopModuleID]) VALUES (N'GroupRejectedNotification', N'Group Rejected Notification',-1,NULL)		
-	END
-GO
 --CRUD for CoreMessaging_Messages
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_SaveMessage]') AND type in (N'P', N'PC'))
@@ -2573,12 +2500,11 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationType]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationType]
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CreateNotificationType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateNotificationType]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveNotificationType]
-	@NotificationTypeID int,
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateNotificationType]
 	@Name nvarchar(100),
 	@Description nvarchar(2000),
 	@TTL int,
@@ -2586,42 +2512,27 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SaveNotification
 	@CreatedUpdatedUserID int
 AS
 BEGIN
-	IF (@NotificationTypeID = -1) BEGIN
-		INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] (
-			[Name],
-			[Description],
-			[TTL],
-			[DesktopModuleId],
-			[CreatedByUserID],
-			[CreatedOnDate],
-			[LastModifiedByUserID],
-			[LastModifiedOnDate]
-		) VALUES (
-			@Name,
-			@Description,
-			@TTL,
-			@DesktopModuleId,
-			@CreatedUpdatedUserID,
-			GETDATE(),
-			@CreatedUpdatedUserID,
-			GETDATE()
-		)
+	INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] (
+		[Name],
+		[Description],
+		[TTL],
+		[DesktopModuleId],
+		[CreatedByUserID],
+		[CreatedOnDate],
+		[LastModifiedByUserID],
+		[LastModifiedOnDate]
+	) VALUES (
+		@Name,
+		@Description,
+		@TTL,
+		@DesktopModuleId,
+		@CreatedUpdatedUserID,
+		GETDATE(),
+		@CreatedUpdatedUserID,
+		GETDATE()
+	)
 		
-		SELECT SCOPE_IDENTITY()
-	END
-	ELSE BEGIN
-		UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
-		SET
-			[Name] = @Name,
-			[Description] = @Description,
-			[TTL] = @TTL,
-			[DesktopModuleId] = @DesktopModuleId,
-			[LastModifiedByUserID] = @CreatedUpdatedUserID,
-			[LastModifiedOnDate] = GETDATE()
-		WHERE [NotificationTypeID] = @NotificationTypeID
-		
-		SELECT @NotificationTypeID
-	END
+	SELECT SCOPE_IDENTITY()	
 END
 GO
 
@@ -2677,11 +2588,11 @@ BEGIN
 END
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionToEnd]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionToEnd]
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeAction]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeAction]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionToEnd]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeAction]
 	@NotificationTypeID int,
 	@NameResourceKey nvarchar(100),
 	@DescriptionResourceKey nvarchar(100),
@@ -2726,138 +2637,6 @@ BEGIN
 	)
 	
 	SELECT SCOPE_IDENTITY()
-END
-GO
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionAfter]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionAfter]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionAfter]
-	@AfterNotificationTypeActionID int,
-	@NotificationTypeID int,
-	@NameResourceKey nvarchar(100),
-	@DescriptionResourceKey nvarchar(100),
-	@ConfirmResourceKey nvarchar(100),
-	@APICall nvarchar(500),
-	@CreatedByUserID int
-AS
-BEGIN
-	DECLARE @Order INT 
-	
-	SELECT @Order = [Order]
-	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
-	WHERE [NotificationTypeActionID] = @AfterNotificationTypeActionID
-	
-	-- Update Orders for all Actions higher than @Order
-	UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
-	SET [Order] = [Order] + 2
-	WHERE [NotificationTypeID] = @NotificationTypeID AND [Order] > @Order
-	
-	SET @Order = @Order + 2
-		
-	INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] (
-		[NotificationTypeID],
-		[NameResourceKey],
-		[DescriptionResourceKey],
-		[ConfirmResourceKey],
-		[Order],
-		[APICall],
-		[CreatedByUserID],
-		[CreatedOnDate],
-		[LastModifiedByUserID],
-		[LastModifiedOnDate]
-	) VALUES (
-		@NotificationTypeID,
-		@NameResourceKey,
-		@DescriptionResourceKey,
-		@ConfirmResourceKey,
-		@Order,
-		@APICall,
-		@CreatedByUserID,
-		GETDATE(),
-		@CreatedByUserID,
-		GETDATE()
-	)
-	
-	SELECT SCOPE_IDENTITY()
-END
-GO
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionBefore]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionBefore]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_AddNotificationTypeActionBefore]
-	@BeforeNotificationTypeActionID int,
-	@NotificationTypeID int,
-	@NameResourceKey nvarchar(100),
-	@DescriptionResourceKey nvarchar(100),
-	@ConfirmResourceKey nvarchar(100),
-	@APICall nvarchar(500),
-	@CreatedByUserID int
-AS
-BEGIN
-	DECLARE @Order INT 
-	SELECT @Order = [Order]
-	FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
-	WHERE [NotificationTypeActionID] = @BeforeNotificationTypeActionID
-	
-	-- Update Orders for all Actions higher than @Order
-	UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
-	SET [Order] = [Order] + 2
-	WHERE [NotificationTypeID] = @NotificationTypeID AND [Order] >= @Order
-		
-	INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] (
-		[NotificationTypeID],
-		[NameResourceKey],
-		[DescriptionResourceKey],
-		[ConfirmResourceKey],
-		[Order],
-		[APICall],
-		[CreatedByUserID],
-		[CreatedOnDate],
-		[LastModifiedByUserID],
-		[LastModifiedOnDate]
-	) VALUES (
-		@NotificationTypeID,
-		@NameResourceKey,
-		@DescriptionResourceKey,
-		@ConfirmResourceKey,
-		@Order,
-		@APICall,
-		@CreatedByUserID,
-		GETDATE(),
-		@CreatedByUserID,
-		GETDATE()
-	)
-	
-	SELECT SCOPE_IDENTITY()
-END
-GO
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_UpdateNotificationTypeAction]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_UpdateNotificationTypeAction]
-GO
-
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_UpdateNotificationTypeAction]
-	@NotificationTypeActionID int,
-	@NameResourceKey nvarchar(100),
-	@DescriptionResourceKey nvarchar(100),
-	@ConfirmResourceKey nvarchar(100),
-	@APICall nvarchar(500),
-	@LastModifiedByUserID int
-AS
-BEGIN
-	UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions]
-	SET
-		[NameResourceKey] = @NameResourceKey,
-		[DescriptionResourceKey] = @DescriptionResourceKey,
-		[ConfirmResourceKey] = @ConfirmResourceKey,
-		[APICall] = @APICall,
-		[LastModifiedByUserID] = @LastModifiedByUserID,
-		[LastModifiedOnDate] = GETDATE()
-	WHERE [NotificationTypeActionID] = @NotificationTypeActionID
 END
 GO
 
@@ -3239,6 +3018,11 @@ IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_{objectQuali
 BEGIN
 ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] DROP CONSTRAINT [DF_{objectQualifier}JournalTypes_SupportsNotify]
 END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_{objectQualifier}Journal_Types_EnableComments]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] DROP CONSTRAINT [DF_{objectQualifier}Journal_Types_EnableComments]
+END
 
 GO
 
@@ -3380,6 +3164,7 @@ CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Types](
 	[AppliesToStream] [bit] NOT NULL,
 	[Options] [nvarchar](max) NULL,
 	[SupportsNotify] [bit] NOT NULL,
+	[EnableComments] [bit] NOT NULL,
  CONSTRAINT [PK_{objectQualifier}JournalTypes] PRIMARY KEY CLUSTERED 
 (
 	[JournalTypeId] ASC
@@ -3452,6 +3237,8 @@ ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] ADD  CONSTRAINT [DF_
 GO
 
 ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] ADD  CONSTRAINT [DF_{objectQualifier}JournalTypes_SupportsNotify]  DEFAULT ((0)) FOR [SupportsNotify]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Types] ADD  CONSTRAINT [DF_{objectQualifier}Journal_Types_EnableComments]  DEFAULT ((1)) FOR [EnableComments]
 GO
 
 ALTER TABLE {databaseOwner}[{objectQualifier}Journal_Data]  WITH NOCHECK ADD  CONSTRAINT [FK_{objectQualifier}Journal_Data_Journal] FOREIGN KEY([JournalId])
@@ -4629,9 +4416,120 @@ INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
 	VALUES
 	(10, 'groupjoin', '', -1, 1, 1, 1, 1, null, 1)
 GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(11, 'wikiadd', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(12, 'wikiupdate', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(13, 'documentadd', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(14, 'documentupdate', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify, EnableComments)
+	VALUES
+	(15, 'articleadd', '', -1, 1, 1, 1, 1, null, 1, 0)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(16, 'videoadd', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(17, 'vote', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify, EnableComments)
+	VALUES
+	(18, 'comment', '', -1, 1, 1, 1, 1, null, 1, 0)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify, EnableComments)
+	VALUES
+	(19, 'question', '', -1, 1, 1, 1, 1, null, 1, 0)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify, EnableComments)
+	VALUES
+	(20, 'answer', '', -1, 1, 1, 1, 1, null, 1, 0)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(21, 'eventcreate', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(22, 'eventattend', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(23, 'projectcreated', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(24, 'projectupdated', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(25, 'reviewadd', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(26, 'reviewupdate', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(27, 'survey', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(28, 'taskadd', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(29, 'taskupdate', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify)
+	VALUES
+	(30, 'privilege', '', -1, 1, 1, 1, 1, null, 1)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify, EnableComments)
+	VALUES
+	(31, 'ideaadd', '', -1, 1, 1, 1, 1, null, 1, 0)
+GO
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Types]
+	(JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify, EnableComments)
+	VALUES
+	(32, 'ideaupdate', '', -1, 1, 1, 1, 1, null, 1, 0)
+GO
 
-/* Add GetMessageItems Procedure */
-/************************************/
+
+/* Add GetMessageConversations Procedure */
+/*****************************************/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetMessageConversations]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetMessageConversations]
 GO
@@ -4744,6 +4642,74 @@ SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
 
 SELECT * from inboxItems where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound
 ORDER BY RowNumber ASC
+END
+GO
+
+/* Add GetSentBox Procedure */
+/************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetSentBox]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetSentBox]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetSentBox]
+	@UserID          int,
+	@PortalID		 int,
+	@PageIndex       int,
+	@PageSize        int,
+	@SortField       nvarchar(25) = 'CreatedOnDate',
+	@SortAscending   bit = 0
+AS
+BEGIN
+
+-- Set the page bounds
+DECLARE @PageLowerBound INT, @PageUpperBound INT;
+
+SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
+SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
+
+--Get the top message for each conversation
+;WITH SentBox  AS
+(
+	SELECT  DISTINCT m.[MessageID], [ConversationID], [Subject], convert(nvarchar(50), [Body]) AS Body,
+			[To], [From], [ReplyAllAllowed], [SenderUserID],
+			m.[CreatedByUserID], m.[CreatedOnDate],
+			m.[LastModifiedByUserID], m.[LastModifiedOnDate],
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments WHERE MessageID = m.MessageID) AS AttachmentCount,
+			ROW_NUMBER() OVER(ORDER BY
+				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN m.[CreatedOnDate] END ASC,
+				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN m.[CreatedOnDate] END DESC,
+				 CASE WHEN @SortField = 'From' AND @SortAscending = 1 THEN [From] END ASC,
+				 CASE WHEN @SortField = 'From' AND @SortAscending = 0 THEN [From] END DESC,
+				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
+				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
+				) AS RowNumber
+	FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages AS m
+	INNER JOIN {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] AS mr ON m.MessageID = mr.MessageID
+	WHERE (SenderUserID = @UserID)
+	AND m.NotificationTypeID IS NULL AND m.PortalID=@PortalID
+	AND mr.Archived = 0
+)
+SELECT * from SentBox where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound
+order by RowNumber ASC
+END
+GO
+
+/* Add GetLastSentMessage Procedure */
+/************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetLastSentMessage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetLastSentMessage]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetLastSentMessage]
+	@UserID int,
+	@PortalID INT
+AS
+BEGIN
+	SELECT TOP 1 *	
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages]
+	WHERE SenderUserID = @UserID	
+	AND PortalID=@PortalID
+	AND NotificationTypeID IS NULL
+	ORDER BY MessageID DESC
 END
 GO
 

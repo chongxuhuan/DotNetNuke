@@ -54,8 +54,12 @@ namespace DotNetNuke.Authentication.Twitter
             base.OnInit(e);
 
             loginButton.Click += loginButton_Click;
+            registerButton.Click += loginButton_Click;
 
             OAuthClient = new TwitterClient(PortalId, Mode);
+
+            loginPanel.Visible = (Mode == AuthMode.Login);
+            registerItem.Visible = (Mode == AuthMode.Register);
         }
 
         private void loginButton_Click(object sender, EventArgs e)

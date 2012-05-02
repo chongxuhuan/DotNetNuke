@@ -80,7 +80,7 @@ namespace DotNetNuke.Web.CoreServices
                     {
                         var targetUser = UserController.GetUserById(PortalSettings.PortalId, targetUserId);
 
-                        RelationshipController.Instance.FollowUser(targetUser);
+                        FollowersController.Instance.FollowUser(targetUser);
                         NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
 
                         return Json(new {Result = "success"});
@@ -103,7 +103,7 @@ namespace DotNetNuke.Web.CoreServices
         {
             var initiatingUser = UserController.GetUserById(PortalSettings.PortalId, initiatingUserId);
 
-            return RelationshipController.Instance.GetFriendRelationship(initiatingUser);
+            return RelationshipController.Instance.GetFriendRelationship(UserController.GetCurrentUserInfo(), initiatingUser);
         }
 
         #endregion

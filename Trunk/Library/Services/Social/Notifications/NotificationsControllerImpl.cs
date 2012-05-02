@@ -75,31 +75,34 @@ namespace DotNetNuke.Services.Social.Notifications
 
         #region Public API
 
-        public virtual NotificationTypeAction AddNotificationTypeActionAfter(int afterNotificationTypeActionId, int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall)
+        public void SetNotificationTypeActions(IList<NotificationTypeAction> actions, int notificationTypeId)
         {
-            Requires.NotNullOrEmpty("nameResourceKey", nameResourceKey);
-            Requires.NotNullOrEmpty("apiCall", apiCall);
+            Requires.NotNull("actions", actions);
+            if(!actions.Any())
+            {
+                throw new ArgumentException("Actions must contain at least one item.");
+            }
 
-            var notificationTypeActionId = _dataService.AddNotificationTypeActionAfter(afterNotificationTypeActionId, notificationTypeId, nameResourceKey, descriptionResourceKey, confirmResourceKey, apiCall, GetCurrentUserId());
-            return GetNotificationTypeAction(notificationTypeActionId);
-        }
+            if(actions.Any(x => string.IsNullOrEmpty(x.APICall)))
+            {
+                throw new ArgumentException("All actions must specify an APICall");
+            }
 
-        public virtual NotificationTypeAction AddNotificationTypeActionBefore(int beforeNotificationTypeActionId, int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall)
-        {
-            Requires.NotNullOrEmpty("nameResourceKey", nameResourceKey);
-            Requires.NotNullOrEmpty("apiCall", apiCall);
+            if (actions.Any(x => string.IsNullOrEmpty(x.NameResourceKey)))
+            {
+                throw new ArgumentException("All actions must specify a NameResourceKey");
+            }
 
-            var notificationTypeActionId = _dataService.AddNotificationTypeActionBefore(beforeNotificationTypeActionId, notificationTypeId, nameResourceKey, descriptionResourceKey, confirmResourceKey, apiCall, GetCurrentUserId());
-            return GetNotificationTypeAction(notificationTypeActionId);
-        }
-
-        public virtual NotificationTypeAction AddNotificationTypeActionToEnd(int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall)
-        {
-            Requires.NotNullOrEmpty("nameResourceKey", nameResourceKey);
-            Requires.NotNullOrEmpty("apiCall", apiCall);
-
-            var notificationTypeActionId = _dataService.AddNotificationTypeActionToEnd(notificationTypeId, nameResourceKey, descriptionResourceKey, confirmResourceKey, apiCall, GetCurrentUserId());
-            return GetNotificationTypeAction(notificationTypeActionId);
+            foreach (var action in actions)
+            {
+                action.NotificationTypeActionId = _dataService.AddNotificationTypeAction(notificationTypeId,
+                                                                                         action.NameResourceKey,
+                                                                                         action.DescriptionResourceKey,
+                                                                                         action.ConfirmResourceKey,
+                                                                                         action.APICall,
+                                                                                         GetCurrentUserId());
+                action.NotificationTypeId = notificationTypeId;
+            }
         }
 
         public virtual int CountNotifications(int userId,int portalId)
@@ -219,28 +222,21 @@ namespace DotNetNuke.Services.Social.Notifications
             }
         }
 
-        public virtual NotificationType CreateNotificationType(string name, string description, TimeSpan timeToLive, int desktopModuleId)
+        public void CreateNotificationType(NotificationType notificationType)
         {
-            Requires.NotNullOrEmpty("name", name);
+            Requires.NotNull("notificationType", notificationType);
+            Requires.NotNullOrEmpty("notificationType.Name", notificationType.Name);
 
-            var totalMinutes = (int)timeToLive.TotalMinutes;
-            var timeToLiveMinutes = totalMinutes == 0 ? Null.NullInteger : totalMinutes;
-
-            if (desktopModuleId <= 0)
+            if (notificationType.DesktopModuleId <= 0)
             {
-                desktopModuleId = Null.NullInteger;
+                notificationType.DesktopModuleId = Null.NullInteger;
             }
 
-            var messageType = new NotificationType
-            {
-                NotificationTypeId = _dataService.SaveNotificationType(Null.NullInteger, name, description, timeToLiveMinutes, desktopModuleId, GetCurrentUserId()),
-                Name = name,
-                Description = description,
-                TimeToLive = timeToLive,
-                DesktopModuleId = desktopModuleId
-            };
-
-            return messageType;
+            notificationType.NotificationTypeId = _dataService.CreateNotificationType(notificationType.Name,
+                                                                                      notificationType.Description,
+                                                                                      (int) notificationType.TimeToLive.TotalMinutes == 0 ? Null.NullInteger : (int) notificationType.TimeToLive.TotalMinutes,
+                                                                                      notificationType.DesktopModuleId,
+                                                                                      GetCurrentUserId());
         }
 
         public virtual void DeleteNotification(int notificationId)
@@ -317,39 +313,6 @@ namespace DotNetNuke.Services.Social.Notifications
         public virtual IList<NotificationTypeAction> GetNotificationTypeActions(int notificationTypeId)
         {
             return CBO.FillCollection<NotificationTypeAction>(_dataService.GetNotificationTypeActions(notificationTypeId));
-        }
-
-        public virtual void UpdateNotificationType(NotificationType notificationType)
-        {
-            Requires.NotNull("NotificationType", notificationType);
-
-            var totalMinutes = (int)notificationType.TimeToLive.TotalMinutes;
-            var timeToLiveMinutes = totalMinutes == 0 ? Null.NullInteger : totalMinutes;
-
-            _dataService.SaveNotificationType(
-                notificationType.NotificationTypeId,
-                notificationType.Name,
-                notificationType.Description,
-                timeToLiveMinutes,
-                notificationType.DesktopModuleId,
-                GetCurrentUserId());
-
-            RemoveNotificationTypeCache();
-        }
-
-        public virtual void UpdateNotificationTypeAction(NotificationTypeAction notificationTypeAction)
-        {
-            Requires.NotNull("notificationTypeAction", notificationTypeAction);
-
-            _dataService.UpdateNotificationTypeAction(
-                notificationTypeAction.NotificationTypeActionId,
-                notificationTypeAction.NameResourceKey,
-                notificationTypeAction.DescriptionResourceKey,
-                notificationTypeAction.ConfirmResourceKey,
-                notificationTypeAction.APICall,
-                GetCurrentUserId());
-
-            RemoveNotificationTypeActionCache();
         }
 
         #endregion

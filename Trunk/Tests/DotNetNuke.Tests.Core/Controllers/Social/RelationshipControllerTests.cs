@@ -28,6 +28,7 @@ using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Social;
 using DotNetNuke.Entities.Users.Social.Data;
+using DotNetNuke.Entities.Users.Social.Internal;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Tests.Utilities;
@@ -885,132 +886,6 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         #endregion
 
         #region Relationship Business APIs Tests
-
-        #region AddFriend Tests
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void RelationshipController_AddFriend_Throws_When_On_Null_Initiating_User()
-        {
-            //Arrange
-            var relationshipController = CreateRelationshipController();
-            var targetUser = new UserInfo();
-
-            //Act, Assert
-            relationshipController.AddFriend(null, targetUser);
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void RelationshipController_AddFriend_Throws_When_On_Null_Target_User()
-        {
-            //Arrange
-            var relationshipController = CreateRelationshipController();
-            var initiatingUser = new UserInfo();
-
-            //Act, Assert
-            relationshipController.AddFriend(initiatingUser, null);
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void RelationshipController_AddFriend_Throws_On_Negative_Initiating_UserID()
-        {
-            //Arrange
-            var relationshipController = CreateRelationshipController(CreateMockDataServiceWithRelationshipTypes());
-            var initiatingUser = new UserInfo();
-            var targetUser = new UserInfo {UserID = Constants.USER_TenId};
-
-            //Act, Assert
-            relationshipController.AddFriend(initiatingUser, targetUser);
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void RelationshipController_AddFriend_Throws_On_Negative_Target_UserID()
-        {
-            //Arrange
-            var relationshipController = CreateRelationshipController(CreateMockDataServiceWithRelationshipTypes());
-            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId };
-            var targetUser = new UserInfo();
-
-            //Act, Assert
-            relationshipController.AddFriend(initiatingUser, targetUser);
-        }
-        
-        [Test]
-        [ExpectedException(typeof(UserRelationshipForSameUsersException))]
-        public void RelationshipController_AddFriend_Throws_When_Same_Users_Are_Passed()
-        {
-            //Arrange
-            var relationshipController = CreateRelationshipController(CreateMockDataServiceWithRelationshipTypes());
-            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
-
-            //Act, Assert
-            relationshipController.AddFriend(initiatingUser, initiatingUser);
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void RelationshipController_AddFriend_Throws_On_Negative_Initiating_PortalID()
-        {
-            //Arrange
-            var relationshipController = CreateRelationshipController(CreateMockDataServiceWithRelationshipTypes());
-            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId };
-            var targetUser = new UserInfo {UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero};
-
-            //Act, Assert
-            relationshipController.AddFriend(initiatingUser, targetUser);
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void RelationshipController_AddFriend_Throws_On_Negative_Target_PortalID()
-        {
-            //Arrange
-            var relationshipController = CreateRelationshipController(CreateMockDataServiceWithRelationshipTypes());
-            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
-            var targetUser = new UserInfo {UserID = Constants.USER_ElevenId};
-
-            //Act, Assert
-            relationshipController.AddFriend(initiatingUser, targetUser);
-        }
-
-        [Test]
-        [ExpectedException(typeof(UserRelationshipForDifferentPortalException))]
-        public void RelationshipController_AddFriend_Throws_On_Users_With_Different_PortalID()
-        {
-            //Arrange
-            var relationshipController = CreateRelationshipController(CreateMockDataServiceWithRelationshipTypes());
-            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
-            var targetUser = new UserInfo {UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_One};
-
-            //Act, Assert
-            relationshipController.AddFriend(initiatingUser, targetUser);
-        }
-
-        [Test]
-        [ExpectedException(typeof(UserRelationshipExistsException))]
-        public void RelationshipController_AddFriend_Throws_On_Existing_Relationship()
-        {
-            //Arrange
-            var mockDataService = CreateMockDataServiceWithRelationshipTypes();
-            var relationshipController = CreateRelationshipController(mockDataService);
-            var initiatingUser = new UserInfo { UserID = Constants.USER_TenId, PortalID = Constants.PORTAL_Zero };
-            var targetUser = new UserInfo { UserID = Constants.USER_ElevenId, PortalID = Constants.PORTAL_Zero };
-
-            //Any UserRelationship between user10 and user11
-            dtUserRelationships.Rows.Clear();
-            dtUserRelationships.Rows.Add(Constants.SOCIAL_UserRelationshipIDUser10User11, Constants.USER_TenId, Constants.USER_ElevenId, Constants.SOCIAL_FriendRelationshipID, RelationshipStatus.None);
-
-            //setup mock DataService            
-            mockDataService.Setup(md => md.GetUserRelationship(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<RelationshipDirection>())).Returns(dtUserRelationships.CreateDataReader());
-
-            //Act, Assert
-            relationshipController.AddFriend(initiatingUser, targetUser);
-        }
-    
-        #endregion
 
         #region InitiateUserRelationship Tests
 

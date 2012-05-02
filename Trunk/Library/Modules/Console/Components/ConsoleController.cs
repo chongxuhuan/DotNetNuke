@@ -117,6 +117,7 @@ namespace DotNetNuke.Modules.Console.Components
             IList<string> returnValue = new List<string>();
             returnValue.Add("IconFile");
             returnValue.Add("IconFileLarge");
+            returnValue.Add("IconNone");
             return returnValue;
         }
 

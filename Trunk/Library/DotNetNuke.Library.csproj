@@ -201,6 +201,12 @@
     <Compile Include="Entities\Users\Internal\IUserController.cs" />
     <Compile Include="Entities\Users\Internal\TestableUserController.cs" />
     <Compile Include="Entities\Users\Internal\UserControllerImpl.cs" />
+    <Compile Include="Entities\Users\Social\FollowersController.cs" />
+    <Compile Include="Entities\Users\Social\FriendsController.cs" />
+    <Compile Include="Entities\Users\Social\IFollowersController.cs" />
+    <Compile Include="Entities\Users\Social\IFriendsController.cs" />
+    <Compile Include="Entities\Users\Social\FollowersControllerImpl.cs" />
+    <Compile Include="Entities\Users\Social\FriendsControllerImpl.cs" />
     <Compile Include="Entities\Users\Social\IRelationshipController.cs" />
     <Compile Include="Entities\Users\Social\RelationshipControllerImpl.cs" />
     <Compile Include="Framework\ServiceLocator.cs" />
@@ -285,6 +291,7 @@
     <Compile Include="Services\Social\Messaging\MessageArchivedStatus.cs" />
     <Compile Include="Services\Social\Messaging\MessageReadStatus.cs" />
     <Compile Include="Services\Social\Messaging\Scheduler\CoreMessagingScheduler.cs" />
+    <Compile Include="Services\Social\Messaging\Views\MessageSentView.cs" />
     <Compile Include="Services\Social\Notifications\Notification.cs" />
     <Compile Include="Services\Social\Notifications\NotificationTypeAction.cs" />
     <Compile Include="Services\Social\Messaging\MessagingController.cs" />
@@ -1318,6 +1325,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\" />
+    <Folder Include="Entities\Users\Social\Internal\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <Target Name="AfterBuild" DependsOnTargets="DebugProject">

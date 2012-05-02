@@ -236,17 +236,6 @@ namespace DotNetNuke.UI.UserControls
                 return TemplateSourceDirectory + "/" + Localization.LocalResourceDirectory + "/" + MyFileName;
             }
         }
-
-        /// <summary>
-        /// Enable to save relative urls.
-        /// </summary>
-        public bool EnableRelativeUrl
-        {
-            get
-            {
-                return Mode != "RICH" || _richTextEditor.EnableRelativeUrl;
-            }
-        }
 		
 		#endregion
 

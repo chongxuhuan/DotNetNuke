@@ -1205,6 +1205,15 @@ namespace DotNetNuke.Modules.Admin.Portals
                                             break;
                                     }
                                 }
+                                else
+                                {
+                                    var controller = new ListController();
+                                    ListEntryInfo imageType = controller.GetListEntryInfo("DataType", "Image");
+                                    if (property.DataType == imageType.EntryID)
+                                    {
+                                        invalidFields += trimmedField + ",";
+                                    }
+                                }
                             }
                         }
 
@@ -1214,6 +1223,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                         }
                         else
                         {
+                            invalidFields = invalidFields.TrimEnd(',');
                             string message = String.Format(Localization.GetString("InvalidFields", LocalResourceFile), invalidFields);
                             UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.RedError);
                             return;

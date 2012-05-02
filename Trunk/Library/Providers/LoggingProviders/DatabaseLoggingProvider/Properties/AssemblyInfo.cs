@@ -32,4 +32,4 @@ using System.Reflection;
 [assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
 [assembly: AssemblyTrademark("DotNetNuke")]
 [assembly: CLSCompliant(true)]
-[assembly: AssemblyVersion("6.2.0.1331")]
+[assembly: AssemblyVersion("6.2.0.1364")]

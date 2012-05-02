@@ -49,6 +49,11 @@ namespace DotNetNuke.Services.Social.Messaging
         /// <param name="sender">Sender's UserInfo</param>        
         int WaitTimeForNextMessage(UserInfo sender);
 
+        ///<summary>Last message sent by the User</summary>
+        ///<returns>Message. Null when no message was sent</returns>
+        /// <param name="sender">Sender's UserInfo</param>        
+        Message GetLastSentMessage(UserInfo sender);
+
         ///<summary>Are attachments allowed</summary>        
         ///<returns>True or False</returns>
         /// <param name="portalId">Portal Id</param>        

@@ -843,9 +843,19 @@ namespace DotNetNuke.Modules.Html
                     desktopModule.Category = "Common";
                     DesktopModuleController.SaveDesktopModule(desktopModule, false, false);
                     break;
-           }
+
+                case "06.02.00":
+                    AddNotificationTypes();
+                    break;
+            }
 
            return string.Empty;
+        }
+
+        private void AddNotificationTypes()
+        {
+            var type = new NotificationType { Name = "HtmlNotification", Description = "Html Module Notification" };
+            NotificationsController.Instance.CreateNotificationType(type);
         }
 
         #endregion

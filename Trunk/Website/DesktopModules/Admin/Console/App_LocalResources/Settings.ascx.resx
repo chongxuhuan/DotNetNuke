@@ -237,4 +237,7 @@
   <data name="User.Text" xml:space="preserve">
     <value>User</value>
   </data>
+  <data name="IconNone.Text" xml:space="preserve">
+    <value>No Icons</value>
+  </data>
 </root>

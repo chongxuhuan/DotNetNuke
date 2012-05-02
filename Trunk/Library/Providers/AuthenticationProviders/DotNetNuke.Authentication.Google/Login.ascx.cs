@@ -26,6 +26,7 @@
 using System;
 
 using DotNetNuke.Authentication.Google.Components;
+using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Authentication.OAuth;
 
 #endregion
@@ -54,8 +55,12 @@ namespace DotNetNuke.Authentication.Google
             base.OnInit(e);
 
             loginButton.Click += loginButton_Click;
+            registerButton.Click += loginButton_Click;
 
             OAuthClient = new GoogleClient(PortalId, Mode);
+
+            loginPanel.Visible = (Mode == AuthMode.Login);
+            registerItem.Visible = (Mode == AuthMode.Register);
         }
 
         private void loginButton_Click(object sender, EventArgs e)

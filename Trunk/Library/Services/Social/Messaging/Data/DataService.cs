@@ -53,6 +53,11 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteReader("CoreMessaging_GetMessage", messageId);
         }
 
+        public IDataReader GetLastSentMessage(int userId, int portalId)
+        {
+            return _provider.ExecuteReader("CoreMessaging_GetLastSentMessage", userId, portalId);
+        }
+
         public IDataReader GetMessagesBySender(int messageId, int portalId)
         {
             return _provider.ExecuteReader("CoreMessaging_GetMessagesBySender", messageId, portalId);
@@ -117,6 +122,11 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             }
 
             return messageBoxView;
+        }
+
+        public IDataReader GetSentBoxView(int userId, int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
+        {
+            return _provider.ExecuteReader("CoreMessaging_GetSentBox", userId, portalId, pageIndex, pageSize, sortColumn, sortAscending);            
         }
 
         public MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool @sortAscending, ref int totalRecords)

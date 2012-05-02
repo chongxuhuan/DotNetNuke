@@ -98,32 +98,34 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         #region CreateNotificationType
 
         [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CreateNotificationType_Throws_On_Null_NotificationType()
+        {
+            _notificationsController.CreateNotificationType(null);
+        }
+
+        [Test]
         [TestCase("")]
         [TestCase(null)]
         [ExpectedException(typeof(ArgumentException))]
         public void CreateNotificationType_Throws_On_Null_Or_Empty_Name(string name)
         {
-            _notificationsController.CreateNotificationType(
-                name,
-                Constants.Messaging_NotificationTypeDescription,
-                TimeSpan.FromMinutes(Constants.Messaging_NotificationTypeTTL),
-                Constants.Messaging_NotificationTypeDesktopModuleId);
+            var notificationType = CreateNewNotificationType();
+            notificationType.Name = name;
+
+            _notificationsController.CreateNotificationType(notificationType);
         }
 
         [Test]
-        public void CreateNotificationType_Calls_DataService_SaveNotificationType()
+        public void CreateNotificationType_Calls_DataService_CreateNotificationType()
         {
             _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
 
             _mockDataService
-                .Setup(ds => ds.SaveNotificationType(Null.NullInteger, Constants.Messaging_NotificationTypeName, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), Constants.UserID_User12))
+                .Setup(ds => ds.CreateNotificationType(Constants.Messaging_NotificationTypeName, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), Constants.UserID_User12))
                 .Verifiable();
 
-            _mockNotificationsController.Object.CreateNotificationType(
-                Constants.Messaging_NotificationTypeName,
-                Constants.Messaging_NotificationTypeDescription,
-                TimeSpan.FromMinutes(Constants.Messaging_NotificationTypeTTL),
-                Constants.Messaging_NotificationTypeDesktopModuleId);
+            _mockNotificationsController.Object.CreateNotificationType(CreateNewNotificationType());
 
             _mockDataService.Verify();
         }
@@ -135,25 +137,23 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         public void CreateNotificationType_Returns_Object_With_Valid_TimeToLive(int actualTimeToLiveTotalMinutes, int expectedTimeToLiveTotalMinutes)
         {
             var actualTimeToLive = TimeSpan.FromMinutes(actualTimeToLiveTotalMinutes);
-            var messageType = _notificationsController.CreateNotificationType(
-                Constants.Messaging_NotificationTypeName,
-                Constants.Messaging_NotificationTypeDescription,
-                actualTimeToLive,
-                Constants.Messaging_NotificationTypeDesktopModuleId);
 
-            Assert.AreEqual(expectedTimeToLiveTotalMinutes, (int)messageType.TimeToLive.TotalMinutes);
+            var notificationType = CreateNewNotificationType();
+            notificationType.TimeToLive = actualTimeToLive;
+            _notificationsController.CreateNotificationType(notificationType);
+
+            Assert.AreEqual(expectedTimeToLiveTotalMinutes, (int)notificationType.TimeToLive.TotalMinutes);
         }
 
         [Test]
-        public void CreateNotificationType_Returns_Valid_Object()
+        public void CreateNotificationType_Makes_Valid_Object()
         {
             var expectedNotificationType = CreateValidNotificationType();
 
             _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
 
             _mockDataService
-                .Setup(ds => ds.SaveNotificationType(
-                    Null.NullInteger,
+                .Setup(ds => ds.CreateNotificationType(
                     expectedNotificationType.Name,
                     expectedNotificationType.Description,
                     (int)expectedNotificationType.TimeToLive.TotalMinutes,
@@ -161,11 +161,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     Constants.UserID_User12))
                 .Returns(Constants.Messaging_NotificationTypeId);
 
-            var actualNotificationType = _mockNotificationsController.Object.CreateNotificationType(
-                expectedNotificationType.Name,
-                expectedNotificationType.Description,
-                expectedNotificationType.TimeToLive,
-                expectedNotificationType.DesktopModuleId);
+            var actualNotificationType = CreateNewNotificationType();
+            _mockNotificationsController.Object.CreateNotificationType(actualNotificationType);
 
             Assert.IsTrue(new NotificationTypeComparer().Equals(expectedNotificationType, actualNotificationType));
         }
@@ -307,126 +304,81 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         #endregion
 
-        #region UpdateNotificationType
-
+        #region AddNotificationTypeAction
         [Test]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void UpdateNotificationType_Throws_On_Null_NotificationType()
+        public void SetNotificationTypeActions_Throws_On_Null()
         {
-            _notificationsController.UpdateNotificationType(null);
+            _notificationsController.SetNotificationTypeActions(null, Constants.Messaging_NotificationTypeId);
         }
 
         [Test]
-        public void UpdateNotificationType_Calls_DataService_SaveNotificationType()
-        {
-            var notificationType = CreateValidNotificationType();
-
-            _mockDataService
-                .Setup(ds => ds.SaveNotificationType(
-                    notificationType.NotificationTypeId,
-                    notificationType.Name,
-                    notificationType.Description,
-                    Constants.Messaging_NotificationTypeTTL,
-                    notificationType.DesktopModuleId,
-                    Constants.UserID_User12))
-                .Verifiable();
-
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockNotificationsController.Object.UpdateNotificationType(notificationType);
-
-            _mockDataService.Verify();
-        }
-
-        [Test]
-        public void UpdateNotificationType_Removes_Object_From_Cache()
-        {
-            var notificationType = CreateValidNotificationType();
-
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockDataService
-                .Setup(ds => ds.SaveNotificationType(
-                    notificationType.NotificationTypeId,
-                    notificationType.Name,
-                    notificationType.Description,
-                    Constants.Messaging_NotificationTypeTTL,
-                    notificationType.DesktopModuleId,
-                    Constants.UserID_User12));
-
-            _mockNotificationsController.Setup(nc => nc.RemoveNotificationTypeCache()).Verifiable();
-            _mockNotificationsController.Object.UpdateNotificationType(notificationType);
-            _mockNotificationsController.Verify();
-        }
-
-        #endregion
-
-        #region AddNotificationTypeActionToEnd
-
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
         [ExpectedException(typeof(ArgumentException))]
-        public void AddNotificationTypeActionToEnd_Throws_On_Null_Or_Empty_Name(string name)
+        public void SetNotificationTypeActions_Throws_On_EmptyList()
         {
-            _notificationsController.AddNotificationTypeActionToEnd(
-                Constants.Messaging_NotificationTypeId,
-                name,
-                Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                Constants.Messaging_NotificationTypeActionAPICall);
+            _notificationsController.SetNotificationTypeActions(new List<NotificationTypeAction>(), Constants.Messaging_NotificationTypeId);
         }
 
         [Test]
         [TestCase(null)]
         [TestCase("")]
         [ExpectedException(typeof(ArgumentException))]
-        public void AddNotificationTypeActionToEnd_Throws_On_Null_Or_Empty_APICall(string apiCall)
+        public void SetNotificationTypeActions_Throws_On_Null_Or_Empty_Name(string name)
         {
-            _notificationsController.AddNotificationTypeActionToEnd(
-                Constants.Messaging_NotificationTypeId,
-                Constants.Messaging_NotificationTypeActionNameResourceKey,
-                Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                apiCall);
+            var action = CreateNewNotificationTypeAction();
+            action.NameResourceKey = name;
+            _notificationsController.SetNotificationTypeActions(new [] {action}, Constants.Messaging_NotificationTypeId);
         }
 
         [Test]
-        public void AddNotificationTypeActionToEnd_Calls_DataService_AddNotificationTypeActionToEnd()
+        [TestCase(null)]
+        [TestCase("")]
+        [ExpectedException(typeof(ArgumentException))]
+        public void SetNotificationTypeActions_Throws_On_Null_Or_Empty_APICall(string apiCall)
+        {
+            var action = CreateNewNotificationTypeAction();
+            action.APICall = apiCall;
+            _notificationsController.SetNotificationTypeActions(new[] { action }, Constants.Messaging_NotificationTypeId);
+        }
+
+        [Test]
+        public void SetNotificationTypeActions_Calls_DataService_AddNotificationTypeAction_For_Each_Of_Two_Actions()
         {
             _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
 
-            _mockDataService
-                .Setup(ds => ds.AddNotificationTypeActionToEnd(
-                    Constants.Messaging_NotificationTypeId,
+//            _mockDataService
+//                .Setup(ds => ds.AddNotificationTypeAction(
+//                    Constants.Messaging_NotificationTypeId,
+//                    Constants.Messaging_NotificationTypeActionNameResourceKey,
+//                    Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
+//                    Constants.Messaging_NotificationTypeActionConfirmResourceKey,
+//                    Constants.Messaging_NotificationTypeActionAPICall,
+//                    Constants.UserID_User12))
+//                .Verifiable();
+
+            _mockNotificationsController.Setup(nc => nc.GetNotificationTypeAction(It.IsAny<int>()));
+
+            _mockNotificationsController.Object.SetNotificationTypeActions(
+                new [] {CreateNewNotificationTypeAction(), CreateNewNotificationTypeAction()},
+                Constants.Messaging_NotificationTypeId);
+
+            _mockDataService.Verify(x => x.AddNotificationTypeAction(Constants.Messaging_NotificationTypeId,
                     Constants.Messaging_NotificationTypeActionNameResourceKey,
                     Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
                     Constants.Messaging_NotificationTypeActionConfirmResourceKey,
                     Constants.Messaging_NotificationTypeActionAPICall,
-                    Constants.UserID_User12))
-                .Verifiable();
-
-            _mockNotificationsController.Setup(nc => nc.GetNotificationTypeAction(It.IsAny<int>()));
-
-            _mockNotificationsController.Object.AddNotificationTypeActionToEnd(
-                Constants.Messaging_NotificationTypeId,
-                Constants.Messaging_NotificationTypeActionNameResourceKey,
-                Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                Constants.Messaging_NotificationTypeActionAPICall);
-
-            _mockDataService.Verify();
+                    Constants.UserID_User12), Times.Exactly(2));
         }
 
         [Test]
-        public void AddNotificationTypeActionToEnd_ReturnsValidObject()
+        public void SetNotificationTypeActions_Sets_NotificationTypeActionId_And_NotificationTypeId()
         {
             var expectedNotificationTypeAction = CreateValidNotificationTypeAction();
 
             _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
 
             _mockDataService
-                .Setup(ds => ds.AddNotificationTypeActionToEnd(
+                .Setup(ds => ds.AddNotificationTypeAction(
                     expectedNotificationTypeAction.NotificationTypeId,
                     expectedNotificationTypeAction.NameResourceKey,
                     expectedNotificationTypeAction.DescriptionResourceKey,
@@ -438,261 +390,11 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _mockNotificationsController
                 .Setup(nc => nc.GetNotificationTypeAction(expectedNotificationTypeAction.NotificationTypeActionId))
                 .Returns(expectedNotificationTypeAction);
+            
+            var action = CreateNewNotificationTypeAction();
+            _mockNotificationsController.Object.SetNotificationTypeActions(new []{action}, expectedNotificationTypeAction.NotificationTypeId);
 
-            var actualNotificationTypeAction = _mockNotificationsController.Object.AddNotificationTypeActionToEnd(
-                expectedNotificationTypeAction.NotificationTypeId,
-                expectedNotificationTypeAction.NameResourceKey,
-                expectedNotificationTypeAction.DescriptionResourceKey,
-                expectedNotificationTypeAction.ConfirmResourceKey,
-                expectedNotificationTypeAction.APICall);
-
-            Assert.IsTrue(new NotificationTypeActionComparer().Equals(expectedNotificationTypeAction, actualNotificationTypeAction));
-        }
-
-        #endregion
-
-        #region AddNotificationTypeActionAfter
-
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
-        [ExpectedException(typeof(ArgumentException))]
-        public void AddNotificationTypeActionAfter_Throws_On_Null_Or_Empty_Name(string name)
-        {
-            _notificationsController.AddNotificationTypeActionAfter(
-                Constants.Messaging_NotificationTypeActionId,
-                Constants.Messaging_NotificationTypeId,
-                name,
-                Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                Constants.Messaging_NotificationTypeActionAPICall);
-        }
-
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
-        [ExpectedException(typeof(ArgumentException))]
-        public void AddNotificationTypeActionAfter_Throws_On_Null_Or_Empty_APICall(string apiCall)
-        {
-            _notificationsController.AddNotificationTypeActionAfter(
-                Constants.Messaging_NotificationTypeActionId,
-                Constants.Messaging_NotificationTypeId,
-                Constants.Messaging_NotificationTypeActionNameResourceKey,
-                Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                apiCall);
-        }
-
-        [Test]
-        public void AddNotificationTypeActionAfter_Calls_DataService_AddNotificationTypeActionAfter()
-        {
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockDataService
-                .Setup(ds => ds.AddNotificationTypeActionAfter(
-                    Constants.Messaging_NotificationTypeActionId,
-                    Constants.Messaging_NotificationTypeId,
-                    Constants.Messaging_NotificationTypeActionNameResourceKey,
-                    Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                    Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                    Constants.Messaging_NotificationTypeActionAPICall,
-                    Constants.UserID_User12))
-                .Verifiable();
-
-            _mockNotificationsController.Setup(nc => nc.GetNotificationTypeAction(It.IsAny<int>()));
-
-            _mockNotificationsController.Object.AddNotificationTypeActionAfter(
-                Constants.Messaging_NotificationTypeActionId,
-                Constants.Messaging_NotificationTypeId,
-                Constants.Messaging_NotificationTypeActionNameResourceKey,
-                Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                Constants.Messaging_NotificationTypeActionAPICall);
-
-            _mockDataService.Verify();
-        }
-
-        [Test]
-        public void AddNotificationTypeActionAfter_ReturnsValidObject()
-        {
-            var expectedNotificationTypeAction = CreateValidNotificationTypeAction();
-
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockDataService
-                .Setup(ds => ds.AddNotificationTypeActionAfter(
-                    expectedNotificationTypeAction.NotificationTypeActionId,
-                    expectedNotificationTypeAction.NotificationTypeId,
-                    expectedNotificationTypeAction.NameResourceKey,
-                    expectedNotificationTypeAction.DescriptionResourceKey,
-                    expectedNotificationTypeAction.ConfirmResourceKey,
-                    expectedNotificationTypeAction.APICall,
-                    Constants.UserID_User12))
-                .Returns(expectedNotificationTypeAction.NotificationTypeActionId);
-
-            _mockNotificationsController
-                .Setup(nc => nc.GetNotificationTypeAction(expectedNotificationTypeAction.NotificationTypeActionId))
-                .Returns(expectedNotificationTypeAction);
-
-            var actualNotificationTypeAction = _mockNotificationsController.Object.AddNotificationTypeActionAfter(
-                expectedNotificationTypeAction.NotificationTypeActionId,
-                expectedNotificationTypeAction.NotificationTypeId,
-                expectedNotificationTypeAction.NameResourceKey,
-                expectedNotificationTypeAction.DescriptionResourceKey,
-                expectedNotificationTypeAction.ConfirmResourceKey,
-                expectedNotificationTypeAction.APICall);
-
-            Assert.IsTrue(new NotificationTypeActionComparer().Equals(expectedNotificationTypeAction, actualNotificationTypeAction));
-        }
-
-        #endregion
-
-        #region AddNotificationTypeActionBefore
-
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
-        [ExpectedException(typeof(ArgumentException))]
-        public void AddNotificationTypeActionBefore_Throws_On_Null_Or_Empty_Name(string name)
-        {
-            _notificationsController.AddNotificationTypeActionBefore(
-                Constants.Messaging_NotificationTypeActionId,
-                Constants.Messaging_NotificationTypeId,
-                name,
-                Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                Constants.Messaging_NotificationTypeActionAPICall);
-        }
-
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
-        [ExpectedException(typeof(ArgumentException))]
-        public void AddNotificationTypeActionBefore_Throws_On_Null_Or_Empty_APICall(string apiCall)
-        {
-            _notificationsController.AddNotificationTypeActionBefore(
-                Constants.Messaging_NotificationTypeActionId,
-                Constants.Messaging_NotificationTypeId,
-                Constants.Messaging_NotificationTypeActionNameResourceKey,
-                Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                apiCall);
-        }
-
-        [Test]
-        public void AddNotificationTypeActionBefore_Calls_DataService_AddNotificationTypeActionBefore()
-        {
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockDataService
-                .Setup(ds => ds.AddNotificationTypeActionBefore(
-                    Constants.Messaging_NotificationTypeActionId,
-                    Constants.Messaging_NotificationTypeId,
-                    Constants.Messaging_NotificationTypeActionNameResourceKey,
-                    Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                    Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                    Constants.Messaging_NotificationTypeActionAPICall,
-                    Constants.UserID_User12))
-                .Verifiable();
-
-            _mockNotificationsController.Setup(nc => nc.GetNotificationTypeAction(It.IsAny<int>()));
-
-            _mockNotificationsController.Object.AddNotificationTypeActionBefore(
-                Constants.Messaging_NotificationTypeActionId,
-                Constants.Messaging_NotificationTypeId,
-                Constants.Messaging_NotificationTypeActionNameResourceKey,
-                Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                Constants.Messaging_NotificationTypeActionAPICall);
-
-            _mockDataService.Verify();
-        }
-
-        [Test]
-        public void AddNotificationTypeActionBefore_ReturnsValidObject()
-        {
-            var expectedNotificationTypeAction = CreateValidNotificationTypeAction();
-
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockDataService
-                .Setup(ds => ds.AddNotificationTypeActionBefore(
-                    expectedNotificationTypeAction.NotificationTypeActionId,
-                    expectedNotificationTypeAction.NotificationTypeId,
-                    expectedNotificationTypeAction.NameResourceKey,
-                    expectedNotificationTypeAction.DescriptionResourceKey,
-                    expectedNotificationTypeAction.ConfirmResourceKey,
-                    expectedNotificationTypeAction.APICall,
-                    Constants.UserID_User12))
-                .Returns(expectedNotificationTypeAction.NotificationTypeActionId);
-
-            _mockNotificationsController
-                .Setup(nc => nc.GetNotificationTypeAction(expectedNotificationTypeAction.NotificationTypeActionId))
-                .Returns(expectedNotificationTypeAction);
-
-            var actualNotificationTypeAction = _mockNotificationsController.Object.AddNotificationTypeActionBefore(
-                expectedNotificationTypeAction.NotificationTypeActionId,
-                expectedNotificationTypeAction.NotificationTypeId,
-                expectedNotificationTypeAction.NameResourceKey,
-                expectedNotificationTypeAction.DescriptionResourceKey,
-                expectedNotificationTypeAction.ConfirmResourceKey,
-                expectedNotificationTypeAction.APICall);
-
-            Assert.IsTrue(new NotificationTypeActionComparer().Equals(expectedNotificationTypeAction, actualNotificationTypeAction));
-        }
-
-        #endregion
-
-        #region UpdateNotificationTypeAction
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void UpdateNotificationTypeAction_Throws_On_Null_NotificationTypeAction()
-        {
-            _notificationsController.UpdateNotificationTypeAction(null);
-        }
-
-        [Test]
-        public void UpdateNotificationTypeAction_Calls_DataService_UpdateNotificationTypeAction()
-        {
-            var notificationTypeAction = CreateValidNotificationTypeAction();
-
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockDataService
-                .Setup(ds => ds.UpdateNotificationTypeAction(
-                    notificationTypeAction.NotificationTypeActionId,
-                    notificationTypeAction.NameResourceKey,
-                    notificationTypeAction.DescriptionResourceKey,
-                    notificationTypeAction.ConfirmResourceKey,
-                    notificationTypeAction.APICall,
-                    Constants.UserID_User12))
-                .Verifiable();
-
-            _mockNotificationsController.Object.UpdateNotificationTypeAction(notificationTypeAction);
-
-            _mockDataService.Verify();
-        }
-
-        [Test]
-        public void UpdateNotificationTypeAction_Removes_Object_From_Cache()
-        {
-            var notificationTypeAction = CreateValidNotificationTypeAction();
-
-            _mockNotificationsController.Setup(nc => nc.GetCurrentUserId()).Returns(Constants.UserID_User12);
-
-            _mockDataService
-                .Setup(ds => ds.UpdateNotificationTypeAction(
-                    notificationTypeAction.NotificationTypeActionId,
-                    notificationTypeAction.NameResourceKey,
-                    notificationTypeAction.DescriptionResourceKey,
-                    notificationTypeAction.ConfirmResourceKey,
-                    notificationTypeAction.APICall,
-                    Constants.UserID_User12));
-
-            _mockNotificationsController.Setup(nc => nc.RemoveNotificationTypeActionCache()).Verifiable();
-            _mockNotificationsController.Object.UpdateNotificationTypeAction(notificationTypeAction);
-            _mockNotificationsController.Verify();
+            Assert.IsTrue(new NotificationTypeActionComparer().Equals(expectedNotificationTypeAction, action));
         }
 
         #endregion
@@ -1386,9 +1088,15 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         private static NotificationType CreateValidNotificationType()
         {
+            var nt = CreateNewNotificationType();
+            nt.NotificationTypeId = Constants.Messaging_NotificationTypeId;
+            return nt;
+        }
+
+        private static NotificationType CreateNewNotificationType()
+        {
             return new NotificationType
             {
-                NotificationTypeId = Constants.Messaging_NotificationTypeId,
                 Name = Constants.Messaging_NotificationTypeName,
                 Description = Constants.Messaging_NotificationTypeDescription,
                 TimeToLive = new TimeSpan(0, Constants.Messaging_NotificationTypeTTL, 0),
@@ -1398,15 +1106,23 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         private static NotificationTypeAction CreateValidNotificationTypeAction()
         {
+            var action = CreateNewNotificationTypeAction();
+
+            action.NotificationTypeActionId = Constants.Messaging_NotificationTypeActionId;
+            action.NotificationTypeId = Constants.Messaging_NotificationTypeId;
+
+            return action;
+        }
+
+        private static NotificationTypeAction CreateNewNotificationTypeAction()
+        {
             return new NotificationTypeAction
-            {
-                NotificationTypeActionId = Constants.Messaging_NotificationTypeActionId,
-                NotificationTypeId = Constants.Messaging_NotificationTypeId,
-                NameResourceKey = Constants.Messaging_NotificationTypeActionNameResourceKey,
-                DescriptionResourceKey = Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
-                ConfirmResourceKey =  Constants.Messaging_NotificationTypeActionConfirmResourceKey,
-                APICall = Constants.Messaging_NotificationTypeActionAPICall
-            };
+                       {
+                           APICall = Constants.Messaging_NotificationTypeActionAPICall,
+                           ConfirmResourceKey = Constants.Messaging_NotificationTypeActionConfirmResourceKey,
+                           DescriptionResourceKey = Constants.Messaging_NotificationTypeActionDescriptionResourceKey,
+                           NameResourceKey = Constants.Messaging_NotificationTypeActionNameResourceKey
+                       };
         }
 
         private void SetupDataTables()

@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using DotNetNuke.Common;
@@ -28,6 +29,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
+using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Log.EventLog;
 
 namespace DotNetNuke.Security.Roles.Internal
@@ -106,6 +108,23 @@ namespace DotNetNuke.Security.Roles.Internal
             Requires.NotNull("role", role);
 
             AddMessage(role, EventLogController.EventLogType.ROLE_DELETED);
+
+            if(role.SecurityMode != SecurityMode.SecurityRole)
+            {
+                //remove group artifacts
+                var portalSettings = PortalController.GetCurrentPortalSettings();
+
+                IFileManager _fileManager = FileManager.Instance;
+                IFolderManager _folderManager = FolderManager.Instance;
+
+                IFolderInfo groupFolder = _folderManager.GetFolder(portalSettings.PortalId, "Groups/" + role.RoleID);
+                if (groupFolder != null)
+                {
+                    _fileManager.DeleteFiles(_folderManager.GetFiles(groupFolder));
+                }
+                _folderManager.DeleteFolder(groupFolder);
+            }
+
             provider.DeleteRole(role);
 
             ClearRoleCache(role.PortalID);

@@ -120,6 +120,9 @@
   <data name="LoginFacebook.Text" xml:space="preserve">
     <value>Login with Facebook</value>
   </data>
+  <data name="RegisterFacebook.Text" xml:space="preserve">
+    <value>Register with Facebook</value>
+  </data>
   <data name="Title.Text" xml:space="preserve">
     <value>Facebook</value>
   </data>

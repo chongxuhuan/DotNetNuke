@@ -75,7 +75,7 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         public UserRelationship Friend
         {
-            get { return RelationshipController.Instance.GetFriendRelationship(_userInfo); }
+            get { return RelationshipController.Instance.GetFriendRelationship(UserController.GetCurrentUserInfo(), _userInfo); }
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         public UserRelationship Follower
         {
-            get { return RelationshipController.Instance.GetFollowingRelationship(_userInfo); }            
+            get { return RelationshipController.Instance.GetFollowingRelationship(UserController.GetCurrentUserInfo(), _userInfo); }            
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         public UserRelationship Following
         {
-            get { return RelationshipController.Instance.GetFollowerRelationship(_userInfo); }
+            get { return RelationshipController.Instance.GetFollowerRelationship(UserController.GetCurrentUserInfo(), _userInfo); }
         }
 
         /// <summary>

@@ -31,6 +31,7 @@ using System.IO;
 using System.Web;
 
 using DotNetNuke.Common;
+using DotNetNuke.Common.Lists;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Users;
@@ -281,19 +282,23 @@ namespace DotNetNuke.Modules.Admin.Users
 
         private void AddProperty(ProfilePropertyDefinition property)
         {
-            DnnFormEditControlItem formItem = new DnnFormEditControlItem
-                                                  {
-                                                      ResourceKey =
-                                                          String.Format("ProfileProperties_{0}", property.PropertyName),
-                                                      LocalResourceFile =
-                                                          "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx.resx",
-                                                      ControlType = EditorInfo.GetEditor(property.DataType),
-                                                      DataMember = "Profile",
-                                                      DataField = property.PropertyName,
-                                                      Visible = property.Visible,
-                                                      Required = property.Required
-                                                  };
-            userForm.Items.Add(formItem);
+            var controller = new ListController();
+            ListEntryInfo imageType = controller.GetListEntryInfo("DataType", "Image");
+            if (property.DataType != imageType.EntryID)
+            {
+                DnnFormEditControlItem formItem = new DnnFormEditControlItem
+                                                        {
+                                                            ResourceKey = String.Format("ProfileProperties_{0}", property.PropertyName),
+                                                            LocalResourceFile = "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx.resx",
+                                                            ControlType = EditorInfo.GetEditor(property.DataType),
+                                                            DataMember = "Profile",
+                                                            DataField = property.PropertyName,
+                                                            Visible = property.Visible,
+                                                            Required = property.Required
+                                                        };
+                userForm.Items.Add(formItem);
+            }
+
         }
 
         private void BindLoginControl(AuthenticationLoginBase authLoginControl, AuthenticationInfo authSystem)

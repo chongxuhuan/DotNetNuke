@@ -64,6 +64,7 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Localization.Internal;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Social.Messaging;
+using DotNetNuke.Services.Social.Notifications;
 using DotNetNuke.UI.Internals;
 using DotNetNuke.Web.Client.ClientResourceManagement;
 
@@ -4166,6 +4167,46 @@ namespace DotNetNuke.Services.Upgrade
 
             //Move Photo Property to the end of the propert list.
             MovePhotoProperty();
+
+            //Add core notification types
+            AddCoreNotificationTypesFor620();
+        }
+
+        private static void AddCoreNotificationTypesFor620()
+        {
+            var actions = new List<NotificationTypeAction>();
+
+            //Friend request
+            var type = new NotificationType {Name = "FriendRequest", Description = "Friend Request"};
+            actions.Add(new NotificationTypeAction
+                            {
+                                NameResourceKey = "Accept",
+                                DescriptionResourceKey = "AcceptFriend",
+                                APICall = "DesktopModules/CoreServices/API/RelationshipService.ashx/AcceptFriend"
+                            });
+            NotificationsController.Instance.CreateNotificationType(type);
+            NotificationsController.Instance.SetNotificationTypeActions(actions, type.NotificationTypeId);
+            
+            //Follower
+            type = new NotificationType { Name = "FollowerRequest", Description = "Follower Request" };
+            NotificationsController.Instance.CreateNotificationType(type);
+
+            //Follow Back
+            type = new NotificationType { Name = "FollowBackRequest", Description = "Follow Back Request" };
+            actions.Clear();
+            actions.Add(new NotificationTypeAction
+            {
+                NameResourceKey = "FollowBack",
+                DescriptionResourceKey = "FollowBack",
+                ConfirmResourceKey = "",
+                APICall = "DesktopModules/CoreServices/API/RelationshipService.ashx/FollowBack"
+            });
+            NotificationsController.Instance.CreateNotificationType(type);
+            NotificationsController.Instance.SetNotificationTypeActions(actions, type.NotificationTypeId);
+
+            //Translation submitted
+            type = new NotificationType { Name = "TranslationSubmitted", Description = "Translation Submitted" };
+            NotificationsController.Instance.CreateNotificationType(type);
         }
 
         private static void ConvertOldMessages()

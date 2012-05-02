@@ -179,10 +179,10 @@ a.OtherTabs:active{text-decoration:none;color:#eee;}
 .LoginContainerGroup{clear:both;padding-top:5px;}
 
 /* NEW LOGIN STYLES*/
-#Login .registerGroup,
-#Login .registerGroup *,
-#Login .loginGroup,
-#Login .loginGroup *{
+.registerGroup,
+.registerGroup *,
+.loginGroup,
+.loginGroup *{
 	display:inline;
 	text-decoration:none;
 	text-transform:capitalize;
@@ -190,21 +190,21 @@ a.OtherTabs:active{text-decoration:none;color:#eee;}
 	font-weight:bold;
 	vertical-align:bottom;
 }
-	#Login .registerGroup a,
-	#Login .loginGroup a{ text-decoration:none; }
-	#Login .registerGroup a:hover,
-	#Login .loginGroup a:hover{ text-decoration:underline;	}
+	.registerGroup a,
+	.loginGroup a{ text-decoration:none; }
+	.registerGroup a:hover,
+	.loginGroup a:hover{ text-decoration:underline;	}
 	
 	/* REGISTER GROUP STYLES */
-	#Login .registerGroup ul{padding-bottom:0;}
-	#Login .registerGroup li{ border-right:1px solid #ddd; }
-	#Login .registerGroup li.userProfileImg{border:none;}
-	#Login .registerGroup a{ padding:0 5px 0 5px; }
-	#Login .registerGroup a{ padding:0 5px 0 5px; }
-	#Login .registerGroup a img{width:25px; height:25px;} 
+	.registerGroup ul{padding-bottom:0;}
+	.registerGroup li{ border-right:1px solid #ddd; }
+	.registerGroup li.userProfileImg{border:none;}
+	.registerGroup a{ padding:0 5px 0 5px; }
+	.registerGroup a{ padding:0 5px 0 5px; }
+	.registerGroup a img{width:25px; height:25px;} 
 	
 	/* LOGIN GROUP STYLES */
-	#Login .loginGroup a.LoginLink{text-transform:capitalize;}
+	.loginGroup a.LoginLink{text-transform:capitalize;}
 
 /* Search SkinObject Styles */
 div.SearchContainer{position:relative;white-space:nowrap;}

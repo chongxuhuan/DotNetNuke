@@ -44,9 +44,9 @@ namespace DotNetNuke.Services.Social.Notifications.Data
 
         #region NotificationTypes CRUD
 
-        public int SaveNotificationType(int notificationTypeId, string name, string description, int timeToLive, int desktopModuleId, int createUpdateUserId)
+        public int CreateNotificationType(string name, string description, int timeToLive, int desktopModuleId, int createUpdateUserId)
         {
-            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("SaveNotificationType"), notificationTypeId, name, _provider.GetNull(description), _provider.GetNull(timeToLive), _provider.GetNull(desktopModuleId), createUpdateUserId);
+            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("CreateNotificationType"), name, _provider.GetNull(description), _provider.GetNull(timeToLive), _provider.GetNull(desktopModuleId), createUpdateUserId);
         }
 
         public void DeleteNotificationType(int notificationTypeId)
@@ -68,24 +68,9 @@ namespace DotNetNuke.Services.Social.Notifications.Data
 
         #region NotificationTypeActions CRUD
 
-        public int AddNotificationTypeActionToEnd(int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall, int createdByUserId)
+        public int AddNotificationTypeAction(int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall, int createdByUserId)
         {
-            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("AddNotificationTypeActionToEnd"), notificationTypeId, nameResourceKey, _provider.GetNull(descriptionResourceKey), _provider.GetNull(confirmResourceKey), apiCall, createdByUserId);
-        }
-
-        public int AddNotificationTypeActionAfter(int afternotificationTypeActionId, int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall, int createdByUserId)
-        {
-            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("AddNotificationTypeActionAfter"), afternotificationTypeActionId, notificationTypeId, nameResourceKey, _provider.GetNull(descriptionResourceKey), _provider.GetNull(confirmResourceKey), apiCall, createdByUserId);
-        }
-
-        public int AddNotificationTypeActionBefore(int beforenotificationTypeActionId, int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall, int createdByUserId)
-        {
-            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("AddNotificationTypeActionBefore"), beforenotificationTypeActionId, notificationTypeId, nameResourceKey, _provider.GetNull(descriptionResourceKey), _provider.GetNull(confirmResourceKey), apiCall, createdByUserId);
-        }
-
-        public void UpdateNotificationTypeAction(int notificationTypeActionId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall, int lastModifiedByUserId)
-        {
-            _provider.ExecuteNonQuery(GetFullyQualifiedName("UpdateNotificationTypeAction"), notificationTypeActionId, nameResourceKey, _provider.GetNull(descriptionResourceKey), _provider.GetNull(confirmResourceKey), apiCall, lastModifiedByUserId);
+            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("AddNotificationTypeAction"), notificationTypeId, nameResourceKey, _provider.GetNull(descriptionResourceKey), _provider.GetNull(confirmResourceKey), apiCall, createdByUserId);
         }
 
         public void DeleteNotificationTypeAction(int notificationTypeActionId)

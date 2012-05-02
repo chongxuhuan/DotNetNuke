@@ -1315,7 +1315,11 @@ namespace DotNetNuke.Entities.Portals
 						portal.Description = description;
 						portal.KeyWords = keyWords;
 						portal.UserTabId = TabController.GetTabByTabPath(portal.PortalID, "//UserProfile", portal.CultureCode);
-						portal.SearchTabId = TabController.GetTabByTabPath(portal.PortalID, "//SearchResults", portal.CultureCode);
+                        if (portal.UserTabId == -1)
+                        {
+                            portal.UserTabId = TabController.GetTabByTabPath(portal.PortalID, "//ActivityFeed", portal.CultureCode);
+                        }
+                        portal.SearchTabId = TabController.GetTabByTabPath(portal.PortalID, "//SearchResults", portal.CultureCode);
 						UpdatePortalInfo(portal);
 						adminUser.Profile.PreferredLocale = portal.DefaultLanguage;
 						var portalSettings = new PortalSettings(portal);
@@ -1334,6 +1338,24 @@ namespace DotNetNuke.Entities.Portals
                             DnnLog.Error(Exc);                            
                         }
 
+                        //add profanity list to new portal
+                        try
+                        {
+                            const string listName = "ProfanityFilter";
+                            var listController = new ListController();
+                            var entry = new ListEntryInfo();
+                            entry.PortalID = portalId;
+                            entry.SystemList = false;
+                            entry.ListName = listName + "-" + portalId;
+                            listController.AddListEntry(entry);
+
+                        }
+                        catch (Exception Exc)
+                        {
+                            DnnLog.Error(Exc);
+                        }
+
+                        
                         ServicesRoutingManager.ReRegisterServiceRoutesWhileSiteIsRunning();
 
                         try

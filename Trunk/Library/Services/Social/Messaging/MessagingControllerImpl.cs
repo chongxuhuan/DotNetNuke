@@ -124,14 +124,11 @@ namespace DotNetNuke.Services.Social.Messaging
                 throw new ArgumentException(string.Format(Localization.Localization.GetString("MsgSubjectTooBigError", Localization.Localization.ExceptionsResourceFile), ConstMaxSubject, subject.Length));
             }
 
-            if (roles != null && roles.Count > 0)
+            if (roles != null && roles.Count > 0 && !IsAdminOrHost(sender))
             {
-                foreach (var roleInfo in roles)
+                if (roles.Select(role => sender.Social.Roles.Any(userRoleInfo => role.RoleID == userRoleInfo.RoleID && userRoleInfo.IsOwner)).Any(owner => !owner))
                 {
-                    if (!IsAdminOrHost(sender) && sender.Social.Roles.SingleOrDefault(ur => ur.RoleID == roleInfo.RoleID && ur.IsOwner) != null)
-                    {
-                        throw new ArgumentException(Localization.Localization.GetString("MsgOnlyHostOrAdminOrGroupOwnerCanSendToRoleError", Localization.Localization.ExceptionsResourceFile));
-                    }
+                    throw new ArgumentException(Localization.Localization.GetString("MsgOnlyHostOrAdminOrGroupOwnerCanSendToRoleError", Localization.Localization.ExceptionsResourceFile));
                 }
             }
 
@@ -307,8 +304,8 @@ namespace DotNetNuke.Services.Social.Messaging
         }
 
         public virtual MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
-        {
-            return _dataService.GetMessageBoxView(userId, GetCurrentUserInfo().PortalID, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Sent);
+        {            
+            return CBO.FillObject<MessageBoxView>(_dataService.GetSentBoxView(userId, GetCurrentUserInfo().PortalID, pageIndex, pageSize, sortColumn, sortAscending));
         }
 
         public virtual int CountArchivedMessagesByConversation(int conversationId)
@@ -460,14 +457,23 @@ namespace DotNetNuke.Services.Social.Messaging
             var interval = GetPortalSettingAsInteger("MessagingThrottlingInterval", sender.PortalID, Null.NullInteger) * 60;
             if (interval > 0 && !IsAdminOrHost(sender))
             {
-                var messageBoxView = GetRecentSentbox(sender.UserID, 0, 1);
-                if (messageBoxView != null && messageBoxView.TotalConversations > 0)
+                var lastSentMessage = GetLastSentMessage(sender);
+                if (lastSentMessage != null)
                 {
-                    waitTime = (int)(interval - GetDateTimeNow().Subtract(messageBoxView.Conversations.First().CreatedOnDate).TotalSeconds);
+                    waitTime = (int)(interval - GetDateTimeNow().Subtract(lastSentMessage.CreatedOnDate).TotalSeconds);
                 }
             }
             return waitTime < 0 ? 0 : waitTime;
         }
+
+        ///<summary>Last message sent by the User</summary>
+        ///<returns>Message. Null when no message was sent</returns>
+        /// <param name="sender">Sender's UserInfo</param>        
+        public virtual Message GetLastSentMessage(UserInfo sender)
+        {
+            return CBO.FillObject<Message>(_dataService.GetLastSentMessage(sender.UserID, sender.PortalID));
+        }
+
 
         #endregion
 
@@ -480,7 +486,7 @@ namespace DotNetNuke.Services.Social.Messaging
 
         internal virtual DateTime GetDateTimeNow()
         {
-            return DateTime.Now;
+            return DateTime.UtcNow;
         }
 
         internal virtual string GetPortalSetting(string settingName, int portalId, string defaultValue)

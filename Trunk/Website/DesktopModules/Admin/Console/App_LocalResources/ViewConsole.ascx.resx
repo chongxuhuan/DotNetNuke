@@ -12,7 +12,7 @@
     
     Example:
     
-    ... ado.net/XML headers && schema ...
+    ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
     <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
@@ -131,5 +131,8 @@
   </data>
   <data name="Show.Text" xml:space="preserve">
     <value>Detailed View</value>
+  </data>
+  <data name="IconNone.Text" xml:space="preserve">
+    <value>No Icons</value>
   </data>
 </root>

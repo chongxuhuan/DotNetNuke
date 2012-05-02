@@ -27,18 +27,25 @@
         }
 
         function _changeView(jObj) {
-            var classList = "console-small console-large console-small-detail console-large-detail";
-            var style = opts.selectedSize == "IconFile" ? "console-small" : "console-large";
+            var classList = "console-none console-none-detail console-small console-large console-small-detail console-large-detail";
+            switch (opts.selectedSize) {
+                case "IconFile":
+                    style = "console-small";
+                    $(jObj).find("div > div img").hide();
+                    $(jObj).find("div > div img:first-child").show();
+                    break;
+                case "IconFileLarge":
+                    $(jObj).find("div > div img").show();
+                    $(jObj).find("div > div img:first-child").hide();
+                    style = "console-large";
+                    break;
+                case "IconNone":
+                    $(jObj).find("div > div img").hide();
+                    $(jObj).find("div > div img:first-child").hide();
+                    style = "console-none";
+                    break;
+            }
             style += opts.showDetails == "Show" ? "-detail" : "";
-
-            if (opts.selectedSize == "IconFile") {
-                $(jObj).find("div > div img").hide();
-                $(jObj).find("div > div img:first-child").show();
-            }
-            else {
-                $(jObj).find("div > div img").show();
-                $(jObj).find("div > div img:first-child").hide();
-            }
 
             $(jObj).find("div").removeClass(classList).addClass(style);
 
@@ -61,7 +68,7 @@
         var self = this;
         $(this).find("select").bind("change", function () {
             var data = "";
-            if (this.value == "IconFile" || this.value == "IconFileLarge") {
+            if (this.value == "IconFile" || this.value == "IconFileLarge" || this.value == "IconNone") {
                 opts.selectedSize = this.value;
                 data = "CS=" + opts.selectedSize;
             }
@@ -95,5 +102,11 @@
         return this;
     };
 
-    $.fn.dnnConsole.defaults = { allowIconSizeChange: true, allowDetailChange: true, selectedSize: 'IconFile', showDetails: 'Hide', showTooltip: true };
+    $.fn.dnnConsole.defaults = {
+        allowIconSizeChange: true,
+        allowDetailChange: true,
+        selectedSize: 'IconFile',
+        showDetails: 'Hide',
+        showTooltip: true
+    };
 })(jQuery);

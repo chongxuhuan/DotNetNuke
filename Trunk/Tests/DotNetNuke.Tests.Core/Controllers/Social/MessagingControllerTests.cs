@@ -69,6 +69,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         private UserInfo _adminUserInfo;
         private UserInfo _hostUserInfo;
         private UserInfo _user12UserInfo;
+        private UserInfo _groupOwnerUserInfo;
 
         #endregion
 
@@ -110,6 +111,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _adminUserInfo = new UserInfo { DisplayName = Constants.UserDisplayName_Admin, UserID = Constants.UserID_Admin, Roles = new[] { Constants.RoleName_Administrators } };
             _hostUserInfo = new UserInfo { DisplayName = Constants.UserDisplayName_Host, UserID = Constants.UserID_Host, IsSuperUser = true };
             _user12UserInfo = new UserInfo { DisplayName = Constants.UserDisplayName_User12, UserID = Constants.UserID_User12 };
+            _groupOwnerUserInfo = new UserInfo { DisplayName = Constants.UserDisplayName_FirstSocialGroupOwner, UserID = Constants.UserID_FirstSocialGroupOwner };
         }
 
         private void SetupPortalSettingsWrapper()
@@ -119,12 +121,13 @@ namespace DotNetNuke.Tests.Core.Controllers
 
         private void SetupRoleProvider()
         {
-            var adminRoleInfo = new UserRoleInfo { RoleName = Constants.RoleName_Administrators, RoleID = Constants.RoleID_Administrators, UserID = Constants.UserID_Admin };
-            var user12RoleInfo = new UserRoleInfo { RoleName = Constants.RoleName_RegisteredUsers, RoleID = Constants.RoleID_RegisteredUsers, UserID = Constants.UserID_User12 };
+            var adminRoleInfoForAdministrators = new UserRoleInfo { RoleName = Constants.RoleName_Administrators, RoleID = Constants.RoleID_Administrators, UserID = Constants.UserID_Admin };
+            var adminRoleInfoforRegisteredUsers = new UserRoleInfo { RoleName = Constants.RoleName_RegisteredUsers, RoleID = Constants.RoleID_RegisteredUsers, UserID = Constants.UserID_User12 };
+            var user12RoleInfoforRegisteredUsers = new UserRoleInfo { RoleName = Constants.RoleName_RegisteredUsers, RoleID = Constants.RoleID_RegisteredUsers, UserID = Constants.UserID_User12 };
             var userFirstSocialGroupOwner = new UserRoleInfo { RoleName = Constants.RoleName_FirstSocialGroup, RoleID = Constants.RoleID_FirstSocialGroup, UserID = Constants.UserID_FirstSocialGroupOwner, IsOwner = true};
 
-            _mockRoleProvider.Setup(rp => rp.GetUserRoles(It.Is<UserInfo>(u => u.UserID == Constants.UserID_Admin), It.IsAny<bool>())).Returns(new List<UserRoleInfo> { adminRoleInfo });
-            _mockRoleProvider.Setup(rp => rp.GetUserRoles(It.Is<UserInfo>(u => u.UserID == Constants.UserID_User12), It.IsAny<bool>())).Returns(new List<UserRoleInfo> { user12RoleInfo });
+            _mockRoleProvider.Setup(rp => rp.GetUserRoles(It.Is<UserInfo>(u => u.UserID == Constants.UserID_Admin), It.IsAny<bool>())).Returns(new List<UserRoleInfo> { adminRoleInfoForAdministrators, adminRoleInfoforRegisteredUsers });
+            _mockRoleProvider.Setup(rp => rp.GetUserRoles(It.Is<UserInfo>(u => u.UserID == Constants.UserID_User12), It.IsAny<bool>())).Returns(new List<UserRoleInfo> { user12RoleInfoforRegisteredUsers });
             _mockRoleProvider.Setup(rp => rp.GetUserRoles(It.Is<UserInfo>(u => u.UserID == Constants.UserID_FirstSocialGroupOwner), It.IsAny<bool>())).Returns(new List<UserRoleInfo> { userFirstSocialGroupOwner });
         }
 
@@ -707,9 +710,8 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void MessagingController_CreateMessage_Calls_DataService_CreateSocialMessageRecipientsForRole_On_Passing_Roles_ByRoleOwner()
         {
             //Arrange
-            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId};            
-            var role1 = new RoleInfo { RoleName = "role1", RoleID = Constants.RoleID_RegisteredUsers};
-            var role2 = new RoleInfo { RoleName = "role2", RoleID = Constants.RoleID_Administrators };
+            var user = new UserInfo { DisplayName = "user1", UserID = Constants.USER_TenId};                        
+            var role = new RoleInfo { RoleName = Constants.RoleName_FirstSocialGroup, RoleID = Constants.RoleID_FirstSocialGroup };
       
             _mockDataService.Setup(md => md.GetMessageRecipientByMessageAndUser(It.IsAny<int>(), Constants.USER_TenId))
                 .Callback(SetupDataTables)
@@ -717,13 +719,15 @@ namespace DotNetNuke.Tests.Core.Controllers
 
             _mockDataService.Setup(md => md.GetMessageRecipientByMessageAndUser(It.IsAny<int>(), _adminUserInfo.UserID))
                 .Callback(SetupDataTables)
-                .Returns(_dtMessageRecipients.CreateDataReader());            
+                .Returns(_dtMessageRecipients.CreateDataReader());
+
+            _mockMessagingController.Setup(mc => mc.GetMessageRecipient(It.IsAny<int>(), It.IsAny<int>()));
 
             //Act
-            var message = _mockMessagingController.Object.CreateMessage("subject", "body", new List<RoleInfo> { role1, role2 }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
+            var message = _mockMessagingController.Object.CreateMessage("subject", "body", new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _groupOwnerUserInfo);
 
             //Assert
-            _mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers + "," + Constants.RoleID_Administrators, It.IsAny<int>()));
+            _mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()));
         }
 
         [Test]
@@ -1000,8 +1004,8 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.GetPortalSettingAsInteger(It.IsAny<string>(), _user12UserInfo.PortalID, Null.NullInteger)).Returns(1);
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(false);
 
-            var messageBoxView = new MessageBoxView { TotalConversations = 0 };
-            _mockMessagingController.Setup(mc => mc.GetRecentSentbox(_user12UserInfo.UserID, It.IsAny<int>(), It.IsAny<int>())).Returns(messageBoxView);
+            Message message = null;
+            _mockMessagingController.Setup(mc => mc.GetLastSentMessage(_user12UserInfo)).Returns(message);
 
             var result = _mockMessagingController.Object.WaitTimeForNextMessage(_user12UserInfo);
 
@@ -1023,18 +1027,27 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.GetPortalSettingAsInteger(It.IsAny<string>(), _user12UserInfo.PortalID, Null.NullInteger)).Returns(throttlingInterval);
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(false);
 
-            var messageBoxView = new MessageBoxView { TotalConversations = 1 };
+            _dtMessages.Clear();
+            _dtMessages.Rows.Add(-1, "", "", "", "", -1, -1, -1, -1, lastMessageDate, -1, Null.NullDate);
 
-            _dtMessageConversationView.Clear();
-            _dtMessageConversationView.Rows.Add(-1, -1, -1, -1, -1, "", "", "", "", -1, false, -1, -1, lastMessageDate, -1, Null.NullDate);
+            //var pkMessagesMessageID = _dtMessages.Columns.Add("MessageID", typeof(int));
+            //_dtMessages.Columns.Add("To", typeof(string));
+            //_dtMessages.Columns.Add("Subject", typeof(string));
+            //_dtMessages.Columns.Add("Body", typeof(string));
+            //_dtMessages.Columns.Add("ConversationId", typeof(int));
+            //_dtMessages.Columns.Add("ReplyAllAllowed", typeof(bool));
+            //_dtMessages.Columns.Add("SenderUserID", typeof(int));
+            //_dtMessages.Columns.Add("CreatedByUserID", typeof(int));
+            //_dtMessages.Columns.Add("CreatedOnDate", typeof(DateTime));
+            //_dtMessages.Columns.Add("LastModifiedByUserID", typeof(int));
+            //_dtMessages.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+            
 
-            var dr = _dtMessageConversationView.CreateDataReader();
+            var dr = _dtMessages.CreateDataReader();
 
-            var messageConversationView = CBO.FillObject<MessageConversationView>(dr);
+            var message = CBO.FillObject<Message>(dr);
 
-            messageBoxView.Conversations = new List<MessageConversationView> { messageConversationView };
-
-            _mockMessagingController.Setup(mc => mc.GetRecentSentbox(_user12UserInfo.UserID, It.IsAny<int>(), It.IsAny<int>())).Returns(messageBoxView);
+            _mockMessagingController.Setup(mc => mc.GetLastSentMessage(_user12UserInfo)).Returns(message);
             _mockMessagingController.Setup(mc => mc.GetDateTimeNow()).Returns(actualDate);
 
             var result = _mockMessagingController.Object.WaitTimeForNextMessage(_user12UserInfo);
@@ -1202,6 +1215,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtMessages = new DataTable("Messages");
             var pkMessagesMessageID = _dtMessages.Columns.Add("MessageID", typeof(int));
             _dtMessages.Columns.Add("To", typeof(string));
+            _dtMessages.Columns.Add("From", typeof(string));
             _dtMessages.Columns.Add("Subject", typeof(string));
             _dtMessages.Columns.Add("Body", typeof(string));
             _dtMessages.Columns.Add("ConversationId", typeof(int));

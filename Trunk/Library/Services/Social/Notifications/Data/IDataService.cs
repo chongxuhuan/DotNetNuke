@@ -28,7 +28,7 @@ namespace DotNetNuke.Services.Social.Notifications.Data
     {
         #region NotificationTypes CRUD
 
-        int SaveNotificationType(int notificationTypeId, string name, string description, int timeToLive, int desktopModuleId, int createUpdateUserId);
+        int CreateNotificationType(string name, string description, int timeToLive, int desktopModuleId, int createUpdateUserId);
         void DeleteNotificationType(int notificationTypeId);
         IDataReader GetNotificationType(int notificationTypeId);
         IDataReader GetNotificationTypeByName(string name);
@@ -37,10 +37,7 @@ namespace DotNetNuke.Services.Social.Notifications.Data
 
         #region NotificationTypeActions CRUD
 
-        int AddNotificationTypeActionToEnd(int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall, int createdByUserId);
-        int AddNotificationTypeActionAfter(int afterNotificationTypeActionId, int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall, int createdByUserId);
-        int AddNotificationTypeActionBefore(int beforeNotificationTypeActionId, int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall, int createdByUserId);
-        void UpdateNotificationTypeAction(int notificationTypeActionId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall, int lastModifiedByUserId);
+        int AddNotificationTypeAction(int notificationTypeId, string nameResourceKey, string descriptionResourceKey, string confirmResourceKey, string apiCall, int createdByUserId);
         void DeleteNotificationTypeAction(int notificationTypeActionId);
         IDataReader GetNotificationTypeAction(int notificationTypeActionId);
         IDataReader GetNotificationTypeActionByName(int notificationTypeId, string name);
