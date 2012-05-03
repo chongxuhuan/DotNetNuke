@@ -252,4 +252,7 @@
   <data name="MsgRecipientLimitExceeded.Text" xml:space="preserve">
     <value>Maximum Recipient Limit Reached. To send the message, please remove some recipients from the To List.</value>
   </data>
+  <data name="MsgMessageRequiredError.Text" xml:space="preserve">
+    <value>The message object supplied cannot be null.</value>
+  </data>
 </root>

@@ -89,14 +89,13 @@ namespace DotNetNuke.Entities.Users
                             //Relationships
                             foreach (Relationship relationship in property.ProfileVisibility.RelationshipVisibilities)
                             {
-                                IList<UserRelationship> userRelationships;
-                                if (user.Social.UserRelationships.TryGetValue(relationship.RelationshipId.ToString(), out userRelationships))
+                                if (user.Social.UserRelationships.Any(userRelationship =>
+                                                                          (userRelationship.RelationshipId == relationship.RelationshipId
+                                                                              && accessingUser.UserID == userRelationship.RelatedUserId)
+                                                                      ))
                                 {
-                                    if (userRelationships.Any(userRelationship => accessingUser.UserID == userRelationship.RelatedUserId))
-                                    {
-                                        isVisible = true;
-                                        break;
-                                    }
+                                    isVisible = true;
+                                    break;
                                 }
                             }
                             //Groups/Roles

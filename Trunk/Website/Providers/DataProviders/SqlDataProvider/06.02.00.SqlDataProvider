@@ -2698,11 +2698,11 @@ BEGIN
 END
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CreateNotification]') AND type in (N'P', N'PC'))
-	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateNotification]
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_SendNotification]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SendNotification]
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateNotification]
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_SendNotification]
 	@NotificationTypeID int,
 	@PortalID INT,
 	@To nvarchar(2000),
@@ -4659,37 +4659,36 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetSentBox]
 	@SortAscending   bit = 0
 AS
 BEGIN
+	-- Set the page bounds
+	DECLARE @PageLowerBound INT, @PageUpperBound INT;
 
--- Set the page bounds
-DECLARE @PageLowerBound INT, @PageUpperBound INT;
-
-SET @PageLowerBound =  (@PageIndex * @PageSize) + 1
-SET @PageUpperBound =  (@PageIndex * @PageSize) + @PageSize
-
---Get the top message for each conversation
-;WITH SentBox  AS
-(
-	SELECT  DISTINCT m.[MessageID], [ConversationID], [Subject], convert(nvarchar(50), [Body]) AS Body,
-			[To], [From], [ReplyAllAllowed], [SenderUserID],
-			m.[CreatedByUserID], m.[CreatedOnDate],
-			m.[LastModifiedByUserID], m.[LastModifiedOnDate],
-			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments WHERE MessageID = m.MessageID) AS AttachmentCount,
-			ROW_NUMBER() OVER(ORDER BY
-				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN m.[CreatedOnDate] END ASC,
-				 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN m.[CreatedOnDate] END DESC,
-				 CASE WHEN @SortField = 'From' AND @SortAscending = 1 THEN [From] END ASC,
-				 CASE WHEN @SortField = 'From' AND @SortAscending = 0 THEN [From] END DESC,
-				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
-				 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
-				) AS RowNumber
-	FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages AS m
-	INNER JOIN {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] AS mr ON m.MessageID = mr.MessageID
-	WHERE (SenderUserID = @UserID)
-	AND m.NotificationTypeID IS NULL AND m.PortalID=@PortalID
-	AND mr.Archived = 0
-)
-SELECT * from SentBox where RowNumber BETWEEN @PageLowerBound AND @PageUpperBound
-order by RowNumber ASC
+	SET @PageLowerBound = (@PageIndex * @PageSize) + 1
+	SET @PageUpperBound = (@PageIndex * @PageSize) + @PageSize
+		
+	;WITH SentBox AS
+	(
+		SELECT DISTINCT [MessageID], [ConversationID], [Subject], convert(nvarchar(50), [Body]) AS Body,
+				[To], [From], [ReplyAllAllowed], [SenderUserID],
+				[CreatedByUserID], [CreatedOnDate],
+				[LastModifiedByUserID], [LastModifiedOnDate],
+				(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageAttachments WHERE MessageID = m.MessageID) AS AttachmentCount,
+				(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages WHERE ConversationID = m.ConversationID) AND UserID = @UserID AND [READ] = 0) AS NewThreadCount,
+				(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages WHERE ConversationID = m.ConversationID) AND UserID = @UserID) AS ThreadCount,
+				ROW_NUMBER() OVER(ORDER BY
+					 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN [CreatedOnDate] END ASC,
+					 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN [CreatedOnDate] END DESC,
+					 CASE WHEN @SortField = 'From' AND @SortAscending = 1 THEN [From] END ASC,
+					 CASE WHEN @SortField = 'From' AND @SortAscending = 0 THEN [From] END DESC,
+					 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
+					 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
+					) AS RowNumber
+		FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages AS m
+		WHERE SenderUserID = @UserID
+		AND NotificationTypeID IS NULL AND PortalID = @PortalID
+		AND EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients MR WHERE MR.MessageID = m.MessageID AND MR.Archived = 0)
+	)
+	SELECT * FROM SentBox WHERE RowNumber BETWEEN @PageLowerBound AND @PageUpperBound
+	ORDER BY RowNumber ASC
 END
 GO
 
@@ -5194,10 +5193,10 @@ AS
 													U.AffiliateID, U.UpdatePassword, U.Authorised, U.CreateDate, U.LastActivityDate, U.LastLockoutDate,
 													U.LastLoginDate, U.LastPasswordChangedDate, U.IsLockedOut, U.PasswordQuestion, U.IsApproved, Prop.PropertyName,
 													CASE
-														WHEN p.Visibility = 0 THEN p.PropertyValue
-														WHEN p.Visibility = 1 AND ' + CONVERT(nvarchar(20), @IsAdmin) + ' = 1 THEN p.PropertyValue
-														WHEN p.Visibility = 1 AND ' + CONVERT(nvarchar(20), @IsAdmin) + ' = 0 AND ' + CONVERT(nvarchar(20), @UserId) + '> 0 THEN p.PropertyValue
-														WHEN p.Visibility = 2 AND ' + CONVERT(nvarchar(20), @IsAdmin) + ' = 1 THEN p.PropertyValue
+														WHEN (p.Visibility = 0) THEN p.PropertyValue
+														WHEN (p.Visibility = 1 AND ' + CONVERT(nvarchar(20), @IsAdmin) + ' = 1) THEN p.PropertyValue
+														WHEN (p.Visibility = 1 AND ' + CONVERT(nvarchar(20), @IsAdmin) + ' = 0 AND ' + CONVERT(nvarchar(20), @UserId) + '> 0) THEN p.PropertyValue
+														WHEN U.UserID = ' + CONVERT(nvarchar(20), @UserId) + 'OR (p.Visibility = 2 AND ' + CONVERT(nvarchar(20), @IsAdmin) + ' = 1) THEN p.PropertyValue
 														ELSE NULL
 													END AS PropertyValue
 											FROM	{objectQualifier}vw_Users AS U
@@ -5355,7 +5354,6 @@ AS
 					AS
 					(
 						SELECT 
-							U.RowNumber,
 							U.UserID,
 							U.PortalID,
 							U.Username,
@@ -5850,23 +5848,26 @@ IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{
   DROP PROCEDURE {databaseOwner}{objectQualifier}CoreMessaging_GetNextMessagesForDispatch
 GO
 
-CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNextMessagesForDispatch] 
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNextMessagesForDispatch]
 	@SchedulerInstance uniqueidentifier,
 	@BatchSize int
 AS
-
-WITH CTE AS  
-(  
-SELECT TOP (@BatchSize) *
-FROM  {objectQualifier}CoreMessaging_MessageRecipients
-WHERE EmailSent = 0  AND  
-	(EmailSchedulerInstance is NULL or EmailSchedulerInstance= '00000000-0000-0000-0000-000000000000') 
+BEGIN
+	WITH CTE AS
+	(
+		SELECT TOP (@BatchSize) *
+		FROM {objectQualifier}CoreMessaging_MessageRecipients
+		WHERE EmailSent = 0 AND (EmailSchedulerInstance IS NULL OR EmailSchedulerInstance = '00000000-0000-0000-0000-000000000000')
+		ORDER BY CreatedOnDate DESC
+	)
+	UPDATE CTE
+	SET EmailSchedulerInstance = @SchedulerInstance
+	
+	SELECT TOP (@BatchSize) *
+	FROM {objectQualifier}CoreMessaging_MessageRecipients
+	WHERE EmailSent = 0 AND EmailSchedulerInstance = @SchedulerInstance
 	ORDER BY CreatedOnDate DESC
-)  	
-UPDATE CTE set EmailSchedulerInstance = @SchedulerInstance  
-
-select * from {objectQualifier}CoreMessaging_MessageRecipients where EmailSchedulerInstance = @SchedulerInstance 
-
+END
 GO
 
 /* Add CoreMessaging_MarkMessageAsDispatched */

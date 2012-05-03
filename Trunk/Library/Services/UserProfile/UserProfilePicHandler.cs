@@ -18,10 +18,12 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 
@@ -40,61 +42,59 @@ namespace DotNetNuke.Services.UserProfile
 
         public void ProcessRequest(HttpContext context)
         {
-            int UserId = -1;
+            var userId = -1;
             if (!String.IsNullOrEmpty(context.Request.QueryString["userid"]))
             {
-                UserId = Convert.ToInt32(context.Request.QueryString["userid"].ToString());
+                userId = Convert.ToInt32(context.Request.QueryString["userid"]);
             }
-            int Width = 55;
-            int Height = 55;
+
+            var width = 55;
             if (!String.IsNullOrEmpty(context.Request.QueryString["w"]))
             {
-                Width = Convert.ToInt32(context.Request.QueryString["w"].ToString());
+                width = Convert.ToInt32(context.Request.QueryString["w"]);
             }
+
+            var height = 55;
             if (!String.IsNullOrEmpty(context.Request.QueryString["h"]))
             {
-                Height = Convert.ToInt32(context.Request.QueryString["h"].ToString());
+                height = Convert.ToInt32(context.Request.QueryString["h"]);
             }
-            int PortalId = 0;
-            PortalSettings portalSettings = PortalController.GetCurrentPortalSettings();
-            UserController uc = new UserController();
-            UserInfo ui = uc.GetUser(PortalId, UserId);
-            FileInfo fi = new FileInfo(context.Request.MapPath(ui.Profile.PhotoURL));
-            String ext = ".png";
-            String sizedPhoto;
-            if (fi.Exists)
+
+            PortalSettings settings = PortalController.GetCurrentPortalSettings();
+            var userController = new UserController();
+            var user = userController.GetUser(settings.PortalId, userId);
+            var fileInfo = new FileInfo(context.Request.MapPath(user.Profile.PhotoURL));
+            var ext = ".png";
+            if (fileInfo.Exists)
             {
-                ext = fi.Extension;
-                //sizedPhoto = fi.FullName; // fi.FullName.Replace(ext, Width.ToString() + "x" + Height.ToString() + ext);
-                sizedPhoto = fi.FullName.Replace(ext, Width.ToString() + "x" + Height.ToString() + ext);
+                ext = fileInfo.Extension;
             }
             else
             {
-                fi = new FileInfo(context.Request.MapPath("~/images/no_avatar.gif"));
-                //sizedPhoto = fi.FullName; // fi.FullName.Replace(ext, Width.ToString() + "x" + Height.ToString() + ext);
-                sizedPhoto = fi.FullName.Replace(ext, Width.ToString() + "x" + Height.ToString() + ext);
+                fileInfo = new FileInfo(context.Request.MapPath("~/images/no_avatar.gif"));
             }
+
+            string sizedPhoto = fileInfo.FullName.Replace(ext, width.ToString(CultureInfo.InvariantCulture) + "x" + height.ToString(CultureInfo.InvariantCulture) + ext);
 
             if (!File.Exists(sizedPhoto))
             {
                 //need to create the photo
-                File.Copy(fi.FullName, sizedPhoto);
-                sizedPhoto = ImageUtils.CreateImage(sizedPhoto, Height, Width);
+                File.Copy(fileInfo.FullName, sizedPhoto);
+                sizedPhoto = ImageUtils.CreateImage(sizedPhoto, height, width);
             }
 
-            byte[] bindata = null;
-            bindata = System.IO.File.ReadAllBytes(sizedPhoto);
-            if (ext == ".png")
+            switch (ext)
             {
-                context.Response.ContentType = "image/png";
-            }
-            else if (ext == ".jpg" || ext == ".jpeg")
-            {
-                context.Response.ContentType = "image/jpeg";
-            }
-            else if (ext == ".gif")
-            {
-                context.Response.ContentType = "image/gif";
+                case ".png":
+                    context.Response.ContentType = "image/png";
+                    break;
+                case ".jpeg":
+                case ".jpg":
+                    context.Response.ContentType = "image/jpeg";
+                    break;
+                case ".gif":
+                    context.Response.ContentType = "image/gif";
+                    break;
             }
             context.Response.WriteFile(sizedPhoto);
             context.Response.End();
@@ -107,8 +107,8 @@ namespace DotNetNuke.Services.UserProfile
                 return false;
             }
         }
-        #endregion
 
-        
+        #endregion
+       
     }
 }

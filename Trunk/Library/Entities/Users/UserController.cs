@@ -235,6 +235,14 @@ namespace DotNetNuke.Entities.Users
             return portalUserCount;
         }
 
+        private static Dictionary<int, string> GetUserLookupDictionary(int portalId)
+        {
+            var masterPortalId = GetEffectivePortalId(portalId);
+            var cacheKey = string.Format(DataCache.UserLookupCacheKey, masterPortalId);
+            return CBO.GetCachedObject<Dictionary<int, string>>(new CacheItemArgs(cacheKey, DataCache.UserLookupCacheTimeOut, 
+                                                            DataCache.UserLookupCachePriority), (c) => new Dictionary<int, string>());
+        }
+
         internal static Hashtable GetUserSettings(int portalId, Hashtable settings)
         {
             portalId = GetEffectivePortalId(portalId);
@@ -769,9 +777,16 @@ namespace DotNetNuke.Entities.Users
         {
             //Get the User cache key
             var masterPortalId = GetEffectivePortalId(portalId);
-            var cacheKey = string.Format(DataCache.UserCacheKey, portalId, username);
+            var cacheKey = string.Format(DataCache.UserCacheKey, masterPortalId, username);
             var user = CBO.GetCachedObject<UserInfo>(new CacheItemArgs(cacheKey, DataCache.UserCacheTimeOut, DataCache.UserCachePriority, masterPortalId, username), GetCachedUserByPortalCallBack);
             FixMemberPortalId(user, portalId);
+
+            if (user!= null)
+            {
+                var lookUp = GetUserLookupDictionary(portalId);
+                lookUp[user.UserID] = user.Username;
+            }
+
             return user;
         }
 
@@ -873,8 +888,20 @@ namespace DotNetNuke.Entities.Users
         /// -----------------------------------------------------------------------------
         public static UserInfo GetUserById(int portalId, int userId)
         {
-            var user = MemberProvider.GetUser(GetEffectivePortalId(portalId), userId);
-            FixMemberPortalId(user, portalId);
+            var lookUp = GetUserLookupDictionary(portalId);
+
+            UserInfo user;
+            string userName;
+            if (lookUp.TryGetValue(userId, out userName))
+            {
+                user = GetCachedUser(portalId, userName);
+            }
+            else
+            {
+                user = MemberProvider.GetUser(GetEffectivePortalId(portalId), userId);
+                FixMemberPortalId(user, portalId);
+                lookUp[userId] = user.Username;
+            }
             return user;
         }
 

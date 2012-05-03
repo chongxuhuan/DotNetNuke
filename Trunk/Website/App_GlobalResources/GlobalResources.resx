@@ -717,11 +717,10 @@ We are pleased to advise that you have been added as a Registered User to [Porta
 Portal Website Address: [Portal:URL]
 Username: [User:UserName]
 Password: [Membership:Password]
-Verification Code: [User:VerificationCode]
 
 You can use the following link to complete your verified registration:
 
-http://[Portal:URL]/default.aspx?ctl=Login&amp;username=[Custom:0]&amp;verificationcode=[User:VerificationCode]
+http://[Portal:URL]/default.aspx?ctl=Login&amp;username=[Custom:0]&amp;verificationcode=[Custom:1]
 
 Thank you, we appreciate your support...
 
@@ -1259,5 +1258,17 @@ Sincerely,
   </data>
   <data name="//Host//DeviceDetectionManagement.String" xml:space="preserve">
     <value>Device Detection Management</value>
+  </data>
+  <data name="//ActivityFeed.String" xml:space="preserve">
+    <value>Activity Feed</value>
+  </data>
+  <data name="//ActivityFeed//Friends.String" xml:space="preserve">
+    <value>Friends</value>
+  </data>
+  <data name="//ActivityFeed//Messages.String" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="//ActivityFeed//MyProfile.String" xml:space="preserve">
+    <value>My Profile</value>
   </data>
 </root>

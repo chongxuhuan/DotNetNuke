@@ -164,10 +164,6 @@ namespace DotNetNuke.HttpModules.Membership
                 //save userinfo object in context
                 context.Items.Add("UserInfo", user);
 
-                //load the personalization object
-                var personalizationController = new PersonalizationController();
-                personalizationController.LoadProfile(context, user.UserID, user.PortalID);
-
                 //Localization.SetLanguage also updates the user profile, so this needs to go after the profile is loaded
                 Localization.SetLanguage(user.Profile.PreferredLocale);
             }

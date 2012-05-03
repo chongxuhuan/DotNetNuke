@@ -9,7 +9,7 @@
             roles = [],
             attachments = [];
 
-        opts.serviceurlbase = opts.servicesFramework.getServiceRoot('CoreServices') + 'MessagingService.ashx/';
+        opts.serviceurlbase = opts.servicesFramework.getServiceRoot('InternalServices') + 'MessagingService.ashx/';
 
         //construct the form
         html = "<fieldset>";

@@ -230,7 +230,7 @@ namespace DotNetNuke.Entities.Users
             {
                 if (_profile == null)
                 {
-                    _profile = new UserProfile();
+                    _profile = new UserProfile(this);
                     UserInfo userInfo = this;
                     ProfileController.GetUserProfile(ref userInfo);
                 }

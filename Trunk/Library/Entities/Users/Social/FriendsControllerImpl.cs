@@ -131,7 +131,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                 SenderUserID = initiatingUser.UserID
             };
 
-            NotificationsController.Instance.CreateNotification(notification, initiatingUser.PortalID, null, new List<UserInfo> { targetUser });
+            NotificationsController.Instance.SendNotification(notification, initiatingUser.PortalID, null, new List<UserInfo> { targetUser });
 
         }
     }

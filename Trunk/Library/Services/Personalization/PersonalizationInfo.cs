@@ -18,6 +18,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
 #region Usings
 
 using System;
@@ -30,65 +31,20 @@ namespace DotNetNuke.Services.Personalization
     [Serializable]
     public class PersonalizationInfo
     {
-        #region "Private Members"
-		
-		private bool _IsModified;
-        private int _PortalId;
-        private Hashtable _Profile;
-        private int _UserId;
-		
-		#endregion
+        #region Private Members
 
-        #region "Public Properties"
-		
-		public int UserId
-        {
-            get
-            {
-                return _UserId;
-            }
-            set
-            {
-                _UserId = value;
-            }
-        }
+        #endregion
 
-        public int PortalId
-        {
-            get
-            {
-                return _PortalId;
-            }
-            set
-            {
-                _PortalId = value;
-            }
-        }
+        #region Public Properties
 
-        public bool IsModified
-        {
-            get
-            {
-                return _IsModified;
-            }
-            set
-            {
-                _IsModified = value;
-            }
-        }
+        public int UserId { get; set; }
 
-        public Hashtable Profile
-        {
-            get
-            {
-                return _Profile;
-            }
-            set
-            {
-                _Profile = value;
-            }
-        }
-		
-		#endregion
+        public int PortalId { get; set; }
+
+        public bool IsModified { get; set; }
+
+        public Hashtable Profile { get; set; }
+
+        #endregion
     }
 }

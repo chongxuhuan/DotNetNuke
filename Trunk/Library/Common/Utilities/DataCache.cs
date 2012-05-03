@@ -148,6 +148,10 @@ namespace DotNetNuke.Common.Utilities
         public const int FolderUserCacheTimeOut = 20;
         public const CacheItemPriority FolderUserCachePriority = CacheItemPriority.Normal;
 
+        public const string FolderMappingCacheKey = "FolderMapping|{0}";
+        public const int FolderMappingCacheTimeOut = 20;
+        public const CacheItemPriority FolderMappingCachePriority = CacheItemPriority.High;
+
         public const string FolderPermissionCacheKey = "FolderPermissions{0}";
         public const CacheItemPriority FolderPermissionCachePriority = CacheItemPriority.Normal;
         public const int FolderPermissionCacheTimeOut = 20;
@@ -162,6 +166,10 @@ namespace DotNetNuke.Common.Utilities
         public const string UserCacheKey = "UserInfo|{0}|{1}";
         public const int UserCacheTimeOut = 1;
         public const CacheItemPriority UserCachePriority = CacheItemPriority.Normal;
+
+        public const string UserLookupCacheKey = "UserLookup|{0}";
+        public const int UserLookupCacheTimeOut = 20;
+        public const CacheItemPriority UserLookupCachePriority = CacheItemPriority.High;
 
         public const string LocalesCacheKey = "Locales{0}";
         public const CacheItemPriority LocalesCachePriority = CacheItemPriority.Normal;

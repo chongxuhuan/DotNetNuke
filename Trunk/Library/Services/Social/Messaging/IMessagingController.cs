@@ -97,9 +97,9 @@ namespace DotNetNuke.Services.Social.Messaging
 
         //Gets the latest 10 messages
 
-        Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
+        void CreateMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
 
-        Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender);
+        void CreateMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender);
 
         int ReplyMessage(int conversationId, string body, IList<int> fileIDs);
 

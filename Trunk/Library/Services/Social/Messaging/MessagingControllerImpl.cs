@@ -97,19 +97,24 @@ namespace DotNetNuke.Services.Social.Messaging
             return GetPortalSetting("MessagingAllowAttachments", portalId, "YES") == "YES";
         }
 
-        public virtual Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)
+        public virtual void CreateMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)
         {
-            return CreateMessage(subject, body, roles, users, fileIDs, UserController.GetCurrentUserInfo());
+            CreateMessage(message, roles, users, fileIDs, UserController.GetCurrentUserInfo());
         }
 
-        public virtual Message CreateMessage(string subject, string body, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender)
+        public virtual void CreateMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender)
         {
             if (sender == null || sender.UserID <= 0)
             {
                 throw new ArgumentException(Localization.Localization.GetString("MsgSenderRequiredError", Localization.Localization.ExceptionsResourceFile));
             }
 
-            if (string.IsNullOrEmpty(subject) && string.IsNullOrEmpty(body))
+            if (message == null)
+            {
+                throw new ArgumentException(Localization.Localization.GetString("MsgMessageRequiredError", Localization.Localization.ExceptionsResourceFile));
+            }
+
+            if (string.IsNullOrEmpty(message.Subject) && string.IsNullOrEmpty(message.Body))
             {
                 throw new ArgumentException(Localization.Localization.GetString("MsgSubjectOrBodyRequiredError", Localization.Localization.ExceptionsResourceFile));
             }
@@ -119,9 +124,9 @@ namespace DotNetNuke.Services.Social.Messaging
                 throw new ArgumentException(Localization.Localization.GetString("MsgRolesOrUsersRequiredError", Localization.Localization.ExceptionsResourceFile));
             }
 
-            if (!string.IsNullOrEmpty(subject) && subject.Length > ConstMaxSubject)
+            if (!string.IsNullOrEmpty(message.Subject) && message.Subject.Length > ConstMaxSubject)
             {
-                throw new ArgumentException(string.Format(Localization.Localization.GetString("MsgSubjectTooBigError", Localization.Localization.ExceptionsResourceFile), ConstMaxSubject, subject.Length));
+                throw new ArgumentException(string.Format(Localization.Localization.GetString("MsgSubjectTooBigError", Localization.Localization.ExceptionsResourceFile), ConstMaxSubject, message.Subject.Length));
             }
 
             if (roles != null && roles.Count > 0 && !IsAdminOrHost(sender))
@@ -184,13 +189,17 @@ namespace DotNetNuke.Services.Social.Messaging
             var profanityFilterSetting = GetPortalSetting("MessagingProfanityFilters", sender.PortalID, "NO");
             if (profanityFilterSetting.Equals("YES", StringComparison.InvariantCultureIgnoreCase))
             {
-                subject = InputFilter(subject);
-                body = InputFilter(body);
+                message.Subject = InputFilter(message.Subject);
+                message.Body = InputFilter(message.Body);
             }
 
-            var message = new Message { Body = body, Subject = subject, To = sbTo.ToString().Trim(','), MessageID = Null.NullInteger, ReplyAllAllowed = replyAllAllowed, SenderUserID = sender.UserID, From = sender.DisplayName };
+            message.To = sbTo.ToString().Trim(',');
+            message.MessageID = Null.NullInteger;
+            message.ReplyAllAllowed = replyAllAllowed;
+            message.SenderUserID = sender.UserID;
+            message.From = sender.DisplayName;
 
-            message.MessageID = _dataService.SaveMessage(message, UserController.GetCurrentUserInfo().PortalID,UserController.GetCurrentUserInfo().UserID);
+            message.MessageID = _dataService.SaveMessage(message, UserController.GetCurrentUserInfo().PortalID, UserController.GetCurrentUserInfo().UserID);
 
             //associate attachments
             if (fileIDs != null)
@@ -228,9 +237,7 @@ namespace DotNetNuke.Services.Social.Messaging
             }
 
             // Mark the conversation as read by the sender of the message.
-            MarkRead(message.MessageID, sender.UserID);
-
-            return message;
+            MarkRead(message.MessageID, sender.UserID);            
         }
 
         public virtual void DeleteMessageRecipient(int messageId, int userId)
@@ -304,8 +311,9 @@ namespace DotNetNuke.Services.Social.Messaging
         }
 
         public virtual MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
-        {            
-            return CBO.FillObject<MessageBoxView>(_dataService.GetSentBoxView(userId, GetCurrentUserInfo().PortalID, pageIndex, pageSize, sortColumn, sortAscending));
+        {
+            var reader = _dataService.GetSentBoxView(userId, GetCurrentUserInfo().PortalID, pageIndex, pageSize, sortColumn, sortAscending);
+            return new MessageBoxView { Conversations = CBO.FillCollection<MessageConversationView>(reader) };
         }
 
         public virtual int CountArchivedMessagesByConversation(int conversationId)
@@ -423,7 +431,7 @@ namespace DotNetNuke.Services.Social.Messaging
             }
 
             //call ReplyMessage
-            var messageId = _dataService.CreateMessageReply(conversationId,sender.PortalID, body, sender.UserID, sender.DisplayName, GetCurrentUserInfo().UserID);
+            var messageId = _dataService.CreateMessageReply(conversationId, sender.PortalID, body, sender.UserID, sender.DisplayName, GetCurrentUserInfo().UserID);
             if (messageId == -1) //Parent message was not found or Recipient was not found in the message
             {
                 throw new MessageOrRecipientNotFoundException(Localization.Localization.GetString("MsgMessageOrRecipientNotFound", Localization.Localization.ExceptionsResourceFile));
@@ -515,7 +523,7 @@ namespace DotNetNuke.Services.Social.Messaging
         #region Upgrade APIs
 
         public void ConvertLegacyMessages(int pageIndex, int pageSize)
-        {            
+        {
             _dataService.ConvertLegacyMessages(pageIndex, pageSize);
         }
 
@@ -537,15 +545,15 @@ namespace DotNetNuke.Services.Social.Messaging
             }
 
             return totalRecords;
-        }        
+        }
 
         #endregion
 
         #region Queued email API's
 
-        public IList<MessageRecipient> GetNextMessagesForDispatch(Guid schedulerInstance,int batchSize)
+        public IList<MessageRecipient> GetNextMessagesForDispatch(Guid schedulerInstance, int batchSize)
         {
-            return CBO.FillCollection<MessageRecipient>(_dataService.GetNextMessagesForDispatch(schedulerInstance,batchSize));
+            return CBO.FillCollection<MessageRecipient>(_dataService.GetNextMessagesForDispatch(schedulerInstance, batchSize));
         }
 
         public void MarkMessageAsDispatched(int messageId, int recipientId)

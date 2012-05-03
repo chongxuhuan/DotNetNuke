@@ -33,17 +33,17 @@ namespace DotNetNuke.Services.Personalization
 {
     public class Personalization
     {
-		#region "Private Methods"
+		#region Private Methods
 
         private static PersonalizationInfo LoadProfile()
         {
             HttpContext context = HttpContext.Current;
 
             //First try and load Personalization object from the Context
-            var objPersonalization = (PersonalizationInfo) context.Items["Personalization"];
+            var personalization = (PersonalizationInfo) context.Items["Personalization"];
 
             //If the Personalization object is nothing load it and store it in the context for future calls
-            if (objPersonalization == null)
+            if (personalization == null)
             {
                 var _portalSettings = (PortalSettings) context.Items["PortalSettings"];
 
@@ -51,131 +51,122 @@ namespace DotNetNuke.Services.Personalization
                 UserInfo UserInfo = UserController.GetCurrentUserInfo();
 
                 //get the personalization object
-                var objPersonalizationController = new PersonalizationController();
-                objPersonalization = objPersonalizationController.LoadProfile(UserInfo.UserID, _portalSettings.PortalId);
+                var personalizationController = new PersonalizationController();
+                personalization = personalizationController.LoadProfile(UserInfo.UserID, _portalSettings.PortalId);
 
                 //store it in the context
-                context.Items.Add("Personalization", objPersonalization);
+                context.Items.Add("Personalization", personalization);
             }
-            return objPersonalization;
+            return personalization;
         }
 		
 		#endregion
 
-		#region "Public Shared Methods"
+		#region Public Shared Methods
+
         /// <summary>
         /// load users profile and extract value base on naming container and key
         /// </summary>
-        /// <param name="NamingContainer">Container for related set of values</param>
-        /// <param name="Key">Individual profile key</param>
+        /// <param name="namingContainer">Container for related set of values</param>
+        /// <param name="key">Individual profile key</param>
         /// <returns></returns>
-        public static object GetProfile(string NamingContainer, string Key)
+        public static object GetProfile(string namingContainer, string key)
         {
-            return GetProfile(LoadProfile(), NamingContainer, Key);
+            return GetProfile(LoadProfile(), namingContainer, key);
         }
 
         /// <summary>
         /// extract value base on naming container and key from PersonalizationInfo object
         /// </summary>
-        /// <param name="objPersonalization">Object containing user personalization info</param>
-        /// <param name="NamingContainer">Container for related set of values</param>
-        /// <param name="Key">Individual profile key</param>
+        /// <param name="personalization">Object containing user personalization info</param>
+        /// <param name="namingContainer">Container for related set of values</param>
+        /// <param name="key">Individual profile key</param>
         /// <returns></returns>
-        public static object GetProfile(PersonalizationInfo objPersonalization, string NamingContainer, string Key)
+        public static object GetProfile(PersonalizationInfo personalization, string namingContainer, string key)
         {
-            if (objPersonalization != null)
-            {
-                return objPersonalization.Profile[NamingContainer + ":" + Key];
-            }
-            else
-            {
-                return "";
-            }
+            return personalization != null ? personalization.Profile[namingContainer + ":" + key] : "";
         }
 
-       /// <summary>
+        /// <summary>
         /// load users profile and extract secure value base on naming container and key
        /// </summary>
-        /// <param name="NamingContainer">Container for related set of values</param>
-        /// <param name="Key">Individual profile key</param>
+        /// <param name="namingContainer">Container for related set of values</param>
+        /// <param name="key">Individual profile key</param>
        /// <returns></returns>
-        public static object GetSecureProfile(string NamingContainer, string Key)
+        public static object GetSecureProfile(string namingContainer, string key)
         {
-            return GetSecureProfile(LoadProfile(), NamingContainer, Key);
+            return GetSecureProfile(LoadProfile(), namingContainer, key);
         }
 
         /// <summary>
         /// extract value base on naming container and key from PersonalizationInfo object
         /// function will automatically decrypt value to plaintext
         /// </summary>
-        /// <param name="objPersonalization">Object containing user personalization info</param>
-        /// <param name="NamingContainer">Container for related set of values</param>
-        /// <param name="Key">Individual profile key</param>
+        /// <param name="personalization">Object containing user personalization info</param>
+        /// <param name="namingContainer">Container for related set of values</param>
+        /// <param name="key">Individual profile key</param>
         /// <returns></returns>
-        public static object GetSecureProfile(PersonalizationInfo objPersonalization, string NamingContainer, string Key)
+        public static object GetSecureProfile(PersonalizationInfo personalization, string namingContainer, string key)
         {
-            if (objPersonalization != null)
+            if (personalization != null)
             {
                 var ps = new PortalSecurity();
-                return ps.DecryptString(objPersonalization.Profile[NamingContainer + ":" + Key].ToString(), Config.GetDecryptionkey());
+                return ps.DecryptString(personalization.Profile[namingContainer + ":" + key].ToString(), Config.GetDecryptionkey());
             }
-            else
-            {
-                return "";
-            }
+            return "";
         }
 
         /// <summary>
         /// remove value from profile
         /// uses namingcontainer and key to locate approriate value
         /// </summary>
-        /// <param name="NamingContainer">Container for related set of values</param>
-        /// <param name="Key">Individual profile key</param>
-        public static void RemoveProfile(string NamingContainer, string Key)
+        /// <param name="namingContainer">Container for related set of values</param>
+        /// <param name="key">Individual profile key</param>
+        public static void RemoveProfile(string namingContainer, string key)
         {
-            RemoveProfile(LoadProfile(), NamingContainer, Key);
+            RemoveProfile(LoadProfile(), namingContainer, key);
         }
 
         /// <summary>
         /// remove value from users PersonalizationInfo object (if it exists)
         /// uses namingcontainer and key to locate approriate value
         /// </summary>
-        /// <param name="objPersonalization">Object containing user personalization info</param>
-        /// <param name="NamingContainer">Container for related set of values</param>
-        /// <param name="Key">Individual profile key</param>
-        public static void RemoveProfile(PersonalizationInfo objPersonalization, string NamingContainer, string Key)
+        /// <param name="personalization">Object containing user personalization info</param>
+        /// <param name="namingContainer">Container for related set of values</param>
+        /// <param name="key">Individual profile key</param>
+        public static void RemoveProfile(PersonalizationInfo personalization, string namingContainer, string key)
         {
-            if (objPersonalization != null)
+            if (personalization != null)
             {
-                (objPersonalization.Profile).Remove(NamingContainer + ":" + Key);
-                objPersonalization.IsModified = true;
+                (personalization.Profile).Remove(namingContainer + ":" + key);
+                personalization.IsModified = true;
             }
         }
 
         /// <summary>
         /// persist profile value -use naming container and key to orgainize
         /// </summary>
-        /// <param name="NamingContainer">Container for related set of values</param>
-        /// <param name="Key">Individual profile key</param>
-        /// <param name="Value">Individual profile value</param>
-        public static void SetProfile(string NamingContainer, string Key, object Value)
+        /// <param name="namingContainer">Container for related set of values</param>
+        /// <param name="key">Individual profile key</param>
+        /// <param name="value">Individual profile value</param>
+        public static void SetProfile(string namingContainer, string key, object value)
         {
-            SetProfile(LoadProfile(), NamingContainer, Key, Value);
+            SetProfile(LoadProfile(), namingContainer, key, value);
         }
 
         /// <summary>
         /// persist value stored in PersonalizationInfo obhect - use naming container and key to organize
         /// </summary>
-        /// <param name="objPersonalization">Object containing user personalization info</param>
-        /// <param name="NamingContainer">Container for related set of values</param>
-        /// <param name="Key">Individual profile key</param>
+        /// <param name="personalization">Object containing user personalization info</param>
+        /// <param name="namingContainer">Container for related set of values</param>
+        /// <param name="key">Individual profile key</param>
         /// <param name="value">Individual profile value</param>
-        public static void SetProfile(PersonalizationInfo objPersonalization, string NamingContainer, string Key, object value)
+        public static void SetProfile(PersonalizationInfo personalization, string namingContainer, string key, object value)
         {
-            if (objPersonalization != null)
+            if (personalization != null)
             {
-                objPersonalization.Profile[NamingContainer + ":" + Key] = value;
-                objPersonalization.IsModified = true;
+                personalization.Profile[namingContainer + ":" + key] = value;
+                personalization.IsModified = true;
             }
         }
 
@@ -183,29 +174,29 @@ namespace DotNetNuke.Services.Personalization
         /// persist profile value -use naming container and key to orgainize
         /// function calls an overload which automatically encrypts the value
         /// </summary>
-        /// <param name="NamingContainer">Object containing user personalization info</param>
-        /// <param name="Key">Individual profile key</param>
-        /// <param name="Value">Individual profile value</param>
-        public static void SetSecureProfile(string NamingContainer, string Key, object Value)
+        /// <param name="namingContainer">Object containing user personalization info</param>
+        /// <param name="key">Individual profile key</param>
+        /// <param name="value">Individual profile value</param>
+        public static void SetSecureProfile(string namingContainer, string key, object value)
         {
-            SetSecureProfile(LoadProfile(), NamingContainer, Key, Value);
+            SetSecureProfile(LoadProfile(), namingContainer, key, value);
         }
 
         /// <summary>
         /// persist profile value from PersonalizationInfo object, using naming container and key to organise 
         /// function will automatically encrypt the value to plaintext
         /// </summary>
-        /// <param name="objPersonalization">Object containing user personalization info</param>
-        /// <param name="NamingContainer">Container for related set of values</param>
-        /// <param name="Key">Individual profile key</param>
+        /// <param name="personalization">Object containing user personalization info</param>
+        /// <param name="namingContainer">Container for related set of values</param>
+        /// <param name="key">Individual profile key</param>
         /// <param name="value">Individual profile value</param>
-        public static void SetSecureProfile(PersonalizationInfo objPersonalization, string NamingContainer, string Key, object value)
+        public static void SetSecureProfile(PersonalizationInfo personalization, string namingContainer, string key, object value)
         {
-            if (objPersonalization != null)
+            if (personalization != null)
             {
                 var ps = new PortalSecurity();
-                objPersonalization.Profile[NamingContainer + ":" + Key] = ps.EncryptString(value.ToString(), Config.GetDecryptionkey());
-                objPersonalization.IsModified = true;
+                personalization.Profile[namingContainer + ":" + key] = ps.EncryptString(value.ToString(), Config.GetDecryptionkey());
+                personalization.IsModified = true;
             }
         }
 		#endregion

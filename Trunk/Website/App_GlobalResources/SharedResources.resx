@@ -1009,7 +1009,7 @@
     <value> All fields marked with a red arrow are required.</value>
   </data>
   <data name="VerifiedMembership.Text" xml:space="preserve">
-    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this portal is Verified. Once your account information has been submitted, you will receive an email containing your unique Verification Code. The Verification Code will be required the first time you attempt to sign in to the portal environment.</value>
+    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this portal is Verified. Once your account information has been submitted, you will receive an email containing a link that you can use to verify your account.</value>
   </data>
   <data name="Captcha.Help" xml:space="preserve">
     <value>Enter the security code</value>
@@ -1036,7 +1036,7 @@
     <value>&lt;strong&gt;An e-mail with your details has been sent to the portal administrator for verification. Once your registration has been approved an e-mail will be sent to your e-mail address: {0}.&lt;/strong&gt;</value>
   </data>
   <data name="VerifiedConfirmationMessage.Text" xml:space="preserve">
-    <value>&lt;strong&gt;An e-mail with your verification code has been sent to your e-mail address: {0}&lt;br&gt;Please access your in-box and get the verification code, which is required to log-in first time.&lt;/strong&gt;</value>
+    <value>&lt;strong&gt;An e-mail with a verification link has been sent to your e-mail address: {0}&lt;br&gt;Please access your in-box and click on the link in order to verify your account .&lt;/strong&gt;</value>
   </data>
   <data name="DNN_ReadingComponent.Text" xml:space="preserve">
     <value>Reading Component Manifest</value>

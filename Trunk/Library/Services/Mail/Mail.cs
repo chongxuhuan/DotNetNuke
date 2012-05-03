@@ -29,7 +29,6 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Web;
 
 using DotNetNuke.Common;
@@ -37,8 +36,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
-using DotNetNuke.Services.Messaging;
-using DotNetNuke.Services.Messaging.Data;
+using DotNetNuke.Services.Tokens;
 
 using Localize = DotNetNuke.Services.Localization.Localization;
 
@@ -255,9 +253,14 @@ namespace DotNetNuke.Services.Mail
                 case MessageType.UserRegistrationVerified:
                     subject = "EMAIL_USER_REGISTRATION_VERIFIED_SUBJECT";
                     body = "EMAIL_USER_REGISTRATION_VERIFIED_BODY";
+                    var propertyNotFound = false;
                     if (HttpContext.Current != null)
                     {
-                        custom = new ArrayList {HttpContext.Current.Server.UrlEncode(user.Username)};
+                        custom = new ArrayList
+                                     {
+                                         HttpContext.Current.Server.UrlEncode(user.Username),
+                                         HttpContext.Current.Server.UrlEncode(user.GetProperty("verificationcode", String.Empty, null, user, Scope.SystemMessages, ref propertyNotFound))
+                                     };
                     }
                     break;
                 case MessageType.PasswordReminder:

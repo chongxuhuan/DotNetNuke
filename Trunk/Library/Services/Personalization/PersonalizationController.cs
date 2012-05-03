@@ -50,26 +50,23 @@ namespace DotNetNuke.Services.Personalization
         }
 
         //override allows for manipulation of PersonalizationInfo outside of HTTPContext
-        public PersonalizationInfo LoadProfile(int UserId, int PortalId)
+        public PersonalizationInfo LoadProfile(int userId, int portalId)
         {
-            var objPersonalization = new PersonalizationInfo();
-            objPersonalization.UserId = UserId;
-            objPersonalization.PortalId = PortalId;
-            objPersonalization.IsModified = false;
+            var personalization = new PersonalizationInfo {UserId = userId, PortalId = portalId, IsModified = false};
             string profileData = Null.NullString;
-            if (UserId > Null.NullInteger)
+            if (userId > Null.NullInteger)
             {
                 IDataReader dr = null;
                 try
                 {
-                    dr = DataProvider.Instance().GetProfile(UserId, PortalId);
+                    dr = DataProvider.Instance().GetProfile(userId, portalId);
                     if (dr.Read())
                     {
                         profileData = dr["ProfileData"].ToString();
                     }
                     else //does not exist
                     {
-                        DataProvider.Instance().AddProfile(UserId, PortalId);
+                        DataProvider.Instance().AddProfile(userId, portalId);
                     }
                 }
                 catch (Exception ex)
@@ -85,55 +82,54 @@ namespace DotNetNuke.Services.Personalization
             {
 				//Anon User - so try and use cookie.
                 HttpContext context = HttpContext.Current;
-                if (context != null && context.Request != null && context.Request.Cookies["DNNPersonalization"] != null)
+                if (context != null && context.Request.Cookies["DNNPersonalization"] != null)
                 {
                     profileData = context.Request.Cookies["DNNPersonalization"].Value;
                 }
             }
             if (string.IsNullOrEmpty(profileData))
             {
-                objPersonalization.Profile = new Hashtable();
+                personalization.Profile = new Hashtable();
             }
             else
             {
-                objPersonalization.Profile = Globals.DeserializeHashTableXml(profileData);
+                personalization.Profile = Globals.DeserializeHashTableXml(profileData);
             }
-            return objPersonalization;
+            return personalization;
         }
 
-        public void SaveProfile(PersonalizationInfo objPersonalization)
+        public void SaveProfile(PersonalizationInfo personalization)
         {
-            SaveProfile(objPersonalization, objPersonalization.UserId, objPersonalization.PortalId);
+            SaveProfile(personalization, personalization.UserId, personalization.PortalId);
         }
 
         //default implementation relies on HTTPContext
-        public void SaveProfile(HttpContext objHTTPContext, int UserId, int PortalId)
+        public void SaveProfile(HttpContext httpContext, int userId, int portalId)
         {
-            var objPersonalization = (PersonalizationInfo) objHTTPContext.Items["Personalization"];
-            SaveProfile(objPersonalization, UserId, PortalId);
+            var objPersonalization = (PersonalizationInfo) httpContext.Items["Personalization"];
+            SaveProfile(objPersonalization, userId, portalId);
         }
 
         //override allows for manipulation of PersonalizationInfo outside of HTTPContext
-        public void SaveProfile(PersonalizationInfo objPersonalization, int UserId, int PortalId)
+        public void SaveProfile(PersonalizationInfo personalization, int userId, int portalId)
         {
-            if (objPersonalization != null)
+            if (personalization != null)
             {
-                if (objPersonalization.IsModified)
+                if (personalization.IsModified)
                 {
-                    string ProfileData = Globals.SerializeHashTableXml(objPersonalization.Profile);
-                    if (UserId > Null.NullInteger)
+                    string ProfileData = Globals.SerializeHashTableXml(personalization.Profile);
+                    if (userId > Null.NullInteger)
                     {
-                        DataProvider.Instance().UpdateProfile(UserId, PortalId, ProfileData);
+                        DataProvider.Instance().UpdateProfile(userId, portalId, ProfileData);
                     }
                     else
                     {
 						//Anon User - so try and use cookie.
                         HttpContext context = HttpContext.Current;
-                        if (context != null && context.Response != null)
+                        if (context != null)
                         {
-                            var personalizationCookie = new HttpCookie("DNNPersonalization");
-                            personalizationCookie.Value = ProfileData;
-                            personalizationCookie.Expires = DateTime.Now.AddDays(30);
+                            var personalizationCookie = new HttpCookie("DNNPersonalization")
+                                                            {Value = ProfileData, Expires = DateTime.Now.AddDays(30)};
                             context.Response.Cookies.Add(personalizationCookie);
                         }
                     }

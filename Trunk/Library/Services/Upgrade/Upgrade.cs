@@ -4182,7 +4182,7 @@ namespace DotNetNuke.Services.Upgrade
                             {
                                 NameResourceKey = "Accept",
                                 DescriptionResourceKey = "AcceptFriend",
-                                APICall = "DesktopModules/CoreServices/API/RelationshipService.ashx/AcceptFriend"
+                                APICall = "DesktopModules/InternalServices/API/RelationshipService.ashx/AcceptFriend"
                             });
             NotificationsController.Instance.CreateNotificationType(type);
             NotificationsController.Instance.SetNotificationTypeActions(actions, type.NotificationTypeId);
@@ -4199,7 +4199,7 @@ namespace DotNetNuke.Services.Upgrade
                 NameResourceKey = "FollowBack",
                 DescriptionResourceKey = "FollowBack",
                 ConfirmResourceKey = "",
-                APICall = "DesktopModules/CoreServices/API/RelationshipService.ashx/FollowBack"
+                APICall = "DesktopModules/InternalServices/API/RelationshipService.ashx/FollowBack"
             });
             NotificationsController.Instance.CreateNotificationType(type);
             NotificationsController.Instance.SetNotificationTypeActions(actions, type.NotificationTypeId);

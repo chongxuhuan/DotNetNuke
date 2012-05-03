@@ -70,8 +70,8 @@ namespace DotNetNuke.HttpModules.Personalization
             {
                 //load the user info object
                 UserInfo UserInfo = UserController.GetCurrentUserInfo();
-                var objPersonalization = new PersonalizationController();
-                objPersonalization.SaveProfile(Context, UserInfo.UserID, _portalSettings.PortalId);
+                var personalization = new PersonalizationController();
+                personalization.SaveProfile(Context, UserInfo.UserID, _portalSettings.PortalId);
             }
         }
     }

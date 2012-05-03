@@ -92,10 +92,21 @@ namespace DotNetNuke.Entities.Users
 
         private bool _IsDirty;
 
+        private UserInfo _user;
+
         //collection to store all profile properties.
         private ProfilePropertyDefinitionCollection _profileProperties;
 
 		#endregion
+
+        public UserProfile()
+        {
+        }
+
+        public UserProfile(UserInfo user)
+        {
+            _user = user;
+        }
 		
 		#region Public Properties
 		
@@ -291,7 +302,28 @@ namespace DotNetNuke.Entities.Users
                 ProfilePropertyDefinition photoProperty = GetProperty(cPhoto);
                 if ((photoProperty != null))
                 {
-                    if (!string.IsNullOrEmpty(photoProperty.PropertyValue) && photoProperty.ProfileVisibility.VisibilityMode == UserVisibilityMode.AllUsers)
+                    UserInfo user = UserController.GetCurrentUserInfo();
+                    PortalSettings settings = PortalController.GetCurrentPortalSettings();
+
+                    bool isVisible = (user.UserID == _user.UserID);
+                    if (!isVisible)
+                    {
+                        switch (photoProperty.ProfileVisibility.VisibilityMode)
+                        {
+                            case UserVisibilityMode.AllUsers:
+                                isVisible = true;
+                                break;
+                            case UserVisibilityMode.MembersOnly:
+                                isVisible = user.UserID > 0;
+                                break;
+                            case UserVisibilityMode.AdminOnly:
+                                isVisible = user.IsInRole(settings.AdministratorRoleName);
+                                break;
+                            case UserVisibilityMode.FriendsAndGroups:
+                                break;
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(photoProperty.PropertyValue) && isVisible)
                     {
                         var fileInfo = FileManager.Instance.GetFile(int.Parse(photoProperty.PropertyValue));
                         if ((fileInfo != null))

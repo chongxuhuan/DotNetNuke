@@ -394,17 +394,14 @@ namespace DotNetNuke.Security.Membership
 
         private static IList<UserInfo> FillUserList(int portalId, IDataReader dr)
         {
-            //TODO - this method needs to be updated to eagerly load the Users.
-            //Currently it is still using the old lazy loading of Membership and profile
-            //The datareader should have the fields needed.
-           
+          
             var users = new List<UserInfo>();
             try
             {
                 while (dr.Read())
                 {
                     //fill business object
-                    UserInfo user = FillUserInfo(portalId, dr, false);
+                    UserInfo user = FillUserAndProfile(portalId, dr);
                     //add to collection
                     users.Add(user);
                 }
@@ -419,6 +416,78 @@ namespace DotNetNuke.Security.Membership
                 CBO.CloseDataReader(dr, true);
             }
             return users;
+        }
+
+        private static UserInfo FillUserAndProfile(int portalId, IDataReader dr)
+        {
+            UserInfo user = null;
+            bool bContinue = (String.Equals(dr.GetName(0), "UserID", StringComparison.InvariantCultureIgnoreCase));
+
+            //Ensure the data reader returned is valid
+            if (bContinue)
+            {
+                user = new UserInfo
+                            {
+                                PortalID = Null.SetNullInteger(dr["PortalID"]),
+                                IsSuperUser = Null.SetNullBoolean(dr["IsSuperUser"]),
+                                IsDeleted = Null.SetNullBoolean(dr["IsDeleted"]),
+                                UserID = Null.SetNullInteger(dr["UserID"]),
+                                DisplayName = Null.SetNullString(dr["DisplayName"]),
+                                Username = Null.SetNullString(dr["Username"]),
+                                Email = Null.SetNullString(dr["Email"]),
+                                AffiliateID = Null.SetNullInteger(dr["AffiliateID"])
+                            };
+                user.AffiliateID = Null.SetNullInteger(Null.SetNull(dr["AffiliateID"], user.AffiliateID));
+
+                UserController.GetUserMembership(user);
+                user.Membership.UpdatePassword = Null.SetNullBoolean(dr["UpdatePassword"]);
+                if (!user.IsSuperUser)
+                {
+                    user.Membership.Approved = Null.SetNullBoolean(dr["Authorised"]);
+                }
+                if (user.PortalID == Null.NullInteger)
+                {
+                    user.PortalID = portalId;
+                }
+
+                var userProfile = new UserProfile(user);
+                userProfile.InitialiseProfile(portalId);
+
+                for(int i = 0; i < dr.FieldCount; i++)
+                {
+                    switch(dr.GetName(i))
+                    {
+                        case "PortalID":
+                        case "IsSuperUser":
+                        case "IsDeleted":
+                        case "UserID":
+                        case "DisplayName":
+                        case "Username":
+                        case "Email":
+                        case "AffiliateID":
+                        case "UpdatePassword":
+                        case "Authorised":
+                        case "CreateDate":
+                        case "LastActivityDate":
+                        case "LastLockoutDate":
+                        case "LastLoginDate":
+                        case "LastPasswordChangedDate":
+                        case "IsLockedOut":
+                        case "PasswordQuestion":
+                        case "IsApproved":
+                            break;
+                        default:
+                            //Probably a profile property
+                            string name = dr.GetName(i);
+                            userProfile.SetProfileProperty(name, Null.SetNullString(dr[name]));
+                            break;
+                    }
+                }
+
+                user.Profile = userProfile;
+
+            }
+            return user;          
         }
 
         private static UserInfo FillUserInfo(int portalId, IDataReader dr, bool closeDataReader)

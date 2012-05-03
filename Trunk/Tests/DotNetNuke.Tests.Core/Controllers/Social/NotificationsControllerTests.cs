@@ -581,10 +581,10 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         #endregion
 
-        #region CreateNotification
+        #region SendNotification
 
         [Test]
-        public void CreateNotification_Sets_Empty_SenderUserId_With_Admin()
+        public void SendNotification_Sets_Empty_SenderUserId_With_Admin()
         {
             var adminUser = new UserInfo
             {
@@ -596,7 +596,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _mockNotificationsController.Setup(nc => nc.GetAdminUser()).Returns(adminUser);
 
             _mockNotificationsController
-                .Setup(nc => nc.CreateNotification(
+                .Setup(nc => nc.SendNotification(
                     It.IsAny<Notification>(),
                     Constants.PORTAL_Zero,
                     It.IsAny<IList<RoleInfo>>(),
@@ -604,7 +604,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             var notification = CreateUnsavedNotification();
 
-            _mockNotificationsController.Object.CreateNotification(
+            _mockNotificationsController.Object.SendNotification(
                 notification,
                 Constants.PORTAL_Zero,
                 new List<RoleInfo>(),
@@ -619,13 +619,13 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         [TestCase("", null)]
         [TestCase("", "")]
         [ExpectedException(typeof(ArgumentException))]
-        public void CreateNotification_Throws_On_Null_Or_Empty_Subject_And_Body(string subject, string body)
+        public void SendNotification_Throws_On_Null_Or_Empty_Subject_And_Body(string subject, string body)
         {
             var notification = CreateUnsavedNotification();
             notification.Subject = subject;
             notification.Body = body;
 
-            _notificationsController.CreateNotification(
+            _notificationsController.SendNotification(
                 notification, 
                 Constants.PORTAL_Zero,
                 new List<RoleInfo>(),
@@ -634,9 +634,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         [Test]
         [ExpectedException(typeof(ArgumentException))]
-        public void CreateNotification_Throws_On_Null_Roles_And_Users()
+        public void SendNotification_Throws_On_Null_Roles_And_Users()
         {
-            _notificationsController.CreateNotification(
+            _notificationsController.SendNotification(
                 CreateUnsavedNotification(),
                 Constants.PORTAL_Zero,
                 null,
@@ -645,7 +645,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         [Test]
         [ExpectedException(typeof(ArgumentException))]
-        public void CreateNotification_Throws_On_Large_Subject()
+        public void SendNotification_Throws_On_Large_Subject()
         {
             var notification = CreateUnsavedNotification();
             var subject = new StringBuilder();
@@ -655,7 +655,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             }
             notification.Subject = subject.ToString();
 
-            _notificationsController.CreateNotification(
+            _notificationsController.SendNotification(
                 notification,
                 Constants.PORTAL_Zero,
                 new List<RoleInfo>(),
@@ -664,9 +664,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         [Test]
         [ExpectedException(typeof(ArgumentException))]
-        public void CreateNotification_Throws_On_Roles_And_Users_With_No_DisplayNames()
+        public void SendNotification_Throws_On_Roles_And_Users_With_No_DisplayNames()
         {
-            _notificationsController.CreateNotification(
+            _notificationsController.SendNotification(
                 CreateUnsavedNotification(),
                 Constants.PORTAL_Zero,
                 new List<RoleInfo>(),
@@ -675,7 +675,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         [Test]
         [ExpectedException(typeof(ArgumentException))]
-        public void CreateNotification_Throws_On_Large_To_List()
+        public void SendNotification_Throws_On_Large_To_List()
         {
             var roles = new List<RoleInfo>();
             var users = new List<UserInfo>();
@@ -686,7 +686,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 users.Add(new UserInfo { DisplayName = "1234567890" });
             }
 
-            _notificationsController.CreateNotification(
+            _notificationsController.SendNotification(
                 CreateUnsavedNotification(),
                 Constants.PORTAL_Zero,
                 roles,
@@ -695,7 +695,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
         [Test]
         [ExpectedException(typeof(RecipientLimitExceededException))]
-        public void CreateNotification_Throws_On_Recipient_Limit_Exceeded()
+        public void SendNotification_Throws_On_Recipient_Limit_Exceeded()
         {
             var adminUser = new UserInfo { PortalID = Constants.CONTENT_ValidPortalId };
 
@@ -709,7 +709,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(1);
 
-            _mockNotificationsController.Object.CreateNotification(
+            _mockNotificationsController.Object.SendNotification(
                 CreateUnsavedNotification(),
                 Constants.PORTAL_Zero,
                 roles,
@@ -717,7 +717,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         }
 
         [Test]
-        public void CreateNotification_Filters_Input_When_ProfanityFilter_Is_Enabled()
+        public void SendNotification_Filters_Input_When_ProfanityFilter_Is_Enabled()
         {
             const string expectedSubjectFiltered = "subject_filtered";
             const string expectedBodyFiltered = "body_filtered";
@@ -744,7 +744,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
 
             _mockDataService
-                .Setup(ds => ds.CreateNotification(
+                .Setup(ds => ds.SendNotification(
                     It.IsAny<Notification>(),
                     Constants.PORTAL_Zero));
 
@@ -759,7 +759,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var notification = CreateUnsavedNotification();
             notification.SenderUserID = adminUser.UserID;
 
-            _mockNotificationsController.Object.CreateNotification(
+            _mockNotificationsController.Object.SendNotification(
                 notification,
                 Constants.PORTAL_Zero,
                 roles,
@@ -770,7 +770,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         }
 
         [Test]
-        public void CreateNotification_Calls_DataService_CreateNotification_On_Valid_Notification()
+        public void SendNotification_Calls_DataService_On_Valid_Notification()
         {
             var adminUser = new UserInfo
                                 {
@@ -792,7 +792,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                             };
 
             _mockDataService
-                .Setup(ds => ds.CreateNotification(
+                .Setup(ds => ds.SendNotification(
                     It.IsAny<Notification>(),
                     Constants.PORTAL_Zero))
                 .Verifiable();
@@ -802,7 +802,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var notification = CreateUnsavedNotification();
             notification.SenderUserID = adminUser.UserID;
 
-            _mockNotificationsController.Object.CreateNotification(
+            _mockNotificationsController.Object.SendNotification(
                 notification,
                 Constants.PORTAL_Zero,
                 roles,
@@ -812,7 +812,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         }
 
         [Test]
-        public void CreateNotification_Calls_Messaging_DataService_CreateSocialMessageRecipientsForRole_When_Passing_Roles()
+        public void SendNotification_Calls_Messaging_DataService_CreateSocialMessageRecipientsForRole_When_Passing_Roles()
         {
             var adminUser = new UserInfo
             {
@@ -834,7 +834,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var users = new List<UserInfo>();
 
             _mockDataService
-                .Setup(ds => ds.CreateNotification(
+                .Setup(ds => ds.SendNotification(
                     It.IsAny<Notification>(),
                     Constants.PORTAL_Zero))
                 .Returns(Constants.Messaging_MessageId_1);
@@ -851,7 +851,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var notification = CreateUnsavedNotification();
             notification.SenderUserID = adminUser.UserID;
 
-            _mockNotificationsController.Object.CreateNotification(
+            _mockNotificationsController.Object.SendNotification(
                 notification,
                 Constants.PORTAL_Zero,
                 roles,
@@ -861,7 +861,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         }
 
         [Test]
-        public void CreateNotification_Calls_Messaging_DataService_SaveSocialMessageRecipient_When_Passing_Users()
+        public void SendNotification_Calls_Messaging_DataService_SaveSocialMessageRecipient_When_Passing_Users()
         {
             var adminUser = new UserInfo
             {
@@ -883,7 +883,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                             };
 
             _mockDataService
-                .Setup(ds => ds.CreateNotification(
+                .Setup(ds => ds.SendNotification(
                     It.IsAny<Notification>(),
                     Constants.PORTAL_Zero))
                 .Returns(Constants.Messaging_MessageId_1);
@@ -909,7 +909,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var notification = CreateUnsavedNotification();
             notification.SenderUserID = adminUser.UserID;
 
-            _mockNotificationsController.Object.CreateNotification(
+            _mockNotificationsController.Object.SendNotification(
                 notification,
                 Constants.PORTAL_Zero,
                 roles,
@@ -919,7 +919,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         }
 
         [Test]
-        public void CreateNotification_Returns_Valid_Object()
+        public void SendNotification_Returns_Valid_Object()
         {
             var expectedNotification = CreateValidNotification();
 
@@ -943,7 +943,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                             };
 
             _mockDataService
-                .Setup(ds => ds.CreateNotification(
+                .Setup(ds => ds.SendNotification(
                     It.IsAny<Notification>(),
                     Constants.PORTAL_Zero))
                 .Returns(Constants.Messaging_MessageId_1);
@@ -974,7 +974,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var notification = CreateUnsavedNotification();
             notification.SenderUserID = adminUser.UserID;
 
-            _mockNotificationsController.Object.CreateNotification(
+            _mockNotificationsController.Object.SendNotification(
                 notification,
                 Constants.PORTAL_Zero, 
                 roles,

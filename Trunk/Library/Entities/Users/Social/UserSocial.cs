@@ -25,6 +25,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Xml.Serialization;
 
 using DotNetNuke.Security.Roles;
@@ -49,10 +51,9 @@ namespace DotNetNuke.Entities.Users.Social
         #region Private
 
         private IList<Relationship> _relationships;
-        private IDictionary<string, IList<UserRelationship>> _userRelationships;
+        private IList<UserRelationship> _userRelationships;
         private  IList<UserRoleInfo> _roles;
         private readonly UserInfo _userInfo;
-        private readonly RelationshipController _relationshipController;
         private readonly RoleController _roleController;
 
         #endregion
@@ -61,7 +62,6 @@ namespace DotNetNuke.Entities.Users.Social
 
         public UserSocial(UserInfo userInfo)
         {
-            _relationshipController = new RelationshipController();
             _roleController = new RoleController();
             _userInfo = userInfo;
         }
@@ -75,7 +75,19 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         public UserRelationship Friend
         {
-            get { return RelationshipController.Instance.GetFriendRelationship(UserController.GetCurrentUserInfo(), _userInfo); }
+            get
+            {
+                var _friendsRelationship = RelationshipController.Instance.GetFriendsRelationshipByPortal(_userInfo.PortalID);
+                var currentUser = UserController.GetCurrentUserInfo();
+                return UserRelationships.SingleOrDefault(ur => (ur.RelationshipId == _friendsRelationship.RelationshipId
+                                                                && 
+                                                                (ur.UserId == _userInfo.UserID &&
+                                                                 ur.RelatedUserId == currentUser.UserID
+                                                                 ||
+                                                                 (ur.UserId == currentUser.UserID &&
+                                                                  ur.RelatedUserId == _userInfo.UserID)
+                                                                )));
+            }
         }
 
         /// <summary>
@@ -83,7 +95,16 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         public UserRelationship Follower
         {
-            get { return RelationshipController.Instance.GetFollowingRelationship(UserController.GetCurrentUserInfo(), _userInfo); }            
+            get
+            {
+                var _followerRelationship = RelationshipController.Instance.GetFollowersRelationshipByPortal(_userInfo.PortalID);
+                var currentUser = UserController.GetCurrentUserInfo();
+                return UserRelationships.SingleOrDefault(ur => (ur.RelationshipId == _followerRelationship.RelationshipId
+                                                                &&
+                                                                (ur.UserId == _userInfo.UserID &&
+                                                                 ur.RelatedUserId == currentUser.UserID
+                                                                )));
+            }
         }
 
         /// <summary>
@@ -91,15 +112,24 @@ namespace DotNetNuke.Entities.Users.Social
         /// </summary>
         public UserRelationship Following
         {
-            get { return RelationshipController.Instance.GetFollowerRelationship(UserController.GetCurrentUserInfo(), _userInfo); }
+            get
+            {
+                var _followerRelationship = RelationshipController.Instance.GetFollowersRelationshipByPortal(_userInfo.PortalID);
+                var currentUser = UserController.GetCurrentUserInfo();
+                return UserRelationships.SingleOrDefault(ur => (ur.RelationshipId == _followerRelationship.RelationshipId
+                                                                &&
+                                                                (ur.UserId == currentUser.UserID &&
+                                                                 ur.RelatedUserId == _userInfo.UserID
+                                                                )));
+            }
         }
 
         /// <summary>
         /// A collection of all the relationships the user is a member of.
         /// </summary>
-        public IDictionary<string, IList<UserRelationship>> UserRelationships
+        public IList<UserRelationship> UserRelationships
         {
-            get { return _userRelationships ?? (_userRelationships = GetUserRelationships()); }
+            get { return _userRelationships ?? (_userRelationships = RelationshipController.Instance.GetUserRelationships(_userInfo)); }
         }
 
         /// <summary>
@@ -134,26 +164,5 @@ namespace DotNetNuke.Entities.Users.Social
         }
 
         #endregion
-
-        private IDictionary<string, IList<UserRelationship>> GetUserRelationships()
-        {
-            var dictionary = new Dictionary<string, IList<UserRelationship>>();
-
-            foreach (UserRelationship userRelationship in RelationshipController.Instance.GetUserRelationships(_userInfo))
-            {
-                Relationship relationship = RelationshipController.Instance.GetRelationship(userRelationship.RelationshipId);
-
-                IList<UserRelationship> userRelationshipList;
-                if (!dictionary.TryGetValue(relationship.RelationshipId.ToString(), out userRelationshipList))
-                {
-                    userRelationshipList = new List<UserRelationship>();
-                    dictionary.Add(relationship.RelationshipId.ToString(), userRelationshipList);
-                }
-
-                userRelationshipList.Add(userRelationship);
-            }
-
-            return dictionary;
-        }
     }
 }

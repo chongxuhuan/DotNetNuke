@@ -136,14 +136,23 @@ namespace DotNetNuke.Services.FileSystem
             return CBO.FillObject<FolderMappingInfo>(dataProvider.GetFolderMapping(folderMappingID));
         }
 
-        public FolderMappingInfo GetFolderMapping(int portalID, string mappingName)
+        public FolderMappingInfo GetFolderMapping(int portalId, int folderMappingID)
         {
-            return CBO.FillObject<FolderMappingInfo>(dataProvider.GetFolderMappingByMappingName(portalID, mappingName));
+            return GetFolderMappings(portalId).SingleOrDefault(fm => fm.FolderMappingID == folderMappingID);
         }
 
-        public List<FolderMappingInfo> GetFolderMappings(int portalID)
+        public FolderMappingInfo GetFolderMapping(int portalId, string mappingName)
         {
-            return CBO.FillCollection<FolderMappingInfo>(dataProvider.GetFolderMappings(portalID));
+            return GetFolderMappings(portalId).SingleOrDefault(fm => fm.MappingName == mappingName);
+        }
+
+        public List<FolderMappingInfo> GetFolderMappings(int portalId)
+        {
+            var cacheKey = String.Format(DataCache.FolderMappingCacheKey, portalId);
+            return CBO.GetCachedObject<List<FolderMappingInfo>>(new CacheItemArgs(cacheKey, 
+                                                                    DataCache.FolderMappingCacheTimeOut, 
+                                                                    DataCache.FolderMappingCachePriority),
+                                                                (c) => CBO.FillCollection<FolderMappingInfo>(dataProvider.GetFolderMappings(portalId)));
         }
 
         public void AddDefaultFolderTypes(int portalID)

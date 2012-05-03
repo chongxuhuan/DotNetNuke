@@ -97,10 +97,10 @@ namespace DotNetNuke.Services.Social.Notifications.Data
 
         #region Notifications Public Methods
 
-        public int CreateNotification(Notification notification, int portalId)
+        public int SendNotification(Notification notification, int portalId)
         {
             int createdByUserId = UserController.GetCurrentUserInfo().UserID;
-            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("CreateNotification"),
+            return _provider.ExecuteScalar<int>(GetFullyQualifiedName("SendNotification"),
                                                 notification.NotificationTypeID,
                                                 portalId,
                                                 notification.To,

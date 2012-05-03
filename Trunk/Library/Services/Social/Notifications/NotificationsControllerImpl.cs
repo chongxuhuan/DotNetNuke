@@ -110,7 +110,7 @@ namespace DotNetNuke.Services.Social.Notifications
             return _dataService.CountNotifications(userId, portalId);
         }
 
-        public virtual void CreateNotification(Notification notification, int portalId, IList<RoleInfo> roles, IList<UserInfo> users)
+        public virtual void SendNotification(Notification notification, int portalId, IList<RoleInfo> roles, IList<UserInfo> users)
         {
             Requires.NotNull("notification", notification);
 
@@ -181,7 +181,7 @@ namespace DotNetNuke.Services.Social.Notifications
                 notification.ExpirationDate = GetExpirationDate(notification.NotificationTypeID);
             }
 
-            notification.NotificationID = _dataService.CreateNotification(notification, portalId);
+            notification.NotificationID = _dataService.SendNotification(notification, portalId);
             
             //send message to Roles
             if (roles != null)

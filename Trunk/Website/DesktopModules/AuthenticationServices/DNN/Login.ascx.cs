@@ -104,37 +104,36 @@ namespace DotNetNuke.Modules.Admin.Authentication
 
             if (!IsPostBack)
             {
-                var verificationCode = Request.QueryString["verificationcode"];
-                if (!string.IsNullOrEmpty(verificationCode))
+                if (!string.IsNullOrEmpty(Request.QueryString["verificationcode"]) && 
+                    PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.VerifiedRegistration)
                 {
-                    if (PortalSettings.UserRegistration == (int)Globals.PortalRegistrationType.VerifiedRegistration)
+                    if (Request.IsAuthenticated)
                     {
-                        if (Request.IsAuthenticated)
-                        {
-                            Controls.Clear();
-                        }
+                        Controls.Clear();
+                    }
 
-                        try
-                        {
-                            UserController.VerifyUser(verificationCode);
-                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("VerificationSuccess", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
-                        }
-                        catch (UserAlreadyVerifiedException)
-                        {
-                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("UserAlreadyVerified", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
-                        }
-                        catch (InvalidVerificationCodeException)
-                        {
-                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("InvalidVerificationCode", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
-                        }
-                        catch (UserDoesNotExistException)
-                        {
-                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("UserDoesNotExist", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
-                        }
-                        catch (Exception)
-                        {
-                            UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("InvalidVerificationCode", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
-                        }
+                    var verificationCode = Server.UrlDecode(Request.QueryString["verificationcode"]);
+
+                    try
+                    {
+                        UserController.VerifyUser(verificationCode);
+                        UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("VerificationSuccess", LocalResourceFile), ModuleMessage.ModuleMessageType.GreenSuccess);
+                    }
+                    catch (UserAlreadyVerifiedException)
+                    {
+                        UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("UserAlreadyVerified", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
+                    }
+                    catch (InvalidVerificationCodeException)
+                    {
+                        UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("InvalidVerificationCode", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                    }
+                    catch (UserDoesNotExistException)
+                    {
+                        UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("UserDoesNotExist", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                    }
+                    catch (Exception)
+                    {
+                        UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("InvalidVerificationCode", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
                     }
                 }
             }
@@ -180,15 +179,8 @@ namespace DotNetNuke.Modules.Admin.Authentication
                 useEmailAsUserName = !registrationFields.Contains("Username");
             }
 
-            if (useEmailAsUserName)
-            {
-                plUsername.Text = LocalizeString("Email");
-            }
-            else
-            {
-                plUsername.Text = LocalizeString("Username");
-            }
-			divCaptcha1.Visible = UseCaptcha;
+		    plUsername.Text = LocalizeString(useEmailAsUserName ? "Email" : "Username");
+		    divCaptcha1.Visible = UseCaptcha;
 			divCaptcha2.Visible = UseCaptcha;
 		}
 

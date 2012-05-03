@@ -112,11 +112,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DotNetNukeHttpApplication.cs" />
-    <Compile Include="CoreServices\NotificationsServiceController.cs" />
-    <Compile Include="CoreServices\RelationshipServiceController.cs" />
-    <Compile Include="CoreServices\MessagingServiceController.cs" />
-    <Compile Include="CoreServices\ServiceRouteMapper.cs" />
-    <Compile Include="CoreServices\UserFileController.cs" />
+    <Compile Include="InternalServices\NotificationsServiceController.cs" />
+    <Compile Include="InternalServices\RelationshipServiceController.cs" />
+    <Compile Include="InternalServices\MessagingServiceController.cs" />
+    <Compile Include="InternalServices\ServiceRouteMapper.cs" />
+    <Compile Include="InternalServices\UserFileController.cs" />
     <Compile Include="Mvp\ModuleSettingsPresenterOfT.cs" />
     <Compile Include="Mvp\ISettingsViewOfT.cs" />
     <Compile Include="Mvp\ProfileModuleViewBase.cs">

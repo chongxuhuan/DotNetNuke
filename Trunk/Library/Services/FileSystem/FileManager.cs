@@ -560,7 +560,7 @@ namespace DotNetNuke.Services.FileSystem
 
             Requires.NotNull("file", file);
 
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.PortalId, file.FolderMappingID);
 
             try
             {

@@ -101,14 +101,17 @@ namespace DotNetNuke.Services.Social.Messaging.Scheduler
             //todo: check if host user can send to multiple portals...
             var messageDetails = MessagingController.Instance.GetMessage(objMessage.MessageID);
 
-            var portalController = new PortalController();
-            var portal = portalController.GetPortal(messageDetails.PortalID);
+            if (messageDetails.SenderUserID != objMessage.UserID)
+            {
+                var portalController = new PortalController();
+                var portal = portalController.GetPortal(messageDetails.PortalID);
 
-            var senderAddress = UserController.GetUserById(messageDetails.PortalID, portal.AdministratorId).Email;
-            var fromAddress = _pController.GetPortal(messageDetails.PortalID).Email;
-            var toAddress = _uController.GetUser(messageDetails.PortalID, objMessage.UserID).Email;
+                var senderAddress = UserController.GetUserById(messageDetails.PortalID, portal.AdministratorId).Email;
+                var fromAddress = _pController.GetPortal(messageDetails.PortalID).Email;
+                var toAddress = _uController.GetUser(messageDetails.PortalID, objMessage.UserID).Email;
 
-            Mail.Mail.SendEmail(fromAddress, senderAddress, toAddress, messageDetails.Subject, messageDetails.Body);
+                Mail.Mail.SendEmail(fromAddress, senderAddress, toAddress, messageDetails.Subject, messageDetails.Body);
+            }
 
             MessagingController.Instance.MarkMessageAsDispatched(objMessage.MessageID, objMessage.RecipientID);
         }
