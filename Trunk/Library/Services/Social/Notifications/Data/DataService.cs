@@ -134,6 +134,11 @@ namespace DotNetNuke.Services.Social.Notifications.Data
             return _provider.ExecuteReader(GetFullyQualifiedName("GetNotification"), notificationId);
         }
 
+        public IDataReader GetNotificationByContext(int notificationTypeId, string context)
+        {
+            return _provider.ExecuteReader(GetFullyQualifiedName("GetNotificationByContext"), notificationTypeId, context);
+        }
+
         #endregion
     }
 }

@@ -21,78 +21,65 @@
 #region Usings
 
 using System;
-using System.Data;
 using System.Xml.Serialization;
-
-using DotNetNuke.Common;
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities;
-using DotNetNuke.Entities.Modules;
 
 #endregion
 
-namespace DotNetNuke.Services.Social.Messaging.Views
+namespace DotNetNuke.Services.Social.Messaging.Internal.Views
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
     /// Namespace:  DotNetNuke.Entities.Messaging.Views
-    /// Class:      MessageConversationView
+    /// Class:      MessageFileView
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageConversationView class contains details of the latest message in a Conversation.
+    /// The MessageFileView class contains details about the attachment
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageConversationView : Message, IHydratable
+    public class MessageFileView
     {
-        /// <summary>
-        /// RowNumber of the message in a set
-        /// </summary>
-        [XmlAttribute]
-        public int RowNumber { get; set; }
+        private string _size;
 
         /// <summary>
-        /// Count of Total Attachments in a Conversation. It is calculated by adding attachments in all the threads for a given conversation.
+        /// The name of the file with extension
         /// </summary>
         [XmlAttribute]
-        public int AttachmentCount { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
-        /// Count of Total New (Unread) Threads in a Conversation. It is calculated by inspecting all the threads in a conversation and counting the ones that are not read yet.
+        /// Size of the File with Unit, e.g. 100 B, 12 KB, 200 MB, etc.
         /// </summary>
         [XmlAttribute]
-        public int NewThreadCount { get; set; }
-
-        /// <summary>
-        /// Count of Total Threads in a Conversation.
-        /// </summary>
-        [XmlAttribute]
-        public int ThreadCount { get; set; }
-
-        /// <summary>
-        /// The Sender User Profile URL
-        /// </summary>
-        [XmlIgnore]
-        public string SenderProfileUrl
+        public string Size
         {
-            get
+            get { return _size; }
+            set
             {
-                return Globals.UserProfileURL(SenderUserID);
+                long bytes;
+                if (!long.TryParse(value, out bytes)) return;
+                const int scale = 1024;
+                var orders = new[] { "GB", "MB", "KB", "B" };
+                var max = (long)Math.Pow(scale, orders.Length - 1);
+
+                foreach (var order in orders)
+                {
+                    if (bytes > max)
+                    {
+                        _size = string.Format("{0:##.##} {1}", decimal.Divide(bytes, max), order);
+                        return;
+                    }
+
+                    max /= scale;
+                }
+                _size = "0 B";
             }
         }
 
         /// <summary>
-        /// Fill the object with data from database.
+        /// Url of the file to download
         /// </summary>
-        /// <param name="dr">the data reader.</param>
-        public new void Fill(IDataReader dr)
-        {
-            RowNumber = Convert.ToInt32(dr["RowNumber"]);
-            AttachmentCount = Convert.ToInt32(dr["AttachmentCount"]);
-            NewThreadCount = Convert.ToInt32(dr["NewThreadCount"]);
-            ThreadCount = Convert.ToInt32(dr["ThreadCount"]);
-
-            base.Fill(dr);            
-        }
+        [XmlAttribute]
+        public string Url { get; set; }
     }
 }

@@ -138,4 +138,13 @@
   <data name="Email.Text" xml:space="preserve">
     <value>Email Address:</value>
   </data>
+  <data name="cmdPassword.Text" xml:space="preserve">
+    <value>Retrieve Password</value>
+  </data>
+  <data name="cmdRegister.Text" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Remember.Text" xml:space="preserve">
+    <value>Remember Login</value>
+  </data>
 </root>

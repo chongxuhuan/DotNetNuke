@@ -23,7 +23,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using DotNetNuke.Services.Social.Messaging.Views;
+
+using DotNetNuke.Services.Social.Messaging.Internal.Views;
 
 #endregion
 
@@ -41,6 +42,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
 
         MessageBoxView GetMessageBoxView(int userId, int portalId,int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
         IDataReader GetSentBoxView(int userId, int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending);
+        IDataReader GetArchiveBoxView(int userId, int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending);
         MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords);        
         void UpdateMessageReadStatus(int conversationId, int userId, bool read);
         void UpdateMessageArchivedStatus(int conversationId, int userId, bool archived);

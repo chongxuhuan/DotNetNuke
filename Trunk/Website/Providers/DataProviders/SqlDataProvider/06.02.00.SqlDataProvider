@@ -2829,6 +2829,38 @@ BEGIN
 END
 GO
 
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationByContext]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationByContext]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetNotificationByContext]
+	@notificationTypeId int,
+	@Context nvarchar(200)
+AS
+BEGIN
+	SELECT
+		M.[MessageID],
+		M.[NotificationTypeId],
+		M.[To],
+		M.[From],
+		M.[Subject],
+		M.[Body],
+		M.[SenderUserID],
+		M.[ExpirationDate],
+        M.[IncludeDismissAction],
+		M.[CreatedByUserID],
+		M.[CreatedOnDate],
+		M.[LastModifiedByUserID],
+		M.[LastModifiedOnDate],
+        M.[Context]
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] AS M
+	WHERE [NotificationTypeId] IS NOT NULL
+	AND M.NotificationTypeId = @notificationTypeId
+	AND M.Context = @context
+END
+GO
+
+
 IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotification]') AND type in (N'P', N'PC'))
 	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotification]
 GO
@@ -4685,9 +4717,55 @@ BEGIN
 		FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages AS m
 		WHERE SenderUserID = @UserID
 		AND NotificationTypeID IS NULL AND PortalID = @PortalID
-		AND EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients MR WHERE MR.MessageID = m.MessageID AND MR.Archived = 0)
 	)
 	SELECT * FROM SentBox WHERE RowNumber BETWEEN @PageLowerBound AND @PageUpperBound
+	ORDER BY RowNumber ASC
+END
+GO
+
+/* Add GetArchiveBox Procedure */
+/*******************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_GetArchiveBox]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetArchiveBox]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_GetArchiveBox]
+	@UserID int,
+	@PortalID int,
+	@PageIndex int,
+	@PageSize int,
+	@SortField nvarchar(25) = 'CreatedOnDate',
+	@SortAscending bit = 0
+AS
+BEGIN
+	-- Set the page bounds
+	DECLARE @PageLowerBound INT, @PageUpperBound INT;
+
+	SET @PageLowerBound = (@PageIndex * @PageSize) + 1
+	SET @PageUpperBound = (@PageIndex * @PageSize) + @PageSize
+
+	;WITH ArchiveBox AS
+	(
+		SELECT DISTINCT m.[MessageID], [ConversationID], [Subject], convert(nvarchar(50), [Body]) AS Body,
+				[To], [From], [ReplyAllAllowed], [SenderUserID],
+				m.[CreatedByUserID], m.[CreatedOnDate],
+				m.[LastModifiedByUserID], m.[LastModifiedOnDate],
+				(SELECT COUNT(*) FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageAttachments] WHERE MessageID = m.MessageID) AS AttachmentCount,
+				(SELECT COUNT(*) FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] WHERE ConversationID = m.ConversationID) AND UserID = @UserID AND [READ] = 0) AS NewThreadCount,
+				(SELECT COUNT(*) FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] WHERE ConversationID = m.ConversationID) AND UserID = @UserID) AS ThreadCount,
+				ROW_NUMBER() OVER(ORDER BY
+					 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN m.[CreatedOnDate] END ASC,
+					 CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN m.[CreatedOnDate] END DESC,
+					 CASE WHEN @SortField = 'From' AND @SortAscending = 1 THEN [From] END ASC,
+					 CASE WHEN @SortField = 'From' AND @SortAscending = 0 THEN [From] END DESC,
+					 CASE WHEN @SortField = 'Subject' AND @SortAscending = 1 THEN [Subject] END ASC,
+					 CASE WHEN @SortField = 'Subject' AND @SortAscending = 0 THEN [Subject] END DESC
+					) AS RowNumber
+		FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] AS m
+		JOIN {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] AS MR ON m.MessageID = MR.MessageID
+		WHERE NotificationTypeID IS NULL AND PortalID = @PortalID AND MR.UserID = @UserID AND MR.Archived = 1
+	)
+	SELECT * FROM ArchiveBox WHERE RowNumber BETWEEN @PageLowerBound AND @PageUpperBound
 	ORDER BY RowNumber ASC
 END
 GO
@@ -5078,11 +5156,14 @@ AS
 		(	SELECT * FROM @PropertyValuesTable
 			WHERE RowValue NOT IN (SELECT ColumnName FROM @UserColumns))
 
-		SELECT @propertyFilter = COALESCE(@propertyFilter + ' OR ' , ' ') + ' (PropertyName=''' + N.RowValue + ''' AND PropertyValue LIKE ''%' + V.RowValue +'%'') '
+		SELECT @propertyFilter = COALESCE(@propertyFilter + ' OR ' , ' ') 
+									+ ' (PropertyName=''' + N.RowValue 
+									+ ''' AND (PropertyValue LIKE ''' + V.RowValue +'%'') OR (PropertyValue LIKE ''% ' + V.RowValue +'%'')'
 		FROM CTE_PropertyNames AS N INNER JOIN CTE_PropertyValues AS V ON N.RowNumber = V.RowNumber
 		
 		-- Filters on User Property		
-		SELECT @userFilter = COALESCE(@userFilter + ' AND ', ' ')  + ' (u.' + N.RowValue + ' LIKE ''%' + V.RowValue +'%'') '
+		SELECT @userFilter = COALESCE(@userFilter + ' AND ', ' ')  
+									+ ' ((u.' + N.RowValue + ' LIKE ''' + V.RowValue +'%'') OR (u.' + N.RowValue + ' LIKE ''% ' + V.RowValue +'%'')) '
 		FROM @UserFiltersTable AS N	INNER JOIN @PropertyValuesTable AS V ON N.RowNumber = V.RowNumber
 		
 		SELECT @userFilterCount = COUNT(*) FROM @UserFiltersTable
@@ -5345,7 +5426,8 @@ AS
 								U.IsApproved
 								FROM {objectQualifier}vw_Users AS U
 							WHERE U.PortalID = ' + CONVERT(nvarchar(20), @PortalID) + '
-								AND U.' + @PropertyName + ' LIKE ''%' + @PropertyValue + '%''
+								AND (U.' + @PropertyName + ' LIKE ''' + @PropertyValue + '%'')
+									OR ((U.' + @PropertyName + ' LIKE ''% ' + @PropertyValue + '%''))
 								AND U.IsDeleted = 0
 						) AS U
 						WHERE RowNumber >= ' + @minRowNumberSql + ' 

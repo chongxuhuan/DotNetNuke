@@ -17,3 +17,11 @@
     </div>
     <p><asp:LinkButton id="cmdLogin" resourcekey="cmdLogin" cssclass="dnnPrimaryAction" text="Login" runat="server" /></p>
 </div>
+<div class="dnnLoginRememberMe"><asp:checkbox id="chkCookie" resourcekey="Remember" runat="server" /></div>
+<div><asp:label id="lblLogin" runat="server" /></div>
+<div class="dnnLoginActions">
+    <ul class="dnnActions dnnClear">
+        <li id="liRegister" runat="server"><asp:HyperLink ID="registerLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdRegister" /></li>                
+        <li id="liPassword" runat="server"><asp:HyperLink ID="passwordLink" runat="server" CssClass="dnnSecondaryAction" resourcekey="cmdPassword" /></li>
+    </ul>
+</div>

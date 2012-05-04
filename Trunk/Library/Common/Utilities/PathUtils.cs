@@ -19,6 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -26,6 +27,7 @@ using System.Web;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.FileSystem;
 
 namespace DotNetNuke.Common.Utilities
 {
@@ -150,14 +152,9 @@ namespace DotNetNuke.Common.Utilities
         /// <returns>The path to a user folder.</returns>
         public virtual string GetUserFolderPath(UserInfo user)
         {
-            var rootFolder = GetUserFolderPathElement(user.UserID, UserFolderElement.Root);
-            var subFolder = GetUserFolderPathElement(user.UserID, UserFolderElement.SubFolder);
-
-            var fullPath = Path.Combine(Path.Combine(rootFolder, subFolder), user.UserID.ToString());
-
-            return String.Format("Users/{0}/", fullPath.Replace("\\", "/"));
+            return FolderManager.Instance.GetUserFolder(user).FolderPath;
         }
-
+        
         /// <summary>
         /// Get elements from the user folder path.
         /// </summary>
@@ -166,6 +163,11 @@ namespace DotNetNuke.Common.Utilities
         /// <returns>The element from the user folder path.</returns>
         public virtual string GetUserFolderPathElement(int userID, UserFolderElement mode)
         {
+            return GetUserFolderPathElementInternal(userID, mode);
+        }
+
+        internal string GetUserFolderPathElementInternal(int userId, UserFolderElement mode)
+        {
             const int subfolderSeedLength = 2;
             const int byteOffset = 255;
             var element = "";
@@ -173,14 +175,24 @@ namespace DotNetNuke.Common.Utilities
             switch (mode)
             {
                 case UserFolderElement.Root:
-                    element = (Convert.ToInt32(userID) & byteOffset).ToString("000");
+                    element = (Convert.ToInt32(userId) & byteOffset).ToString("000");
                     break;
                 case UserFolderElement.SubFolder:
-                    element = userID.ToString("00").Substring(userID.ToString("00").Length - subfolderSeedLength, subfolderSeedLength);
+                    element = userId.ToString("00").Substring(userId.ToString("00").Length - subfolderSeedLength, subfolderSeedLength);
                     break;
             }
 
             return element;
+        } 
+        
+        internal string GetUserFolderPathInternal(UserInfo user)
+        {
+            var rootFolder = GetUserFolderPathElementInternal(user.UserID, UserFolderElement.Root);
+            var subFolder = GetUserFolderPathElementInternal(user.UserID, UserFolderElement.SubFolder);
+
+            var fullPath = Path.Combine(Path.Combine(rootFolder, subFolder), user.UserID.ToString(CultureInfo.InvariantCulture));
+
+            return String.Format("Users/{0}/", fullPath.Replace("\\", "/"));
         }
 
         /// <summary>

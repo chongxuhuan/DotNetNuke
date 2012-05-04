@@ -5,6 +5,10 @@
 <%@ Register TagPrefix="dnn" TagName="PortalAliases" Src="~/DesktopModules/Admin/Portals/PortalAliases.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="Audit" Src="~/controls/ModuleAuditControl.ascx" %>
 <%@ Register TagPrefix="dnn" TagName="ProfileDefinitions" Src="~/DesktopModules/Admin/Security/ProfileDefinitions.ascx" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+
+<dnn:DnnJsInclude ID="DnnJsInclude1" runat="server" FilePath="~/Resources/Shared/Components/Tokeninput/jquery.tokeninput.js" Priority="103" />
+<dnn:DnnCssInclude ID="DnnCssInclude1" runat="server" FilePath="~/Resources/Shared/Components/Tokeninput/Themes/token-input-facebook.css" />
 
 <div class="dnnForm dnnSiteSettings dnnClear" id="dnnSiteSettings">
 	<ul class="dnnAdminTabNav dnnClear">
@@ -553,7 +557,7 @@
             noText: noText,
             title: titleText
         });
-        
+
         $('#<%= cmdRestore.ClientID %>').dnnConfirm({
             text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("RestoreCCSMessage")) %>',
             yesText: yesText,
@@ -595,7 +599,17 @@
         $('#<%= registrationFormType.ClientID %>').click(function () {
             toggleRegistrationFormType(true);
         });
+
+
+        var serviceFramework = $.ServicesFramework(<%=ModuleContext.ModuleId %>);
+        var baseServicepath = serviceFramework.getServiceRoot('InternalServices') + 'ProfileService.ashx/';
+        $('input[id$="registrationFields"]').tokenInput(baseServicepath + "Search", {
+            theme: "facebook",
+            prePopulate: <% = CustomRegistrationFields %>
+        }); 
+        
     }
+
 
     $(document).ready(function () {
         setupDnnSiteSettings();

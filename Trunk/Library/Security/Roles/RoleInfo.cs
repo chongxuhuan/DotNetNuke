@@ -621,9 +621,6 @@ namespace DotNetNuke.Security.Roles
                                     break;
                             }                            
                             break;
-                        case "usercount":
-                            UserCount = reader.ReadContentAsInt();
-                            break;
                         case "status":
                             switch (reader.ReadElementContentAsString())
                             {
@@ -702,8 +699,6 @@ namespace DotNetNuke.Security.Roles
                     writer.WriteElementString("securitymode", "both");
                     break;
             }
-            writer.WriteElementString("usercount", UserCount.ToString(CultureInfo.InvariantCulture).ToLowerInvariant());
-
             switch (Status)
             {
                 case RoleStatus.Pending:

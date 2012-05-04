@@ -64,6 +64,7 @@ using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Localization.Internal;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Social.Messaging;
+using DotNetNuke.Services.Social.Messaging.Internal;
 using DotNetNuke.Services.Social.Notifications;
 using DotNetNuke.UI.Internals;
 using DotNetNuke.Web.Client.ClientResourceManagement;
@@ -4212,7 +4213,7 @@ namespace DotNetNuke.Services.Upgrade
         private static void ConvertOldMessages()
         {
             //Move old messages to new format. Do this in smaller batches so we can send feedback to browser and don't time out
-            var messagesToConvert = MessagingController.Instance.CountLegacyMessages();
+            var messagesToConvert = InternalMessagingController.Instance.CountLegacyMessages();
             var messagesRemaining = messagesToConvert;
             const int batchSize = 500;
 
@@ -4227,7 +4228,7 @@ namespace DotNetNuke.Services.Upgrade
                 HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, string.Format("Converting old Messages to new format. Total: {0} [Remaining: {1}]<br/>", messagesToConvert, messagesRemaining));            
                 try
                 {
-                    MessagingController.Instance.ConvertLegacyMessages(0, batchSize);
+                    InternalMessagingController.Instance.ConvertLegacyMessages(0, batchSize);
                 }
                 catch (Exception ex)
                 {                    

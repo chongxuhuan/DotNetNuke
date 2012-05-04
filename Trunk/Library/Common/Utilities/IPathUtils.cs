@@ -60,6 +60,7 @@ namespace DotNetNuke.Common.Utilities
         /// </summary>
         /// <param name="user">The user info.</param>
         /// <returns>The path to a user folder.</returns>
+        [Obsolete("Deprecated in 6.2.0.  Replaced by FolderManager.Instance.GetUserFolder(UserInfo)")]
         string GetUserFolderPath(UserInfo user);
 
         /// <summary>
@@ -68,6 +69,7 @@ namespace DotNetNuke.Common.Utilities
         /// <param name="userID">The user identifier.</param>
         /// <param name="mode">The UserFolderElement to get.</param>
         /// <returns>The element from the user folder path.</returns>
+        [Obsolete("Deprecated in DNN 6.2.  No replacement, this should have been internal only")]
         string GetUserFolderPathElement(int userID, PathUtils.UserFolderElement mode);
 
         /// <summary>

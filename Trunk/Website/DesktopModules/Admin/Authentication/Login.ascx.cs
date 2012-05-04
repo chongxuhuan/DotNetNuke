@@ -42,6 +42,7 @@ using DotNetNuke.Modules.Admin.Users;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Authentication;
+using DotNetNuke.Services.Authentication.OAuth;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Mail;
@@ -69,8 +70,8 @@ namespace DotNetNuke.Modules.Admin.Authentication
 
 		#region Private Members
 
-		private static MessagingController _messagingController = new MessagingController();
 		private readonly List<AuthenticationLoginBase> _loginControls = new List<AuthenticationLoginBase>();
+        private readonly List<OAuthLoginBase> _oAuthControls = new List<OAuthLoginBase>();
 
 		#endregion
 
@@ -79,9 +80,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// <summary>
 		/// Gets and sets the current AuthenticationType
 		/// </summary>
-		/// <history>
-		/// 	[cnurse]	07/12/2007  Created
-		/// </history>
 		protected string AuthenticationType
 		{
 			get
@@ -102,9 +100,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// <summary>
 		/// Gets and sets a flag that determines whether the user should be automatically registered
 		/// </summary>
-		/// <history>
-		/// 	[cnurse]	07/16/2007  Created
-		/// </history>
 		protected bool AutoRegister
 		{
 			get
@@ -142,10 +137,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// <summary>
 		/// Gets and sets the current Page No
 		/// </summary>
-		/// <history>
-		/// 	[cnurse]	03/09/2006  Created
-		///     [cnurse]    07/03/2007  Moved from Sign.ascx.vb
-		/// </history>
 		protected int PageNo
 		{
 			get
@@ -166,10 +157,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// <summary>
 		/// Gets the Redirect URL (after successful login)
 		/// </summary>
-		/// <history>
-		/// 	[cnurse]	04/18/2006  Created
-		///     [cnurse]    07/03/2007  Moved from Sign.ascx.vb
-		/// </history>
 		protected string RedirectURL
 		{
 			get
@@ -256,12 +243,29 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			}
 		}
 
+        /// <summary>
+        /// Gets and sets a flag that determines whether a permanent auth cookie should be created
+        /// </summary>
+        protected bool RememberMe
+        {
+            get
+            {
+                var rememberMe = Null.NullBoolean;
+                if (ViewState["RememberMe"] != null)
+                {
+                    rememberMe = Convert.ToBoolean(ViewState["RememberMe"]);
+                }
+                return rememberMe;
+            }
+            set
+            {
+                ViewState["RememberMe"] = value;
+            }
+        }
+
 		/// <summary>
 		/// Gets whether the Captcha control is used to validate the login
 		/// </summary>
-		/// <history>
-		/// 	[cnurse]	07/12/2007  Created
-		/// </history>
 		protected bool UseCaptcha
 		{
 			get
@@ -291,9 +295,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// <summary>
 		/// Gets and sets the current UserToken
 		/// </summary>
-		/// <history>
-		/// 	[cnurse]	07/12/2007  Created
-		/// </history>
 		protected string UserToken
 		{
 			get
@@ -315,130 +316,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 
 		#region Private Methods
 
-		private void DisplayLoginControl(AuthenticationLoginBase authLoginControl, bool addHeader, bool addFooter)
-		{
-			//Create a <div> to hold the control
-			var container = new HtmlGenericControl {TagName = "div", ID = authLoginControl.AuthenticationType};
-
-			//Add Settings Control to Container
-			container.Controls.Add(authLoginControl);
-
-			//Add a Section Header
-			SectionHeadControl sectionHeadControl;
-			if (addHeader)
-			{
-				sectionHeadControl = (SectionHeadControl) LoadControl("~/controls/SectionHeadControl.ascx");
-				sectionHeadControl.IncludeRule = true;
-				sectionHeadControl.CssClass = "Head";
-				sectionHeadControl.Text = Localization.GetString("Title", authLoginControl.LocalResourceFile);
-
-				sectionHeadControl.Section = container.ID;
-
-				//Add Section Head Control to Container
-				pnlLoginContainer.Controls.Add(sectionHeadControl);
-			}
-			
-			//Add Container to Controls
-			pnlLoginContainer.Controls.Add(container);
-
-
-			//Add LineBreak
-			if (addFooter)
-			{
-				pnlLoginContainer.Controls.Add(new LiteralControl("<br />"));
-			}
-			pnlLoginContainer.Visible = true;
-		}
-
-		private void DisplayTabbedLoginControl(AuthenticationLoginBase authLoginControl, TabStripTabCollection Tabs)
-		{
-			var tab = new DNNTab(Localization.GetString("Title", authLoginControl.LocalResourceFile)) {ID = authLoginControl.AuthenticationType};
-			tab.Controls.Add(authLoginControl);
-			Tabs.Add(tab);
-			tsLogin.Visible = true;
-		}
-
-		private void BindLoginControl(AuthenticationLoginBase authLoginControl, AuthenticationInfo authSystem)
-		{
-			//set the control ID to the resource file name ( ie. controlname.ascx = controlname )
-			//this is necessary for the Localization in PageBase
-			authLoginControl.AuthenticationType = authSystem.AuthenticationType;
-			authLoginControl.ID = Path.GetFileNameWithoutExtension(authSystem.LoginControlSrc) + "_" + authSystem.AuthenticationType;
-			authLoginControl.LocalResourceFile = authLoginControl.TemplateSourceDirectory + "/" + Localization.LocalResourceDirectory + "/" +
-												 Path.GetFileNameWithoutExtension(authSystem.LoginControlSrc);
-			authLoginControl.RedirectURL = RedirectURL;
-			authLoginControl.ModuleConfiguration = ModuleConfiguration;
-
-			//attempt to inject control attributes
-			AddLoginControlAttributes(authLoginControl);
-			authLoginControl.UserAuthenticated += UserAuthenticated;
-		}
-
-		private void BindLogin()
-		{
-			if (PortalSettings.UserRegistration == (int) Globals.PortalRegistrationType.NoRegistration)
-			{
-				liRegister.Visible = false;
-			}
-			lblLogin.Text = Localization.GetSystemMessage(PortalSettings, "MESSAGE_LOGIN_INSTRUCTIONS");
-			List<AuthenticationInfo> authSystems = AuthenticationController.GetEnabledAuthenticationServices();
-			AuthenticationLoginBase defaultLoginControl = null;
-			foreach (AuthenticationInfo authSystem in authSystems)
-			{
-				try
-				{
-					var authLoginControl = (AuthenticationLoginBase) LoadControl("~/" + authSystem.LoginControlSrc);
-					BindLoginControl(authLoginControl, authSystem);
-					if (authSystem.AuthenticationType == "DNN")
-					{
-						defaultLoginControl = authLoginControl;
-					}
-					
-					//Check if AuthSystem is Enabled
-					if (authLoginControl.Enabled)
-					{
-						//Add Login Control to List
-						_loginControls.Add(authLoginControl);
-					}
-				}
-				catch (Exception ex)
-				{
-					Exceptions.LogException(ex);
-				}
-			}
-			int authCount = _loginControls.Count;
-			switch (authCount)
-			{
-				case 0:
-					//No enabled controls - inject default dnn control
-					if (defaultLoginControl == null)
-					{
-						//No controls enabled for portal, and default DNN control is not enabled by host, so load system default (DNN)
-						AuthenticationInfo authSystem = AuthenticationController.GetAuthenticationServiceByType("DNN");
-						var authLoginControl = (AuthenticationLoginBase) LoadControl("~/" + authSystem.LoginControlSrc);
-						BindLoginControl(authLoginControl, authSystem);
-						DisplayLoginControl(authLoginControl, false, false);
-					}
-					else
-					{
-						//Portal has no login controls enabled so load default DNN control
-						DisplayLoginControl(defaultLoginControl, false, false);
-					}
-					break;
-				case 1:
-					//We don't want the control to render with tabbed interface
-					DisplayLoginControl(_loginControls[0], false, false);
-					break;
-				default:
-					foreach (AuthenticationLoginBase authLoginControl in _loginControls)
-					{
-						DisplayTabbedLoginControl(authLoginControl, tsLogin.Tabs);
-					}
-
-					break;
-			}
-		}
-
 		private void AddLoginControlAttributes(AuthenticationLoginBase loginControl)
 		{
 			//search selected authentication control for username and password fields
@@ -453,13 +330,103 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			{
 				password.Attributes.Add("AUTOCOMPLETE", "off");
 			}
-			
-			//see if the portal supports persistant cookies
-			var rememberme = (CheckBox) FindControl("chkCookie");
-			rememberme.Visible = Host.RememberCheckbox;
 		}
 
-		private void BindRegister()
+        private void BindLogin()
+        {
+            List<AuthenticationInfo> authSystems = AuthenticationController.GetEnabledAuthenticationServices();
+            AuthenticationLoginBase defaultLoginControl = null;
+            foreach (AuthenticationInfo authSystem in authSystems)
+            {
+                try
+                {
+                    var authLoginControl = (AuthenticationLoginBase)LoadControl("~/" + authSystem.LoginControlSrc);
+                    BindLoginControl(authLoginControl, authSystem);
+                    if (authSystem.AuthenticationType == "DNN")
+                    {
+                        defaultLoginControl = authLoginControl;
+                    }
+
+                    //Check if AuthSystem is Enabled
+                    if (authLoginControl.Enabled)
+                    {
+                        var oAuthLoginControl = authLoginControl as OAuthLoginBase;
+                        if (oAuthLoginControl != null)
+                        {
+                            //Add Login Control to List
+                            _oAuthControls.Add(oAuthLoginControl);
+                        }
+                        else
+                        {
+                            //Add Login Control to List
+                            _loginControls.Add(authLoginControl);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Exceptions.LogException(ex);
+                }
+            }
+            int authCount = _loginControls.Count;
+            switch (authCount)
+            {
+                case 0:
+                    //No enabled controls - inject default dnn control
+                    if (defaultLoginControl == null)
+                    {
+                        //No controls enabled for portal, and default DNN control is not enabled by host, so load system default (DNN)
+                        AuthenticationInfo authSystem = AuthenticationController.GetAuthenticationServiceByType("DNN");
+                        var authLoginControl = (AuthenticationLoginBase)LoadControl("~/" + authSystem.LoginControlSrc);
+                        BindLoginControl(authLoginControl, authSystem);
+                        DisplayLoginControl(authLoginControl, false, false);
+                    }
+                    else
+                    {
+                        //Portal has no login controls enabled so load default DNN control
+                        DisplayLoginControl(defaultLoginControl, false, false);
+                    }
+                    break;
+                case 1:
+                    //We don't want the control to render with tabbed interface
+                    DisplayLoginControl(_loginControls[0], false, false);
+                    break;
+                default:
+                    foreach (AuthenticationLoginBase authLoginControl in _loginControls)
+                    {
+                        DisplayTabbedLoginControl(authLoginControl, tsLogin.Tabs);
+                    }
+
+                    break;
+            }
+            BindOAuthControls();
+        }
+
+        private void BindOAuthControls()
+        {
+            foreach (OAuthLoginBase oAuthLoginControl in _oAuthControls)
+            {
+                socialLoginControls.Controls.Add(oAuthLoginControl);
+            }
+        }
+
+        private void BindLoginControl(AuthenticationLoginBase authLoginControl, AuthenticationInfo authSystem)
+        {
+            //set the control ID to the resource file name ( ie. controlname.ascx = controlname )
+            //this is necessary for the Localization in PageBase
+            authLoginControl.AuthenticationType = authSystem.AuthenticationType;
+            authLoginControl.ID = Path.GetFileNameWithoutExtension(authSystem.LoginControlSrc) + "_" + authSystem.AuthenticationType;
+            authLoginControl.LocalResourceFile = authLoginControl.TemplateSourceDirectory + "/" + Localization.LocalResourceDirectory + "/" +
+                                                 Path.GetFileNameWithoutExtension(authSystem.LoginControlSrc);
+            authLoginControl.RedirectURL = RedirectURL;
+            authLoginControl.ModuleConfiguration = ModuleConfiguration;
+
+            //attempt to inject control attributes
+            AddLoginControlAttributes(authLoginControl);
+            authLoginControl.UserAuthenticated += UserAuthenticated;
+        }
+
+        private void BindRegister()
 		{
 			lblType.Text = AuthenticationType;
 			lblToken.Text = UserToken;
@@ -509,7 +476,50 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			}
 		}
 
-		private void InitialiseUser()
+        private void DisplayLoginControl(AuthenticationLoginBase authLoginControl, bool addHeader, bool addFooter)
+        {
+            //Create a <div> to hold the control
+            var container = new HtmlGenericControl { TagName = "div", ID = authLoginControl.AuthenticationType };
+
+            //Add Settings Control to Container
+            container.Controls.Add(authLoginControl);
+
+            //Add a Section Header
+            SectionHeadControl sectionHeadControl;
+            if (addHeader)
+            {
+                sectionHeadControl = (SectionHeadControl)LoadControl("~/controls/SectionHeadControl.ascx");
+                sectionHeadControl.IncludeRule = true;
+                sectionHeadControl.CssClass = "Head";
+                sectionHeadControl.Text = Localization.GetString("Title", authLoginControl.LocalResourceFile);
+
+                sectionHeadControl.Section = container.ID;
+
+                //Add Section Head Control to Container
+                pnlLoginContainer.Controls.Add(sectionHeadControl);
+            }
+
+            //Add Container to Controls
+            pnlLoginContainer.Controls.Add(container);
+
+
+            //Add LineBreak
+            if (addFooter)
+            {
+                pnlLoginContainer.Controls.Add(new LiteralControl("<br />"));
+            }
+            pnlLoginContainer.Visible = true;
+        }
+
+        private void DisplayTabbedLoginControl(AuthenticationLoginBase authLoginControl, TabStripTabCollection Tabs)
+        {
+            var tab = new DNNTab(Localization.GetString("Title", authLoginControl.LocalResourceFile)) { ID = authLoginControl.AuthenticationType };
+            tab.Controls.Add(authLoginControl);
+            Tabs.Add(tab);
+            tsLogin.Visible = true;
+        }
+
+        private void InitialiseUser()
 		{
 			//Set UserName to authentication Token
 			User.Username = UserToken.Replace("http://", "").TrimEnd('/');
@@ -546,10 +556,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// <summary>
 		/// ShowPanel controls what "panel" is to be displayed
 		/// </summary>
-		/// <history>
-		/// 	[cnurse]	03/21/2006
-		///     [cnurse]    07/03/2007  Moved from Sign.ascx.vb
-		/// </history>
 		/// -----------------------------------------------------------------------------
 		private void ShowPanel()
 		{
@@ -641,10 +647,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// </summary>
 		/// <param name="objUser">The logged in User</param>
 		/// <param name="ignoreExpiring">Ignore the situation where the password is expiring (but not yet expired)</param>
-		/// <history>
-		/// 	[cnurse]	03/15/2006
-		///     [cnurse]    07/03/2007  Moved from Sign.ascx.vb
-		/// </history>
 		/// -----------------------------------------------------------------------------
 		private void ValidateUser(UserInfo objUser, bool ignoreExpiring)
 		{
@@ -678,7 +680,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
 					AuthenticationController.SetAuthenticationType(AuthenticationType);
 
 					//Complete Login
-					UserController.UserLogin(PortalId, objUser, PortalSettings.PortalName, AuthenticationLoginBase.GetIPAddress(), chkCookie.Checked);
+                    UserController.UserLogin(PortalId, objUser, PortalSettings.PortalName, AuthenticationLoginBase.GetIPAddress(), RememberMe);
 
 					//redirect browser
 			        var redirectUrl = RedirectURL;
@@ -732,11 +734,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// </summary>
 		/// <remarks>
 		/// </remarks>
-		/// <history>
-		/// 	[cnurse]	9/8/2004	Updated to reflect design changes for Help, 508 support
-		///                       and localisation
-		///     [cnurse]    07/08/2007  Moved from Sign.ascx.vb
-		/// </history>
 		protected override void OnInit(EventArgs e)
 		{
 			base.OnInit(e);
@@ -773,11 +770,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// </summary>
 		/// <remarks>
 		/// </remarks>
-		/// <history>
-		/// 	[cnurse]	9/8/2004	Updated to reflect design changes for Help, 508 support
-		///                       and localisation
-		///     [cnurse]    07/08/2007  Moved from Sign.ascx.vb
-		/// </history>
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
@@ -823,13 +815,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			if (!Request.IsAuthenticated || UserNeedsVerification())
 			{
 				ShowPanel();
-
-                if (Request.IsAuthenticated)
-                {
-                    chkCookie.Visible = false;
-                    liRegister.Visible = false;
-                    liPassword.Visible = false;
-                }
 			}
 			else //user is already authenticated
 			{
@@ -859,34 +844,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 				ctlCaptcha.Text = Localization.GetString("CaptchaText", Localization.SharedResourceFile);
 			}
 
-			var returnUrl = Globals.NavigateURL();
-			string url;
-			if (PortalSettings.UserRegistration != (int)Globals.PortalRegistrationType.NoRegistration)
-			{
-				if (!string.IsNullOrEmpty(Request.QueryString["returnurl"]))
-				{
-					returnUrl = Request.QueryString["returnurl"];
-				}
-				returnUrl = HttpUtility.UrlEncode(returnUrl);
-
-				url = Globals.RegisterURL(returnUrl, Null.NullString);
-                registerLink.NavigateUrl = url;
-                if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger)
-                {
-                    registerLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(url, this, PortalSettings, true, false, 600, 950));
-                }
-			}
-			else
-			{
-				registerLink.Visible = false;
-			}
-
-			url = Globals.NavigateURL("SendPassword", "returnurl=" + returnUrl);
-            passwordLink.NavigateUrl = url;
-			if (PortalSettings.EnablePopUps)
-			{
-                passwordLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(url, this, PortalSettings, true, false, 300, 650));
-			}
 		}
 
 	    /// <summary>
@@ -894,9 +851,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// </summary>
 		/// <remarks>
 		/// </remarks>
-		/// <history>
-		/// 	[cnurse]	07/12/2007	Created
-		/// </history>
 		protected void cmdAssociate_Click(object sender, EventArgs e)
 		{
 			if ((UseCaptcha && ctlCaptcha.IsValid) || (!UseCaptcha))
@@ -932,9 +886,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// </summary>
 		/// <remarks>
 		/// </remarks>
-		/// <history>
-		/// 	[cnurse]	07/12/2007	Created
-		/// </history>
 		protected void cmdCreateUser_Click(object sender, EventArgs e)
 		{
 			User.Membership.Password = UserController.GeneratePassword();
@@ -963,9 +914,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// </summary>
 		/// <remarks>
 		/// </remarks>
-		/// <history>
-		/// 	[cnurse]	06/30/2006  Created
-		/// </history>
 		protected void cmdProceed_Click(object sender, EventArgs e)
 		{
 			var user = ctlPassword.User;
@@ -977,9 +925,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// </summary>
 		/// <remarks>
 		/// </remarks>
-		/// <history>
-		/// 	[cnurse]	03/15/2006  Created
-		/// </history>
 		protected void PasswordUpdated(object sender, Password.PasswordUpdatedEventArgs e)
 		{
 			PasswordUpdateStatus status = e.UpdateStatus;
@@ -1004,11 +949,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// <summary>
 		/// ProfileUpdated runs when the profile is updated
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
-		/// <history>
-		/// 	[cnurse]	03/16/2006  Created
-		/// </history>
 		protected void ProfileUpdated(object sender, EventArgs e)
 		{
 			//Authorize User
@@ -1019,11 +959,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 		/// UserAuthenticated runs when the user is authenticated by one of the child
 		/// Authentication controls
 		/// </summary>
-		/// <remarks>
-		/// </remarks>
-		/// <history>
-		/// 	[cnurse]	07/10/2007  Created
-		/// </history>
 		protected void UserAuthenticated(object sender, UserAuthenticatedEventArgs e)
 		{
 			LoginStatus = e.LoginStatus;
@@ -1040,6 +975,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
                                 //First update the profile (if any properties have been passed)
                                 AuthenticationType = e.AuthenticationType;
                                 ProfileProperties = e.Profile;
+                                RememberMe = e.RememberMe;
                                 UpdateProfile(e.User, true);
                                 ValidateUser(e.User, false);
                             }

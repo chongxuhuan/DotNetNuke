@@ -41,20 +41,18 @@ namespace DotNetNuke.Web.InternalServices
         {
             try
             {
-                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
-                if (recipient != null)
+                Notification notification = NotificationsController.Instance.GetNotification(notificationId);
+                int userRelationshipId;
+                if (int.TryParse(notification.Context, out userRelationshipId))
                 {
-                    Notification notification = NotificationsController.Instance.GetNotification(notificationId);
-                    int initiatingUserId;
-                    if (int.TryParse(notification.Context, out initiatingUserId))
+                    var userRelationship = RelationshipController.Instance.GetUserRelationship(userRelationshipId);
+                    if (userRelationship != null)
                     {
-                        RelationshipController.Instance.AcceptUserRelationship(GetFriendUserRelationship(initiatingUserId).UserRelationshipId);
-                        NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
-
+                        var friend = UserController.GetUserById(PortalSettings.PortalId, userRelationship.UserId);
+                        FriendsController.Instance.AcceptFriend(friend);
                         return Json(new { Result = "success" });
-                    }
+                    }                        
                 }
-
                 return Json(new { Result = "error" });
             }
             catch (Exception)

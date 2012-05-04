@@ -21,64 +21,35 @@
 #region Usings
 
 using System;
-using System.Data;
+using System.Collections.Generic;
 using System.Xml.Serialization;
-
-using DotNetNuke.Common;
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities;
-using DotNetNuke.Entities.Modules;
 
 #endregion
 
-namespace DotNetNuke.Services.Social.Messaging.Views
+namespace DotNetNuke.Services.Social.Messaging.Internal.Views
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.Entities.Messaging.Views
-    /// Class:      MessageConversationView
+    /// Namespace:  DotNetNuke.Entities.Messaging
+    /// Class:      MessageThreadView
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageConversationView class contains details of the latest message in a Conversation.
+    /// The MessageThreadView class contains MessageConversationView and collection of MessageAttachmentView
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageSentView : Message, IHydratable
+    public class MessageThreadView
     {
         /// <summary>
-        /// RowNumber of the message in a set
+        /// MessageItemView containing consolidated information about the message
         /// </summary>
         [XmlAttribute]
-        public int RowNumber { get; set; }
+        public MessageConversationView Conversation { get; set; }
 
         /// <summary>
-        /// Count of Total Attachments in a Conversation. It is calculated by adding attachments in all the threads for a given conversation.
+        /// List of attachments
         /// </summary>
         [XmlAttribute]
-        public int AttachmentCount { get; set; }      
-
-        /// <summary>
-        /// The Sender User Profile URL
-        /// </summary>
-        [XmlIgnore]
-        public string SenderProfileUrl
-        {
-            get
-            {
-                return Globals.UserProfileURL(SenderUserID);
-            }
-        }
-
-        /// <summary>
-        /// Fill the object with data from database.
-        /// </summary>
-        /// <param name="dr">the data reader.</param>
-        public new void Fill(IDataReader dr)
-        {
-            RowNumber = Convert.ToInt32(dr["RowNumber"]);
-            AttachmentCount = Convert.ToInt32(dr["AttachmentCount"]);
-
-            base.Fill(dr);            
-        }
+        public IList<MessageFileView> Attachments { get; set; }
     }
 }

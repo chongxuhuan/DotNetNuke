@@ -32,7 +32,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Social.Notifications;
-using DotNetNuke.Services.Social.Messaging;
+using DotNetNuke.Services.Social.Messaging.Internal;
 
 #endregion
 
@@ -156,7 +156,7 @@ namespace DotNetNuke.UI.Skins.Controls
 
                         if (ShowUnreadMessages)
                         {
-                            var unreadMessages = MessagingController.Instance.CountUnreadMessages(userInfo.UserID, userInfo.PortalID);
+                            var unreadMessages = InternalMessagingController.Instance.CountUnreadMessages(userInfo.UserID, userInfo.PortalID);
                             var unreadAlerts = NotificationsController.Instance.CountNotifications(userInfo.UserID, userInfo.PortalID);
 
                             messageLink.Text = unreadMessages > 0 ? string.Format(Localization.GetString("Messages", Localization.GetResourceFile(this, MyFileName)), unreadMessages) : Localization.GetString("NoMessages", Localization.GetResourceFile(this, MyFileName));

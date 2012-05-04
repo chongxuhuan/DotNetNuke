@@ -26,6 +26,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Scheduling;
+using DotNetNuke.Services.Social.Messaging.Internal;
 
 #endregion
 
@@ -60,7 +61,7 @@ namespace DotNetNuke.Services.Social.Messaging.Scheduler
 
                     while (messageLeft)
                     {
-                        var batchMessages = MessagingController.Instance.GetNextMessagesForDispatch(schedulerInstance, Convert.ToInt32(Host.MessageSchedulerBatchSize.ToString()));
+                        var batchMessages = InternalMessagingController.Instance.GetNextMessagesForDispatch(schedulerInstance, Convert.ToInt32(Host.MessageSchedulerBatchSize.ToString()));
 
                         if (batchMessages != null && batchMessages.Count > 0)
                         {
@@ -113,7 +114,7 @@ namespace DotNetNuke.Services.Social.Messaging.Scheduler
                 Mail.Mail.SendEmail(fromAddress, senderAddress, toAddress, messageDetails.Subject, messageDetails.Body);
             }
 
-            MessagingController.Instance.MarkMessageAsDispatched(objMessage.MessageID, objMessage.RecipientID);
+            InternalMessagingController.Instance.MarkMessageAsDispatched(objMessage.MessageID, objMessage.RecipientID);
         }
     }
 }

@@ -22,8 +22,10 @@
 
 using System;
 using System.Net;
+using System.Web;
 
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
@@ -101,6 +103,45 @@ namespace DotNetNuke.Modules.Admin.Authentication
 			cmdLogin.Click += OnLoginClick;
 
 			ClientAPI.RegisterKeyCapture(Parent, cmdLogin, 13);
+
+            if (PortalSettings.UserRegistration == (int)Globals.PortalRegistrationType.NoRegistration)
+            {
+                liRegister.Visible = false;
+            }
+            lblLogin.Text = Localization.GetSystemMessage(PortalSettings, "MESSAGE_LOGIN_INSTRUCTIONS");
+
+            var returnUrl = Globals.NavigateURL();
+            string url;
+            if (PortalSettings.UserRegistration != (int)Globals.PortalRegistrationType.NoRegistration)
+            {
+                if (!string.IsNullOrEmpty(Request.QueryString["returnurl"]))
+                {
+                    returnUrl = Request.QueryString["returnurl"];
+                }
+                returnUrl = HttpUtility.UrlEncode(returnUrl);
+
+                url = Globals.RegisterURL(returnUrl, Null.NullString);
+                registerLink.NavigateUrl = url;
+                if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger)
+                {
+                    registerLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(url, this, PortalSettings, true, false, 600, 950));
+                }
+            }
+            else
+            {
+                registerLink.Visible = false;
+            }
+
+            //see if the portal supports persistant cookies
+            chkCookie.Visible = Host.RememberCheckbox;
+
+            url = Globals.NavigateURL("SendPassword", "returnurl=" + returnUrl);
+            passwordLink.NavigateUrl = url;
+            if (PortalSettings.EnablePopUps)
+            {
+                passwordLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(url, this, PortalSettings, true, false, 300, 650));
+            }
+
 
             if (!IsPostBack)
             {
@@ -202,7 +243,12 @@ namespace DotNetNuke.Modules.Admin.Authentication
 				}
 				
 				//Raise UserAuthenticated Event
-				var eventArgs = new UserAuthenticatedEventArgs(objUser, txtUsername.Text, loginStatus, "DNN") {Authenticated = authenticated, Message = message};
+				var eventArgs = new UserAuthenticatedEventArgs(objUser, txtUsername.Text, loginStatus, "DNN")
+				                    {
+				                        Authenticated = authenticated, 
+                                        Message = message,
+                                        RememberMe = chkCookie.Checked
+				                    };
 				OnUserAuthenticated(eventArgs);
 			}
 		}

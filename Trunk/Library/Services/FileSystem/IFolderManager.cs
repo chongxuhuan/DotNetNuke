@@ -129,6 +129,13 @@ namespace DotNetNuke.Services.FileSystem
         IFolderInfo GetFolder(Guid uniqueId);
 
         /// <summary>
+        /// Get the users folder
+        /// </summary>
+        /// <param name="userInfo">the user</param>
+        /// <returns>FolderInfo for the users folder</returns>
+        IFolderInfo GetUserFolder(UserInfo userInfo);
+
+        /// <summary>
         /// Gets the list of subfolders for the specified folder.
         /// </summary>
         /// <param name="parentFolder">The folder to get the list of subfolders.</param>

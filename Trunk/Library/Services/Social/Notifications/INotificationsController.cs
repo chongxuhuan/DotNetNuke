@@ -130,10 +130,11 @@ namespace DotNetNuke.Services.Social.Notifications
         /// <param name="pageSize">The page size used to filter the list to a particular number of results.</param>
         /// <returns>The filtered list of notifications sent to the provided user in the specified portal.</returns>
         IList<Notification> GetNotifications(int userId, int portalId, int pageIndex, int pageSize);
-        
+
         /// <summary>
         /// Deletes an existing notification.
         /// </summary>
+        /// <remarks>It does not delete NotificationRecipient.</remarks>
         /// <param name="notificationId">The notification identifier.</param>
         void DeleteNotification(int notificationId);
         
@@ -145,6 +146,14 @@ namespace DotNetNuke.Services.Social.Notifications
         /// <param name="userId">The user identifier.</param>
         void DeleteNotificationRecipient(int notificationId, int userId);
 
+        /// <summary>
+        /// Deletes an individual notification recipient based on NotificationTypeId, Context and UserId.
+        /// </summary>
+        /// <remarks>It also deletes the notification if there are no more recipients.</remarks>
+        /// <param name="notificationTypeId">Id of the notification type</param>
+        /// <param name="context">Context set by creator of the notification.</param>
+        /// <param name="userId">The user identifier.</param>
+        void DeleteNotificationRecipient(int notificationTypeId, string context, int userId);
 
         /// <summary>
         /// Get a Notification
@@ -152,6 +161,14 @@ namespace DotNetNuke.Services.Social.Notifications
         /// <param name="notificationId">The notificationId</param>
         /// <returns>A notification</returns>
         Notification GetNotification(int notificationId);
+
+        /// <summary>
+        /// Get a Notification by NotificationTypeId and Context
+        /// </summary>
+        /// <param name="notificationTypeId">Id of the notification type</param>
+        /// <param name="context">Context set by creator of the notification.</param>
+        /// <returns>The filtered list of notifications sent to the provided user in the specified portal.</returns>
+        IList<Notification> GetNotificationByContext(int notificationTypeId, string context);
 
         #endregion
     }

@@ -46,6 +46,9 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             var friendRelationship = RelationshipController.Instance.GetFriendRelationship(UserController.GetCurrentUserInfo(), targetUser);
 
             RelationshipController.Instance.AcceptUserRelationship(friendRelationship.UserRelationshipId);
+            NotificationsController.Instance.DeleteNotificationRecipient(NotificationsController.Instance.GetNotificationType(FriendRequest).NotificationTypeId,
+                friendRelationship.UserRelationshipId.ToString(CultureInfo.InvariantCulture), 
+                UserController.GetCurrentUserInfo().UserID);
         }
 
         /// -----------------------------------------------------------------------------
@@ -81,7 +84,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             var userRelationship = RelationshipController.Instance.InitiateUserRelationship(initiatingUser, targetUser, 
                                         RelationshipController.Instance.GetFriendsRelationshipByPortal(initiatingUser.PortalID));
 
-            AddFriendRequestNotification(initiatingUser, targetUser);
+            AddFriendRequestNotification(initiatingUser, targetUser, userRelationship);
         }
 
         /// -----------------------------------------------------------------------------
@@ -112,7 +115,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
             RelationshipController.Instance.DeleteUserRelationship(friend);
         }
 
-        private void AddFriendRequestNotification(UserInfo initiatingUser, UserInfo targetUser)
+        private void AddFriendRequestNotification(UserInfo initiatingUser, UserInfo targetUser, UserRelationship userRelationship)
         {
             var notificationType = NotificationsController.Instance.GetNotificationType(FriendRequest);
             var subject = string.Format(Localization.GetString("AddFriendRequestSubject", Localization.GlobalResourceFile),
@@ -127,7 +130,7 @@ namespace DotNetNuke.Entities.Users.Social.Internal
                 Subject = subject,
                 Body = body,
                 IncludeDismissAction = true,
-                Context = initiatingUser.UserID.ToString(CultureInfo.InvariantCulture),
+                Context = userRelationship.UserRelationshipId.ToString(CultureInfo.InvariantCulture),
                 SenderUserID = initiatingUser.UserID
             };
 

@@ -203,25 +203,6 @@ namespace DotNetNuke.Modules.Admin.Host
                 cboPerformance.Items.FindByValue("3").Selected = true;
             }
             cboCacheability.Items.FindByValue(Entities.Host.Host.AuthenticatedCacheability).Selected = true;
-            if (cboCompression.Items.FindByValue(Entities.Host.Host.HttpCompressionAlgorithm.ToString()) != null)
-            {
-                cboCompression.Items.FindByValue(Entities.Host.Host.HttpCompressionAlgorithm.ToString()).Selected = true;
-            }
-            else
-            {
-                cboCompression.Items.FindByValue("0").Selected = true;
-            }
-
-            string filePath = Globals.ApplicationMapPath + "\\Compression.config";
-            if (File.Exists(filePath))
-            {
-                var fileReader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                var doc = new XPathDocument(fileReader);
-                foreach (XPathNavigator nav in doc.CreateNavigator().Select("compression/excludedPaths/path"))
-                {
-                    txtExcludedPaths.Text += nav.Value.ToLower() + Environment.NewLine;
-                }
-            }
         }
 
         private void BindPaymentProcessor()
@@ -668,27 +649,6 @@ namespace DotNetNuke.Modules.Admin.Host
             }
         }
 
-        protected void UpdateCompression()
-        {
-            var xmlCompression = new XmlDocument();
-            XmlNode nodeRoot = xmlCompression.CreateElement("compression");
-            XmlNode nodeExcludedPaths = xmlCompression.CreateElement("excludedPaths");
-            nodeRoot.AppendChild(nodeExcludedPaths);
-            foreach (string strItem in txtExcludedPaths.Text.Split('\r', '\n'))
-            {
-                if (!String.IsNullOrEmpty(strItem.Trim()))
-                {
-                    XmlUtils.AppendElement(ref xmlCompression, nodeExcludedPaths, "path", strItem.Trim(), false);
-                }
-            }
-            xmlCompression.AppendChild(nodeRoot);
-            XmlDeclaration xmlDeclaration = xmlCompression.CreateXmlDeclaration("1.0", "utf-8", null);
-            xmlCompression.InsertBefore(xmlDeclaration, nodeRoot);
-            string strFile = Globals.ApplicationMapPath + "\\Compression.config";
-            File.SetAttributes(strFile, FileAttributes.Normal);
-            xmlCompression.Save(strFile);
-        }
-
         protected void UpdateSchedule()
         {
             bool restartSchedule = false;
@@ -809,7 +769,6 @@ namespace DotNetNuke.Modules.Admin.Host
                     {
                         HostController.Instance.Update("PageCaching", cboPageCacheProvider.SelectedItem.Value, false);
                     }
-                    HostController.Instance.Update("HttpCompression", cboCompression.SelectedItem.Value, false);
                     HostController.Instance.Update("EnableModuleOnLineHelp", chkEnableHelp.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("EnableFileAutoSync", chkAutoSync.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("HelpURL", txtHelpURL.Text, false);
@@ -828,8 +787,6 @@ namespace DotNetNuke.Modules.Admin.Host
                     HostController.Instance.Update(ClientResourceSettings.EnableCompositeFilesKey, chkCrmEnableCompositeFiles.Checked.ToString(CultureInfo.InvariantCulture));
                     HostController.Instance.Update(ClientResourceSettings.MinifyCssKey, chkCrmMinifyCss.Checked.ToString(CultureInfo.InvariantCulture));
                     HostController.Instance.Update(ClientResourceSettings.MinifyJsKey, chkCrmMinifyJs.Checked.ToString(CultureInfo.InvariantCulture));
-
-                    UpdateCompression();
 
                     UpdateSchedule();
 

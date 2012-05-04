@@ -1,5 +1,4 @@
 ﻿#region Copyright
-
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,54 +17,26 @@
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
-
 #endregion
 
 #region Usings
 
 using System;
 
-using DotNetNuke.Authentication.Google.Components;
-using DotNetNuke.Services.Authentication;
-using DotNetNuke.Services.Authentication.OAuth;
+using DotNetNuke.Framework;
 
 #endregion
 
-namespace DotNetNuke.Authentication.Google
+namespace DotNetNuke.Services.Social.Messaging.Internal
 {
-    public partial class Login : OAuthLoginBase
+	/// <summary>
+	/// Business Layer to manage Messaging. Also contains CRUD methods.
+	/// </summary>
+    public class InternalMessagingController : ServiceLocator<IInternalMessagingController, InternalMessagingController>
     {
-        protected override string AuthSystemApplicationName
+        protected override Func<IInternalMessagingController> GetFactory()
         {
-            get { return "Google"; }
-        }
-
-        public override bool SupportsRegistration
-        {
-            get { return true; }
-        }
-
-        protected override UserData GetCurrentUser()
-        {
-            return OAuthClient.GetCurrentUser<GoogleUserData>();
-        }
-
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-
-            loginButton.Click += loginButton_Click;
-            registerButton.Click += loginButton_Click;
-
-            OAuthClient = new GoogleClient(PortalId, Mode);
-
-            loginItem.Visible = (Mode == AuthMode.Login);
-            registerItem.Visible = (Mode == AuthMode.Register);
-        }
-
-        private void loginButton_Click(object sender, EventArgs e)
-        {
-            OAuthClient.Authorize();
+            return () => new InternalMessagingControllerImpl();
         }
     }
 }

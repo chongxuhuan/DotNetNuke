@@ -123,10 +123,17 @@ namespace DotNetNuke.Services.Journal
 
         #region Public Methods
 
-        public void DeleteJournalItem(int journalId)
+        public void DeleteJournalItem(int portalId, int currentUserId, int journalId)
         {
+            
             var jds = new JournalDataService();
+            var ji = GetJournalItem(portalId, currentUserId, journalId);
+            int groupId = ji.SocialGroupId;
             jds.Journal_Delete(journalId);
+            if (groupId > 0)
+            {
+                UpdateGroupStats(portalId, groupId);
+            }
         }
 
         public void DeleteJournalItemByKey(int portalId, string objectKey)
@@ -451,7 +458,7 @@ namespace DotNetNuke.Services.Journal
             jds.Journal_Comment_Like(journalId, commentId, userId, displayName);
         }
 
-        public void SaveComment(CommentInfo comment)
+        public CommentInfo SaveComment(CommentInfo comment)
         {
             var jds = new JournalDataService();
             var portalSecurity = new PortalSecurity();
@@ -473,7 +480,7 @@ namespace DotNetNuke.Services.Journal
             }
 
             comment.CommentId = jds.Journal_Comment_Save(comment.JournalId, comment.CommentId, comment.UserId, comment.Comment, xml);
-            comment = GetComment(comment.CommentId);
+            return GetComment(comment.CommentId);
         }
 
         #endregion

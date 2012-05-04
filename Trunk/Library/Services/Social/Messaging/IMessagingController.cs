@@ -23,27 +23,28 @@ using System;
 using System.Collections.Generic;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
-using DotNetNuke.Services.Social.Messaging.Views;
 
 namespace DotNetNuke.Services.Social.Messaging
 {
     public interface IMessagingController
     {
-        #region Upgrade APIs
-
-        void ConvertLegacyMessages(int pageIndex, int pageSize);
-        int CountLegacyMessages();
-
-        #endregion
-
-        #region Messaging Business APIs
+        #region CRUD APIs
 
         Message GetMessage(int messageId);
-
         MessageRecipient GetMessageRecipient(int messageId, int userId);
         IList<MessageRecipient> GetMessageRecipients(int messageId);
         void DeleteMessageRecipient(int messageId, int userId);
-        
+
+
+        void MarkRead(int conversationId, int userId);
+        void MarkUnRead(int conversationId, int userId);
+        void MarkArchived(int conversationId, int userId);
+        void MarkUnArchived(int conversationId, int userId);
+
+        #endregion
+
+        #region Admin Settings APIs
+
         ///<summary>How long a user needs to wait before user is allowed sending the next message</summary>
         ///<returns>Time in seconds. Returns zero if user has never sent a message</returns>
         /// <param name="sender">Sender's UserInfo</param>        
@@ -66,36 +67,7 @@ namespace DotNetNuke.Services.Social.Messaging
 
         #endregion
 
-        #region Easy Wrapper APIs
-
-        void MarkRead(int conversationId, int userId);
-        void MarkUnRead(int conversationId, int userId);
-        void MarkArchived(int conversationId, int userId);
-        void MarkUnArchived(int conversationId, int userId);
-
-        MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool @ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
-
-        MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending);
-
-        MessageBoxView GetRecentInbox(int userId);
-
-        MessageBoxView GetRecentInbox(int userId, int pageIndex, int pageSize);
-
-        MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
-
-        MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending);
-
-        MessageBoxView GetRecentSentbox(int userId);
-
-        MessageBoxView GetRecentSentbox(int userId, int pageIndex, int pageSize);
-
-        MessageBoxView GetArchivedMessages(int userId, int pageIndex, int pageSize);
-
-        MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, ref int totalRecords);
-
-        MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords);
-
-        //Gets the latest 10 messages
+        #region Create and Reply APIs
 
         void CreateMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
 
@@ -105,21 +77,7 @@ namespace DotNetNuke.Services.Social.Messaging
 
         int ReplyMessage(int conversationId, string body, IList<int> fileIDs, UserInfo sender);
 
-        int CountUnreadMessages(int userId,int portalId);
+        #endregion        
 
-        int CountConversations(int userId, int portalId,MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
-
-        int CountMessagesByConversation(int conversationId);
-
-        int CountArchivedMessagesByConversation(int conversationId);
-
-        #endregion
-
-        #region Queued email API's
-
-        IList<MessageRecipient> GetNextMessagesForDispatch(Guid schedulerInstance,int batchSize);
-        void MarkMessageAsDispatched(int messageId, int recipientId);
-
-        #endregion
     }
 }

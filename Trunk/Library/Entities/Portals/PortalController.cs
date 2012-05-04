@@ -368,51 +368,62 @@ namespace DotNetNuke.Entities.Portals
             }
         }
 
-        private static void ParseFolderPermissions(XmlNodeList nodeFolderPermissions, int PortalId, FolderInfo folder)
+        private static void ParseFolderPermissions(XmlNodeList nodeFolderPermissions, int portalId, FolderInfo folder)
         {
-            PermissionController objPermissionController = new PermissionController();
-            int PermissionID = 0;
+            PermissionController permissionController = new PermissionController();
+            int permissionId = 0;
 
             //Clear the current folder permissions
             folder.FolderPermissions.Clear();
             foreach (XmlNode xmlFolderPermission in nodeFolderPermissions)
             {
-                string PermissionKey = XmlUtils.GetNodeValue(xmlFolderPermission.CreateNavigator(), "permissionkey");
-                string PermissionCode = XmlUtils.GetNodeValue(xmlFolderPermission.CreateNavigator(), "permissioncode");
-                string RoleName = XmlUtils.GetNodeValue(xmlFolderPermission.CreateNavigator(), "rolename");
-                bool AllowAccess = XmlUtils.GetNodeValueBoolean(xmlFolderPermission, "allowaccess");
-                foreach (PermissionInfo objPermission in
-                    objPermissionController.GetPermissionByCodeAndKey(PermissionCode, PermissionKey))
+                string permissionKey = XmlUtils.GetNodeValue(xmlFolderPermission.CreateNavigator(), "permissionkey");
+                string permissionCode = XmlUtils.GetNodeValue(xmlFolderPermission.CreateNavigator(), "permissioncode");
+                string roleName = XmlUtils.GetNodeValue(xmlFolderPermission.CreateNavigator(), "rolename");
+                bool allowAccess = XmlUtils.GetNodeValueBoolean(xmlFolderPermission, "allowaccess");
+                foreach (PermissionInfo permission in permissionController.GetPermissionByCodeAndKey(permissionCode, permissionKey))
                 {
-                    PermissionID = objPermission.PermissionID;
+                    permissionId = permission.PermissionID;
                 }
-                int RoleID = int.MinValue;
-                switch (RoleName)
+                int roleId = int.MinValue;
+                switch (roleName)
                 {
                     case Globals.glbRoleAllUsersName:
-                        RoleID = Convert.ToInt32(Globals.glbRoleAllUsers);
+                        roleId = Convert.ToInt32(Globals.glbRoleAllUsers);
                         break;
                     case Globals.glbRoleUnauthUserName:
-                        RoleID = Convert.ToInt32(Globals.glbRoleUnauthUser);
+                        roleId = Convert.ToInt32(Globals.glbRoleUnauthUser);
                         break;
                     default:
-                        RoleInfo objRole = TestableRoleController.Instance.GetRole(PortalId, r => r.RoleName == RoleName);
+                        RoleInfo objRole = TestableRoleController.Instance.GetRole(portalId, r => r.RoleName == roleName);
                         if (objRole != null)
                         {
-                            RoleID = objRole.RoleID;
+                            roleId = objRole.RoleID;
                         }
                         break;
                 }
 
                 //if role was found add, otherwise ignore
-                if (RoleID != int.MinValue)
+                if (roleId != int.MinValue)
                 {
-                    FolderPermissionInfo objFolderPermission = new FolderPermissionInfo();
-                    objFolderPermission.FolderID = folder.FolderID;
-                    objFolderPermission.PermissionID = PermissionID;
-                    objFolderPermission.RoleID = RoleID;
-                    objFolderPermission.AllowAccess = AllowAccess;
-                    folder.FolderPermissions.Add(objFolderPermission);
+                    var folderPermission = new FolderPermissionInfo
+                                                  {
+                                                      FolderID = folder.FolderID,
+                                                      PermissionID = permissionId,
+                                                      RoleID = roleId,
+                                                      UserID = Null.NullInteger,
+                                                      AllowAccess = allowAccess
+                                                  };
+
+                    bool canAdd = !folder.FolderPermissions.Cast<FolderPermissionInfo>()
+                                                .Any(fp => fp.FolderID == folderPermission.FolderID 
+                                                        && fp.PermissionID == folderPermission.PermissionID 
+                                                        && fp.RoleID == folderPermission.RoleID 
+                                                        && fp.UserID == folderPermission.UserID);
+                    if (canAdd)
+                    {
+                        folder.FolderPermissions.Add(folderPermission);
+                    }
                 }
             }
             FolderPermissionController.SaveFolderPermissions(folder);

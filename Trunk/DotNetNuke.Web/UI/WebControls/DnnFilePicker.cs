@@ -656,7 +656,7 @@ namespace DotNetNuke.Web.UI.WebControls
 			//Add Personal Folder
 			if (UsePersonalFolder)
 			{
-                var userFolder = PathUtils.Instance.GetUserFolderPath(user);
+			    var userFolder = FolderManager.Instance.GetUserFolder(user).FolderPath;
 				var userFolderItem = _cboFolders.Items.FindByValue(userFolder);
 				if (userFolderItem != null)
 				{

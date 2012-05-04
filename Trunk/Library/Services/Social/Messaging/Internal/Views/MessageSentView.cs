@@ -21,40 +21,62 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Xml.Serialization;
 
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities;
+using DotNetNuke.Common;
 using DotNetNuke.Entities.Modules;
 
 #endregion
 
-namespace DotNetNuke.Services.Social.Messaging.Views
+namespace DotNetNuke.Services.Social.Messaging.Internal.Views
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.Entities.Messaging
-    /// Class:      MessageThreadView
+    /// Namespace:  DotNetNuke.Entities.Messaging.Views
+    /// Class:      MessageConversationView
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageThreadView class contains MessageConversationView and collection of MessageAttachmentView
+    /// The MessageConversationView class contains details of the latest message in a Conversation.
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageThreadView
+    public class MessageSentView : Message, IHydratable
     {
         /// <summary>
-        /// MessageItemView containing consolidated information about the message
+        /// RowNumber of the message in a set
         /// </summary>
         [XmlAttribute]
-        public MessageConversationView Conversation { get; set; }
+        public int RowNumber { get; set; }
 
         /// <summary>
-        /// List of attachments
+        /// Count of Total Attachments in a Conversation. It is calculated by adding attachments in all the threads for a given conversation.
         /// </summary>
         [XmlAttribute]
-        public IList<MessageFileView> Attachments { get; set; }
+        public int AttachmentCount { get; set; }      
+
+        /// <summary>
+        /// The Sender User Profile URL
+        /// </summary>
+        [XmlIgnore]
+        public string SenderProfileUrl
+        {
+            get
+            {
+                return Globals.UserProfileURL(SenderUserID);
+            }
+        }
+
+        /// <summary>
+        /// Fill the object with data from database.
+        /// </summary>
+        /// <param name="dr">the data reader.</param>
+        public new void Fill(IDataReader dr)
+        {
+            RowNumber = Convert.ToInt32(dr["RowNumber"]);
+            AttachmentCount = Convert.ToInt32(dr["AttachmentCount"]);
+
+            base.Fill(dr);            
+        }
     }
 }

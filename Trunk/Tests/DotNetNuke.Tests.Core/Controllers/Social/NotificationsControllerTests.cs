@@ -1011,6 +1011,18 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _mockDataService.Verify();
         }
 
+        [Test]
+        public void GetNotifications_Calls_DataService_GetNotificationByContext()
+        {
+            _mockDataService
+                .Setup(ds => ds.GetNotificationByContext(Constants.Messaging_NotificationTypeId, Constants.Messaging_NotificationContext))
+                .Returns(new DataTable().CreateDataReader())
+                .Verifiable();
+
+            _notificationsController.GetNotificationByContext(Constants.Messaging_NotificationTypeId, Constants.Messaging_NotificationContext);
+            _mockDataService.Verify();
+        }
+
         #endregion
 
         #region CountNotifications
@@ -1033,6 +1045,16 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             _mockMessagingController.Setup(mc => mc.DeleteMessageRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12)).Verifiable();
             _mockMessagingController.Setup(mc => mc.GetMessageRecipients(Constants.Messaging_MessageId_1)).Returns(new List<MessageRecipient>());
             _notificationsController.DeleteNotificationRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12);
+            _mockMessagingController.Verify();
+        }
+
+        [Test]
+        public void DeleteNotificationRecipientByContext_Calls_DeleteMessageRecipient()
+        {
+            _mockNotificationsController.Setup(mc => mc.DeleteNotificationRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12)).Verifiable();
+            _mockNotificationsController.Setup(mc => mc.GetNotificationByContext(Constants.Messaging_NotificationTypeId, Constants.Messaging_NotificationContext))
+                .Returns(new List<Notification> { new Notification { NotificationID = Constants.Messaging_MessageId_1 } });
+            _mockNotificationsController.Object.DeleteNotificationRecipient(Constants.Messaging_NotificationTypeId, Constants.Messaging_NotificationContext, Constants.UserID_User12);
             _mockMessagingController.Verify();
         }
 

@@ -59,7 +59,7 @@ namespace DotNetNuke.Authentication.LiveConnect
 
             OAuthClient = new LiveClient(PortalId, Mode);
 
-            loginPanel.Visible = (Mode == AuthMode.Login);
+            loginItem.Visible = (Mode == AuthMode.Login);
             registerItem.Visible = (Mode == AuthMode.Register);
         }
 

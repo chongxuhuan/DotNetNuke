@@ -52,6 +52,7 @@ namespace DotNetNuke.Services.Social.Notifications.Data
         int CountNotifications(int userId, int portalId);
         IDataReader GetNotifications(int userId, int portalId, int pageIndex, int pageSize);
         IDataReader GetNotification(int notificationId);
+        IDataReader GetNotificationByContext(int notificationTypeId, string context);
 
         #endregion
 

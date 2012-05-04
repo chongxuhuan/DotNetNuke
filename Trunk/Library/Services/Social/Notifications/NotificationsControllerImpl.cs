@@ -254,9 +254,22 @@ namespace DotNetNuke.Services.Social.Notifications
             }
         }
 
+        public virtual void DeleteNotificationRecipient(int notificationTypeId, string context, int userId)
+        {
+            foreach (var notification in GetNotificationByContext(notificationTypeId, context))
+            {
+                DeleteNotificationRecipient(notification.NotificationID, userId);
+            }
+        }
+
         public Notification GetNotification(int notificationId)
         {
             return CBO.FillObject<Notification>(_dataService.GetNotification(notificationId));
+        }
+
+        public virtual IList<Notification> GetNotificationByContext(int notificationTypeId, string context)
+        {
+            return CBO.FillCollection<Notification>(_dataService.GetNotificationByContext(notificationTypeId, context));
         }
 
         public virtual void DeleteNotificationType(int notificationTypeId)

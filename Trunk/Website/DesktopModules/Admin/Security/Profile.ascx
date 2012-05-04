@@ -27,6 +27,11 @@
             }
         });
 
+        $('div[name$="_visibility"] > ul').mouseleave(function () {
+            $(this).slideUp('slow');
+            $(this).parent().children("a").removeClass('dnnFormActive');
+        });
+
         $('input[name$="_visibility"]').click(function () {
             showHideOptions($(this));
         });

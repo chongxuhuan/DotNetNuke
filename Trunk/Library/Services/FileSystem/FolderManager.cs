@@ -227,14 +227,8 @@ namespace DotNetNuke.Services.FileSystem
             var userFolders = new List<IFolderInfo>();
 
             var portalID = user.PortalID;
-            var userFolderPath = PathUtils.Instance.GetUserFolderPath(user);
 
-            var userFolder = GetFolder(portalID, userFolderPath);
-            if (userFolder == null)
-            {
-                AddUserFolder(user);
-                userFolder = GetFolder(portalID, userFolderPath);
-            }
+            var userFolder = GetUserFolder(user);
 
             var defaultFolderMaping = FolderMappingController.Instance.GetDefaultFolderMapping(portalID);
 
@@ -297,6 +291,15 @@ namespace DotNetNuke.Services.FileSystem
             DnnLog.MethodEntry();
 
             return CBOWrapper.Instance.FillObject<FolderInfo>(DataProvider.Instance().GetFolderByUniqueID(uniqueId));
+        }
+
+        public virtual IFolderInfo GetUserFolder(UserInfo userInfo)
+        {
+            //always use _default portal for a super user
+            int portalId = userInfo.IsSuperUser ? -1 : userInfo.PortalID;
+            
+            string userFolderPath = ((PathUtils)PathUtils.Instance).GetUserFolderPathInternal(userInfo);
+            return GetFolder(portalId, userFolderPath) ?? AddUserFolder(userInfo);
         }
 
         /// <summary>
@@ -402,9 +405,8 @@ namespace DotNetNuke.Services.FileSystem
             var userFolders = new List<IFolderInfo>();
 
             var portalID = user.PortalID;
-            var userFolderPath = PathUtils.Instance.GetUserFolderPath(user);
-
-            var userFolder = GetFolder(portalID, userFolderPath) ?? AddUserFolder(user);
+            
+            var userFolder = GetUserFolder(user);
 
             foreach (var folder in GetFolders(portalID, permissions, user.UserID).Where(folder => folder.FolderPath != null))
             {
@@ -789,7 +791,8 @@ namespace DotNetNuke.Services.FileSystem
         /// <summary>This member is reserved for internal use and is not intended to be used directly from your code.</summary>
         internal virtual IFolderInfo AddUserFolder(UserInfo user)
         {
-            var portalID = user.PortalID;
+            //user _default portal for all super users
+            var portalID = user.IsSuperUser ? -1 : user.PortalID;
 
             var defaultFolderMapping = FolderMappingController.Instance.GetDefaultFolderMapping(portalID);
 

@@ -3828,7 +3828,8 @@ namespace DotNetNuke.Common
         /// <summary>
         /// Return User Profile Picture Formatted Url. UserId, width and height can be passed to build a formatted Avatar Url.
         /// </summary>        
-        /// <returns>Formatted url, e.g. http://www.mysite.com/profilepic.ashx?userid={0}&h={1}&w={2}</returns>
+        /// <returns>Formatted url,  e.g. http://www.mysite.com/profilepic.ashx?userid={0}&amp;h={1}&amp;w={2} 
+        /// </returns>
         /// <remarks>Usage: ascx - <asp:Image ID="avatar" runat="server" CssClass="SkinObject" />
         /// code behind - avatar.ImageUrl = string.Format(Globals.UserProfilePicFormattedUrl(), userInfo.UserID, 32, 32)
         /// </remarks>

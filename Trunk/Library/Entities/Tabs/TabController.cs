@@ -214,9 +214,19 @@ namespace DotNetNuke.Entities.Tabs
                                                 TabID = tab.TabID,
                                                 PermissionID = permissionID,
                                                 RoleID = roleID,
+                                                UserID = Null.NullInteger,
                                                 AllowAccess = allowAccess
                                             };
-                    tab.TabPermissions.Add(tabPermission);
+
+                    bool canAdd = !tab.TabPermissions.Cast<TabPermissionInfo>()
+                                                .Any(tp => tp.TabID == tabPermission.TabID
+                                                        && tp.PermissionID == tabPermission.PermissionID
+                                                        && tp.RoleID == tabPermission.RoleID
+                                                        && tp.UserID == tabPermission.UserID);
+                    if (canAdd)
+                    {
+                        tab.TabPermissions.Add(tabPermission);
+                    }
                 }
             }
         }

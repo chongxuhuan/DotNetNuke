@@ -201,7 +201,7 @@
                             $.post(opts.serviceurlbase + "Create", opts.servicesFramework.getAntiForgeryProperty(params), function (data) {
                                 if (data.Result === "success") {
                                     composeMessageDialog.dialog("option", "title", opts.messageSentTitle);
-                                    var dismissThis = $('<a href="#"/>')
+                                    var dismissThis = $('<a href="javascript:void(0)"/>') // DO NOT USE href="#" IN ORDER TO PREVENT ISSUES WITH IE
                                         .text(' ' + opts.dismissThisText)
                                         .click(function () {
                                             composeMessageDialog.dialog("close");

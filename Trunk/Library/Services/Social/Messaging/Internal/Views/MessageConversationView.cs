@@ -21,52 +21,76 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Xml.Serialization;
 
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities;
+using DotNetNuke.Common;
 using DotNetNuke.Entities.Modules;
 
 #endregion
 
-namespace DotNetNuke.Services.Social.Messaging.Views
+namespace DotNetNuke.Services.Social.Messaging.Internal.Views
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
-    /// Namespace:  DotNetNuke.Entities.Messaging
-    /// Class:      MessageThreadsView
+    /// Namespace:  DotNetNuke.Entities.Messaging.Views
+    /// Class:      MessageConversationView
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageThreadsView class contains collection of MessageThreadView and other meta data
+    /// The MessageConversationView class contains details of the latest message in a Conversation.
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageThreadsView
+    public class MessageConversationView : Message, IHydratable
     {
         /// <summary>
-        /// Total Number of Threads
+        /// RowNumber of the message in a set
         /// </summary>
         [XmlAttribute]
-        public int TotalThreads { get; set; }
+        public int RowNumber { get; set; }
 
         /// <summary>
-        /// Total Number of New (Unread) Threads
+        /// Count of Total Attachments in a Conversation. It is calculated by adding attachments in all the threads for a given conversation.
         /// </summary>
         [XmlAttribute]
-        public int TotalNewThreads { get; set; }
+        public int AttachmentCount { get; set; }
 
         /// <summary>
-        /// Total Number of Archived Threads
+        /// Count of Total New (Unread) Threads in a Conversation. It is calculated by inspecting all the threads in a conversation and counting the ones that are not read yet.
         /// </summary>
         [XmlAttribute]
-        public int TotalArchivedThreads { get; set; }
+        public int NewThreadCount { get; set; }
 
         /// <summary>
-        /// List of Conversations
+        /// Count of Total Threads in a Conversation.
         /// </summary>
         [XmlAttribute]
-        public List<MessageThreadView> Conversations { get; set; }
+        public int ThreadCount { get; set; }
+
+        /// <summary>
+        /// The Sender User Profile URL
+        /// </summary>
+        [XmlIgnore]
+        public string SenderProfileUrl
+        {
+            get
+            {
+                return Globals.UserProfileURL(SenderUserID);
+            }
+        }
+
+        /// <summary>
+        /// Fill the object with data from database.
+        /// </summary>
+        /// <param name="dr">the data reader.</param>
+        public new void Fill(IDataReader dr)
+        {
+            RowNumber = Convert.ToInt32(dr["RowNumber"]);
+            AttachmentCount = Convert.ToInt32(dr["AttachmentCount"]);
+            NewThreadCount = Convert.ToInt32(dr["NewThreadCount"]);
+            ThreadCount = Convert.ToInt32(dr["ThreadCount"]);
+
+            base.Fill(dr);            
+        }
     }
 }

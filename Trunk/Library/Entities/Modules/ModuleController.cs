@@ -504,8 +504,14 @@ namespace DotNetNuke.Entities.Modules
                                                           RoleID = roleID,
                                                           AllowAccess = Convert.ToBoolean(XmlUtils.GetNodeValue(node.CreateNavigator(), "allowaccess"))
                                                       };
+
                         // do not add duplicate ModulePermissions
-                        if (!FindModulePermission(modulePermission, module))
+                        bool canAdd = !module.ModulePermissions.Cast<ModulePermissionInfo>()
+                                                    .Any(mp => mp.ModuleID == modulePermission.ModuleID
+                                                            && mp.PermissionID == modulePermission.PermissionID
+                                                            && mp.RoleID == modulePermission.RoleID
+                                                            && mp.UserID == modulePermission.UserID);
+                        if (canAdd)
                         {
                             module.ModulePermissions.Add(modulePermission);
                         }
@@ -514,10 +520,6 @@ namespace DotNetNuke.Entities.Modules
             }
         }
 
-        private static bool FindModulePermission(ModulePermissionInfo modulePermission, ModuleInfo module)
-        {
-            return module.ModulePermissions.Cast<ModulePermissionInfo>().Any(mp => (mp.ModuleID == modulePermission.ModuleID) && (mp.PermissionID == modulePermission.PermissionID) && (mp.RoleID == modulePermission.RoleID));
-        }
 
         private static bool FindModule(XmlNode nodeModule, int tabId, PortalTemplateModuleAction mergeTabs)
         {

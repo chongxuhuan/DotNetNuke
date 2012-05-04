@@ -27,8 +27,6 @@ using System.Globalization;
 using System.IO;
 using System.Web.Mvc;
 
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Icons;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
@@ -40,13 +38,12 @@ namespace DotNetNuke.Web.InternalServices
     public class UserFileController : DnnController
     {
         private readonly IFolderManager _folderManager = FolderManager.Instance;
-        private readonly IPathUtils _pathUtils = PathUtils.Instance;
-
+        
         [DnnAuthorize]
         [HttpGet]
         public ActionResult GetItems(string fileExtensions)
         {
-            IFolderInfo userFolder = GetUserFolder();
+            IFolderInfo userFolder = _folderManager.GetUserFolder(UserInfo);
 
             var extensions = new List<string>();
             if (!string.IsNullOrEmpty(fileExtensions))
@@ -120,7 +117,7 @@ namespace DotNetNuke.Web.InternalServices
         {
             if (IsImageFile(file.RelativePath))
             {
-                return Path.Combine(PortalSettings.HomeDirectory, file.RelativePath);
+                return FileManager.Instance.GetUrl(file);
             }
 
             string fileIcon = IconController.IconURL("Ext" + file.Extension, "32x32");
@@ -167,21 +164,6 @@ namespace DotNetNuke.Web.InternalServices
                 size = (size / 1024);
             }
             return size.ToString(CultureInfo.InvariantCulture) + (biggerThanAMegabyte ? "Mb" : "k");
-        }
-
-        private IFolderInfo GetUserFolder()
-        {
-            int portalId;
-            portalId = UserInfo.IsSuperUser ? -1 : PortalSettings.PortalId;
-
-            string userFolderPath = _pathUtils.GetUserFolderPath(UserInfo);
-            IFolderInfo folder = _folderManager.GetFolder(portalId, userFolderPath);
-            if (folder == null)
-            {
-                // this line will take care of creating the user's folder
-                _folderManager.GetFileSystemFolders(UserInfo, "READ");
-            }
-            return _folderManager.GetFolder(portalId, userFolderPath);
         }
 
         class Item

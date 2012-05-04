@@ -42,14 +42,6 @@ namespace DotNetNuke.Services.Authentication
     /// -----------------------------------------------------------------------------
     public class UserAuthenticatedEventArgs : EventArgs
     {
-        private bool _Authenticated = true;
-        private string _AuthenticationType = Null.NullString;
-        private bool _AutoRegister = Null.NullBoolean;
-        private UserLoginStatus _LoginStatus = UserLoginStatus.LOGIN_FAILURE;
-        private string _Message = Null.NullString;
-        private NameValueCollection _Profile = new NameValueCollection();
-        private string _UserToken = Null.NullString;
-
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// All properties Constructor.
@@ -58,145 +50,73 @@ namespace DotNetNuke.Services.Authentication
         /// <param name="token">The user token</param>
         /// <param name="status">The login status.</param>
         /// <param name="type">The type of Authentication</param>
-        /// <history>
-        /// 	[cnurse]	07/10/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public UserAuthenticatedEventArgs(UserInfo user, string token, UserLoginStatus status, string type)
         {
+            Profile = new NameValueCollection();
+            Message = String.Empty;
+            AutoRegister = false;
+            Authenticated = true;
             User = user;
-            _LoginStatus = status;
-            _UserToken = token;
-            _AuthenticationType = type;
+            LoginStatus = status;
+            UserToken = token;
+            AuthenticationType = type;
+            RememberMe = false;
         }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets a flag that determines whether the User was authenticated
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/11/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
-        public bool Authenticated
-        {
-            get
-            {
-                return _Authenticated;
-            }
-            set
-            {
-                _Authenticated = value;
-            }
-        }
+        public bool Authenticated { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the Authentication Type
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/10/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
-        public string AuthenticationType
-        {
-            get
-            {
-                return _AuthenticationType;
-            }
-            set
-            {
-                _AuthenticationType = value;
-            }
-        }
+        public string AuthenticationType { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets a flag that determines whether the user should be automatically registered
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/16/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
-        public bool AutoRegister
-        {
-            get
-            {
-                return _AutoRegister;
-            }
-            set
-            {
-                _AutoRegister = value;
-            }
-        }
+        public bool AutoRegister { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the Login Status
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/10/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
-        public UserLoginStatus LoginStatus
-        {
-            get
-            {
-                return _LoginStatus;
-            }
-            set
-            {
-                _LoginStatus = value;
-            }
-        }
+        public UserLoginStatus LoginStatus { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the Message
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/11/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
-        public string Message
-        {
-            get
-            {
-                return _Message;
-            }
-            set
-            {
-                _Message = value;
-            }
-        }
+        public string Message { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the Profile
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/16/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
-        public NameValueCollection Profile
-        {
-            get
-            {
-                return _Profile;
-            }
-            set
-            {
-                _Profile = value;
-            }
-        }
+        public NameValueCollection Profile { get; set; }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets and sets the RememberMe setting
+        /// </summary>
+        /// -----------------------------------------------------------------------------
+        public bool RememberMe { get; set; }
 
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// Gets and sets the User
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/10/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
         public UserInfo User { get; set; }
 
@@ -204,20 +124,7 @@ namespace DotNetNuke.Services.Authentication
         /// <summary>
         /// Gets and sets the UserToken (the userid or authenticated id)
         /// </summary>
-        /// <history>
-        /// 	[cnurse]	07/10/2007  Created
-        /// </history>
         /// -----------------------------------------------------------------------------
-        public string UserToken
-        {
-            get
-            {
-                return _UserToken;
-            }
-            set
-            {
-                _UserToken = value;
-            }
-        }
+        public string UserToken { get; set; }
     }
 }

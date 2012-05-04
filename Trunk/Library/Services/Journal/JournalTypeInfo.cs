@@ -17,6 +17,7 @@ namespace DotNetNuke.Services.Journal {
         public bool SupportsNotify { get; set; }
         public string Options { get; set; }
         public bool IsEnabled { get; set; }
+        public bool EnableComments { get; set; }
         public int KeyID {
             get {
                 return JournalTypeId;
@@ -37,6 +38,7 @@ namespace DotNetNuke.Services.Journal {
             SupportsNotify = Null.SetNullBoolean(dr["SupportsNotify"]);
             Options = Null.SetNullString(dr["Options"]);
             IsEnabled = Null.SetNullBoolean(dr["IsEnabled"]);
+            EnableComments = Null.SetNullBoolean(dr["EnableComments"]);
         }
     }
 }

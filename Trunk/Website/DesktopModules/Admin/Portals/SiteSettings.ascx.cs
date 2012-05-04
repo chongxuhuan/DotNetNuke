@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.UI.WebControls;
 
@@ -92,6 +93,12 @@ namespace DotNetNuke.Modules.Admin.Portals
                 return LocaleController.Instance.GetCurrentLocale(PortalId).Code;
             }
         }
+
+        #endregion
+
+        #region Public Properties
+
+        protected string CustomRegistrationFields { get; set; }
 
         #endregion
 
@@ -505,7 +512,6 @@ namespace DotNetNuke.Modules.Admin.Portals
                 standardProviderSettings.DataSource = providerConfig;
                 standardProviderSettings.DataBind();
 
-
                 basicRegistrationSettings.DataSource = settings;
                 basicRegistrationSettings.DataBind();
 
@@ -518,7 +524,19 @@ namespace DotNetNuke.Modules.Admin.Portals
                 validationRegistrationSettings.DataSource = settings;
                 validationRegistrationSettings.DataBind();
 
-                registrationFields.Text = PortalController.GetPortalSetting("Registration_RegistrationFields", portalId, String.Empty);
+                var customRegistrationFields = PortalController.GetPortalSetting("Registration_RegistrationFields", portalId, String.Empty);
+
+                var sb = new StringBuilder();
+                sb.Append("[ ");
+                int i = 0;
+                foreach(var field in customRegistrationFields.Split(','))
+                {
+                    if (i != 0) sb.Append(",");
+                    sb.Append("{ id: \"" + field + "\", name: \"" + field + "\"}");
+                    i++;
+                }
+                sb.Append(" ]");
+                CustomRegistrationFields = sb.ToString();
 
                 passwordRegistrationSettings.DataSource = settings;
                 passwordRegistrationSettings.DataBind();
@@ -696,6 +714,7 @@ namespace DotNetNuke.Modules.Admin.Portals
             base.OnInit(e);
 
             jQuery.RequestDnnPluginsRegistration();
+            ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
 
             chkPayPalSandboxEnabled.CheckedChanged += OnChkPayPalSandboxChanged;
             IncrementCrmVersionButton.Click += IncrementCrmVersion;
@@ -1180,54 +1199,7 @@ namespace DotNetNuke.Modules.Admin.Portals
                             return;
                         }
 
-                        string invalidFields = String.Empty;
-                        if (!String.IsNullOrEmpty(setting))
-                        {
-                            string[] fields = setting.Split(',');
-                            foreach (string field in fields)
-                            {
-                                var trimmedField = field.Trim();
-                                ProfilePropertyDefinition property = ProfileController.GetPropertyDefinitionByName(PortalId, trimmedField);
-                                if (property == null)
-                                {
-                                    switch (trimmedField)
-                                    {
-                                        case "Username":
-                                        case "Email":
-                                        case "Password":
-                                        case "PasswordConfirm":
-                                        case "PasswordQuestion":
-                                        case "PasswordAnswer":
-                                        case "DisplayName":
-                                            break;
-                                        default:
-                                            invalidFields += trimmedField + ",";
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    var controller = new ListController();
-                                    ListEntryInfo imageType = controller.GetListEntryInfo("DataType", "Image");
-                                    if (property.DataType == imageType.EntryID)
-                                    {
-                                        invalidFields += trimmedField + ",";
-                                    }
-                                }
-                            }
-                        }
-
-                        if (String.IsNullOrEmpty(invalidFields))
-                        {
-                            PortalController.UpdatePortalSetting(_portalId, "Registration_RegistrationFields", setting);
-                        }
-                        else
-                        {
-                            invalidFields = invalidFields.TrimEnd(',');
-                            string message = String.Format(Localization.GetString("InvalidFields", LocalResourceFile), invalidFields);
-                            UI.Skins.Skin.AddModuleMessage(this, message, ModuleMessage.ModuleMessageType.RedError);
-                            return;
-                        }
+                        PortalController.UpdatePortalSetting(_portalId, "Registration_RegistrationFields", setting);
                     }
 
                     PortalController.UpdatePortalSetting(_portalId, "Registration_RegistrationFormType", registrationFormType.SelectedValue, false);

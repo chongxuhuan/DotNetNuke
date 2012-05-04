@@ -28,9 +28,8 @@ using System.Globalization;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel;
 using DotNetNuke.Data;
-using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.FileSystem;
-using DotNetNuke.Services.Social.Messaging.Views;
+using DotNetNuke.Services.Social.Messaging.Internal.Views;
 
 #endregion
 
@@ -127,6 +126,11 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         public IDataReader GetSentBoxView(int userId, int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
         {
             return _provider.ExecuteReader("CoreMessaging_GetSentBox", userId, portalId, pageIndex, pageSize, sortColumn, sortAscending);            
+        }
+
+        public IDataReader GetArchiveBoxView(int userId, int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
+        {
+            return _provider.ExecuteReader("CoreMessaging_GetArchiveBox", userId, portalId, pageIndex, pageSize, sortColumn, sortAscending);
         }
 
         public MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool @sortAscending, ref int totalRecords)

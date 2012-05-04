@@ -13,13 +13,13 @@ namespace DotNetNuke.Authentication.Twitter {
     public partial class Login {
         
         /// <summary>
-        /// loginPanel control.
+        /// loginItem control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl loginPanel;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl loginItem;
         
         /// <summary>
         /// loginButton control.

@@ -21,70 +21,42 @@
 #region Usings
 
 using System;
-using System.Data;
+using System.Collections.Generic;
 using System.Xml.Serialization;
-
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities;
-using DotNetNuke.Entities.Modules;
 
 #endregion
 
-namespace DotNetNuke.Services.Social.Messaging.Views
+namespace DotNetNuke.Services.Social.Messaging.Internal.Views
 {
     /// -----------------------------------------------------------------------------
     /// Project:    DotNetNuke
     /// Namespace:  DotNetNuke.Entities.Messaging.Views
-    /// Class:      MessageFileView
+    /// Class:      MessageBoxView
     /// -----------------------------------------------------------------------------
     /// <summary>
-    /// The MessageFileView class contains details about the attachment
+    /// The MessageBoxView contains the View of Inbox, Sent or Archived messages
     /// </summary>
     /// -----------------------------------------------------------------------------
     [Serializable]
-    public class MessageFileView
+    public class MessageBoxView 
     {
-        private string _size;
-
         /// <summary>
-        /// The name of the file with extension
+        /// Total Number of Coversations
         /// </summary>
         [XmlAttribute]
-        public string Name { get; set; }
+        public int TotalConversations { get; set; }
 
         /// <summary>
-        /// Size of the File with Unit, e.g. 100 B, 12 KB, 200 MB, etc.
+        /// Total Number of New (Unread) Threads
         /// </summary>
         [XmlAttribute]
-        public string Size
-        {
-            get { return _size; }
-            set
-            {
-                long bytes;
-                if (!long.TryParse(value, out bytes)) return;
-                const int scale = 1024;
-                var orders = new[] { "GB", "MB", "KB", "B" };
-                var max = (long)Math.Pow(scale, orders.Length - 1);
-
-                foreach (var order in orders)
-                {
-                    if (bytes > max)
-                    {
-                        _size = string.Format("{0:##.##} {1}", decimal.Divide(bytes, max), order);
-                        return;
-                    }
-
-                    max /= scale;
-                }
-                _size = "0 B";
-            }
-        }
+        public int TotalNewThreads { get; set; }
 
         /// <summary>
-        /// Url of the file to download
+        /// List of Conversations
         /// </summary>
         [XmlAttribute]
-        public string Url { get; set; }
+        public List<MessageConversationView> Conversations { get; set; }
+
     }
 }

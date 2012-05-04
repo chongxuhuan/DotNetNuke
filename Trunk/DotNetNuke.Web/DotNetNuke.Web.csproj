@@ -113,6 +113,7 @@
   <ItemGroup>
     <Compile Include="Common\DotNetNukeHttpApplication.cs" />
     <Compile Include="InternalServices\NotificationsServiceController.cs" />
+    <Compile Include="InternalServices\ProfileServiceController.cs" />
     <Compile Include="InternalServices\RelationshipServiceController.cs" />
     <Compile Include="InternalServices\MessagingServiceController.cs" />
     <Compile Include="InternalServices\ServiceRouteMapper.cs" />
