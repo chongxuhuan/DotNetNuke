@@ -855,7 +855,10 @@ namespace DotNetNuke.Modules.Html
         private void AddNotificationTypes()
         {
             var type = new NotificationType { Name = "HtmlNotification", Description = "Html Module Notification" };
-            NotificationsController.Instance.CreateNotificationType(type);
+            if (NotificationsController.Instance.GetNotificationType(type.Name) == null)
+            {
+                NotificationsController.Instance.CreateNotificationType(type);
+            }
         }
 
         #endregion

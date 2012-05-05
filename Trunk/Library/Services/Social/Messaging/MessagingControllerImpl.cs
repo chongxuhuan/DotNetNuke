@@ -92,7 +92,7 @@ namespace DotNetNuke.Services.Social.Messaging
         {
             _dataService.DeleteMessageRecipientByMessageAndUser(messageId, userId);
         }
-      
+
         public virtual Message GetMessage(int messageId)
         {
             return CBO.FillObject<Message>(_dataService.GetMessage(messageId));
@@ -314,12 +314,16 @@ namespace DotNetNuke.Services.Social.Messaging
                 users = new List<UserInfo>();
             }
 
-            //add sender as a recipient of the message
-            users.Add(sender);
-
             foreach (var recipient in from user in users where GetMessageRecipient(message.MessageID, user.UserID) == null select new MessageRecipient { MessageID = message.MessageID, UserID = user.UserID, Read = false, RecipientID = Null.NullInteger })
             {
                 _dataService.SaveMessageRecipient(recipient, UserController.GetCurrentUserInfo().UserID);
+            }
+
+            if (users.All(u => u.UserID != sender.UserID))
+            {
+                //add sender as a recipient of the message
+                var recipientId = _dataService.SaveMessageRecipient(new MessageRecipient { MessageID = message.MessageID, UserID = sender.UserID, Read = false, RecipientID = Null.NullInteger }, UserController.GetCurrentUserInfo().UserID);
+                Internal.InternalMessagingController.Instance.MarkMessageAsDispatched(message.MessageID, recipientId);
             }
 
             // Mark the conversation as read by the sender of the message.
@@ -412,6 +416,6 @@ namespace DotNetNuke.Services.Social.Messaging
             return userInfo.IsSuperUser || userInfo.IsInRole(TestablePortalSettings.Instance.AdministratorRoleName);
         }
 
-        #endregion        
+        #endregion
     }
 }

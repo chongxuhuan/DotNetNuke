@@ -41,17 +41,21 @@ namespace DotNetNuke.Web.InternalServices
         {
             try
             {
-                Notification notification = NotificationsController.Instance.GetNotification(notificationId);
-                int userRelationshipId;
-                if (int.TryParse(notification.Context, out userRelationshipId))
+                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
+                if (recipient != null)
                 {
-                    var userRelationship = RelationshipController.Instance.GetUserRelationship(userRelationshipId);
-                    if (userRelationship != null)
+                    Notification notification = NotificationsController.Instance.GetNotification(notificationId);
+                    int userRelationshipId;
+                    if (int.TryParse(notification.Context, out userRelationshipId))
                     {
-                        var friend = UserController.GetUserById(PortalSettings.PortalId, userRelationship.UserId);
-                        FriendsController.Instance.AcceptFriend(friend);
-                        return Json(new { Result = "success" });
-                    }                        
+                        var userRelationship = RelationshipController.Instance.GetUserRelationship(userRelationshipId);
+                        if (userRelationship != null)
+                        {
+                            var friend = UserController.GetUserById(PortalSettings.PortalId, userRelationship.UserId);
+                            FriendsController.Instance.AcceptFriend(friend);
+                            return Json(new {Result = "success"});
+                        }
+                    }
                 }
                 return Json(new { Result = "error" });
             }

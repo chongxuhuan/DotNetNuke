@@ -6222,6 +6222,130 @@ AS
 		WHERE  UserRoleId = @UserRoleId
 GO
 
+/* Update SettingValue */
+/***********************/
+
+ALTER TABLE {databaseOwner}{objectQualifier}ModuleSettings
+	ALTER COLUMN SettingValue nvarchar(max) NOT NULL
+
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}TabModuleSettings
+	ALTER COLUMN SettingValue nvarchar(max) NOT NULL
+
+GO
+
+/* Update AddModuleSetting */
+/***************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddModuleSetting]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}AddModuleSetting
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddModuleSetting]
+	@ModuleId			int,
+	@SettingName		nvarchar(50),
+	@SettingValue		nvarchar(max),
+	@CreatedByUserID	int
+AS
+	INSERT INTO {databaseOwner}{objectQualifier}ModuleSettings ( 
+		ModuleId,
+		SettingName,
+		SettingValue,
+		CreatedByUserID,
+		CreatedOnDate,
+		LastModifiedByUserID,
+		LastModifiedOnDate
+	) 
+	VALUES ( 
+		@ModuleId, 
+		@SettingName, 
+		@SettingValue,
+		@CreatedByUserID,
+		getdate(),
+		@CreatedByUserID,
+		getdate()
+	)
+GO
+
+/* Update AddTabModuleSetting */
+/******************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}AddTabModuleSetting]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}AddTabModuleSetting
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddTabModuleSetting]
+	@TabModuleId   		int,
+	@SettingName   		nvarchar(50),
+	@SettingValue  		nvarchar(max),
+	@CreatedByUserID  	int
+AS
+	INSERT INTO {databaseOwner}{objectQualifier}TabModuleSettings ( 
+		TabModuleId,
+		SettingName, 
+		SettingValue,
+		CreatedByUserID,
+		CreatedOnDate,
+		LastModifiedByUserID,
+		LastModifiedOnDate
+	) 
+	VALUES ( 
+		@TabModuleId,
+		@SettingName, 
+		@SettingValue,
+		@CreatedByUserID,
+		getdate(),
+		@CreatedByUserID,
+		getdate()
+	)
+
+GO
+
+/* Update UpdateModuleSetting */
+/******************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdateModuleSetting]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateModuleSetting
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateModuleSetting]
+	@ModuleId				int,
+	@SettingName			nvarchar(50),
+	@SettingValue			nvarchar(max),
+	@LastModifiedByUserID  	int
+AS
+	UPDATE 	{databaseOwner}{objectQualifier}ModuleSettings
+		SET 	SettingValue = @SettingValue,
+				LastModifiedByUserID = @LastModifiedByUserID,
+				LastModifiedOnDate = getdate()
+		WHERE ModuleId = @ModuleId
+		AND SettingName = @SettingName
+GO
+
+/* Update UpdateTabModuleSetting */
+/*********************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdateTabModuleSetting]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateTabModuleSetting
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateTabModuleSetting]
+	@TabModuleId			int,
+	@SettingName			nvarchar(50),
+	@SettingValue			nvarchar(max),
+	@LastModifiedByUserID	int
+
+AS
+	UPDATE {databaseOwner}{objectQualifier}TabModuleSettings
+		SET    SettingValue = @SettingValue,
+			   LastModifiedByUserID = @LastModifiedByUserID,
+			   LastModifiedOnDate = getdate()
+		WHERE  TabModuleId = @TabModuleId
+		AND    SettingName = @SettingName
+
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/

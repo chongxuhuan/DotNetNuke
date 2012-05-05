@@ -80,10 +80,6 @@ namespace DesktopModules.Admin.Security
                                       {
                                           GetNextActionID(), Localization.GetString("AddGroup.Action", LocalResourceFile), ModuleActionType.AddContent, "", "add.gif", EditUrl("EditGroup"), false,
                                           SecurityAccessLevel.Edit, true, false
-                                          },
-                                      {
-                                          GetNextActionID(), Localization.GetString("UserSettings.Action", LocalResourceFile), ModuleActionType.AddContent, "", "settings.gif", EditUrl("UserSettings"),
-                                          false, SecurityAccessLevel.Edit, true, false
                                           }
                                   };
                 return actions;
