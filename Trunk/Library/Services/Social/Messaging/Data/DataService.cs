@@ -72,7 +72,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteScalar<int>("CoreMessaging_CreateMessageReply", conversationId, portalId,body, senderUserId, from, createUpdateUserId);
         }
 
-        public MessageBoxView GetMessageBoxView(int userId, int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
+        public MessageBoxView GetMessageBoxView(int userId, int portalId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
         {
             object read = null;
             object archived = null;
@@ -108,7 +108,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                     break;
             }
 
-            var dr = _provider.ExecuteReader("CoreMessaging_GetMessageConversations", userId, portalId , pageIndex, pageSize, sortColumn, sortAscending, read, archived, sent);
+            var dr = _provider.ExecuteReader("CoreMessaging_GetMessageConversations", userId, portalId , afterMessageId, numberOfRecords, sortColumn, sortAscending, read, archived, sent);
             var messageBoxView = new MessageBoxView();
 
             try
@@ -123,21 +123,21 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return messageBoxView;
         }
 
-        public IDataReader GetSentBoxView(int userId, int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
+        public IDataReader GetSentBoxView(int userId, int portalId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending)
         {
-            return _provider.ExecuteReader("CoreMessaging_GetSentBox", userId, portalId, pageIndex, pageSize, sortColumn, sortAscending);            
+            return _provider.ExecuteReader("CoreMessaging_GetSentBox", userId, portalId, afterMessageId, numberOfRecords, sortColumn, sortAscending);            
         }
 
-        public IDataReader GetArchiveBoxView(int userId, int portalId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
+        public IDataReader GetArchiveBoxView(int userId, int portalId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending)
         {
-            return _provider.ExecuteReader("CoreMessaging_GetArchiveBox", userId, portalId, pageIndex, pageSize, sortColumn, sortAscending);
+            return _provider.ExecuteReader("CoreMessaging_GetArchiveBox", userId, portalId, afterMessageId, numberOfRecords, sortColumn, sortAscending);
         }
 
-        public MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool @sortAscending, ref int totalRecords)
+        public MessageThreadsView GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool @sortAscending, ref int totalRecords)
         {
             var messageThreadsView = new MessageThreadsView();
 
-            var dr = _provider.ExecuteReader("CoreMessaging_GetMessageThread", conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending);
+            var dr = _provider.ExecuteReader("CoreMessaging_GetMessageThread", conversationId, userId, afterMessageId, numberOfRecords, sortColumn, sortAscending);
 
             try
             {

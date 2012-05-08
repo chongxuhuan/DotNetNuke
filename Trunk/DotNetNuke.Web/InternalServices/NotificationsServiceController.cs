@@ -24,6 +24,7 @@
 using System;
 using System.Web.Mvc;
 
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Services.Social.Notifications;
 using DotNetNuke.Web.Services;
@@ -35,21 +36,23 @@ namespace DotNetNuke.Web.InternalServices
     {
         public ActionResult Dismiss(int notificationId)
         {
+            var success = false;
+
             try
             {
                 var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
                 if (recipient != null)
                 {
                     NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
-                    return Json(new { Result = "success" });
+                    success = true;
                 }
-                
-                return Json(new { Result = "error" });
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return Json(new { Result = "error" });
+                DnnLog.Error(exc);
             }
+
+            return Json(new { Result = success ? "success" : "error" });
         }
     }
 }

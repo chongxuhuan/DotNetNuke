@@ -272,8 +272,14 @@
     <Compile Include="Services\Journal\Content.cs" />
     <Compile Include="Services\Journal\Data\IJournalDataService.cs" />
     <Compile Include="Services\Journal\Data\JournalDataService.cs" />
+    <Compile Include="Services\Journal\Data\JournalDataServiceImpl.cs" />
+    <Compile Include="Services\Journal\IJournalController.cs" />
+    <Compile Include="Services\Journal\Internal\IInternalJournalController.cs" />
+    <Compile Include="Services\Journal\Internal\InternalJournalController.cs" />
+    <Compile Include="Services\Journal\Internal\InternalJournalControllerImpl.cs" />
     <Compile Include="Services\Journal\ItemData.cs" />
     <Compile Include="Services\Journal\JournalController.cs" />
+    <Compile Include="Services\Journal\JournalControllerImpl.cs" />
     <Compile Include="Services\Journal\JournalEntity.cs" />
     <Compile Include="Services\Journal\JournalItem.cs" />
     <Compile Include="Services\Journal\JournalTypeInfo.cs" />

@@ -273,7 +273,7 @@ namespace DotNetNuke.Web.Client.ClientResourceManagement
                 {
                     xmlFrag = xmlDoc.CreateDocumentFragment();
                     xmlFrag.InnerXml = @"<clientDependency version=""0"" fileDependencyExtensions="".js,.css"">
-                                            <fileRegistration defaultProvider=""LoaderControlProvider"">
+                                            <fileRegistration defaultProvider=""DnnPageHeaderProvider"">
                                               <providers>
                                                 <add name=""DnnBodyProvider"" type=""DotNetNuke.Web.Client.Providers.DnnBodyProvider, DotNetNuke.Web.Client"" enableCompositeFiles=""false"" />
                                                 <add name=""DnnPageHeaderProvider"" type=""DotNetNuke.Web.Client.Providers.DnnPageHeaderProvider, DotNetNuke.Web.Client"" enableCompositeFiles=""false"" />

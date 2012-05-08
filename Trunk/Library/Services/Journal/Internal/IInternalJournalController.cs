@@ -18,41 +18,34 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 
-using DotNetNuke.Common;
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Entities.Portals;
-using DotNetNuke.Entities.Tabs;
-using DotNetNuke.Services.Exceptions;
-
-#endregion
-
-namespace DotNetNuke.Modules.Console.Components
+namespace DotNetNuke.Services.Journal.Internal
 {
-    public class ConsoleController
+    public interface IInternalJournalController
     {
-        public static IList<string> GetSizeValues()
-        {
-            IList<string> returnValue = new List<string>();
-            returnValue.Add("IconFile");
-            returnValue.Add("IconFileLarge");
-            returnValue.Add("IconNone");
-            return returnValue;
-        }
+        IList<JournalItem> GetJournalItemsByProfile  (int portalId, int moduleId, int userID, int profileId, int currentIndex, int rows);
+        IList<JournalItem> GetJournalItemsByGroup(int portalId, int moduleId, int userID, int socialGroupId, int currentIndex, int rows);
+        IList<JournalItem> GetJournalItems(int portalId, int moduleId, int userID, int currentIndex, int rows);
 
-        public static IList<string> GetViewValues()
-        {
-            IList<string> returnValue = new List<string>();
-            returnValue.Add("Hide");
-            returnValue.Add("Show");
-            return returnValue;
-        }
+        IList<CommentInfo> GetCommentsByJournalIds(string journalIds);
+
+        void LikeJournalItem(int journalId, int userID, string displayName);
+
+        //todo should not return CommentInfo
+        CommentInfo SaveComment(CommentInfo ci);
+
+        CommentInfo GetComment(int commentId);
+
+        //todo doensn't commentId imply journalId?
+        void DeleteComment(int journalId, int commentId);
+
+        //todo doensn't commentId imply journalId?
+        void LikeComment(int journalId, int commentId, int userID, string displayName);
+
+        void DeleteFilters(int portalId, int moduleId);
+
+        void SaveFilters(int portalId, int moduleId, int toInt32);
     }
 }

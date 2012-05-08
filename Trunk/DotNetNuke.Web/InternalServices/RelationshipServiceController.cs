@@ -26,6 +26,7 @@ using System.Web.Mvc;
 
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Social;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Services.Social.Notifications;
 using DotNetNuke.Web.Services;
@@ -39,12 +40,14 @@ namespace DotNetNuke.Web.InternalServices
 
         public ActionResult AcceptFriend(int notificationId)
         {
+            var success = false;
+
             try
             {
                 var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
                 if (recipient != null)
                 {
-                    Notification notification = NotificationsController.Instance.GetNotification(notificationId);
+                    var notification = NotificationsController.Instance.GetNotification(notificationId);
                     int userRelationshipId;
                     if (int.TryParse(notification.Context, out userRelationshipId))
                     {
@@ -53,16 +56,17 @@ namespace DotNetNuke.Web.InternalServices
                         {
                             var friend = UserController.GetUserById(PortalSettings.PortalId, userRelationship.UserId);
                             FriendsController.Instance.AcceptFriend(friend);
-                            return Json(new {Result = "success"});
+                            success = true;
                         }
                     }
                 }
-                return Json(new { Result = "error" });
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return Json(new { Result = "error" });
+                DnnLog.Error(exc);
             }
+            
+            return Json(new { Result = success ? "success" : "error" });
         }
 
         #endregion
@@ -71,12 +75,14 @@ namespace DotNetNuke.Web.InternalServices
 
         public ActionResult FollowBack(int notificationId)
         {
+            var success = false;
+
             try
             {
                 var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
                 if (recipient != null)
                 {
-                    Notification notification = NotificationsController.Instance.GetNotification(notificationId);
+                    var notification = NotificationsController.Instance.GetNotification(notificationId);
                     int targetUserId;
                     if (int.TryParse(notification.Context, out targetUserId))
                     {
@@ -85,27 +91,16 @@ namespace DotNetNuke.Web.InternalServices
                         FollowersController.Instance.FollowUser(targetUser);
                         NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);
 
-                        return Json(new {Result = "success"});
+                        success = true;
                     }
                 }
-
-                return Json(new { Result = "error" });
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return Json(new { Result = "error" });
+                DnnLog.Error(exc);
             }
-        }
-
-        #endregion
-
-        #region Private helpers
-
-        private UserRelationship GetFriendUserRelationship(int initiatingUserId)
-        {
-            var initiatingUser = UserController.GetUserById(PortalSettings.PortalId, initiatingUserId);
-
-            return RelationshipController.Instance.GetFriendRelationship(UserController.GetCurrentUserInfo(), initiatingUser);
+            
+            return Json(new { Result = success ? "success" : "error" });
         }
 
         #endregion

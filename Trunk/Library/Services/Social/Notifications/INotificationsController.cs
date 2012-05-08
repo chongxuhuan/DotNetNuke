@@ -126,10 +126,11 @@ namespace DotNetNuke.Services.Social.Notifications
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="portalId">The portal identifier.</param>
-        /// <param name="pageIndex">The page index (starting at 0) used to filter the list to a particular number of results.</param>
-        /// <param name="pageSize">The page size used to filter the list to a particular number of results.</param>
+        /// <param name="afterNotificationId">The notification identifier of the last notification displayed. Use -1 to start from the beggining of the list.</param>
+        /// <param name="numberOfRecords">The number of results to retrieve.</param>
         /// <returns>The filtered list of notifications sent to the provided user in the specified portal.</returns>
-        IList<Notification> GetNotifications(int userId, int portalId, int pageIndex, int pageSize);
+        /// <example>For example, if we have the following ordered notification identifiers: 4, 6, 2, 12, 45, and we pass 2 as the afterNotificationId and 2 as the numberOfRecords, the method will return the notifications 12 and 45.</example>
+        IList<Notification> GetNotifications(int userId, int portalId, int afterNotificationId, int numberOfRecords);
 
         /// <summary>
         /// Deletes an existing notification.
@@ -145,6 +146,13 @@ namespace DotNetNuke.Services.Social.Notifications
         /// <param name="notificationId">The notification identifier.</param>
         /// <param name="userId">The user identifier.</param>
         void DeleteNotificationRecipient(int notificationId, int userId);
+
+        /// <summary>
+        /// Deletes all NotificationRecipient for the NotificationId.
+        /// </summary>
+        /// <remarks>It also deletes the notification.</remarks>
+        /// <param name="notificationId">The notification identifier.</param>        
+        void DeleteAllNotificationRecipients(int notificationId);
 
         /// <summary>
         /// Deletes an individual notification recipient based on NotificationTypeId, Context and UserId.

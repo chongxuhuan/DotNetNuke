@@ -78,12 +78,13 @@ namespace DotNetNuke.Services.Social.Notifications
         public void SetNotificationTypeActions(IList<NotificationTypeAction> actions, int notificationTypeId)
         {
             Requires.NotNull("actions", actions);
-            if(!actions.Any())
+
+            if (!actions.Any())
             {
                 throw new ArgumentException("Actions must contain at least one item.");
             }
 
-            if(actions.Any(x => string.IsNullOrEmpty(x.APICall)))
+            if (actions.Any(x => string.IsNullOrEmpty(x.APICall)))
             {
                 throw new ArgumentException("All actions must specify an APICall");
             }
@@ -105,7 +106,7 @@ namespace DotNetNuke.Services.Social.Notifications
             }
         }
 
-        public virtual int CountNotifications(int userId,int portalId)
+        public virtual int CountNotifications(int userId, int portalId)
         {
             return _dataService.CountNotifications(userId, portalId);
         }
@@ -114,11 +115,11 @@ namespace DotNetNuke.Services.Social.Notifications
         {
             Requires.NotNull("notification", notification);
 
-            if(notification.SenderUserID < 1)
+            if (notification.SenderUserID < 1)
             {
                 notification.SenderUserID = GetAdminUser().UserID;
             }
-            
+
             if (string.IsNullOrEmpty(notification.Subject) && string.IsNullOrEmpty(notification.Body))
             {
                 throw new ArgumentException(Localization.Localization.GetString("MsgSubjectOrBodyRequiredError", Localization.Localization.ExceptionsResourceFile));
@@ -182,7 +183,7 @@ namespace DotNetNuke.Services.Social.Notifications
             }
 
             notification.NotificationID = _dataService.SendNotification(notification, portalId);
-            
+
             //send message to Roles
             if (roles != null)
             {
@@ -234,7 +235,7 @@ namespace DotNetNuke.Services.Social.Notifications
 
             notificationType.NotificationTypeId = _dataService.CreateNotificationType(notificationType.Name,
                                                                                       notificationType.Description,
-                                                                                      (int) notificationType.TimeToLive.TotalMinutes == 0 ? Null.NullInteger : (int) notificationType.TimeToLive.TotalMinutes,
+                                                                                      (int)notificationType.TimeToLive.TotalMinutes == 0 ? Null.NullInteger : (int)notificationType.TimeToLive.TotalMinutes,
                                                                                       notificationType.DesktopModuleId,
                                                                                       GetCurrentUserId());
         }
@@ -251,6 +252,14 @@ namespace DotNetNuke.Services.Social.Notifications
             if (recipients.Count == 0)
             {
                 DeleteNotification(notificationId);
+            }
+        }
+
+        public virtual void DeleteAllNotificationRecipients(int notificationId)
+        {
+            foreach (var recipient in MessagingController.Instance.GetMessageRecipients(notificationId))
+            {
+                DeleteNotificationRecipient(notificationId, recipient.UserID);
             }
         }
 
@@ -285,10 +294,10 @@ namespace DotNetNuke.Services.Social.Notifications
 
             RemoveNotificationTypeActionCache();
         }
-        
-        public virtual IList<Notification> GetNotifications(int userId, int portalId,int pageIndex, int pageSize)
+
+        public virtual IList<Notification> GetNotifications(int userId, int portalId, int afterNotificationId, int numberOfRecords)
         {
-            return CBO.FillCollection<Notification>(_dataService.GetNotifications(userId, portalId, pageIndex, pageSize));
+            return CBO.FillCollection<Notification>(_dataService.GetNotifications(userId, portalId, afterNotificationId, numberOfRecords));
         }
 
         public virtual NotificationType GetNotificationType(int notificationTypeId)
@@ -345,9 +354,9 @@ namespace DotNetNuke.Services.Social.Notifications
         internal virtual DateTime GetExpirationDate(int notificationTypeId)
         {
             var notificationType = GetNotificationType(notificationTypeId);
-            
-            return notificationType.TimeToLive.TotalMinutes > 0 
-                ? DateTime.UtcNow.AddMinutes(notificationType.TimeToLive.TotalMinutes) 
+
+            return notificationType.TimeToLive.TotalMinutes > 0
+                ? DateTime.UtcNow.AddMinutes(notificationType.TimeToLive.TotalMinutes)
                 : DateTime.MinValue;
         }
 

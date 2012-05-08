@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
@@ -18,19 +18,17 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
-
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
 
-#endregion
+using DotNetNuke.Framework;
 
-[assembly: AssemblyTitle("DotNetNuke.Providers.FiftyOneClientCapabilityProvider")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: Guid("25C9803D-A80E-44D5-A87E-1CDFB05C99A0")]
-[assembly: AssemblyVersion("6.2.0.1439")]
+namespace DotNetNuke.Services.Journal.Internal
+{
+    public class InternalJournalController : ServiceLocator<IInternalJournalController, InternalJournalController>
+    {
+        protected override Func<IInternalJournalController> GetFactory()
+        {
+            return () => new InternalJournalControllerImpl();
+        }
+    }
+}

@@ -82,30 +82,30 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         #region Get View APIs
 
-        public virtual MessageBoxView GetArchivedMessages(int userId, int pageIndex, int pageSize)
+        public virtual MessageBoxView GetArchivedMessages(int userId, int afterMessageId, int numberOfRecords)
         {
-            var reader = _dataService.GetArchiveBoxView(userId, GetCurrentUserInfo().PortalID, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending);
+            var reader = _dataService.GetArchiveBoxView(userId, GetCurrentUserInfo().PortalID, afterMessageId, numberOfRecords, ConstSortColumnDate, !ConstAscending);
             return new MessageBoxView { Conversations = CBO.FillCollection<MessageConversationView>(reader) };
         }
 
-        public virtual MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
+        public virtual MessageBoxView GetInbox(int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending)
         {
-            return GetInbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
+            return GetInbox(userId, afterMessageId, numberOfRecords, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
         }
 
-        public virtual MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
+        public virtual MessageBoxView GetInbox(int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
         {
-            return _dataService.GetMessageBoxView(userId, GetCurrentUserInfo().PortalID, pageIndex, pageSize, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
+            return _dataService.GetMessageBoxView(userId, GetCurrentUserInfo().PortalID, afterMessageId, numberOfRecords, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
         }
 
-        public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords)
+        public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, ref int totalRecords)
         {
-            return GetMessageThread(conversationId, userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending, ref totalRecords);
+            return GetMessageThread(conversationId, userId, afterMessageId, numberOfRecords, ConstSortColumnDate, !ConstAscending, ref totalRecords);
         }
 
-        public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, ref int totalRecords)
+        public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, ref int totalRecords)
         {
-            return _dataService.GetMessageThread(conversationId, userId, pageIndex, pageSize, sortColumn, sortAscending, ref totalRecords);
+            return _dataService.GetMessageThread(conversationId, userId, afterMessageId, numberOfRecords, sortColumn, sortAscending, ref totalRecords);
         }
 
         public virtual MessageBoxView GetRecentInbox(int userId)
@@ -113,9 +113,9 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             return GetRecentInbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize);
         }
 
-        public virtual MessageBoxView GetRecentInbox(int userId, int pageIndex, int pageSize)
+        public virtual MessageBoxView GetRecentInbox(int userId, int afterMessageId, int numberOfRecords)
         {
-            return GetInbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending);
+            return GetInbox(userId, afterMessageId, numberOfRecords, ConstSortColumnDate, !ConstAscending);
         }
 
         public virtual MessageBoxView GetRecentSentbox(int userId)
@@ -123,19 +123,19 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             return GetRecentSentbox(userId, ConstDefaultPageIndex, ConstDefaultPageSize);
         }
 
-        public virtual MessageBoxView GetRecentSentbox(int userId, int pageIndex, int pageSize)
+        public virtual MessageBoxView GetRecentSentbox(int userId, int afterMessageId, int numberOfRecords)
         {
-            return GetSentbox(userId, pageIndex, pageSize, ConstSortColumnDate, !ConstAscending);
+            return GetSentbox(userId, afterMessageId, numberOfRecords, ConstSortColumnDate, !ConstAscending);
         }
 
-        public virtual MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending)
+        public virtual MessageBoxView GetSentbox(int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending)
         {
-            return GetSentbox(userId, pageIndex, pageSize, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
+            return GetSentbox(userId, afterMessageId, numberOfRecords, sortColumn, sortAscending, MessageReadStatus.Any, MessageArchivedStatus.UnArchived);
         }
 
-        public virtual MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
+        public virtual MessageBoxView GetSentbox(int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
         {
-            var reader = _dataService.GetSentBoxView(userId, GetCurrentUserInfo().PortalID, pageIndex, pageSize, sortColumn, sortAscending);
+            var reader = _dataService.GetSentBoxView(userId, GetCurrentUserInfo().PortalID, afterMessageId, numberOfRecords, sortColumn, sortAscending);
             return new MessageBoxView { Conversations = CBO.FillCollection<MessageConversationView>(reader) };
         }
 

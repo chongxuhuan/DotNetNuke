@@ -23,6 +23,7 @@
 
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -30,51 +31,61 @@ using System.Web.Mvc;
 using DotNetNuke.Common.Lists;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Web.Services;
 
 #endregion
 
 namespace DotNetNuke.Web.InternalServices
 {
-    [DnnAuthorize()]
+    [DnnAuthorize]
     public class ProfileServiceController : DnnController
     {
-        private void AddProperty(IList<SearchResult> results, string field, string searchTerm)
+        private static void AddProperty(ICollection<SearchResult> results, string field, string searchTerm)
         {
             if (field.ToLowerInvariant().Contains(searchTerm.ToLowerInvariant().Trim()))
             {
                 results.Add(new SearchResult { id = field, name = field });
             }
         }
+
         public ActionResult Search(string q)
         {
-            var portalId = PortalController.GetEffectivePortalId(PortalSettings.PortalId);
-
-            var controller = new ListController();              
-                
-            ListEntryInfo textType = controller.GetListEntryInfo("DataType", "Text");
-            ListEntryInfo regionType = controller.GetListEntryInfo("DataType", "Region");
-            ListEntryInfo countryType = controller.GetListEntryInfo("DataType", "Country");
-
-            IList<SearchResult> results = new List<SearchResult>();
-            foreach (ProfilePropertyDefinition definition in ProfileController.GetPropertyDefinitionsByPortal(portalId)
-                                        .Cast<ProfilePropertyDefinition>()
-                                        .Where((definition) => definition.DataType == textType.EntryID 
-                                                || definition.DataType == regionType.EntryID 
-                                                || definition.DataType == countryType.EntryID))
+            try
             {
-                AddProperty(results, definition.PropertyName, q);
+                var portalId = PortalController.GetEffectivePortalId(PortalSettings.PortalId);
+
+                var controller = new ListController();
+
+                var textType = controller.GetListEntryInfo("DataType", "Text");
+                var regionType = controller.GetListEntryInfo("DataType", "Region");
+                var countryType = controller.GetListEntryInfo("DataType", "Country");
+
+                IList<SearchResult> results = new List<SearchResult>();
+                foreach (var definition in ProfileController.GetPropertyDefinitionsByPortal(portalId)
+                                            .Cast<ProfilePropertyDefinition>()
+                                            .Where(definition => definition.DataType == textType.EntryID
+                                                    || definition.DataType == regionType.EntryID
+                                                    || definition.DataType == countryType.EntryID))
+                {
+                    AddProperty(results, definition.PropertyName, q);
+                }
+
+                AddProperty(results, "Email", q);
+                AddProperty(results, "DisplayName", q);
+                AddProperty(results, "Username", q);
+                AddProperty(results, "Password", q);
+                AddProperty(results, "PasswordConfirm", q);
+                AddProperty(results, "PasswordQuestion", q);
+                AddProperty(results, "PasswordAnswer", q);
+
+                return Json(results.OrderBy(sr => sr.id), JsonRequestBehavior.AllowGet);
             }
-
-            AddProperty(results, "Email", q);
-            AddProperty(results, "DisplayName", q);
-            AddProperty(results, "Username", q);
-            AddProperty(results, "Password", q);
-            AddProperty(results, "PasswordConfirm", q);
-            AddProperty(results, "PasswordQuestion", q);
-            AddProperty(results, "PasswordAnswer", q);
-
-            return Json(results.OrderBy(sr => sr.id), JsonRequestBehavior.AllowGet);
+            catch (Exception exc)
+            {
+                DnnLog.Error(exc);
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
         }
 
         private class SearchResult

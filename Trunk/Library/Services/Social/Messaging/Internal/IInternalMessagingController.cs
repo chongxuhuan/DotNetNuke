@@ -37,27 +37,27 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         #region Get View APIs
 
-        MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool @ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
+        MessageBoxView GetInbox(int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool @ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
 
-        MessageBoxView GetInbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending);
+        MessageBoxView GetInbox(int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending);
 
         MessageBoxView GetRecentInbox(int userId);
 
-        MessageBoxView GetRecentInbox(int userId, int pageIndex, int pageSize);
+        MessageBoxView GetRecentInbox(int userId, int afterMessageId, int numberOfRecords);
 
-        MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
+        MessageBoxView GetSentbox(int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool ascending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus);
 
-        MessageBoxView GetSentbox(int userId, int pageIndex, int pageSize, string sortColumn, bool sortAscending);
+        MessageBoxView GetSentbox(int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending);
 
         MessageBoxView GetRecentSentbox(int userId);
 
-        MessageBoxView GetRecentSentbox(int userId, int pageIndex, int pageSize);
+        MessageBoxView GetRecentSentbox(int userId, int afterMessageId, int numberOfRecords);
 
-        MessageBoxView GetArchivedMessages(int userId, int pageIndex, int pageSize);
+        MessageBoxView GetArchivedMessages(int userId, int afterMessageId, int numberOfRecords);
 
-        MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, string sortColumn, bool ascending, ref int totalRecords);
+        MessageThreadsView GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool ascending, ref int totalRecords);
 
-        MessageThreadsView GetMessageThread(int conversationId, int userId, int pageIndex, int pageSize, ref int totalRecords);
+        MessageThreadsView GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, ref int totalRecords);
 
         #endregion
 

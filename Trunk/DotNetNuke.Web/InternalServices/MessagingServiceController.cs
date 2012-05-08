@@ -33,6 +33,7 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Internal;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Web.Services;
@@ -44,7 +45,18 @@ namespace DotNetNuke.Web.InternalServices
     {
         public ActionResult WaitTimeForNextMessage()
         {
-            var response = new { Value = MessagingController.Instance.WaitTimeForNextMessage(UserInfo), Result = "success" };
+            object response;
+            
+            try
+            {
+                response = new { Result = "success", Value = MessagingController.Instance.WaitTimeForNextMessage(UserInfo) };
+            }
+            catch (Exception exc)
+            {
+                DnnLog.Error(exc);
+                response = new { Result = "error" };
+            }
+            
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
@@ -52,80 +64,87 @@ namespace DotNetNuke.Web.InternalServices
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Create(string subject, string body, string roleIds, string userIds, string fileIds)
         {
-            var roleIdsList = string.IsNullOrEmpty(roleIds) ? null : roleIds.FromJson<IList<int>>();
-            var userIdsList = string.IsNullOrEmpty(userIds) ? null : userIds.FromJson<IList<int>>();
-            var fileIdsList = string.IsNullOrEmpty(fileIds) ? null : fileIds.FromJson<IList<int>>();
+            object response;
 
-            var roles = roleIdsList != null && roleIdsList.Count > 0
-                ? roleIdsList.Select(id => TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == id)).Where(role => role != null).ToList()
-                : null;
-
-            List<UserInfo> users = null;
-            if (userIdsList != null)
+            try
             {
-                var userController = new UserController();
-                users = userIdsList.Select(id => userController.GetUser(PortalSettings.PortalId, id)).Where(user => user != null).ToList();
-            }
+                var roleIdsList = string.IsNullOrEmpty(roleIds) ? null : roleIds.FromJson<IList<int>>();
+                var userIdsList = string.IsNullOrEmpty(userIds) ? null : userIds.FromJson<IList<int>>();
+                var fileIdsList = string.IsNullOrEmpty(fileIds) ? null : fileIds.FromJson<IList<int>>();
 
-            var message = new Message {Subject = HttpUtility.UrlDecode(subject), Body = HttpUtility.UrlDecode(body)};
-            MessagingController.Instance.CreateMessage(message, roles, users, fileIdsList);
-            var response = new { Value = message.MessageID, Result = "success" };
+                var roles = roleIdsList != null && roleIdsList.Count > 0
+                    ? roleIdsList.Select(id => TestableRoleController.Instance.GetRole(PortalSettings.PortalId, r => r.RoleID == id)).Where(role => role != null).ToList()
+                    : null;
+
+                List<UserInfo> users = null;
+                if (userIdsList != null)
+                {
+                    var userController = new UserController();
+                    users = userIdsList.Select(id => userController.GetUser(PortalSettings.PortalId, id)).Where(user => user != null).ToList();
+                }
+
+                var message = new Message { Subject = HttpUtility.UrlDecode(subject), Body = HttpUtility.UrlDecode(body) };
+                MessagingController.Instance.CreateMessage(message, roles, users, fileIdsList);
+                response = new { Result = "success", Value = message.MessageID };
+            }
+            catch (Exception exc)
+            {
+                DnnLog.Error(exc);
+                response = new { Result = "error" };
+            }
 
             return Json(response);
         }
 
         public ActionResult Search(string q)
         {
-            var portalId = PortalController.GetEffectivePortalId(PortalSettings.PortalId);
-            var isAdmin = UserInfo.IsSuperUser || UserInfo.IsInRole("Administrators");
-            const int numResults = 10;
-
-            // GetUsersAdvancedSearch doesn't accept a comma or a single quote in the query so we have to remove them for now. See issue 20224.
-            q = q.Replace(",", "").Replace("'", "");
-            if (q.Length == 0) return Json(null, JsonRequestBehavior.AllowGet);
-
-            var results = TestableUserController.Instance.GetUsersAdvancedSearch(portalId, UserInfo.UserID, -1, -1, -1, isAdmin, -1, numResults, "DisplayName", true, "DisplayName", q)
-                .Select(user => new SearchResult
-                { 
-                    id = "user-" + user.UserID,
-                    name = user.DisplayName,
-                    iconfile = string.Format(Globals.UserProfilePicFormattedUrl(), user.UserID, 32, 32),
-                }).ToList();
-
-            //Roles should be visible to Administrators or Group Owner
-            var checkRoles = false;
-            if (isAdmin)
-                checkRoles = true;
-            else
+            try
             {
-                if (UserInfo.Social.Roles.Any(role => role.IsOwner))
+                var portalId = PortalController.GetEffectivePortalId(PortalSettings.PortalId);
+                var isAdmin = UserInfo.IsSuperUser || UserInfo.IsInRole("Administrators");
+                const int numResults = 10;
+
+                // GetUsersAdvancedSearch doesn't accept a comma or a single quote in the query so we have to remove them for now. See issue 20224.
+                q = q.Replace(",", "").Replace("'", "");
+                if (q.Length == 0) return Json(null, JsonRequestBehavior.AllowGet);
+
+                var results = TestableUserController.Instance.GetUsersAdvancedSearch(portalId, UserInfo.UserID, -1, -1, -1, isAdmin, -1, numResults, "DisplayName", true, "DisplayName", q)
+                    .Select(user => new SearchResult
+                    {
+                        id = "user-" + user.UserID,
+                        name = user.DisplayName,
+                        iconfile = string.Format(Globals.UserProfilePicFormattedUrl(), user.UserID, 32, 32),
+                    }).ToList();
+
+                //Roles should be visible to Administrators or Group Owner
+                if (isAdmin || UserInfo.Social.Roles.Any(role => role.IsOwner))
                 {
-                    checkRoles = true;
-                }                                
-            }
+                    var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, numResults, q);
+                    results.AddRange(from roleInfo in roles
+                                     where
+                                         isAdmin ||
+                                         UserInfo.Social.Roles.SingleOrDefault(
+                                             ur => ur.RoleID == roleInfo.RoleID && ur.IsOwner) != null
+                                     select new SearchResult
+                                     {
+                                         id = "role-" + roleInfo.RoleID,
+                                         name = roleInfo.RoleName,
+                                         iconfile =
+                                             TestableGlobals.Instance.ResolveUrl(
+                                                 string.IsNullOrEmpty(roleInfo.IconFile)
+                                                     ? "~/images/no_avatar.gif"
+                                                     : PortalSettings.HomeDirectory.TrimEnd('/') + "/" +
+                                                       roleInfo.IconFile)
+                                     });
+                }
 
-            if (checkRoles)
+                return Json(results.OrderBy(sr => sr.name), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception exc)
             {
-                var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, numResults, q);
-                results.AddRange(from roleInfo in roles
-                                 where
-                                     isAdmin ||
-                                     UserInfo.Social.Roles.SingleOrDefault(
-                                         ur => ur.RoleID == roleInfo.RoleID && ur.IsOwner) != null
-                                 select new SearchResult
-                                            {
-                                                id = "role-" + roleInfo.RoleID,
-                                                name = roleInfo.RoleName,
-                                                iconfile =
-                                                    TestableGlobals.Instance.ResolveUrl(
-                                                        string.IsNullOrEmpty(roleInfo.IconFile)
-                                                            ? "~/images/no_avatar.gif"
-                                                            : PortalSettings.HomeDirectory.TrimEnd('/') + "/" +
-                                                              roleInfo.IconFile)
-                                            });
+                DnnLog.Error(exc);
+                return Json(null, JsonRequestBehavior.AllowGet);
             }
-
-            return Json(results.OrderBy(sr => sr.name), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

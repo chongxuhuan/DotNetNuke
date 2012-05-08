@@ -4171,6 +4171,12 @@ namespace DotNetNuke.Services.Upgrade
 
             //Add core notification types
             AddCoreNotificationTypesFor620();
+
+            //Console module should not be IPortable
+            var consoleModule = DesktopModuleController.GetDesktopModuleByModuleName("Console", Null.NullInteger);
+            consoleModule.SupportedFeatures = 0;
+            consoleModule.BusinessControllerClass = "";
+            DesktopModuleController.SaveDesktopModule(consoleModule, false, false);
         }
 
         private static void AddCoreNotificationTypesFor620()

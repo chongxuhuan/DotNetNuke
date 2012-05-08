@@ -50,12 +50,10 @@ namespace DotNetNuke.Services.Social.Notifications.Data
         int SendNotification(Notification notification, int portalId);
         void DeleteNotification(int notificationId);
         int CountNotifications(int userId, int portalId);
-        IDataReader GetNotifications(int userId, int portalId, int pageIndex, int pageSize);
+        IDataReader GetNotifications(int userId, int portalId, int afterNotificationId, int numberOfRecords);
         IDataReader GetNotification(int notificationId);
         IDataReader GetNotificationByContext(int notificationTypeId, string context);
 
         #endregion
-
-        
     }
 }

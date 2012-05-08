@@ -31,36 +31,36 @@ using System.Data;
 namespace DotNetNuke.Services.Journal {
     public interface IJournalDataService {
 
-        IDataReader Journal_ListForSummary(int PortalId, int ModuleId, int CurrentUserId, int RowIndex, int MaxRows);
-        IDataReader Journal_ListForProfile(int PortalId, int ModuleId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows);
-        IDataReader Journal_ListForGroup(int PortalId, int ModuleId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows);
-        void Journal_Delete(int JournalId);
-        void Journal_DeleteByKey(int PortalId, string ObjectKey);
-        IDataReader Journal_Get(int PortalId, int CurrentUserId, int JournalId);
-        IDataReader Journal_GetByKey(int PortalId, string ObjectKey);
-        int Journal_Save(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalId, int JournalTypeId, string Title, string Summary,
-            string Body, string ItemData, string xml, string ObjectKey, Guid AccessKey, string SecuritySet);
-        void Journal_UpdateContentItemId(int JournalId, int ContentItemId);
-        void Journal_Like(int JournalId, int UserId, string DisplayName);
-        IDataReader Journal_LikeList(int PortalId, int JournalId);
+        IDataReader Journal_ListForSummary(int portalId, int moduleId, int currentUserId, int rowIndex, int maxRows);
+        IDataReader Journal_ListForProfile(int portalId, int moduleId, int currentUserId, int profileId, int rowIndex, int maxRows);
+        IDataReader Journal_ListForGroup(int portalId, int moduleId, int currentUserId, int groupId, int rowIndex, int maxRows);
+        void Journal_Delete(int journalId);
+        void Journal_DeleteByKey(int portalId, string objectKey);
+        IDataReader Journal_Get(int portalId, int currentUserId, int journalId);
+        IDataReader Journal_GetByKey(int portalId, string objectKey);
+        int Journal_Save(int portalId, int currentUserId, int profileId, int groupId, int journalId, int journalTypeId, string title, string summary,
+            string body, string itemData, string xml, string objectKey, Guid accessKey, string securitySet);
+        void Journal_UpdateContentItemId(int journalId, int contentItemId);
+        void Journal_Like(int journalId, int userId, string displayName);
+        IDataReader Journal_LikeList(int portalId, int journalId);
 
-        void Journal_Comment_Delete(int JournalId, int CommentId);
-        int Journal_Comment_Save(int JournalId, int CommentId, int UserId, string Comment, string xml);
-        IDataReader Journal_Comment_List(int JournalId);
-        IDataReader Journal_Comment_Get(int CommentId);
-        IDataReader Journal_Comment_ListByJournalIds(string JournalIds);
-        void Journal_Comment_Like(int JournalId, int CommentId, int UserId, string DisplayName);
-        IDataReader Journal_Comment_LikeList(int PortalId, int JournalId, int CommentId);
-        IDataReader Journal_Types_List(int PortalId);
-        IDataReader Journal_Types_GetById(int JournalTypeId);
-        IDataReader Journal_Types_Get(string JournalType);
+        void Journal_Comment_Delete(int journalId, int commentId);
+        int Journal_Comment_Save(int journalId, int commentId, int userId, string comment, string xml);
+        IDataReader Journal_Comment_List(int journalId);
+        IDataReader Journal_Comment_Get(int commentId);
+        IDataReader Journal_Comment_ListByJournalIds(string journalIds);
+        void Journal_Comment_Like(int journalId, int commentId, int userId, string displayName);
+        IDataReader Journal_Comment_LikeList(int portalId, int journalId, int commentId);
+        IDataReader Journal_Types_List(int portalId);
+        IDataReader Journal_Types_GetById(int journalTypeId);
+        IDataReader Journal_Types_Get(string journalType);
 
-        void Journal_Types_Delete(int JournalTypeId, int PortalId);
-        int Journal_Types_Save(int JournalTypeId, string JournalType, string icon, int PortalId, bool IsEnabled, bool AppliesToProfile, bool AppliesToGroup, bool AppliesToStream, string Options, bool SupportsNotify);
-        IDataReader Journal_GetStatsForGroup(int PortalId, int GroupId);
+        void Journal_Types_Delete(int journalTypeId, int portalId);
+        int Journal_Types_Save(int journalTypeId, string journalType, string icon, int portalId, bool isEnabled, bool appliesToProfile, bool appliesToGroup, bool appliesToStream, string options, bool supportsNotify);
+        IDataReader Journal_GetStatsForGroup(int portalId, int groupId);
 
-        IDataReader Journal_TypeFilters_List(int PortalId, int ModuleId);
-        void Journal_TypeFilters_Delete(int PortalId, int ModuleId);
-        void Journal_TypeFilters_Save(int PortalId, int ModuleId, int JournalTypeId);
+        IDataReader Journal_TypeFilters_List(int portalId, int moduleId);
+        void Journal_TypeFilters_Delete(int portalId, int moduleId);
+        void Journal_TypeFilters_Save(int portalId, int moduleId, int journalTypeId);
     }
 }

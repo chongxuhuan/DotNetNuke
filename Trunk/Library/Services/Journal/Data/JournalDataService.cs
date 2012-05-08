@@ -24,112 +24,20 @@
 #region Usings
 
 using System;
-using System.Data;
-
-using DotNetNuke.Data;
 using System.IO;
 using System.Xml;
 using DotNetNuke.Entities.Content.Common;
 using DotNetNuke.Entities.Content;
+using DotNetNuke.Framework;
 
 #endregion
 
 namespace DotNetNuke.Services.Journal {
-    public class JournalDataService : IJournalDataService {
-        private readonly DataProvider provider = DataProvider.Instance();
-
-        #region IJournalDataService Members
-        public IDataReader Journal_ListForSummary(int PortalId, int ModuleId, int CurrentUserId, int RowIndex, int MaxRows) {
-            return provider.ExecuteReader("Journal_ListForSummary", PortalId, ModuleId, CurrentUserId, RowIndex, MaxRows);
+    public class JournalDataService : ServiceLocator<IJournalDataService, JournalDataService>
+    {
+        protected override Func<IJournalDataService> GetFactory()
+        {
+            return () => new JournalDataServiceImpl();
         }
-        public IDataReader Journal_ListForProfile(int PortalId, int ModuleId, int CurrentUserId, int ProfileId, int RowIndex, int MaxRows) {
-            return provider.ExecuteReader("Journal_ListForProfile", PortalId, ModuleId, CurrentUserId, ProfileId, RowIndex, MaxRows);
-        }
-        public IDataReader Journal_ListForGroup(int PortalId, int ModuleId, int CurrentUserId, int GroupId, int RowIndex, int MaxRows) {
-            return provider.ExecuteReader("Journal_ListForGroup", PortalId, ModuleId, CurrentUserId, GroupId, RowIndex, MaxRows);
-        }
-        public void Journal_Delete(int JournalId) {
-            provider.ExecuteNonQuery("Journal_Delete", JournalId);
-        }
-        public void Journal_DeleteByKey(int PortalId, string ObjectKey) {
-            provider.ExecuteNonQuery("Journal_DeleteByKey", PortalId, ObjectKey);
-        }
-        public void Journal_Like(int JournalId, int UserId, string DisplayName) {
-            provider.ExecuteNonQuery("Journal_Like", JournalId, UserId, DisplayName);
-        }
-        public IDataReader Journal_LikeList(int PortalId, int JournalId) {
-            return provider.ExecuteReader("Journal_LikeList", PortalId, JournalId);
-        }
-        public void Journal_UpdateContentItemId(int JournalId, int ContentItemId) {
-            provider.ExecuteNonQuery("Journal_UpdateContentItemId", JournalId, ContentItemId);
-        }
-        public IDataReader Journal_Get(int PortalId, int CurrentUserId, int JournalId) {
-            return provider.ExecuteReader("Journal_Get", PortalId, CurrentUserId, JournalId);
-        }
-        public IDataReader Journal_GetByKey(int PortalId, string ObjectKey) {
-            return provider.ExecuteReader("Journal_GetByKey", PortalId, ObjectKey);
-        }
-        public int Journal_Save(int PortalId, int CurrentUserId, int ProfileId, int GroupId, int JournalId, int JournalTypeId, string Title,
-                string Summary, string Body, string ItemData, string xml, string ObjectKey, Guid AccessKey, string SecuritySet) {  
-            
-            JournalId = (int)provider.ExecuteScalar("Journal_Save", PortalId, JournalId, JournalTypeId, CurrentUserId, ProfileId, 
-                    GroupId, Title, Summary, ItemData, xml, ObjectKey, AccessKey, SecuritySet);
-            
-            return JournalId;
-        }
-
-        public void Journal_Comment_Delete(int JournalId, int CommentId) {
-             provider.ExecuteNonQuery("Journal_Comment_Delete", JournalId, CommentId);
-        }
-        public int Journal_Comment_Save(int JournalId, int CommentId,int UserId, string Comment, string xml) {
-            CommentId = (int)provider.ExecuteScalar("Journal_Comment_Save",JournalId, CommentId, UserId, Comment, xml);
-            return CommentId;
-        }
-        public IDataReader Journal_Comment_List(int JournalId) {
-            return provider.ExecuteReader("Journal_Comment_List", JournalId);
-        }
-        public IDataReader Journal_Comment_Get(int CommentId) {
-            return provider.ExecuteReader("Journal_Comment_Get", CommentId);
-        }
-        public IDataReader Journal_Comment_ListByJournalIds(string JournalIds) {
-            return provider.ExecuteReader("Journal_Comment_ListByJournalIds", JournalIds);
-        }
-        public void Journal_Comment_Like(int JournalId, int CommentId, int UserId, string DisplayName) {
-            provider.ExecuteNonQuery("Journal_Comment_Like", JournalId, CommentId, UserId, DisplayName);
-        }
-        public IDataReader Journal_Comment_LikeList(int PortalId, int JournalId, int CommentId) {
-            return provider.ExecuteReader("Journal_Comment_LikeList", PortalId, JournalId, CommentId);
-        }
-
-        public IDataReader Journal_Types_List(int PortalId) {
-            return provider.ExecuteReader("Journal_Types_List", PortalId);
-        }
-        public IDataReader Journal_Types_GetById(int JournalTypeId) {
-            return provider.ExecuteReader("Journal_Types_GetById", JournalTypeId);
-        }
-        public IDataReader Journal_Types_Get(string JournalType) {
-            return provider.ExecuteReader("Journal_Types_Get", JournalType);
-        }
-        public void Journal_Types_Delete(int JournalTypeId, int PortalId) {
-            provider.ExecuteNonQuery("Journal_Types_Delete", JournalTypeId, PortalId);
-        }
-        public int Journal_Types_Save(int JournalTypeId, string JournalType, string icon, int PortalId, bool IsEnabled, bool AppliesToProfile, bool AppliesToGroup, bool AppliesToStream, string Options, bool SupportsNotify) {
-            JournalTypeId = (int)provider.ExecuteScalar("Journal_Types_Save", JournalTypeId, JournalType, icon, PortalId, IsEnabled, AppliesToProfile, AppliesToGroup, AppliesToStream, Options, SupportsNotify);
-            return JournalTypeId;
-        }
-        public IDataReader Journal_GetStatsForGroup(int PortalId, int GroupId) {
-            return provider.ExecuteReader("Journal_GetStatsForGroup", PortalId, GroupId);
-        }
-
-        public IDataReader Journal_TypeFilters_List(int PortalId, int ModuleId) {
-            return provider.ExecuteReader("Journal_TypeFilters_List", PortalId, ModuleId);
-        }
-        public void Journal_TypeFilters_Delete(int PortalId, int ModuleId) {
-            provider.ExecuteNonQuery("Journal_TypeFilters_Delete", PortalId, ModuleId);
-        }
-        public void Journal_TypeFilters_Save(int PortalId, int ModuleId, int JournalTypeId) {
-            provider.ExecuteNonQuery("Journal_TypeFilters_Save", PortalId, ModuleId, JournalTypeId);
-        }
-        #endregion
     }
 }

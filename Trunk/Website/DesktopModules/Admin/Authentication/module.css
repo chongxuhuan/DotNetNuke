@@ -3,7 +3,7 @@
 
 .dnnLogin{width:100%;}
 
-.LoginContainer {
+.LoginPanel{
 	width:500px;
 	padding-right:50px;
 	float:left;
@@ -23,10 +23,10 @@
 .dnnPrimaryAction{margin-left:202px;}
 .dnnLoginRememberMe{padding-left:200px;}
 
-.SocailLinks{float:left;}
+#socialControls{float:left; padding-top:27px;}
 
 
-ul.buttonList{ list-style:none; padding-left:0; }
+#socialControls ul.buttonList{ list-style:none; padding-left:0; }
 ul.buttonList li{ 
 	float:none;
 	list-style:none;

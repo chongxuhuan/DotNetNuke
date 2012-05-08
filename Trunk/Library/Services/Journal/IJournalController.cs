@@ -1,6 +1,6 @@
 #region Copyright
 // 
-// DotNetNukeÂ® - http://www.dotnetnuke.com
+// DotNetNuke® - http://www.dotnetnuke.com
 // Copyright (c) 2002-2012
 // by DotNetNuke Corporation
 // 
@@ -18,19 +18,20 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
-#region Usings
-
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
-#endregion
-
-[assembly: AssemblyTitle("DotNetNuke.Providers.FiftyOneClientCapabilityProvider")]
-[assembly: AssemblyDescription("Open Source Web Application Framework")]
-[assembly: AssemblyCompany("DotNetNuke Corporation")]
-[assembly: AssemblyProduct("http://www.dotnetnuke.com")]
-[assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
-[assembly: AssemblyTrademark("DotNetNuke")]
-[assembly: Guid("25C9803D-A80E-44D5-A87E-1CDFB05C99A0")]
-[assembly: AssemblyVersion("6.2.0.1439")]
+namespace DotNetNuke.Services.Journal
+{
+    public interface IJournalController
+    {
+        JournalTypeInfo GetJournalType(string groupcreate);
+        JournalItem GetJournalItemByKey(int portalID, string objectKey);
+        void DeleteJournalItemByKey(int portalID, string objectKey);
+        //todo Save should not return a journal item
+        JournalItem SaveJournalItem(JournalItem journalItem, int i);
+        JournalItem GetJournalItem(int portalId, int userID, int journalId);
+        void DeleteJournalItem(int portalId, int userID, int journalId);
+        IEnumerable<JournalTypeInfo> GetJournalTypes(int portalId);
+    }
+}

@@ -24,53 +24,60 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Web.Mvc;
 
 using DotNetNuke.Entities.Icons;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Web.Services;
 
 namespace DotNetNuke.Web.InternalServices
 {
-
     public class UserFileController : DnnController
     {
         private readonly IFolderManager _folderManager = FolderManager.Instance;
-        
+
         [DnnAuthorize]
         [HttpGet]
         public ActionResult GetItems(string fileExtensions)
         {
-            IFolderInfo userFolder = _folderManager.GetUserFolder(UserInfo);
-
-            var extensions = new List<string>();
-            if (!string.IsNullOrEmpty(fileExtensions))
+            try
             {
-                fileExtensions = fileExtensions.ToLowerInvariant();
-                extensions.AddRange(fileExtensions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+                var userFolder = _folderManager.GetUserFolder(UserInfo);
+                var extensions = new List<string>();
+
+                if (!string.IsNullOrEmpty(fileExtensions))
+                {
+                    fileExtensions = fileExtensions.ToLowerInvariant();
+                    extensions.AddRange(fileExtensions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+                }
+
+                var folderStructure = new Item
+                {
+                    children = GetChildren(userFolder, extensions),
+                    folder = true,
+                    id = userFolder.FolderID,
+                    name = Localization.GetString("UserFolderTitle.Text", Localization.SharedResourceFile)
+                };
+
+                return Json(new List<Item> { folderStructure }, JsonRequestBehavior.AllowGet);
             }
-
-            var folderStructure = new Item
+            catch (Exception exc)
             {
-                children = GetChildren(userFolder, extensions),
-                folder = true,
-                id = userFolder.FolderID,
-                name = Localization.GetString("UserFolderTitle.Text",Localization.SharedResourceFile)
-            };
-
-            return Json(new List<Item> { folderStructure }, JsonRequestBehavior.AllowGet);
+                DnnLog.Error(exc);
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
         }
 
         // ReSharper disable LoopCanBeConvertedToQuery
-        private List<Item> GetChildren(IFolderInfo folder, List<string> extensions)
+        private List<Item> GetChildren(IFolderInfo folder, ICollection<string> extensions)
         {
             var everything = new List<Item>();
 
-            IEnumerable<IFolderInfo> folders = _folderManager.GetFolders(folder);
+            var folders = _folderManager.GetFolders(folder);
 
-            foreach (IFolderInfo currentFolder in folders)
+            foreach (var currentFolder in folders)
             {
                 everything.Add(new Item
                 {
@@ -82,9 +89,9 @@ namespace DotNetNuke.Web.InternalServices
                 });
             }
 
-            IEnumerable<IFileInfo> files = _folderManager.GetFiles(folder);
+            var files = _folderManager.GetFiles(folder);
 
-            foreach (IFileInfo file in files)
+            foreach (var file in files)
             {
                 // list is empty or contains the file extension in question
                 if (extensions.Count == 0 || extensions.Contains(file.Extension.ToLowerInvariant()))
@@ -120,7 +127,7 @@ namespace DotNetNuke.Web.InternalServices
                 return FileManager.Instance.GetUrl(file);
             }
 
-            string fileIcon = IconController.IconURL("Ext" + file.Extension, "32x32");
+            var fileIcon = IconController.IconURL("Ext" + file.Extension, "32x32");
             if (!System.IO.File.Exists(Server.MapPath(fileIcon)))
             {
                 fileIcon = IconController.IconURL("File", "32x32");
@@ -130,35 +137,24 @@ namespace DotNetNuke.Web.InternalServices
 
         private static string GetTypeName(IFileInfo file)
         {
-            if (file.ContentType == null)
-            {
-                return string.Empty;
-            }
-
-            string name = file.ContentType;
-            if (name.StartsWith("image/"))
-            {
-                name = file.ContentType.Replace("image/", string.Empty);
-            }
-            else
-            {
-                name = file.Extension != null ? file.Extension.ToLowerInvariant() : string.Empty;
-            }
-
-            return name;
+            return file.ContentType == null
+                       ? string.Empty
+                       : (file.ContentType.StartsWith("image/") 
+                            ? file.ContentType.Replace("image/", string.Empty) 
+                            : (file.Extension != null ? file.Extension.ToLowerInvariant() : string.Empty));
         }
 
         private static bool IsImageFile(string relativePath)
         {
             var acceptedExtensions = new List<string> { "jpg", "png", "gif", "jpe", "jpeg", "tiff" };
-            string extension = relativePath.Substring(relativePath.LastIndexOf(".", StringComparison.Ordinal) + 1).ToLower();
+            var extension = relativePath.Substring(relativePath.LastIndexOf(".", StringComparison.Ordinal) + 1).ToLower();
             return acceptedExtensions.Contains(extension);
         }
 
         private static string GetFileSize(int sizeInBytes)
         {
-            int size = sizeInBytes / 1024;
-            bool biggerThanAMegabyte = size > 1024;
+            var size = sizeInBytes / 1024;
+            var biggerThanAMegabyte = size > 1024;
             if (biggerThanAMegabyte)
             {
                 size = (size / 1024);
@@ -169,6 +165,7 @@ namespace DotNetNuke.Web.InternalServices
         class Item
         {
             // ReSharper disable InconsistentNaming
+            // ReSharper disable UnusedAutoPropertyAccessor.Local
             public int id { get; set; }
             public string name { get; set; }
             public bool folder { get; set; }
@@ -178,6 +175,7 @@ namespace DotNetNuke.Web.InternalServices
             public string size { get; set; }
             public string modified { get; set; }
             public List<Item> children { get; set; }
+            // ReSharper restore UnusedAutoPropertyAccessor.Local
             // ReSharper restore InconsistentNaming
         }
     }

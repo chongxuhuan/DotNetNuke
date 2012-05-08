@@ -99,7 +99,7 @@ namespace DotNetNuke.Services.Social.Notifications.Data
 
         public int SendNotification(Notification notification, int portalId)
         {
-            int createdByUserId = UserController.GetCurrentUserInfo().UserID;
+            var createdByUserId = UserController.GetCurrentUserInfo().UserID;
             return _provider.ExecuteScalar<int>(GetFullyQualifiedName("SendNotification"),
                                                 notification.NotificationTypeID,
                                                 portalId,
@@ -124,9 +124,9 @@ namespace DotNetNuke.Services.Social.Notifications.Data
             return _provider.ExecuteScalar<int>(GetFullyQualifiedName("CountNotifications"), userId, portalId);
         }
 
-        public IDataReader GetNotifications(int userId, int portalId,int pageIndex, int pageSize)
+        public IDataReader GetNotifications(int userId, int portalId, int afterNotificationId, int numberOfRecords)
         {
-            return _provider.ExecuteReader(GetFullyQualifiedName("GetNotifications"), userId, portalId, pageIndex, pageSize);
+            return _provider.ExecuteReader(GetFullyQualifiedName("GetNotifications"), userId, portalId, afterNotificationId, numberOfRecords);
         }
 
         public IDataReader GetNotification(int notificationId)

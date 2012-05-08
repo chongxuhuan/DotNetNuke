@@ -121,8 +121,8 @@ namespace DotNetNuke.Security.Roles.Internal
                 if (groupFolder != null)
                 {
                     _fileManager.DeleteFiles(_folderManager.GetFiles(groupFolder));
-                }
-                _folderManager.DeleteFolder(groupFolder);
+                    _folderManager.DeleteFolder(groupFolder);
+                }                
             }
 
             provider.DeleteRole(role);
