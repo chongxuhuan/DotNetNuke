@@ -174,7 +174,7 @@ namespace DotNetNuke.Services.Url.FriendlyUrl
                     {
                         if (queryStringDic.ContainsKey("ctl") && !queryStringDic.ContainsKey("language"))
                         {
-                            switch (queryStringDic["ctl"])
+                            switch (queryStringDic["ctl"].ToLowerInvariant())
                             {
                                 case "terms":
                                     friendlyPath = GetFriendlyAlias("~/terms.aspx", portalAlias, isPagePath);

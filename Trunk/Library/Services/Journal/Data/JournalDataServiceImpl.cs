@@ -24,6 +24,10 @@ namespace DotNetNuke.Services.Journal
         public void Journal_DeleteByKey(int portalId, string objectKey) {
             _provider.ExecuteNonQuery("Journal_DeleteByKey", portalId, objectKey);
         }
+        public void Journal_DeleteByGroupId(int portalId, int groupId)
+        {
+            _provider.ExecuteNonQuery("Journal_DeleteByGroupId", portalId, groupId);
+        }
         public void Journal_Like(int journalId, int userId, string displayName) {
             _provider.ExecuteNonQuery("Journal_Like", journalId, userId, displayName);
         }

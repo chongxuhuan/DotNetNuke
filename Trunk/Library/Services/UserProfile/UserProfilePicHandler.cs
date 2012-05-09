@@ -64,7 +64,7 @@ namespace DotNetNuke.Services.UserProfile
             var userController = new UserController();
             var user = userController.GetUser(settings.PortalId, userId);
             var fileInfo = new FileInfo(context.Request.MapPath(user.Profile.PhotoURL));
-            var ext = ".png";
+            string ext;
             if (fileInfo.Exists)
             {
                 ext = fileInfo.Extension;
@@ -72,6 +72,7 @@ namespace DotNetNuke.Services.UserProfile
             else
             {
                 fileInfo = new FileInfo(context.Request.MapPath("~/images/no_avatar.gif"));
+                ext = "gif";
             }
 
             string sizedPhoto = fileInfo.FullName.Replace(ext, width.ToString(CultureInfo.InvariantCulture) + "x" + height.ToString(CultureInfo.InvariantCulture) + ext);
@@ -97,7 +98,12 @@ namespace DotNetNuke.Services.UserProfile
                     break;
             }
             context.Response.WriteFile(sizedPhoto);
+            context.Response.Cache.SetCacheability(HttpCacheability.Public);
+            context.Response.Cache.SetExpires(DateTime.Now.AddMinutes(1));
+            context.Response.Cache.SetMaxAge(new TimeSpan(0, 1, 0));
+            context.Response.AddHeader("Last-Modified", DateTime.Now.ToLongDateString());
             context.Response.End();
+
         }
 
         public bool IsReusable

@@ -117,11 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AboutMe.Text" xml:space="preserve">
+    <value>About Me</value>
+  </data>
   <data name="ControlTitle_viewprofile.Text" xml:space="preserve">
     <value>View Profile</value>
   </data>
   <data name="Edit.Text" xml:space="preserve">
     <value>Edit Profile</value>
+  </data>
+  <data name="Email.Text" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="GetInTouch.Text" xml:space="preserve">
+    <value>Ways To Get In Touch</value>
+  </data>
+  <data name="Location.Text" xml:space="preserve">
+    <value>Location</value>
   </data>
   <data name="MyAccount.Text" xml:space="preserve">
     <value>My Account</value>

@@ -67,6 +67,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         private DataTable _dtMessageRecipients;
         private DataTable _dtPortalSettings;
         private DataTable _dtMessageConversationView;
+        private DataTable _dtMessageThreadsView;
 
         private UserInfo _adminUserInfo;
         private UserInfo _hostUserInfo;
@@ -209,8 +210,14 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void GetMessageThread_Calls_DataService_GetMessageThread()
         {
             var totalRecords = 0;
-            _internalMessagingController.GetMessageThread(0, 0, 0, 0, "", false, ref totalRecords);
-            _mockDataService.Verify(ds => ds.GetMessageThread(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), ref totalRecords));
+
+            DataService.RegisterInstance(_mockDataService.Object);
+
+            _dtMessageThreadsView.Clear();
+
+            _mockDataService.Setup(ds => ds.GetMessageThread(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), ref totalRecords)).Returns(_dtMessageThreadsView.CreateDataReader()).Verifiable();            
+            _mockInternalMessagingController.Object.GetMessageThread(0, 0, 0, 0, "", false, ref totalRecords);
+            _mockDataService.Verify();
         }
 
         [Test]
@@ -330,7 +337,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void MessagingController_CreateMessage_Throws_On_Null_Message()
         {
             //Act, Assert
-            _messagingController.CreateMessage(null, new List<RoleInfo>(), new List<UserInfo>(), new List<int>(), _user12UserInfo);
+            _messagingController.SendMessage(null, new List<RoleInfo>(), new List<UserInfo>(), new List<int>(), _user12UserInfo);
         }
 
         [Test]
@@ -338,7 +345,7 @@ namespace DotNetNuke.Tests.Core.Controllers
         public void MessagingController_CreateMessage_Throws_On_Null_Body_And_Subject()
         {
             //Act, Assert
-            _messagingController.CreateMessage(new Message(), new List<RoleInfo>(), new List<UserInfo>(), new List<int>(), _user12UserInfo);
+            _messagingController.SendMessage(new Message(), new List<RoleInfo>(), new List<UserInfo>(), new List<int>(), _user12UserInfo);
         }
 
         [Test]
@@ -349,7 +356,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var message = new Message {Subject = "subject", Body = "body"};
 
             //Act, Assert
-            _messagingController.CreateMessage(message, null, null, null, _user12UserInfo);
+            _messagingController.SendMessage(message, null, null, null, _user12UserInfo);
         }
 
         [Test]
@@ -360,7 +367,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var message = new Message { Subject = "subject", Body = "body" };
 
             //Act, Assert
-            _messagingController.CreateMessage(message, new List<RoleInfo>(), new List<UserInfo>(), null, _user12UserInfo);
+            _messagingController.SendMessage(message, new List<RoleInfo>(), new List<UserInfo>(), null, _user12UserInfo);
         }
 
         [Test]
@@ -371,7 +378,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var message = new Message { Subject = "subject", Body = "body" };
 
             //Act, Assert
-            _messagingController.CreateMessage(message, new List<RoleInfo> { new RoleInfo() }, new List<UserInfo> { new UserInfo() }, null, _user12UserInfo);
+            _messagingController.SendMessage(message, new List<RoleInfo> { new RoleInfo() }, new List<UserInfo> { new UserInfo() }, null, _user12UserInfo);
         }
 
         [Test]
@@ -389,7 +396,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var message = new Message { Subject = subject.ToString(), Body = "body" };
 
             //Act, Assert
-            _messagingController.CreateMessage(message, new List<RoleInfo> { new RoleInfo() }, new List<UserInfo> { new UserInfo() }, null, _user12UserInfo);
+            _messagingController.SendMessage(message, new List<RoleInfo> { new RoleInfo() }, new List<UserInfo> { new UserInfo() }, null, _user12UserInfo);
         }
 
         [Test]
@@ -408,7 +415,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             }
 
             //Act, Assert
-            _messagingController.CreateMessage(message, roles, users, null, _user12UserInfo);
+            _messagingController.SendMessage(message, roles, users, null, _user12UserInfo);
         }
 
         [Test]
@@ -421,7 +428,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var role = new RoleInfo { RoleName = "role1" };
 
             //Act
-            _messagingController.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, null);
+            _messagingController.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, null);
         }
 
         [Test]
@@ -435,7 +442,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             var sender = new UserInfo { DisplayName = "user11" };
 
             //Act
-            _messagingController.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, sender);
+            _messagingController.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, sender);
         }
 
         [Test]
@@ -454,7 +461,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             mockDataService.Setup(md => md.GetMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            messagingController.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _user12UserInfo);
+            messagingController.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _user12UserInfo);
         }
 
         //[Test]
@@ -479,7 +486,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             mockDataService.Setup(md => md.GetMessageRecipientByMessageAndUser(It.IsAny<int>(), It.IsAny<int>())).Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            messagingController.CreateMessage(message, null, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _user12UserInfo);
+            messagingController.SendMessage(message, null, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _user12UserInfo);
         }
 
         [Test]
@@ -501,7 +508,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
 
             //Assert
             _mockDataService.Verify(ds => ds.SaveMessage(It.Is<Message>(v => v.PortalID == Constants.PORTAL_Zero && v.Subject == "subject"
@@ -533,7 +540,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
 
             //Assert
             Assert.AreEqual("subject_filtered", message.Subject);
@@ -566,7 +573,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
 
             //SaveMessageRecipient is called twice, one for sent message and second for receive                        
         }
@@ -590,7 +597,7 @@ namespace DotNetNuke.Tests.Core.Controllers
                 .Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            messagingController.CreateMessage(message, new List<RoleInfo>(), new List<UserInfo> { user }, null, sender);
+            messagingController.SendMessage(message, new List<RoleInfo>(), new List<UserInfo> { user }, null, sender);
 
             //Assert
             Assert.AreEqual(message.To, Constants.USER_TenName);
@@ -616,7 +623,7 @@ namespace DotNetNuke.Tests.Core.Controllers
                 .Returns(() => _dtMessageRecipients.CreateDataReader());
 
             //Act
-            messagingController.CreateMessage(message, new List<RoleInfo>(), new List<UserInfo> { user10, user11 }, null, sender);
+            messagingController.SendMessage(message, new List<RoleInfo>(), new List<UserInfo> { user10, user11 }, null, sender);
 
             //Assert
             Assert.AreEqual(message.To, Constants.USER_TenName + "," + Constants.USER_ElevenName);
@@ -635,7 +642,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo>(), null, _adminUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo>(), null, _adminUserInfo);
 
             //Assert
             Assert.AreEqual(message.To, Constants.RoleName_Administrators);
@@ -655,7 +662,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role1, role2 }, new List<UserInfo>(), null, _adminUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role1, role2 }, new List<UserInfo>(), null, _adminUserInfo);
 
             //Assert
             Assert.AreEqual(message.To, Constants.RoleName_Administrators + "," + Constants.RoleName_Subscribers);
@@ -680,7 +687,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
             _mockDataService.Verify(ds => ds.SaveMessageAttachment(It.Is<MessageAttachment>(v => v.MessageID == message.MessageID), It.IsAny<int>()));
@@ -704,7 +711,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { _user12UserInfo }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { _user12UserInfo }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
             _mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers.ToString(), It.IsAny<int>()));
@@ -729,7 +736,7 @@ namespace DotNetNuke.Tests.Core.Controllers
                 .Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            messagingController.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { _user12UserInfo }, new List<int> { Constants.FOLDER_ValidFileId }, _hostUserInfo);
+            messagingController.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { _user12UserInfo }, new List<int> { Constants.FOLDER_ValidFileId }, _hostUserInfo);
 
             //Assert
             mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers.ToString(), It.IsAny<int>()));
@@ -755,7 +762,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role1, role2 }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role1, role2 }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
             _mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(message.MessageID, Constants.RoleID_RegisteredUsers + "," + Constants.RoleID_Administrators, It.IsAny<int>()));
@@ -780,7 +787,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.GetMessageRecipient(It.IsAny<int>(), It.IsAny<int>()));
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _groupOwnerUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _groupOwnerUserInfo);
 
             //Assert
             _mockDataService.Verify(ds => ds.CreateMessageRecipientsForRole(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()));
@@ -805,7 +812,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, null, _adminUserInfo);
 
             //Assert
             _mockDataService.Verify(ds => ds.SaveMessageRecipient(It.Is<MessageRecipient>(v => v.MessageID == message.MessageID && v.UserID == user.UserID), It.IsAny<int>()));
@@ -830,7 +837,7 @@ namespace DotNetNuke.Tests.Core.Controllers
             _mockMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(true);
 
             //Act
-            _mockMessagingController.Object.CreateMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
+            _mockMessagingController.Object.SendMessage(message, new List<RoleInfo> { role }, new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
             Assert.AreEqual(message.ReplyAllAllowed, false);
@@ -854,7 +861,7 @@ namespace DotNetNuke.Tests.Core.Controllers
                 .Returns(_dtMessageRecipients.CreateDataReader());
 
             //Act
-            messagingController.CreateMessage(message, new List<RoleInfo>(), new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
+            messagingController.SendMessage(message, new List<RoleInfo>(), new List<UserInfo> { user }, new List<int> { Constants.FOLDER_ValidFileId }, _adminUserInfo);
 
             //Assert
             Assert.AreEqual(message.ReplyAllAllowed, true);
@@ -1123,10 +1130,12 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             DataService.RegisterInstance(_mockDataService.Object);
 
+            _dtMessageConversationView.Clear();
+
             _user12UserInfo.PortalID = Constants.PORTAL_Zero;
 
             _mockInternalMessagingController.Setup(mc => mc.GetCurrentUserInfo()).Returns(_user12UserInfo);
-            _mockDataService.Setup(ds => ds.GetMessageBoxView(It.IsAny<int>(), Constants.PORTAL_Zero, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), MessageReadStatus.Any, MessageArchivedStatus.Any, MessageSentStatus.Received)).Verifiable();
+            _mockDataService.Setup(ds => ds.GetInBoxView(It.IsAny<int>(), Constants.PORTAL_Zero, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), MessageReadStatus.Any, MessageArchivedStatus.Any, MessageSentStatus.Received)).Returns(_dtMessageConversationView.CreateDataReader()).Verifiable();
             _mockInternalMessagingController.Object.GetInbox(0, 0, 0, "", false, MessageReadStatus.Any, MessageArchivedStatus.Any);
             _mockDataService.Verify();
         }
@@ -1202,8 +1211,8 @@ namespace DotNetNuke.Tests.Core.Controllers
         [Test]
         public void CountConversations_Calls_DataService_CountTotalConversations()
         {
-            _mockDataService.Setup(ds => ds.CountTotalConversations(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool?>(), It.IsAny<bool?>(), It.IsAny<bool?>())).Verifiable();
-            _internalMessagingController.CountConversations(Constants.UserID_User12, Constants.PORTAL_Zero, MessageReadStatus.Any, MessageArchivedStatus.Any, MessageSentStatus.Any);
+            _mockDataService.Setup(ds => ds.CountTotalConversations(It.IsAny<int>(), It.IsAny<int>())).Verifiable();
+            _internalMessagingController.CountConversations(Constants.UserID_User12, Constants.PORTAL_Zero);
             _mockDataService.Verify();
         }
 
@@ -1216,6 +1225,30 @@ namespace DotNetNuke.Tests.Core.Controllers
         {
             _mockDataService.Setup(ds => ds.CountNewThreads(It.IsAny<int>(), It.IsAny<int>())).Verifiable();
             _internalMessagingController.CountUnreadMessages(Constants.UserID_User12, Constants.PORTAL_Zero);
+            _mockDataService.Verify();
+        }
+
+        #endregion
+
+        #region CountSentMessages
+
+        [Test]
+        public void CountSentMessages_Calls_DataService_CountSentMessages()
+        {
+            _mockDataService.Setup(ds => ds.CountSentMessages(It.IsAny<int>(), It.IsAny<int>())).Verifiable();
+            _internalMessagingController.CountSentMessages(Constants.UserID_User12, Constants.PORTAL_Zero);
+            _mockDataService.Verify();
+        }
+
+        #endregion
+
+        #region CountArchivedMessages
+
+        [Test]
+        public void CountArchivedMessages_Calls_DataService_CountArchivedMessages()
+        {
+            _mockDataService.Setup(ds => ds.CountArchivedMessages(It.IsAny<int>(), It.IsAny<int>())).Verifiable();
+            _internalMessagingController.CountArchivedMessages(Constants.UserID_User12, Constants.PORTAL_Zero);
             _mockDataService.Verify();
         }
 
@@ -1338,6 +1371,12 @@ namespace DotNetNuke.Tests.Core.Controllers
             _dtMessageConversationView.Columns.Add("CreatedOnDate", typeof(DateTime));
             _dtMessageConversationView.Columns.Add("LastModifiedByUserID", typeof(int));
             _dtMessageConversationView.Columns.Add("LastModifiedOnDate", typeof(DateTime));
+
+            //Thread View
+            _dtMessageThreadsView = new DataTable();
+            _dtMessageThreadsView.Columns.Add("TotalThreads", typeof(int));
+            _dtMessageThreadsView.Columns.Add("TotalNewThreads", typeof(int));
+            _dtMessageThreadsView.Columns.Add("TotalArchivedThreads", typeof(int));
         }
 
         #endregion

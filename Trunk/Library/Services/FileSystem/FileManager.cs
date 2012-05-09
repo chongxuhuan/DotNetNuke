@@ -369,7 +369,7 @@ namespace DotNetNuke.Services.FileSystem
 
             var file = GetFile(folder, fileName);
             var existsFile = file != null;
-            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.PortalID, folder.FolderMappingID);
 
             try
             {

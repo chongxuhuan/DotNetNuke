@@ -31,6 +31,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Log.EventLog;
+using DotNetNuke.Services.Journal;
 
 namespace DotNetNuke.Security.Roles.Internal
 {
@@ -122,7 +123,8 @@ namespace DotNetNuke.Security.Roles.Internal
                 {
                     _fileManager.DeleteFiles(_folderManager.GetFiles(groupFolder));
                     _folderManager.DeleteFolder(groupFolder);
-                }                
+                }
+                JournalController.Instance.DeleteJournalItemByGroupId(portalSettings.PortalId, role.RoleID);
             }
 
             provider.DeleteRole(role);

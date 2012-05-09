@@ -3090,12 +3090,6 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 DROP TABLE {databaseOwner}[{objectQualifier}Journal_Comments]
 GO
 
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal](
 	[JournalId] [int] IDENTITY(1,1) NOT NULL,
 	[JournalTypeId] [int] NOT NULL,
@@ -3112,36 +3106,17 @@ CREATE TABLE {databaseOwner}[{objectQualifier}Journal](
 	[ObjectKey] [nvarchar](255) NULL,
 	[AccessKey] [uniqueidentifier] NULL,
 	[ContentItemId] [int] NULL,
- CONSTRAINT [PK_{objectQualifier}Journal] PRIMARY KEY CLUSTERED 
-(
-	[JournalId] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
+	CONSTRAINT [PK_{objectQualifier}Journal] PRIMARY KEY CLUSTERED ([JournalId] ASC)
+)
 
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Security](
 	[JournalId] [int] NOT NULL,
 	[SecurityKey] [nvarchar](50) NOT NULL,
- CONSTRAINT [IX_{objectQualifier}Journal_Security] UNIQUE NONCLUSTERED 
-(
-	[JournalId] DESC,
-	[SecurityKey] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
+	CONSTRAINT [IX_{objectQualifier}Journal_Security] UNIQUE NONCLUSTERED (	[JournalId] DESC,	[SecurityKey] ASC)
+)
 
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Access](
@@ -3151,14 +3126,8 @@ CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Access](
 	[AccessKey] [uniqueidentifier] NOT NULL,
 	[IsEnabled] [bit] NOT NULL,
 	[DateCreated] [datetime] NOT NULL
-) ON [PRIMARY]
+)
 
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal_TypeFilters](
@@ -3166,19 +3135,9 @@ CREATE TABLE {databaseOwner}[{objectQualifier}Journal_TypeFilters](
 	[PortalId] [int] NOT NULL,
 	[ModuleId] [int] NOT NULL,
 	[JournalTypeId] [int] NOT NULL,
- CONSTRAINT [PK_{objectQualifier}Journal_TypeFilters] PRIMARY KEY CLUSTERED 
-(
-	[JournalTypeFilterId] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
+	CONSTRAINT [PK_{objectQualifier}Journal_TypeFilters] PRIMARY KEY CLUSTERED ([JournalTypeFilterId] ASC)
+)
 
-GO
-
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Types](
@@ -3193,31 +3152,16 @@ CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Types](
 	[Options] [nvarchar](max) NULL,
 	[SupportsNotify] [bit] NOT NULL,
 	[EnableComments] [bit] NOT NULL,
- CONSTRAINT [PK_{objectQualifier}JournalTypes] PRIMARY KEY CLUSTERED 
-(
-	[JournalTypeId] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
+	CONSTRAINT [PK_{objectQualifier}JournalTypes] PRIMARY KEY CLUSTERED ([JournalTypeId] ASC)
+)
 
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Data](
 	[JournalId] [int] NOT NULL,
 	[JournalXML] [xml] NOT NULL
-) ON [PRIMARY]
+)
 
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Comments](
@@ -3228,11 +3172,8 @@ CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Comments](
 	[DateCreated] [datetime] NOT NULL,
 	[DateUpdated] [datetime] NOT NULL,
 	[CommentXML] [xml] NULL,
- CONSTRAINT [PK_{objectQualifier}Journal_Comments] PRIMARY KEY CLUSTERED 
-(
-	[CommentId] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
+	CONSTRAINT [PK_{objectQualifier}Journal_Comments] PRIMARY KEY CLUSTERED (	[CommentId] ASC)
+)
 
 GO
 
@@ -3578,6 +3519,10 @@ GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_GetByKey]') AND type in (N'P', N'PC'))
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_GetByKey]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_DeleteByGroupId]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_DeleteByGroupId]
 GO
 
 SET ANSI_NULLS ON
@@ -4390,7 +4335,25 @@ END
 
 
 GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_DeleteByGroupId]
+@PortalId int,
+@GroupId int 
+AS
+DELETE {databaseOwner}[{objectQualifier}Journal_Security] 
+FROM {databaseOwner}[{objectQualifier}Journal_Security] as js  INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j 
+   ON js.JournalId = j.JournalId
+WHERE j.PortalId = @PortalId AND j.GroupId = @GroupId AND @GroupId > 0 AND j.GroupId IS NOT NULL
 
+DELETE {databaseOwner}[{objectQualifier}Journal_Comments] 
+FROM {databaseOwner}[{objectQualifier}Journal_Comments] as jc  INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j 
+   ON jc.JournalId = j.JournalId
+WHERE j.PortalId = @PortalId AND j.GroupId = @GroupId AND @GroupId > 0 AND j.GroupId IS NOT NULL
+
+DELETE FROM {databaseOwner}[{objectQualifier}Journal] WHERE PortalId = @PortalId AND GroupId = @GroupId AND @GroupId > 0 AND GroupId IS NOT NULL
+
+
+
+GO
 
 
 
@@ -4796,25 +4759,14 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwn
 GO
 
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountTotalConversations]
-	@UserID          int,
-	@PortalID		 INT,
-	@Read            bit = 0,
-	@Archived        bit = 0,
-	@SentOnly        bit = 0
+	@UserID int,
+	@PortalID int
 AS
 BEGIN
-	;WITH ConversationIDs AS
-	(
-		SELECT ConversationID
-		FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] mr
-		INNER JOIN {databaseOwner}[{objectQualifier}CoreMessaging_Messages] m ON mr.MessageID = m.MessageID
-		WHERE ((Archived = @Archived) or (@Archived is null AND [Archived] IS NOT null))
-		AND (([Read] = @Read) or (@Read is null AND [READ] IS NOT null))
-		AND ((@SentOnly = 1 AND SenderUserID = @UserID) or (@SentOnly is NULL AND UserID = @UserID) or (@SentOnly = 0 AND UserID = @UserID))
-		AND m.NotificationTypeID IS NULL AND m.PortalID=@PortalID
-		GROUP BY ConversationID
-	)
-	SELECT COUNT(*) AS TotalRecords FROM ConversationIDs
+	SELECT COUNT(DISTINCT M.ConversationID) AS TotalConversations
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] M
+	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] MR ON M.MessageID = MR.MessageID
+	WHERE NotificationTypeID IS NULL AND PortalID = @PortalID AND Archived = 0 AND UserID = @UserID
 END
 GO
 
@@ -4848,6 +4800,43 @@ BEGIN
 	FROM {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients]
 	WHERE MessageID IN (SELECT MessageID FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] WHERE ConversationID = @ConversationID)
 	AND [Archived] = 1
+END
+GO
+
+/* Add CountSentMessages Procedure */
+/***********************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CountSentMessages]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountSentMessages]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountSentMessages]
+	@UserID int,
+	@PortalID int
+AS
+BEGIN
+	SELECT COUNT(MessageID) AS TotalRecords
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages]
+	WHERE SenderUserID = @UserID
+	AND NotificationTypeID IS NULL AND PortalID = @PortalID
+END
+GO
+
+/* Add CountArchivedMessages Procedure */
+/***************************************/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CountArchivedMessages]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountArchivedMessages]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CountArchivedMessages]
+	@UserID int,
+	@PortalID int
+AS
+BEGIN
+	SELECT COUNT(DISTINCT M.MessageID) AS TotalRecords
+	FROM {databaseOwner}[{objectQualifier}CoreMessaging_Messages] M
+	JOIN {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] MR ON M.MessageID = MR.MessageID
+	WHERE Archived = 1
+	AND NotificationTypeID IS NULL AND PortalID = @PortalID AND UserID = @UserID
 END
 GO
 
@@ -6321,6 +6310,36 @@ AS
 			   LastModifiedOnDate = getdate()
 		WHERE  TabModuleId = @TabModuleId
 		AND    SettingName = @SettingName
+
+GO
+
+/* Update GetServices */
+/*********************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}GetServices]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}GetServices
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetServices]
+	@PortalId  int,
+	@UserId    int
+
+AS
+	SELECT     
+		R.*,
+		UR.IsOwner, 
+		UR.UserRoleID, 
+		UR.UserID, 
+		UR.ExpiryDate, 
+		UR.IsTrialUsed, 
+		UR.EffectiveDate, 
+		U.DisplayName, 
+		U.Email
+	FROM {databaseOwner}{objectQualifier}Users U 
+		INNER JOIN {databaseOwner}{objectQualifier}UserRoles AS UR ON U.UserID = UR.UserID 
+		RIGHT OUTER JOIN {databaseOwner}{objectQualifier}Roles AS R ON UR.RoleID = R.RoleID AND UR.UserID = @UserId
+	WHERE  R.PortalId = @PortalId AND R.IsPublic = 1
+	ORDER BY R.RoleName
 
 GO
 

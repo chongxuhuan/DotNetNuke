@@ -21,13 +21,17 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Framework;
 using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
@@ -66,7 +70,16 @@ namespace DotNetNuke.Modules.Admin.Users
             }
         }
 
+        public string ProfileProperties { get; set; }
+
         #region Event Handlers
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            jQuery.RegisterJQuery(Page);
+        }
 
 		/// <summary>
 		///   Page_Load runs when the control is loaded
@@ -125,12 +138,55 @@ namespace DotNetNuke.Modules.Admin.Users
 			    if (ProfileUser.Profile.ProfileProperties.Cast<ProfilePropertyDefinition>().Count(profProperty => profProperty.Visible) == 0)
                 {
                     noPropertiesLabel.Visible = true;
+                    profileOutput.Visible = false;
                 }
                 else
                 {
                     var token = new TokenReplace { User = ProfileUser, AccessingUser = ModuleContext.PortalSettings.UserInfo };
-                    profileOutput.Text = token.ReplaceEnvironmentTokens(template);
+                    profileOutput.InnerHtml = token.ReplaceEnvironmentTokens(template);
+                    noPropertiesLabel.Visible = false;
+                    profileOutput.Visible = true;
                 }
+
+			    var propertyAccess = new ProfilePropertyAccess(ProfileUser);
+                var profileResourceFile = "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx";
+                StringBuilder sb = new StringBuilder();
+                bool propertyNotFound = false;
+                foreach (ProfilePropertyDefinition property in ProfileUser.Profile.ProfileProperties)
+                {
+                    string value = propertyAccess.GetProperty(property.PropertyName,
+                                                              String.Empty,
+                                                              Thread.CurrentThread.CurrentUICulture,
+                                                              ModuleContext.PortalSettings.UserInfo,
+                                                              Scope.DefaultSettings,
+                                                              ref propertyNotFound);
+                    sb.Append("self." + property.PropertyName + " = ko.observable('");
+                    if(property.PropertyName == "Biography")
+                    {
+                        value = value.Replace("\n", "");
+                    }
+                    sb.Append(value + "');");
+                    sb.Append('\n');
+                    sb.Append("self." + property.PropertyName + "Text = '");
+                    sb.Append(Localization.GetString("ProfileProperties_" + property.PropertyName, profileResourceFile).TrimEnd(':') + "';");
+                    sb.Append('\n');
+                }
+                string email = propertyAccess.GetProperty("Email",
+                                                          String.Empty,
+                                                          Thread.CurrentThread.CurrentUICulture,
+                                                          ModuleContext.PortalSettings.UserInfo,
+                                                          Scope.DefaultSettings,
+                                                          ref propertyNotFound);
+
+                sb.Append("self.Email = ko.observable('");
+                sb.Append(email + "');");
+                sb.Append('\n');
+                sb.Append("self.EmailText = '");
+                sb.Append(LocalizeString("Email") + "';");
+                sb.Append('\n');
+
+
+                ProfileProperties = sb.ToString();
 
 
 			}

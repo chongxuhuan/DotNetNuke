@@ -24,6 +24,7 @@
 using System;
 using System.Globalization;
 
+using DotNetNuke.Common;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Common.Utilities;
 
@@ -45,8 +46,6 @@ namespace DotNetNuke.Services.Authentication.OAuth
             APIKey = PortalController.GetPortalSetting(Service + "_APIKey", portalId, "");
             APISecret = PortalController.GetPortalSetting(Service + "_APISecret", portalId, "");
             Enabled = PortalController.GetPortalSettingAsBoolean(Service + "_Enabled", portalId, false);
-            LoginURL = PortalController.GetPortalSetting(Service + "_LoginURL", portalId, "");
-            RegisterURL = PortalController.GetPortalSetting(Service + "_RegisterURL", portalId, "");
         }
 
         protected string Service { get; set; }
@@ -56,10 +55,6 @@ namespace DotNetNuke.Services.Authentication.OAuth
         public string APISecret { get; set; }
 
         public bool Enabled { get; set; }
-
-        public string LoginURL { get; set; }
-
-        public string RegisterURL { get; set; }
 
         private static string GetCacheKey(string service, int portalId)
         {
@@ -88,8 +83,6 @@ namespace DotNetNuke.Services.Authentication.OAuth
             PortalController.UpdatePortalSetting(config.PortalID, config.Service + "_APIKey", config.APIKey);
             PortalController.UpdatePortalSetting(config.PortalID, config.Service + "_APISecret", config.APISecret);
             PortalController.UpdatePortalSetting(config.PortalID, config.Service + "_Enabled", config.Enabled.ToString(CultureInfo.InvariantCulture));
-            PortalController.UpdatePortalSetting(config.PortalID, config.Service + "_LoginURL", config.LoginURL);
-            PortalController.UpdatePortalSetting(config.PortalID, config.Service + "_RegisterURL", config.RegisterURL);
             ClearConfig(config.Service, config.PortalID);
         }
     }

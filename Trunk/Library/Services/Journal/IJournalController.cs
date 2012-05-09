@@ -28,6 +28,7 @@ namespace DotNetNuke.Services.Journal
         JournalTypeInfo GetJournalType(string groupcreate);
         JournalItem GetJournalItemByKey(int portalID, string objectKey);
         void DeleteJournalItemByKey(int portalID, string objectKey);
+        void DeleteJournalItemByGroupId(int portalId, int groupId);
         //todo Save should not return a journal item
         JournalItem SaveJournalItem(JournalItem journalItem, int i);
         JournalItem GetJournalItem(int portalId, int userID, int journalId);

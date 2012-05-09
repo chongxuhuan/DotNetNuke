@@ -526,17 +526,24 @@ namespace DotNetNuke.Modules.Admin.Portals
 
                 var customRegistrationFields = PortalController.GetPortalSetting("Registration_RegistrationFields", portalId, String.Empty);
 
-                var sb = new StringBuilder();
-                sb.Append("[ ");
-                int i = 0;
-                foreach(var field in customRegistrationFields.Split(','))
+                if (!String.IsNullOrEmpty(customRegistrationFields))
                 {
-                    if (i != 0) sb.Append(",");
-                    sb.Append("{ id: \"" + field + "\", name: \"" + field + "\"}");
-                    i++;
+                    var sb = new StringBuilder();
+                    sb.Append("[ ");
+                    int i = 0;
+                    foreach (var field in customRegistrationFields.Split(','))
+                    {
+                        if (i != 0) sb.Append(",");
+                        sb.Append("{ id: \"" + field + "\", name: \"" + field + "\"}");
+                        i++;
+                    }
+                    sb.Append(" ]");
+                    CustomRegistrationFields = sb.ToString();
                 }
-                sb.Append(" ]");
-                CustomRegistrationFields = sb.ToString();
+                else
+                {
+                    CustomRegistrationFields = "null";
+                }
 
                 passwordRegistrationSettings.DataSource = settings;
                 passwordRegistrationSettings.DataBind();

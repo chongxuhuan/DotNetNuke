@@ -95,7 +95,8 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         public virtual MessageBoxView GetInbox(int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus)
         {
-            return _dataService.GetMessageBoxView(userId, GetCurrentUserInfo().PortalID, afterMessageId, numberOfRecords, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
+            var reader = _dataService.GetInBoxView(userId, GetCurrentUserInfo().PortalID, afterMessageId, numberOfRecords, sortColumn, sortAscending, readStatus, archivedStatus, MessageSentStatus.Received);
+            return new MessageBoxView { Conversations = CBO.FillCollection<MessageConversationView>(reader) };         
         }
 
         public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, ref int totalRecords)
@@ -105,7 +106,33 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         public virtual MessageThreadsView GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, ref int totalRecords)
         {
-            return _dataService.GetMessageThread(conversationId, userId, afterMessageId, numberOfRecords, sortColumn, sortAscending, ref totalRecords);
+            var messageThreadsView = new MessageThreadsView();
+
+            var dr = _dataService.GetMessageThread(conversationId, userId, afterMessageId, numberOfRecords, sortColumn, sortAscending, ref totalRecords);
+
+            try
+            {
+                while (dr.Read())
+                {
+                    var messageThreadView = new MessageThreadView { Conversation = new MessageConversationView() };
+                    messageThreadView.Conversation.Fill(dr);
+
+                    if (messageThreadView.Conversation.AttachmentCount > 0)
+                    {
+                        messageThreadView.Attachments = _dataService.GetMessageAttachmentsByMessage(messageThreadView.Conversation.MessageID);
+                    }
+
+                    if (messageThreadsView.Conversations == null) messageThreadsView.Conversations = new List<MessageThreadView>();
+
+                    messageThreadsView.Conversations.Add(messageThreadView);
+                }
+            }
+            finally
+            {
+                CBO.CloseDataReader(dr, true);
+            }
+
+            return messageThreadsView;            
         }
 
         public virtual MessageBoxView GetRecentInbox(int userId)
@@ -153,50 +180,24 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             return _dataService.CountMessagesByConversation(conversationId);
         }
 
-        public virtual int CountConversations(int userId, int portalId, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
+        public virtual int CountConversations(int userId, int portalId)
         {
-            bool? read = null;
-
-            switch (readStatus)
-            {
-                case MessageReadStatus.Read:
-                    read = true;
-                    break;
-                case MessageReadStatus.UnRead:
-                    read = false;
-                    break;
-            }
-
-            bool? archived = null;
-
-            switch (archivedStatus)
-            {
-                case MessageArchivedStatus.Archived:
-                    archived = true;
-                    break;
-                case MessageArchivedStatus.UnArchived:
-                    archived = false;
-                    break;
-            }
-
-            bool? sent = null;
-
-            switch (sentStatus)
-            {
-                case MessageSentStatus.Received:
-                    sent = false;
-                    break;
-                case MessageSentStatus.Sent:
-                    sent = true;
-                    break;
-            }
-
-            return _dataService.CountTotalConversations(userId, portalId, read, archived, sent);
+            return _dataService.CountTotalConversations(userId, portalId);
         }
 
         public virtual int CountUnreadMessages(int userId, int portalId)
         {
             return _dataService.CountNewThreads(userId, portalId);
+        }
+
+        public virtual int CountSentMessages(int userId, int portalId)
+        {
+            return _dataService.CountSentMessages(userId, portalId);
+        }
+
+        public virtual int CountArchivedMessages(int userId, int portalId)
+        {
+            return _dataService.CountArchivedMessages(userId, portalId);
         }
         
         #endregion

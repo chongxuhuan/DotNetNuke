@@ -182,12 +182,12 @@ namespace DotNetNuke.Services.Social.Messaging
 
         #region Create and Reply APIs
 
-        public virtual void CreateMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)
+        public virtual void SendMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs)
         {
-            CreateMessage(message, roles, users, fileIDs, UserController.GetCurrentUserInfo());
+            SendMessage(message, roles, users, fileIDs, UserController.GetCurrentUserInfo());
         }
 
-        public virtual void CreateMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender)
+        public virtual void SendMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender)
         {
             if (sender == null || sender.UserID <= 0)
             {

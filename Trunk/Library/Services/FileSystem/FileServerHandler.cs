@@ -167,7 +167,7 @@ namespace DotNetNuke.Services.FileSystem
                             {
                                 try
                                 {
-                                    var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
+                                    var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.PortalId, file.FolderMappingID);
                                     var directUrl = fileManager.GetUrl(file);
                                     if (directUrl.Contains("LinkClick") || (blnForceDownload && folderMapping.FolderProviderType == "StandardFolderProvider"))
                                     {

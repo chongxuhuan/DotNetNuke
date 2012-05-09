@@ -40,6 +40,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 
+using DotNetNuke.Common;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Membership;
 
@@ -93,9 +94,9 @@ namespace DotNetNuke.Services.Authentication.OAuth
             APISecret = OAuthConfigBase.GetConfig(Service, portalId).APISecret;
             Mode = mode;
 
-            CallbackUri = Mode == AuthMode.Login 
-                                    ? new Uri(OAuthConfigBase.GetConfig(Service, portalId).LoginURL) 
-                                    : new Uri(OAuthConfigBase.GetConfig(Service, portalId).RegisterURL);
+            CallbackUri = Mode == AuthMode.Login
+                                    ? new Uri(Globals.LoginURL(String.Empty, false))
+                                    : new Uri(Globals.RegisterURL(String.Empty, String.Empty));
         }
 
         #region Protected Properties

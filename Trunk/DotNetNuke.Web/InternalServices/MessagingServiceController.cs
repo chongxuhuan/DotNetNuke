@@ -84,7 +84,7 @@ namespace DotNetNuke.Web.InternalServices
                 }
 
                 var message = new Message { Subject = HttpUtility.UrlDecode(subject), Body = HttpUtility.UrlDecode(body) };
-                MessagingController.Instance.CreateMessage(message, roles, users, fileIdsList);
+                MessagingController.Instance.SendMessage(message, roles, users, fileIdsList);
                 response = new { Result = "success", Value = message.MessageID };
             }
             catch (Exception exc)

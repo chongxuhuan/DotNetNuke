@@ -197,8 +197,14 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 		private void SetCookies(HttpWebRequest request)
 		{
 			request.CookieContainer = new CookieContainer();
+		    var sessionCookie = GetSessionCookieName();
 			foreach (var key in Request.Cookies.AllKeys)
 			{
+			    if (key == sessionCookie)
+			    {
+			        continue;
+			    }
+
                 var cookie = new Cookie(HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(Request.Cookies[key].Value), "/", request.RequestUri.Host);
 				request.CookieContainer.Add(cookie);
 			}
@@ -228,6 +234,11 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 
 			return content;
 		}
+
+        private string GetSessionCookieName()
+        {
+            return "ASP.NET_SessionId";
+        }
 
 		#endregion
 	}

@@ -300,7 +300,6 @@
     <Compile Include="Services\Social\Messaging\MessageArchivedStatus.cs" />
     <Compile Include="Services\Social\Messaging\MessageReadStatus.cs" />
     <Compile Include="Services\Social\Messaging\Scheduler\CoreMessagingScheduler.cs" />
-    <Compile Include="Services\Social\Messaging\Internal\Views\MessageSentView.cs" />
     <Compile Include="Services\Social\Notifications\Notification.cs" />
     <Compile Include="Services\Social\Notifications\NotificationTypeAction.cs" />
     <Compile Include="Services\Social\Messaging\MessagingController.cs" />

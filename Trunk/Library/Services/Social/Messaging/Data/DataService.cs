@@ -72,7 +72,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteScalar<int>("CoreMessaging_CreateMessageReply", conversationId, portalId,body, senderUserId, from, createUpdateUserId);
         }
 
-        public MessageBoxView GetMessageBoxView(int userId, int portalId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
+        public IDataReader GetInBoxView(int userId, int portalId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus)
         {
             object read = null;
             object archived = null;
@@ -108,19 +108,7 @@ namespace DotNetNuke.Services.Social.Messaging.Data
                     break;
             }
 
-            var dr = _provider.ExecuteReader("CoreMessaging_GetMessageConversations", userId, portalId , afterMessageId, numberOfRecords, sortColumn, sortAscending, read, archived, sent);
-            var messageBoxView = new MessageBoxView();
-
-            try
-            {
-                messageBoxView.Conversations = CBO.FillCollection<MessageConversationView>(dr);
-            }
-            finally
-            {
-                CBO.CloseDataReader(dr, true);
-            }
-
-            return messageBoxView;
+            return _provider.ExecuteReader("CoreMessaging_GetMessageConversations", userId, portalId , afterMessageId, numberOfRecords, sortColumn, sortAscending, read, archived, sent);
         }
 
         public IDataReader GetSentBoxView(int userId, int portalId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending)
@@ -133,35 +121,9 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteReader("CoreMessaging_GetArchiveBox", userId, portalId, afterMessageId, numberOfRecords, sortColumn, sortAscending);
         }
 
-        public MessageThreadsView GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool @sortAscending, ref int totalRecords)
-        {
-            var messageThreadsView = new MessageThreadsView();
-
-            var dr = _provider.ExecuteReader("CoreMessaging_GetMessageThread", conversationId, userId, afterMessageId, numberOfRecords, sortColumn, sortAscending);
-
-            try
-            {
-                while (dr.Read())
-                {
-                    var messageThreadView = new MessageThreadView { Conversation = new MessageConversationView() };
-                    messageThreadView.Conversation.Fill(dr);
-
-                    if (messageThreadView.Conversation.AttachmentCount > 0)
-                    {
-                        messageThreadView.Attachments = GetMessageAttachmentsByMessage(messageThreadView.Conversation.MessageID);
-                    }
-
-                    if (messageThreadsView.Conversations == null) messageThreadsView.Conversations = new List<MessageThreadView>();
-
-                    messageThreadsView.Conversations.Add(messageThreadView);
-                }
-            }
-            finally
-            {
-                CBO.CloseDataReader(dr, true);
-            }
-
-            return messageThreadsView;
+        public IDataReader GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool @sortAscending, ref int totalRecords)
+        {            
+            return _provider.ExecuteReader("CoreMessaging_GetMessageThread", conversationId, userId, afterMessageId, numberOfRecords, sortColumn, sortAscending);
         }
 
         public void UpdateMessageReadStatus(int conversationId, int userId, bool read)
@@ -179,17 +141,9 @@ namespace DotNetNuke.Services.Social.Messaging.Data
             return _provider.ExecuteScalar<int>("CoreMessaging_CountNewThreads", userId, portalId);
         }
 
-        public int CountTotalConversations(int userId, int portalId, bool? read, bool? archived, bool? sentOnly)
+        public int CountTotalConversations(int userId, int portalId)
         {
-            object objRead = DBNull.Value;
-            object objArchived = DBNull.Value;
-            object objSent = DBNull.Value;
-
-            if (read != null) objRead = read.Value;
-            if (archived != null) objArchived = archived.Value;
-            if (sentOnly != null) objSent = sentOnly.Value;
-
-            return _provider.ExecuteScalar<int>("CoreMessaging_CountTotalConversations", userId, portalId,objRead, objArchived, objSent);
+            return _provider.ExecuteScalar<int>("CoreMessaging_CountTotalConversations", userId, portalId);
         }
 
         public int CountMessagesByConversation(int conversationId)
@@ -200,6 +154,16 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         public int CountArchivedMessagesByConversation(int conversationId)
         {
             return _provider.ExecuteScalar<int>("CoreMessaging_CountArchivedMessagesByConversation", conversationId);
+        }
+
+        public int CountSentMessages(int userId, int portalId)
+        {
+            return _provider.ExecuteScalar<int>("CoreMessaging_CountSentMessages", userId, portalId);
+        }
+
+        public int CountArchivedMessages(int userId, int portalId)
+        {
+            return _provider.ExecuteScalar<int>("CoreMessaging_CountArchivedMessages", userId, portalId);
         }
 
         #endregion

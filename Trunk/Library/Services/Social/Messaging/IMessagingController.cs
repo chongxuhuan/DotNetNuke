@@ -69,9 +69,9 @@ namespace DotNetNuke.Services.Social.Messaging
 
         #region Create and Reply APIs
 
-        void CreateMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
+        void SendMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs);
 
-        void CreateMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender);
+        void SendMessage(Message message, IList<RoleInfo> roles, IList<UserInfo> users, IList<int> fileIDs, UserInfo sender);
 
         int ReplyMessage(int conversationId, string body, IList<int> fileIDs);
 

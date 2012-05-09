@@ -114,6 +114,10 @@ namespace DotNetNuke.Services.Journal
         {
             _dataService.Journal_DeleteByKey(portalId, objectKey);
         }
+        public void DeleteJournalItemByGroupId(int portalId, int groupId)
+        {
+            _dataService.Journal_DeleteByGroupId(portalId, groupId);
+        }
 
         public JournalItem GetJournalItem(int portalId, int currentUserId, int journalId)
         {

@@ -3218,9 +3218,13 @@ namespace DotNetNuke.Common
         /// <returns>Formatted url.</returns>
         public static string RegisterURL(string returnURL, string originalURL)
         {
-            string strURL = "";
+            string strURL;
             PortalSettings _portalSettings = PortalController.GetCurrentPortalSettings();
-            string extraParams = string.Concat("returnurl=", returnURL);
+            string extraParams = String.Empty;
+            if (!string.IsNullOrEmpty(returnURL))
+            {
+                extraParams = string.Concat("returnurl=", returnURL);
+            }
             if (!string.IsNullOrEmpty(originalURL))
             {
                 extraParams += string.Concat("&orignalurl=", originalURL);

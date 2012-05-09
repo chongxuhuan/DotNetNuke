@@ -72,11 +72,15 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         int CountUnreadMessages(int userId, int portalId);
 
-        int CountConversations(int userId, int portalId, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
+        int CountConversations(int userId, int portalId);
 
         int CountMessagesByConversation(int conversationId);
 
         int CountArchivedMessagesByConversation(int conversationId);
+
+        int CountSentMessages(int userId, int portalId);
+
+        int CountArchivedMessages(int userId, int portalId);
 
         #endregion
     }

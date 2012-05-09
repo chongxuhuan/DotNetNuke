@@ -40,17 +40,19 @@ namespace DotNetNuke.Services.Social.Messaging.Data
         IDataReader GetLastSentMessage(int userId, int portalId);
         void DeleteMessage(int messageId);
 
-        MessageBoxView GetMessageBoxView(int userId, int portalId,int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
+        IDataReader GetInBoxView(int userId, int portalId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, MessageReadStatus readStatus, MessageArchivedStatus archivedStatus, MessageSentStatus sentStatus);
         IDataReader GetSentBoxView(int userId, int portalId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending);
         IDataReader GetArchiveBoxView(int userId, int portalId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending);
-        MessageThreadsView GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, ref int totalRecords);        
+        IDataReader GetMessageThread(int conversationId, int userId, int afterMessageId, int numberOfRecords, string sortColumn, bool sortAscending, ref int totalRecords);        
         void UpdateMessageReadStatus(int conversationId, int userId, bool read);
         void UpdateMessageArchivedStatus(int conversationId, int userId, bool archived);
         int CreateMessageReply(int conversationId, int portalId,string body, int senderUserId, string from, int createUpdateUserId);
         int CountNewThreads(int userId, int portalId);
-        int CountTotalConversations(int userId, int portalId, bool? read, bool? archived, bool? sentOnly);
+        int CountTotalConversations(int userId, int portalId);
         int CountMessagesByConversation(int conversationId);
         int CountArchivedMessagesByConversation(int conversationId);
+        int CountSentMessages(int userId, int portalId);
+        int CountArchivedMessages(int userId, int portalId);
         
         #endregion
 
