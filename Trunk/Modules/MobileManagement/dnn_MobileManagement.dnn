@@ -35,7 +35,7 @@
 										<controlTitle>Site Redirection Management</controlTitle>
 										<controlType>View</controlType>
 										<iconFile />
-										<helpUrl />
+                    <helpUrl>http://help.dotnetnuke.com/Default.aspx?tabid=1657</helpUrl>
 										<viewOrder>0</viewOrder>
 									</moduleControl>
 									<moduleControl>
@@ -46,7 +46,7 @@
 										<controlTitle>Redirection Settings</controlTitle>
 										<controlType>Edit</controlType>
 										<iconFile />
-										<helpUrl />
+                    <helpUrl>http://help.dotnetnuke.com/Default.aspx?tabid=1657</helpUrl>
 										<viewOrder>0</viewOrder>
 									</moduleControl>
 									<moduleControl>
@@ -57,7 +57,7 @@
 										<controlTitle>Simple Settings</controlTitle>
 										<controlType>Edit</controlType>
 										<iconFile />
-										<helpUrl />
+                    <helpUrl>http://help.dotnetnuke.com/Default.aspx?tabid=1657</helpUrl>
 										<viewOrder>0</viewOrder>
 									</moduleControl>
 								</moduleControls>

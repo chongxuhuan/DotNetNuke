@@ -110,7 +110,7 @@
                     <controlTitle />
                     <controlType>View</controlType>
                     <iconFile />
-                    <helpUrl>http://www.dotnetnuke.com/default.aspx?tabid=787</helpUrl>
+                    <helpUrl>http://help.dotnetnuke.com/Default.aspx?tabid=265</helpUrl>
                     <viewOrder>0</viewOrder>
                   </moduleControl>
                   <moduleControl>
@@ -120,7 +120,7 @@
                     <controlTitle>Edit Content</controlTitle>
                     <controlType>Edit</controlType>
                     <iconFile />
-                    <helpUrl>http://www.dotnetnuke.com/default.aspx?tabid=787</helpUrl>
+                    <helpUrl>http://help.dotnetnuke.com/Default.aspx?tabid=269</helpUrl>
                     <viewOrder>0</viewOrder>
                     <supportsPopUps>True</supportsPopUps>
                   </moduleControl>
@@ -131,7 +131,7 @@
                     <controlTitle>My Work</controlTitle>
                     <controlType>View</controlType>
                     <iconFile />
-                    <helpUrl />
+                    <helpUrl>http://help.dotnetnuke.com/Default.aspx?tabid=273</helpUrl>
                     <viewOrder>0</viewOrder>
                     <supportsPopUps>True</supportsPopUps>
                   </moduleControl>
@@ -142,7 +142,7 @@
                     <controlTitle>Settings</controlTitle>
                     <controlType>Edit</controlType>
                     <iconFile />
-                    <helpUrl>http://www.dotnetnuke.com/default.aspx?tabid=787</helpUrl>
+                    <helpUrl>http://help.dotnetnuke.com/Default.aspx?tabid=279</helpUrl>
                     <viewOrder>0</viewOrder>
                   </moduleControl>
                 </moduleControls>

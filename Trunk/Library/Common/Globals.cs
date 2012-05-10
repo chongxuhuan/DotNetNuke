@@ -3853,7 +3853,7 @@ namespace DotNetNuke.Common
                 avatarUrl = "http://" + avatarUrl;
             }
 
-            avatarUrl += "/profilepic.ashx?userid={0}&h={1}&w={2}";            
+            avatarUrl += "/profilepic.ashx?userId={0}&h={1}&w={2}";            
 
             return avatarUrl;
         }

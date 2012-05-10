@@ -101,13 +101,6 @@
             $wrap.html(data);
         });
 
-        // initial load and binding of the data
-        getItems(function (result) {
-            // apply bindings, scope to this instance of the plugin
-            ko.applyBindings(new fileManagerModel(result), document.getElementById($wrap.attr('id')));
-            $wrap.data('userFileManager.bound', true);
-        });
-
         $wrap.css('display', 'none');
 
         // Parent scope is defined (e.g. body).
@@ -117,9 +110,16 @@
 
             // refresh the data
             getItems(function (result) {
-                var boundDomElement = $wrap.get(0); // expose the underlying DOM element.
-                var context = ko.contextFor(boundDomElement); // get our KO context
-                context.$root.updateItems(result); // call the updateItems method
+                if ($wrap.data('userFileManager.bound') === true) {
+                    var boundDomElement = $wrap.get(0); // expose the underlying DOM element.
+                    var context = ko.contextFor(boundDomElement); // get our KO context
+                    context.$root.updateItems(result); // call the updateItems method
+                }
+                else {
+                    // apply bindings, scope to this instance of the plugin
+                    ko.applyBindings(new fileManagerModel(result), document.getElementById($wrap.attr('id')));
+                    $wrap.data('userFileManager.bound', true);
+                }
             });
 
             $wrap.dialog({

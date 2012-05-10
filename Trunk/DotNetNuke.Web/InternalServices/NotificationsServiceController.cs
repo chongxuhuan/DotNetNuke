@@ -25,7 +25,7 @@ using System;
 using System.Web.Mvc;
 
 using DotNetNuke.Instrumentation;
-using DotNetNuke.Services.Social.Messaging;
+using DotNetNuke.Services.Social.Messaging.Internal;
 using DotNetNuke.Services.Social.Notifications;
 using DotNetNuke.Web.Services;
 
@@ -40,7 +40,7 @@ namespace DotNetNuke.Web.InternalServices
 
             try
             {
-                var recipient = MessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
+                var recipient = InternalMessagingController.Instance.GetMessageRecipient(notificationId, UserInfo.UserID);
                 if (recipient != null)
                 {
                     NotificationsController.Instance.DeleteNotificationRecipient(notificationId, UserInfo.UserID);

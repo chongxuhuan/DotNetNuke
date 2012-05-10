@@ -29,7 +29,13 @@ using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
+using DotNetNuke.Entities.Users;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Messaging.Data;
+using DotNetNuke.Services.Social.Messaging;
+using DotNetNuke.Services.Social.Messaging.Internal;
+
+using Message = DotNetNuke.Services.Messaging.Data.Message;
 
 #endregion
 
@@ -51,7 +57,8 @@ namespace DotNetNuke.Services.Messaging
 
         #region "Constructors"
 
-        public MessagingController() : this(GetDataService())
+        public MessagingController()
+            : this(GetDataService())
         {
         }
 
@@ -121,33 +128,60 @@ namespace DotNetNuke.Services.Messaging
             return _MessagingPage;
         }
 
-        
+        [Obsolete("Deprecated in 6.2.0 - use DotNetNuke.Services.Social.Messaging.MessagingController.Instance(messageId)")]
         public Message GetMessageByID(int PortalID, int UserID, int messageId)
         {
-            return (Message)CBO.FillObject(_DataService.GetMessageByID(messageId), typeof(Message));
+            var coreMessage = InternalMessagingController.Instance.GetMessage(messageId);
+            var coreMessageRecipient = InternalMessagingController.Instance.GetMessageRecipient(messageId, UserID);
+            return ConvertCoreMessageToServicesMessage(PortalID, UserID, coreMessageRecipient, coreMessage);
         }
 
+        private static Message ConvertCoreMessageToServicesMessage(int PortalID, int UserID, MessageRecipient coreMessageRecipeint, Social.Messaging.Message coreMessage)
+        {
+            var message = new Message { AllowReply = true, Body = coreMessage.Body, FromUserID = coreMessage.SenderUserID, MessageDate = coreMessage.CreatedOnDate, PortalID = PortalID };
+            //TODO: how to covert ID to GUID
+            //message.Conversation = coreMessage.ConversationId;
+
+            switch (coreMessageRecipeint.Read)
+            {
+                case true:
+                    message.Status = MessageStatusType.Read;
+                    break;
+                case false:
+                    message.Status = MessageStatusType.Unread;
+                    break;
+            }
+
+            message.ToUserID = UserID;
+            return message;
+        }
+
+        [Obsolete("Deprecated in 6.2.0")]
         public List<Message> GetUserInbox(int PortalID, int UserID, int PageNumber, int PageSize)
         {
             return CBO.FillCollection<Message>(_DataService.GetUserInbox(PortalID, UserID, PageNumber, PageSize));
         }
 
+        [Obsolete("Deprecated in 6.2.0 - use DotNetNuke.Services.Social.Messaging.MessagingController.Instance.GetMessage(messageId)")]
         public int GetInboxCount(int PortalID, int UserID)
         {
-            return _DataService.GetInboxCount(PortalID, UserID);
+            return InternalMessagingController.Instance.CountConversations(UserID, PortalID);
         }
 
+        [Obsolete("Deprecated in 6.2.0 - use InternalMessagingController.Instance.GetMessage(messageId)")]
         public int GetNewMessageCount(int PortalID, int UserID)
         {
-            return _DataService.GetNewMessageCount(PortalID, UserID);
+            return InternalMessagingController.Instance.CountUnreadMessages(UserID, PortalID);
         }
 
+        [Obsolete("Deprecated in 6.2.0 - use InternalMessagingController.Instance.GetMessage(messageId)")]
         public Message GetNextMessageForDispatch(Guid SchedulerInstance)
         {
-            return (Message)CBO.FillObject(_DataService.GetNextMessageForDispatch(SchedulerInstance), typeof(Message));
+            //does not need to run as scheduled task name was updated 
+            return null;
         }
 
-
+        [Obsolete("Deprecated in 6.2.0 - use InternalMessagingController.Instance.GetMessage(messageId)")]
         public long SaveMessage(Message message)
         {
             if ((PortalSettings.Current != null))
@@ -160,17 +194,47 @@ namespace DotNetNuke.Services.Messaging
                 message.Conversation = Guid.NewGuid();
             }
 
-            return _DataService.SaveMessage(message);
-        }
+            List<UserInfo> users = null;
 
+            var userController = new UserController();
+            users.Add(userController.GetUser(message.PortalID, message.ToUserID));
+
+            List<RoleInfo> emptyRoles = null;
+            List<int> files = null;
+            //var coreMessage = DotNetNuke.Services.Social.Messaging.MessagingController.Instance.createmessage(message.Subject, message.Body, emptyRoles, users, files);
+
+            //return coreMessage.MessageID;
+            return -1;
+
+        }
+        [Obsolete("Deprecated in 6.2.0 - use InternalMessagingController.Instance.GetMessage(messageId)")]
         public void UpdateMessage(Message message)
         {
+            //TODO: we dont have an update equivalent - is used for status changes -including deletes
+            switch (message.Status)
+            {
+                case MessageStatusType.Unread:
+                    //InternalMessagingController.Instance.MarkUnRead(message.Conversation,message.ToUserID);
+                    break;
+                case MessageStatusType.Draft:
+                    //no equivalent
+                    break;
+                case MessageStatusType.Deleted:
+                    //same as archive?
+                    //InternalMessagingController.Instance.MarkArchived(message.Conversation, message.ToUserID);
+                    break;
+                case MessageStatusType.Read:
+                    //InternalMessagingController.Instance.MarkRead(message.Conversation, message.ToUserID);
+                    break;
+            }
+
             _DataService.UpdateMessage(message);
         }
 
+        [Obsolete("Deprecated in 6.2.0 - use InternalMessagingController.Instance.GetMessage(messageId)")]
         public void MarkMessageAsDispatched(int MessageID)
         {
-            _DataService.MarkMessageAsDispatched(MessageID);
+            //does not need to run as scheduled task name was updated
         }
 
         #endregion

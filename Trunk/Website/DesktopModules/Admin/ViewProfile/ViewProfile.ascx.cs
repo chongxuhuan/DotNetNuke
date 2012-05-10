@@ -171,12 +171,11 @@ namespace DotNetNuke.Modules.Admin.Users
                     sb.Append(Localization.GetString("ProfileProperties_" + property.PropertyName, profileResourceFile).TrimEnd(':') + "';");
                     sb.Append('\n');
                 }
-                string email = propertyAccess.GetProperty("Email",
-                                                          String.Empty,
-                                                          Thread.CurrentThread.CurrentUICulture,
-                                                          ModuleContext.PortalSettings.UserInfo,
-                                                          Scope.DefaultSettings,
-                                                          ref propertyNotFound);
+
+			    string email = (ProfileUserId == ModuleContext.PortalSettings.UserId
+			                    || ModuleContext.PortalSettings.UserInfo.IsInRole(ModuleContext.PortalSettings.AdministratorRoleName))
+			                       ? ProfileUser.Email
+			                       : String.Empty;
 
                 sb.Append("self.Email = ko.observable('");
                 sb.Append(email + "');");

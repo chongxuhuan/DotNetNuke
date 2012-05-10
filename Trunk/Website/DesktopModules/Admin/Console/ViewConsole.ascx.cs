@@ -436,15 +436,19 @@ namespace DesktopModules.Admin.Console
 			    var sb = new StringBuilder();
                 if(tab.TabID == PortalSettings.ActiveTab.TabID)
                 {
-                    sb.Append("<div class=\"active\">");
+                    sb.Append("<div class=\"active console-none \">");
                 }
                 else
                 {
-                    sb.Append("<div>");
+                    sb.Append("<div class=\"console-none \">");
                 }
                 sb.Append("<a href=\"{0}\">");
-			    sb.Append("<img src=\"{1}\" alt=\"{3}\" width=\"16px\" height=\"16px\"/>");
-                sb.Append("<img src=\"{2}\" alt=\"{3}\" width=\"32px\" height=\"32px\"/>");
+
+                if (DefaultSize != "IconNone" || (AllowSizeChange || AllowViewChange))
+                {
+                    sb.Append("<img src=\"{1}\" alt=\"{3}\" width=\"16px\" height=\"16px\"/>");
+                    sb.Append("<img src=\"{2}\" alt=\"{3}\" width=\"32px\" height=\"32px\"/>");
+                }
                 sb.Append("</a>");
                 sb.Append("<h3>{3}</h3>");
                 sb.Append("<div>{4}</div>");

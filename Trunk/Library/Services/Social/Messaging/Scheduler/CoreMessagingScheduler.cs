@@ -102,7 +102,7 @@ namespace DotNetNuke.Services.Social.Messaging.Scheduler
         private void SendMessage(MessageRecipient objMessage)
         {
             //todo: check if host user can send to multiple portals...
-            var messageDetails = MessagingController.Instance.GetMessage(objMessage.MessageID);
+            var messageDetails = InternalMessagingController.Instance.GetMessage(objMessage.MessageID);
 
             var senderAddress = _uController.GetUser(messageDetails.PortalID, messageDetails.SenderUserID).Email;
             var fromAddress = _pController.GetPortal(messageDetails.PortalID).Email;

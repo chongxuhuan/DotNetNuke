@@ -36,6 +36,7 @@ using DotNetNuke.Entities.Users.Internal;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Roles.Internal;
 using DotNetNuke.Services.Social.Messaging;
+using DotNetNuke.Services.Social.Messaging.Internal;
 using DotNetNuke.Web.Services;
 
 namespace DotNetNuke.Web.InternalServices
@@ -49,7 +50,7 @@ namespace DotNetNuke.Web.InternalServices
             
             try
             {
-                response = new { Result = "success", Value = MessagingController.Instance.WaitTimeForNextMessage(UserInfo) };
+                response = new { Result = "success", Value = InternalMessagingController.Instance.WaitTimeForNextMessage(UserInfo) };
             }
             catch (Exception exc)
             {

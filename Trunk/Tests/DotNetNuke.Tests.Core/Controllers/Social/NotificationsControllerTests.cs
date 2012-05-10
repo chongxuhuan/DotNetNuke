@@ -32,6 +32,7 @@ using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Services.Social.Messaging.Exceptions;
+using DotNetNuke.Services.Social.Messaging.Internal;
 using DotNetNuke.Services.Social.Notifications;
 using DotNetNuke.Services.Social.Notifications.Data;
 using DotNetNuke.Tests.Utilities;
@@ -52,6 +53,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         private Mock<IDataService> _mockDataService;
         private Mock<DotNetNuke.Services.Social.Messaging.Data.IDataService> _mockMessagingDataService;
         private Mock<IMessagingController> _mockMessagingController;
+        private Mock<IInternalMessagingController> _mockInternalMessagingController;
         private NotificationsControllerImpl _notificationsController;
         private Mock<NotificationsControllerImpl> _mockNotificationsController;
         private Mock<DataProvider> _dataProvider;
@@ -79,6 +81,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
 
             _mockMessagingController = new Mock<IMessagingController>();
             MessagingController.SetTestableInstance(_mockMessagingController.Object);
+
+            _mockInternalMessagingController = new Mock<IInternalMessagingController>();
+            InternalMessagingController.SetTestableInstance(_mockInternalMessagingController.Object);
 
             DataService.RegisterInstance(_mockDataService.Object);
             DotNetNuke.Services.Social.Messaging.Data.DataService.RegisterInstance(_mockMessagingDataService.Object);
@@ -707,7 +712,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                 new RoleInfo { RoleName = "Role2" }
                             };
 
-            _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(1);
+            _mockInternalMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(1);
 
             _mockNotificationsController.Object.SendNotification(
                 CreateUnsavedNotification(),
@@ -729,7 +734,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 PortalID = Constants.PORTAL_Zero
             };
 
-            _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
+            _mockInternalMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
 
             var roles = new List<RoleInfo>();
             var users = new List<UserInfo>
@@ -779,7 +784,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                     PortalID = Constants.PORTAL_Zero
                                 };
 
-            _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
+            _mockInternalMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
 
             var roles = new List<RoleInfo>();
             var users = new List<UserInfo>
@@ -821,7 +826,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 PortalID = Constants.PORTAL_Zero
             };
 
-            _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
+            _mockInternalMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
 
             var roles = new List<RoleInfo>
                             {
@@ -870,7 +875,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 PortalID = Constants.PORTAL_Zero
             };
 
-            _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
+            _mockInternalMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
 
             var roles = new List<RoleInfo>();
             var users = new List<UserInfo>
@@ -888,7 +893,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     Constants.PORTAL_Zero))
                 .Returns(Constants.Messaging_MessageId_1);
 
-            _mockMessagingController
+            _mockInternalMessagingController
                 .Setup(mc => mc.GetMessageRecipient(
                     Constants.Messaging_MessageId_1,
                     Constants.UserID_User12))
@@ -930,7 +935,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                 PortalID = Constants.PORTAL_Zero
             };
 
-            _mockMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
+            _mockInternalMessagingController.Setup(mc => mc.RecipientLimit(adminUser.PortalID)).Returns(10);
 
             var roles = new List<RoleInfo>();
             var users = new List<UserInfo>
@@ -954,7 +959,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                     Constants.RoleID_RegisteredUsers.ToString(CultureInfo.InvariantCulture),
                     It.IsAny<int>()));
 
-            _mockMessagingController
+            _mockInternalMessagingController
                 .Setup(mc => mc.GetMessageRecipient(
                     Constants.Messaging_MessageId_1,
                     Constants.UserID_User12))
@@ -1042,8 +1047,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         [Test]
         public void DeleteNotificationRecipient_Calls_MessagingController_DeleteMessageRecipient()
         {
-            _mockMessagingController.Setup(mc => mc.DeleteMessageRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12)).Verifiable();
-            _mockMessagingController.Setup(mc => mc.GetMessageRecipients(Constants.Messaging_MessageId_1)).Returns(new List<MessageRecipient>());
+            _mockInternalMessagingController.Setup(mc => mc.DeleteMessageRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12)).Verifiable();
+            _mockInternalMessagingController.Setup(mc => mc.GetMessageRecipients(Constants.Messaging_MessageId_1)).Returns(new List<MessageRecipient>());
             _notificationsController.DeleteNotificationRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12);
             _mockMessagingController.Verify();
         }
@@ -1066,8 +1071,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
                                             new MessageRecipient()
                                         };
 
-            _mockMessagingController.Setup(mc => mc.DeleteMessageRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12));
-            _mockMessagingController.Setup(mc => mc.GetMessageRecipients(Constants.Messaging_MessageId_1)).Returns(messageRecipients);
+            _mockInternalMessagingController.Setup(mc => mc.DeleteMessageRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12));
+            _mockInternalMessagingController.Setup(mc => mc.GetMessageRecipients(Constants.Messaging_MessageId_1)).Returns(messageRecipients);
             _mockNotificationsController.Object.DeleteNotificationRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12);
             
             _mockNotificationsController.Verify(nc => nc.DeleteNotification(Constants.Messaging_MessageId_1), Times.Never());
@@ -1076,10 +1081,38 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         [Test]
         public void DeleteNotificationRecipient_Deletes_Notification_When_There_Are_No_More_Recipients()
         {
-            _mockMessagingController.Setup(mc => mc.DeleteMessageRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12));
-            _mockMessagingController.Setup(mc => mc.GetMessageRecipients(Constants.Messaging_MessageId_1)).Returns(new List<MessageRecipient>());
+            _mockInternalMessagingController.Setup(mc => mc.DeleteMessageRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12));
+            _mockInternalMessagingController.Setup(mc => mc.GetMessageRecipients(Constants.Messaging_MessageId_1)).Returns(new List<MessageRecipient>());
             _mockNotificationsController.Object.DeleteNotificationRecipient(Constants.Messaging_MessageId_1, Constants.UserID_User12);
             _mockNotificationsController.Verify(nc => nc.DeleteNotification(Constants.Messaging_MessageId_1));
+        }
+
+        #endregion
+
+        #region DeleteAllNotificationRecipients
+
+        [Test]
+        public void DeleteAllNotificationRecipients_Calls_DeleteNotificationRecipient_For_Each_Recipient()
+        {
+            var recipients = new List<MessageRecipient>
+                                 {
+                                     new MessageRecipient { RecipientID = Constants.Messaging_RecipientId_1 }, 
+                                     new MessageRecipient { RecipientID = Constants.Messaging_RecipientId_2 }
+                                 };
+
+            _mockInternalMessagingController.Setup(imc => imc.GetMessageRecipients(Constants.Messaging_MessageId_1)).Returns(recipients);
+
+            _mockNotificationsController.Object.DeleteAllNotificationRecipients(Constants.Messaging_MessageId_1);
+
+            _mockNotificationsController.Verify(nc => nc.DeleteNotificationRecipient(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(2));
+        }
+
+        [Test]
+        public void DeleteAllNotificationRecipients_Does_Not_Call_DeleteNotificationRecipient_When_Notification_Has_No_Recipients()
+        {
+            _mockInternalMessagingController.Setup(imc => imc.GetMessageRecipients(Constants.Messaging_MessageId_1)).Returns(new List<MessageRecipient>());
+            _mockNotificationsController.Object.DeleteAllNotificationRecipients(Constants.Messaging_MessageId_1);
+            _mockNotificationsController.Verify(nc => nc.DeleteNotificationRecipient(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
         }
 
         #endregion

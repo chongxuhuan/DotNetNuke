@@ -32,6 +32,7 @@ using DotNetNuke.Security;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Services.Social.Messaging.Exceptions;
+using DotNetNuke.Services.Social.Messaging.Internal;
 using DotNetNuke.Services.Social.Notifications.Data;
 
 namespace DotNetNuke.Services.Social.Notifications
@@ -163,7 +164,7 @@ namespace DotNetNuke.Services.Social.Notifications
             var recipientCount = 0;
             if (users != null) recipientCount += users.Count;
             if (roles != null) recipientCount += roles.Count;
-            if (recipientCount > MessagingController.Instance.RecipientLimit(portalId))
+            if (recipientCount > InternalMessagingController.Instance.RecipientLimit(portalId))
             {
                 throw new RecipientLimitExceededException(Localization.Localization.GetString("MsgRecipientLimitExceeded", Localization.Localization.ExceptionsResourceFile));
             }
@@ -206,7 +207,7 @@ namespace DotNetNuke.Services.Social.Notifications
             }
 
             var recipients = from user in users
-                             where MessagingController.Instance.GetMessageRecipient(notification.NotificationID, user.UserID) == null
+                             where InternalMessagingController.Instance.GetMessageRecipient(notification.NotificationID, user.UserID) == null
                              select new MessageRecipient
                                         {
                                             MessageID = notification.NotificationID,
@@ -247,8 +248,8 @@ namespace DotNetNuke.Services.Social.Notifications
 
         public virtual void DeleteNotificationRecipient(int notificationId, int userId)
         {
-            MessagingController.Instance.DeleteMessageRecipient(notificationId, userId);
-            var recipients = MessagingController.Instance.GetMessageRecipients(notificationId);
+            InternalMessagingController.Instance.DeleteMessageRecipient(notificationId, userId);
+            var recipients = InternalMessagingController.Instance.GetMessageRecipients(notificationId);
             if (recipients.Count == 0)
             {
                 DeleteNotification(notificationId);
@@ -257,7 +258,7 @@ namespace DotNetNuke.Services.Social.Notifications
 
         public virtual void DeleteAllNotificationRecipients(int notificationId)
         {
-            foreach (var recipient in MessagingController.Instance.GetMessageRecipients(notificationId))
+            foreach (var recipient in InternalMessagingController.Instance.GetMessageRecipients(notificationId))
             {
                 DeleteNotificationRecipient(notificationId, recipient.UserID);
             }

@@ -58,6 +58,7 @@ namespace DotNetNuke.Web.UI.WebControls
         protected override WebControl CreateControlInternal(Control container)
         {
             _textBox = new DnnNumericTextBox {EmptyMessage = LocalizeString(ResourceKey + ".Hint"), ID = ID + "_TextBox", Width = TextBoxWidth };
+            _textBox.Style.Add("float", "none");
             _textBox.EmptyMessageStyle.CssClass += "dnnformHint";
             _textBox.Type = Type;
             _textBox.NumberFormat.DecimalDigits = DecimalDigits;

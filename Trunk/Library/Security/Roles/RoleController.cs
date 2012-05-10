@@ -90,6 +90,7 @@ namespace DotNetNuke.Security.Roles
 
                     //Remove the UserInfo from the Cache, as it has been modified
                     DataCache.ClearUserCache(portalId, user.Username);
+                    DataCache.RemoveCache(String.Format(DataCache.RolesCacheKey, portalId));
                 }
                 else
                 {
@@ -259,8 +260,9 @@ namespace DotNetNuke.Security.Roles
                 eventLogController.AddLog(userRole, PortalController.GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.USER_ROLE_UPDATED);
             }
 
-            //Remove the UserInfo from the Cache, as it has been modified
+            //Remove the UserInfo and Roles from the Cache, as they have been modified
             DataCache.ClearUserCache(portalId, user.Username);
+            DataCache.RemoveCache(String.Format(DataCache.RolesCacheKey, portalId));
         }
 
         /// -----------------------------------------------------------------------------

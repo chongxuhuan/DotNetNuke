@@ -21,13 +21,61 @@
 
 using System;
 using System.Collections.Generic;
-
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Social.Messaging.Internal.Views;
 
 namespace DotNetNuke.Services.Social.Messaging.Internal
 {
     public interface IInternalMessagingController
     {
+        #region Reply APIs
+
+        int ReplyMessage(int conversationId, string body, IList<int> fileIDs);
+
+        int ReplyMessage(int conversationId, string body, IList<int> fileIDs, UserInfo sender);
+
+        #endregion
+
+
+        #region CRUD APIs
+
+        Message GetMessage(int messageId);
+        MessageRecipient GetMessageRecipient(int messageId, int userId);
+        IList<MessageRecipient> GetMessageRecipients(int messageId);
+        void DeleteMessageRecipient(int messageId, int userId);
+
+
+        void MarkRead(int conversationId, int userId);
+        void MarkUnRead(int conversationId, int userId);
+        void MarkArchived(int conversationId, int userId);
+        void MarkUnArchived(int conversationId, int userId);
+
+        #endregion
+
+        #region Admin Settings APIs
+
+        ///<summary>How long a user needs to wait before user is allowed sending the next message</summary>
+        ///<returns>Time in seconds. Returns zero if user has never sent a message</returns>
+        /// <param name="sender">Sender's UserInfo</param>        
+        int WaitTimeForNextMessage(UserInfo sender);
+
+        ///<summary>Last message sent by the User</summary>
+        ///<returns>Message. Null when no message was sent</returns>
+        /// <param name="sender">Sender's UserInfo</param>        
+        Message GetLastSentMessage(UserInfo sender);
+
+        ///<summary>Maximum number of Recipients allowed</summary>        
+        ///<returns>Count. Message to a Role is considered a single Recipient. Each User in the To list is counted as one User each.</returns>
+        /// <param name="portalId">Portal Id</param>        
+        int RecipientLimit(int portalId);
+
+        ///<summary>Are attachments allowed</summary>        
+        ///<returns>True or False</returns>
+        /// <param name="portalId">Portal Id</param>        
+        bool AttachmentsAllowed(int portalId);
+
+        #endregion
+
         #region Upgrade APIs
 
         void ConvertLegacyMessages(int pageIndex, int pageSize);

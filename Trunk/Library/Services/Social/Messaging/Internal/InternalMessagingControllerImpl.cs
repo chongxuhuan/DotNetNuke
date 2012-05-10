@@ -22,11 +22,15 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Security;
 using DotNetNuke.Services.Social.Messaging.Data;
+using DotNetNuke.Services.Social.Messaging.Exceptions;
 using DotNetNuke.Services.Social.Messaging.Internal.Views;
 
 #endregion
@@ -76,6 +80,160 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             Requires.NotNull("dataService", dataService);
 
             _dataService = dataService;
+        }
+
+        #endregion
+
+        #region CRUD APIs
+
+        public virtual void DeleteMessageRecipient(int messageId, int userId)
+        {
+            _dataService.DeleteMessageRecipientByMessageAndUser(messageId, userId);
+        }
+
+        public virtual Message GetMessage(int messageId)
+        {
+            return CBO.FillObject<Message>(_dataService.GetMessage(messageId));
+        }
+
+        public virtual MessageRecipient GetMessageRecipient(int messageId, int userId)
+        {
+            return CBO.FillObject<MessageRecipient>(_dataService.GetMessageRecipientByMessageAndUser(messageId, userId));
+        }
+
+        public virtual IList<MessageRecipient> GetMessageRecipients(int messageId)
+        {
+            return CBO.FillCollection<MessageRecipient>(_dataService.GetMessageRecipientsByMessage(messageId));
+        }
+
+        public virtual void MarkArchived(int conversationId, int userId)
+        {
+            _dataService.UpdateMessageArchivedStatus(conversationId, userId, true);
+        }
+
+        public virtual void MarkRead(int conversationId, int userId)
+        {
+            _dataService.UpdateMessageReadStatus(conversationId, userId, true);
+        }
+
+        public virtual void MarkUnArchived(int conversationId, int userId)
+        {
+            _dataService.UpdateMessageArchivedStatus(conversationId, userId, false);
+        }
+
+        public virtual void MarkUnRead(int conversationId, int userId)
+        {
+            _dataService.UpdateMessageReadStatus(conversationId, userId, false);
+        }
+
+        #endregion
+
+        #region Reply APIs
+
+        public virtual int ReplyMessage(int conversationId, string body, IList<int> fileIDs)
+        {
+            return ReplyMessage(conversationId, body, fileIDs, UserController.GetCurrentUserInfo());
+        }
+
+        public virtual int ReplyMessage(int conversationId, string body, IList<int> fileIDs, UserInfo sender)
+        {
+            if (sender == null || sender.UserID <= 0)
+            {
+                throw new ArgumentException(Localization.Localization.GetString("MsgSenderRequiredError", Localization.Localization.ExceptionsResourceFile));
+            }
+
+            if (string.IsNullOrEmpty(body))
+            {
+                throw new ArgumentException(Localization.Localization.GetString("MsgBodyRequiredError", Localization.Localization.ExceptionsResourceFile));
+            }
+
+            //Cannot have attachments if it's not enabled
+            if (fileIDs != null && !InternalMessagingController.Instance.AttachmentsAllowed(sender.PortalID))
+            {
+                throw new AttachmentsNotAllowed(Localization.Localization.GetString("MsgAttachmentsNotAllowed", Localization.Localization.ExceptionsResourceFile));
+            }
+
+            //Profanity Filter
+            var profanityFilterSetting = GetPortalSetting("MessagingProfanityFilters", sender.PortalID, "NO");
+            if (profanityFilterSetting.Equals("YES", StringComparison.InvariantCultureIgnoreCase))
+            {
+                body = InputFilter(body);
+            }
+
+            //call ReplyMessage
+            var messageId = _dataService.CreateMessageReply(conversationId, sender.PortalID, body, sender.UserID, sender.DisplayName, GetCurrentUserInfo().UserID);
+            if (messageId == -1) //Parent message was not found or Recipient was not found in the message
+            {
+                throw new MessageOrRecipientNotFoundException(Localization.Localization.GetString("MsgMessageOrRecipientNotFound", Localization.Localization.ExceptionsResourceFile));
+            }
+
+            //associate attachments
+            if (fileIDs != null)
+            {
+                foreach (var attachment in fileIDs.Select(fileId => new MessageAttachment { MessageAttachmentID = Null.NullInteger, FileID = fileId, MessageID = messageId }))
+                {
+                    _dataService.SaveMessageAttachment(attachment, UserController.GetCurrentUserInfo().UserID);
+                }
+            }
+
+            // Mark reply as read and dispatched by the sender
+            var recipient = GetMessageRecipient(messageId, sender.UserID);
+            
+            MarkMessageAsDispatched(messageId, recipient.RecipientID);
+            MarkRead(conversationId, sender.UserID);
+
+            return messageId;
+        }
+
+
+        #endregion
+
+        #region Admin Settings APIs
+
+        /// <summary>How long a user needs to wait before sending the next message.</summary>
+        /// <returns>Time in seconds. Returns zero if user is Host, Admin or has never sent a message.</returns>
+        /// <param name="sender">Sender's UserInfo</param>
+        /// <exception cref="System.ArgumentNullException"></exception>
+        public virtual int WaitTimeForNextMessage(UserInfo sender)
+        {
+            Requires.NotNull("sender", sender);
+
+            var waitTime = 0;
+            // MessagingThrottlingInterval contains the number of MINUTES to wait before sending the next message
+            var interval = GetPortalSettingAsInteger("MessagingThrottlingInterval", sender.PortalID, Null.NullInteger) * 60;
+            if (interval > 0 && !IsAdminOrHost(sender))
+            {
+                var lastSentMessage = GetLastSentMessage(sender);
+                if (lastSentMessage != null)
+                {
+                    waitTime = (int)(interval - GetDateTimeNow().Subtract(lastSentMessage.CreatedOnDate).TotalSeconds);
+                }
+            }
+            return waitTime < 0 ? 0 : waitTime;
+        }
+
+        ///<summary>Last message sent by the User</summary>
+        ///<returns>Message. Null when no message was sent</returns>
+        /// <param name="sender">Sender's UserInfo</param>        
+        public virtual Message GetLastSentMessage(UserInfo sender)
+        {
+            return CBO.FillObject<Message>(_dataService.GetLastSentMessage(sender.UserID, sender.PortalID));
+        }
+
+        ///<summary>Are attachments allowed</summary>        
+        ///<returns>True or False</returns>
+        /// <param name="portalId">Portal Id</param>               
+        public virtual bool AttachmentsAllowed(int portalId)
+        {
+            return GetPortalSetting("MessagingAllowAttachments", portalId, "YES") == "YES";
+        }
+
+        ///<summary>Maximum number of Recipients allowed</summary>        
+        ///<returns>Count. Message to a Role is considered a single Recipient. Each User in the To list is counted as one User each.</returns>
+        /// <param name="portalId">Portal Id</param>        
+        public virtual int RecipientLimit(int portalId)
+        {
+            return GetPortalSettingAsInteger("MessagingRecipientLimit", portalId, 5);
         }
 
         #endregion
@@ -204,9 +362,35 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
 
         #region Internal Methods
 
+        internal virtual DateTime GetDateTimeNow()
+        {
+            return DateTime.UtcNow;
+        }
+
         internal virtual UserInfo GetCurrentUserInfo()
         {
             return UserController.GetCurrentUserInfo();
+        }
+
+        internal virtual int GetPortalSettingAsInteger(string key, int portalId, int defaultValue)
+        {
+            return PortalController.GetPortalSettingAsInteger(key, portalId, defaultValue);
+        }
+
+        internal virtual string GetPortalSetting(string settingName, int portalId, string defaultValue)
+        {
+            return PortalController.GetPortalSetting(settingName, portalId, defaultValue);
+        }
+
+        internal virtual bool IsAdminOrHost(UserInfo userInfo)
+        {
+            return userInfo.IsSuperUser || userInfo.IsInRole(TestablePortalSettings.Instance.AdministratorRoleName);
+        }
+
+        internal virtual string InputFilter(string input)
+        {
+            var ps = new PortalSecurity();
+            return ps.InputFilter(input, PortalSecurity.FilterFlag.NoProfanity);
         }
 
         #endregion
@@ -247,11 +431,10 @@ namespace DotNetNuke.Services.Social.Messaging.Internal
             return CBO.FillCollection<MessageRecipient>(_dataService.GetNextMessagesForDispatch(schedulerInstance, batchSize));
         }
 
-        public void MarkMessageAsDispatched(int messageId, int recipientId)
+        public virtual void MarkMessageAsDispatched(int messageId, int recipientId)
         {
             _dataService.MarkMessageAsDispatched(messageId, recipientId);
         }
-
 
         #endregion
     }
