@@ -33,15 +33,12 @@ namespace DotNetNuke.Services.Journal.Internal
 
         void LikeJournalItem(int journalId, int userID, string displayName);
 
-        //todo should not return CommentInfo
-        CommentInfo SaveComment(CommentInfo ci);
+        void SaveComment(CommentInfo ci);
 
         CommentInfo GetComment(int commentId);
 
-        //todo doensn't commentId imply journalId?
         void DeleteComment(int journalId, int commentId);
 
-        //todo doensn't commentId imply journalId?
         void LikeComment(int journalId, int commentId, int userID, string displayName);
 
         void DeleteFilters(int portalId, int moduleId);

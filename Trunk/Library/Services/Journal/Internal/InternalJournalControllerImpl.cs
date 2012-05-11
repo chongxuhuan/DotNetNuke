@@ -65,7 +65,7 @@ namespace DotNetNuke.Services.Journal.Internal
             _dataService.Journal_Like(journalId, userId, displayName);
         }
 
-        public CommentInfo SaveComment(CommentInfo comment)
+        public void SaveComment(CommentInfo comment)
         {
             var portalSecurity = new PortalSecurity();
             if (!String.IsNullOrEmpty(comment.Comment))
@@ -86,7 +86,9 @@ namespace DotNetNuke.Services.Journal.Internal
             }
 
             comment.CommentId = _dataService.Journal_Comment_Save(comment.JournalId, comment.CommentId, comment.UserId, comment.Comment, xml);
-            return GetComment(comment.CommentId);
+            var newComment = GetComment(comment.CommentId);
+            comment.DateCreated = newComment.DateCreated;
+            comment.DateUpdated = newComment.DateUpdated;
         }
 
         public CommentInfo GetComment(int commentId)

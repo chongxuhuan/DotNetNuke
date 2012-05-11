@@ -101,7 +101,7 @@ namespace DotNetNuke.Services.UserProfile
             context.Response.Cache.SetCacheability(HttpCacheability.Public);
             context.Response.Cache.SetExpires(DateTime.Now.AddMinutes(1));
             context.Response.Cache.SetMaxAge(new TimeSpan(0, 1, 0));
-            context.Response.AddHeader("Last-Modified", DateTime.Now.ToLongDateString());
+            context.Response.AddHeader("Last-Modified", DateTime.Now.ToString("r"));
             context.Response.End();
 
         }

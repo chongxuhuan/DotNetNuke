@@ -31,6 +31,7 @@ using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Messaging.Data;
 using DotNetNuke.Services.Social.Messaging;
 using DotNetNuke.Services.Social.Messaging.Internal;
@@ -136,25 +137,7 @@ namespace DotNetNuke.Services.Messaging
             return ConvertCoreMessageToServicesMessage(PortalID, UserID, coreMessageRecipient, coreMessage);
         }
 
-        private static Message ConvertCoreMessageToServicesMessage(int PortalID, int UserID, MessageRecipient coreMessageRecipeint, Social.Messaging.Message coreMessage)
-        {
-            var message = new Message { AllowReply = true, Body = coreMessage.Body, FromUserID = coreMessage.SenderUserID, MessageDate = coreMessage.CreatedOnDate, PortalID = PortalID };
-            //TODO: how to covert ID to GUID
-            //message.Conversation = coreMessage.ConversationId;
 
-            switch (coreMessageRecipeint.Read)
-            {
-                case true:
-                    message.Status = MessageStatusType.Read;
-                    break;
-                case false:
-                    message.Status = MessageStatusType.Unread;
-                    break;
-            }
-
-            message.ToUserID = UserID;
-            return message;
-        }
 
         [Obsolete("Deprecated in 6.2.0")]
         public List<Message> GetUserInbox(int PortalID, int UserID, int PageNumber, int PageSize)
@@ -201,30 +184,39 @@ namespace DotNetNuke.Services.Messaging
 
             List<RoleInfo> emptyRoles = null;
             List<int> files = null;
-            //var coreMessage = DotNetNuke.Services.Social.Messaging.MessagingController.Instance.createmessage(message.Subject, message.Body, emptyRoles, users, files);
+            
+            var coremessage = new Social.Messaging.Message {Body = message.Body, Subject = message.Subject};
 
-            //return coreMessage.MessageID;
+
+            DotNetNuke.Services.Social.Messaging.MessagingController.Instance.SendMessage(coremessage, emptyRoles, users, files);
+            var objEventLog = new EventLogController();
+
+            objEventLog.AddLog("SaveMessage",
+                               "Binary compatibility broken, returns a fixed id - please use Social.Messaging.MessagingController ",
+                               PortalController.GetCurrentPortalSettings(),
+                               UserController.GetCurrentUserInfo().UserID,
+                               EventLogController.EventLogType.ADMIN_ALERT);
+            
             return -1;
 
         }
         [Obsolete("Deprecated in 6.2.0 - use InternalMessagingController.Instance.GetMessage(messageId)")]
         public void UpdateMessage(Message message)
         {
-            //TODO: we dont have an update equivalent - is used for status changes -including deletes
+            var user = UserController.GetCurrentUserInfo().UserID;
             switch (message.Status)
             {
                 case MessageStatusType.Unread:
-                    //InternalMessagingController.Instance.MarkUnRead(message.Conversation,message.ToUserID);
+                    InternalMessagingController.Instance.MarkUnRead(message.MessageID, user);
                     break;
                 case MessageStatusType.Draft:
                     //no equivalent
                     break;
                 case MessageStatusType.Deleted:
-                    //same as archive?
-                    //InternalMessagingController.Instance.MarkArchived(message.Conversation, message.ToUserID);
+                    InternalMessagingController.Instance.MarkArchived(message.MessageID, user);
                     break;
                 case MessageStatusType.Read:
-                    //InternalMessagingController.Instance.MarkRead(message.Conversation, message.ToUserID);
+                    InternalMessagingController.Instance.MarkRead(message.MessageID, user);
                     break;
             }
 
@@ -237,6 +229,26 @@ namespace DotNetNuke.Services.Messaging
             //does not need to run as scheduled task name was updated
         }
 
+        #endregion
+
+        #region "functions to support obsolence"
+        private static Message ConvertCoreMessageToServicesMessage(int PortalID, int UserID, MessageRecipient coreMessageRecipeint, Social.Messaging.Message coreMessage)
+        {
+            var message = new Message { AllowReply = true, Body = coreMessage.Body, FromUserID = coreMessage.SenderUserID, MessageDate = coreMessage.CreatedOnDate, PortalID = PortalID };
+
+            switch (coreMessageRecipeint.Read)
+            {
+                case true:
+                    message.Status = MessageStatusType.Read;
+                    break;
+                case false:
+                    message.Status = MessageStatusType.Unread;
+                    break;
+            }
+
+            message.ToUserID = UserID;
+            return message;
+        }
         #endregion
 
         private readonly IMessagingDataService _DataService;

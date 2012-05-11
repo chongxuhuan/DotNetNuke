@@ -5125,7 +5125,7 @@ AS
 
 		SELECT @propertyFilter = COALESCE(@propertyFilter + ' OR ' , ' ') 
 									+ ' (PropertyName=''' + N.RowValue 
-									+ ''' AND (PropertyValue LIKE ''' + V.RowValue +'%'') OR (PropertyValue LIKE ''% ' + V.RowValue +'%'')'
+									+ ''' AND ((PropertyValue LIKE ''' + V.RowValue +'%'') OR (PropertyValue LIKE ''% ' + V.RowValue +'%'')))'
 		FROM CTE_PropertyNames AS N INNER JOIN CTE_PropertyValues AS V ON N.RowNumber = V.RowNumber
 		
 		-- Filters on User Property		
@@ -5433,7 +5433,7 @@ AS
 					(
 						MAX(PropertyValue) for PropertyName in (' + @pivotSql + ')
 					) as pivotTable
-				'
+					' + @sortSql
 	EXEC(@sql)
 GO
 
@@ -6345,7 +6345,8 @@ GO
 
 /* Update version number in DesktopModules */
 /*******************************************/
-DECLARE @version nvarchar(8) = '06.02.00'
+DECLARE @version nvarchar(8)
+SET @version = '06.02.00'
 UPDATE {databaseOwner}{objectQualifier}DesktopModules SET Version = @version WHERE ModuleName='SiteWizard'
 UPDATE {databaseOwner}{objectQualifier}DesktopModules SET Version = @version WHERE ModuleName='Lists'
 UPDATE {databaseOwner}{objectQualifier}DesktopModules SET Version = @version WHERE ModuleName='Authentication'

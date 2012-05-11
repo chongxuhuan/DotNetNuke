@@ -25,12 +25,12 @@ namespace DotNetNuke.Services.Journal
 {
     public interface IJournalController
     {
-        JournalTypeInfo GetJournalType(string groupcreate);
+        JournalTypeInfo GetJournalType(string journalType);
+        JournalTypeInfo GetJournalTypeById(int journalTypeId);
         JournalItem GetJournalItemByKey(int portalID, string objectKey);
         void DeleteJournalItemByKey(int portalID, string objectKey);
         void DeleteJournalItemByGroupId(int portalId, int groupId);
-        //todo Save should not return a journal item
-        JournalItem SaveJournalItem(JournalItem journalItem, int i);
+        void SaveJournalItem(JournalItem journalItem, int tabId);
         JournalItem GetJournalItem(int portalId, int userID, int journalId);
         void DeleteJournalItem(int portalId, int userID, int journalId);
         IEnumerable<JournalTypeInfo> GetJournalTypes(int portalId);

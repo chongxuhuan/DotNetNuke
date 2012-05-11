@@ -1271,8 +1271,13 @@ Sincerely,
   <data name="//ActivityFeed//MyProfile.String" xml:space="preserve">
     <value>My Profile</value>
   </data>
-  <data name="EMAIL_NOREPLY_DISCLAIMER.Text" xml:space="preserve">
-    <value>
+  <data name="EMAIL_SUBJECT_FORMAT.Text" xml:space="preserve">
+    <value>New message from {0}</value>
+  </data>
+  <data name="EMAIL_BODY_FORMAT.Text" xml:space="preserve">
+    <value>Subject: {0}
+    
+{1}
 
 Please do not reply to this email.</value>
   </data>

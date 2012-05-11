@@ -29,7 +29,6 @@ using System.Web;
 using System.Xml;
 
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.ComponentModel;
 using DotNetNuke.Entities.Content;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security;
@@ -124,21 +123,6 @@ namespace DotNetNuke.Services.Journal
             return CBO.FillObject<JournalItem>(_dataService.Journal_Get(portalId, currentUserId, journalId));
         }
 
-//        public List<object> GetJournalItemLikeList(int portalId, int journalId)
-//        {
-//            var jds = new JournalDataService();
-//            var list = new List<object>();
-//            using (IDataReader dr = jds.Journal_LikeList(portalId, journalId))
-//            {
-//                while (dr.Read())
-//                {
-//                    list.Add(new {userId = dr["UserId"].ToString(), name = dr["DisplayName"].ToString()});
-//                }
-//                dr.Close();
-//            }
-//            return list;
-//        }
-
         public JournalItem GetJournalItemByKey(int portalId, string objectKey)
         {
             if (string.IsNullOrEmpty(objectKey))
@@ -148,16 +132,16 @@ namespace DotNetNuke.Services.Journal
             return (JournalItem) CBO.FillObject(_dataService.Journal_GetByKey(portalId, objectKey), typeof (JournalItem));
         }
 
-        public JournalItem SaveJournalItem(JournalItem journalItem, int tabId)
+        public void SaveJournalItem(JournalItem journalItem, int tabId)
         {
             if (journalItem.UserId < 1)
             {
-                return null;
+                throw new ArgumentException("journalItem.UserId must be for a real user");
             }
             UserInfo currentUser = UserController.GetUserById(journalItem.PortalId, journalItem.UserId);
             if (currentUser == null)
             {
-                return null;
+                throw new Exception("Unable to locate the current user");
             }
             
             string xml = null;
@@ -273,7 +257,10 @@ namespace DotNetNuke.Services.Journal
                                                      journalItem.AccessKey,
                                                      journalItem.SecuritySet);
 
-            journalItem = GetJournalItem(journalItem.PortalId, journalItem.UserId, journalItem.JournalId);
+            var updatedJournalItem = GetJournalItem(journalItem.PortalId, journalItem.UserId, journalItem.JournalId);
+            journalItem.DateCreated = updatedJournalItem.DateCreated;
+            journalItem.DateUpdated = updatedJournalItem.DateUpdated;
+
             var cnt = new Content();
 
             if (journalItem.ContentItemId > 0)
@@ -284,6 +271,7 @@ namespace DotNetNuke.Services.Journal
             {
                 ContentItem ci = cnt.CreateContentItem(journalItem, tabId);
                 _dataService.Journal_UpdateContentItemId(journalItem.JournalId, ci.ContentItemId);
+                journalItem.ContentItemId = ci.ContentItemId;
             }
             if (journalItem.SocialGroupId > 0)
             {
@@ -296,90 +284,26 @@ namespace DotNetNuke.Services.Journal
                     Exceptions.Exceptions.LogException(exc);
                 }
             }
-            return journalItem;
         }
 
         #endregion
 
         #region Journal Types
 
-//        public void DeleteJournalType(int journalTypeId, int portalId)
-//        {
-//            _dataService.Journal_Types_Delete(journalTypeId, portalId);
-//        }
-
         public JournalTypeInfo GetJournalType(string journalType)
         {
             return CBO.FillObject<JournalTypeInfo>(_dataService.Journal_Types_Get(journalType));
         }
 
-//        public JournalTypeInfo GetJournalTypeById(int journalTypeId)
-//        {
-//            return CBO.FillObject<JournalTypeInfo>(_dataService.Journal_Types_GetById(journalTypeId));
-//        }
+        public JournalTypeInfo GetJournalTypeById(int journalTypeId)
+        {
+            return CBO.FillObject<JournalTypeInfo>(_dataService.Journal_Types_GetById(journalTypeId));
+        }
 
         public IEnumerable<JournalTypeInfo> GetJournalTypes(int portalId)
         {
             return CBO.FillCollection<JournalTypeInfo>(_dataService.Journal_Types_List(portalId));
         }
-
-//        public void SaveJournalType(JournalTypeInfo journalType)
-//        {
-//            journalType.JournalTypeId = _dataService.Journal_Types_Save(journalType.JournalTypeId,
-//                                                                        journalType.JournalType,
-//                                                                        journalType.icon,
-//                                                                        journalType.PortalId,
-//                                                                        journalType.IsEnabled,
-//                                                                        journalType.AppliesToProfile,
-//                                                                        journalType.AppliesToGroup,
-//                                                                        journalType.AppliesToStream,
-//                                                                        journalType.Options,
-//                                                                        journalType.SupportsNotify);
-//            GetJournalTypeById(journalType.JournalTypeId);
-//        }
-
-        #endregion
-
-        #region Journal Type Filters
-
-//        public Dictionary<int, string> GetFilters(int portalId, int moduleId)
-//        {
-//            var jds = new JournalDataService();
-//            var filters = new Dictionary<int, string>();
-//            using (IDataReader dr = jds.Journal_TypeFilters_List(portalId, moduleId))
-//            {
-//                while (dr.Read())
-//                {
-//                    filters.Add(Convert.ToInt32(dr["JournalTypeId"].ToString()), dr["JournalType"].ToString());
-//                }
-//                dr.Close();
-//            }
-//            return filters;
-//        }
-
-        #endregion
-
-        #region Comments
-
-//        public List<object> GetCommentLikeList(int portalId, int journalId, int commentId)
-//        {
-//            var jds = new JournalDataService();
-//            var list = new List<object>();
-//            using (IDataReader dr = jds.Journal_Comment_LikeList(portalId, journalId, commentId))
-//            {
-//                while (dr.Read())
-//                {
-//                    list.Add(new {userId = dr["UserId"].ToString(), name = dr["DisplayName"].ToString()});
-//                }
-//                dr.Close();
-//            }
-//            return list;
-//        }
-
-//        public List<CommentInfo> GetComments(int journalId)
-//        {
-//            return CBO.FillCollection<CommentInfo>(_dataService.Journal_Comment_List(journalId));
-//        }
 
         #endregion
     }
