@@ -194,21 +194,21 @@ namespace DotNetNuke.Modules.Admin.MobilePreview
 		}
 
 		//append current cookies to the http request
-		private void SetCookies(HttpWebRequest request)
-		{
-			request.CookieContainer = new CookieContainer();
-		    var sessionCookie = GetSessionCookieName();
-			foreach (var key in Request.Cookies.AllKeys)
-			{
-			    if (key == sessionCookie)
-			    {
-			        continue;
-			    }
+        private void SetCookies(HttpWebRequest proxyRequest)
+        {
+            proxyRequest.CookieContainer = new CookieContainer();
+            var sessionCookie = GetSessionCookieName();
+            foreach (var key in Request.Cookies.AllKeys)
+            {
+                if (key == sessionCookie)
+                {
+                    continue;
+                }
 
-                var cookie = new Cookie(HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(Request.Cookies[key].Value), "/", request.RequestUri.Host);
-				request.CookieContainer.Add(cookie);
-			}
-		}
+                var cookie = new Cookie(key, Request.Cookies[key].Value, "/", proxyRequest.RequestUri.Host);
+                proxyRequest.CookieContainer.Add(cookie);
+            }
+        }
 
 		private string MakeAbsoluteUrl(string content, Uri requestUri)
 		{

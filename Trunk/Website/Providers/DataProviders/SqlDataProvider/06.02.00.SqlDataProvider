@@ -3112,20 +3112,24 @@ CREATE TABLE {databaseOwner}[{objectQualifier}Journal](
 GO
 
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Security](
+	[JournalSecurityId] [int] IDENTITY(1,1) NOT NULL,
 	[JournalId] [int] NOT NULL,
 	[SecurityKey] [nvarchar](50) NOT NULL,
-	CONSTRAINT [IX_{objectQualifier}Journal_Security] UNIQUE NONCLUSTERED (	[JournalId] DESC,	[SecurityKey] ASC)
+	CONSTRAINT [PK_{objectQualifier}Journal_Security] PRIMARY KEY CLUSTERED ( [JournalSecurityId] ASC),
+	CONSTRAINT [IX_{objectQualifier}Journal_Security] UNIQUE NONCLUSTERED ( [JournalId] DESC, [SecurityKey] ASC )
 )
 
 GO
 
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Access](
+	[JournalAccessId] [int] IDENTITY(1,1) NOT NULL,
 	[JournalTypeId] [int] NOT NULL,
 	[PortalId] [int] NOT NULL,
 	[Name] [nvarchar](50) NOT NULL,
 	[AccessKey] [uniqueidentifier] NOT NULL,
 	[IsEnabled] [bit] NOT NULL,
-	[DateCreated] [datetime] NOT NULL
+	[DateCreated] [datetime] NOT NULL,
+	CONSTRAINT [PK_{objectQualifier}Journal_Access] PRIMARY KEY CLUSTERED (	[JournalAccessId] ASC )
 )
 
 GO
@@ -3158,8 +3162,10 @@ CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Types](
 GO
 
 CREATE TABLE {databaseOwner}[{objectQualifier}Journal_Data](
+	[JournalDataId] [int] IDENTITY(1,1) NOT NULL,
 	[JournalId] [int] NOT NULL,
-	[JournalXML] [xml] NOT NULL
+	[JournalXML] [xml] NOT NULL,
+	CONSTRAINT [PK_{objectQualifier}Journal_Data] PRIMARY KEY CLUSTERED ([JournalDataId] ASC)
 )
 
 GO
@@ -3754,8 +3760,9 @@ INSERT INTO {databaseOwner}[{objectQualifier}Journal]
 	(@JournalTypeId, @UserId, GETUTCDATE(), GETUTCDATE(), @PortalId, @ProfileId, @GroupId, @Title, @Summary, @ObjectKey, @AccessKey, @ItemData)
 SET @JournalId = SCOPE_IDENTITY()
 BEGIN
-INSERT INTO {databaseOwner}[{objectQualifier}Journal_Security] 
-			SELECT @JournalId, string from {databaseOwner}[{objectQualifier}Journal_SplitText](@SecuritySet,',')
+INSERT INTO {databaseOwner}[{objectQualifier}Journal_Security]
+	(JournalId, SecurityKey) 
+	SELECT @JournalId, string from {databaseOwner}[{objectQualifier}Journal_SplitText](@SecuritySet,',')
 END
 IF @JournalXML IS NOT NULL
 BEGIN
@@ -3971,9 +3978,7 @@ GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_Types_List]
 @PortalId int
 AS
-SELECT JournalTypeId, JournalType, IsNull(icon,'') as Icon, 
-	AppliesToProfile, AppliesToGroup, AppliesToStream,
-	Options,IsEnabled,SupportsNotify, PortalId
+SELECT * 
 FROM {databaseOwner}[{objectQualifier}Journal_Types]
 WHERE (PortalId = -1 OR PortalId = @PortalId)
 

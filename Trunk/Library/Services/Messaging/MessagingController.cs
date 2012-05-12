@@ -165,7 +165,7 @@ namespace DotNetNuke.Services.Messaging
         }
 
         [Obsolete("Deprecated in 6.2.0 - use InternalMessagingController.Instance.GetMessage(messageId)")]
-        public long SaveMessage(Message message)
+        public void SaveMessage(Message message)
         {
             if ((PortalSettings.Current != null))
             {
@@ -188,18 +188,9 @@ namespace DotNetNuke.Services.Messaging
             var coremessage = new Social.Messaging.Message {Body = message.Body, Subject = message.Subject};
 
 
-            DotNetNuke.Services.Social.Messaging.MessagingController.Instance.SendMessage(coremessage, emptyRoles, users, files);
-            var objEventLog = new EventLogController();
-
-            objEventLog.AddLog("SaveMessage",
-                               "Binary compatibility broken, returns a fixed id - please use Social.Messaging.MessagingController ",
-                               PortalController.GetCurrentPortalSettings(),
-                               UserController.GetCurrentUserInfo().UserID,
-                               EventLogController.EventLogType.ADMIN_ALERT);
-            
-            return -1;
-
+            Social.Messaging.MessagingController.Instance.SendMessage(coremessage, emptyRoles, users, files);
         }
+
         [Obsolete("Deprecated in 6.2.0 - use InternalMessagingController.Instance.GetMessage(messageId)")]
         public void UpdateMessage(Message message)
         {
