@@ -1,6 +1,8 @@
 @charset "utf-8";
 /* CSS Document */
 
+.ContentPane *{zoom:1;} /* Trigger quirks mode for IE */
+
 .dnnLogin{width:100%;}
 
 .LoginPanel{

@@ -1,3 +1,5 @@
+.ContentPane *{zoom:1;} /* Trigger quirks mode for IE */
+
 .dnnSecurityRoles, .dnnManageUsers, .dnnProfileProperties, .dnnEditProfileDef, .dnnPassword, .dnnProfile, .dnnRoleDetails, .dnnManageSecurityRoles, .dnnUserSettings
 {
     margin: 1em auto 2.5em;
