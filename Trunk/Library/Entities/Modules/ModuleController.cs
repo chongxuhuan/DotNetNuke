@@ -558,6 +558,8 @@ namespace DotNetNuke.Entities.Modules
                     var portalController = new PortalController();
                     PortalInfo portal = portalController.GetPortal(PortalId);
 
+                    content = HttpContext.Current.Server.HtmlDecode(content);
+
                     //Determine if the Module is copmpletely installed 
                     //(ie are we running in the same request that installed the module).
                     if (module.DesktopModule.SupportedFeatures == Null.NullInteger)
@@ -569,7 +571,6 @@ namespace DotNetNuke.Entities.Modules
                     }
                     else
                     {
-                        content = HttpContext.Current.Server.HtmlDecode(content);
                         if (module.DesktopModule.IsPortable)
                         {
                             try

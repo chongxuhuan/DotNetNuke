@@ -277,7 +277,7 @@
     <value>Test done.  Waited {0} milliseconds.</value>
   </data>
   <data name="UserEmailExists.Text" xml:space="preserve">
-    <value>A user already exists for the email address specified.  Please login using the registered account of that email address.</value>
+    <value>A user is already using this email address. Please register under a different email address or obtain a password reminder using your existing email address.</value>
   </data>
   <data name="InvalidAnswer.Text" xml:space="preserve">
     <value>The answer specified is invalid.  Please specify a valid answer to the question.</value>

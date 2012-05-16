@@ -75,11 +75,17 @@ namespace DotNetNuke.Services.Journal {
             var objContent = Util.GetContentController().GetContentItem(objJournalItem.ContentItemId);
 
             if (objContent == null) return;
-            objContent.Content = GetContentBody(objJournalItem);
-            objContent.TabID = tabId;
-            objContent.ContentKey = "journalid=" + objJournalItem.JournalId; // we reset this just in case the page changed.
+            //Only update content the contentitem if it was created by the journal
+            if ((objContent.ContentTypeId == GetContentTypeID("DNNCorp_JournalProfile") && objJournalItem.ProfileId > 0)
+                    || (objContent.ContentTypeId == GetContentTypeID("DNNCorp_JournalGroup") && objJournalItem.SocialGroupId > 0))
+            {
+                objContent.Content = GetContentBody(objJournalItem);
+                objContent.TabID = tabId;
+                objContent.ContentKey = "journalid=" + objJournalItem.JournalId; // we reset this just in case the page changed.
 
-            Util.GetContentController().UpdateContentItem(objContent);
+                Util.GetContentController().UpdateContentItem(objContent);
+            }
+            
 
             // Update Terms
             //var cntTerm = new Terms();

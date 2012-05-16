@@ -98,6 +98,11 @@
             <moduleName>DNN_HTML</moduleName>
             <foldername>HTML</foldername>
             <businessControllerClass>DotNetNuke.Modules.Html.HtmlTextController, DotNetNuke.Modules.Html</businessControllerClass>
+            <supportedFeatures>
+              <supportedFeature type="Portable" />
+              <supportedFeature type="Searchable" />
+              <supportedFeature type="Upgradable" />
+            </supportedFeatures>
             <moduleDefinitions>
               <moduleDefinition>
                 <friendlyName>Text/HTML</friendlyName>

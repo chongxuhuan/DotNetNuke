@@ -35,6 +35,7 @@ using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
+using DotNetNuke.Web.UI.WebControls.Extensions;
 
 using Globals = DotNetNuke.Common.Globals;
 
@@ -285,6 +286,8 @@ namespace DotNetNuke.Modules.Admin.Security
                         cmdManage.Visible = false;
                         lblRoleName.Visible = false;
                         txtRoleName.Visible = true;
+
+                        statusList.SelectedIndex = 1;
 
 						//select default role group id
 						if(Request.QueryString["RoleGroupID"] != null)

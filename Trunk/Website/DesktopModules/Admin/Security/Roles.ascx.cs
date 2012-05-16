@@ -396,7 +396,7 @@ namespace DesktopModules.Admin.Security
                         {
                             var rolesLink = (HyperLink) imgColumnControl;
                             var role = (RoleInfo) item.DataItem;
-                            rolesLink.Visible = role.RoleName != PortalSettings.AdministratorRoleName || (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName));
+                            rolesLink.Visible = (role.Status == RoleStatus.Approved) && (role.RoleName != PortalSettings.AdministratorRoleName || (PortalSecurity.IsInRole(PortalSettings.AdministratorRoleName)));
                         }
                     }
                     break;

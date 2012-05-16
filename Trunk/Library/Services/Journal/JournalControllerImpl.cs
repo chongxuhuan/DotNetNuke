@@ -266,6 +266,7 @@ namespace DotNetNuke.Services.Journal
             if (journalItem.ContentItemId > 0)
             {
                 cnt.UpdateContentItem(journalItem, tabId);
+                _dataService.Journal_UpdateContentItemId(journalItem.JournalId, journalItem.ContentItemId);
             }
             else
             {
