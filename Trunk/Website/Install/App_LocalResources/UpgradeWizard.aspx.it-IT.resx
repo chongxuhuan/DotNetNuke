@@ -1,35 +1,152 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <data name="BestPractices.Text">
+	<!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="metadata">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" />
+							</xsd:sequence>
+							<xsd:attribute name="name" use="required" type="xsd:string" />
+							<xsd:attribute name="type" type="xsd:string" />
+							<xsd:attribute name="mimetype" type="xsd:string" />
+							<xsd:attribute ref="xml:space" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="assembly">
+						<xsd:complexType>
+							<xsd:attribute name="alias" type="xsd:string" />
+							<xsd:attribute name="name" type="xsd:string" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+							<xsd:attribute ref="xml:space" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="BestPractices.Text" xml:space="preserve">
     <value>Si sta per aggiornare il tuo sito Web a una versione più recente dell'applicazione DotNetNuke. Applicare gli aggiornamenti su base omogenea è il modo migliore per garantire che si stanno proteggendo l'integrità del vostro investimento e la sicurezza degli utenti e risorse. Prima di procedere con il processo di aggiornamento automatizzato assicurarsi che:&lt;ul&gt;
 &lt;li&gt;Hai fatto piani per primo tentativo questo processo in un ambiente di gestione temporanea&lt;li&gt;sono state documentate tua corrente caratteristiche di installazione, ad esempio facendo ricerche sulla compatibilità degli eventuali moduli di terze parti che si possono utilizzare&lt;li&gt;avete creato il backup del vostro ambiente necessarie affinché sarà in grado di ripristinare il tuo sito Web in caso di un errore imprevisto di aggiornamento.&lt;/li&gt;&lt;/li&gt;&lt;/li&gt;&lt;/ul&gt;</value>
   </data>
-  <data name="ChooseLanguage.Text">
+	<data name="ChooseLanguage.Text" xml:space="preserve">
     <value>Scegli la lingua:</value>
   </data>
-  <data name="CurrentVersion.Text">
+	<data name="CurrentVersion.Text" xml:space="preserve">
     <value>Versione corrente - {0}</value>
   </data>
-  <data name="IntroDetail.Text">
+	<data name="IntroDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;Benvenuti alla pagina di aggiornamento DotNetNuke.&lt;/p&gt;
 
 &lt;p&gt;Il primo passo è quello di scegliere la lingua che si desidera utilizzare per l'aggiornamento.&lt;/p&gt;
 
 </value>
   </data>
-  <data name="Next.Text">
+	<data name="Next.Text" xml:space="preserve">
     <value>Aggiorna ora</value>
   </data>
-  <data name="Password.Text">
+	<data name="Password.Text" xml:space="preserve">
     <value>Password:</value>
   </data>
-  <data name="Title.Text">
+	<data name="Title.Text" xml:space="preserve">
     <value>Aggiornamento DotNetNuke</value>
   </data>
-  <data name="Username.Text">
+	<data name="Username.Text" xml:space="preserve">
     <value>Host (SuperUtente) Username:</value>
   </data>
-  <data name="Version.Text">
+	<data name="Version.Text" xml:space="preserve">
     <value>Aggiornamento DotNetNuke - versione {0}</value>
   </data>
 </root>

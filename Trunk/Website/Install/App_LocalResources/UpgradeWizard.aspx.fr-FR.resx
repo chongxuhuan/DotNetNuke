@@ -1,30 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <data name="BestPractices.Text">
+  <!--Last change: CET: 14/02/2012 17:03:26   (UTC: 2012-02-14 16:03:26Z) 
+-->
+  <data name="BestPractices.Text" xml:space="preserve">
     <value>Vous vous apprêtez  à mettre à jour votre site dans une version plus récente de DotNetNuke. Avant de procéder à la mise à jour automatique vérifiez que :&lt;ul&gt;&lt;li&gt;vous allez effectuer cette mise à jour dans un environnement de test&lt;/li&gt;&lt;li&gt;vous avez documenté toutes les informations spécifiques  à votre installation et vérifié la compatibilité de cette mise à jour avec les modules tiers.&lt;/li&gt;&lt;li&gt;vous avez créé les sauvegardes nécessaires afin de pouvoir procéder à une restauration en cas d’erreur lors du processus de mise à jour&lt;/li&gt;&lt;/ul&gt;</value>
   </data>
-  <data name="ChooseLanguage.Text">
+  <data name="ChooseLanguage.Text" xml:space="preserve">
     <value>Langue :</value>
   </data>
-  <data name="CurrentVersion.Text">
+  <data name="CurrentVersion.Text" xml:space="preserve">
     <value>Verion actuelle - {0}</value>
   </data>
-  <data name="IntroDetail.Text">
+  <data name="IntroDetail.Text" xml:space="preserve">
     <value>&lt;p&gt;Bienvenue dans l’assistant de mise à jour DotNetNuke&lt;/p&gt;&lt;p&gt;La première chose à faire est de sélectionner la langue à utiliser pour le processus de mise à jour/p&gt;</value>
   </data>
-  <data name="Next.Text">
+  <data name="Next.Text" xml:space="preserve">
     <value>Mettre à jour</value>
   </data>
-  <data name="Password.Text">
+  <data name="Password.Text" xml:space="preserve">
     <value>Mot de passe :</value>
   </data>
-  <data name="Title.Text">
+  <data name="Title.Text" xml:space="preserve">
     <value>Mise à jour DotNetNuke</value>
   </data>
-  <data name="Username.Text">
+  <data name="Username.Text" xml:space="preserve">
     <value>Identifiant hôte (SuperUtilisateur) :</value>
   </data>
-  <data name="Version.Text">
+  <data name="Version.Text" xml:space="preserve">
     <value>Versino de la mise à jour - {0}</value>
   </data>
+  <!---->
 </root>
