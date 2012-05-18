@@ -160,6 +160,11 @@ namespace DotNetNuke.Modules.Admin.Users
                                                               ModuleContext.PortalSettings.UserInfo,
                                                               Scope.DefaultSettings,
                                                               ref propertyNotFound);
+                    var propertyName = Localization.GetString("ProfileProperties_" + property.PropertyName,profileResourceFile);
+                    propertyName = (String.IsNullOrEmpty(propertyName)) 
+                                        ? property.PropertyName
+                                        : propertyName.Trim(':');
+
                     sb.Append("self." + property.PropertyName + " = ko.observable('");
                     if(property.PropertyName == "Biography")
                     {
@@ -168,7 +173,7 @@ namespace DotNetNuke.Modules.Admin.Users
                     sb.Append(value + "');");
                     sb.Append('\n');
                     sb.Append("self." + property.PropertyName + "Text = '");
-                    sb.Append(Localization.GetString("ProfileProperties_" + property.PropertyName, profileResourceFile).TrimEnd(':') + "';");
+                    sb.Append(propertyName + "';");
                     sb.Append('\n');
                 }
 

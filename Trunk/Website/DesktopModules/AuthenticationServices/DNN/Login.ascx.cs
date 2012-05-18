@@ -153,7 +153,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
                         Controls.Clear();
                     }
 
-                    var verificationCode = Server.UrlDecode(Request.QueryString["verificationcode"]);
+                    var verificationCode = Request.QueryString["verificationcode"];
 
                     try
                     {
