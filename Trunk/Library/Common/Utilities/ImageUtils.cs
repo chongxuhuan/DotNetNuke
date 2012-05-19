@@ -31,7 +31,7 @@ using DotNetNuke.Services.FileSystem.Internal;
 
 namespace DotNetNuke.Common.Utilities
 {
-    internal class ImageUtils
+    public class ImageUtils
     {
         private static int _imgHeight;
         private static int _imgWidth;
@@ -365,9 +365,9 @@ namespace DotNetNuke.Common.Utilities
         /// <returns>updated calculated height/width minesions</returns>
         public static Size NewImageSize(int currentWidth, int currentHeight, int newWidth, int newHeight)
         {
-            decimal decScale = (currentWidth/newWidth) > (currentHeight/newHeight) ? Convert.ToDecimal(currentWidth/newWidth) : Convert.ToDecimal(currentHeight/newHeight);
-            newWidth = Convert.ToInt32(Math.Floor(currentWidth/decScale));
-            newHeight = Convert.ToInt32(Math.Floor(currentHeight/decScale));
+            decimal decScale = ((decimal)currentWidth / (decimal)newWidth) > ((decimal)currentHeight / (decimal)newHeight) ? Convert.ToDecimal((decimal)currentWidth / (decimal)newWidth) : Convert.ToDecimal((decimal)currentHeight / (decimal)newHeight);
+            newWidth = Convert.ToInt32(Math.Floor((decimal)currentWidth / decScale));
+            newHeight = Convert.ToInt32(Math.Floor((decimal)currentHeight / decScale));
 
             var newSize = new Size(newWidth, newHeight);
 
