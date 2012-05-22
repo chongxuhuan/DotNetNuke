@@ -900,7 +900,12 @@ namespace DotNetNuke.Entities.Users
             {
                 user = MemberProvider.GetUser(GetEffectivePortalId(portalId), userId);
                 FixMemberPortalId(user, portalId);
-                lookUp[userId] = user.Username;
+                if (user != null)
+                {
+
+                    lookUp[userId] = user.Username;
+
+                }
             }
             return user;
         }

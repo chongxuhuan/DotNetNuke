@@ -452,7 +452,7 @@ namespace DotNetNuke.UI.Containers
                 string controlSrc = ModuleConfiguration.ModuleControl.ControlSrc;
                 string folderName = ModuleConfiguration.DesktopModule.FolderName;
 
-                ClientResourceManager.RegisterStyleSheet(Page, Globals.ApplicationPath + "/DesktopModules/" + folderName + "/module.css", FileOrder.Css.ModuleCss);
+                ClientResourceManager.RegisterStyleSheet(Page, Globals.ApplicationPath + "/DesktopModules/" + folderName.Replace("\\", "/") + "/module.css", FileOrder.Css.ModuleCss);
 
                 if (controlSrc.LastIndexOf("/") > 0)
                 {

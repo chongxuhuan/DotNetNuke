@@ -434,8 +434,8 @@ namespace DotNetNuke.Security.Roles
             {
                 OutputFormat = format;
             }
-            propertyName = propertyName.ToLowerInvariant();
-            switch (propertyName)
+            string propName = propertyName.ToLowerInvariant();
+            switch (propName)
             {
                 case "roleid":
                     return PropertyAccess.FormatString(RoleID.ToString(), format);
@@ -485,11 +485,20 @@ namespace DotNetNuke.Security.Roles
                     }
                 case "groupcreatorname":
                     return PropertyAccess.FormatString(GetString("GroupCreatorName", string.Empty), format);
+                default:
+                    if (Settings.ContainsKey(propertyName))
+                    {
+                        return PropertyAccess.FormatString(GetString(propertyName, string.Empty), format);
+                    } else
+                    {
+                        propertyNotFound = true;
+                        return string.Empty;
+                    }
 
             }
 
-            propertyNotFound = true;
-            return string.Empty;
+            
+            
         }
 
         #endregion
