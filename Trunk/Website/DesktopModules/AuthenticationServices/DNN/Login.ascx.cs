@@ -122,10 +122,6 @@ namespace DotNetNuke.Modules.Admin.Authentication
 
                 url = Globals.RegisterURL(returnUrl, Null.NullString);
                 registerLink.NavigateUrl = url;
-                if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger)
-                {
-                    registerLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(url, this, PortalSettings, true, false, 600, 950));
-                }
             }
             else
             {

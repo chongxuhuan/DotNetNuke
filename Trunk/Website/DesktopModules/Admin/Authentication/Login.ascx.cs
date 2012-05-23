@@ -1054,6 +1054,7 @@ namespace DotNetNuke.Modules.Admin.Authentication
 						//First update the profile (if any properties have been passed)
 						AuthenticationType = e.AuthenticationType;
 						ProfileProperties = e.Profile;
+                        RememberMe = e.RememberMe;
 						UpdateProfile(e.User, true);
 						ValidateUser(e.User, (e.AuthenticationType != "DNN"));
 					}
