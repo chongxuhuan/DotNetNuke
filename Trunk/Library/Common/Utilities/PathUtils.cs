@@ -111,7 +111,7 @@ namespace DotNetNuke.Common.Utilities
 
             if (!Directory.Exists(physicalPath))
             {
-                throw new ArgumentException("The argument 'physicalPath' is not a valid path.");
+                throw new ArgumentException("The argument 'physicalPath' is not a valid path. " + physicalPath);
             }
 
             var rootFolderMapPath = RemoveTrailingSlash(GetRootFolderMapPath(portalID));

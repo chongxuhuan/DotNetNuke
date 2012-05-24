@@ -5818,19 +5818,19 @@ GO
 IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}HostSettings WHERE [SettingName] = N'CrmEnableCompositeFiles')
   BEGIN
     INSERT INTO {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
-    VALUES('CrmEnableCompositeFiles', 'True', 0, -1, GETDATE(), -1, GETDATE())
+    VALUES('CrmEnableCompositeFiles', 'False', 0, -1, GETDATE(), -1, GETDATE())
   END
 
 IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}HostSettings WHERE [SettingName] = N'CrmMinifyCss')
   BEGIN
     INSERT INTO {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
-    VALUES('CrmMinifyCss', 'True', 0, -1, GETDATE(), -1, GETDATE())
+    VALUES('CrmMinifyCss', 'False', 0, -1, GETDATE(), -1, GETDATE())
   END
 
 IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}HostSettings WHERE [SettingName] = N'CrmMinifyJs')
   BEGIN
     INSERT INTO {databaseOwner}{objectQualifier}HostSettings(SettingName, SettingValue, SettingIsSecure, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
-    VALUES('CrmMinifyJs', 'True', 0, -1, GETDATE(), -1, GETDATE())
+    VALUES('CrmMinifyJs', 'False', 0, -1, GETDATE(), -1, GETDATE())
   END
 
 IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}HostSettings WHERE [SettingName] = N'CrmVersion')
