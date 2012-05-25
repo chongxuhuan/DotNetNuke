@@ -22,15 +22,14 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Web;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
 using System.IO;
+using DotNetNuke.Services.Localization.Internal;
 
 #endregion
 
@@ -42,6 +41,8 @@ namespace DotNetNuke.Services.UserProfile
 
         public void ProcessRequest(HttpContext context)
         {
+            SetupCulture();
+
             var userId = -1;
             if (!String.IsNullOrEmpty(context.Request.QueryString["userid"]))
             {
@@ -104,6 +105,18 @@ namespace DotNetNuke.Services.UserProfile
             context.Response.AddHeader("Last-Modified", DateTime.Now.ToString("r"));
             context.Response.End();
 
+        }
+        
+        private void SetupCulture()
+        {
+            PortalSettings settings = PortalController.GetCurrentPortalSettings();
+            if (settings == null) return;
+
+            CultureInfo pageLocale = TestableLocalization.Instance.GetPageLocale(settings);
+            if (pageLocale != null)
+            {
+                TestableLocalization.Instance.SetThreadCultures(pageLocale, settings);
+            }
         }
 
         public bool IsReusable

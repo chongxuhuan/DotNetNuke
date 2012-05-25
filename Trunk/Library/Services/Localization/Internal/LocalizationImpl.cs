@@ -20,19 +20,15 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using DotNetNuke.Common;
+using DotNetNuke.Entities.Portals;
 
 namespace DotNetNuke.Services.Localization.Internal
 {
     internal class LocalizationImpl : ILocalization
     {
-        /// <summary>
-        /// Inspect the browser supplied language headers and find the best match from the supplied list
-        /// </summary>
-        /// <param name="cultureCodes">The codes to search for a match</param>
-        /// <param name="fallback">The code to return if no good match is found</param>
-        /// <returns>Best matching culture code, or fallback if not good match found</returns>
         public string BestCultureCodeBasedOnBrowserLanguages(IEnumerable<string> cultureCodes, string fallback)
         {
             if(cultureCodes == null)
@@ -80,14 +76,19 @@ namespace DotNetNuke.Services.Localization.Internal
             return fallback;
         }
 
-        /// <summary>
-        /// Inspect the browser supplied language headers and find the best match from the supplied list
-        /// </summary>
-        /// <param name="cultureCodes">The codes to search for a match</param>
-        /// <returns>Best matching culture code, or SystemLocale if no good match found</returns>
         public string BestCultureCodeBasedOnBrowserLanguages(IEnumerable<string> cultureCodes)
         {
             return BestCultureCodeBasedOnBrowserLanguages(cultureCodes, Localization.SystemLocale);
+        }
+
+        public CultureInfo GetPageLocale(PortalSettings portalSettings)
+        {
+            return Localization.GetPageLocale(portalSettings);
+        }
+
+        public void SetThreadCultures(CultureInfo cultureInfo, PortalSettings portalSettings)
+        {
+            Localization.SetThreadCultures(cultureInfo, portalSettings);
         }
     }
 }

@@ -19,6 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Globalization;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -32,6 +33,7 @@ using DotNetNuke.Entities.Portals.Internal;
 using DotNetNuke.Entities.Tabs.Internal;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.HttpModules.Membership;
+using DotNetNuke.Services.Localization.Internal;
 
 namespace DotNetNuke.Web.Services
 {
@@ -48,6 +50,18 @@ namespace DotNetNuke.Web.Services
 
             LoadDnnContext(requestContext.HttpContext);
             AuthenticateRequest(requestContext.HttpContext, PortalSettings.PortalId);
+            SetupCulture();
+        }
+
+        private void SetupCulture()
+        {
+            if (PortalSettings == null) return;
+
+            CultureInfo pageLocale = TestableLocalization.Instance.GetPageLocale(PortalSettings);
+            if (pageLocale != null)
+            {
+                TestableLocalization.Instance.SetThreadCultures(pageLocale, PortalSettings);
+            }
         }
 
         protected virtual void AuthenticateRequest(HttpContextBase context, int portalId)
