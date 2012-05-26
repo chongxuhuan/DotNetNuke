@@ -1815,4 +1815,150 @@ corrected with each release. &lt;/p&gt;
         &lt;/ul&gt;
         </value>
     </data>
+  <data name="WhatsNew.06.01.04" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+		&lt;li&gt;Fixed issue with loading the splash page skin in the login, privacy and terms of use pages&lt;/li&gt;
+	&lt;li&gt;Fixed issue when searching for words with special characters in them&lt;/li&gt;
+	&lt;li&gt;Fixed redirection issue when the user does not have permissions to access a resource&lt;/li&gt;
+	&lt;li&gt;Fixed issue when clearing the cache using the ClearHostCache() function&lt;/li&gt;
+	&lt;li&gt;Fixed issue when displaying the site structure in the link to page feature&lt;/li&gt;
+	&lt;li&gt;Fixed issue when inline editing the title of modules&lt;/li&gt;
+	&lt;li&gt;Fixed issue with incorrect redirection when portal alias mapping mode is set to redirect.&lt;/li&gt;
+	&lt;li&gt;Fixed issue with closing the Newsletter preview&lt;/li&gt;
+	&lt;li&gt;Updated the controls in the schedule UI to match the rest of the application&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the hosts' profile picture is not copied to child sites&lt;/li&gt;
+	&lt;li&gt;Fixed issue with useFullyQualifiedRedirectUrl in medium trust environments&lt;/li&gt;
+	&lt;li&gt;Added a regular expression validation when creating User Name validation rules&lt;/li&gt;
+	&lt;li&gt;Fixed upgrade issue when upgrading from 5.6.3 to 6.0.1&lt;/li&gt;
+	&lt;li&gt;Fixed duplicate key exception in the File Manager&lt;/li&gt;
+	&lt;li&gt;Fixed issue in the creation of language packs for the RadEditor Provider&lt;/li&gt;
+	&lt;li&gt;Fixed issue with the font used in the Dark Knight skin and languages that contain accents&lt;/li&gt;
+	&lt;li&gt;Fixed issue with language retention when using stating localization&lt;/li&gt;
+	&lt;li&gt;Fixed issue that stopped host users from deleting their lists entries&lt;/li&gt;
+	&lt;li&gt;Fixed CSS problem in the login / registration pages when using IE7 and IE8&lt;/li&gt;
+	&lt;li&gt;Fixed issue cause by URL's changing to small caps after login&lt;/li&gt;
+	&lt;li&gt;Created a new configuration that forces the host user to change the default password on the first login&lt;/li&gt;
+	&lt;li&gt;Updated the Dark Knight skin to use HTML5 as the doctype and dded HTML5 doctype as an option under fallback skin doctype&lt;/li&gt;
+	&lt;li&gt;Fixed issues created by the system requiring multiple configurations for the applyCSS dropdown in the Telerik Editor Provider&lt;/li&gt;&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue in the File Manager when validating file extensions&lt;/li&gt;
+
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;File Manager&lt;/li&gt;
+	&lt;li&gt;HTML Module&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;RadEditor Provider&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="WhatsNew.06.01.05" xml:space="preserve">
+    <value>
+    &lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Fixed issue that stopped users from creating vocabularies when the portal ID was not zero&lt;/li&gt;
+      &lt;li&gt;
+        Fixed issue that caused modules configured to be displayed on all pages
+        to be added to the wrong container in new pages
+      &lt;/li&gt;
+      &lt;li&gt;Fixed page quota restriction issue in the Ribbon Bar&lt;/li&gt;
+      &lt;li&gt;Removed restriction that would not allow users to use a dash in page names. Now users can create pages with names like "site-map"&lt;/li&gt;
+      &lt;li&gt;Fixed issue that was causing the wrong container to be loaded in modules when in edit mode&lt;/li&gt;
+      &lt;li&gt;Fixed exception thrown in modulesettings.ascx.cs when the start or end dates are before the current date&lt;/li&gt;
+      &lt;li&gt;Fixed ordering problem when restoring pages with children from the recycle bin&lt;/li&gt;
+      &lt;li&gt;Fixed issue when applying a skin and a container to the host pages from the Pages module&lt;/li&gt;
+      &lt;li&gt;Fixed issue when a page is given a name that ends with the word "install"&lt;/li&gt;
+      &lt;li&gt;Fixed issue where the delete folder action did not function as expected within the Image Manager&lt;/li&gt;
+      &lt;li&gt;Fixed issue that caused pop up not to close when the retrieve password action was cancelled&lt;/li&gt;
+      &lt;li&gt;Fixed UI issue in the HTML Editor Manager&lt;/li&gt;
+      &lt;li&gt;Fixed issue in the DDRMenu when setting pages as hidden&lt;/li&gt;
+      &lt;li&gt;Fixed error logged when Banners was clicked&lt;/li&gt;
+      &lt;li&gt;Fixed issue in LinkClick when port numbers are used&lt;/li&gt;
+      &lt;li&gt;Fixed issue in SiteWizard.ascx where the "SelectedValue" is set to an invalid attribute&lt;/li&gt;
+      &lt;li&gt;Fixed issue where SendPassword.ascx fails because the ReturnURL was not specified in the querystring&lt;/li&gt;
+      &lt;li&gt;Fixed issue in the Search Input Settings page when the module was manually added to a page&lt;/li&gt;
+      &lt;li&gt;Added module load exceptions to the event log&lt;/li&gt;
+      &lt;li&gt;Fixed issue when creating extensions from Host &gt; Extensions&lt;/li&gt;
+      &lt;li&gt;Fixed issue in the Site Settings when single quotes were being treated as escape characters&lt;/li&gt;
+      &lt;li&gt;
+        Fixed issue with PDF&#39;s getting corrupted when sending them as
+        attachments in the Newsletter Module
+      &lt;/li&gt;
+      &lt;li&gt;Fixed font styling issues in the installation flow&lt;/li&gt;
+      &lt;li&gt;
+        Fixed issue with adding modules to single culture pages when Content
+        Localization is enabled
+      &lt;/li&gt;
+      &lt;li&gt;Fixed error when accessing the online help from the tools menu&lt;/li&gt;
+      &lt;li&gt;Fixed issue with the Telerik editor removing html tags from pages&lt;/li&gt;
+      &lt;li&gt;Removed unnecessary confirmation dialog when unzipping folders&lt;/li&gt;
+      &lt;li&gt;Fixed error logged when uninstalling modules&lt;/li&gt;
+      &lt;li&gt;Fixed issue in the DDR Menu that was causing rendering issues when visiting the site using a mobile device&lt;/li&gt;
+      &lt;li&gt;Back-Ported the Site Redirection Management Module to CE&lt;/li&gt;
+      &lt;li&gt;Enhanced the UX in the Site Configuration Wizard&lt;/li&gt;
+      &lt;li&gt;Enhance the UX of the Create Page Wizard&lt;/li&gt;
+      &lt;li&gt;Migrated from the WURFL device data repository to the 51Degrees data repository&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+    &lt;ul&gt;
+      &lt;li&gt;None&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+    &lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Pages Module&lt;/li&gt;
+      &lt;li&gt;DDR Menu&lt;/li&gt;
+      &lt;li&gt;HTML Editor&lt;/li&gt;
+      &lt;li&gt;Device Detection Management Module&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+    &lt;ul&gt;
+      &lt;li&gt;None&lt;/li&gt;
+    &lt;/ul&gt;
+    </value>
+  </data>
+  <data name="WhatsNew.06.02.00" xml:space="preserve">
+    <value>
+&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Fixed issue in the Site Settings when single quotes were being treated as escape characters&lt;/li&gt;
+&lt;li&gt;Fixed issue loading the Mobile Premium Data after upgrading from CE to PE&lt;/li&gt;
+&lt;li&gt;Fixed errors logged when updating folder provider settings&lt;/li&gt;
+&lt;li&gt;Fixed the order of the mobile device capabilities in the Site Redirection Management UI&lt;/li&gt;
+&lt;li&gt;The User Profile page was completely rebuilt.  We needed User Profiles to have multiple child pages. This would allow for the most flexibility by still following the typical DotNetNuke page and module structure&lt;/li&gt;
+&lt;li&gt;The Social Groups module allows users to browse pages for viewing a group details&lt;/li&gt;
+&lt;li&gt;One of the more critical pieces to a successful collaboration platform is the activity stream. 
+    We have created a Journal Module and API that will allow you to easily display and create activities within your site&lt;/li&gt;
+&lt;li&gt;User File Manager. As part of building the new Journal Module, we are providing a better way for users to manage their own files within DotNetNuke&lt;/li&gt;
+&lt;li&gt;A member directory that is vital to the success of any collaborative site or site that is based upon user-to-user interaction&lt;/li&gt;
+&lt;li&gt;A messaging module that similar to email, provides a mechanism for users to communicate within a site in a private manner&lt;/li&gt;
+&lt;li&gt;Implemented User Relationships functionality that allows users to connect with each other as followers or friends&lt;/li&gt;
+&lt;li&gt;Implemented API methods to support filtering options for text (both replace and remove). One custom filter for profanity was added to the FilterFlag used by the InputFilter function - this will be used by the Journal function and can be reused by 3rd party module developers&lt;/li&gt;
+&lt;li&gt;Implemented changes to how the Tab (Page) Hierarchy is managed. Due to the limitations of earlier versions of SQL Server, prior to these changes, the business layer managed the handling of the tab hierarchy. Whenever a tab was created or moved in the hierarchy, there was a lot of calculation to calculate the effect on other tabs and update them accordingly&lt;/li&gt;
+&lt;li&gt;Implemented support for SSL Offloading so that large enterprises can offload SSL support to network devices such as load balancers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;Device Preview Management Module&lt;/li&gt;
+	&lt;li&gt;Journal Module&lt;/li&gt;
+	&lt;li&gt;Member Directory Module&lt;/li&gt;
+	&lt;li&gt;Message Center Module&lt;/li&gt;
+	&lt;li&gt;Social Groups Module&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+      </value>
+  </data>
 </root>
