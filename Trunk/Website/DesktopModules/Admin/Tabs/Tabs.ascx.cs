@@ -277,6 +277,18 @@ namespace DesktopModules.Admin.Tabs
                         }
                     }
                     BindTree();
+
+                    if(!string.IsNullOrEmpty(Request.QueryString["edittabid"]))
+                    {
+                        var tabId = Request.QueryString["edittabid"];
+                        var node = ctlPages.FindNodeByValue(tabId);
+                        if(node != null)
+                        {
+                            node.Selected = true;
+                            node.ExpandParentNodes();
+                            CtlPagesNodeClick(ctlPages, new RadTreeNodeEventArgs(node));
+                        }
+                    }
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -700,7 +712,8 @@ namespace DesktopModules.Admin.Tabs
                 dgPermissions.TabID = tab.TabID;
                 dgPermissions.DataBind();
 
-                cmdMore.NavigateUrl = ModuleContext.NavigateUrl(tabId, "", false, "ctl=Tab", "action=edit", "returntabid=" + TabId);
+                var returnUrl = Globals.NavigateURL(TabId, string.Empty, "edittabid=" + tabId, "isHost=" + (rblMode.SelectedValue == "H"));
+                cmdMore.NavigateUrl = ModuleContext.NavigateUrl(tabId, "", false, "ctl=Tab", "action=edit", "returnurl=" + returnUrl);
 
                 txtTitle.Text = tab.Title;
                 txtName.Text = tab.TabName;

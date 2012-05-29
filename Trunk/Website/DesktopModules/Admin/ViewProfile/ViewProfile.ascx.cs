@@ -92,6 +92,12 @@ namespace DotNetNuke.Modules.Admin.Users
 
 			try
 			{
+                if(Null.IsNull(ProfileUserId))
+                {
+                    Visible = false;
+                    return;
+                }
+
                 var template = (ModuleContext.Settings["ProfileTemplate"] != null) 
                             ? Convert.ToString(ModuleContext.Settings["ProfileTemplate"]) 
                             : Localization.GetString("DefaultTemplate", LocalResourceFile);

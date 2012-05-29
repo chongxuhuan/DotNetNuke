@@ -84,7 +84,8 @@ namespace DotNetNuke.Entities.Users
         private const string cPhoto = "Photo";
         private const string cTimeZone = "TimeZone";
         private const string cPreferredLocale = "PreferredLocale";
-        private const String cPreferredTimeZone = "PreferredTimeZone";
+        private const string cPreferredTimeZone = "PreferredTimeZone";
+        private const string cBiography = "Biography";
 
 		#endregion
 
@@ -686,6 +687,18 @@ namespace DotNetNuke.Entities.Users
             set
             {
                 SetProfileProperty(cTimeZone, value.ToString(CultureInfo.InvariantCulture));
+            }
+        }
+
+        public string Biography
+        {
+            get
+            {
+                return GetPropertyValue(cBiography);
+            }
+            set
+            {
+                SetProfileProperty(cBiography, value);
             }
         }
 

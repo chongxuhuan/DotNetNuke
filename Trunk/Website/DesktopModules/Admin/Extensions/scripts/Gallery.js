@@ -13,8 +13,8 @@ function Gallery(params) {
         rowId: 0
         , index: 1
         , pageSize: 10
-        , orderBy: "Title"
-        , orderDir: "asc"
+        , orderBy: ""
+        , orderDir: ""
         , thenBy: ""
         , thenDir: "asc"
         , animationSpeed: "slow"

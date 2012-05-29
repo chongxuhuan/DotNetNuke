@@ -77,20 +77,20 @@ namespace DotNetNuke.Services.Mail
                 var HTMLView = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
                 mailMessage.AlternateViews.Add(HTMLView);
             }
-
-            var smtpClient = new SmtpClient();
-
-            var smtpHostParts = smtpServer.Split(':');
-            smtpClient.Host = smtpHostParts[0];
-            if (smtpHostParts.Length > 1)
-            {
-                smtpClient.Port = Convert.ToInt32(smtpHostParts[1]);
-            }
             
             if (!String.IsNullOrEmpty(smtpServer))
             {
                 try
                 {
+                    var smtpClient = new SmtpClient();
+
+                    var smtpHostParts = smtpServer.Split(':');
+                    smtpClient.Host = smtpHostParts[0];
+                    if (smtpHostParts.Length > 1)
+                    {
+                        smtpClient.Port = Convert.ToInt32(smtpHostParts[1]);
+                    }
+
                     switch (smtpAuthentication)
                     {
                         case "":

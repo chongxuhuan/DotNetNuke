@@ -130,7 +130,7 @@
     <value>Enable Language Parameter in URLs?</value>
   </data>
     <data name="ControlTitle_settings.Text" xml:space="preserve">
-    <value>Portal Language Settings</value>
+    <value>Website Language Settings</value>
   </data>
     <data name="plPageSize.Help" xml:space="preserve">
     <value>If you have enabled Paging in the Editor you can set the Page Size to use here (default is 10)</value>

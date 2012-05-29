@@ -280,7 +280,7 @@
     <value>Select Control:</value>
   </data>
   <data name="IsPremium.Help" xml:space="preserve">
-    <value>All Modules can be assigned/unassigned from a Portal.  However, on Portal Creation Premium Modules are not auto-assigned to a new portal.</value>
+    <value>All Modules can be assigned/unassigned from a website.  However, on website Creation Premium Modules are not auto-assigned to a new website.</value>
   </data>
   <data name="IsPremium.Text" xml:space="preserve">
     <value>Is Premium Module?</value>
@@ -307,7 +307,7 @@
     <value>In this section you can set deploy permissions for this module. Clicking a checkbox twice will make sure users in that role cannot put this module on a page (Deny Permission).</value>
   </data>
   <data name="NoPermission.Text" xml:space="preserve">
-    <value>You are not allowed to put this module on an page in this portal. For more information please contact your hosting provider</value>
+    <value>You are not allowed to put this module on an page in this website. For more information please contact your hosting provider</value>
   </data>
   <data name="Control.Header" xml:space="preserve">
     <value>Control</value>

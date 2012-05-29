@@ -378,9 +378,9 @@ company and customer feedback. [Portal:PortalName] encourages you to periodicall
   <data name="EMAIL_PORTAL_SIGNUP_BODY.Text" xml:space="preserve">
     <value>Dear [User:DisplayName],
 
-Your Portal Website Has Been Created. Please read the following information carefully and be sure to save this message in a safe location for future reference.
+Your Website Has Been Created. Please read the following information carefully and be sure to save this message in a safe location for future reference.
 
-Portal Website Address: [Portal:URL]
+Website Address: [Portal:URL]
 Username: [User:UserName]
 Verification Code: [User:VerificationCode]
 
@@ -601,11 +601,11 @@ Email: [User:Email]
 
 Thank you for registering at [Portal:PortalName]. Please read the following information carefully and be sure to save this message in a safe location for future reference.
 
-Portal Website Address: [Portal:URL]
+Website Address: [Portal:URL]
 Username: [User:UserName]
 Password: [Membership:Password]
 
-Your account details will be reviewed by the portal Administrator and you will receive a notification upon account activation.
+Your account details will be reviewed by the website Administrator and you will receive a notification upon account activation.
 
 Thank you, we appreciate your support...
 
@@ -666,7 +666,7 @@ You have requested a Password Reminder from [Portal:PortalName].
 
 Please login using the following information:
 
-Portal Website Address: [Portal:URL]
+Website Address: [Portal:URL]
 Username:   [User:Username]
 Password: [Membership:Password]
 
@@ -825,7 +825,7 @@ Thank you,
   <data name="404.Error" xml:space="preserve">
     <value>&lt;div style="height: 100%; width: 90%;"&gt;
         &lt;p style="color:red; font-weight:bold;"&gt;Domain Name {0} Does Not Exist In The Database&lt;/p&gt;
-        &lt;p&gt;DotNetNuke supports multiple portals from a single database/codebase. It accomplishes
+        &lt;p&gt;DotNetNuke supports multiple websites from a single database/codebase. It accomplishes
     this by converting the URL of the client browser Request to a valid PortalID in
         the Portals database table. The following steps describe the process:&lt;/p&gt;
     &lt;ol style="text-align: left; list-style-type: decimal; list-style-position: outside;"&gt;
@@ -860,7 +860,7 @@ Thank you,
                     field ) to locate a matching record.
                     &lt;br /&gt;
                     &lt;br /&gt;
-                    Note: If there are multiple URLs which correspond to the same portal then the PortalAlias
+                    Note: If there are multiple URLs which correspond to the same website then the website alias
                     field must contain each valid Domain Name in a comma seperated list.
                     &lt;br /&gt;
                     &lt;br /&gt;
@@ -1042,7 +1042,7 @@ You have changed your Password on [Portal:PortalName].
 
 Please login using the following information:
 
-Portal Website Address: [Portal:URL]
+Website Address: [Portal:URL]
 Username:   [User:Username]
 Password: [Membership:Password]
 

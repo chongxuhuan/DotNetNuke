@@ -1776,7 +1776,7 @@ namespace DotNetNuke.Modules.Admin.FileManager
                 }
                 var intEnd = DestPath.LastIndexOf("\\");
                 DestPath = DestPath.Substring(0, intEnd);
-
+                LastFolderPath = DestPath;
                 //since we removed folder, we will select parent folder
                 var colNodes = DNNTree.SelectedTreeNodes;
                 if (colNodes.Count > 0)

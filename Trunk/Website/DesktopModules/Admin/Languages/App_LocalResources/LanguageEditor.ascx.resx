@@ -151,7 +151,7 @@
     <value>All unsaved changes will be lost if you continue. Are you sure you want to continue?</value>
   </data>
   <data name="ControlTitle_.Text" xml:space="preserve">
-    <value>Custom Portal Locale</value>
+    <value>Custom Website Locale</value>
   </data>
   <data name="ControlTitle_editlanguage.Text" xml:space="preserve">
     <value>Language Editor</value>

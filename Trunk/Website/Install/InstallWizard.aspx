@@ -160,7 +160,11 @@
             <script type="text/javascript" src="../js/dnn.xml.jsparser.js"></script>
             <script type="text/javascript" src="../js/dnn.xmlhttp.js"></script>
             <script type="text/javascript" src="../js/dnn.xmlhttp.jsxmlhttprequest.js"></script>
-            <script type="text/javascript" src="../js/dnncore.js"></script>    
+            <script type="text/javascript" src="../js/dnncore.js"></script>
+            <script type="text/javascript" src="../js/dnn.jquery.js"></script>
+            <script type="text/javascript" src="../Resources/Shared/Scripts/jquery/jquery.hoverIntent.min.js"></script>
+            <script type="text/javascript" src="../Resources/Shared/Scripts/jquery/jquery-ui.min.js"></script>
+            <script type="text/javascript" src="../Resources/Shared/Scripts/initTooltips.js"></script>
         </asp:placeholder>
         
         <div class="dnnForm dnnInstall dnnClear" id="dnnInstall">

@@ -121,7 +121,7 @@
     <value>Banner Source</value>
   </data>
   <data name="plSource.Help" xml:space="preserve">
-    <value>Specify whether to display banners defined for the Site or for the Portal</value>
+    <value>Specify whether to display banners defined for the Site or for the Website</value>
   </data>
   <data name="plType.Text" xml:space="preserve">
     <value>Banner Type</value>

@@ -22,10 +22,6 @@
     <property name="ToolbarMode">Default</property>
     <property name="ToolsWidth"></property>
 
-    <property name="DMX Integration Settings" IsSeparator="true" />
-    <property name="DMXIntegration">False</property>
-    <property name="DMXPath"></property>
-
     <property name="Document Manager Settings" IsSeparator="true" />
     <property name="DocumentsFilters">*.*</property>
     <property name="DocumentsPath">/Documents</property>

@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
     <packages>
-        <package name="DotNetNuke.ModuleCaching.MemoryProvider" type="Provider" version="06.02.00">
+        <package name="DotNetNuke.ModuleCaching.MemoryProvider" type="Provider" version="06.02.01">
             <friendlyName>DotNetNuke Module Caching Memory Provider</friendlyName>
             <description>DotNetNuke Module Caching Provider that uses a Memory as its persistence medium.</description>
             <dependencies/>

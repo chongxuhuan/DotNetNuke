@@ -130,7 +130,7 @@
     <value>Cost Per Click ( CPC )</value>
   </data>
   <data name="plCPC.Help" xml:space="preserve">
-    <value>Cost Per Click (CPC) is the commission paid to the vendor when a visitor is referred to your portal website</value>
+    <value>Cost Per Click (CPC) is the commission paid to the vendor when a visitor is referred to your website</value>
   </data>
   <data name="CPC.ErrorMessage" xml:space="preserve">
     <value>You Must Enter a Valid CPC"</value>
@@ -139,7 +139,7 @@
     <value>Cost Per Acquisition ( CPA )</value>
   </data>
   <data name="plCPA.Help" xml:space="preserve">
-    <value>Cost Per Acquisition (CPA) is the commission paid to the vendor when a visitor becomes a member of your portal website</value>
+    <value>Cost Per Acquisition (CPA) is the commission paid to the vendor when a visitor becomes a member of your website</value>
   </data>
   <data name="CPA.ErrorMessage" xml:space="preserve">
     <value>You Must Enter a Valid CPA</value>

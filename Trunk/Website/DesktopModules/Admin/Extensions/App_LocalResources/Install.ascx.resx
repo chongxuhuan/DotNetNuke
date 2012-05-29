@@ -127,7 +127,7 @@
     <value>Invalid File Extension - {0}</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
-    <value>&lt;h1&gt;About Package Install&lt;/h1&gt;&lt;p&gt;Allows you to upload and install packages to the portal.&lt;/p&gt;</value>
+    <value>&lt;h1&gt;About Package Install&lt;/h1&gt;&lt;p&gt;Allows you to upload and install packages to the website.&lt;/p&gt;</value>
   </data>
   <data name="NoFile.Text" xml:space="preserve">
     <value>You need to select a file to upload first - click the Browse button to locate the file on your local file system.</value>

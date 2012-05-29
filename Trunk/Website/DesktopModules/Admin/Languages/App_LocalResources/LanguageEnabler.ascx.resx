@@ -157,7 +157,7 @@
     <value>This is a list of all available &lt;br /&gt;languages in the installation.</value>
   </data>
   <data name="Portal.Help" xml:space="preserve">
-    <value>Edit resourcekeys for this portal</value>
+    <value>Edit resourcekeys for this website</value>
   </data>
   <data name="Portal.Text" xml:space="preserve">
     <value>Site</value>

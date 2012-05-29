@@ -70,9 +70,65 @@ function addFileToMoveList(strfile, sender, strSelClass, strOrigClass) {
     }
     else {
         /* checking */
-        setMoveFiles(getMoveFiles() + strfile + ";");
+        var selectedFiles = getMoveFiles();
+        if(selectedFiles.substr(0, 1) != ";") selectedFiles = ";" + selectedFiles;
+        if(selectedFiles.substr(selectedFiles.length - 1, 1) != ";") selectedFiles = selectedFiles + ";";
+        if(selectedFiles.indexOf(";" + strfile + ";") == -1) {
+            setMoveFiles(getMoveFiles() + strfile + ";");
+        }
         objRow.className = strSelClass;
     }
+    updateCheckAllState();
+}
+
+function updateCheckAllState(sender, allChecked) {
+    if(allChecked == undefined) {
+        allChecked = true;
+        var inputs = document.getElementById("<%=dgFileList.ClientID %>").getElementsByTagName("input");
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].type === "checkbox" && inputs[i].id.indexOf("chkFile") > -1) {
+                if (!inputs[i].checked) {
+                    allChecked = false;
+                    break;
+                }
+            }
+        }
+        m_bAllFilesChecked = allChecked;
+    }
+    if(sender == undefined) {
+        sender = document.getElementById('<%=dgFileList.Controls[0].Controls[1].FindControl("pnlCheckAll").ClientID %>').getElementsByTagName("input")[0];
+    }
+    if (!m_bAllFilesChecked) {
+        if(sender.src.indexOf("unchecked") == -1) {
+            sender.src = sender.src.replace('checked', 'unchecked');
+            sender.alt = m_sLocaleSelectAll;
+        }
+    }
+    else {
+        sender.src = sender.src.replace('unchecked', 'checked');
+        sender.alt = m_sLocaleUnSelectAll;
+    }
+}
+
+function restoreCheckState() {
+    var selectedFiles = getMoveFiles();
+    if(selectedFiles.substr(0, 1) != ";") selectedFiles = ";" + selectedFiles;
+    if(selectedFiles.substr(selectedFiles.length - 1, 1) != ";") selectedFiles = selectedFiles + ";";
+    var inputs = document.getElementById("<%=dgFileList.ClientID %>").getElementsByTagName("input");
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].type === "checkbox" && inputs[i].id.indexOf("chkFile") > -1) {
+            var fileName = inputs[i].parentNode.getAttribute("filename");
+            if (selectedFiles.indexOf(";" + fileName + ";") > -1) {
+                inputs[i].checked = true;
+                var clickEvent = inputs[i].getAttribute("onclick");
+                var func = function() {
+                    eval(clickEvent);
+                };
+                func.call(inputs[i]);
+            }
+        }
+    }
+    updateCheckAllState();
 }
 
 function canAddFolder() {
@@ -431,14 +487,7 @@ function unzipFile(FileName) {
 function gridCheckAll(sender) {
     m_bAllFilesChecked = !m_bAllFilesChecked;
     checkAllFiles(m_bAllFilesChecked);
-    if (!m_bAllFilesChecked) {
-        sender.src = sender.src.replace('checked', 'unchecked');
-        sender.alt = m_sLocaleSelectAll;
-    }
-    else {
-        sender.src = sender.src.replace('unchecked', 'checked');
-        sender.alt = m_sLocaleUnSelectAll;
-    }
+    updateCheckAllState(sender, m_bAllFilesChecked);
     return false;
 }
 
@@ -468,8 +517,7 @@ function error(result, ctx) {
 
 /* handle ajax request */
 Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-	m_bAllFilesChecked = false;
-	setMoveFiles('');
+    restoreCheckState();
 });
 
 </script>

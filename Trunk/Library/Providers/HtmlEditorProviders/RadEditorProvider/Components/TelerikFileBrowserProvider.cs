@@ -55,10 +55,22 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 #region Overrides
 
-		public override System.IO.Stream GetFile(string url)
+		public override Stream GetFile(string url)
 		{
 			//base calls CheckWritePermissions method
-			return TelerikContent.GetFile(FileSystemValidation.ToVirtualPath(url));
+            Stream fileContent = null;
+		    var folderPath = FileSystemValidation.ToDBPath(url);
+		    var fileName = GetFileName(url);
+            var folder = DNNValidator.GetUserFolder(folderPath);
+            if (folder != null)
+            {
+                var file = FileManager.Instance.GetFile(folder, fileName);
+                if (file != null)
+                {
+                    fileContent = FileManager.Instance.GetFileContent(file);
+                }
+            }
+            return fileContent;
 		}
 
 		public override string GetPath(string url)
@@ -376,23 +388,20 @@ namespace DotNetNuke.Providers.RadEditorProvider
 					return returnValue;
 				}
 
-				returnValue = TelerikContent.StoreFile(file, virtualPath, name, arguments);
+                var folder = DNNValidator.GetUserFolder(virtualPath);
 
-                DNNValidator.OnFileCreated(FileSystemValidation.CombineVirtualPath(virtualPath, name), file.ContentLength);
-
-				Services.FileSystem.FileInfo dnnFileInfo = new DotNetNuke.Services.FileSystem.FileInfo();
-				FillFileInfo(file, ref dnnFileInfo);
+			    var fileInfo = new DotNetNuke.Services.FileSystem.FileInfo();
+                FillFileInfo(file, ref fileInfo);
 
 				//Add or update file
-				FolderInfo dnnFolder = DNNValidator.GetUserFolder(virtualPath);
-				Services.FileSystem.FileInfo dnnFile = DNNFileCtrl.GetFile(name, PortalSettings.PortalId, dnnFolder.FolderID);
+				Services.FileSystem.FileInfo dnnFile = DNNFileCtrl.GetFile(name, PortalSettings.PortalId, folder.FolderID);
 				if (dnnFile != null)
 				{
-					DNNFileCtrl.UpdateFile(dnnFile.FileId, dnnFileInfo.FileName, dnnFileInfo.Extension, file.ContentLength, dnnFileInfo.Width, dnnFileInfo.Height, dnnFileInfo.ContentType, dnnFolder.FolderPath, dnnFolder.FolderID);
+				    FileManager.Instance.UpdateFile(dnnFile, file.InputStream);
 				}
 				else
 				{
-					DNNFileCtrl.AddFile(PortalSettings.PortalId, dnnFileInfo.FileName, dnnFileInfo.Extension, file.ContentLength, dnnFileInfo.Width, dnnFileInfo.Height, dnnFileInfo.ContentType, dnnFolder.FolderPath, dnnFolder.FolderID, true);
+				    FileManager.Instance.AddFile(folder, name, file.InputStream);
 				}
 
 				return returnValue;

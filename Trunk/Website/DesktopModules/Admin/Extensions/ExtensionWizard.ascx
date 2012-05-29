@@ -86,3 +86,17 @@
         </WizardSteps>
     </asp:Wizard>
 </div>
+<script language="javascript" type="text/javascript">
+/*globals jQuery, window, Sys */
+(function ($, Sys) {
+    function setUpDnnExtensions() {
+        $('#dnnCreateExtension').dnnPanels();
+    }
+    $(document).ready(function () {
+        setUpDnnExtensions();
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+            setUpDnnExtensions();
+        });
+    });
+} (jQuery, window.Sys));
+</script>

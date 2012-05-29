@@ -124,7 +124,7 @@
     <value>Host Root</value>
   </data>
   <data name="PortalRoot.Text" xml:space="preserve">
-    <value>Portal Root</value>
+    <value>Site Root</value>
   </data>
   <data name="FileName.Header" xml:space="preserve">
     <value>File Name</value>
@@ -271,7 +271,7 @@
     <value>Error Deleting Folder:&lt;br/&gt;</value>
   </data>
   <data name="NotEnoughSpace.Text" xml:space="preserve">
-    <value>Not Enough avaialble Portal Space</value>
+    <value>Not Enough avaialble Website Space</value>
   </data>
   <data name="PleaseLogin.Text" xml:space="preserve">
     <value>Please login before copying/moving files</value>

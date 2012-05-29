@@ -3,7 +3,6 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 <h2 class="dnnFormSectionHead"><a href="" class="dnnLabelExpanded"><%=LocalizeString("Title")%></a></h2>
 <fieldset>
-    <div class="dnnFormMessage dnnFormInfo"><asp:Label ID="lblHelp" runat="server" /></div>
     <div class="dnnFormItem">
         <dnn:Label ID="plPackageLanguage" runat="server" ControlName="cboLanguage" />
         <asp:DropDownList ID="cboLanguage" runat="server" DataTextField="Text" DataValueField="LanguageID"/>

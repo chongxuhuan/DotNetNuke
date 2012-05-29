@@ -190,7 +190,7 @@
     <value>Web Farm Enabled:</value>
   </data>
   <data name="plHost.Help" xml:space="preserve">
-    <value>Displays selected settings that affect all portals in this installation.</value>
+    <value>Displays selected settings that affect all websites in this installation.</value>
   </data>
   <data name="plHost.Text" xml:space="preserve">
     <value>DotNetNuke Host Settings:</value>

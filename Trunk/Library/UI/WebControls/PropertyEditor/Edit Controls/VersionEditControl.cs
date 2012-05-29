@@ -204,7 +204,7 @@ namespace DotNetNuke.UI.WebControls
             bool dataChanged = false;
             Version presentValue = Version;
             var postedValue = new Version(majorVersion + "." + minorVersion + "." + buildVersion);
-            if (!presentValue.Equals(postedValue))
+            if (!postedValue.Equals(presentValue))
             {
                 Value = postedValue;
                 dataChanged = true;

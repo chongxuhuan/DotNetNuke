@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.UI.WebControls;
 
@@ -187,66 +188,73 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
 				string name = GetClassName();
 				string moduleControl = "DesktopModules/" + folder + "/" + controlSrc;
 
-				var package = new PackageInfo();
-				package.Name = name;
-				package.FriendlyName = friendlyName;
-				package.Description = txtDescription.Text;
-				package.Version = new Version(1, 0, 0);
-				package.PackageType = "Module";
-				package.License = Util.PACKAGE_NoLicense;
+                if (PackageController.GetPackages().Any(p => p.Name == name || p.FriendlyName == friendlyName))
+                {
+                    UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("NonuniqueName", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                }
+                else
+                {
+                    var package = new PackageInfo();
+                    package.Name = name;
+                    package.FriendlyName = friendlyName;
+                    package.Description = txtDescription.Text;
+                    package.Version = new Version(1, 0, 0);
+                    package.PackageType = "Module";
+                    package.License = Util.PACKAGE_NoLicense;
 
-				//Save Package
-				PackageController.SavePackage(package);
+                    //Save Package
+                    PackageController.SavePackage(package);
 
-				var objDesktopModules = new DesktopModuleController();
-				var objDesktopModule = new DesktopModuleInfo();
+                    var objDesktopModules = new DesktopModuleController();
+                    var objDesktopModule = new DesktopModuleInfo();
 
-				objDesktopModule.DesktopModuleID = Null.NullInteger;
-				objDesktopModule.ModuleName = name;
-				objDesktopModule.FolderName = folder;
-				objDesktopModule.FriendlyName = friendlyName;
-				objDesktopModule.Description = txtDescription.Text;
-				objDesktopModule.IsPremium = false;
-				objDesktopModule.IsAdmin = false;
-				objDesktopModule.Version = "01.00.00";
-				objDesktopModule.BusinessControllerClass = "";
-				objDesktopModule.CompatibleVersions = "";
-				objDesktopModule.Dependencies = "";
-				objDesktopModule.Permissions = "";
-				objDesktopModule.PackageID = package.PackageID;
+                    objDesktopModule.DesktopModuleID = Null.NullInteger;
+                    objDesktopModule.ModuleName = name;
+                    objDesktopModule.FolderName = folder;
+                    objDesktopModule.FriendlyName = friendlyName;
+                    objDesktopModule.Description = txtDescription.Text;
+                    objDesktopModule.IsPremium = false;
+                    objDesktopModule.IsAdmin = false;
+                    objDesktopModule.Version = "01.00.00";
+                    objDesktopModule.BusinessControllerClass = "";
+                    objDesktopModule.CompatibleVersions = "";
+                    objDesktopModule.Dependencies = "";
+                    objDesktopModule.Permissions = "";
+                    objDesktopModule.PackageID = package.PackageID;
 
 #pragma warning disable 612,618
-				objDesktopModule.DesktopModuleID = objDesktopModules.AddDesktopModule(objDesktopModule);
+                    objDesktopModule.DesktopModuleID = objDesktopModules.AddDesktopModule(objDesktopModule);
 #pragma warning restore 612,618
 
-				//Add module to all portals
-				DesktopModuleController.AddDesktopModuleToPortals(objDesktopModule.DesktopModuleID);
+                    //Add module to all portals
+                    DesktopModuleController.AddDesktopModuleToPortals(objDesktopModule.DesktopModuleID);
 
-				//Save module definition
-				moduleDefinition = new ModuleDefinitionInfo();
+                    //Save module definition
+                    moduleDefinition = new ModuleDefinitionInfo();
 
-				moduleDefinition.ModuleDefID = Null.NullInteger;
-				moduleDefinition.DesktopModuleID = objDesktopModule.DesktopModuleID;
-				moduleDefinition.FriendlyName = friendlyName;
-				moduleDefinition.DefaultCacheTime = 0;
+                    moduleDefinition.ModuleDefID = Null.NullInteger;
+                    moduleDefinition.DesktopModuleID = objDesktopModule.DesktopModuleID;
+                    moduleDefinition.FriendlyName = friendlyName;
+                    moduleDefinition.DefaultCacheTime = 0;
 
-				moduleDefinition.ModuleDefID = ModuleDefinitionController.SaveModuleDefinition(moduleDefinition, false, true);
+                    moduleDefinition.ModuleDefID = ModuleDefinitionController.SaveModuleDefinition(moduleDefinition, false, true);
 
-				//Save module control
-				var objModuleControl = new ModuleControlInfo();
+                    //Save module control
+                    var objModuleControl = new ModuleControlInfo();
 
-				objModuleControl.ModuleControlID = Null.NullInteger;
-				objModuleControl.ModuleDefID = moduleDefinition.ModuleDefID;
-				objModuleControl.ControlKey = "";
-				objModuleControl.ControlSrc = moduleControl;
-				objModuleControl.ControlTitle = "";
-				objModuleControl.ControlType = SecurityAccessLevel.View;
-				objModuleControl.HelpURL = "";
-				objModuleControl.IconFile = "";
-				objModuleControl.ViewOrder = 0;
-				objModuleControl.SupportsPartialRendering = false;
+                    objModuleControl.ModuleControlID = Null.NullInteger;
+                    objModuleControl.ModuleDefID = moduleDefinition.ModuleDefID;
+                    objModuleControl.ControlKey = "";
+                    objModuleControl.ControlSrc = moduleControl;
+                    objModuleControl.ControlTitle = "";
+                    objModuleControl.ControlType = SecurityAccessLevel.View;
+                    objModuleControl.HelpURL = "";
+                    objModuleControl.IconFile = "";
+                    objModuleControl.ViewOrder = 0;
+                    objModuleControl.SupportsPartialRendering = false;
 
-				ModuleControlController.AddModuleControl(objModuleControl);
+                    ModuleControlController.AddModuleControl(objModuleControl);
+                }
 			}
 			catch (Exception exc)
 			{

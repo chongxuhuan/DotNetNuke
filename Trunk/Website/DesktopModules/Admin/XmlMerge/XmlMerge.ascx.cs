@@ -147,10 +147,13 @@ namespace DotNetNuke.Modules.XmlMerge
                     txtConfiguration.Enabled = true;
                 }
             }
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
 
             SetSaveButtonState();
-
-
         }
 
         protected void OnExecuteClick(object sender, EventArgs e)

@@ -154,7 +154,7 @@
     <value>Update Authentication Settings</value>
   </data>
   <data name="HostHelp.Text" xml:space="preserve">
-    <value>This editor allows you to configure the Authentication Provider.  You can configure the location of the source files and you can enable the provider.  Enabled providers are available to portal administrators, who can then configure the provider for their portal.</value>
+    <value>This editor allows you to configure the Authentication Provider.  You can configure the location of the source files and you can enable the provider.  Enabled providers are available to website administrators, who can then configure the provider for their website.</value>
   </data>
   <data name="AdminHelp.Text" xml:space="preserve">
     <value>This editor allows you to configure the Authentication Provider. </value>

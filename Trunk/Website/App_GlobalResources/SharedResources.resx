@@ -301,7 +301,7 @@
     <value>A User Already Exists For the Username Specified. Please Register Again Using A Different Username.</value>
   </data>
   <data name="RegError.Text" xml:space="preserve">
-    <value>An Unexpected Error Occurred During Registration. Please Contact The Portal Administrator For Futher Information.</value>
+    <value>An Unexpected Error Occurred During Registration. Please Contact The Website Administrator For Futher Information.</value>
   </data>
   <data name="PaneNotFound.Error" xml:space="preserve">
     <value>Cannot locate ContentPane for Skin</value>
@@ -310,10 +310,10 @@
     <value>The hosting contract for {0} expired on {1}. Please contact &lt;a href="mailto:{2}"&gt;{2}&lt;/a&gt; for further information.</value>
   </data>
   <data name="TabAccess.Error" xml:space="preserve">
-    <value>You do not have access to view this tab within the portal.</value>
+    <value>You do not have access to view this tab within the website.</value>
   </data>
   <data name="ModuleAccess.Error" xml:space="preserve">
-    <value>You do not have access to view this module within the portal.</value>
+    <value>You do not have access to view this module within the website.</value>
   </data>
   <data name="CriticalError.Error" xml:space="preserve">
     <value>A critical error has occurred.</value>
@@ -793,7 +793,7 @@
     <value>An Error Has Occurred When Attempting To Save The File {0}. Please Contact Your Hosting Provider To Ensure The Appropriate Security Settings Have Been Enabled On The Server.</value>
   </data>
   <data name="DiskSpaceExceeded.Text" xml:space="preserve">
-    <value>The File {0} Exceeds The Amount Of Disk Space You Currently Have Available. Please Contact Your Hosting Provider For Inquiries Related To Increasing Your Portal Disk Space.</value>
+    <value>The File {0} Exceeds The Amount Of Disk Space You Currently Have Available. Please Contact Your Hosting Provider For Inquiries Related To Increasing Your websire Disk Space.</value>
   </data>
   <data name="WordCleanButton.Text" xml:space="preserve">
     <value>Clean MS Word HTML</value>
@@ -883,7 +883,7 @@
     <value>Error creating Profile Definitions</value>
   </data>
   <data name="CreatePortal.Error" xml:space="preserve">
-    <value>Error creating Portal</value>
+    <value>Error creating Website</value>
   </data>
   <data name="CreateAdminUser.Error" xml:space="preserve">
     <value>Error creating Administrator user account.</value>
@@ -892,10 +892,10 @@
     <value>Error deleting previous upload folder</value>
   </data>
   <data name="ChildPortal.Error" xml:space="preserve">
-    <value>Error configuring Child Portal</value>
+    <value>Error configuring Child website</value>
   </data>
   <data name="PortalTemplate.Error" xml:space="preserve">
-    <value>Error parsing Portal Template</value>
+    <value>Error parsing Website Template</value>
   </data>
   <data name="AdminTemplate.Error" xml:space="preserve">
     <value>Error parsing Admin Template</value>
@@ -949,7 +949,7 @@
     <value>You do not have permission to upload images.</value>
   </data>
   <data name="LastPortal.Text" xml:space="preserve">
-    <value>You Can Not Delete The Last Portal In Your Database</value>
+    <value>You Can Not Delete The Last Website In Your Database</value>
   </data>
   <data name="User.Text" xml:space="preserve">
     <value>Username:</value>
@@ -970,7 +970,7 @@
     <value>The password has been reset.</value>
   </data>
   <data name="PasswordInvalid.Text" xml:space="preserve">
-    <value>You must enter a valid password.  Please check with the Portal Administrator if you do not know the password requirements.</value>
+    <value>You must enter a valid password.  Please check with the Website Administrator if you do not know the password requirements.</value>
   </data>
   <data name="PasswordMailError.Text" xml:space="preserve">
     <value>The password has been reset, but there was an error sending the Email reminder message.</value>
@@ -997,10 +997,10 @@
     <value>Insecure account details</value>
   </data>
   <data name="PrivateMembership.Text" xml:space="preserve">
-    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this portal is Private. Once your account information has been submitted, the portal Administrator will be notified and your application will be subjected to a screening procedure. If your application is authorized, you will receive notification of your access to the portal environment.</value>
+    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this website is Private. Once your account information has been submitted, the Website Administrator will be notified and your application will be subjected to a screening procedure. If your application is authorized, you will receive notification of your access to the website environment.</value>
   </data>
   <data name="PublicMembership.Text" xml:space="preserve">
-    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this portal is Public. Once your account information has been submitted, you will be immediately granted access to the portal environment.</value>
+    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this website is Public. Once your account information has been submitted, you will be immediately granted access to the website environment.</value>
   </data>
   <data name="Register.Text" xml:space="preserve">
     <value>User Registration</value>
@@ -1009,7 +1009,7 @@
     <value> All fields marked with a red arrow are required.</value>
   </data>
   <data name="VerifiedMembership.Text" xml:space="preserve">
-    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this portal is Verified. Once your account information has been submitted, you will receive an email containing a link that you can use to verify your account.</value>
+    <value>&lt;strong&gt;*Note:&lt;/strong&gt; Membership to this website is Verified. Once your account information has been submitted, you will receive an email containing a link that you can use to verify your account.</value>
   </data>
   <data name="Captcha.Help" xml:space="preserve">
     <value>Enter the security code</value>
@@ -1033,7 +1033,7 @@
     <value>CAPTCHA image</value>
   </data>
   <data name="PrivateConfirmationMessage.Text" xml:space="preserve">
-    <value>&lt;strong&gt;An e-mail with your details has been sent to the portal administrator for verification. Once your registration has been approved an e-mail will be sent to your e-mail address: {0}.&lt;/strong&gt;</value>
+    <value>&lt;strong&gt;An e-mail with your details has been sent to the website administrator for verification. Once your registration has been approved an e-mail will be sent to your e-mail address: {0}.&lt;/strong&gt;</value>
   </data>
   <data name="DNN_ReadingComponent.Text" xml:space="preserve">
     <value>Reading Component Manifest</value>
@@ -1267,7 +1267,7 @@
     <value>Processing Cleanup File - {0}</value>
   </data>
   <data name="LANGUAGE_PortalsEnabled.Text" xml:space="preserve">
-    <value>Language Enabled for all Portals - {0}</value>
+    <value>Language Enabled for all Websites - {0}</value>
   </data>
   <data name="PermissionTypeGrant.Text" xml:space="preserve">
     <value>Permission Granted</value>
@@ -1351,7 +1351,7 @@
     <value>Visible By Administrators Only</value>
   </data>
   <data name="PortalRoot.Text" xml:space="preserve">
-    <value>Portal Root</value>
+    <value>Site Root</value>
   </data>
   <data name="False.Text" xml:space="preserve">
     <value>False</value>
@@ -1441,7 +1441,7 @@
     <value>Friends and Groups</value>
   </data>
   <data name="ModuleNotIntended.Text" xml:space="preserve">
-    <value>This module is only intended for use on a page which is defined as the profile page for the portal.</value>
+    <value>This module is only intended for use on a page which is defined as the profile page for the website.</value>
   </data>
   <data name="Delete.Text" xml:space="preserve">
     <value>Delete</value>

@@ -342,6 +342,16 @@ namespace DotNetNuke.UI.WebControls
 			{
 				label.Attributes.Add("for", EditControl.ClientID);
 			}
+
+            //make sure the help container have the default css class to active js handler.
+            if (!pnlHelp.ControlStyle.CssClass.Contains("dnnClear"))
+            {
+                pnlHelp.ControlStyle.CssClass = string.Format("dnnClear {0}", pnlHelp.ControlStyle.CssClass);
+            }
+            if(!pnlHelp.ControlStyle.CssClass.Contains("dnnFormHelpContent"))
+            {
+                pnlHelp.ControlStyle.CssClass = string.Format("dnnFormHelpContent {0}", pnlHelp.ControlStyle.CssClass);
+            }
 		}
 
 		#endregion

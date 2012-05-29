@@ -121,7 +121,7 @@
     <value>Host Root</value>
   </data>
   <data name="PortalRoot.Text" xml:space="preserve">
-    <value>Portal Root</value>
+    <value>Site Root</value>
   </data>
   <data name="File.Text" xml:space="preserve">
     <value>Content Files</value>
@@ -175,7 +175,7 @@
     <value>Install Language Pack</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
-    <value>&lt;h1&gt;About Web Upload&lt;/h1&gt;&lt;p&gt;Allows you to upload files to the portal.&lt;/p&gt;</value>
+    <value>&lt;h1&gt;About Web Upload&lt;/h1&gt;&lt;p&gt;Allows you to upload files to the website.&lt;/p&gt;</value>
   </data>
   <data name="cmdUpload.Text" xml:space="preserve">
     <value>Save File</value>

@@ -44,12 +44,12 @@ namespace DotNetNuke.UI.Modules
         {
             get
             {
-                int UserId = Null.NullInteger;
                 if (!string.IsNullOrEmpty(Request.Params["UserId"]))
                 {
-                    UserId = Int32.Parse(Request.Params["UserId"]);
+                    return Int32.Parse(Request.Params["UserId"]);
                 }
-                return UserId;
+
+                return UserController.GetCurrentUserInfo().UserID;
             }
         }
 

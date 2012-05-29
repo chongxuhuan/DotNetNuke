@@ -131,7 +131,7 @@
     <value>This account is currently locked out due to too many unsuccessful login attempts.</value>
   </data>
   <data name="InvalidUser.Text" xml:space="preserve">
-    <value>This account is not a User in the current Portal.</value>
+    <value>This account is not a User in the current Website.</value>
   </data>
   <data name="SuperUser.Text" xml:space="preserve">
     <value>This account represents a SuperUser.  You do not have the rights to edit a SuperUser Account.</value>
@@ -230,10 +230,10 @@
     <value>You have successfully unsubscribed from the {0} role.</value>
   </data>
   <data name="EmailError.Text" xml:space="preserve">
-    <value>This portal requires a unique Email Address.  The Email Address you entered has already been used.</value>
+    <value>This website requires a unique Email Address.  The Email Address you entered has already been used.</value>
   </data>
   <data name="CannotAddUser.Text" xml:space="preserve">
-    <value>Your configuration requires the user to enter a Password reminder Question and Answer.  This is incompatible with Administrators adding users, so has been disabled for this portal.</value>
+    <value>Your configuration requires the user to enter a Password reminder Question and Answer.  This is incompatible with Administrators adding users, so has been disabled for this website.</value>
   </data>
   <data name="cmdLogin.Text" xml:space="preserve">
     <value>Proceed to Login</value>

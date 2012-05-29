@@ -139,13 +139,13 @@
     <value>The name for the vocabulary.</value>
   </data>
   <data name="Portal.Text" xml:space="preserve">
-    <value>Portal</value>
+    <value>Website</value>
   </data>
   <data name="Scope.Text" xml:space="preserve">
     <value>Scope</value>
   </data>
   <data name="Scope.ToolTip" xml:space="preserve">
-    <value>The scope for this vocabulary, application-wide or portal-specific.</value>
+    <value>The scope for this vocabulary, application-wide or site-specific.</value>
   </data>
   <data name="Simple.Text" xml:space="preserve">
     <value>Simple</value>

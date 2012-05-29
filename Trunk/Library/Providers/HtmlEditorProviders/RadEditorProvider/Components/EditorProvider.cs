@@ -805,16 +805,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
                                     break;
                                 }
-                            case "DMXIntegration":
-                                {
-                                    _DMXIntegration = Convert.ToBoolean(node.InnerText);
-                                    break;
-                                }
-                            case "DMXPath":
-                                {
-                                    _DMXPath = node.InnerText;
-                                    break;
-                                }
                             default:
                                 {
                                     // end of RadSpell properties
@@ -946,20 +936,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
         	var saveTemplateDialogJs = 
 				"<script type=\"text/javascript\">var __textEditorSaveTemplateDialog = \"" + strSaveTemplateDialogPath + "\";</script>";
 			_panel.Page.ClientScript.RegisterClientScriptBlock(GetType(), "SaveTemplateDialog", saveTemplateDialogJs);
-
-            if (_DMXIntegration)
-            {
-                string strDMXDialogPath = _panel.Page.ResolveUrl("~/DesktopModules/DMXBrowser.ContentProvider/DMXBrowser.aspx?Path=" + _DMXPath + "&TabId=" + PortalSettings.ActiveTab.TabID);
-
-				//add dmx browser dialog var
-				var dmxManagerDialogJs = "<script type=\"text/javascript\">var __textEditorDMXManagerDialog = \"" + strDMXDialogPath + "\";</script>";
-				_panel.Page.ClientScript.RegisterClientScriptBlock(GetType(), "DMXManagerDialog", dmxManagerDialogJs);
-                
-                //add css classes for save template tool
-                _panel.Controls.Add(
-                    new LiteralControl("<style type=\"text/css\">.reTool .DMXManager { background-image: url('" + _panel.Page.ResolveUrl(moduleFolderPath + "images/DMXManager.gif") + "'); }</style>"));
-            }
-
 
             //add css classes for save template tool
             _panel.Controls.Add(
@@ -1161,8 +1137,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
         private readonly RadEditor _editor = new RadEditor();
         private readonly Panel _panel = new Panel();
-        private bool _DMXIntegration;
-        private string _DMXPath = "/";
         private bool _ShowPortalLinks = true;
 
         //must override properties

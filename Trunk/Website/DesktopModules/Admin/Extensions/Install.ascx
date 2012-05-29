@@ -45,8 +45,10 @@
                 </div>
             </asp:WizardStep>
             <asp:WizardStep ID="Step1" runat="server" Title="Warnings" StepType="Step" AllowReturn="false">
+                <div class="dnnFormMessage dnnFormWarning" id="lblWarningMessageWrapper" runat="server">
+                    <asp:Label ID="lblWarningMessage" runat="server" EnableViewState="False" />
+                </div>
                 <asp:Panel ID="pnlRepair" runat="server" Visible="false">
-                    <div class="dnnFormMessage dnnFormWarning"><asp:Label ID="lblWarningMessage" runat="server" EnableViewState="False" /></div>
                     <p><asp:Label ID="lblRepairInstallHelp" runat="server" resourcekey="RepairInstallHelp" /></p>
                     <p><strong><asp:CheckBox ID="chkRepairInstall" runat="server" resourcekey="RepairInstall" TextAlign="Left" AutoPostBack="true" /></strong></p>
                 </asp:Panel>

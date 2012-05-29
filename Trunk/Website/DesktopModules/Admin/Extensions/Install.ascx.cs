@@ -498,7 +498,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 }
                 else
                 {
-                    lblWarningMessage.Visible = true;
+                    lblWarningMessageWrapper.Visible = true;
                     pnlRepair.Visible = false;
                     pnlWhitelist.Visible = false;
                     pnlLegacy.Visible = true;
@@ -507,7 +507,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             else if (Installer == null)
             {
-                lblWarningMessage.Visible = true;
+                lblWarningMessageWrapper.Visible = true;
                 pnlRepair.Visible = false;
                 pnlWhitelist.Visible = false;
                 pnlLegacy.Visible = false;
@@ -516,7 +516,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             else if (!Installer.IsValid)
             {
-                lblWarningMessage.Visible = true;
+                lblWarningMessageWrapper.Visible = true;
                 pnlRepair.Visible = false;
                 pnlWhitelist.Visible = false;
                 pnlLegacy.Visible = false;
@@ -528,7 +528,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             else if (!string.IsNullOrEmpty(Installer.InstallerInfo.LegacyError))
             {
-                lblWarningMessage.Visible = true;
+                lblWarningMessageWrapper.Visible = true;
                 pnlRepair.Visible = false;
                 pnlWhitelist.Visible = false;
                 pnlLegacy.Visible = false;
@@ -536,7 +536,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             else if (!Installer.InstallerInfo.HasValidFiles && !chkIgnoreWhiteList.Checked)
             {
-                lblWarningMessage.Visible = true;
+                lblWarningMessageWrapper.Visible = true;
                 pnlRepair.Visible = false;
                 pnlWhitelist.Visible = true;
                 pnlLegacy.Visible = false;
@@ -544,7 +544,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             }
             else if (Installer.InstallerInfo.Installed && !chkRepairInstall.Checked)
             {
-                lblWarningMessage.Visible = true;
+                lblWarningMessageWrapper.Visible = true;
                 if (Installer.InstallerInfo.PortalID == InstallPortalId)
                 {
                     pnlRepair.Visible = true;

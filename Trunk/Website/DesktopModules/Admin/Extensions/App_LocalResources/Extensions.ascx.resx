@@ -211,7 +211,7 @@
     <value>Click Here To Get The Language Pack</value>
   </data>
   <data name="Portal.Header" xml:space="preserve">
-    <value>Portal</value>
+    <value>Website</value>
   </data>
   <data name="lblUpdate.Text" xml:space="preserve">
     <value>This application contains an Update Service which displays an icon when a new version of an Extension is available. The icon displayed will contain a visual indication if a currently installed Extension contains a potential security vulnerability. If a security vulnerability is identified, it is highly recommended that you upgrade to the newer version of the Extension. Clicking the icon will redirect you to a location where you will be able to acquire the Extension for immediate installation.</value>

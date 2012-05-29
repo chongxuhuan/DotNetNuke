@@ -226,13 +226,13 @@
     <value>Set As Default Settings? </value>
   </data>
   <data name="plDefault.Help" xml:space="preserve">
-    <value>Select this option if you would like the Page Settings for this module to be used as the default settings when adding new modules. Option only available to Portal Admins and Superusers.</value>
+    <value>Select this option if you would like the Page Settings for this module to be used as the default settings when adding new modules. Option only available to Website Admins and Superusers.</value>
   </data>
   <data name="plAllModules.Text" xml:space="preserve">
     <value>Apply To All Modules?</value>
   </data>
   <data name="plAllModules.Help" xml:space="preserve">
-    <value>Select this option if you would like the Page Settings for this module to be applied to all existing modules in the site. Option only available to Portal Admins and Superusers.</value>
+    <value>Select this option if you would like the Page Settings for this module to be applied to all existing modules in the site. Option only available to Website Admins and Superusers.</value>
   </data>
   <data name="GeneralDetails.Text" xml:space="preserve">
     <value>Basic Settings</value>
@@ -286,7 +286,7 @@
     <value>End Date must be after Start Date</value>
   </data>
   <data name="plNewTabs.Help" xml:space="preserve">
-    <value>Check this box to add the module to new pages only. Option only available to Portal Admins and Superusers.</value>
+    <value>Check this box to add the module to new pages only. Option only available to Website Admins and Superusers.</value>
   </data>
   <data name="plNewTabs.Text" xml:space="preserve">
     <value>Add to new pages only?</value>

@@ -193,7 +193,7 @@
     <value>The globally unique identifier which can be used to identify this application.</value>
   </data>
   <data name="plHostPortal.Text" xml:space="preserve">
-    <value>Host Portal:</value>
+    <value>Host Website:</value>
   </data>
   <data name="plHostTitle.Text" xml:space="preserve">
     <value>Host Title:</value>
@@ -466,7 +466,7 @@
     <value>Host</value>
   </data>
   <data name="Portal.Text" xml:space="preserve">
-    <value>Portal</value>
+    <value>Site</value>
   </data>
   <data name="plCache.Help" xml:space="preserve">
     <value>Set the length of time that objects remain in the cache</value>
@@ -520,7 +520,7 @@
     <value>Check to enable request filters.</value>
   </data>
   <data name="plHostPortal.Help" xml:space="preserve">
-    <value>Select the default portal</value>
+    <value>Select the default website</value>
   </data>
   <data name="ControlTitle_.Text" xml:space="preserve">
     <value>Host Settings</value>
@@ -640,13 +640,13 @@
     <value>Check this box to automatically synchronize the file system.</value>
   </data>
   <data name="plPageQuota.Help" xml:space="preserve">
-    <value>You can specify a maximum number of pages per portal.</value>
+    <value>You can specify a maximum number of pages per website.</value>
   </data>
   <data name="plPageQuota.Text" xml:space="preserve">
     <value>Page Quota:</value>
   </data>
   <data name="plUserQuota.Help" xml:space="preserve">
-    <value>You can specify a maximum number of users per portal.</value>
+    <value>You can specify a maximum number of users per website.</value>
   </data>
   <data name="plUserQuota.Text" xml:space="preserve">
     <value>User Quota:</value>
@@ -838,7 +838,7 @@
     <value>Module Cache Provider</value>
   </data>
   <data name="plContentLocalization.Help" xml:space="preserve">
-    <value>Check this to enable passing the users current culture allowing for dynamic portal and content localization</value>
+    <value>Check this to enable passing the users current culture allowing for dynamic website and content localization</value>
   </data>
   <data name="plContentLocalization.Text" xml:space="preserve">
     <value>Allow Content Localization?</value>
@@ -941,5 +941,8 @@
   </data>
   <data name="txtBatch.Help" xml:space="preserve">
     <value>The number of messages sent by the messaging scheduler in each batch.</value>
+  </data>
+  <data name="SmtpServerInvalid.Text" xml:space="preserve">
+    <value>Smtp server's value is incorrect, you can't add custom port in it if your install instance is running under medium trust level.</value>
   </data>
 </root>

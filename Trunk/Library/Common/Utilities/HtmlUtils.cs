@@ -741,14 +741,14 @@ namespace DotNetNuke.Common.Utilities
             foreach (string portalAlias in aliases)
             {
                 string searchAlias = portalAlias;
-                if (portalAlias.Contains("/"))
+                if (!portalAlias.Contains("/"))
                 {
-                    searchAlias = portalAlias.Substring(0, portalAlias.IndexOf("/"));
+                    searchAlias = string.Format("{0}/", portalAlias);
                 }
             	string protocol = PortalSettings.Current.SSLEnabled ? "https://" : "http://";
                 Regex exp = new Regex(string.Format("(href=&quot;){0}{1}(.*?&quot;)", protocol, searchAlias));
 
-                html = exp.Replace(html, "$1$2");
+                html = exp.Replace(html, "$1/$2");
             }
 
             return html;

@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="plPortalID.Text" xml:space="preserve">
-    <value>Portal</value>
+    <value>Website</value>
   </data>
   <data name="plPortalID.Help" xml:space="preserve">
-    <value>Select the Portal you would like to view.</value>
+    <value>Select the Website you would like to view.</value>
   </data>
   <data name="plLogType.Text" xml:space="preserve">
     <value>Type</value>
@@ -154,7 +154,7 @@
     <value>Username</value>
   </data>
   <data name="Portal.Text" xml:space="preserve">
-    <value>Portal</value>
+    <value>Website</value>
   </data>
   <data name="Summary.Text" xml:space="preserve">
     <value>Summary</value>
@@ -258,7 +258,7 @@
     <value>Event Viewer</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
-    <value>&lt;h1&gt;About Log Viewer&lt;/h1&gt;&lt;p&gt;Allows you to view log entries for portal events.&lt;/p&gt;</value>
+    <value>&lt;h1&gt;About Log Viewer&lt;/h1&gt;&lt;p&gt;Allows you to view log entries for website events.&lt;/p&gt;</value>
   </data>
   <data name="SecurityException.Text" xml:space="preserve">
     <value>Security Exception</value>

@@ -667,7 +667,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 						case "showportallinks":
 						case "autoresizeheight":
 						case "linksuserelativeurls":
-						case "dmxintegration":
 						case "newlinebr":
 						{
 							CheckBox ctl = (CheckBox)(FindControlRecursive(plhConfig, "ctl_rc_" + objConfig.Key));
@@ -1012,7 +1011,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 							case "showportallinks":
 							case "autoresizeheight":
 							case "linksuserelativeurls":
-							case "dmxintegration":
 							case "newlinebr":
 							{
 								CheckBox ctl = (CheckBox)(FindControlRecursive(plhConfig, "ctl_rc_" + objConfig.Key));
@@ -1279,7 +1277,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 						case "showportallinks":
 						case "autoresizeheight":
 						case "linksuserelativeurls":
-						case "dmxintegration":
 						case "newlinebr":
 						{
 							CheckBox ctl = new CheckBox();

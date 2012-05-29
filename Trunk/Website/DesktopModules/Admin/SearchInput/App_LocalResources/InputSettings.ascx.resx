@@ -59,7 +59,7 @@
   </data>
   <data name="ModuleHelp.Text">
     <value>		&lt;h1&gt;About Search Input Settings &lt;/h1&gt;
-		&lt;p&gt;The Search Input Module enables a user to enter a word or phrase for searching the portal for any relevant match. There are 2 Search Input Settings that control the display and action performed within the module. &lt;/p&gt;
+		&lt;p&gt;The Search Input Module enables a user to enter a word or phrase for searching the website for any relevant match. There are 2 Search Input Settings that control the display and action performed within the module. &lt;/p&gt;
 		&lt;ul&gt;
 				&lt;li&gt;
 						&lt;div align="left"&gt;

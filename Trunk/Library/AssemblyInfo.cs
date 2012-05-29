@@ -49,8 +49,8 @@ using DotNetNuke.Application;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("6.2.0.1607")]
-[assembly: AssemblyFileVersion("6.2.0.1607")]
+[assembly: AssemblyVersion("6.2.1.4")]
+[assembly: AssemblyFileVersion("6.2.1.4")]
 [assembly: AssemblyStatus(ReleaseMode.Stable)]
 // Allow internal variables to be visible to testing projects
 [assembly: InternalsVisibleTo("DotNetNuke.Tests.Core")]

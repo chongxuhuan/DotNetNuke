@@ -58,7 +58,7 @@
         <value>Edit Role Group</value>
     </data>
     <data name="ModuleHelp.Text">
-        <value>&lt;h1&gt;About Edit Role Groups&lt;/h1&gt;&lt;p&gt;Administrators can manage the security role groups defined for their portal. The module allows you to add new groups, modify existing groups and delete groups.&lt;/p&gt;</value>
+        <value>&lt;h1&gt;About Edit Role Groups&lt;/h1&gt;&lt;p&gt;Administrators can manage the security role groups defined for their website. The module allows you to add new groups, modify existing groups and delete groups.&lt;/p&gt;</value>
     </data>
 	<data name="DuplicateRoleGroup.Text">
 		<value>A role group with the same name already exists. The new group was not added.</value>

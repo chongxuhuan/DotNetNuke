@@ -133,7 +133,7 @@
     <value>The name of your redirect</value>
   </data>
   <data name="lblRedirectSource.Help" xml:space="preserve">
-    <value>Determines if you redirect is portal or page level</value>
+    <value>Determines if you redirect is website or page level</value>
   </data>
   <data name="lblRedirectTarget.Help" xml:space="preserve">
     <value>The target destination for the redirect</value>
@@ -154,7 +154,7 @@
     <value>Url</value>
   </data>
   <data name="lnkPortalAlias.Text" xml:space="preserve">
-    <value>Enter new portal alias</value>
+    <value>Enter new website alias</value>
   </data>
   <data name="optBoth.Text" xml:space="preserve">
     <value>Both</value>

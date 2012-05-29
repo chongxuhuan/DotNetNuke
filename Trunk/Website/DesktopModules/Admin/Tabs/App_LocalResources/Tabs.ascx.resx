@@ -121,7 +121,7 @@
     <value>Add Page(s)</value>
   </data>
   <data name="CanNotDeleteHomeTab.Text" xml:space="preserve">
-    <value>You must not delete the home page of your portal!</value>
+    <value>You must not delete the home page of your website!</value>
   </data>
   <data name="CanNotDeleteSpecialTab.Text" xml:space="preserve">
     <value>This is a special tab and cannot be deleted!</value>
@@ -151,7 +151,7 @@
     <value>Page is hidden in menu</value>
   </data>
   <data name="lblHome.Text" xml:space="preserve">
-    <value>Homepage of the portal</value>
+    <value>Homepage of the website</value>
   </data>
   <data name="lblSecure.Text" xml:space="preserve">
     <value>Visible to dedicated roles only</value>
@@ -166,13 +166,13 @@
     <value>Move Up</value>
   </data>
   <data name="root.Text" xml:space="preserve">
-    <value>Portal Root</value>
+    <value>Site Root</value>
   </data>
   <data name="ShowHostTabs.Text" xml:space="preserve">
     <value>Host Pages</value>
   </data>
   <data name="ShowPortalTabs.Text" xml:space="preserve">
-    <value>Portal Pages</value>
+    <value>Website Pages</value>
   </data>
   <data name="ViewPage.Text" xml:space="preserve">
     <value>View Page</value>

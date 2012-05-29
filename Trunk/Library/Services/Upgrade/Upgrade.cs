@@ -2234,57 +2234,7 @@ namespace DotNetNuke.Services.Upgrade
             AddModuleControl(Null.NullInteger, "ViewProfile", "View Profile", "DesktopModules/Admin/Security/ViewProfile.ascx", "icon_users_32px.gif", SecurityAccessLevel.Anonymous, Null.NullInteger);
 
             //Update Child Portal subHost.aspx
-            var portalAliasController = new PortalAliasController();
-            ArrayList aliases = portalAliasController.GetPortalAliasArrayByPortalID(Null.NullInteger);
-            string childPath;
-
-            foreach (PortalAliasInfo aliasInfo in aliases)
-            {
-                //For the alias to be for a child it must be of the form ...../child
-                int intChild = aliasInfo.HTTPAlias.IndexOf("/");
-                if (intChild != -1 && intChild != (aliasInfo.HTTPAlias.Length - 1))
-                {
-                    childPath = Globals.ApplicationMapPath + "\\" + aliasInfo.HTTPAlias.Substring(intChild + 1);
-                    if (!string.IsNullOrEmpty(Globals.ApplicationPath))
-                    {
-                        childPath = childPath.Replace("\\", "/");
-                        childPath = childPath.Replace(Globals.ApplicationPath, "");
-                    }
-                    childPath = childPath.Replace("/", "\\");
-                    // check if File exists and make sure it's not the site's main default.aspx page
-                    string childDefaultPage = childPath + "\\" + Globals.glbDefaultPage;
-                    if (childPath != Globals.ApplicationMapPath && File.Exists(childDefaultPage))
-                    {
-                        var objDefault = new System.IO.FileInfo(childDefaultPage);
-                        var objSubHost = new System.IO.FileInfo(Globals.HostMapPath + "subhost.aspx");
-                        // check if upgrade is necessary
-                        if (objDefault.Length != objSubHost.Length)
-                        {
-                            //check file is readonly
-                            bool wasReadonly = false;
-                            FileAttributes attributes = File.GetAttributes(childDefaultPage);
-                            if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                            {
-                                wasReadonly = true;
-                                //remove readonly attribute
-                                File.SetAttributes(childDefaultPage, FileAttributes.Normal);
-                            }
-
-                            //Rename existing file                                
-                            File.Copy(childDefaultPage, childPath + "\\old_" + Globals.glbDefaultPage, true);
-
-                            //copy file
-                            File.Copy(Globals.HostMapPath + "subhost.aspx", childDefaultPage, true);
-
-                            //set back the readonly attribute
-                            if (wasReadonly)
-                            {
-                                File.SetAttributes(childDefaultPage, FileAttributes.ReadOnly);
-                            }
-                        }
-                    }
-                }
-            }
+            UpdateChildPortalsDefaultPage();
 
             // add the solutions explorer module to the admin tab
             if (CoreModuleExists("Solutions") == false)
@@ -3859,7 +3809,7 @@ namespace DotNetNuke.Services.Upgrade
                 case "4.0":
                     //Look for requestValidationMode attribute
                     XmlDocument configFile = Config.Load();
-                    XPathNavigator configNavigator = configFile.CreateNavigator().SelectSingleNode("//configuration/system.web/httpRuntime");
+                    XPathNavigator configNavigator = configFile.CreateNavigator().SelectSingleNode("//configuration/system.web/httpRuntime|//configuration/location/system.web/httpRuntime");
                     if (configNavigator != null && !string.IsNullOrEmpty(configNavigator.GetAttribute("requestValidationMode", "")))
                     {
                         isCurrent = true;
@@ -4169,6 +4119,9 @@ namespace DotNetNuke.Services.Upgrade
             //Move Photo Property to the end of the propert list.
             MovePhotoProperty();
 
+            //Update Child Portal's Default Page
+            UpdateChildPortalsDefaultPage();
+
             //Add core notification types
             AddCoreNotificationTypesFor620();
 
@@ -4305,6 +4258,61 @@ namespace DotNetNuke.Services.Upgrade
                                                                                                       });
                         propPhoto.ViewOrder = maxOrder;
                         ProfileController.UpdatePropertyDefinition(propPhoto);
+                    }
+                }
+            }
+        }
+
+        private static void UpdateChildPortalsDefaultPage()
+        {
+            //Update Child Portal subHost.aspx
+            var portalAliasController = new PortalAliasController();
+            ArrayList aliases = portalAliasController.GetPortalAliasArrayByPortalID(Null.NullInteger);
+
+            foreach (PortalAliasInfo aliasInfo in aliases)
+            {
+                //For the alias to be for a child it must be of the form ...../child
+                int intChild = aliasInfo.HTTPAlias.IndexOf("/");
+                if (intChild != -1 && intChild != (aliasInfo.HTTPAlias.Length - 1))
+                {
+                    var childPath = Globals.ApplicationMapPath + "\\" + aliasInfo.HTTPAlias.Substring(intChild + 1);
+                    if (!string.IsNullOrEmpty(Globals.ApplicationPath))
+                    {
+                        childPath = childPath.Replace("\\", "/");
+                        childPath = childPath.Replace(Globals.ApplicationPath, "");
+                    }
+                    childPath = childPath.Replace("/", "\\");
+                    // check if File exists and make sure it's not the site's main default.aspx page
+                    string childDefaultPage = childPath + "\\" + Globals.glbDefaultPage;
+                    if (childPath != Globals.ApplicationMapPath && File.Exists(childDefaultPage))
+                    {
+                        var objDefault = new System.IO.FileInfo(childDefaultPage);
+                        var objSubHost = new System.IO.FileInfo(Globals.HostMapPath + "subhost.aspx");
+                        // check if upgrade is necessary
+                        if (objDefault.Length != objSubHost.Length)
+                        {
+                            //check file is readonly
+                            bool wasReadonly = false;
+                            FileAttributes attributes = File.GetAttributes(childDefaultPage);
+                            if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                            {
+                                wasReadonly = true;
+                                //remove readonly attribute
+                                File.SetAttributes(childDefaultPage, FileAttributes.Normal);
+                            }
+
+                            //Rename existing file                                
+                            File.Copy(childDefaultPage, childPath + "\\old_" + Globals.glbDefaultPage, true);
+
+                            //copy file
+                            File.Copy(Globals.HostMapPath + "subhost.aspx", childDefaultPage, true);
+
+                            //set back the readonly attribute
+                            if (wasReadonly)
+                            {
+                                File.SetAttributes(childDefaultPage, FileAttributes.ReadOnly);
+                            }
+                        }
                     }
                 }
             }

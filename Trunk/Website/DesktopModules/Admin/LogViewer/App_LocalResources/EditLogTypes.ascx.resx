@@ -121,7 +121,7 @@
     <value>Log Type</value>
   </data>
   <data name="Portal.Header" xml:space="preserve">
-    <value>Portal</value>
+    <value>Website</value>
   </data>
   <data name="Active.Header" xml:space="preserve">
     <value>Active</value>
@@ -148,10 +148,10 @@
     <value>What type of event is this Log Type</value>
   </data>
   <data name="plLogTypePortalID.Text" xml:space="preserve">
-    <value>Portal</value>
+    <value>Website</value>
   </data>
   <data name="plLogTypePortalID.Help" xml:space="preserve">
-    <value>Which Portal is this Log Event Associated with</value>
+    <value>Which Website is this Log Event Associated with</value>
   </data>
   <data name="plKeepMostRecent.Text" xml:space="preserve">
     <value>Keep Most Recent</value>
@@ -217,7 +217,7 @@
     <value>Edit Log Settings</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
-    <value>&lt;h1&gt;About Log Viewer&lt;/h1&gt;&lt;p&gt;Allows you to edit portal events to log.&lt;/p&gt;</value>
+    <value>&lt;h1&gt;About Log Viewer&lt;/h1&gt;&lt;p&gt;Allows you to edit website events to log.&lt;/p&gt;</value>
   </data>
   <data name="DeleteError.Text" xml:space="preserve">
     <value>The selected log setting could not be deleted. You should delete all existing log entries for this logtype first.</value>

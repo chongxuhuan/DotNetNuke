@@ -175,7 +175,7 @@
     <value>Your password will expire on {0}.  Please update your password before continuing.</value>
   </data>
   <data name="PasswordInvalid.Text" xml:space="preserve">
-    <value>You must enter a valid password.  Please check with the Portal Administrator if you do not know the password requirements.</value>
+    <value>You must enter a valid password.  Please check with the Website Administrator if you do not know the password requirements.</value>
   </data>
   <data name="PasswordMismatch.Text" xml:space="preserve">
     <value>Password Values Entered Do Not Match.</value>

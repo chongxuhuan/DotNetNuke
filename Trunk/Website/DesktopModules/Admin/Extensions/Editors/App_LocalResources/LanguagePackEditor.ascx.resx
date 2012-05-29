@@ -151,7 +151,7 @@
     <value>Language:</value>
   </data>
   <data name="plEnabled.Help" xml:space="preserve">
-    <value>Check this box to enable the language in this portal.</value>
+    <value>Check this box to enable the language in this website.</value>
   </data>
   <data name="plEnabled.Text" xml:space="preserve">
     <value>Enabled</value>

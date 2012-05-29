@@ -139,10 +139,10 @@
     <value>This is a date</value>
   </data>
   <data name="LogDisabled.Text" xml:space="preserve">
-    <value>Your Hosting Provider Has Disabled the Site Log History Feature For Your Portal.</value>
+    <value>Your Hosting Provider Has Disabled the Site Log History Feature For Your Website.</value>
   </data>
   <data name="LogHistory.Text" xml:space="preserve">
-    <value>Your Hosting Provider Has Limited Your Portal To {0} Days Of Site Log History.</value>
+    <value>Your Hosting Provider Has Limited Your Website To {0} Days Of Site Log History.</value>
   </data>
   <data name="ControlTitle_.Text" xml:space="preserve">
     <value>Site Log</value>
@@ -151,7 +151,7 @@
     <value>&lt;h1&gt;About Site Log&lt;/h1&gt;&lt;p&gt;Administrators can view the details of visitors using their site. There are a variety of reports available to display information regarding site usage, membership, and volumes.&lt;/p&gt;</value>
   </data>
   <data name="FileSystem.Text" xml:space="preserve">
-    <value>Your Hosting Provider Has Disabled the Site Log Viewer Feature For Your Portal.  The Logs can be viewed offline and are available in the \Logs\ subfolder of your Portal's Home Directory.</value>
+    <value>Your Hosting Provider Has Disabled the Site Log Viewer Feature For Your Website.  The Logs can be viewed offline and are available in the \Logs\ subfolder of your Portal's Home Directory.</value>
   </data>
   <data name="valDates.Text" xml:space="preserve">
     <value>&lt;br/&gt;End Date must be Greater than Start Date</value>

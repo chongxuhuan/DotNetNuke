@@ -309,9 +309,12 @@ namespace DotNetNuke.Services.Mail
                 return true;
             }
 
-            var languageToSearch = String.IsNullOrEmpty(userLanguage) ? _portalSettings.DefaultLanguage : userLanguage;
+            if(string.IsNullOrEmpty(userLanguage))
+            {
+                userLanguage = _portalSettings.DefaultLanguage;
+            }
 
-            return LanguageFilter.Any(s => languageToSearch.ToLowerInvariant().StartsWith(s.ToLowerInvariant() + "*"));
+            return LanguageFilter.Any(s => userLanguage.ToLowerInvariant().StartsWith(s.ToLowerInvariant()));
         }
 
         /// <summary>add a user to the userlist, if it is not already in there</summary>

@@ -133,7 +133,7 @@
     <value>Use Page Default</value>
   </data>
   <data name="Portal.Text" xml:space="preserve">
-    <value>Use Portal Default</value>
+    <value>Use Site Default</value>
   </data>
   <data name="System.Text" xml:space="preserve">
     <value>Use System Default</value>

@@ -124,7 +124,7 @@
     <value>Return</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
-    <value>&lt;h1&gt;About Package UnInstall&lt;/h1&gt;&lt;p&gt;Allows you to uninstall packages from the portal.&lt;/p&gt;</value>
+    <value>&lt;h1&gt;About Package UnInstall&lt;/h1&gt;&lt;p&gt;Allows you to uninstall packages from the website.&lt;/p&gt;</value>
   </data>
   <data name="cmdUninstall.Text" xml:space="preserve">
     <value>UnInstall Package</value>

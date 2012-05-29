@@ -20,9 +20,6 @@
   <property name="ToolbarMode">Default</property>
   <property name="ToolsWidth">
   </property>
-  <property name="DMXIntegration">False</property>
-  <property name="DMXPath">
-  </property>
   <property name="DocumentsFilters">*.*</property>
   <property name="DocumentsPath">/</property>
   <property name="MaxDocumentSize">1024000</property>

@@ -725,13 +725,6 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				return LogDetailError(ErrorCodes.AddFolder_NoPermission, ToVirtualPath(dnnFolder.FolderPath), logDetail);
 			}
 
-            //only allow management of regular storage type
-            if (dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.InsecureFileSystem 
-                && dnnFolder.StorageLocation != (int)FolderController.StorageLocationTypes.SecureFileSystem)
-            {
-                return LogDetailError(ErrorCodes.AddFolder_NotInsecureFolder, ToVirtualPath(dnnFolder.FolderPath), logDetail);
-            }
-
 			return string.Empty;
 		}
 

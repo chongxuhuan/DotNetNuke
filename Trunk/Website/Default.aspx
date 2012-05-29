@@ -4,6 +4,7 @@
 <asp:literal id="skinDocType" runat="server"></asp:literal>
 <html <asp:literal id="attributeList" runat="server"></asp:literal>>
 <head id="Head" runat="server">
+    <title />
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
     <meta content="text/javascript" http-equiv="Content-Script-Type" />
     <meta content="text/css" http-equiv="Content-Style-Type" />

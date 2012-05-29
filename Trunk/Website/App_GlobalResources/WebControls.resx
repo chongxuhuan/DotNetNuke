@@ -142,7 +142,7 @@
     <value>Ok</value>
   </data>
   <data name="PortalRoot.Text" xml:space="preserve">
-    <value>Portal Root</value>
+    <value>Site Root</value>
   </data>
   <data name="Save.Text" xml:space="preserve">
     <value>Save File</value>

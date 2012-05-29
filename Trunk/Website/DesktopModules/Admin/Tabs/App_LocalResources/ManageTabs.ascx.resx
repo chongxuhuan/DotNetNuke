@@ -268,7 +268,7 @@
     <value>Page Name Is Required</value>
   </data>
   <data name="DeleteSpecialPage.Text" xml:space="preserve">
-    <value>A page defined as Home, Splash, Login or User Page for the portal, or the last visible Page in the portal cannot be deleted. Also the Admin and Host Page can not be deleted.</value>
+    <value>A page defined as Home, Splash, Login or User Page for the website, or the last visible Page in the website cannot be deleted. Also the Admin and Host Page can not be deleted.</value>
   </data>
   <data name="valStartDate.ErrorMessage" xml:space="preserve">
     <value>Invalid Start Date</value>
@@ -298,7 +298,7 @@
     <value>Copy design</value>
   </data>
   <data name="plCopySkin.Help" xml:space="preserve">
-    <value>Copies the currently selected design (skin and container) for the page to descendant pages. Option only available to Portal Admins and Superusers.</value>
+    <value>Copies the currently selected design (skin and container) for the page to descendant pages. Option only available to Website Admins and Superusers.</value>
   </data>
   <data name="plCopySkin.Text" xml:space="preserve">
     <value>Copy design to descendants:</value>

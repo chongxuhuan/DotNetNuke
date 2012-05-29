@@ -175,7 +175,7 @@
     <value>Refresh Page Priorities</value>
   </data>
   <data name="SectionProviderSettings.Help" xml:space="preserve">
-    <value>In this section you can view and configure available Sitemap providers for the current portal. Check the "Enabled" checkbox if you want to include urls generated for that provider in the final sitemap file. You can also override the priority for all urls of any given provider by checking the appropriate checkbox and giving a value for the new priority</value>
+    <value>In this section you can view and configure available Sitemap providers for the current website. Check the "Enabled" checkbox if you want to include urls generated for that provider in the final sitemap file. You can also override the priority for all urls of any given provider by checking the appropriate checkbox and giving a value for the new priority</value>
   </data>
   <data name="SectionProviderSettings.Text" xml:space="preserve">
     <value>Installed Sitemap Providers</value>

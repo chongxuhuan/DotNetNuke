@@ -1,1 +1,1 @@
-<%@ Page Language="C#" Inherits="Telerik.Web.UI.DialogHandler, Telerik.Web.UI" %>
+<%@ Page Language="C#" Inherits="DotNetNuke.Providers.RadEditorProvider.DotNetNukeDialogHandler, DotNetNuke.RadEditorProvider" %>

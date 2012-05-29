@@ -18,6 +18,9 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
+using System.Threading;
+
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Tabs;
 
@@ -42,14 +45,14 @@ namespace DotNetNuke.Providers.RadEditorProvider
 			if (! Page.IsPostBack && userInfo != null && userInfo.UserID != Null.NullInteger)
 			{
 				//check view permissions - Yes?
-				PortalSettings _PortalSettings = PortalController.GetCurrentPortalSettings();
-				string pageCulture = _PortalSettings.ActiveTab.CultureCode;
+				var portalSettings = PortalController.GetCurrentPortalSettings();
+			    var pageCulture = Thread.CurrentThread.CurrentCulture.Name;
 				if (string.IsNullOrEmpty(pageCulture))
 				{
-					pageCulture = PortalController.GetActivePortalLanguage(_PortalSettings.PortalId);
+                    pageCulture = PortalController.GetActivePortalLanguage(portalSettings.PortalId);
 				}
 
-				List<TabInfo> tabs = TabController.GetTabsBySortOrder(_PortalSettings.PortalId, pageCulture, true);
+                List<TabInfo> tabs = TabController.GetTabsBySortOrder(portalSettings.PortalId, pageCulture, true);
 				var sortedTabList = TabController.GetPortalTabs(tabs, Null.NullInteger, false, Null.NullString, true, false, true, true, true);
 
 				Items.Clear();

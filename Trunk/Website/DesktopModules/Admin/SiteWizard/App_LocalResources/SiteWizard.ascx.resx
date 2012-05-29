@@ -123,7 +123,7 @@
   <data name="Introduction.Help" xml:space="preserve">
     <value>
 			The Site Configuration Wizard provides an Administrator with a User-Friendly
-			way to set up the more common features of a Portal.
+			way to set up the more common features of a Website.
 			You can step through the Wizard using the Next/Back buttons at the bottom
 			of the Wizard Page.
 			Once enough detail has been collected to complete the Wizard, the Finish Button will be
@@ -166,7 +166,7 @@
     <value>You must select a Template before you can proceed.</value>
   </data>
   <data name="InvalidTemplate.Text" xml:space="preserve">
-    <value>{0} is not a valid Portal Template File.</value>
+    <value>{0} is not a valid Website Template File.</value>
   </data>
   <data name="Skin.Title" xml:space="preserve">
     <value>Select a Skin for your Site</value>
@@ -249,7 +249,7 @@
     <value>Site Wizard</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
-    <value>&lt;h1&gt;About Site Wizard&lt;/h1&gt;&lt;p&gt;The Administrator can use this user-friendly wizard to set up the common features of the Portal/Site.&lt;/p&gt;</value>
+    <value>&lt;h1&gt;About Site Wizard&lt;/h1&gt;&lt;p&gt;The Administrator can use this user-friendly wizard to set up the common features of the Website.&lt;/p&gt;</value>
   </data>
   <data name="Finish.Text" xml:space="preserve">
     <value>Finish</value>
