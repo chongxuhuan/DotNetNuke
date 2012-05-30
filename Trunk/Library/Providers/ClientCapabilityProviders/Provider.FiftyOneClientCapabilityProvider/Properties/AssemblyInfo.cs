@@ -33,4 +33,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("DotNetNuke is copyright 2002-2012 by DotNetNuke Corporation. All Rights Reserved.")]
 [assembly: AssemblyTrademark("DotNetNuke")]
 [assembly: Guid("25C9803D-A80E-44D5-A87E-1CDFB05C99A0")]
-[assembly: AssemblyVersion("6.2.1.4")]
+[assembly: AssemblyVersion("6.2.1.8")]

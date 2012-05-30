@@ -225,7 +225,7 @@ namespace DotNetNuke.Modules.Admin.Users
             get
             {
                 int _PageNo = 0;
-                if (ViewState["PageNo"] != null)
+                if (ViewState["PageNo"] != null && !IsPostBack)
                 {
                     _PageNo = Convert.ToInt32(ViewState["PageNo"]);
                 }

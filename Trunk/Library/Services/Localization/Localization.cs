@@ -870,7 +870,7 @@ namespace DotNetNuke.Services.Localization
 		/// <returns>A valid CultureInfo if any is found</returns>
 		public static CultureInfo GetBrowserCulture(int portalId)
 		{
-			if (HttpContext.Current == null || HttpContext.Current.Request.UserLanguages == null)
+            if (HttpContext.Current == null || HttpContext.Current.Request == null || HttpContext.Current.Request.UserLanguages == null)
 				return null;
 
 			CultureInfo culture = null;

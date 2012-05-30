@@ -68,6 +68,9 @@ namespace DotNetNuke.Services.FileSystem
 
             UpdateFolderMappingSettings(objFolderMapping);
 
+            var cacheKey = String.Format(DataCache.FolderMappingCacheKey, objFolderMapping.PortalID);
+            DataCache.RemoveCache(cacheKey);
+
             return objFolderMapping.FolderMappingID;
         }
 

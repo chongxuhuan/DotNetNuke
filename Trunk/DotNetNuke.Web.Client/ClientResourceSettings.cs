@@ -75,6 +75,11 @@ namespace DotNetNuke.Web.Client
 
         private bool? IsBooleanSettingEnabled(string settingKey)
         {
+            if(Status != UpgradeStatus.None)
+            {
+                return false;
+            }
+            
             var portalEnabled = GetBooleanSetting(PortalSettingsDictionaryKey, settingKey);
             var overrideDefaultSettings = GetBooleanSetting(PortalSettingsDictionaryKey, OverrideDefaultSettingsKey);
 
@@ -203,6 +208,64 @@ namespace DotNetNuke.Web.Client
             {
                 return null;
             }
+        }
+
+        private bool _statusChecked;
+        private UpgradeStatus _status;
+
+        private UpgradeStatus Status
+        {
+            get
+            {
+                if (!_statusChecked)
+                {
+                    _status = GetStatusByReflection();
+                    _statusChecked = true;
+                }
+
+                return _status;
+            }
+        }
+
+        private UpgradeStatus GetStatusByReflection()
+        {
+            try
+            {
+                var type = Type.GetType("DotNetNuke.Common.Globals, DotNetNuke");
+
+                PropertyInfo property = type.GetProperty("Status", BindingFlags.Static | BindingFlags.Public);
+                var status = (UpgradeStatus)property.GetValue(null, null);
+                return status;
+            }
+            catch (Exception)
+            {
+                return UpgradeStatus.Unknown;
+            }
+        }
+
+        private enum UpgradeStatus
+        {
+            /// <summary>
+            /// The application need update to a higher version.
+            /// </summary>
+            Upgrade,
+            /// <summary>
+            /// The application need to install itself.
+            /// </summary>
+            Install,
+            /// <summary>
+            /// The application is normal running.
+            /// </summary>
+            None,
+            /// <summary>
+            /// The application occur error when running.
+            /// </summary>
+            Error,
+            /// <summary>
+            /// The application status is unknown,
+            /// </summary>
+            /// <remarks>This status should never be returned. its is only used as a flag that Status hasn't been determined.</remarks>
+            Unknown
         }
     }
 }
