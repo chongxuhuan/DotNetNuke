@@ -1,8 +1,0 @@
-<Settings>
-  <Setting>
-    <Name>BorderWidth</Name>
-    <Type>String</Type>
-    <Help>Sets the border width of the logo image</Help>
-    <Value></Value>
-  </Setting>
-</Settings>
