@@ -2245,12 +2245,14 @@
           <ProjectItem ReplaceParameters="false" TargetFileName="Installwizard.aspx.de-DE.resx">Installwizard.aspx.de-DE.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Installwizard.aspx.es-ES.resx">Installwizard.aspx.es-ES.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Installwizard.aspx.fr-FR.resx">Installwizard.aspx.fr-FR.resx</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Installwizard.aspx.it-IT.resx">Installwizard.aspx.it-IT.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Installwizard.aspx.nl-NL.resx">Installwizard.aspx.nl-NL.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Installwizard.aspx.resx">Installwizard.aspx.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Locales.xml">Locales.xml</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="UpgradeWizard.aspx.de-DE.resx">UpgradeWizard.aspx.de-DE.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="UpgradeWizard.aspx.es-ES.resx">UpgradeWizard.aspx.es-ES.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="UpgradeWizard.aspx.fr-FR.resx">UpgradeWizard.aspx.fr-FR.resx</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="UpgradeWizard.aspx.it-IT.resx">UpgradeWizard.aspx.it-IT.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="UpgradeWizard.aspx.nl-NL.resx">UpgradeWizard.aspx.nl-NL.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="UpgradeWizard.aspx.resx">UpgradeWizard.aspx.resx</ProjectItem>
         </Folder>
@@ -2314,6 +2316,7 @@
           <ProjectItem ReplaceParameters="false" TargetFileName="ResourcePack.Full.06.02.01.de-DE.resources">ResourcePack.Full.06.02.01.de-DE.resources</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="ResourcePack.Full.06.02.01.es-ES.resources">ResourcePack.Full.06.02.01.es-ES.resources</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="ResourcePack.Full.06.02.01.fr-FR.resources">ResourcePack.Full.06.02.01.fr-FR.resources</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="ResourcePack.Full.06.02.01.it-IT.resources">ResourcePack.Full.06.02.01.it-IT.resources</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="ResourcePack.Full.06.02.01.nl-NL.resources">ResourcePack.Full.06.02.01.nl-NL.resources</ProjectItem>
         </Folder>
         <Folder Name="Module" TargetFolderName="Module">
@@ -2583,12 +2586,14 @@
           <ProjectItem ReplaceParameters="false" TargetFileName="Blank Website.template.en-US.resx">Blank Website.template.en-US.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Blank Website.template.es-ES.resx">Blank Website.template.es-ES.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Blank Website.template.fr-FR.resx">Blank Website.template.fr-FR.resx</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Blank Website.template.it-IT.resx">Blank Website.template.it-IT.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Blank Website.template.nl-NL.resx">Blank Website.template.nl-NL.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Default Website.template">Default Website.template</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Default Website.template.de-DE.resx">Default Website.template.de-DE.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Default Website.template.en-US.resx">Default Website.template.en-US.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Default Website.template.es-ES.resx">Default Website.template.es-ES.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Default Website.template.fr-FR.resx">Default Website.template.fr-FR.resx</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Default Website.template.it-IT.resx">Default Website.template.it-IT.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Default Website.template.nl-NL.resx">Default Website.template.nl-NL.resx</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="Default Website.template.resources">Default Website.template.resources</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="default.css">default.css</ProjectItem>

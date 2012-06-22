@@ -13,16 +13,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LocalizedTemplateName.Text">
-    <value>Lege Website</value>
+    <value xml:space="preserve">Lege Website</value>
   </data>
   <data name="Setting.DefaultLanguage.Text">
-    <value>nl-NL</value>
+    <value xml:space="preserve">nl-NL</value>
   </data>
   <data name="Setting.FooterText.Text">
-    <value>Copyright [year] by DotNetNuke Corporation</value>
+    <value xml:space="preserve">Copyright [year] by DotNetNuke Corporation</value>
   </data>
   <data name="PortalDescription.Text">
-    <value>Lege Website</value>
+    <value xml:space="preserve">Lege Website</value>
   </data>
   <data name="Tab.Home.Description.Text">
     <value />
@@ -31,7 +31,7 @@
     <value />
   </data>
   <data name="Tab.Home.Name.Text">
-    <value>Startpagina</value>
+    <value xml:space="preserve">Startpagina</value>
   </data>
   <data name="Tab.Home.PageHeadText.Text">
     <value />
@@ -40,6 +40,6 @@
     <value />
   </data>
   <data name="RoleGroup.Description.Text">
-    <value>Een dummy rolgroup die de globale rollen representeerd</value>
+    <value xml:space="preserve">Een dummy rolgroup die de globale rollen representeerd</value>
   </data>
 </root>

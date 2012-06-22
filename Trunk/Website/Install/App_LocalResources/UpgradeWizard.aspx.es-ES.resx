@@ -13,7 +13,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BestPractices.Text">
-    <value>Esta página le permite realizar una actualización de la aplicación DotNetNuke a una versión más reciente. Aplicar las actualizaciones de forma consistente es la mejor manera de garantizar la seguridad de su sistema, de los usuarios y de los documentos de la web. Antes de proceder con el proceso de actualización verifique que:
+    <value xml:space="preserve">Esta página le permite realizar una actualización de la aplicación DotNetNuke a una versión más reciente. Aplicar las actualizaciones de forma consistente es la mejor manera de garantizar la seguridad de su sistema, de los usuarios y de los documentos de la web. Antes de proceder con el proceso de actualización verifique que:
 &lt;ul&gt;
 &lt;li&gt;ha realizado pruebas de actualización en un entorno de test
 &lt;li&gt;ha documentado las características de su instalación incluyendo la compatibilidad de los módulos que se utilizan en este sistema
@@ -21,29 +21,29 @@
 &lt;/ul&gt;</value>
   </data>
   <data name="ChooseLanguage.Text">
-    <value>Seleccione el idioma:</value>
+    <value xml:space="preserve">Seleccione el idioma:</value>
   </data>
   <data name="CurrentVersion.Text">
-    <value>Versión actual - {0}</value>
+    <value xml:space="preserve">Versión actual - {0}</value>
   </data>
   <data name="IntroDetail.Text">
-    <value>&lt;p&gt;Bienvenido a la página de actualización de DotNetNuke.&lt;/p&gt;
+    <value xml:space="preserve">&lt;p&gt;Bienvenido a la página de actualización de DotNetNuke.&lt;/p&gt;
 
 &lt;p&gt;El primer paso consiste en seleccionar el idioma que quiera usar para la actualización.&lt;/p&gt;</value>
   </data>
   <data name="Next.Text">
-    <value>Actualizar ahora</value>
+    <value xml:space="preserve">Actualizar ahora</value>
   </data>
   <data name="Password.Text">
-    <value>Contraseña:</value>
+    <value xml:space="preserve">Contraseña:</value>
   </data>
   <data name="Title.Text">
-    <value>Actualización de DotNetNuke</value>
+    <value xml:space="preserve">Actualización de DotNetNuke</value>
   </data>
   <data name="Username.Text">
-    <value>Usuario administrador del sistema (superusuario):</value>
+    <value xml:space="preserve">Usuario administrador del sistema (superusuario):</value>
   </data>
   <data name="Version.Text">
-    <value>Actualización de DotNetNuke - Versión {0}</value>
+    <value xml:space="preserve">Actualización de DotNetNuke - Versión {0}</value>
   </data>
 </root>

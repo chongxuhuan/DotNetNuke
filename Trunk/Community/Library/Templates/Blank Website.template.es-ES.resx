@@ -13,16 +13,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LocalizedTemplateName.Text">
-    <value>Sitio web en blanco</value>
+    <value xml:space="preserve">Sitio web en blanco</value>
   </data>
   <data name="Setting.DefaultLanguage.Text">
-    <value>es-ES</value>
+    <value xml:space="preserve">es-ES</value>
   </data>
   <data name="Setting.FooterText.Text">
-    <value>Copyright [year] - DotNetNuke Corporation</value>
+    <value xml:space="preserve">Copyright [year] - DotNetNuke Corporation</value>
   </data>
   <data name="PortalDescription.Text">
-    <value>Plantilla para sitio web en blanco</value>
+    <value xml:space="preserve">Plantilla para sitio web en blanco</value>
   </data>
   <data name="Tab.Home.Description.Text">
     <value />
@@ -31,7 +31,7 @@
     <value />
   </data>
   <data name="Tab.Home.Name.Text">
-    <value>Inicio</value>
+    <value xml:space="preserve">Inicio</value>
   </data>
   <data name="Tab.Home.PageHeadText.Text">
     <value />
@@ -40,6 +40,6 @@
     <value />
   </data>
   <data name="RoleGroup.Description.Text">
-    <value>Grupo de roles que representa los roles globales del portal</value>
+    <value xml:space="preserve">Grupo de roles que representa los roles globales del portal</value>
   </data>
 </root>
