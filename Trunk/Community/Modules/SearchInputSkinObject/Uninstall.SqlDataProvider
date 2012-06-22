@@ -1,0 +1,3 @@
+delete from {databaseOwner}{objectQualifier}ModuleControls where ControlKey = 'OPENSEARCHRESULTS'
+
+GO

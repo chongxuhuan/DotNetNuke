@@ -1,0 +1,344 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LocalizedTemplateName.Text">
+    <value>Mobiele Website</value>
+  </data>
+  <data name="RoleGroup.Description.Text">
+    <value>Een dummy rolgroup die de globale rollen representeerd</value>
+  </data>
+  <data name="Setting.DefaultLanguage.Text">
+    <value>nl-NL</value>
+  </data>
+  <data name="Setting.FooterText.Text">
+    <value>Copyright [year] by DotNetNuke Corporation</value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.0.Text">
+    <value>Elizabeth Taylor</value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.1.Text">
+    <value>President, CEO</value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.2.Text">
+    <value>Donec nibh ipsum, ullamcorper eleifend molestie nec, elementum et est. Quisque a massa et sapien vestibulum pulvinar. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam diam lacus, scelerisque eu luctus a, blandit nec mi. </value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.3.Text">
+    <value>Vestibulum interdum porttitor sapien, quis tempor nisl bibendum quis. Vestibulum ac feugiat urna. Morbi quis velit sed magna blandit gravida vel nec purus. Vivamus vel nibh nisl.</value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.4.Text">
+    <value>James Woolworth </value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.5.Text">
+    <value>Nam augue velit, tincidunt in ultricies at, varius pellentesque mauris. Etiam orci risus, tincidunt eu faucibus at, dictum et mauris. </value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.6.Text">
+    <value>Donec turpis urna, suscipit ut eleifend semper, commodo non sapien. Aenean facilisis ipsum at elit consequat quis luctus justo feugiat. Vivamus lacus diam, scelerisque vitae bibendum id, condimentum eu diam.</value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.7.Text">
+    <value>Susan G. Komen</value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.8.Text">
+    <value>Vestibulum scelerisque tincidunt nisl nec laoreet. Proin pellentesque aliquet molestie.</value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.9.Text">
+    <value>Morbi quis velit sed magna blandit gravida vel nec purus. Vivamus vel nibh nisl.Vestibulum scelerisque tincidunt nisl nec laoreet.</value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Content.10.Text">
+    <value>Marisa Miller </value>
+  </data>
+  <data name="Tab.About.ContentPane.Module.Footer.Text">
+    <value />
+  </data>
+  <data name="Tab.About.ContentPane.Module.Header.Text">
+    <value />
+  </data>
+  <data name="Tab.About.ContentPane.Module.Title.Text">
+    <value>Our Management</value>
+  </data>
+  <data name="Tab.About.Name.Text">
+    <value>Over Ons</value>
+  </data>
+  <data name="Tab.About.Title.Text">
+    <value />
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.0.Text">
+    <value>DotNetNuke Corp.</value>
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.1.Text">
+    <value>155 Bovet Road, Suite 201</value>
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.2.Text">
+    <value>
+San Mateo, CA 94402</value>
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.3.Text">
+    <value>E</value>
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.4.Text">
+    <value>: sales@dnncorp.com</value>
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.5.Text">
+    <value>T</value>
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.6.Text">
+    <value>: +1 650 288 3150</value>
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.7.Text">
+    <value>F</value>
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.8.Text">
+    <value>: +1 650 288 3191</value>
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Footer.Text">
+    <value />
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Header.Text">
+    <value />
+  </data>
+  <data name="Tab.ContactUs.ContentPane.Module.Title.Text">
+    <value>Neem contact met ons op</value>
+  </data>
+  <data name="Tab.ContactUs.Description.Text">
+    <value />
+  </data>
+  <data name="Tab.ContactUs.Keywords.Text">
+    <value />
+  </data>
+  <data name="Tab.ContactUs.Name.Text">
+    <value>Contact</value>
+  </data>
+  <data name="Tab.ContactUs.PageHeadText.Text">
+    <value />
+  </data>
+  <data name="Tab.ContactUs.Title.Text">
+    <value />
+  </data>
+  <data name="Tab.Home.ContentPane.Module.Content.0.Text">
+    <value>DotNetNuke is de kracht achter mobiele websites - SNEL. Volg deze drie eenvoudige stappen:</value>
+  </data>
+  <data name="Tab.Home.ContentPane.Module.Content.1.Text">
+    <value>Maak uw mobiele content</value>
+  </data>
+  <data name="Tab.Home.ContentPane.Module.Content.2.Text">
+    <value>DotNetNuke maakt het creëren van (mobiele) content heel eenvoudig. U kunt starten met het bewerken van content van een bestaande pagina, of maak nieuwe pagina's aan en voeg uw eigen modules toe.</value>
+  </data>
+  <data name="Tab.Home.ContentPane.Module.Content.3.Text">
+    <value>Preview content</value>
+  </data>
+  <data name="Tab.Home.ContentPane.Module.Content.4.Text">
+    <value>Mobiele apparaten hebben verschillende resoluties. Gebruik de meegeleverde profielen, en maak eigen profielen, en zie hoe content eruit ziet op verschillende resoluties.</value>
+  </data>
+  <data name="Tab.Home.ContentPane.Module.Content.5.Text">
+    <value>Beheer doorsturen van URL's</value>
+  </data>
+  <data name="Tab.Home.ContentPane.Module.Content.6.Text">
+    <value>Bepaal zelf welke apparaten gebruik moeten maken van uw nieuwe mobiele website. Het meestvoorkomende scenario is dat alleen mobiele telefoons doorgestuurd worden naar de nieuwe site, maar u kunt zelf sites aanmaken voor tablets of andere apparaten, gebaseerd op hun functionaliteiten.</value>
+  </data>
+  <data name="Tab.Home.ContentPane.Module.Footer.Text">
+    <value />
+  </data>
+  <data name="Tab.Home.ContentPane.Module.Header.Text">
+    <value />
+  </data>
+  <data name="Tab.Home.ContentPane.Module.Title.Text">
+    <value>DotNetNuke Gaat Mobiel</value>
+  </data>
+  <data name="Tab.Home.Description.Text">
+    <value />
+  </data>
+  <data name="Tab.Home.Keywords.Text">
+    <value />
+  </data>
+  <data name="Tab.Home.Name.Text">
+    <value>Startpagina</value>
+  </data>
+  <data name="Tab.Home.PageHeadText.Text">
+    <value />
+  </data>
+  <data name="Tab.Home.SocialPane.Module.Content.0.Text">
+    <value>
+    .socialIcons{ width:204px;height: 24px; margin: 0 auto; text-align: center;}
+    .socialIcons .icon{width: 24px; height: 24px; display: block; float: left; margin-right: 21px; background-image: url({{PortalRoot}}/social-icns.png);}
+    .socialIcons .youtube{background-position: -45px 0;}
+    .socialIcons .linkedin{background-position: -90px 0;}
+    .socialIcons .flickr{background-position: -135px 0;}
+    .socialIcons .facebook{background-position: -180px 0;margin-right: 0;}
+</value>
+  </data>
+  <data name="Tab.Home.SocialPane.Module.Footer.Text">
+    <value />
+  </data>
+  <data name="Tab.Home.SocialPane.Module.Header.Text">
+    <value />
+  </data>
+  <data name="Tab.Home.SocialPane.Module.Title.Text">
+    <value>Text/HTML</value>
+  </data>
+  <data name="Tab.Home.Title.Text">
+    <value />
+  </data>
+  <data name="Tab.About.Description.Text">
+    <value />
+  </data>
+  <data name="Tab.About.Keywords.Text">
+    <value />
+  </data>
+  <data name="Tab.About.PageHeadText.Text">
+    <value />
+  </data>
+  <data name="Tab.Products.ContentPane.Module.Content.0.Text">
+    <value>Klassiek Design</value>
+  </data>
+  <data name="Tab.Products.ContentPane.Module.Content.1.Text">
+    <value>Proin condimentum odio ipsum, sit amet consequat lacus. Ut elementum nisl id lectus ullamcorper bibendum. Praesent pellentesque bibendum sodales. Aenean ut convallis velit. In vestibulum aliquam condimentum. Vivamus tincidunt ante id nibh volutpat porta.</value>
+  </data>
+  <data name="Tab.Products.ContentPane.Module.Content.2.Text">
+    <value>Praesent pellentesque bibendum sodales. Aenean ut convallis velit. In vestibulum aliquam condimentum. Vivamus tincidunt ante id nibh volutpat porta.</value>
+  </data>
+  <data name="Tab.Products.ContentPane.Module.Content.3.Text">
+    <value>Hoge Prestaties</value>
+  </data>
+  <data name="Tab.Products.ContentPane.Module.Content.4.Text">
+    <value>Elektrische Dans</value>
+  </data>
+  <data name="Tab.Products.ContentPane.Module.Content.5.Text">
+    <value>Proin condimentum odio ipsum, sit amet consequat lacus. Ut elementum nisl id lectus ullamcorper bibendum. </value>
+  </data>
+  <data name="Tab.Products.ContentPane.Module.Footer.Text">
+    <value />
+  </data>
+  <data name="Tab.Products.ContentPane.Module.Header.Text">
+    <value />
+  </data>
+  <data name="Tab.Products.ContentPane.Module.Title.Text">
+    <value>Onze Fantastische Fietsen</value>
+  </data>
+  <data name="Tab.Products.Description.Text">
+    <value />
+  </data>
+  <data name="Tab.Products.Keywords.Text">
+    <value />
+  </data>
+  <data name="Tab.Products.Name.Text">
+    <value>Producten</value>
+  </data>
+  <data name="Tab.Products.PageHeaderText.Text">
+    <value />
+  </data>
+  <data name="Tab.Products.Title.Text">
+    <value />
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Content.0.Text">
+    <value>Suspendisse hendrerit mi a mi vehicula tempus vitae nec felis. Praesent ac urna at lectus porta porttitor. Cras nulla leo, porta nec laoreet ac, lobortis non enim. Duis nisl nisi, mattis vel egestas sed, venenatissed turpis. Donec vel metus risus, egestas. </value>
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Content.1.Text">
+    <value>Praesent pellentesque bibendum sodales. Aenean ut convallis velit. In vestibulum aliquam condimentum. Vivamus tincidunt ante id nibh volutpat porta. Nulla ut dolor massa, eu vestibulum massa.</value>
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Content.2.Text">
+    <value>Proin condimentum odio ipsum, sit amet consequat lacus. </value>
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Content.3.Text">
+    <value>Ut elementum nisl id lectus ullamcorper bibendum. </value>
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Content.4.Text">
+    <value>Praesent pellentesque bibendum sodales. </value>
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Content.5.Text">
+    <value>Aenean ut convallis velit. </value>
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Content.6.Text">
+    <value>In vestibulum aliquam condimentum. </value>
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Content.7.Text">
+    <value>Vivamus tincidunt ante id nibh volutpat porta.</value>
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Content.8.Text">
+    <value>Mis je de mooie lijnen en klassieke ontwerpen uit het verleden? Kijk dan eens naar onze nieuwe modellen gebaseerd op de meest populaire designs uit je jeugd.</value>
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Content.9.Text">
+    <value>Praesent pellentesque bibendum sodales. Aenean ut convallis velit. In vestibulum aliquam condimentum. Vivamus tincidunt ante id nibh volutpat porta. Nulla ut dolor massa, eu vestibulum massa. Suspendisse hendrerit mi a mi vehicula tempus vitae nec felis. Praesent ac urna at lectus porta porttitor. Cras nulla leo, porta nec laoreet ac, lobortis non enim.</value>
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Footer.Text">
+    <value />
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Header.Text">
+    <value />
+  </data>
+  <data name="Tab.Services.ContentPane.Module.Title.Text">
+    <value>Onze Diensten</value>
+  </data>
+  <data name="Tab.Services.Description.Text">
+    <value />
+  </data>
+  <data name="Tab.Services.Keywords.Text">
+    <value />
+  </data>
+  <data name="Tab.Services.Name.Text">
+    <value>Diensten</value>
+  </data>
+  <data name="Tab.Services.PageHeadText.Text">
+    <value />
+  </data>
+  <data name="Tab.Services.Title.Text">
+    <value />
+  </data>
+  <data name="PortalDescription.Text">
+    <value>Sjabloon voor mobiele website</value>
+  </data>
+  <data name="Tab.Directors.Description.Text">
+    <value />
+  </data>
+  <data name="Tab.Directors.Keywords.Text">
+    <value />
+  </data>
+  <data name="Tab.Directors.Name.Text">
+    <value>Raad van Bestuur</value>
+  </data>
+  <data name="Tab.Directors.PageHeadText.Text">
+    <value />
+  </data>
+  <data name="Tab.Directors.Title.Text">
+    <value />
+  </data>
+  <data name="Tab.Investors.Description.Text">
+    <value />
+  </data>
+  <data name="Tab.Investors.Keywords.Text">
+    <value />
+  </data>
+  <data name="Tab.Investors.Name.Text">
+    <value>Investeerder relaties</value>
+  </data>
+  <data name="Tab.Investors.PageHeadText.Text">
+    <value />
+  </data>
+  <data name="Tab.Investors.Title.Text">
+    <value />
+  </data>
+  <data name="Tab.ManagementTeam.Description.Text">
+    <value />
+  </data>
+  <data name="Tab.ManagementTeam.Keywords.Text">
+    <value />
+  </data>
+  <data name="Tab.ManagementTeam.Name.Text">
+    <value>Management Team</value>
+  </data>
+  <data name="Tab.ManagementTeam.PageHeadText.Text">
+    <value />
+  </data>
+  <data name="Tab.ManagementTeam.Title.Text">
+    <value />
+  </data>
+</root>

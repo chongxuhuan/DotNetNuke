@@ -1,0 +1,6 @@
+if not exists (select ControlKey from {databaseOwner}{objectQualifier}ModuleControls where ControlKey = 'OPENSEARCHRESULTS') begin
+	insert into {databaseOwner}{objectQualifier}ModuleControls(ControlKey, ControlTitle, ControlSrc, ControlType) values('OPENSEARCHRESULTS', '', 'DesktopModules/XSSearchResults/XSSearchResults.ascx', -1)		
+end
+
+GO
+

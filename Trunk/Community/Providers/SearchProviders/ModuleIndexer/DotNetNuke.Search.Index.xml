@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DotNetNuke.Search.Index</name>
+    </assembly>
+    <members>
+        <member name="T:DotNetNuke.Services.Search.ModuleIndexer">
+            -----------------------------------------------------------------------------
+            Namespace:  DotNetNuke.Services.Search
+            Project:    DotNetNuke.Search.Index
+            Class:      ModuleIndexer
+            -----------------------------------------------------------------------------
+            <summary>
+            The ModuleIndexer is an implementation of the abstract IndexingProvider
+            class
+            </summary>
+            <remarks>
+            </remarks>
+            <history>
+            	[cnurse]	11/15/2004	documented
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Services.Search.ModuleIndexer.GetSearchIndexItems(System.Int32)">
+            -----------------------------------------------------------------------------
+            <summary>
+            GetSearchIndexItems gets the SearchInfo Items for the Portal
+            </summary>
+            <remarks>
+            </remarks>
+            <param name="PortalID">The Id of the Portal</param>
+            <history>
+            	[cnurse]	11/15/2004	documented
+                [vnguyen]   09/07/2010  Modified: Included logic to add TabId to searchItems
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Services.Search.ModuleIndexer.GetModuleList(System.Int32)">
+            -----------------------------------------------------------------------------
+            <summary>
+            GetModuleList gets a collection of SearchContentModuleInfo Items for the Portal
+            </summary>
+            <remarks>
+            Parses the Modules of the Portal, determining whetehr they are searchable.
+            </remarks>
+            <param name="PortalID">The Id of the Portal</param>
+            <history>
+            	[cnurse]	11/15/2004	documented
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="T:DotNetNuke.Services.Search.SearchContentModuleInfo">
+            -----------------------------------------------------------------------------
+            Namespace:  DotNetNuke.Services.Search
+            Project:    DotNetNuke.Search.Index
+            Class:      SearchContentModuleInfo
+            -----------------------------------------------------------------------------
+            <summary>
+            The SearchContentModuleInfo class represents an extendension (by containment)
+            of ModuleInfo to add a parametere that determines whether a module is Searchable
+            </summary>
+            <remarks>
+            </remarks>
+            <history>
+            	[cnurse]	11/15/2004	documented
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">
+            -----------------------------------------------------------------------------
+            Namespace:  DotNetNuke.Services.Search
+            Project:    DotNetNuke.Search.Index
+            Class:      SearchContentModuleInfoCollection
+            -----------------------------------------------------------------------------
+            <summary>
+            Represents a collection of <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> objects.
+            </summary>
+            <remarks>
+            </remarks>
+            <history>
+            	[cnurse]	11/15/2004	documented
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see> class.
+            </summary>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.#ctor(DotNetNuke.Services.Search.SearchContentModuleInfoCollection)">
+            <summary>
+            Initializes a new instance of the <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see> class containing the elements of the specified source collection.
+            </summary>
+            <param name="value">A <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see> with which to initialize the collection.</param>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.#ctor(DotNetNuke.Services.Search.SearchContentModuleInfo[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see> class containing the specified array of <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> objects.
+            </summary>
+            <param name="value">An array of <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> objects with which to initialize the collection. </param>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.Add(DotNetNuke.Services.Search.SearchContentModuleInfo)">
+            <summary>
+            Add an element of the specified <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> to the end of the collection.
+            </summary>
+            <param name="value">An object of type <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> to add to the collection.</param>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.IndexOf(DotNetNuke.Services.Search.SearchContentModuleInfo)">
+            <summary>
+            Gets the index in the collection of the specified <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see>, if it exists in the collection.
+            </summary>
+            <param name="value">The <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see> to locate in the collection.</param>
+            <returns>The index in the collection of the specified object, if found; otherwise, -1.</returns>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.Insert(System.Int32,DotNetNuke.Services.Search.SearchContentModuleInfo)">
+            <summary>
+            Add an element of the specified <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> to the collection at the designated index.
+            </summary>
+            <param name="index">An <see cref="T:System.Int32">Integer</see> to indicate the location to add the object to the collection.</param>
+            <param name="value">An object of type <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> to add to the collection.</param>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.Remove(DotNetNuke.Services.Search.SearchContentModuleInfo)">
+            <summary>
+            Remove the specified object of type <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> from the collection.
+            </summary>
+            <param name="value">An object of type <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> to remove to the collection.</param>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.Contains(DotNetNuke.Services.Search.SearchContentModuleInfo)">
+            <summary>
+            Gets a value indicating whether the collection contains the specified <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see>.
+            </summary>
+            <param name="value">The <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see> to search for in the collection.</param>
+            <returns><b>true</b> if the collection contains the specified object; otherwise, <b>false</b>.</returns>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.AddRange(DotNetNuke.Services.Search.SearchContentModuleInfo[])">
+            <summary>
+            Copies the elements of the specified <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> array to the end of the collection.
+            </summary>
+            <param name="value">An array of type <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfo">SearchContentModuleInfo</see> containing the objects to add to the collection.</param>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.AddRange(DotNetNuke.Services.Search.SearchContentModuleInfoCollection)">
+            <summary>
+            Adds the contents of another <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see> to the end of the collection.
+            </summary>
+            <param name="value">A <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see> containing the objects to add to the collection. </param>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.CopyTo(DotNetNuke.Services.Search.SearchContentModuleInfo[],System.Int32)">
+            <summary>
+            Copies the collection objects to a one-dimensional <see cref="T:System.Array">Array</see> instance beginning at the specified index.
+            </summary>
+            <param name="array">The one-dimensional <see cref="T:System.Array">Array</see> that is the destination of the values copied from the collection.</param>
+            <param name="index">The index of the array at which to begin inserting.</param>
+        </member>
+        <member name="M:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.ToArray">
+            <summary>
+            Creates a one-dimensional <see cref="T:System.Array">Array</see> instance containing the collection items.
+            </summary>
+            <returns>Array of type SearchContentModuleInfo</returns>
+        </member>
+        <member name="P:DotNetNuke.Services.Search.SearchContentModuleInfoCollection.Item(System.Int32)">
+            <summary>
+            Gets the <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see> at the specified index in the collection.
+            <para>
+            In VB.Net, this property is the indexer for the <see cref="T:DotNetNuke.Services.Search.SearchContentModuleInfoCollection">SearchContentModuleInfoCollection</see> class.
+            </para>
+            </summary>
+        </member>
+    </members>
+</doc>

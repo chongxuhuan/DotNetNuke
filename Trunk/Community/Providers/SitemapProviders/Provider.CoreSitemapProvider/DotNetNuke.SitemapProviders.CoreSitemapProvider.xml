@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DotNetNuke.SitemapProviders.CoreSitemapProvider</name>
+    </assembly>
+    <members>
+        <member name="M:DotNetNuke.SitemapProviders.CoreSitemapProvider.GetUrls(System.Int32,DotNetNuke.Entities.Portals.PortalSettings,System.String)">
+            <summary>
+              Includes page urls on the sitemap
+            </summary>
+            <remarks>
+              Pages that are included:
+              - are not deleted
+              - are not disabled
+              - are normal pages (not links,...)
+              - are visible (based on date and permissions)
+            </remarks>
+        </member>
+        <member name="M:DotNetNuke.SitemapProviders.CoreSitemapProvider.GetPageUrl(DotNetNuke.Entities.Tabs.TabInfo,System.String)">
+            <summary>
+              Return the sitemap url node for the page
+            </summary>
+            <param name = "objTab">The page being indexed</param>
+            <param name="language">Culture code to use in the URL</param>
+            <returns>A SitemapUrl object for the current page</returns>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="M:DotNetNuke.SitemapProviders.CoreSitemapProvider.GetPriority(DotNetNuke.Entities.Tabs.TabInfo)">
+            <summary>
+              When page level priority is used, the priority for each page will be computed from 
+              the hierarchy level of the page. 
+              Top level pages will have a value of 1, second level 0.9, third level 0.8, ...
+            </summary>
+            <param name = "objTab">The page being indexed</param>
+            <returns>The priority assigned to the page</returns>
+            <remarks>
+            </remarks>
+        </member>
+    </members>
+</doc>

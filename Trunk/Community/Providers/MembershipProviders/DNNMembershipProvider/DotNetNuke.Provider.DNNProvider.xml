@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DotNetNuke.Provider.DNNProvider</name>
+    </assembly>
+    <members>
+        <member name="T:DotNetNuke.Security.Profile.DNNProfileProvider">
+            -----------------------------------------------------------------------------
+            Project:    DotNetNuke
+            Namespace:  DotNetNuke.Security.Profile
+            Class:      DNNProfileProvider
+            -----------------------------------------------------------------------------
+            <summary>
+            The DNNProfileProvider overrides the default ProfileProvider to provide
+            a purely DotNetNuke implementation
+            </summary>
+            <remarks>
+            </remarks>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Profile.DNNProfileProvider.GetUserProfile(DotNetNuke.Entities.Users.UserInfo@)">
+            -----------------------------------------------------------------------------
+            <summary>
+            GetUserProfile retrieves the UserProfile information from the Data Store
+            </summary>
+            <remarks>
+            </remarks>
+            <param name="user">The user whose Profile information we are retrieving.</param>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Profile.DNNProfileProvider.UpdateUserProfile(DotNetNuke.Entities.Users.UserInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            UpdateUserProfile persists a user's Profile to the Data Store
+            </summary>
+            <remarks>
+            </remarks>
+            <param name="user">The user to persist to the Data Store.</param>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="P:DotNetNuke.Security.Profile.DNNProfileProvider.CanEditProviderProperties">
+            -----------------------------------------------------------------------------
+            <summary>
+            Gets whether the Provider Properties can be edited
+            </summary>
+            <returns>A Boolean</returns>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="T:DotNetNuke.Security.Membership.DNNRoleProvider">
+            -----------------------------------------------------------------------------
+            Project:    DotNetNuke
+            Namespace:  DotNetNuke.Security.Membership
+            Class:      DNNRoleProvider
+            -----------------------------------------------------------------------------
+            <summary>
+            The DNNRoleProvider overrides the default MembershipProvider to provide
+            a purely DNN Membership Component implementation
+            </summary>
+            <remarks>
+            </remarks>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.CreateRole(DotNetNuke.Security.Roles.RoleInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            CreateRole persists a Role to the Data Store
+            </summary>
+            <remarks>
+            </remarks>
+            <param name="role">The role to persist to the Data Store.</param>
+            <returns>A Boolean indicating success or failure.</returns>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.DeleteRole(DotNetNuke.Security.Roles.RoleInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            DeleteRole deletes a Role from the Data Store
+            </summary>
+            <param name="role">The role to delete from the Data Store.</param>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.GetRoles(System.Int32)">
+            -----------------------------------------------------------------------------
+            <summary>
+            Get the roles for a portal
+            </summary>
+            <param name="portalId">Id of the portal (If -1 all roles for all portals are 
+            retrieved.</param>
+            <returns>An ArrayList of RoleInfo objects</returns>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.UpdateRole(DotNetNuke.Security.Roles.RoleInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            Update a role
+            </summary>
+            <param name="role">The role to update</param>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.UpdateRoleSettings(DotNetNuke.Security.Roles.RoleInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            Update the role settings for a role
+            </summary>
+            <param name="role">The role to update</param>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.AddUserToRole(System.Int32,DotNetNuke.Entities.Users.UserInfo,DotNetNuke.Entities.Users.UserRoleInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            AddUserToRole adds a User to a Role
+            </summary>
+            <remarks>
+            </remarks>
+            <param name="portalId">Id of the portal</param>
+            <param name="user">The user to add.</param>
+            <param name="userRole">The role to add the user to.</param>
+            <returns>A Boolean indicating success or failure.</returns>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.GetUserRole(System.Int32,System.Int32,System.Int32)">
+            -----------------------------------------------------------------------------
+            <summary>
+            GetUserRole gets a User/Role object from the Data Store
+            </summary>
+            <remarks>
+            </remarks>
+            <param name="portalId">Id of the portal</param>
+            <param name="userId">The Id of the User</param>
+            <param name="roleId">The Id of the Role.</param>
+            <returns>The UserRoleInfo object</returns>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.GetUserRoles(DotNetNuke.Entities.Users.UserInfo,System.Boolean)">
+            <summary>
+            Gets a list of UserRoles for the user
+            </summary>
+            <param name="user">A UserInfo object representaing the user</param>
+            <param name="includePrivate">Include private roles.</param>
+            <returns>A list of UserRoleInfo objects</returns>
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.GetUserRoles(System.Int32,System.String,System.String)">
+            -----------------------------------------------------------------------------
+            <summary>
+            GetUserRoles gets a collection of User/Role objects from the Data Store
+            </summary>
+            <remarks>
+            </remarks>
+            <param name="portalId">Id of the portal</param>
+            <param name="userName">The user to fetch roles for</param>
+            <param name="roleName">The role to fetch users for</param>
+            <returns>An ArrayList of UserRoleInfo objects</returns>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.GetUsersByRoleName(System.Int32,System.String)">
+            -----------------------------------------------------------------------------
+            <summary>
+            Get the users in a role (as User objects)
+            </summary>
+            <param name="portalId">Id of the portal (If -1 all roles for all portals are 
+            retrieved.</param>
+            <param name="roleName">The role to fetch users for</param>
+            <returns>An ArrayList of UserInfo objects</returns>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.RemoveUserFromRole(System.Int32,DotNetNuke.Entities.Users.UserInfo,DotNetNuke.Entities.Users.UserRoleInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            Remove a User from a Role
+            </summary>
+            <remarks>
+            </remarks>
+            <param name="portalId">Id of the portal</param>
+            <param name="user">The user to remove.</param>
+            <param name="userRole">The role to remove the user from.</param>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.UpdateUserRole(DotNetNuke.Entities.Users.UserRoleInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            Updates a User/Role
+            </summary>
+            <param name="userRole">The User/Role to update</param>
+            <history>
+                [cnurse]	12/15/2005	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.CreateRoleGroup(DotNetNuke.Security.Roles.RoleGroupInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            CreateRoleGroup persists a RoleGroup to the Data Store
+            </summary>
+            <remarks>
+            </remarks>
+            <param name="roleGroup">The RoleGroup to persist to the Data Store.</param>
+            <returns>The Id of the new role.</returns>
+            <history>
+                [cnurse]	03/28/2006	created
+                [jlucarino]	02/26/2009	added CreatedByUserID parameter
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.DeleteRoleGroup(DotNetNuke.Security.Roles.RoleGroupInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            DeleteRoleGroup deletes a RoleGroup from the Data Store
+            </summary>
+            <param name="roleGroup">The RoleGroup to delete from the Data Store.</param>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.GetRoleGroup(System.Int32,System.Int32)">
+            -----------------------------------------------------------------------------
+            <summary>
+            GetRoleGroup gets a RoleGroup from the Data Store
+            </summary>
+            <param name="portalId">Id of the portal</param>
+            <param name="roleGroupId">The Id of the RoleGroup to retrieve.</param>
+            <returns>A RoleGroupInfo object</returns>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.GetRoleGroups(System.Int32)">
+            -----------------------------------------------------------------------------
+            <summary>
+            Get the RoleGroups for a portal
+            </summary>
+            <param name="portalId">Id of the portal.</param>
+            <returns>An ArrayList of RoleGroupInfo objects</returns>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="M:DotNetNuke.Security.Membership.DNNRoleProvider.UpdateRoleGroup(DotNetNuke.Security.Roles.RoleGroupInfo)">
+            -----------------------------------------------------------------------------
+            <summary>
+            Update a RoleGroup
+            </summary>
+            <param name="roleGroup">The RoleGroup to update</param>
+            <history>
+                [cnurse]	03/28/2006	created
+                [jlucarino]	02/26/2009	added LastModifiedByUserID parameter
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+    </members>
+</doc>

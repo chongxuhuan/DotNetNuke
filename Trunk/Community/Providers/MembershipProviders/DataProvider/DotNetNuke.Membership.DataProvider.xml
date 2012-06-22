@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DotNetNuke.Membership.DataProvider</name>
+    </assembly>
+    <members>
+        <member name="T:DotNetNuke.Security.Membership.Data.DataProvider">
+            -----------------------------------------------------------------------------
+            Project:    DotNetNuke
+            Namespace:  DotNetNuke.Security.Membership
+            Class:      DataProvider
+            -----------------------------------------------------------------------------
+            <summary>
+            The DataProvider provides the abstract Data Access Layer for the project
+            </summary>
+            <remarks>
+            </remarks>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+        <member name="T:DotNetNuke.Security.Membership.Data.SqlDataProvider">
+            -----------------------------------------------------------------------------
+            Project:    DotNetNuke
+            Namespace:  DotNetNuke.Security.Membership
+            Class:      SqlDataProvider
+            -----------------------------------------------------------------------------
+            <summary>
+            The SqlDataProvider provides a concrete SQL Server implementation of the
+            Data Access Layer for the project
+            </summary>
+            <remarks>
+            </remarks>
+            <history>
+                [cnurse]	03/28/2006	created
+            </history>
+            -----------------------------------------------------------------------------
+        </member>
+    </members>
+</doc>

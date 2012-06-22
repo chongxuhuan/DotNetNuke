@@ -1,0 +1,156 @@
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E22D9F82-DBEB-4BB1-B331-8A3AFCDE056C}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotNetNuke.Authentication.LinkedIn</RootNamespace>
+    <AssemblyName>DotNetNuke.Authentication.LinkedIn</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <UseIISExpress>false</UseIISExpress>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1591</NoWarn>
+    <DocumentationFile>DotNetNuke.Authentication.LinkedIn.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1591</NoWarn>
+    <DocumentationFile>DotNetNuke.Authentication.LinkedIn.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Components\LinkedInClient.cs" />
+    <Compile Include="Components\LinkedInUserData.cs" />
+    <Compile Include="Login.ascx.cs">
+      <DependentUpon>Login.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Login.ascx.designer.cs">
+      <DependentUpon>Login.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.ascx.cs">
+      <DependentUpon>Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Settings.ascx.designer.cs">
+      <DependentUpon>Settings.ascx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\Login.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Images\js-signin.png" />
+    <Content Include="Images\linkedin_16X16.jpg" />
+    <Content Include="Images\linkedin_32X32.jpg" />
+    <Content Include="license.txt" />
+    <Content Include="Login.ascx" />
+    <Content Include="releasenotes.txt" />
+    <Content Include="Settings.ascx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\Settings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\DotNetNuke.Library.csproj">
+      <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
+      <Name>DotNetNuke.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LinkedIn_Auth.dnn" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>26663</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>LinkedIn_Auth</DNNFileName>
+    <PackageName>LinkedIn_Auth</PackageName>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\Build\BuildScripts</BuildScriptsPath>
+    <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\..\..\Website\Install\AuthSystem</WebsiteInstallPath>
+  </PropertyGroup>
+  <Import Project="$(BuildScriptsPath)\Package.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="CopyBin;GetFiles;DebugProject;Package">
+  </Target>
+  <Target Name="GetFiles">
+    <ItemGroup>
+      <TextFiles Include="*.txt" Exclude="license.txt;releasenotes.txt" />
+    </ItemGroup>
+    <ItemGroup>
+      <Images Include="Images\*.*" />
+    </ItemGroup>
+    <ItemGroup>
+      <Views Include="*.ascx" />
+    </ItemGroup>
+    <ItemGroup>
+      <ResourceFiles Include="App_LocalResources\*.resx" />
+    </ItemGroup>
+    <ItemGroup>
+      <Resources Include="@(ResourceFiles);@(Images);@(Views);@(Controls);@(TextFiles)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="CopyBin">
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin" />
+  </Target>
+  <Target Name="DebugProject" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Copy SourceFiles="@(Views)" DestinationFolder="..\..\..\..\Website\DesktopModules\AuthenticationServices\LinkedIn" />
+    <Copy SourceFiles="@(Images)" DestinationFolder="..\..\..\..\Website\DesktopModules\AuthenticationServices\LinkedIn\Images" />
+    <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="..\..\..\..\Website\DesktopModules\AuthenticationServices\LinkedIn\App_LocalResources" />
+  </Target>
+</Project>

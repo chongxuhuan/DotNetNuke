@@ -1,0 +1,94 @@
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{77CC3D39-8526-4554-832A-8537BD1441CB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotNetNuke.Provider.WURFLClientCapabilityProvider</RootNamespace>
+    <AssemblyName>DotNetNuke.Provider.WURFLClientCapabilityProvider</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Providers\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>DotNetNuke.Provider.WURFLClientCapabilityProvider.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Providers\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>DotNetNuke.Provider.WURFLClientCapabilityProvider.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FiftyOne.Foundation">
+      <HintPath>..\..\..\Components\51Degrees\bin\FiftyOne.Foundation.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="WURFLClientCapability.cs" />
+    <Compile Include="DeviceInfoClientCapability.cs" />
+    <Compile Include="WURFLClientCapabilityProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\DotNetNuke.Library.csproj">
+      <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
+      <Name>DotNetNuke.Library</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="license.txt" />
+    <Content Include="releaseNotes.txt" />
+    <Content Include="WURFLDeviceDatabase\web_browsers_patch.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WURFLClientCapabilityProvider.dnn" />
+    <None Include="WURFLDeviceDatabase\wurfl.xml.gz" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>WURFLClientCapabilityProvider</DNNFileName>
+    <PackageName>WURFLClientCapabilityProvider</PackageName>
+    <Providers>/Providers</Providers>
+    <BuildScriptsPath>$(MSBuildProjectDirectory)\..\..\..\..\Build\BuildScripts</BuildScriptsPath>
+    <WebsiteInstallPath>$(MSBuildProjectDirectory)\..\..\..\..\Website\Install\Provider</WebsiteInstallPath>
+  </PropertyGroup>
+  <Import Project="$(BuildScriptsPath)\Package.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="DebugProject;GetFiles;Package">
+  </Target>
+  <Target Name="GetFiles">
+    <ItemGroup>
+      <TextFiles Include="*.txt" Exclude="license.txt;releasenotes.txt" />
+      <Resources Include="@(TextFiles)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="DebugProject">
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).dll" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).pdb" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bin$(Providers)\$(AssemblyName).xml" DestinationFolder="../../../../Website/bin$(Providers)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\WURFLDeviceDatabase\web_browsers_patch.xml" DestinationFolder="../../../../Website/App_Data/WURFLDeviceDatabase" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\WURFLDeviceDatabase\wurfl.xml.gz" DestinationFolder="../../../../Website/App_Data/WURFLDeviceDatabase" />
+  </Target>
+</Project>
