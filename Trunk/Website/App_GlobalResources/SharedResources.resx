@@ -310,7 +310,7 @@
     <value>The hosting contract for {0} expired on {1}. Please contact &lt;a href="mailto:{2}"&gt;{2}&lt;/a&gt; for further information.</value>
   </data>
   <data name="TabAccess.Error" xml:space="preserve">
-    <value>You do not have access to view this tab within the website.</value>
+    <value>You do not have access to view this page within the website.</value>
   </data>
   <data name="ModuleAccess.Error" xml:space="preserve">
     <value>You do not have access to view this module within the website.</value>
