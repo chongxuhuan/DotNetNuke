@@ -8,13 +8,13 @@
     </div>
     <div class="dnnFormItem">
         <dnn:label id="plFile" runat="server" controlname="txtFile" />
-        <asp:textbox id="txtFile" runat="server" maxlength="200" />
+        <asp:textbox CssClass="dnnFormRequired" id="txtFile" runat="server" maxlength="200" />
         <asp:requiredfieldvalidator id="valFileName" runat="server" controltovalidate="txtFile" display="Dynamic" resourcekey="valFileName.ErrorMessage" CssClass="dnnFormMessage dnnFormError" SetFocusOnError="true" />
     </div>
     <div class="dnnFormItem">
         <dnn:label id="plDescription" runat="server" controlname="txtDescription" />
-        <asp:textbox id="txtDescription" runat="server" enableviewstate="False" TextMode="MultiLine" />
-        <asp:requiredfieldvalidator id="valDescription" runat="server" controltovalidate="txtDescription" display="Dynamic" resourcekey="valDescription.ErrorMessage" CssClass="dnnFormMessage dnnFormerror" SetFocusOnError="true" />
+        <asp:textbox CssClass="dnnFormRequired" id="txtDescription" runat="server" enableviewstate="False" TextMode="MultiLine" />
+        <asp:requiredfieldvalidator id="valDescription" runat="server" controltovalidate="txtDescription" display="Dynamic" resourcekey="valDescription.ErrorMessage" CssClass="dnnFormMessage dnnFormError" SetFocusOnError="true" />
     </div>
     <div class="dnnFormItem">
         <dnn:label id="plContent" runat="server" controlname="chkContent" />

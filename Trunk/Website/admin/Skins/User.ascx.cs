@@ -22,13 +22,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Social.Notifications;
@@ -129,10 +132,13 @@ namespace DotNetNuke.UI.Skins.Controls
                                             : Globals.RegisterURL(HttpUtility.UrlEncode(Globals.NavigateURL()), Null.NullString);
                         enhancedRegisterLink.NavigateUrl = registerLink.NavigateUrl;
 
-                        //if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger)
-                        //{
-                        //    registerLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(registerLink.NavigateUrl, this, PortalSettings, true, false, 600, 950));
-                        //}
+                        if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger
+                            && !HasSocialAuthenticationEnabled())
+                        {
+                            var clickEvent = "return " + UrlUtils.PopUpUrl(registerLink.NavigateUrl, this, PortalSettings, true, false, 600, 950);
+                            registerLink.Attributes.Add("onclick", clickEvent);
+                            enhancedRegisterLink.Attributes.Add("onclick", clickEvent);
+                        }
 
                     }
                     else
@@ -244,6 +250,14 @@ namespace DotNetNuke.UI.Skins.Controls
 
             //default to User Profile Page
             return PortalSettings.UserTabId;            
+        }
+
+        private bool HasSocialAuthenticationEnabled()
+        {
+            return (from a in AuthenticationController.GetEnabledAuthenticationServices()
+                    let enabled = PortalController.GetPortalSettingAsBoolean(a.AuthenticationType + "_Enabled", PortalSettings.PortalId, false)
+                    where a.AuthenticationType != "DNN" && enabled
+                    select a).Any();
         }
     }
 }

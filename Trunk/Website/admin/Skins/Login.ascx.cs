@@ -21,11 +21,15 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 
 using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Portals;
+using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Modules;
@@ -146,10 +150,13 @@ namespace DotNetNuke.UI.Skins.Controls
                     loginLink.NavigateUrl = Globals.LoginURL(returnUrl, (Request.QueryString["override"] != null));
                     enhancedLoginLink.NavigateUrl = loginLink.NavigateUrl;
 
-                    //if (PortalSettings.EnablePopUps && PortalSettings.LoginTabId == Null.NullInteger)
-                    //{
-                    //    loginLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(loginLink.NavigateUrl, this, PortalSettings, true, false, 300, 650));
-                    //}
+                    if (PortalSettings.EnablePopUps && PortalSettings.LoginTabId == Null.NullInteger
+                        && !HasSocialAuthenticationEnabled())
+                    {
+                        var clickEvent = "return " + UrlUtils.PopUpUrl(loginLink.NavigateUrl, this, PortalSettings, true, false, 300, 650);
+                        loginLink.Attributes.Add("onclick", clickEvent);
+                        enhancedLoginLink.Attributes.Add("onclick", clickEvent);
+                    }
                 }
             }
             catch (Exception exc)
@@ -157,7 +164,15 @@ namespace DotNetNuke.UI.Skins.Controls
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-		
+
+        private bool HasSocialAuthenticationEnabled()
+        {
+            return (from a in AuthenticationController.GetEnabledAuthenticationServices()
+                               let enabled = PortalController.GetPortalSettingAsBoolean(a.AuthenticationType + "_Enabled", PortalSettings.PortalId, false)
+                               where a.AuthenticationType != "DNN" && enabled
+                               select a).Any();
+        }
+
 		#endregion
     }
 }
