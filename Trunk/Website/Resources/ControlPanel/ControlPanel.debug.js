@@ -11,9 +11,12 @@
 				return opts.wrappingHtml;
 			});
 
-			$('[id$="CommonTasksPanel"]').detach().appendTo('#dnnCommonTasks .megaborder');
-			$('[id$="CurrentPagePanel"]').detach().appendTo('#dnnCurrentPage .megaborder');
-			$('[id$="AdminPanel"]').detach().appendTo('#dnnOtherTools .megaborder');
+            if ($('[id$="CommonTasksPanel"]').length > 0) $('[id$="CommonTasksPanel"]').detach().appendTo('#dnnCommonTasks .megaborder');
+            else $('#dnnCommonTasks').remove();
+            $('[id$="CurrentPagePanel"]').detach().appendTo('#dnnCurrentPage .megaborder');
+            if ($('[id$="AdminPanel"]').length > 0) $('[id$="AdminPanel"]').detach().appendTo('#dnnOtherTools .megaborder');
+            else $('#dnnOtherTools').remove();
+
 
 			var $wrapper = $('#dnnCPWrap');
 			if ($wrapper.hasClass('Pinned')) {
