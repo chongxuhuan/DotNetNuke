@@ -2257,11 +2257,11 @@
           <ProjectItem ReplaceParameters="false" TargetFileName="UpgradeWizard.aspx.resx">UpgradeWizard.aspx.resx</ProjectItem>
         </Folder>
         <Folder Name="AuthSystem" TargetFolderName="AuthSystem">
-          <ProjectItem ReplaceParameters="false" TargetFileName="Facebook_Auth_06.02.01_Install.zip">Facebook_Auth_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="Google_Auth_06.02.01_Install.zip">Google_Auth_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="Live_Auth_06.02.01_Install.zip">Live_Auth_06.02.01_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Facebook_Auth_07.00.00_Install.zip">Facebook_Auth_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Google_Auth_07.00.00_Install.zip">Google_Auth_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Live_Auth_07.00.00_Install.zip">Live_Auth_07.00.00_Install.zip</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="PlaceHolder.txt">PlaceHolder.txt</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="Twitter_Auth_06.02.01_Install.zip">Twitter_Auth_06.02.01_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Twitter_Auth_07.00.00_Install.zip">Twitter_Auth_07.00.00_Install.zip</ProjectItem>
         </Folder>
         <Folder Name="Cleanup" TargetFolderName="Cleanup">
           <ProjectItem ReplaceParameters="false" TargetFileName="03.00.08.txt">03.00.08.txt</ProjectItem>
@@ -2321,40 +2321,40 @@
         </Folder>
         <Folder Name="Module" TargetFolderName="Module">
           <ProjectItem ReplaceParameters="false" TargetFileName="DDRMenu_02.00.02_Install.zip">DDRMenu_02.00.02_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_CoreMessaging_06.02.01_Install.zip">DNNCE_CoreMessaging_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_HTML_06.02.01_Install.zip">DNNCE_HTML_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_Journal_06.02.01_Install.zip">DNNCE_Journal_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_MemberDirectory_06.02.01_Install.zip">DNNCE_MemberDirectory_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_MobileManagement_06.02.01_Install.zip">DNNCE_MobileManagement_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_PreviewProfileManagement_06.02.01_Install.zip">DNNCE_PreviewProfileManagement_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_RazorHost_(Requires_Net_4)_06.02.01_Install.resources">DNNCE_RazorHost_(Requires_Net_4)_06.02.01_Install.resources</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_SocialGroups_06.02.01_Install.zip">DNNCE_SocialGroups_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_Taxonomy_06.02.01_Install.zip">DNNCE_Taxonomy_06.02.01_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_CoreMessaging_07.00.00_Install.zip">DNNCE_CoreMessaging_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_HTML_07.00.00_Install.zip">DNNCE_HTML_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_Journal_07.00.00_Install.zip">DNNCE_Journal_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_MemberDirectory_07.00.00_Install.zip">DNNCE_MemberDirectory_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_MobileManagement_07.00.00_Install.zip">DNNCE_MobileManagement_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_PreviewProfileManagement_07.00.00_Install.zip">DNNCE_PreviewProfileManagement_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_RazorHost_(Requires_Net_4)_07.00.00_Install.resources">DNNCE_RazorHost_(Requires_Net_4)_07.00.00_Install.resources</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_SocialGroups_07.00.00_Install.zip">DNNCE_SocialGroups_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNCE_Taxonomy_07.00.00_Install.zip">DNNCE_Taxonomy_07.00.00_Install.zip</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="PlaceHolder.txt">PlaceHolder.txt</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="Telerik_06.02.01_Install.zip">Telerik_06.02.01_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Telerik_07.00.00_Install.zip">Telerik_07.00.00_Install.zip</ProjectItem>
         </Folder>
         <Folder Name="Portal" TargetFolderName="Portal">
           <ProjectItem ReplaceParameters="false" TargetFileName="PlaceHolder.txt">PlaceHolder.txt</ProjectItem>
         </Folder>
         <Folder Name="Provider" TargetFolderName="Provider">
-          <ProjectItem ReplaceParameters="false" TargetFileName="ASP2MenuNavigationProvider_06.02.01_Install.resources">ASP2MenuNavigationProvider_06.02.01_Install.resources</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="AspNetMembershipProvider_06.02.01_Install.zip">AspNetMembershipProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="CorePermissionProvider_06.02.01_Install.zip">CorePermissionProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="CoreSitemapProvider_06.02.01_Install.zip">CoreSitemapProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DatabaseLoggingProvider_06.02.01_Install.zip">DatabaseLoggingProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNDropDownNavigationProvider_06.02.01_Install.resources">DNNDropDownNavigationProvider_06.02.01_Install.resources</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNMembershipProvider_06.02.01_Install.zip">DNNMembershipProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNMenuNavigationProvider_06.02.01_Install.zip">DNNMenuNavigationProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="DNNTreeNavigationProvider_06.02.01_Install.zip">DNNTreeNavigationProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="FiftyOneClientCapabilityProvider_06.02.01_Install.zip">FiftyOneClientCapabilityProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="FileBasedCachingProvider_06.02.01_Install.zip">FileBasedCachingProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="FileModuleCachingProvider_06.02.01_Install.zip">FileModuleCachingProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="MemoryModuleCachingProvider_06.02.01_Install.zip">MemoryModuleCachingProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="RadEditorProvider_06.02.01_Install.zip">RadEditorProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="SchedulingProvider_06.02.01_Install.zip">SchedulingProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="SearchIndexProvider_06.02.01_Install.zip">SearchIndexProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="SearchProvider_06.02.01_Install.zip">SearchProvider_06.02.01_Install.zip</ProjectItem>
-          <ProjectItem ReplaceParameters="false" TargetFileName="SolpartMenuNavigationProvider_06.02.01_Install.zip">SolpartMenuNavigationProvider_06.02.01_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="ASP2MenuNavigationProvider_07.00.00_Install.resources">ASP2MenuNavigationProvider_07.00.00_Install.resources</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="AspNetMembershipProvider_07.00.00_Install.zip">AspNetMembershipProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="CorePermissionProvider_07.00.00_Install.zip">CorePermissionProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="CoreSitemapProvider_07.00.00_Install.zip">CoreSitemapProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DatabaseLoggingProvider_07.00.00_Install.zip">DatabaseLoggingProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNDropDownNavigationProvider_07.00.00_Install.resources">DNNDropDownNavigationProvider_07.00.00_Install.resources</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNMembershipProvider_07.00.00_Install.zip">DNNMembershipProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNMenuNavigationProvider_07.00.00_Install.zip">DNNMenuNavigationProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="DNNTreeNavigationProvider_07.00.00_Install.zip">DNNTreeNavigationProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="FiftyOneClientCapabilityProvider_07.00.00_Install.zip">FiftyOneClientCapabilityProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="FileBasedCachingProvider_07.00.00_Install.zip">FileBasedCachingProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="FileModuleCachingProvider_07.00.00_Install.zip">FileModuleCachingProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="MemoryModuleCachingProvider_07.00.00_Install.zip">MemoryModuleCachingProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="RadEditorProvider_07.00.00_Install.zip">RadEditorProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="SchedulingProvider_07.00.00_Install.zip">SchedulingProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="SearchIndexProvider_07.00.00_Install.zip">SearchIndexProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="SearchProvider_07.00.00_Install.zip">SearchProvider_07.00.00_Install.zip</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="SolpartMenuNavigationProvider_07.00.00_Install.zip">SolpartMenuNavigationProvider_07.00.00_Install.zip</ProjectItem>
         </Folder>
         <Folder Name="Scripts" TargetFolderName="Scripts">
           <ProjectItem ReplaceParameters="false" TargetFileName="PlaceHolder.txt">PlaceHolder.txt</ProjectItem>
@@ -2720,6 +2720,8 @@
             <ProjectItem ReplaceParameters="false" TargetFileName="06.01.05.SqlDataProvider">06.01.05.SqlDataProvider</ProjectItem>
             <ProjectItem ReplaceParameters="false" TargetFileName="06.02.00.SqlDataProvider">06.02.00.SqlDataProvider</ProjectItem>
             <ProjectItem ReplaceParameters="false" TargetFileName="06.02.01.SqlDataProvider">06.02.01.SqlDataProvider</ProjectItem>
+            <ProjectItem ReplaceParameters="false" TargetFileName="06.02.02.SqlDataProvider">06.02.02.SqlDataProvider</ProjectItem>
+            <ProjectItem ReplaceParameters="false" TargetFileName="07.00.00.SqlDataProvider">07.00.00.SqlDataProvider</ProjectItem>
             <ProjectItem ReplaceParameters="false" TargetFileName="DotNetNuke.Data.SqlDataProvider">DotNetNuke.Data.SqlDataProvider</ProjectItem>
             <ProjectItem ReplaceParameters="false" TargetFileName="DotNetNuke.Schema.SqlDataProvider">DotNetNuke.Schema.SqlDataProvider</ProjectItem>
             <ProjectItem ReplaceParameters="false" TargetFileName="InstallCommon.sql">InstallCommon.sql</ProjectItem>

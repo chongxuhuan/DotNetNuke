@@ -130,12 +130,12 @@ namespace DotNetNuke.Services.Exceptions
 			if (portalSettings != null && !String.IsNullOrEmpty(portalSettings.LogoFile))
 			{
 				IFileInfo fileInfo = FileManager.Instance.GetFile(portalSettings.PortalId, portalSettings.LogoFile);
-				headerImage.ImageUrl = FileManager.Instance.GetUrl(fileInfo);
+                if (fileInfo != null)
+                {
+                    headerImage.ImageUrl = FileManager.Instance.GetUrl(fileInfo);
+                }
 			}
-			else
-			{
-				headerImage.Visible = false;
-			}
+            headerImage.Visible = !string.IsNullOrEmpty(headerImage.ImageUrl);
 
             string strLocalizedMessage = Null.NullString;
             PortalSecurity objSecurity = new PortalSecurity();
