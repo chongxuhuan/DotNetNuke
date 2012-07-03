@@ -168,7 +168,7 @@ namespace DotNetNuke.Modules.MemberDirectory
             var browser = Request.Browser;
             if (browser.Type == "IE" || browser.MajorVersion < 8)
             {
-                const string cssLink = "<link href=\"/ie-member-directory.css\" rel=\"stylesheet\" type=\"text/css\" />";
+                const string cssLink = @"<link href=""/DesktopModules/MemberDirectory/ie-member-directory.css"" rel=""stylesheet"" type=""text/css"" />";
                 Page.Header.Controls.Add(new LiteralControl(cssLink));
             }
         }

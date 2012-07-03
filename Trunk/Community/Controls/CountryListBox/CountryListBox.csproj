@@ -8,7 +8,7 @@
     <AssemblyName>CountryListBox</AssemblyName>
     <AssemblyOriginatorKeyMode>None</AssemblyOriginatorKeyMode>
     <OutputType>Library</OutputType>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <RootNamespace>CountryListBox</RootNamespace>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -29,6 +29,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\..\Website\bin\</OutputPath>

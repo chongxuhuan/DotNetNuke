@@ -37,7 +37,7 @@
                 <div class="mdFilterLists">
                     <asp:DropDownList runat="server" ID="groupList" DataTextField="RoleName" DataValueField="RoleID"/>
                     <asp:DropDownList runat="server" ID="relationShipList" DataTextField="Name" DataValueField="RelationshipId"/>
-                    <asp:DropDownList runat="server" ID="propertyList" DataTextField="PropertyName" DataValueField="PropertyName"/>
+                    <asp:DropDownList runat="server" ID="propertyList" DataTextField="Text" DataValueField="Value"/>
                     <asp:TextBox runat="server" ID="propertyValue" />
                 </div>
             </div>
@@ -67,19 +67,19 @@
         </div>        
         <div class="dnnFormItem">
             <dnn:label id="searchField1Label" runat="server" controlname="searchField1List" />
-            <asp:DropDownList runat="server" ID="searchField1List" DataTextField="PropertyName" DataValueField="PropertyName"/>
+            <asp:DropDownList runat="server" ID="searchField1List" DataTextField="Text" DataValueField="Value"/>
         </div>
         <div class="dnnFormItem">
             <dnn:label id="searchField2Label" runat="server" controlname="searchField2List" />
-            <asp:DropDownList runat="server" ID="searchField2List" DataTextField="PropertyName" DataValueField="PropertyName"/>
+            <asp:DropDownList runat="server" ID="searchField2List" DataTextField="Text" DataValueField="Value"/>
         </div>
         <div class="dnnFormItem">
             <dnn:label id="searchField3Label" runat="server" controlname="searchField3List" />
-            <asp:DropDownList runat="server" ID="searchField3List" DataTextField="PropertyName" DataValueField="PropertyName"/>
+            <asp:DropDownList runat="server" ID="searchField3List" DataTextField="Text" DataValueField="Value"/>
         </div>
         <div class="dnnFormItem">
             <dnn:label id="searchField4Label" runat="server" controlname="searchField4List" />
-            <asp:DropDownList runat="server" ID="searchField4List" DataTextField="PropertyName" DataValueField="PropertyName"/>
+            <asp:DropDownList runat="server" ID="searchField4List" DataTextField="Text" DataValueField="Value"/>
         </div>
     </fieldset>
     <h2 id="H2" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded"><%=LocalizeString("Paging")%></a></h2>

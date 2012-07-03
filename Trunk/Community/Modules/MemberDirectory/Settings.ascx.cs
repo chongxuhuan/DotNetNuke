@@ -24,12 +24,14 @@
 #region Usings
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 using DotNetNuke.Entities.Profile;
 using DotNetNuke.Modules.MemberDirectory.Presenters;
@@ -135,27 +137,31 @@ namespace DotNetNuke.Modules.MemberDirectory
 
                 var profileResourceFile = "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx";
 
-                var properties = (from ProfilePropertyDefinition property in Model.ProfileProperties
-                                  select new { PropertyName = GetLocalizeName(property.PropertyName, profileResourceFile) })
-                             .ToList();
-
-                propertyList.DataSource = properties;
+                
+                System.Web.UI.WebControls.ListItemCollection propertiesCollection = GetPropertiesCollection(profileResourceFile);
+                    
+                
+                //Bind the ListItemCollection to the list
+                propertyList.DataSource = propertiesCollection;
                 propertyList.DataBind();
 
-                properties.Insert(0, new { PropertyName = Localization.GetString("Username", LocalResourceFile) });
-                properties.Insert(1, new { PropertyName = Localization.GetString("DisplayName", LocalResourceFile) });
-                properties.Insert(2, new { PropertyName = Localization.GetString("Email", LocalResourceFile) });
+                //Insert custom properties to the Search field lists
+                propertiesCollection.Insert(0,new ListItem(Localization.GetString("Username",LocalResourceFile),"Username"));
+                propertiesCollection.Insert(1, new ListItem(Localization.GetString("DisplayName", LocalResourceFile), "DisplayName"));
+                propertiesCollection.Insert(2, new ListItem(Localization.GetString("Email", LocalResourceFile), "Email"));
 
-                searchField1List.DataSource = properties;
+                //Bind the properties collection in the Search Field Lists
+
+                searchField1List.DataSource = propertiesCollection;
                 searchField1List.DataBind();
 
-                searchField2List.DataSource = properties;
+                searchField2List.DataSource = propertiesCollection;
                 searchField2List.DataBind();
 
-                searchField3List.DataSource = properties;
+                searchField3List.DataSource = propertiesCollection;
                 searchField3List.DataBind();
 
-                searchField4List.DataSource = properties;
+                searchField4List.DataSource = propertiesCollection;
                 searchField4List.DataBind();
 
                 filterBySelector.Select(_filterBy, false, 0);
@@ -180,6 +186,17 @@ namespace DotNetNuke.Modules.MemberDirectory
                 searchField3List.Select(GetTabModuleSetting("SearchField3", _defaultSearchField3));
                 searchField4List.Select(GetTabModuleSetting("SearchField4", _defaultSearchField4));
             }
+        }
+
+        private ListItemCollection GetPropertiesCollection(string profileResourceFile)
+        {
+            var result = new ListItemCollection();
+            foreach (var property in Model.ProfileProperties)
+            {
+                result.Add(new ListItem(GetLocalizeName(property.PropertyName,profileResourceFile),property.PropertyName));
+            }
+            
+            return result;
         }
 
         protected override void OnSettingsLoaded()

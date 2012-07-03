@@ -33,7 +33,6 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Icons;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.UI.Utilities;
-using DotNetNuke.UI.WebControls.Design;
 
 #endregion
 
@@ -48,11 +47,7 @@ namespace DotNetNuke.UI.WebControls
     /// </summary>
     /// <remarks>
     /// </remarks>
-    /// <history>
-    ///     [cnurse]	02/21/2006	created
-    /// </history>
     /// -----------------------------------------------------------------------------
-    [ToolboxData("<{0}:PropertyEditorControl runat=server></{0}:PropertyEditorControl>"), Designer(typeof (PropertyEditorControlDesigner)), PersistChildren(true)]
     public class PropertyEditorControl : WebControl, INamingContainer
     {
 		#region Private Members

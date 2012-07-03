@@ -1,5 +1,110 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -7,167 +112,167 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="LocalizedTemplateName.Text">
-    <value xml:space="preserve">Site Web Mobile</value>
+  <data name="LocalizedTemplateName.Text" xml:space="preserve">
+    <value>Site Web Mobile</value>
   </data>
-  <data name="RoleGroup.Description.Text">
-    <value xml:space="preserve">Un gruppo di ruolo fittizio che rappresenta un ruolo globale.</value>
+  <data name="RoleGroup.Description.Text" xml:space="preserve">
+    <value>Un gruppo di ruolo fittizio che rappresenta un ruolo globale.</value>
   </data>
-  <data name="Setting.DefaultLanguage.Text">
-    <value xml:space="preserve">it-IT</value>
+  <data name="Setting.DefaultLanguage.Text" xml:space="preserve">
+    <value>it-IT</value>
   </data>
-  <data name="Setting.FooterText.Text">
-    <value xml:space="preserve">Copyright [year] by DotNetNuke Corporation</value>
+  <data name="Setting.FooterText.Text" xml:space="preserve">
+    <value>Copyright [year] by DotNetNuke Corporation</value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.0.Text">
-    <value xml:space="preserve">Elizabeth Taylor</value>
+  <data name="Tab.About.ContentPane.Module.Content.0.Text" xml:space="preserve">
+    <value>Elizabeth Taylor</value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.1.Text">
-    <value xml:space="preserve">Presidente, Direttore</value>
+  <data name="Tab.About.ContentPane.Module.Content.1.Text" xml:space="preserve">
+    <value>Presidente, Direttore</value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.2.Text">
-    <value xml:space="preserve">Donec nibh ipsum, ullamcorper eleifend molestie nec, elementum et est. Quisque a massa et sapien vestibulum pulvinar. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam diam lacus, scelerisque eu luctus a, blandit nec mi. </value>
+  <data name="Tab.About.ContentPane.Module.Content.2.Text" xml:space="preserve">
+    <value>Donec nibh ipsum, ullamcorper eleifend molestie nec, elementum et est. Quisque a massa et sapien vestibulum pulvinar. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam diam lacus, scelerisque eu luctus a, blandit nec mi. </value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.3.Text">
-    <value xml:space="preserve">Vestibulum interdum porttitor sapien, quis tempor nisl bibendum quis. Vestibulum ac feugiat urna. Morbi quis velit sed magna blandit gravida vel nec purus. Vivamus vel nibh nisl.</value>
+  <data name="Tab.About.ContentPane.Module.Content.3.Text" xml:space="preserve">
+    <value>Vestibulum interdum porttitor sapien, quis tempor nisl bibendum quis. Vestibulum ac feugiat urna. Morbi quis velit sed magna blandit gravida vel nec purus. Vivamus vel nibh nisl.</value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.4.Text">
-    <value xml:space="preserve">James Woolworth </value>
+  <data name="Tab.About.ContentPane.Module.Content.4.Text" xml:space="preserve">
+    <value>James Woolworth </value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.5.Text">
-    <value xml:space="preserve">Nam augue velit, tincidunt in ultricies at, varius pellentesque mauris. Etiam orci risus, tincidunt eu faucibus at, dictum et mauris. </value>
+  <data name="Tab.About.ContentPane.Module.Content.5.Text" xml:space="preserve">
+    <value>Nam augue velit, tincidunt in ultricies at, varius pellentesque mauris. Etiam orci risus, tincidunt eu faucibus at, dictum et mauris. </value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.6.Text">
-    <value xml:space="preserve">Donec turpis urna, suscipit ut eleifend semper, commodo non sapien. Aenean facilisis ipsum at elit consequat quis luctus justo feugiat. Vivamus lacus diam, scelerisque vitae bibendum id, condimentum eu diam.</value>
+  <data name="Tab.About.ContentPane.Module.Content.6.Text" xml:space="preserve">
+    <value>Donec turpis urna, suscipit ut eleifend semper, commodo non sapien. Aenean facilisis ipsum at elit consequat quis luctus justo feugiat. Vivamus lacus diam, scelerisque vitae bibendum id, condimentum eu diam.</value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.7.Text">
-    <value xml:space="preserve">Susan G. Komen</value>
+  <data name="Tab.About.ContentPane.Module.Content.7.Text" xml:space="preserve">
+    <value>Susan G. Komen</value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.8.Text">
-    <value xml:space="preserve">Vestibulum scelerisque tincidunt nisl nec laoreet. Proin pellentesque aliquet molestie.</value>
+  <data name="Tab.About.ContentPane.Module.Content.8.Text" xml:space="preserve">
+    <value>Vestibulum scelerisque tincidunt nisl nec laoreet. Proin pellentesque aliquet molestie.</value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.9.Text">
-    <value xml:space="preserve">Morbi quis velit sed magna blandit gravida vel nec purus. Vivamus vel nibh nisl.Vestibulum scelerisque tincidunt nisl nec laoreet.</value>
+  <data name="Tab.About.ContentPane.Module.Content.9.Text" xml:space="preserve">
+    <value>Morbi quis velit sed magna blandit gravida vel nec purus. Vivamus vel nibh nisl.Vestibulum scelerisque tincidunt nisl nec laoreet.</value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Content.10.Text">
-    <value xml:space="preserve">Marisa Miller </value>
+  <data name="Tab.About.ContentPane.Module.Content.10.Text" xml:space="preserve">
+    <value>Marisa Miller </value>
   </data>
-  <data name="Tab.About.ContentPane.Module.Footer.Text">
+  <data name="Tab.About.ContentPane.Module.Footer.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.About.ContentPane.Module.Header.Text">
+  <data name="Tab.About.ContentPane.Module.Header.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.About.ContentPane.Module.Title.Text">
-    <value xml:space="preserve">Gestione</value>
+  <data name="Tab.About.ContentPane.Module.Title.Text" xml:space="preserve">
+    <value>Gestione</value>
   </data>
-  <data name="Tab.About.Name.Text">
-    <value xml:space="preserve">Chi Siamo</value>
+  <data name="Tab.About.Name.Text" xml:space="preserve">
+    <value>Chi Siamo</value>
   </data>
-  <data name="Tab.About.Title.Text">
+  <data name="Tab.About.Title.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Content.0.Text">
-    <value xml:space="preserve">DotNetNuke Corp.</value>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.0.Text" xml:space="preserve">
+    <value>DotNetNuke Corp.</value>
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Content.1.Text">
-    <value xml:space="preserve">Via 9 Aprile 100</value>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.1.Text" xml:space="preserve">
+    <value>Via 9 Aprile 100</value>
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Content.2.Text">
-    <value xml:space="preserve">
+  <data name="Tab.ContactUs.ContentPane.Module.Content.2.Text" xml:space="preserve">
+    <value>
 00187 Roma</value>
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Content.3.Text">
-    <value xml:space="preserve">E</value>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.3.Text" xml:space="preserve">
+    <value>E</value>
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Content.4.Text">
-    <value xml:space="preserve">sales@dnncorp.com</value>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.4.Text" xml:space="preserve">
+    <value>sales@dnncorp.com</value>
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Content.5.Text">
-    <value xml:space="preserve">T</value>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.5.Text" xml:space="preserve">
+    <value>T</value>
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Content.6.Text">
-    <value xml:space="preserve">(650) 288 - 3150</value>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.6.Text" xml:space="preserve">
+    <value>(650) 288 - 3150</value>
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Content.7.Text">
-    <value xml:space="preserve">F</value>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.7.Text" xml:space="preserve">
+    <value>F</value>
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Content.8.Text">
-    <value xml:space="preserve">: (650) 288 - 3191</value>
+  <data name="Tab.ContactUs.ContentPane.Module.Content.8.Text" xml:space="preserve">
+    <value>: (650) 288 - 3191</value>
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Footer.Text">
+  <data name="Tab.ContactUs.ContentPane.Module.Footer.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Header.Text">
+  <data name="Tab.ContactUs.ContentPane.Module.Header.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.ContactUs.ContentPane.Module.Title.Text">
-    <value xml:space="preserve">Contatti</value>
+  <data name="Tab.ContactUs.ContentPane.Module.Title.Text" xml:space="preserve">
+    <value>Contatti</value>
   </data>
-  <data name="Tab.ContactUs.Description.Text">
+  <data name="Tab.ContactUs.Description.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.ContactUs.Keywords.Text">
+  <data name="Tab.ContactUs.Keywords.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.ContactUs.Name.Text">
-    <value xml:space="preserve">Contatti</value>
+  <data name="Tab.ContactUs.Name.Text" xml:space="preserve">
+    <value>Contatti</value>
   </data>
-  <data name="Tab.ContactUs.PageHeadText.Text">
+  <data name="Tab.ContactUs.PageHeadText.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.ContactUs.Title.Text">
+  <data name="Tab.ContactUs.Title.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Home.ContentPane.Module.Content.0.Text">
-    <value xml:space="preserve">Costruire site web per disponitivi mobili è facile con DotNetNuke. Basta seguire le tre fasi sottoelencate:</value>
+  <data name="Tab.Home.ContentPane.Module.Content.0.Text" xml:space="preserve">
+    <value>Costruire site web per disponitivi mobili è facile con DotNetNuke. Basta seguire le tre fasi sottoelencate:</value>
   </data>
-  <data name="Tab.Home.ContentPane.Module.Content.1.Text">
-    <value xml:space="preserve">Create contenuto per disponitivi mobili</value>
+  <data name="Tab.Home.ContentPane.Module.Content.1.Text" xml:space="preserve">
+    <value>Create contenuto per disponitivi mobili</value>
   </data>
-  <data name="Tab.Home.ContentPane.Module.Content.2.Text">
-    <value xml:space="preserve">Creare contenuti è molto facile con DotNetNuke. Puoi iniziare modificando il contenuto nelle pagine esistenti o crearne di nuove e aggiungendo i tuoi propri moduli.</value>
+  <data name="Tab.Home.ContentPane.Module.Content.2.Text" xml:space="preserve">
+    <value>Creare contenuti è molto facile con DotNetNuke. Puoi iniziare modificando il contenuto nelle pagine esistenti o crearne di nuove e aggiungendo i tuoi propri moduli.</value>
   </data>
-  <data name="Tab.Home.ContentPane.Module.Content.3.Text">
-    <value xml:space="preserve">Anteprima contenuto</value>
+  <data name="Tab.Home.ContentPane.Module.Content.3.Text" xml:space="preserve">
+    <value>Anteprima contenuto</value>
   </data>
-  <data name="Tab.Home.ContentPane.Module.Content.4.Text">
-    <value xml:space="preserve">Dispositivi mobili hanno risoluzioni differenti. Utilizza i profili inclusi e crea i tuoi per vedere come i tuoi contenuti apparirànno su risoluzioni diverse.</value>
+  <data name="Tab.Home.ContentPane.Module.Content.4.Text" xml:space="preserve">
+    <value>Dispositivi mobili hanno risoluzioni differenti. Utilizza i profili inclusi e crea i tuoi per vedere come i tuoi contenuti apparirànno su risoluzioni diverse.</value>
   </data>
-  <data name="Tab.Home.ContentPane.Module.Content.5.Text">
-    <value xml:space="preserve">Gestione il reindirizzamento URL</value>
+  <data name="Tab.Home.ContentPane.Module.Content.5.Text" xml:space="preserve">
+    <value>Gestione il reindirizzamento URL</value>
   </data>
-  <data name="Tab.Home.ContentPane.Module.Content.6.Text">
-    <value xml:space="preserve">Scegli quali dispositivi vorresti che utilizzino il tuo nuovo sito web mobile. Lo scenario più comune sarà che i telefoni cellulari sarranno reindirizzati al nuovo sito, ma è anche possibile definire siti per tablet o altri dispositivi a base della loro capacità.</value>
+  <data name="Tab.Home.ContentPane.Module.Content.6.Text" xml:space="preserve">
+    <value>Scegli quali dispositivi vorresti che utilizzino il tuo nuovo sito web mobile. Lo scenario più comune sarà che i telefoni cellulari sarranno reindirizzati al nuovo sito, ma è anche possibile definire siti per tablet o altri dispositivi a base della loro capacità.</value>
   </data>
-  <data name="Tab.Home.ContentPane.Module.Footer.Text">
+  <data name="Tab.Home.ContentPane.Module.Footer.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Home.ContentPane.Module.Header.Text">
+  <data name="Tab.Home.ContentPane.Module.Header.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Home.ContentPane.Module.Title.Text">
-    <value xml:space="preserve">DotNetNuke per dispositivi mobili</value>
+  <data name="Tab.Home.ContentPane.Module.Title.Text" xml:space="preserve">
+    <value>DotNetNuke per dispositivi mobili</value>
   </data>
-  <data name="Tab.Home.Description.Text">
+  <data name="Tab.Home.Description.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Home.Keywords.Text">
+  <data name="Tab.Home.Keywords.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Home.Name.Text">
-    <value xml:space="preserve">Home</value>
+  <data name="Tab.Home.Name.Text" xml:space="preserve">
+    <value>Home</value>
   </data>
-  <data name="Tab.Home.PageHeadText.Text">
+  <data name="Tab.Home.PageHeadText.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Home.SocialPane.Module.Content.0.Text">
-    <value xml:space="preserve">
+  <data name="Tab.Home.SocialPane.Module.Content.0.Text" xml:space="preserve">
+    <value>
     .socialIcons{ width:204px;height: 24px; margin: 0 auto; text-align: center;}
     .socialIcons .icon{width: 24px; height: 24px; display: block; float: left; margin-right: 21px; background-image: url({{PortalRoot}}/social-icns.png);}
     .socialIcons .youtube{background-position: -45px 0;}
@@ -176,169 +281,172 @@
     .socialIcons .facebook{background-position: -180px 0;margin-right: 0;}
 </value>
   </data>
-  <data name="Tab.Home.SocialPane.Module.Footer.Text">
+  <data name="Tab.Home.SocialPane.Module.Footer.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Home.SocialPane.Module.Header.Text">
+  <data name="Tab.Home.SocialPane.Module.Header.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Home.SocialPane.Module.Title.Text">
-    <value xml:space="preserve">Text/HTML</value>
+  <data name="Tab.Home.SocialPane.Module.Title.Text" xml:space="preserve">
+    <value>Text/HTML</value>
   </data>
-  <data name="Tab.Home.Title.Text">
+  <data name="Tab.Home.Title.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.About.Description.Text">
+  <data name="Tab.About.Description.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.About.Keywords.Text">
+  <data name="Tab.About.Keywords.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.About.PageHeadText.Text">
+  <data name="Tab.About.PageHeadText.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Products.ContentPane.Module.Content.0.Text">
-    <value xml:space="preserve">Vintage Design</value>
+  <data name="Tab.Products.ContentPane.Module.Content.0.Text" xml:space="preserve">
+    <value>Vintage Design</value>
   </data>
-  <data name="Tab.Products.ContentPane.Module.Content.1.Text">
-    <value xml:space="preserve">Proin condimentum odio ipsum, sit amet consequat lacus. Ut elementum nisl id lectus ullamcorper bibendum. Praesent pellentesque bibendum sodales. Aenean ut convallis velit. In vestibulum aliquam condimentum. Vivamus tincidunt ante id nibh volutpat porta.</value>
+  <data name="Tab.Products.ContentPane.Module.Content.1.Text" xml:space="preserve">
+    <value>Proin condimentum odio ipsum, sit amet consequat lacus. Ut elementum nisl id lectus ullamcorper bibendum. Praesent pellentesque bibendum sodales. Aenean ut convallis velit. In vestibulum aliquam condimentum. Vivamus tincidunt ante id nibh volutpat porta.</value>
   </data>
-  <data name="Tab.Products.ContentPane.Module.Content.2.Text">
-    <value xml:space="preserve">Praesent pellentesque bibendum sodales. Aenean ut convallis velit. In vestibulum aliquam condimentum. Vivamus tincidunt ante id nibh volutpat porta.</value>
+  <data name="Tab.Products.ContentPane.Module.Content.2.Text" xml:space="preserve">
+    <value>Praesent pellentesque bibendum sodales. Aenean ut convallis velit. In vestibulum aliquam condimentum. Vivamus tincidunt ante id nibh volutpat porta.</value>
   </data>
-  <data name="Tab.Products.ContentPane.Module.Content.3.Text">
-    <value xml:space="preserve">High Performance</value>
+  <data name="Tab.Products.ContentPane.Module.Content.3.Text" xml:space="preserve">
+    <value>High Performance</value>
   </data>
-  <data name="Tab.Products.ContentPane.Module.Content.4.Text">
-    <value xml:space="preserve">Electric Dance</value>
+  <data name="Tab.Products.ContentPane.Module.Content.4.Text" xml:space="preserve">
+    <value>Electric Dance</value>
   </data>
-  <data name="Tab.Products.ContentPane.Module.Content.5.Text">
-    <value xml:space="preserve">Proin condimentum odio ipsum, sit amet consequat lacus. Ut elementum nisl id lectus ullamcorper bibendum. </value>
+  <data name="Tab.Products.ContentPane.Module.Content.5.Text" xml:space="preserve">
+    <value>Proin condimentum odio ipsum, sit amet consequat lacus. Ut elementum nisl id lectus ullamcorper bibendum. </value>
   </data>
-  <data name="Tab.Products.ContentPane.Module.Footer.Text">
+  <data name="Tab.Products.ContentPane.Module.Footer.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Products.ContentPane.Module.Header.Text">
+  <data name="Tab.Products.ContentPane.Module.Header.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Products.ContentPane.Module.Title.Text">
-    <value xml:space="preserve">Le Nostre Super Biciclette</value>
+  <data name="Tab.Products.ContentPane.Module.Title.Text" xml:space="preserve">
+    <value>Le Nostre Super Biciclette</value>
   </data>
-  <data name="Tab.Products.Description.Text">
+  <data name="Tab.Products.Description.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Products.Keywords.Text">
+  <data name="Tab.Products.Keywords.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Products.Name.Text">
-    <value xml:space="preserve">Prodotti</value>
+  <data name="Tab.Products.Name.Text" xml:space="preserve">
+    <value>Prodotti</value>
   </data>
-  <data name="Tab.Products.PageHeaderText.Text">
+  <data name="Tab.Products.PageHeaderText.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Products.Title.Text">
+  <data name="Tab.Products.Title.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Services.ContentPane.Module.Content.0.Text">
-    <value xml:space="preserve">Suspendisse hendrerit mi a mi vehicula tempus vitae nec felis. Praesent ac urna at lectus porta porttitor. Cras nulla leo, porta nec laoreet ac, lobortis non enim. Duis nisl nisi, mattis vel egestas sed, venenatissed turpis. Donec vel metus risus, egestas. </value>
+  <data name="Tab.Services.ContentPane.Module.Content.0.Text" xml:space="preserve">
+    <value>Suspendisse hendrerit mi a mi vehicula tempus vitae nec felis. Praesent ac urna at lectus porta porttitor. Cras nulla leo, porta nec laoreet ac, lobortis non enim. Duis nisl nisi, mattis vel egestas sed, venenatissed turpis. Donec vel metus risus, egestas. </value>
   </data>
-  <data name="Tab.Services.ContentPane.Module.Content.1.Text">
-    <value xml:space="preserve">Praesent pellentesque bibendum sodales. Aenean ut convallis velit. In vestibulum aliquam condimentum. Vivamus tincidunt ante id nibh volutpat porta. Nulla ut dolor massa, eu vestibulum massa.</value>
+  <data name="Tab.Services.ContentPane.Module.Content.1.Text" xml:space="preserve">
+    <value>Praesent pellentesque bibendum sodales. Aenean ut convallis velit. In vestibulum aliquam condimentum. Vivamus tincidunt ante id nibh volutpat porta. Nulla ut dolor massa, eu vestibulum massa.</value>
   </data>
-  <data name="Tab.Services.ContentPane.Module.Content.2.Text">
-    <value xml:space="preserve">Proin condimentum odio ipsum, sit amet consequat lacus. </value>
+  <data name="Tab.Services.ContentPane.Module.Content.2.Text" xml:space="preserve">
+    <value>Proin condimentum odio ipsum, sit amet consequat lacus. </value>
   </data>
-  <data name="Tab.Services.ContentPane.Module.Content.3.Text">
-    <value xml:space="preserve">Ut elementum nisl id lectus ullamcorper bibendum. </value>
+  <data name="Tab.Services.ContentPane.Module.Content.3.Text" xml:space="preserve">
+    <value>Ut elementum nisl id lectus ullamcorper bibendum. </value>
   </data>
-  <data name="Tab.Services.ContentPane.Module.Content.4.Text">
-    <value xml:space="preserve">Praesent pellentesque bibendum sodales. </value>
+  <data name="Tab.Services.ContentPane.Module.Content.4.Text" xml:space="preserve">
+    <value>Praesent pellentesque bibendum sodales. </value>
   </data>
-  <data name="Tab.Services.ContentPane.Module.Content.5.Text">
-    <value xml:space="preserve">Aenean ut convallis velit. </value>
+  <data name="Tab.Services.ContentPane.Module.Content.5.Text" xml:space="preserve">
+    <value>Aenean ut convallis velit. </value>
   </data>
-  <data name="Tab.Services.ContentPane.Module.Content.6.Text">
-    <value xml:space="preserve">In vestibulum aliquam condimentum. </value>
+  <data name="Tab.Services.ContentPane.Module.Content.6.Text" xml:space="preserve">
+    <value>In vestibulum aliquam condimentum. </value>
   </data>
-  <data name="Tab.Services.ContentPane.Module.Content.7.Text">
-    <value xml:space="preserve">Vivamus tincidunt ante id nibh volutpat porta.</value>
+  <data name="Tab.Services.ContentPane.Module.Content.7.Text" xml:space="preserve">
+    <value>Vivamus tincidunt ante id nibh volutpat porta.</value>
   </data>
-  <data name="Tab.Services.ContentPane.Module.Content.8.Text">
-    <value xml:space="preserve">Donec nibh ipsum, ullamcorper eleifend molestie nec, elementum et est. Quisque a massa et sapien vestibulum pulvinar.</value>
+  <data name="Tab.Services.ContentPane.Module.Content.8.Text" xml:space="preserve">
+    <value>Donec nibh ipsum, ullamcorper eleifend molestie nec, elementum et est. Quisque a massa et sapien vestibulum pulvinar.</value>
   </data>
-  <data name="Tab.Services.ContentPane.Module.Content.9.Text">
-    <value xml:space="preserve">[Tab.Services.ContentPane.Module.Content.4.Text][Tab.Services.ContentPane.Module.Content.5.Text][Tab.Services.ContentPane.Module.Content.6.Text][Tab.Services.ContentPane.Module.Content.7.Text]Nulla ut dolor massa, eu vestibulum massa.</value>
+  <data name="Tab.Services.ContentPane.Module.Content.9.Text" xml:space="preserve">
+    <value>[Tab.Services.ContentPane.Module.Content.4.Text][Tab.Services.ContentPane.Module.Content.5.Text][Tab.Services.ContentPane.Module.Content.6.Text][Tab.Services.ContentPane.Module.Content.7.Text]Nulla ut dolor massa, eu vestibulum massa.</value>
   </data>
-  <data name="Tab.Services.ContentPane.Module.Footer.Text">
+  <data name="Tab.Services.ContentPane.Module.Footer.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Services.ContentPane.Module.Header.Text">
+  <data name="Tab.Services.ContentPane.Module.Header.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Services.ContentPane.Module.Title.Text">
-    <value xml:space="preserve">I nostri servizi</value>
+  <data name="Tab.Services.ContentPane.Module.Title.Text" xml:space="preserve">
+    <value>I nostri servizi</value>
   </data>
-  <data name="Tab.Services.Description.Text">
+  <data name="Tab.Services.Description.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Services.Keywords.Text">
+  <data name="Tab.Services.Keywords.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Services.Name.Text">
-    <value xml:space="preserve">Servizi</value>
+  <data name="Tab.Services.Name.Text" xml:space="preserve">
+    <value>Servizi</value>
   </data>
-  <data name="Tab.Services.PageHeadText.Text">
+  <data name="Tab.Services.PageHeadText.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Services.Title.Text">
+  <data name="Tab.Services.Title.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="PortalDescription.Text">
-    <value xml:space="preserve">Modello Mobile</value>
+  <data name="PortalDescription.Text" xml:space="preserve">
+    <value>Modello Mobile</value>
   </data>
-  <data name="Tab.Directors.Description.Text">
+  <data name="Tab.Directors.Description.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Directors.Keywords.Text">
+  <data name="Tab.Directors.Keywords.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Directors.Name.Text">
-    <value xml:space="preserve">Consiglio di Amministrazione</value>
+  <data name="Tab.Directors.Name.Text" xml:space="preserve">
+    <value>Consiglio di Amministrazione</value>
   </data>
-  <data name="Tab.Directors.PageHeadText.Text">
+  <data name="Tab.Directors.PageHeadText.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Directors.Title.Text">
+  <data name="Tab.Directors.Title.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Investors.Description.Text">
+  <data name="Tab.Investors.Description.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Investors.Keywords.Text">
+  <data name="Tab.Investors.Keywords.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Investors.Name.Text">
-    <value xml:space="preserve">Investitori</value>
+  <data name="Tab.Investors.Name.Text" xml:space="preserve">
+    <value>Investitori</value>
   </data>
-  <data name="Tab.Investors.PageHeadText.Text">
+  <data name="Tab.Investors.PageHeadText.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.Investors.Title.Text">
+  <data name="Tab.Investors.Title.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.ManagementTeam.Description.Text">
+  <data name="Tab.ManagementTeam.Description.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.ManagementTeam.Keywords.Text">
+  <data name="Tab.ManagementTeam.Keywords.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.ManagementTeam.Name.Text">
-    <value xml:space="preserve">Team di Gestione</value>
+  <data name="Tab.ManagementTeam.Name.Text" xml:space="preserve">
+    <value>Team di Gestione</value>
   </data>
-  <data name="Tab.ManagementTeam.PageHeadText.Text">
+  <data name="Tab.ManagementTeam.PageHeadText.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="Tab.ManagementTeam.Title.Text">
+  <data name="Tab.ManagementTeam.Title.Text" xml:space="preserve">
     <value />
+  </data>
+  <data name="CurrentLanguage.Text" xml:space="preserve">
+    <value>it-IT</value>
   </data>
 </root>

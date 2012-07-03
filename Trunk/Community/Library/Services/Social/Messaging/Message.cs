@@ -151,6 +151,7 @@ namespace DotNetNuke.Services.Social.Messaging
         public void Fill(IDataReader dr)
         {
             MessageID = Convert.ToInt32(dr["MessageID"]);
+            PortalID = Null.SetNullInteger(dr["PortalId"]);
             To = Null.SetNullString(dr["To"]);
             From = Null.SetNullString(dr["From"]);
             Subject = Null.SetNullString(dr["Subject"]);

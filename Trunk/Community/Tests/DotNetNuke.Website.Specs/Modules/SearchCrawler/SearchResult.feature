@@ -3,6 +3,7 @@
 	I want the search result control work correctly
 
 @MustBeDefaultAdminCredentials
+@ClearSmtpSettings
 Scenario: Should only display current site's result
 	Given I am on the site home page
 	And I have logged in as the host

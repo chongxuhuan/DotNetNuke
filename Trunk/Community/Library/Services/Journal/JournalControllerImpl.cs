@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 using System.Web;
 using System.Xml;
 
@@ -75,6 +76,16 @@ namespace DotNetNuke.Services.Journal
             {
                 return;
             }
+
+            for (var i = 0; i < role.Settings.Keys.Count; i++ )
+            {
+                var key = role.Settings.Keys.ElementAt(i);
+                if(key.StartsWith("stat_"))
+                {
+                    role.Settings[key] = "0";
+                }
+            }
+
             using (IDataReader dr = _dataService.Journal_GetStatsForGroup(portalId, groupId))
             {
                 while (dr.Read())

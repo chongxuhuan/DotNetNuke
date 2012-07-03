@@ -54,8 +54,8 @@ namespace DotNetNuke.Services.FileSystem
 
         public FolderMappingInfo GetDefaultFolderMapping(int portalID)
         {
-            return Config.GetSection("folder") != null ? 
-                GetFolderMappings(portalID).Find(fm => fm.FolderProviderType == Config.GetDefaultProvider("folder").Name) : 
+            return Config.GetSection("folder") != null ?
+                GetFolderMappings(portalID).Find(fm => fm.FolderProviderType == Config.GetDefaultProvider("folder").Name) :
                 GetFolderMapping(portalID, "Standard");
         }
 
@@ -68,8 +68,7 @@ namespace DotNetNuke.Services.FileSystem
 
             UpdateFolderMappingSettings(objFolderMapping);
 
-            var cacheKey = String.Format(DataCache.FolderMappingCacheKey, objFolderMapping.PortalID);
-            DataCache.RemoveCache(cacheKey);
+            ClearFolderMappingCache(objFolderMapping.PortalID);
 
             return objFolderMapping.FolderMappingID;
         }
@@ -78,13 +77,13 @@ namespace DotNetNuke.Services.FileSystem
         {
             var folderManager = FolderManager.Instance;
             var folders = folderManager.GetFolders(portalID);
-            
+
             var folderMappingFolders = folders.Where(f => f.FolderMappingID == folderMappingID);
 
             if (folderMappingFolders.Count() > 0)
             {
                 // Delete files in folders with the provided mapping (only in the database)
-				foreach (var file in folderMappingFolders.Select<IFolderInfo, IEnumerable<IFileInfo>>(folderManager.GetFiles).SelectMany(files => files))
+                foreach (var file in folderMappingFolders.Select<IFolderInfo, IEnumerable<IFileInfo>>(folderManager.GetFiles).SelectMany(files => files))
                 {
                     dataProvider.DeleteFile(portalID, file.FileName, file.FolderId);
                 }
@@ -119,9 +118,10 @@ namespace DotNetNuke.Services.FileSystem
                     }
                 }
             }
-            
+
             dataProvider.DeleteFolderMapping(folderMappingID);
-            DataCache.RemoveCache(CacheKeyPrefix + folderMappingID);
+            ClearFolderMappingCache(portalID);
+            ClearFolderMappingSettingsCache(folderMappingID);
         }
 
         public void UpdateFolderMapping(FolderMappingInfo objFolderMapping)
@@ -131,6 +131,7 @@ namespace DotNetNuke.Services.FileSystem
                                              objFolderMapping.Priority,
                                              UserController.GetCurrentUserInfo().UserID);
 
+            ClearFolderMappingCache(objFolderMapping.PortalID);
             UpdateFolderMappingSettings(objFolderMapping);
         }
 
@@ -152,8 +153,8 @@ namespace DotNetNuke.Services.FileSystem
         public List<FolderMappingInfo> GetFolderMappings(int portalId)
         {
             var cacheKey = String.Format(DataCache.FolderMappingCacheKey, portalId);
-            return CBO.GetCachedObject<List<FolderMappingInfo>>(new CacheItemArgs(cacheKey, 
-                                                                    DataCache.FolderMappingCacheTimeOut, 
+            return CBO.GetCachedObject<List<FolderMappingInfo>>(new CacheItemArgs(cacheKey,
+                                                                    DataCache.FolderMappingCacheTimeOut,
                                                                     DataCache.FolderMappingCachePriority),
                                                                 (c) => CBO.FillCollection<FolderMappingInfo>(dataProvider.GetFolderMappings(portalId)));
         }
@@ -210,6 +211,8 @@ namespace DotNetNuke.Services.FileSystem
             {
                 UpdateFolderMappingSetting(objFolderMapping.FolderMappingID, sKey, Convert.ToString(objFolderMapping.FolderMappingSettings[sKey]));
             }
+
+            ClearFolderMappingSettingsCache(objFolderMapping.FolderMappingID);
         }
 
         private static void UpdateFolderMappingSetting(int folderMappingID, string settingName, string settingValue)
@@ -236,7 +239,16 @@ namespace DotNetNuke.Services.FileSystem
                 // Ensure DataReader is closed
                 CBO.CloseDataReader(dr, true);
             }
+        }
 
+        private static void ClearFolderMappingCache(int portalId)
+        {
+            var cacheKey = String.Format(DataCache.FolderMappingCacheKey, portalId);
+            DataCache.RemoveCache(cacheKey);
+        }
+
+        private static void ClearFolderMappingSettingsCache(int folderMappingID)
+        {
             DataCache.RemoveCache(CacheKeyPrefix + folderMappingID);
         }
 

@@ -136,6 +136,8 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockEventLogController = new Mock<IEventLogController>();
+            mockEventLogController.Setup(c => c.AddLog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<EventLogController.EventLogType>()));
+            CreateLocalizationProvider();
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var relationshipType = new RelationshipType()
                                         {
@@ -262,6 +264,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockEventLogController = new Mock<IEventLogController>();
+            mockEventLogController.Setup(c => c.AddLog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<EventLogController.EventLogType>()));
+            CreateLocalizationProvider();
+
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var relationshipType = new RelationshipType()
                                         {
@@ -333,6 +338,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockEventLogController = new Mock<IEventLogController>();
+            mockEventLogController.Setup(c => c.AddLog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<EventLogController.EventLogType>()));
+            CreateLocalizationProvider();
+
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var relationship = new Relationship()
                                     {
@@ -522,6 +530,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockEventLogController = new Mock<IEventLogController>();
+            mockEventLogController.Setup(c => c.AddLog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<EventLogController.EventLogType>()));
+            CreateLocalizationProvider();
+
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var relationship = new Relationship
                                         {
@@ -593,6 +604,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockEventLogController = new Mock<IEventLogController>();
+            mockEventLogController.Setup(c => c.AddLog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<EventLogController.EventLogType>()));
+            CreateLocalizationProvider();
+
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var userRelationship = new UserRelationship
                                         {
@@ -725,6 +739,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             mockDataService.Setup(ds => ds.SaveUserRelationship(It.IsAny<UserRelationship>(), It.IsAny<int>()))
                                 .Returns(Constants.SOCIAL_UserRelationshipIDUser10User11);
             var mockEventLogController = new Mock<IEventLogController>();
+            mockEventLogController.Setup(c => c.AddLog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<EventLogController.EventLogType>()));
+            CreateLocalizationProvider();
+
             var relationshipController = new RelationshipControllerImpl(mockDataService.Object, mockEventLogController.Object);
             var userRelationship = new UserRelationship
                                             {
@@ -780,6 +797,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
         {
             //Arrange
             var mockEventLogController = new Mock<IEventLogController>();
+            mockEventLogController.Setup(c => c.AddLog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<EventLogController.EventLogType>()));
+            CreateLocalizationProvider();
+
             var relationshipController = CreateRelationshipController(mockEventLogController);
             var preference = new UserRelationshipPreference()
                                         {
@@ -867,6 +887,9 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             mockDataService.Setup(ds => ds.SaveUserRelationshipPreference(It.IsAny<UserRelationshipPreference>(), It.IsAny<int>()))
                                 .Returns(Constants.SOCIAL_PrefereceIDForUser11);
             var mockEventLogController = new Mock<IEventLogController>();
+            mockEventLogController.Setup(c => c.AddLog(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<EventLogController.EventLogType>()));
+            CreateLocalizationProvider();
+
             var relationshipController = new RelationshipControllerImpl(mockDataService.Object, mockEventLogController.Object);
             var preference = new UserRelationshipPreference()
                                             {

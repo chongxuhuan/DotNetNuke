@@ -11,7 +11,7 @@
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <OutputType>Library</OutputType>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <RootNamespace>DotNetNuke</RootNamespace>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -28,6 +28,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\</OutputPath>
@@ -1137,8 +1138,6 @@
     <Compile Include="UI\WebControls\PropertyEditor\Adapters\SettingsEditorInfoAdapter.cs" />
     <Compile Include="UI\WebControls\PropertyEditor\Adapters\StandardEditorInfoAdapter.cs" />
     <Compile Include="UI\WebControls\PropertyEditor\CollectionEditorControl.cs" />
-    <Compile Include="UI\WebControls\PropertyEditor\Design\DefaultDesignerInfo.cs" />
-    <Compile Include="UI\WebControls\PropertyEditor\Design\PropertyEditorControlDesigner.cs" />
     <Compile Include="UI\WebControls\PropertyEditor\Edit Controls\CheckEditControl.cs" />
     <Compile Include="UI\WebControls\PropertyEditor\Edit Controls\DateEditControl.cs" />
     <Compile Include="UI\WebControls\PropertyEditor\Edit Controls\DateTimeEditControl.cs" />

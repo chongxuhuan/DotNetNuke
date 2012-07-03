@@ -159,7 +159,17 @@
             <param name="pageName"></param>
             <param name="template"></param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:DotNetNuke.Tests.Steps.BaseSteps.GivenThePageHasPermissionSetForRole(System.String,System.String,System.String,System.String)" -->
+        <member name="M:DotNetNuke.Tests.Steps.BaseSteps.GivenThePageHasPermissionSetForRole(System.String,System.String,System.String,System.String)">
+            <summary>
+            Gives the role specified the specified permissions for the page.
+            This step assumes that both the page and the role already exist on the site.
+            </summary>
+            <param name="pageName">The name of the page.</param>
+            <param name="roleName">The role that will be given view permissions.</param>
+            <param name="permission">The permission.</param>
+            <param name="setting">Allowed, Denied, Not Allowed.
+            This field must be entered exactly as the role name will appear in the permissions grid.</param>
+        </member>
         <member name="M:DotNetNuke.Tests.Steps.BaseSteps.WhenIClickTheLink(System.String)">
             <summary>
             Navigates to the admin page specified.

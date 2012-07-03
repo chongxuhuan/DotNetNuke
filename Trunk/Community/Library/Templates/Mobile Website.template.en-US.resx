@@ -446,4 +446,7 @@ San Mateo, CA 94402</value>
   <data name="Tab.ManagementTeam.Title.Text" xml:space="preserve">
     <value />
   </data>
+  <data name="CurrentLanguage.Text" xml:space="preserve">
+    <value>en-US</value>
+  </data>
 </root>

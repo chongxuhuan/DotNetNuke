@@ -56,8 +56,7 @@ namespace DotNetNuke.Services.FileSystem
                     }
                     else
                     {
-                        var oFolderMappingCtrl = new FolderMappingController();
-                        _folderMappingSettings = oFolderMappingCtrl.GetFolderMappingSettings(FolderMappingID);
+                        _folderMappingSettings = FolderMappingController.Instance.GetFolderMappingSettings(FolderMappingID);
                     }
                 }
                 return _folderMappingSettings;

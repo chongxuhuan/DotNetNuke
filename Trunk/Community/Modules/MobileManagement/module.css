@@ -20,7 +20,8 @@
 #dnnMobileManagement .dnnRedirectItemList li { list-style:none; margin: 0px 0px 0px 0px; padding: 0.4em; font-size: 1.4em; height: 18px; }
 #dnnMobileManagement .dnnRedirectItemList .alternate{ background-color:#E0E0E0; }
 #dnnMobileManagement .dnnRedirectionEnabled {width:150px; display: inline; float: left; text-align: left; padding-left: 10px; vertical-align: middle;}
-#dnnMobileManagement .dnnChildPages{ width:450px; display: inline; float: left; text-align: left;  vertical-align: middle;}
+#dnnMobileManagement .dnnChildPages{ width:400px; display: inline; float: left; text-align: left;  vertical-align: middle;}
+#dnnMobileManagement .dnnChildPages label { width: 80%; }
 
 #dnnMobileManagement .dnnEditSection { margin-bottom: 15px; width:750px;}
 #dnnMobileManagement .dnnEditSection .dnnDropDown { width: 250px; float:left; }

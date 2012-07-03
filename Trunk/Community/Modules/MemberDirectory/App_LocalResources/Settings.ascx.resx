@@ -232,13 +232,13 @@
     <value>Member Directory Settings</value>
   </data>
   <data name="DateCreated.Text" xml:space="preserve">
-    <value>Date Created:</value>
+    <value>Date Created</value>
   </data>
   <data name="LastName.Text" xml:space="preserve">
-    <value>Last Name:</value>
+    <value>Last Name</value>
   </data>
   <data name="UserId.Text" xml:space="preserve">
-    <value>User Id;</value>
+    <value>User Id</value>
   </data>
   <data name="Paging.Text" xml:space="preserve">
     <value>Paging Options</value>

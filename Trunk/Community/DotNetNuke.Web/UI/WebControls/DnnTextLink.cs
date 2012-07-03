@@ -109,7 +109,7 @@ namespace DotNetNuke.Web.UI.WebControls
         [Category("Appearance")]
         [DefaultValue("")]
         [Localizable(true)]
-        public string DisabledCssClass
+        public new string DisabledCssClass
         {
             get
             {

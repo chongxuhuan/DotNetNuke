@@ -67,9 +67,11 @@ namespace DotNetNuke.Tests.BuildVerification
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Add Child Site")]
+        [NUnit.Framework.CategoryAttribute("ClearSmtpSettings")]
         public virtual void AddChildSite()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add Child Site", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add Child Site", new string[] {
+                        "ClearSmtpSettings"});
 #line 7
 this.ScenarioSetup(scenarioInfo);
 #line 8

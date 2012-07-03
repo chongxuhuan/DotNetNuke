@@ -31,7 +31,6 @@ using DotNetNuke.Entities.Modules;
 
 namespace DotNetNuke.Services.Exceptions
 {
-    [Serializable]
     public class ModuleLoadException : BasePortalException
     {
         private readonly ModuleInfo m_ModuleConfiguration;
@@ -126,15 +125,14 @@ namespace DotNetNuke.Services.Exceptions
             }
         }
 
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-			//Serialize this class' state and then call the base class GetObjectData
-            info.AddValue("m_ModuleId", m_ModuleId, typeof (Int32));
-            info.AddValue("m_ModuleDefId", m_ModuleDefId, typeof (Int32));
-            info.AddValue("m_FriendlyName", m_FriendlyName, typeof (string));
-            info.AddValue("m_ModuleControlSource", m_ModuleControlSource, typeof (string));
-            base.GetObjectData(info, context);
-        }
+        //public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        //{
+        //    //Serialize this class' state and then call the base class GetObjectData
+        //    info.AddValue("m_ModuleId", m_ModuleId, typeof (Int32));
+        //    info.AddValue("m_ModuleDefId", m_ModuleDefId, typeof (Int32));
+        //    info.AddValue("m_FriendlyName", m_FriendlyName, typeof (string));
+        //    info.AddValue("m_ModuleControlSource", m_ModuleControlSource, typeof (string));
+        //    base.GetObjectData(info, context);
+        //}
     }
 }

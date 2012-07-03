@@ -14,5 +14,5 @@ Scenario: The token in email subject should be replace
 	When I go to the Module 0 Settings page
 	And I change workflow to Content Approval
 	And I Submit content of Module 0
-	Then Then subject in notification email should replace all tokens
+	Then Subject in notification email should replace all tokens
 

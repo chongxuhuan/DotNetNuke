@@ -83,11 +83,11 @@ namespace DotNetNuke.Website.Specs.Modules.Html
             HTMLModule.AddCommentLink.Click();
         }
 
-        [Then(@"Then subject in notification email should replace all tokens")]
+        [Then(@"Subject in notification email should replace all tokens")]
         public void ThenThenSubjectInNotificationEmailShouldReplaceAllTokens()
         {
             var user = UserController.GetUserByName(PortalId, TestUsers.Admin.UserName);
-            var notification = NotificationsController.Instance.GetNotifications(user.UserID, PortalId, 0, 1)
+            var notification = NotificationsController.Instance.GetNotifications(user.UserID, PortalId, -1, 1)
                 .FirstOrDefault();
             WatiNAssert.AssertIsTrue(notification != null, "GetNotification_" + user.UserID + "_Error.jpg");
             Assert.IsTrue(notification.Subject.IndexOf("[", StringComparison.InvariantCultureIgnoreCase) == -1);

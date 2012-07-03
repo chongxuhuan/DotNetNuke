@@ -19,6 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -1093,11 +1094,10 @@ namespace DotNetNuke.Tests.Core.Providers.Folder
             var mockCache = MockComponentProvider.CreateNew<CachingProvider>();
             mockCache.Setup(c => c.GetItem(It.IsAny<string>())).Returns(null);
 
-            var settingTable = new DataTable();
-            settingTable.Columns.Add("SettingName", typeof (string));
-            settingTable.Columns.Add("SettingValue", typeof (string));
+            var settings = new Hashtable();
+            settings["SyncAllSubFolders"] = "true";
 
-            _mockData.Setup(c => c.GetFolderMappingSettings(It.IsAny<int>())).Returns(settingTable.CreateDataReader());
+            _folderMappingController.Setup(c => c.GetFolderMappingSettings(It.IsAny<int>())).Returns(settings);
 
             var hostSettingsTable = new DataTable("HostSettings");
             var nameCol = hostSettingsTable.Columns.Add("SettingName");

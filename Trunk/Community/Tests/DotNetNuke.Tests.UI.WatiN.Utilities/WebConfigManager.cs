@@ -159,5 +159,11 @@ namespace DotNetNuke.Tests.UI.WatiN.Utilities
                 ConfigurationManager.RefreshSection("system.web/machineKey");
             }
         }
+
+        public static void TouchConfig(string sitePath)
+        {
+            var webConfigPath = Path.Combine(sitePath, "web.config");
+            File.SetLastWriteTime(webConfigPath, DateTime.Now);
+        }
     }
 }

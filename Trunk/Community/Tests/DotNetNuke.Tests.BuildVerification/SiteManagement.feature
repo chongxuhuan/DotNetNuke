@@ -3,7 +3,7 @@
 	As a host user
 	I want to be able to create and maintain separate sites
 
-@ignore
+@ClearSmtpSettings
 Scenario: Add Child Site
 	Given I am on the site home page
 	And I have logged in as the host

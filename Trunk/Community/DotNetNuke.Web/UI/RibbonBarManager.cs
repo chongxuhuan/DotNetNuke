@@ -222,7 +222,11 @@ namespace DotNetNuke.Web.UI
             {
                 throw new DotNetNukeException("Page name is required.", DotNetNukeErrorCode.PageNameRequired);
             }
-            else if ((Regex.IsMatch(tab.TabName, "^AUX$|^CON$|^LPT[1-9]$|^CON$|^COM[1-9]$|^NUL$|^SITEMAP$|^LINKCLICK$|^KEEPALIVE$|^DEFAULT$|^ERRORPAGE$", RegexOptions.IgnoreCase)))
+            else if ((Regex.IsMatch(tab.TabName, "^LPT[1-9]$|^COM[1-9]$", RegexOptions.IgnoreCase)))
+            {
+                throw new DotNetNukeException("Page name is invalid.", DotNetNukeErrorCode.PageNameInvalid);
+            }
+            else if ((Regex.IsMatch(HtmlUtils.StripNonWord(tab.TabName, false), "^AUX$|^CON$|^NUL$|^SITEMAP$|^LINKCLICK$|^KEEPALIVE$|^DEFAULT$|^ERRORPAGE$", RegexOptions.IgnoreCase)))
             {
                 throw new DotNetNukeException("Page name is invalid.", DotNetNukeErrorCode.PageNameInvalid);
             }

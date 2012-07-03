@@ -373,13 +373,27 @@ namespace DotNetNuke.HttpModules
                         }
                         if (tabPath == "/register.aspx")
                         {
-                            if (!string.IsNullOrEmpty(requestQuery))
+                            if (portal.RegisterTabId > Null.NullInteger)
                             {
-                                RewriterUtils.RewriteUrl(app.Context, "~/" + Globals.glbDefaultPage + "?TabID=" + portal.HomeTabId + "&portalid=" + portalID + "&ctl=Register&" + requestQuery);
+                                if (!string.IsNullOrEmpty(requestQuery))
+                                {
+                                    RewriterUtils.RewriteUrl(app.Context, "~/" + Globals.glbDefaultPage + "?TabID=" + portal.RegisterTabId + "&portalid=" + portalID + "&" + requestQuery);
+                                }
+                                else
+                                {
+                                    RewriterUtils.RewriteUrl(app.Context, "~/" + Globals.glbDefaultPage + "?TabID=" + portal.RegisterTabId + "&portalid=" + portalID);
+                                }
                             }
                             else
                             {
-                                RewriterUtils.RewriteUrl(app.Context, "~/" + Globals.glbDefaultPage + "?TabID=" + portal.HomeTabId + "&portalid=" + portalID + "&ctl=Register");
+                                if (!string.IsNullOrEmpty(requestQuery))
+                                {
+                                    RewriterUtils.RewriteUrl(app.Context, "~/" + Globals.glbDefaultPage + "?TabID=" + portal.HomeTabId + "&portalid=" + portalID + "&ctl=Register&" + requestQuery);
+                                }
+                                else
+                                {
+                                    RewriterUtils.RewriteUrl(app.Context, "~/" + Globals.glbDefaultPage + "?TabID=" + portal.HomeTabId + "&portalid=" + portalID + "&ctl=Register");
+                                }
                             }
                             return;
                         }

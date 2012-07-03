@@ -19,6 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
+using DotNetNuke.Entities.Controllers;
 using DotNetNuke.Tests.UI.WatiN.Utilities;
 using DotNetNuke.Tests.Utilities;
 
@@ -37,6 +38,13 @@ namespace DotNetNuke.Tests.Steps
         public void MustHaveEmailSetUpForSiteDumpToFolder()
         {
             MailManager.SetUpMailDumpFolder();
+        }
+
+        [BeforeScenario("ClearSmtpSettings")]
+        public void ClearSmtpSetings()
+        {
+            HostController.Instance.Update("SMTPServer", "", false);
+            WebConfigManager.TouchConfig(PhysicalPath);
         }
 
         /// <summary>
