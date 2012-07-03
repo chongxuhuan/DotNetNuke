@@ -288,6 +288,7 @@ div.SearchIcon img{margin-top:3px;}
 				.dnnForm .dnnFormExpandContent a{font-weight:bold;}
 			.dnnForm .dnnFormItem span.CommandButton input{display:none !important;font-size:0;line-height:0;border-collapse:collapse;}	
 		.dnnForm .dnnFormItem{padding:4px 6px;clear:both;line-height:1.8;min-height:1.8em;text-align:left;position:relative;}
+		    *:first-child+html .dnnForm .dnnFormItem{position:static;}
 			.dnnForm .dnnFormItem label a span{line-height:1.4;}
 		.dnnForm .dnnFormItem:after{clear:both;content:".";display:block;height:0;visibility:hidden;font-size:0;}
 		.dnnForm fieldset{display:block;padding:1em 0;border:none;margin:0;text-align:left;}
@@ -319,6 +320,7 @@ div.SearchIcon img{margin-top:3px;}
 		background:url(../../images/help-icn.png) no-repeat right;display:block;position:relative;z-index:2;}
 			.dnnForm .dnnFormItem a.dnnFormHelp span{padding-right:1.8em;display:block;}
 			.dnnForm .dnnFormItem a.dnnFormHelp img{display:none;}
+        	*:first-child+html .dnnFormItem a.dnnFormHelp{position:static;}
 	
 		.dnnTooltip{position:relative;}
 		
