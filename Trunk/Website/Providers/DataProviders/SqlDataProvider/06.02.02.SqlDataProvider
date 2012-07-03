@@ -1,0 +1,55 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+/**************** Fix bug DNN-21747 ***************/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}BuildTabLevelAndPath]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}BuildTabLevelAndPath]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}BuildTabLevelAndPath](@TabId INT, @IncludeChild BIT = 0)
+	AS
+	BEGIN
+		DECLARE @ParentId INT, @Level INT, @TabPath NVARCHAR(255), @TabName NVARCHAR(50)
+		SELECT @ParentId = ParentId, @TabName = TabName FROM {databaseOwner}[{objectQualifier}Tabs] WHERE TabID = @TabId
+		IF @ParentId > 0
+		BEGIN
+			SELECT 
+				@Level = [Level] + 1,
+				@TabPath = TabPath + '//' + {databaseOwner}[{objectQualifier}RemoveStringCharacters](@TabName, '&? ./''-#:')
+			 FROM {databaseOwner}[{objectQualifier}Tabs] WHERE TabID = @ParentId
+		END
+		ELSE
+		BEGIN
+			SELECT @Level = 0, @TabPath = '//' + {databaseOwner}[{objectQualifier}RemoveStringCharacters](@TabName, '&? ./''-#:')
+		END
+		
+		UPDATE {databaseOwner}[{objectQualifier}Tabs] SET [Level] = @Level, TabPath = @TabPath WHERE TabID = @TabId
+		
+		IF @IncludeChild = 1
+		BEGIN
+			DECLARE @ChildTabs TABLE(TabID INT)
+			DECLARE @ChildID INT
+			INSERT INTO @ChildTabs SELECT TabID FROM {databaseOwner}[{objectQualifier}Tabs] WHERE ParentId =  @TabId
+			WHILE EXISTS (SELECT TOP 1 TabID FROM @ChildTabs)
+				BEGIN
+					SET @ChildID = (SELECT TOP 1 TabID FROM @ChildTabs)
+					EXEC {databaseOwner}[{objectQualifier}BuildTabLevelAndPath] @ChildID, @IncludeChild
+					DELETE FROM @ChildTabs WHERE TabID = @ChildID
+				END
+		END
+	END
+
+GO
+
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/
