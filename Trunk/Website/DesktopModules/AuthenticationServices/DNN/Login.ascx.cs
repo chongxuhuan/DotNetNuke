@@ -21,6 +21,7 @@
 #region Usings
 
 using System;
+using System.Linq;
 using System.Net;
 using System.Web;
 
@@ -122,6 +123,11 @@ namespace DotNetNuke.Modules.Admin.Authentication
 
                 url = Globals.RegisterURL(returnUrl, Null.NullString);
                 registerLink.NavigateUrl = url;
+                if (PortalSettings.EnablePopUps && PortalSettings.RegisterTabId == Null.NullInteger
+                    && !HasSocialAuthenticationEnabled())
+                {
+                    registerLink.Attributes.Add("onclick", "return " + UrlUtils.PopUpUrl(url, this, PortalSettings, true, false, 600, 950));
+                }
             }
             else
             {
@@ -249,6 +255,14 @@ namespace DotNetNuke.Modules.Admin.Authentication
 				OnUserAuthenticated(eventArgs);
 			}
 		}
+
+        private bool HasSocialAuthenticationEnabled()
+        {
+            return (from a in AuthenticationController.GetEnabledAuthenticationServices()
+                    let enabled = PortalController.GetPortalSettingAsBoolean(a.AuthenticationType + "_Enabled", PortalSettings.PortalId, false)
+                    where a.AuthenticationType != "DNN" && enabled
+                    select a).Any();
+        }
 		
 		#endregion
 

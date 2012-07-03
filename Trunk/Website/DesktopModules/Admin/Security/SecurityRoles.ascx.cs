@@ -22,6 +22,8 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -68,6 +70,9 @@ namespace DotNetNuke.Modules.Admin.Security
         private RoleInfo _Role;
         private int _SelectedUserID = Null.NullInteger;
         private UserInfo _User;
+
+        private int _totalPages = 1;
+        private int _totalRecords;
 
 		#endregion
 
@@ -179,6 +184,17 @@ namespace DotNetNuke.Modules.Admin.Security
             {
                 var setting = UserModuleBase.GetSetting(PortalId, "Security_UsersControl");
                 return (UsersControl)setting;
+            }
+        }
+
+        protected int CurrentPage { get; set; }
+
+        protected int PageSize
+        {
+            get
+            {
+                var setting = UserModuleBase.GetSetting(PortalId, "Records_PerPage");
+                return Convert.ToInt32(setting);
             }
         }
 
@@ -329,24 +345,47 @@ namespace DotNetNuke.Modules.Admin.Security
         /// -----------------------------------------------------------------------------
         private void BindGrid()
         {
-            var objRoleController = new RoleController();
+            
 
             if (RoleId != Null.NullInteger)
             {
                 cmdAdd.Text = Localization.GetString("AddUser.Text", LocalResourceFile);
                 grdUserRoles.DataKeyField = "UserId";
                 grdUserRoles.Columns[2].Visible = false;
-                grdUserRoles.DataSource = objRoleController.GetUserRoles(PortalId, null, Role.RoleName);
-                grdUserRoles.DataBind();
             }
-            if (UserId != -1)
+            if (UserId != Null.NullInteger)
             {
                 cmdAdd.Text = Localization.GetString("AddRole.Text", LocalResourceFile);
                 grdUserRoles.DataKeyField = "RoleId";
                 grdUserRoles.Columns[1].Visible = false;
-                grdUserRoles.DataSource = objRoleController.GetUserRoles(PortalId, User.Username, Null.NullString);
-                grdUserRoles.DataBind();
             }
+
+            grdUserRoles.DataSource = GetPagedDataSource();
+            grdUserRoles.DataBind();
+
+            ctlPagingControl.TotalRecords = _totalRecords;
+            ctlPagingControl.PageSize = PageSize;
+            ctlPagingControl.CurrentPage = CurrentPage;
+            ctlPagingControl.TabID = TabId;
+            ctlPagingControl.QuerystringParams = System.Web.HttpUtility.UrlDecode(String.Join("&", Request.QueryString.ToString().Split('&').
+                                                                        ToList().
+                                                                        Where(s => s.StartsWith("ctl") 
+                                                                            || s.StartsWith("mid")
+                                                                            || s.StartsWith("RoleId")
+                                                                            || s.StartsWith("popUp")).ToArray()));
+        }
+
+        private IList<UserRoleInfo> GetPagedDataSource()
+        {
+            var objRoleController = new RoleController();
+            var roleName = RoleId != Null.NullInteger ? Role.RoleName : Null.NullString;
+            var userName = UserId != Null.NullInteger ? User.Username : Null.NullString;
+
+            var userList = objRoleController.GetUserRoles(PortalId, userName, roleName);
+            _totalRecords = userList.Count;
+            _totalPages = _totalRecords%PageSize == 0 ? _totalRecords/PageSize : _totalRecords/PageSize + 1;
+
+            return userList.Skip((CurrentPage - 1 )*PageSize).Take(PageSize).ToList();
         }
 
         /// -----------------------------------------------------------------------------
@@ -525,6 +564,12 @@ namespace DotNetNuke.Modules.Admin.Security
             if ((Request.QueryString["UserId"] != null))
             {
                 UserId = Int32.Parse(Request.QueryString["UserId"]);
+            }
+
+            CurrentPage = 1;
+            if (Request.QueryString["CurrentPage"] != null)
+            {
+                CurrentPage = Convert.ToInt32(Request.QueryString["CurrentPage"]);
             }
 
             cboRoles.SelectedIndexChanged += cboRoles_SelectedIndexChanged;

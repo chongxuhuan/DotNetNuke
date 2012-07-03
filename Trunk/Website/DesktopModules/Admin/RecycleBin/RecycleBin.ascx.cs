@@ -177,6 +177,13 @@ namespace DesktopModules.Admin.RecycleBin
             var module = moduleController.GetModule(moduleId, tabId, false);
             if ((module != null))
             {
+                if (tabsListBox.Items.FindByValue(module.TabID.ToString(CultureInfo.InvariantCulture)) != null)
+                {
+                    var title = !string.IsNullOrEmpty(module.ModuleTitle) ? module.ModuleTitle : module.DesktopModule.FriendlyName;
+                    Skin.AddModuleMessage(this, string.Format(Localization.GetString("TabDeleted.ErrorMessage", LocalResourceFile), title),
+                                                   ModuleMessage.ModuleMessageType.RedError);
+                    return;
+                }
                 moduleController.RestoreModule(module);
                 eventLogController.AddLog(module, PortalSettings, UserId, "", EventLogController.EventLogType.MODULE_RESTORED);
             }

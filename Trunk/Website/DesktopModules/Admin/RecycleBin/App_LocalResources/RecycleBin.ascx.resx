@@ -112,19 +112,19 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Tabs.Text" xml:space="preserve">
     <value>Pages</value>
   </data>
   <data name="cmdRestoreTab.Help" xml:space="preserve">
-    <value>Restore Selected Page</value>
+    <value>Restore Selected Page(s)</value>
   </data>
   <data name="cmdDeleteTab.Help" xml:space="preserve">
-    <value>Delete Selected Page</value>
+    <value>Delete Selected Page(s)</value>
   </data>
   <data name="Modules.Text" xml:space="preserve">
     <value>Modules</value>
@@ -133,7 +133,7 @@
     <value>Restore Selected Module(s)</value>
   </data>
   <data name="cmdDeleteModule.Help" xml:space="preserve">
-    <value>Permanently Delete Selected Module</value>
+    <value>Permanently Delete Selected Module(s)</value>
   </data>
   <data name="cmdEmpty.Text" xml:space="preserve">
     <value>Empty Recycle Bin</value>
@@ -157,10 +157,10 @@
     <value>Recycle Bin</value>
   </data>
   <data name="cmdRestoreTab.Text" xml:space="preserve">
-    <value>Restore Selected Page</value>
+    <value>Restore Selected Page(s)</value>
   </data>
   <data name="cmdDeleteTab.Text" xml:space="preserve">
-    <value>Delete Selected Page</value>
+    <value>Delete Selected Page(s)</value>
   </data>
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>&lt;h1&gt;About Recycle Bin&lt;/h1&gt;&lt;p&gt;The Recycle Bin provides an interface for restoring or permanently deleting Pages and Modules.&lt;/p&gt;</value>
@@ -172,9 +172,12 @@
     <value>Show pages and modules in current language only</value>
   </data>
   <data name="cmdDeleteModule.Text" xml:space="preserve">
-    <value>Delete Selected Module</value>
+    <value>Delete Selected Module(s)</value>
   </data>
   <data name="cmdRestoreModule.Text" xml:space="preserve">
     <value>Restore Selected Module(s)</value>
+  </data>
+  <data name="TabDeleted.ErrorMessage" xml:space="preserve">
+    <value>&lt;b&gt;{0}&lt;/b&gt; module cannot be restored until the page which this module belong to is restored first.</value>
   </data>
 </root>

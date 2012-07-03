@@ -80,6 +80,7 @@
                 </asp:TemplateColumn>
             </Columns>
         </asp:DataGrid>
+        <dnn:pagingcontrol id="ctlPagingControl" runat="server"></dnn:pagingcontrol>
     </asp:Panel>
     <ul id="actionsRow" runat="server" class="dnnActions dnnClear">
         <li><asp:HyperLink id="cmdCancel" runat="server" CssClass="dnnPrimaryAction" resourcekey="Close" /></li>

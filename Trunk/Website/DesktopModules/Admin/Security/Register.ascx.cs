@@ -288,6 +288,7 @@ namespace DotNetNuke.Modules.Admin.Users
             {
                 DnnFormEditControlItem formItem = new DnnFormEditControlItem
                                                         {
+                                                            ID = property.PropertyName,
                                                             ResourceKey = String.Format("ProfileProperties_{0}", property.PropertyName),
                                                             LocalResourceFile = "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx.resx",
                                                             ControlType = EditorInfo.GetEditor(property.DataType),
@@ -296,6 +297,11 @@ namespace DotNetNuke.Modules.Admin.Users
                                                             Visible = property.Visible,
                                                             Required = property.Required
                                                         };
+                //To check if the property has a deafult value
+                if (!String.IsNullOrEmpty(property.DefaultValue))
+                {
+                    formItem.Value = property.DefaultValue;
+                }
                 userForm.Items.Add(formItem);
             }
 
@@ -694,6 +700,23 @@ namespace DotNetNuke.Modules.Admin.Users
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            if (Request.IsAuthenticated)
+            {
+                //if a Login Page has not been specified for the portal
+                if (Globals.IsAdminControl())
+                {
+                    //redirect to current page 
+                    Response.Redirect(Globals.NavigateURL(), true);
+                }
+                else //make module container invisible if user is not a page admin
+                {
+                    if (!TabPermissionController.CanAdminPage())
+                    {
+                        ContainerControl.Visible = false;
+                    }
+                }
+            }
 
             if (UseCaptcha)
             {

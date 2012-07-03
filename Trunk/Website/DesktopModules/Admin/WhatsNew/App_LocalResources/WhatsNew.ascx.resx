@@ -1961,4 +1961,66 @@ corrected with each release. &lt;/p&gt;
 &lt;/ul&gt;
       </value>
   </data>
+  <data name="WhatsNew.06.02.01" xml:space="preserve">
+    <value>
+&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Fixed issue in the return URL after a user is shown the login screen when accessing an unauthorized resource&lt;/li&gt;
+&lt;li&gt;Fixed issue that stopped super users from being shown in the auto-suggest user lookup function in the member directory module&lt;/li&gt;
+&lt;li&gt;Fixed issue when sending bulk emails and localization is enabled&lt;/li&gt;
+&lt;li&gt;Added localization keys to the filter settings in member directory&lt;/li&gt;
+&lt;li&gt;Added localization keys to the user profile menu&lt;/li&gt;
+&lt;li&gt;Fixed issue that cause the newsletter module to not function properly in child sites&lt;/li&gt;
+&lt;li&gt;Fixed issue in the member directory advanced search option where settings were not used correctly&lt;/li&gt;
+&lt;li&gt;Fixed UI issue in the user profile when using IE 7&lt;/li&gt;
+&lt;li&gt;Fixed language packs installation issue when the product is installed using the auto option&lt;/li&gt;
+&lt;li&gt;Fixed issue where the language, if different from English, is not set as the default language after installation&lt;/li&gt;
+&lt;li&gt;Fixed backward compatibility issue when using language packs for previous versions of the product&lt;/li&gt;
+&lt;li&gt;Fixed issue in the profile when single quotes are used&lt;/li&gt;
+&lt;li&gt;Fixed issue when creating pages with a pound "#" in the name&lt;/li&gt;
+&lt;li&gt;Fixed issue that stops the install wizard when a language pack has errors&lt;/li&gt;
+&lt;li&gt;Fixed UI issue when uploading a logo&lt;/li&gt;
+&lt;li&gt;Fixed issue that stopped forge modules from being deployed through the extensions catalog&lt;/li&gt;
+&lt;li&gt;Fixed issue in when page names contain dots&lt;/li&gt;
+&lt;li&gt;Improved performance when accessing user permissions&lt;/li&gt;
+&lt;li&gt;Fixed issue that stopped super users from uploading icon files&lt;/li&gt;
+&lt;li&gt;Fixed issue when creating the path for the icon in custom desktop modules&lt;/li&gt;
+&lt;li&gt;Fixed issue in the HTML editor that was causing links to not work when tracking clicks&lt;/li&gt;
+&lt;li&gt;Fixed issue in Social Groups where users were not shown as group members when upgrading from previous releases&lt;/li&gt;
+&lt;li&gt;Fixed styling issue in the Journal when importing links information&lt;/li&gt;
+&lt;li&gt;Fixed object reference error when calling SaveMessage in MessagingController.cs&lt;/li&gt;
+&lt;li&gt;Fixed knockout exception in the MyProfile template&lt;/li&gt;
+&lt;li&gt;Fixed issue when upgrading from 4.9.5 to the latest version&lt;/li&gt;
+&lt;li&gt;Fixed issues with JavaScript in the user biography&lt;/li&gt;
+&lt;li&gt;Fixed issue that stopped additional profile properties to be displayed in the member directory after modifying the template&lt;/li&gt;
+&lt;li&gt;Fixed issue that caused the password fields to be cleared after selecting the country during registration&lt;/li&gt;
+&lt;li&gt;Fixed issue in the file manager that stopped users from creating folder mappings&lt;/li&gt;
+&lt;li&gt;Fixed the can not create type 'DotNetNuke.Modules.Journal.ProfilePic' error when using DotNetNuke.Modules.Journal.dll&lt;/li&gt;
+&lt;li&gt;Improved the performance of the login control&lt;/li&gt;
+&lt;li&gt;Fixed issue in the DDR Menu that was causing rendering issues when visiting the site using a mobile device&lt;/li&gt;
+&lt;li&gt;Updated the Dark Knight skin to use HTML5 as the doctype and dded HTML5 doctype as an option under fallback skin doctype&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;Newsletter Module&lt;/li&gt;
+    &lt;li&gt;File Manager Module&lt;/li&gt;
+    &lt;li&gt;Pages Module&lt;/li&gt;
+    &lt;li&gt;HTML Module&lt;/li&gt;
+    &lt;li&gt;Journal Module&lt;/li&gt;
+    &lt;li&gt;Member Directory&lt;/li&gt;
+    &lt;li&gt;Social Groups&lt;/li&gt;
+    &lt;li&gt;Device Preivew Management Module&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;Google Authentication Provider&lt;/li&gt;
+    &lt;li&gt;Facebook Authentication Provider&lt;/li&gt;
+&lt;/ul&gt;
+    </value>
+  </data>
 </root>

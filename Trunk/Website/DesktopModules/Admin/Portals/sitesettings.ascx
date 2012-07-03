@@ -423,7 +423,6 @@
                     </Items>
                 </dnn:DnnFormEditor>
                 <div id="uniqueEmailRow">
-                    <hr/>
                     <dnn:DnnFormEditor id="standardProviderSettings" runat="Server" FormMode="Short">
                         <Items>
                             <dnn:DnnFormToggleButtonItem runat="server" DataField="RequiresUniqueEmail" Enabled="False" />
