@@ -343,7 +343,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
             {
                 var kvp = (KeyValuePair<string, string>)e.Item.DataItem;
 
-                DataGrid extensionsGrid = item.Controls[1] as DataGrid;
+                DataGrid extensionsGrid = item.FindControl("extensionsGrid") as DataGrid;
                 extensionsGrid.ItemDataBound += extensionsGrid_ItemDataBound;
 
                 Localization.LocalizeDataGrid(ref extensionsGrid, LocalResourceFile); 

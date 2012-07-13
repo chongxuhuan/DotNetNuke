@@ -53,6 +53,12 @@ namespace DotNetNuke.Modules.Admin.Portals
 {
     public partial class Signup : PortalModuleBase
     {
+        #region Private Properties
+
+        private CultureDropDownTypes DisplayType { get; set; }
+
+        #endregion
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -218,7 +224,24 @@ namespace DotNetNuke.Modules.Admin.Portals
             }
             else
             {
-                text = string.Format("{0} - {1}", template.Name, template.CultureCode);
+                if (DisplayType == 0)
+                {
+                    string _ViewType = Convert.ToString(Services.Personalization.Personalization.GetProfile("LanguageDisplayMode", "ViewType" + PortalId));
+                    switch (_ViewType)
+                    {
+                        case "NATIVE":
+                            DisplayType = CultureDropDownTypes.NativeName;
+                            break;
+                        case "ENGLISH":
+                            DisplayType = CultureDropDownTypes.EnglishName;
+                            break;
+                        default:
+                            DisplayType = CultureDropDownTypes.DisplayName;
+                            break;
+                    }
+                }
+
+                text = string.Format("{0} - {1}", template.Name, Localization.GetLocaleName(template.CultureCode, DisplayType));
                 value = string.Format("{0}|{1}", Path.GetFileName(template.TemplateFilePath), template.CultureCode);
             }
             

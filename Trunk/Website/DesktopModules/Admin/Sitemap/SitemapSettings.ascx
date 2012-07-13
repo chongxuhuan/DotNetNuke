@@ -60,16 +60,16 @@
 		<div class="dnnFormItem">
 			<dnn:Label ID="lblCache" runat="server" ControlName="chkCache" />
 			<asp:DropDownList ID="cmbDaysToCache" runat="server">
-				<Items>
-					<asp:ListItem ResourceKey="DisableCaching" />
-					<asp:ListItem ResourceKey="1Day" />
-					<asp:ListItem ResourceKey="2Days" />
-					<asp:ListItem ResourceKey="3Days" />
-					<asp:ListItem ResourceKey="4Days" />
-					<asp:ListItem ResourceKey="5Days" />
-					<asp:ListItem ResourceKey="6Days" />
-					<asp:ListItem ResourceKey="7Days" />
-				</Items>
+			    <Items>
+			        <asp:ListItem runat="server" Value="0" resourcekey="DisableCaching"></asp:ListItem>
+                    <asp:ListItem runat="server" Value="1" resourcekey="1Day"></asp:ListItem>
+                    <asp:ListItem runat="server" Value="2" resourcekey="2Days"></asp:ListItem>
+                    <asp:ListItem runat="server" Value="3" resourcekey="3Days"></asp:ListItem>
+                    <asp:ListItem runat="server" Value="4" resourcekey="4Days"></asp:ListItem>
+                    <asp:ListItem runat="server" Value="5" resourcekey="5Days"></asp:ListItem>
+                    <asp:ListItem runat="server" Value="6" resourcekey="6Days"></asp:ListItem>
+                    <asp:ListItem runat="server" Value="7" resourcekey="7Days"></asp:ListItem>
+			    </Items>			   
 			</asp:DropDownList>
 			<asp:LinkButton ID="lnkResetCache" runat="server" CssClass="dnnSecondaryAction" resourcekey="lnkResetCache" Text="ResetCache"/>
 		</div>

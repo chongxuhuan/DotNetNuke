@@ -188,9 +188,10 @@ namespace DotNetNuke.Modules.Admin.ModuleDefinitions
 				string name = GetClassName();
 				string moduleControl = "DesktopModules/" + folder + "/" + controlSrc;
 
-                if (PackageController.GetPackages().Any(p => p.Name == name || p.FriendlyName == friendlyName))
+                var packageInfo = PackageController.GetPackages().FirstOrDefault(p => p.Name == name || p.FriendlyName == friendlyName);
+                if (packageInfo != null)
                 {
-                    UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("NonuniqueName", LocalResourceFile), ModuleMessage.ModuleMessageType.RedError);
+                    UI.Skins.Skin.AddModuleMessage(this, String.Format(Localization.GetString("NonuniqueNameModule", LocalResourceFile), packageInfo.FriendlyName), ModuleMessage.ModuleMessageType.RedError);
                 }
                 else
                 {

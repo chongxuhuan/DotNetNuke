@@ -103,8 +103,8 @@ namespace DotNetNuke.Services.Install
 				ViewState["PortalBinded"] = value;
 			}
     	}
-
-		#endregion
+        
+        #endregion
 
 		#region Protected Members
 
@@ -613,7 +613,7 @@ namespace DotNetNuke.Services.Install
             }
             else
             {
-                text = string.Format("{0} - {1}", template.Name, template.CultureCode);
+                text = string.Format("{0} - {1}", template.Name, Localization.Localization.GetLocaleName(template.CultureCode, CultureDropDownTypes.NativeName));
                 value = string.Format("{0}|{1}", Path.GetFileName(template.TemplateFilePath), template.CultureCode);
             }
 
@@ -895,7 +895,7 @@ namespace DotNetNuke.Services.Install
                     {
                         if ((File.Exists(installPath + "\\" + packageItem.Value)))
                         {
-                            success = Upgrade.Upgrade.InstallPackage(installPath + "\\" + packageItem.Value, packageType, true, false);
+                            success = Upgrade.Upgrade.InstallPackage(installPath + "\\" + packageItem.Value, packageType, false);
                             if (!success)
                             {
                                 strErrorMessage += string.Format(LocalizeString(errorKey), packageItem.Text);
@@ -966,7 +966,7 @@ namespace DotNetNuke.Services.Install
                         string languagePack = String.Format(installPath + "\\ResourcePack.Full.{0}.{1}.resources", Globals.FormatVersion(ApplicationVersion, "00", 3, "."), template.CultureCode);
                         if (File.Exists(languagePack))
                         {
-                            success = Upgrade.Upgrade.InstallPackage(languagePack, "Language", true, false);
+                            success = Upgrade.Upgrade.InstallPackage(languagePack, "Language", false);
                         }
                     }
                 }

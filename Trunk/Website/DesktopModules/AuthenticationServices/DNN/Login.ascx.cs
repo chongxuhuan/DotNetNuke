@@ -259,7 +259,12 @@ namespace DotNetNuke.Modules.Admin.Authentication
         private bool HasSocialAuthenticationEnabled()
         {
             return (from a in AuthenticationController.GetEnabledAuthenticationServices()
-                    let enabled = PortalController.GetPortalSettingAsBoolean(a.AuthenticationType + "_Enabled", PortalSettings.PortalId, false)
+                    let enabled = (a.AuthenticationType == "Facebook"
+                                     || a.AuthenticationType == "Google"
+                                     || a.AuthenticationType == "Live"
+                                     || a.AuthenticationType == "Twitter")
+                                  ? PortalController.GetPortalSettingAsBoolean(a.AuthenticationType + "_Enabled", PortalSettings.PortalId, false)
+                                  : !string.IsNullOrEmpty(a.LoginControlSrc) && (LoadControl("~/" + a.LoginControlSrc) as AuthenticationLoginBase).Enabled
                     where a.AuthenticationType != "DNN" && enabled
                     select a).Any();
         }

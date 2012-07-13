@@ -220,7 +220,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
                 {
                     if (packageItem.Selected)
                     {
-                        success = Upgrade.InstallPackage(InstallPath + "\\" + packageItem.Value, packageType, false, false);
+                        success = Upgrade.InstallPackage(InstallPath + "\\" + packageItem.Value, packageType, false);
                         if (!success)
                         {
                             strErrorMessage += string.Format(Localization.GetString(errorKey, LocalResourceFile), packageItem.Text);

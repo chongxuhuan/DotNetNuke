@@ -444,9 +444,9 @@ namespace DotNetNuke.Modules.Admin.Extensions
             {
                 var kvp = (KeyValuePair<string, PackageType>)e.Item.DataItem;
 
-                DataGrid extensionsGrid = item.Controls[1] as DataGrid;
-            	
-                Label noResultsLabel = item.Controls[3] as Label;
+                DataGrid extensionsGrid = item.FindControl("extensionsGrid") as DataGrid;
+
+                Label noResultsLabel = item.FindControl("noResultsLabel") as Label;
 
                 BindGrid(kvp.Key, extensionsGrid, noResultsLabel);
 

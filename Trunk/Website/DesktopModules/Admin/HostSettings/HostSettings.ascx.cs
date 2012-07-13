@@ -74,6 +74,10 @@ namespace DotNetNuke.Modules.Admin.Host
     /// </summary>
     /// <remarks>
     /// </remarks>
+    /// <history>
+    /// 	[cnurse]	9/27/2004	Updated to reflect design changes for Help, 508 support
+    ///                       and localisation
+    /// </history>
     /// -----------------------------------------------------------------------------
     public partial class HostSettings : PortalModuleBase
     {
@@ -109,6 +113,10 @@ namespace DotNetNuke.Modules.Admin.Host
             lblDataProvider.Text = ProviderConfiguration.GetProviderConfiguration("data").DefaultProvider;
             lblFramework.Text = Globals.NETFrameworkVersion.ToString(2);
 
+            if (!Upgrade.IsNETFrameworkCurrent("3.5"))
+            {
+                UI.Skins.Skin.AddModuleMessage(this, Localization.GetString("FrameworkDownLevel", LocalResourceFile), ModuleMessage.ModuleMessageType.YellowWarning);
+            }
             if (WindowsIdentity.GetCurrent() != null)
             {
                 // ReSharper disable PossibleNullReferenceException
@@ -605,7 +613,7 @@ namespace DotNetNuke.Modules.Admin.Host
             {
                 if (!String.IsNullOrEmpty(txtHostEmail.Text))
                 {
-                    txtSMTPPassword.Attributes.Add("value", Entities.Host.Host.SMTPPassword);
+                    txtSMTPPassword.Attributes.Add("value", txtSMTPPassword.Text);
 
                     string strMessage = Mail.SendMail(txtHostEmail.Text,
                                                       txtHostEmail.Text,

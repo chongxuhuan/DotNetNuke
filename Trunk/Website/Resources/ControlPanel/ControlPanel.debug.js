@@ -17,7 +17,6 @@
             if ($('[id$="AdminPanel"]').length > 0) $('[id$="AdminPanel"]').detach().appendTo('#dnnOtherTools .megaborder');
             else $('#dnnOtherTools').remove();
 
-
 			var $wrapper = $('#dnnCPWrap');
 			if ($wrapper.hasClass('Pinned')) {
 				$wrapper.parent().css({ paddingBottom: '0' });

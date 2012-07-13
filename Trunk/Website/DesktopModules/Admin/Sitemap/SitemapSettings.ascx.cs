@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Web;
+using System.Web.UI.WebControls;
 
 using DotNetNuke.Common;
 using DotNetNuke.Entities.Modules;
@@ -62,6 +63,8 @@ namespace DotNetNuke.Modules.Admin.Sitemap
             var excludePriority = float.Parse(PortalController.GetPortalSetting("SitemapExcludePriority", PortalId, "0.1"), NumberFormatInfo.InvariantInfo);
             txtExcludePriority.Text = excludePriority.ToString();
 
+            //Load Days to Cache options
+            //LoadDaysToCache();
             cmbDaysToCache.SelectedIndex = Int32.Parse(PortalController.GetPortalSetting("SitemapCacheDays", PortalId, "1"));
         }
 

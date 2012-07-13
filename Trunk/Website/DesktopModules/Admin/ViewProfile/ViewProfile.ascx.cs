@@ -171,16 +171,18 @@ namespace DotNetNuke.Modules.Admin.Users
                                         ? property.PropertyName
                                         : propertyName.Trim(':');
 
-                    sb.Append("self." + property.PropertyName + " = ko.observable(");
+                    var clientName = Localization.GetSafeJSString(property.PropertyName);
+                    sb.Append("self['" + clientName + "'] = ko.observable(");
                     sb.Append("\"");
+                    value = Localization.GetSafeJSString(value);
                     if(property.PropertyName == "Biography")
                     {
-                        value = Localization.GetSafeJSString(value.Replace("\n", ""));
+                        value =value.Replace("\n", "");
                     }
-                    sb.Append(value.Replace("'", "&apos;") + "\"" + ");");
+                    sb.Append(value + "\"" + ");");
                     sb.Append('\n');
-                    sb.Append("self." + property.PropertyName + "Text = '");
-                    sb.Append(propertyName + "';");
+                    sb.Append("self['" + clientName + "Text'] = '");
+                    sb.Append(clientName + "';");
                     sb.Append('\n');
                 }
 

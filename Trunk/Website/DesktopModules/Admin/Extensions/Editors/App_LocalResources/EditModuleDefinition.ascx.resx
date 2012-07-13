@@ -254,6 +254,9 @@
 	<data name="NonuniqueName.Text" xml:space="preserve">
     <value>A package already exists with this name  - please provide an alternative Name</value>
   </data>
+	<data name="NonuniqueNameModule.Text" xml:space="preserve">
+    <value>The module from the selected location exists and registered as {0}</value>
+  </data>
 	<data name="MissingManifest.Text" xml:space="preserve">
     <value>You must provide a mainfest file (.dnn or .dnn5 file)</value>
   </data>

@@ -38,6 +38,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Entities.Users.Internal;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Membership;
+using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
