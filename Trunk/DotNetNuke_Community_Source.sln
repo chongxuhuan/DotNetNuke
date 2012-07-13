@@ -80,14 +80,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Authentication.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.FiftyOneClientCapabilityProvider", "Community\Providers\ClientCapabilityProviders\Provider.FiftyOneClientCapabilityProvider\Provider.FiftyOneClientCapabilityProvider.csproj", "{7E780100-F200-4720-B362-7C930C0843B8}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "DotNetNuke_Community", "http://localhost/DotNetNuke_Community", "{BC47F45C-9FBC-4083-B0DB-AECC4DB67F43}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "localhost/DotNetNuke_Community", "http://localhost/DotNetNuke_Community", "{BC47F45C-9FBC-4083-B0DB-AECC4DB67F43}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = ""
 		SccAuxPath = ""
 		SccLocalPath = ""
 		SccProvider = ""
 		UseIISExpress = "false"
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv3.5"
 		Debug.AspNetCompiler.VirtualPath = "/DotNetNuke_Community"
 		Debug.AspNetCompiler.PhysicalPath = "Website\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\DotNetNuke_Community\"
@@ -604,6 +604,7 @@ Global
 		{BC47F45C-9FBC-4083-B0DB-AECC4DB67F43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC47F45C-9FBC-4083-B0DB-AECC4DB67F43}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{BC47F45C-9FBC-4083-B0DB-AECC4DB67F43}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC47F45C-9FBC-4083-B0DB-AECC4DB67F43}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{BC47F45C-9FBC-4083-B0DB-AECC4DB67F43}.Release|x86.ActiveCfg = Debug|Any CPU
 		{43609E4B-DAD3-45BA-82FF-98A1E031249F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{43609E4B-DAD3-45BA-82FF-98A1E031249F}.Debug|Any CPU.Build.0 = Debug|Any CPU
