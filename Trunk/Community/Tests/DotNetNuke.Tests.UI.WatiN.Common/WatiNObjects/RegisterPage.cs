@@ -142,6 +142,17 @@ namespace DotNetNuke.Tests.UI.WatiN.Common.WatiNObjects
 
         #endregion
 
+        public SelectList Country
+        {
+            get
+            {
+                if (PopUpFrame != null)
+                {
+                    return PopUpFrame.SelectList(Find.ByName(s => s.EndsWith("Country_Control")));
+                }
+                return IEInstance.SelectList(Find.ByName(s => s.EndsWith("Country_Control")));
+            }
+        }
         #endregion
 
         #region Public Methods

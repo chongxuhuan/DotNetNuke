@@ -17,7 +17,7 @@ Scenario: User Registration Notifcation mail should contains display name
 		| Password     | password					|
 		| Display Name | RegisterUserTest DN		|
 	And I click the Register button
-	Then The admin notification mail should contain Display Name
+	Then The admin notification mail should contain RegisterUserTest DN
 
 @MustBeDefaultAdminCredentials
 @CustomRegistration
@@ -28,10 +28,10 @@ Scenario: Password should remain its value after page post back
 	When I log off
 	And I click the Register link
 	And I fill in the Register User form
-		| Control      | Value						|
-		| User Name    | RegisterUserTest			|
-		| Email        | RegisterUserTest@dnn.com	|
-		| Password     | password					|
-		| Display Name | RegisterUserTest DN		|
-	And I select country as China
+		| Control      | Value			|
+		| User Name    | Israel			|
+		| Email        | israel@dnn.com	|
+		| Password     | password		|
+		| Display Name | Israel			|
+	And I select country as Canada
 	Then Password field's value should be password

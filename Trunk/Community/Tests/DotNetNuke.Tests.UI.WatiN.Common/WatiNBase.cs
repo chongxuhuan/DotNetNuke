@@ -199,7 +199,15 @@ namespace DotNetNuke.Tests.UI.WatiN.Common
         #region Divs
         public Div ConfirmationPopUpDiv
         {
-            get { return IEInstance.Div(Find.ByClass(s => s.Contains("ui-dialog"))); }
+            get
+            {
+                if(PopUpFrame != null)
+                {
+                    return PopUpFrame.Div(d => d.ClassName != null && d.ClassName.Contains("ui-dialog") && d.Style.Display == "block");
+                }
+
+                return IEInstance.Div(d => d.ClassName != null && d.ClassName.Contains("ui-dialog") && d.Style.Display == "block");
+            }
         }
         public DivCollection ModuleDivs
         {
@@ -212,7 +220,7 @@ namespace DotNetNuke.Tests.UI.WatiN.Common
         {
             get
             {
-                return ConfirmationPopUpDiv.Button(Find.ByText("Yes"));
+                return ConfirmationPopUpDiv.Button(Find.ByText(s => s.Contains("Yes")));
             }
         }
         public Button NoConfirmationButton

@@ -3849,14 +3849,10 @@ namespace DotNetNuke.Common
             {
                 avatarUrl = HttpContext.Current.Request.Url.Host;
             }
-            if (HttpContext.Current.Request.IsSecureConnection)
-            {
-                avatarUrl = "https://" + avatarUrl;
-            }
-            else
-            {
-                avatarUrl = "http://" + avatarUrl;
-            }
+            avatarUrl = string.Format("{0}://{1}{2}",
+                                      HttpContext.Current.Request.IsSecureConnection ? "https" : "http",
+                                      avatarUrl,
+                                      !HttpContext.Current.Request.Url.IsDefaultPort ? ":" + HttpContext.Current.Request.Url.Port : string.Empty);
 
             avatarUrl += "/profilepic.ashx?userId={0}&h={1}&w={2}";            
 

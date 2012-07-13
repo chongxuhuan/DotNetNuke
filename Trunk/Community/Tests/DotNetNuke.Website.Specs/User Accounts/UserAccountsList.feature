@@ -42,7 +42,7 @@ Scenario: Should not be able to input invalid value in user name validation
 	Given I am on the site home page
 	And I have logged in as the admin
 	When I navigate to the admin page Site Settings
-	And I input [ in Security_UserNameValidation field
+	And I input [ in UserName Validation field
 	And I Update Site Settings
 	Then I should see error message
 

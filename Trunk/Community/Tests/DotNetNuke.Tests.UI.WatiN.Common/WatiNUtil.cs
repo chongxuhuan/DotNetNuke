@@ -19,6 +19,8 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 using System;
+using System.Threading;
+
 using WatiN.Core;
 using WatiN.Core.Native.Windows;
 
@@ -36,7 +38,8 @@ namespace DotNetNuke.Tests.UI.WatiN.Common
         {
             if (ieInstance != null)
             {
-                ieInstance.Close();
+                ieInstance.ForceClose();
+                Thread.Sleep(2000);
             }
         }
 

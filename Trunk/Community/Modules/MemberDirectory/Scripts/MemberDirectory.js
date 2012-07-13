@@ -440,7 +440,24 @@
                     $(this).addClass("active");
                     $(".mdSearch").addClass("active");
                 });
+                var timer;
+                var cursorIsOnAdvancedSearchForm;
+                $('a#mdAdvancedSearch').mouseleave(function () {
+                    timer = setTimeout(function () {
+                        if ($('div#mdAdvancedSearchForm').is(':visible') && !cursorIsOnAdvancedSearchForm) {
+                            $('div#mdAdvancedSearchForm').hide();
+                            $(this).removeClass("active");
+                            $(".mdSearch").removeClass("active");
+                        }
+                    }, 150);
+
+                });
+                $('div#mdAdvancedSearchForm').mouseenter(function () {
+                    cursorIsOnAdvancedSearchForm = true;
+                });
                 $('div#mdAdvancedSearchForm').mouseleave(function () {
+                    clearTimeout(timer);
+                    cursorIsOnAdvancedSearchForm = false;
                     $(this).hide();
                     $('a#mdAdvancedSearch').removeClass("active");
                     $(".mdSearch").removeClass("active");

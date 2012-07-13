@@ -171,9 +171,6 @@
     </Compile>
     <Compile Include="Modules\SearchCrawler\SearchResultSteps.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service Layer\AuthMode.cs" />
-    <Compile Include="Service Layer\ServiceCaller.cs" />
-    <Compile Include="Service Layer\ServiceIntegrationTests.cs" />
     <Compile Include="Site Settings\UpdateSitePaymentSettings.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

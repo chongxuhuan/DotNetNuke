@@ -85,11 +85,26 @@ namespace DotNetNuke.Website.Specs.Host_Features
         [When(@"I create a new site group")]
         public void WhenICreateANewSiteGroup()
         {
-            if (!SiteGroupPage.CreateSiteGroupButton.Exists)
+            while (SiteGroupPage.GetEditButton(string.Empty) != null)
             {
-                return;
+                SiteGroupPage.GetEditButton(string.Empty).Click();
+                if (SiteGroupPage.SelectedPortalSelectList.Options.Count > 0)
+                {
+                    foreach (var option in SiteGroupPage.SelectedPortalSelectList.Options)
+                    {
+                        option.Select();
+                    }
+                    SiteGroupPage.RemoveSiteToGroupButton.Click();
+                    SiteGroupPage.YesConfirmationButton.Click();
+                    WaitAjaxRequestComplete();
+                }
+
+                SiteGroupPage.DeleteButton.Click();
+                SiteGroupPage.YesConfirmationButton.Click();
+                WaitAjaxRequestComplete();
             }
 
+            IEInstance.WaitForComplete();
             SiteGroupPage.CreateSiteGroupButton.Click();
             SiteGroupPage.GroupNameField.Value = "Main Group";
             SiteGroupPage.GroupDescriptionField.Value = "Main Group";
@@ -114,7 +129,7 @@ namespace DotNetNuke.Website.Specs.Host_Features
                 throw new Exception("No portals available in Portal Select list");
             }
 
-            SiteGroupPage.AvailablePortalSelectList.Options[0].Select();
+            SiteGroupPage.AvailablePortalSelectList.Option(Find.ByText("Child")).Select();
             SiteGroupPage.AddSiteToGroupButton.Click();
 
             SiteGroupPage.AddSiteToGroupButton.WaitUntil(p => !Convert.ToBoolean(IEInstance.Eval("Sys.WebForms.PageRequestManager.getInstance().get_isInAsyncPostBack();")));
@@ -129,7 +144,7 @@ namespace DotNetNuke.Website.Specs.Host_Features
         [Then(@"I shouldn't see delete button on administrator")]
         public void ThenIShouldnTSeeDeleteButtonOnAdministrator()
         {
-            Assert.IsFalse(UserPage.GetUserDeleteButton("Administrator Account").Exists);
+            WatiNAssert.AssertIsFalse(UserPage.GetUserDeleteButton("Administrator Account").Exists, "AdminAccountNotExists.png");
         }
     }
 }

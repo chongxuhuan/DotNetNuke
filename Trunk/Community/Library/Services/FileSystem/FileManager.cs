@@ -54,7 +54,7 @@ namespace DotNetNuke.Services.FileSystem
         {
             get
             {
-                if(_contentTypes == null)
+                if (_contentTypes == null)
                 {
                     _contentTypes = new Dictionary<string, string>();
                     _contentTypes.Add("txt", "text/plain");
@@ -171,6 +171,17 @@ namespace DotNetNuke.Services.FileSystem
                 throw new InvalidFileExtensionException(string.Format(Localization.Localization.GetExceptionMessage("AddFileExtensionNotAllowed", "The extension '{0}' is not allowed. The file has not been added."), Path.GetExtension(fileName)));
             }
 
+            var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
+            var folderProvider = FolderProvider.Instance(folderMapping.FolderProviderType);
+
+            bool needToWriteFile = fileContent != null && (overwrite || !folderProvider.FileExists(folder, fileName));
+            bool usingSeekableStream = false;
+
+            if (fileContent != null && !needToWriteFile && FileExists(folder, fileName))
+            {
+                return GetFile(folder, fileName);
+            }
+
             var file = new FileInfo
             {
                 PortalId = folder.PortalID,
@@ -179,62 +190,81 @@ namespace DotNetNuke.Services.FileSystem
                 Width = Null.NullInteger,
                 Height = Null.NullInteger,
                 ContentType = contentType,
-                Folder = TestableGlobals.Instance.GetSubFolderPath(Path.Combine(folder.PhysicalPath, fileName), folder.PortalID),
+                Folder =
+                    TestableGlobals.Instance.GetSubFolderPath(
+                        Path.Combine(folder.PhysicalPath, fileName), folder.PortalID),
                 FolderId = folder.FolderID,
                 LastModificationTime = DateTime.Now
             };
 
-            if (!PortalControllerWrapper.Instance.HasSpaceAvailable(folder.PortalID, file.Size))
-            {
-                throw new NoSpaceAvailableException(Localization.Localization.GetExceptionMessage("AddFileNoSpaceAvailable", "The portal has no space available to store the specified file. The file has not been added."));
-            }
-
-            file.FileId = DataProvider.Instance().AddFile(file.PortalId,
-                                                          file.UniqueId,
-                                                          file.VersionGuid,
-                                                          file.FileName,
-                                                          file.Extension,
-                                                          file.Size,
-                                                          file.Width,
-                                                          file.Height,
-                                                          file.ContentType,
-                                                          file.Folder,
-                                                          file.FolderId,
-                                                          GetCurrentUserID(),
-                                                          file.SHA1Hash,
-                                                          file.LastModificationTime);
             try
             {
-                var folderMapping = FolderMappingController.Instance.GetFolderMapping(folder.FolderMappingID);
-                var folderProvider = FolderProvider.Instance(folderMapping.FolderProviderType);
-
-                if (overwrite || !folderProvider.FileExists(folder, fileName))
+                if (needToWriteFile)
                 {
-                    folderProvider.AddFile(folder, fileName, fileContent);
-                }
-                //get file size and modification time from provider.
-                file.Size = (int)folderProvider.GetFileSize(file);
-                //if file size is zero then get it from file content, this is special for database provider.
-                if(file.Size == 0 && fileContent != null)
-                {
-                    if(!fileContent.CanSeek)
+                    if (!fileContent.CanSeek)
                     {
                         fileContent = GetSeekableStream(fileContent);
+                        usingSeekableStream = true;
                     }
+
                     file.Size = (int)fileContent.Length;
+
+                    if (!PortalControllerWrapper.Instance.HasSpaceAvailable(folder.PortalID, file.Size))
+                    {
+                        throw new NoSpaceAvailableException(
+                            Localization.Localization.GetExceptionMessage("AddFileNoSpaceAvailable",
+                                                                          "The portal has no space available to store the specified file. The file has not been added."));
+                    }
                 }
-                file.LastModificationTime = folderProvider.GetLastModificationTime(file);
+                else
+                {
+                    file.Size = (int)folderProvider.GetFileSize(file);
+                }
+
+                file.FileId = DataProvider.Instance().AddFile(file.PortalId,
+                                                              file.UniqueId,
+                                                              file.VersionGuid,
+                                                              file.FileName,
+                                                              file.Extension,
+                                                              file.Size,
+                                                              file.Width,
+                                                              file.Height,
+                                                              file.ContentType,
+                                                              file.Folder,
+                                                              file.FolderId,
+                                                              GetCurrentUserID(),
+                                                              file.SHA1Hash,
+                                                              file.LastModificationTime);
+                try
+                {
+                    if (needToWriteFile)
+                    {
+                        folderProvider.AddFile(folder, fileName, fileContent);
+                    }
+
+                    file.LastModificationTime = folderProvider.GetLastModificationTime(file);
+                }
+                catch (Exception ex)
+                {
+                    DnnLog.Error(ex);
+
+                    DataProvider.Instance().DeleteFile(file.PortalId, file.FileName, file.FolderId);
+
+                    throw new FolderProviderException(
+                        Localization.Localization.GetExceptionMessage("AddFileUnderlyingSystemError",
+                                                                      "The underlying system threw an exception. The file has not been added."),
+                        ex);
+                }
+
+                return UpdateFile(file, false);
             }
-            catch (Exception ex)
+            finally
             {
-                DnnLog.Error(ex);
-
-                DataProvider.Instance().DeleteFile(file.PortalId, file.FileName, file.FolderId);
-
-                throw new FolderProviderException(Localization.Localization.GetExceptionMessage("AddFileUnderlyingSystemError", "The underlying system threw an exception. The file has not been added."), ex);
+                if (usingSeekableStream)
+                {
+                    fileContent.Dispose();
+                }
             }
-
-            return UpdateFile(file, false);
         }
 
         /// <summary>

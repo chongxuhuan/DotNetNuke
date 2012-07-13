@@ -142,7 +142,14 @@ namespace DotNetNuke.Tests.Steps
 
         public void WaitAjaxRequestComplete()
         {
-            HomePage.ContentPaneDiv.WaitUntil(p => !Convert.ToBoolean(IEInstance.Eval("Sys.WebForms.PageRequestManager.getInstance().get_isInAsyncPostBack();")));
+            if(HomePage.PopUpFrame != null)
+            {
+                HomePage.PopUpFrame.Body.WaitUntil(p => !Convert.ToBoolean(IEInstance.Eval("Sys.WebForms.PageRequestManager.getInstance().get_isInAsyncPostBack();")));
+            }
+            else
+            {
+                HomePage.ContentPaneDiv.WaitUntil(p => !Convert.ToBoolean(IEInstance.Eval("Sys.WebForms.PageRequestManager.getInstance().get_isInAsyncPostBack();")));                
+            }
         }
 
         #endregion

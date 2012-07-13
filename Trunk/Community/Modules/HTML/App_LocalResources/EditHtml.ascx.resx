@@ -223,7 +223,7 @@
     <value>State of the workflow used by this module.</value>
   </data>
   <data name="plMaxVersions.Help" xml:space="preserve">
-    <value>The maximum versions of versions that are maintained for any html content.</value>
+    <value>The maximum number of versions that are maintained for any html content.</value>
   </data>
   <data name="plPreviewWorkflowState.Help" xml:space="preserve">
     <value>The workflow state of the content displayed.</value>

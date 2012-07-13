@@ -18,6 +18,8 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 // DEALINGS IN THE SOFTWARE.
 #endregion
+
+using DotNetNuke.Common;
 using DotNetNuke.Common.Utilities;
 
 using System;
@@ -27,6 +29,8 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Services.FileSystem;
 
 using Telerik.Web.UI;
+using DotNetNuke.Services.Exceptions;
+using System.Web;
 
 namespace DotNetNuke.Providers.RadEditorProvider
 {
@@ -65,6 +69,10 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 				if (! IsPostBack)
 				{
+                    if (!IsValidUser())
+                    {
+                        Response.Redirect(Globals.LoginURL(HttpUtility.UrlEncode(Request.RawUrl), true), true);                   
+                    }
 
 					FixAllowedExtensions();
 
@@ -75,7 +83,8 @@ namespace DotNetNuke.Providers.RadEditorProvider
 					string strStartFolder = "";
 					try
 					{
-						strStartFolder = Request.QueryString["path"];
+                        if(!String.IsNullOrEmpty(Request.QueryString["path"]))
+						    strStartFolder = Request.QueryString["path"];
 					}
 					catch
 					{
@@ -119,6 +128,12 @@ namespace DotNetNuke.Providers.RadEditorProvider
 				throw ex;
 			}
 		}
+
+        private bool IsValidUser()
+        {
+            bool result = User.Identity.IsAuthenticated && Security.Permissions.TabPermissionController.CanManagePage();
+            return result;
+        }
 
 		protected void Save_OnClick(object sender, EventArgs e)
 		{

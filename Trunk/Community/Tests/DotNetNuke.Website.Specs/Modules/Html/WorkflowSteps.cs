@@ -81,6 +81,7 @@ namespace DotNetNuke.Website.Specs.Modules.Html
             HTMLModule.SaveContentLink.Click();
             HTMLModule.CommentTextField.Value = "Submit Comment";
             HTMLModule.AddCommentLink.Click();
+            WaitAjaxRequestComplete();
         }
 
         [Then(@"Subject in notification email should replace all tokens")]

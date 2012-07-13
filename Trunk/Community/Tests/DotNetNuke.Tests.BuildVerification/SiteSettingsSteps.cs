@@ -54,8 +54,9 @@ namespace DotNetNuke.Tests.BuildVerification
         [Given(@"I am on the Advanced Settings Tab")]
         public void GivenIAmOnTheAdvancedSettingsTab()
         {
+            Thread.Sleep(2500);
             SettingsPage.AdvancedSettingsTab.Click();
-            Thread.Sleep(1500);
+            Thread.Sleep(2500);
         }
 
         /// <summary>

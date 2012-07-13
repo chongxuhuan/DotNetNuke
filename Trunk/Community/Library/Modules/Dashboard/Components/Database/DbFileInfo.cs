@@ -48,8 +48,12 @@ namespace DotNetNuke.Modules.Dashboard.Components.Database
         {
             get
             {
-                string sname = string.Format("{0}...{1}", FileName.Substring(0, FileName.IndexOf('\\') + 1), FileName.Substring(FileName.LastIndexOf('\\', FileName.LastIndexOf('\\') - 1)));
-                return sname;
+                if(FileName.IndexOf('\\') == FileName.LastIndexOf('\\'))
+                {
+                    return FileName;
+                }
+
+                return string.Format("{0}...{1}", FileName.Substring(0, FileName.IndexOf('\\') + 1), FileName.Substring(FileName.LastIndexOf('\\', FileName.LastIndexOf('\\') - 1)));
             }
         }
     }

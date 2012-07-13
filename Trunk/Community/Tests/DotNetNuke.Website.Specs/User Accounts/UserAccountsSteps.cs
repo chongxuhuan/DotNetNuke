@@ -105,12 +105,10 @@ namespace DotNetNuke.Website.Specs.Steps
             UserPage.UserSettingsLink.Click();
         }
 
-        [When(@"I input (.*) in (.*) field")]
-        public void WhenIInputInField(string value, string fieldName)
+        [When(@"I input (.*) in UserName Validation field")]
+        public void WhenIInputIninUserNameValidationField(string value)
         {
-            SiteSettingsPage.ContentPaneDiv
-                .Div(Find.ById(s => s.EndsWith("SiteSettings_validationRegistrationSettings")))
-                .TextFields[0].Value = value;
+            SiteSettingsPage.UsernameSecurityValidationField.Value = value;
         }
 
         [When(@"I Update Site Settings")]
@@ -118,9 +116,7 @@ namespace DotNetNuke.Website.Specs.Steps
         {
             SiteSettingsPage.UpdateLink.Click();
             SiteSettingsPage.UpdateLink.WaitUntil(p => !Convert.ToBoolean(IEInstance.Eval("Sys.WebForms.PageRequestManager.getInstance().get_isInAsyncPostBack();")));
-
         }
-
 
         [Then(@"I should see error message")]
         public void ThenIShouldSeeErrorMessage()

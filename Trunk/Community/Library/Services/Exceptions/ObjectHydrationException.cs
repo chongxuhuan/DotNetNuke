@@ -30,6 +30,7 @@ using System.Security.Permissions;
 
 namespace DotNetNuke.Services.Exceptions
 {
+    [Serializable]
     public class ObjectHydrationException : BasePortalException
     {
         private List<string> _Columns;
@@ -90,6 +91,13 @@ namespace DotNetNuke.Services.Exceptions
                 }
                 return _Message;
             }
+        }
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+			//Serialize this class' state and then call the base class GetObjectData
+            base.GetObjectData(info, context);
         }
     }
 }

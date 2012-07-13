@@ -134,5 +134,12 @@ namespace DotNetNuke.Website.Specs.User_Accounts
         {
             Assert.IsFalse(UserProfilePage.GetProfilePropertyTextField(propertyName).Exists);
         }
+
+        [Then(@"the Edit Profile link should be visible")]
+        public void EditProfileLinkVisible()
+        {
+            IEInstance.WaitForComplete();
+            Assert.IsTrue(UserProfilePage.EditProfileLink.Exists);
+        }
     }
 }

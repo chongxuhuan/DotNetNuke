@@ -103,13 +103,15 @@ namespace DotNetNuke.Website.Specs.Steps
 		[When(@"I click help icon")]
 		public void WhenIClickHelpIcon()
 		{
-			var label = IEInstance.Spans.Filter(Find.ById(s => s.EndsWith("lblName_lblLabel"))).First();
+			var label = IEInstance.Span(Find.ById(s => s.EndsWith("lblName_lblLabel")));
+            IEInstance.BringToFront();
 			PositionMousePointerInMiddleOfElement(label, IEInstance);
 		}
 
 		[Then(@"I should see help text")]
 		public void ThenIShouldSeeHelpText()
 		{
+            Thread.Sleep(1500);
 			Assert.AreEqual("block", IEInstance.Divs.Filter(Find.ById(d => d.EndsWith("lblName_pnlHelp"))).First().Style.Display);
 		}
 

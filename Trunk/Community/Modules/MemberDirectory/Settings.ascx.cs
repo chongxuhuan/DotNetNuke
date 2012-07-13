@@ -24,7 +24,6 @@
 #region Usings
 
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -137,21 +136,20 @@ namespace DotNetNuke.Modules.MemberDirectory
 
                 var profileResourceFile = "~/DesktopModules/Admin/Security/App_LocalResources/Profile.ascx";
 
-                
                 System.Web.UI.WebControls.ListItemCollection propertiesCollection = GetPropertiesCollection(profileResourceFile);
-                    
-                
+
+
                 //Bind the ListItemCollection to the list
                 propertyList.DataSource = propertiesCollection;
                 propertyList.DataBind();
 
                 //Insert custom properties to the Search field lists
-                propertiesCollection.Insert(0,new ListItem(Localization.GetString("Username",LocalResourceFile),"Username"));
+                propertiesCollection.Insert(0, new ListItem(Localization.GetString("Username", LocalResourceFile), "Username"));
                 propertiesCollection.Insert(1, new ListItem(Localization.GetString("DisplayName", LocalResourceFile), "DisplayName"));
                 propertiesCollection.Insert(2, new ListItem(Localization.GetString("Email", LocalResourceFile), "Email"));
 
                 //Bind the properties collection in the Search Field Lists
-
+      
                 searchField1List.DataSource = propertiesCollection;
                 searchField1List.DataBind();
 
@@ -193,9 +191,9 @@ namespace DotNetNuke.Modules.MemberDirectory
             var result = new ListItemCollection();
             foreach (var property in Model.ProfileProperties)
             {
-                result.Add(new ListItem(GetLocalizeName(property.PropertyName,profileResourceFile),property.PropertyName));
+                result.Add(new ListItem(GetLocalizeName(property.PropertyName, profileResourceFile), property.PropertyName));
             }
-            
+
             return result;
         }
 

@@ -115,7 +115,7 @@ Scenario: A Profile Property with ReadOnly set to true should be Visible to Admi
 
 @ClearExtraProfileProperties
 @MustHaveAUserWithFullProfile
-Scenario: A Profile Property with ReadOnly set to true should be Read Only for User
+Scenario: A Profile Property with numbers at the start should work
 	Given I am on the site home page
 	And I have logged in as the host
 	And I have cleared the dotnetnuke cache
@@ -123,19 +123,16 @@ Scenario: A Profile Property with ReadOnly set to true should be Read Only for U
 	And I click Add New Profile Property
 	And I fill in the profile property form
 		| Control				| Value				|
-		| Property Name			| ReadOnly			|
+		| Property Name			| 1234  			|
 		| Data Type				| Text				|
-		| Property Category		| Basic				|
-		| Length				| 100				|
+		| Property Category		| Name				|
+		| Length				| 3  				|
 		| Required				| false				|
 		| Visible				| true				|
-		| ReadOnly				| true				|
+		| ReadOnly				| false				|
 	And I click Next
 	And I click Return
 	And I log off
 	And I have logged in as the user MichaelWoods password1234
 	When I have clicked on my name
-	And I click Edit Profile
-	And I click the Manage Profile Tab
-	Then Profile Property ReadOnly is visible
-	And Profile Property ReadOnly is not editable
+    Then the Edit Profile link should be visible

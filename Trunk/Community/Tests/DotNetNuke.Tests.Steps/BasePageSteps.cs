@@ -286,9 +286,9 @@ namespace DotNetNuke.Tests.Steps
         /// This step assumes that both the page and the role already exist on the site.
         /// </summary>
         /// <param name="pageName">The name of the page.</param>
-        /// <param name="roleName">The role that will be given view permissions.</param>
-        /// <param name="permission">The permission.</param>
-        /// <param name="setting">Allowed, Denied, Not Allowed.
+        /// <param name="roleName">The role that will be given view permissions. 
+        /// <param name="permission">The permission. 
+        /// <param name="setting">Allowed, Denied, Not Allowed.</param>
         /// This field must be entered exactly as the role name will appear in the permissions grid.</param>
         [Given(@"The page (.*) has (.*) permission set to (.*) for the role (.*)")]
         [When(@"The page (.*) has (.*) permission set to (.*) for the role (.*)")]

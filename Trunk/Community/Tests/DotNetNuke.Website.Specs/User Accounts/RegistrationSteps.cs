@@ -105,6 +105,7 @@ namespace DotNetNuke.Website.Specs.Steps
         [Then(@"The admin notification mail should contain (.*)")]
         public void IAmLoggedInAsTheRegisterUser(string content)
         {
+            Thread.Sleep(1000);
             var adminEmail = UserController.GetUserByName(PortalId, "admin").Email;
             MailAssert.Base64EncodedContentLineContains(content, adminEmail, "My Website New User Registration");
         }
@@ -112,9 +113,7 @@ namespace DotNetNuke.Website.Specs.Steps
         [When(@"I select country as (.*)")]
         public void WhenISelectCountryAs(string countryName)
         {
-            var countryList = IEInstance.Span(Find.ByText("Country:"))
-                .Parent.Parent.Parent.NextSibling as SelectList;
-            countryList.Option(Find.ByText(countryName)).Select();
+            RegisterPage.Country.Option(Find.ByText(countryName)).Select();
             Thread.Sleep(1000);
         }
 

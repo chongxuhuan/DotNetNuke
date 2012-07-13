@@ -28,6 +28,7 @@ using System.Security.Permissions;
 
 namespace DotNetNuke.Services.Exceptions
 {
+    [Serializable]
     public class PageLoadException : BasePortalException
     {
         //default constructor
@@ -47,6 +48,13 @@ namespace DotNetNuke.Services.Exceptions
 
         protected PageLoadException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+        }
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+			//Serialize this class' state and then call the base class GetObjectData
+            base.GetObjectData(info, context);
         }
     }
 }

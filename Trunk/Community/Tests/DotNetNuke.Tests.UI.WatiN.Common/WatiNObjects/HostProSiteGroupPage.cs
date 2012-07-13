@@ -209,14 +209,38 @@ namespace DotNetNuke.Tests.UI.WatiN.Common.WatiNObjects
 			{
 				if (PopUpFrame != null)
 				{
-					return PopUpFrame.Link(Find.ByName(s => s.EndsWith("EditPortalGroupView_deleteButton")));
+					return PopUpFrame.Link(Find.ById(s => s.EndsWith("EditPortalGroupView_deleteButton")));
 				}
 
-				return ContentPaneDiv.Link((Find.ByName(s => s.EndsWith("EditPortalGroupView_deleteButton"))));
+                return ContentPaneDiv.Link((Find.ById(s => s.EndsWith("EditPortalGroupView_deleteButton"))));
 			}
 		}
 
+	    public Table GroupsTable
+	    {
+	        get
+	        {
+	            return FindElement<Table>(Find.ById(s => s.Contains("PortalGroupListView_groupsGrid")));
+	        }
+	    }
 
 		#endregion
-	}
+
+        #region Public Methods
+
+        public Link GetEditButton(string groupName)
+        {
+            foreach (var row in GroupsTable.TableRows)
+            {
+                if (row.ClassName == "rgRow" && (string.IsNullOrEmpty(groupName) || row.TableCells[1].InnerHtml.Contains(groupName)))
+                {
+                    return row.Link(Find.ById(s => s.EndsWith("editLink")));
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
+    }
 }

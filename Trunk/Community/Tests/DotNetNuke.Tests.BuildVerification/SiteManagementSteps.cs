@@ -72,7 +72,7 @@ namespace DotNetNuke.Tests.BuildVerification
             SiteManagementPage.SiteAliasField.Value = SiteUrl.Replace("http://", "") + "/" + portalAlias;
             SiteManagementPage.SiteNameField.Value = portalTitle;
             SiteManagementPage.PortalTemplateSelectList.Refresh();
-            SiteManagementPage.PortalTemplateSelectList.Select("Default Website - en-US");
+            SiteManagementPage.PortalTemplateSelectList.Select("Default Website - English (United States)");
             Thread.Sleep(3000);
         }
 

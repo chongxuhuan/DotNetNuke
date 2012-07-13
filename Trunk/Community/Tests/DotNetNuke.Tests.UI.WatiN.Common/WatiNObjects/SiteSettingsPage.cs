@@ -259,6 +259,11 @@ namespace DotNetNuke.Tests.UI.WatiN.Common.WatiNObjects
         {
             get { return IEInstance.TextField(Find.ById(s => s.EndsWith("SiteSettings_txtSTDURL"))); }
         }
+        public TextField UsernameSecurityValidationField
+        {
+            get { return IEInstance.TextField(Find.ById(s => s.EndsWith("SiteSettings_validationRegistrationSettings_ctl01__TextBox"))); }
+        }
+
         #endregion
 
         #region Images

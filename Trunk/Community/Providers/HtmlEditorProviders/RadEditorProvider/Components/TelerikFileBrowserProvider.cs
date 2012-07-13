@@ -394,15 +394,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
                 FillFileInfo(file, ref fileInfo);
 
 				//Add or update file
-				Services.FileSystem.FileInfo dnnFile = DNNFileCtrl.GetFile(name, PortalSettings.PortalId, folder.FolderID);
-				if (dnnFile != null)
-				{
-				    FileManager.Instance.UpdateFile(dnnFile, file.InputStream);
-				}
-				else
-				{
-				    FileManager.Instance.AddFile(folder, name, file.InputStream);
-				}
+				FileManager.Instance.AddFile(folder, name, file.InputStream);
 
 				return returnValue;
 			}
@@ -601,20 +593,23 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
 			    var dnnFolder = DNNValidator.GetUserFolder(folderPath);
 
-			    if ((dnnFolder == null))
+			    if (dnnFolder == null)
 			    {
+                    invalidFolders.Add(radDirectory);
 			        continue;
 			    }
 			    
                 //Don't show protected folders
-			    if (! (string.IsNullOrEmpty(dnnFolder.FolderPath)) && dnnFolder.IsProtected)
+			    if (!string.IsNullOrEmpty(dnnFolder.FolderPath) && dnnFolder.IsProtected)
 			    {
+                    invalidFolders.Add(radDirectory);
 			        continue;
 			    }
 
 			    //Don't show Cache folder
 			    if (dnnFolder.FolderPath.ToLowerInvariant() == "cache/")
 			    {
+                    invalidFolders.Add(radDirectory);
 			        continue;
 			    }
 
@@ -635,47 +630,10 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
                     if (loadFiles)
                     {
-                        IDictionary<string, Services.FileSystem.FileInfo> dnnFiles = GetDNNFiles(dnnFolder.FolderID);
-
-                        if (dnnFolder.StorageLocation != (int) FolderController.StorageLocationTypes.InsecureFileSystem)
+                        var files = FolderManager.Instance.GetFiles(dnnFolder);
+                        foreach (var fileInfo in files)
                         {
-                            //check Telerik search patterns to filter out files
-                            foreach (var dnnFile in dnnFiles.Values)
-                            {
-                                var tempVar = SearchPatterns;
-                                if (CheckSearchPatterns(dnnFile.FileName, ref tempVar))
-                                {
-                                    var tabId = Null.NullInteger;
-                                    if (dnnFile.PortalId > Null.NullInteger)
-                                    {
-                                        tabId = new PortalSettings(dnnFile.PortalId).HomeTabId;
-                                    }
-                                    var url = Common.Globals.LinkClick("fileid=" + dnnFile.FileId, tabId, Null.NullInteger);
-
-                                    var fileItem = new FileItem(dnnFile.FileName, dnnFile.Extension, dnnFile.Size, "", url, "", folderPermissions);
-
-                                    showFiles.Add(fileItem);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //check Telerik search patterns to filter out files
-                            foreach (var telerikFile in radDirectory.Files)
-                            {
-                                if (dnnFiles.ContainsKey(telerikFile.Name))
-                                {
-                                    var fileItem = new FileItem(telerikFile.Name,
-                                                                telerikFile.Extension,
-                                                                telerikFile.Length,
-                                                                "",
-                                                                FileSystemValidation.ToVirtualPath(folderPath) + telerikFile.Name,
-                                                                "",
-                                                                folderPermissions);
-
-                                    showFiles.Add(fileItem);
-                                }
-                            }
+                            showFiles.Add(new FileItem(fileInfo.FileName, fileInfo.Extension, fileInfo.Size, "", FileManager.Instance.GetUrl(fileInfo), "", folderPermissions));
                         }
                     }
 

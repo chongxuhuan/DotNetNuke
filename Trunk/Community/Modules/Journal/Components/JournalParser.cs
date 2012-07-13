@@ -35,11 +35,10 @@ namespace DotNetNuke.Modules.Journal.Components {
             if (string.IsNullOrEmpty(url)) {
                 url = HttpContext.Current.Request.Url.Host;
             }
-            if (HttpContext.Current.Request.IsSecureConnection) {
-                url = "https://" + url;
-            } else {
-                url = "http://" + url;
-            }
+		    url = string.Format("{0}://{1}{2}",
+		                        HttpContext.Current.Request.IsSecureConnection ? "https" : "http",
+		                        url,
+		                        !HttpContext.Current.Request.Url.IsDefaultPort ? ":" + HttpContext.Current.Request.Url.Port : string.Empty);
 		}
 		public string GetList(int currentIndex, int rows) {
             if (CurrentUser.UserID > 0) {

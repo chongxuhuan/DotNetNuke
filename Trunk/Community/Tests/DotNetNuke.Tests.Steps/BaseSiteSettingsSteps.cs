@@ -28,6 +28,7 @@ using System.Threading;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Tests.UI.WatiN.Common;
 using DotNetNuke.Tests.UI.WatiN.Common.WatiNObjects;
+using DotNetNuke.Tests.UI.WatiN.Utilities;
 
 using TechTalk.SpecFlow;
 
@@ -53,6 +54,7 @@ namespace DotNetNuke.Tests.Steps
                 site.ProcessorUserId = "philip_1320123085_biz@dnncorp.com";
                 portalController.UpdatePortalInfo(site);
             }
+            WebConfigManager.TouchConfig(PhysicalPath);
         }
 
         /// <summary>

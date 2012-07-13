@@ -1278,35 +1278,15 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             var culture = CultureInfo.CreateSpecificCulture("en-US");
             var actualDate = DateTime.Parse(actualDateString, culture);
             var lastMessageDate = DateTime.Parse(lastMessageDateString, culture);
-
             _user12UserInfo.PortalID = Constants.CONTENT_ValidPortalId;
-
             _mockInternalMessagingController.Setup(mc => mc.GetPortalSettingAsInteger(It.IsAny<string>(), _user12UserInfo.PortalID, Null.NullInteger)).Returns(throttlingInterval);
             _mockInternalMessagingController.Setup(mc => mc.IsAdminOrHost(_adminUserInfo)).Returns(false);
-
             _dtMessages.Clear();
-            _dtMessages.Rows.Add(-1, "", "", "", "", -1, -1, -1, -1, lastMessageDate, -1, Null.NullDate);
-
-            //var pkMessagesMessageID = _dtMessages.Columns.Add("MessageID", typeof(int));
-            //_dtMessages.Columns.Add("To", typeof(string));
-            //_dtMessages.Columns.Add("Subject", typeof(string));
-            //_dtMessages.Columns.Add("Body", typeof(string));
-            //_dtMessages.Columns.Add("ConversationId", typeof(int));
-            //_dtMessages.Columns.Add("ReplyAllAllowed", typeof(bool));
-            //_dtMessages.Columns.Add("SenderUserID", typeof(int));
-            //_dtMessages.Columns.Add("CreatedByUserID", typeof(int));
-            //_dtMessages.Columns.Add("CreatedOnDate", typeof(DateTime));
-            //_dtMessages.Columns.Add("LastModifiedByUserID", typeof(int));
-            //_dtMessages.Columns.Add("LastModifiedOnDate", typeof(DateTime));
-
-
+            _dtMessages.Rows.Add(-1, 1, "", "", "", "", -1, -1, -1, -1, lastMessageDate, -1, Null.NullDate);
             var dr = _dtMessages.CreateDataReader();
-
             var message = CBO.FillObject<Message>(dr);
-
             _mockInternalMessagingController.Setup(mc => mc.GetLastSentMessage(_user12UserInfo)).Returns(message);
             _mockInternalMessagingController.Setup(mc => mc.GetDateTimeNow()).Returns(actualDate);
-
             var result = _mockInternalMessagingController.Object.WaitTimeForNextMessage(_user12UserInfo);
 
             Assert.AreEqual(expected, result);
@@ -1497,6 +1477,7 @@ namespace DotNetNuke.Tests.Core.Controllers.Social
             //Messages
             _dtMessages = new DataTable("Messages");
             var pkMessagesMessageID = _dtMessages.Columns.Add("MessageID", typeof(int));
+            _dtMessages.Columns.Add("PortalId", typeof(int));
             _dtMessages.Columns.Add("To", typeof(string));
             _dtMessages.Columns.Add("From", typeof(string));
             _dtMessages.Columns.Add("Subject", typeof(string));

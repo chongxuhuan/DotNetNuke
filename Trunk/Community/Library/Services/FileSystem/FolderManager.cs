@@ -243,6 +243,10 @@ namespace DotNetNuke.Services.FileSystem
                         folder.DisplayPath = "My Folder/";
                         folder.DisplayName = "My Folder";
                     }
+                    else
+                    {
+                        continue;
+                    }
                 }
 
                 userFolders.Add(folder);
@@ -430,6 +434,10 @@ namespace DotNetNuke.Services.FileSystem
                     {
                         folder.DisplayPath = "My Folder/";
                         folder.DisplayName = "My Folder";
+                    }
+                    else
+                    {
+                        continue;
                     }
                 }
 

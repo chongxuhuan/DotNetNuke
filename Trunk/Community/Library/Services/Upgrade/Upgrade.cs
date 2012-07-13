@@ -3697,9 +3697,13 @@ namespace DotNetNuke.Services.Upgrade
             FolderManager.Instance.Synchronize(Null.NullInteger, "", true, true);
         }
 
-        public static bool InstallPackage(string file, string packageType, bool forceInstall, bool writeFeedback)
+        public static bool InstallPackage(string file, string packageType, bool writeFeedback)
         {
-            bool success = true;
+            bool success = Null.NullBoolean;
+            if (writeFeedback)
+            {
+                HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "Installing Package File " + Path.GetFileNameWithoutExtension(file) + ": ");
+            }
 
             bool deleteTempFolder = true;
             if (packageType == "Skin" || packageType == "Container")
@@ -3708,17 +3712,6 @@ namespace DotNetNuke.Services.Upgrade
             }
 
             var installer = new Installer.Installer(new FileStream(file, FileMode.Open, FileAccess.Read), Globals.ApplicationMapPath, true, deleteTempFolder);
-
-            bool installFile = (installer.InstallerInfo.PackageID > Null.NullInteger) 
-                                    || (Path.GetExtension(file.ToLower()) == ".zip")
-                                    || forceInstall;
-
-            if (installFile)
-            {
-                if (writeFeedback)
-                {
-                    HtmlUtils.WriteFeedback(HttpContext.Current.Response, 2, "Installing Package File " + Path.GetFileNameWithoutExtension(file) + ": ");
-                }
 
                 //Check if manifest is valid
                 if (installer.IsValid)
@@ -3779,8 +3772,6 @@ namespace DotNetNuke.Services.Upgrade
                         DnnLog.Error(exc);
                     }
                 }
-            }
-
             return success;
         }
 
@@ -3795,9 +3786,26 @@ namespace DotNetNuke.Services.Upgrade
             {
                 foreach (string file in Directory.GetFiles(installPackagePath))
                 {
-                    if ((Path.GetExtension(file.ToLower()) == ".zip") || (Path.GetExtension(file.ToLower()) == ".resources"))
+                    bool installLanguage = false;
+                    if (packageType == "Language")
                     {
-                        InstallPackage(file, packageType, false, writeFeedback);
+                        var installedLocales = LocaleController.Instance.GetLocales(Null.NullInteger);
+                        foreach(string culture in installedLocales.Keys)
+                        {
+                            if (file.ToLowerInvariant() == installPackagePath.ToLowerInvariant() + "\\resourcepack.full."
+                                + Globals.FormatVersion(DotNetNukeContext.Current.Application.Version)
+                                + "." + culture.ToLowerInvariant() +".resources")
+                            {
+                                installLanguage = true;
+                                break;
+                            }
+                        }
+
+                    }
+                    if (Path.GetExtension(file.ToLower()) == ".zip" || installLanguage)
+                    {
+
+                        InstallPackage(file, packageType, writeFeedback);
                     }
                 }
             }
