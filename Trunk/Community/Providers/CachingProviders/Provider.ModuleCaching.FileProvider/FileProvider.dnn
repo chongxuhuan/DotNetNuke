@@ -1,0 +1,70 @@
+<dotnetnuke type="Package" version="5.0">
+    <packages>
+        <package name="DotNetNuke.ModuleCaching.FileProvider" type="Provider" version="07.00.00">
+            <friendlyName>DotNetNuke Module Caching File Provider</friendlyName>
+            <description>DotNetNuke Module Caching Provider that uses a File as its persistence medium.</description>
+            <dependencies/>
+            <owner>
+                <name>DotNetNuke</name>
+                <organization>DotNetNuke Corporation</organization>
+                <url>www.dotnetnuke.com</url>
+                <email>support@dotnetnuke.com</email>
+            </owner>
+            <license src="license.txt" />
+            <releaseNotes src="releaseNotes.txt" />
+            <components>
+                <component type="Script">
+                    <scripts>
+                        <basePath>Providers\ModuleCachingProviders\FileModuleCachingProvider</basePath>
+                        <script type="UnInstall">
+                            <name>Uninstall.SqlDataProvider</name>
+                            <version>05.02.00</version>
+                        </script>
+                    </scripts>
+                </component>
+                <component type="Assembly">
+                    <assemblies>
+                        <assembly>
+                            <path>bin\Providers</path>
+                            <name>DotNetNuke.Provider.ModuleCaching.FileProvider.dll</name>
+                        </assembly>
+                    </assemblies>
+                </component>
+                <component type="File">
+                    <files>
+                        <basePath>\Providers\ModuleCachingProviders\FileModuleCachingProvider</basePath>
+                        <file>
+                            <name>license.txt</name>
+                        </file>
+                        <file>
+                            <name>releaseNotes.txt</name>
+                        </file>
+                    </files>
+                </component>
+                <component type="Config">
+                    <config>
+                        <configFile>web.config</configFile>
+                        <install>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/moduleCaching/providers" action="update" key="name" collision="overwrite">
+                                        <add name="FileModuleCachingProvider"
+                                             type="DotNetNuke.Services.ModuleCache.FileProvider, DotNetNuke.Provider.ModuleCaching.FileProvider"
+                                             providerPath="~\Providers\ModuleCachingProviders\FileModuleCachingProvider\" />
+                                    </node>
+                                </nodes>
+                            </configuration>
+                        </install>
+                        <uninstall>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/moduleCaching/providers/add[@name='FileModuleCachingProvider']" action="remove" />
+                                </nodes>
+                            </configuration>
+                        </uninstall>
+                    </config>
+                </component>
+            </components>
+        </package>
+    </packages>
+</dotnetnuke>

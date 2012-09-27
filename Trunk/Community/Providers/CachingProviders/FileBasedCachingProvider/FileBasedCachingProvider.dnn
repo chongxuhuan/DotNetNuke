@@ -1,0 +1,69 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="DotNetNuke.FileBasedCachingProvider" type="Provider" version="07.00.00">
+      <friendlyName>DotNetNuke File Based Caching Provider</friendlyName>
+      <description>DotNetNuke File Based Caching Provider Project provides a File based Caching service.</description>
+      <dependencies/>
+      <owner>
+        <name>DotNetNuke</name>
+        <organization>DotNetNuke Corporation</organization>
+        <url>www.dotnetnuke.com</url>
+        <email>support@dotnetnuke.com</email>
+      </owner>
+      <license src="license.txt" />
+      <releaseNotes src="releaseNotes.txt" />
+      <components>
+        <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <path>bin\Providers</path>
+              <name>DotNetNuke.Caching.FileBasedCachingProvider.dll</name>
+            </assembly>
+          </assemblies>
+        </component>
+        <component type="File">
+          <files>
+            <basePath>Providers\CachingProviders\FileBasedCachingProvider</basePath>
+            <file>
+              <name>license.txt</name>
+            </file>
+            <file>
+              <name>releaseNotes.txt</name>
+            </file>
+          </files>
+        </component>
+        <component type="Config">
+          <config>
+            <configFile>web.config</configFile>
+            <install>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/dotnetnuke/caching/providers" action="update" key="name" collision="overwrite">
+                    <add name="FileBasedCachingProvider"
+				type="DotNetNuke.Services.Cache.FileBasedCachingProvider.FBCachingProvider, DotNetNuke.Caching.FileBasedCachingProvider"
+				providerPath="~\Providers\CachingProviders\FileBasedCachingProvider\" />
+                  </node>
+                </nodes>
+              </configuration>
+            </install>
+            <uninstall>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/dotnetnuke/caching/providers/add[@name='FileBasedCachingProvider']" action="remove" />
+                </nodes>
+              </configuration>
+            </uninstall>
+          </config>
+        </component>
+        <component type="Cleanup" version="05.01.03">
+          <files>
+            <file>
+              <path>bin</path>
+              <name>DotNetNuke.Caching.FileBasedCachingProvider.dll</name>
+            </file>
+          </files>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

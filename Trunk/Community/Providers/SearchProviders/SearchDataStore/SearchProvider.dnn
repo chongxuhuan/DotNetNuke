@@ -1,0 +1,69 @@
+<dotnetnuke type="Package" version="5.0">
+    <packages>
+        <package name="DotNetNuke.SearchProvider" type="Provider" version="07.00.00">
+            <friendlyName>DotNetNuke Search Provider</friendlyName>
+            <description>DotNetNuke Search Provider Project provides a search service.</description>
+            <dependencies/>
+            <owner>
+                <name>DotNetNuke</name>
+                <organization>DotNetNuke Corporation</organization>
+                <url>www.dotnetnuke.com</url>
+                <email>support@dotnetnuke.com</email>
+            </owner>
+            <license src="license.txt" />
+            <releaseNotes src="releaseNotes.txt" />
+            <components>
+                <component type="Assembly">
+                    <assemblies>
+                        <assembly>
+                            <path>bin\Providers</path>
+                            <name>DotNetNuke.Search.DataStore.dll</name>
+                        </assembly>
+                    </assemblies>
+                </component>
+                <component type="File">
+                    <files>
+                        <basePath>\Providers\SearchProviders\SearchDataStore</basePath>
+                        <file>
+                            <name>license.txt</name>
+                        </file>
+                        <file>
+                            <name>releaseNotes.txt</name>
+                        </file>
+                    </files>
+                </component>
+                <component type="Config">
+                    <config>
+                        <configFile>web.config</configFile>
+                        <install>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/searchDataStore/providers" action="update" key="name" collision="overwrite">
+                                        <add name="SearchDataStoreProvider"
+                                             type="DotNetNuke.Services.Search.SearchDataStore, DotNetNuke.Search.DataStore"
+                                             providerPath="~\Providers\SearchProviders\SearchDataStore\" />
+                                    </node>
+                                </nodes>
+                            </configuration>
+                        </install>
+                        <uninstall>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/searchDataStore/providers/add[@name='SearchDataStoreProvider']" action="remove" />
+                                </nodes>
+                            </configuration>
+                        </uninstall>
+                    </config>
+                </component>
+                <component type="Cleanup" version="05.01.01">
+                    <files>
+                        <file>
+                            <path>bin</path>
+                            <name>DotNetNuke.Search.DataStore.dll</name>
+                        </file>
+                    </files>
+                </component>
+            </components>
+        </package>
+    </packages>
+</dotnetnuke>

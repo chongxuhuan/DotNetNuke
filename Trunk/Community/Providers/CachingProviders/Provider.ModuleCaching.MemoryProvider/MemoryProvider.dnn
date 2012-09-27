@@ -1,0 +1,70 @@
+<dotnetnuke type="Package" version="5.0">
+    <packages>
+        <package name="DotNetNuke.ModuleCaching.MemoryProvider" type="Provider" version="07.00.00">
+            <friendlyName>DotNetNuke Module Caching Memory Provider</friendlyName>
+            <description>DotNetNuke Module Caching Provider that uses a Memory as its persistence medium.</description>
+            <dependencies/>
+            <owner>
+                <name>DotNetNuke</name>
+                <organization>DotNetNuke Corporation</organization>
+                <url>www.dotnetnuke.com</url>
+                <email>support@dotnetnuke.com</email>
+            </owner>
+            <license src="license.txt" />
+            <releaseNotes src="releaseNotes.txt" />
+            <components>
+                <component type="Script">
+                    <scripts>
+                        <basePath>Providers\ModuleCachingProviders\MemoryModuleCachingProvider</basePath>
+                        <script type="UnInstall">
+                            <name>Uninstall.SqlDataProvider</name>
+                            <version>05.02.01</version>
+                        </script>
+                    </scripts>
+                </component>
+                <component type="Assembly">
+                    <assemblies>
+                        <assembly>
+                            <path>bin\Providers</path>
+                            <name>DotNetNuke.Provider.ModuleCaching.MemoryProvider.dll</name>
+                        </assembly>
+                    </assemblies>
+                </component>
+                <component type="File">
+                    <files>
+                        <basePath>\Providers\ModuleCachingProviders\MemoryModuleCachingProvider</basePath>
+                        <file>
+                            <name>license.txt</name>
+                        </file>
+                        <file>
+                            <name>releaseNotes.txt</name>
+                        </file>
+                    </files>
+                </component>
+                <component type="Config">
+                    <config>
+                        <configFile>web.config</configFile>
+                        <install>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/moduleCaching/providers" action="update" key="name" collision="overwrite">
+                                        <add name="MemoryModuleCachingProvider"
+                                             type="DotNetNuke.Services.ModuleCache.MemoryProvider, DotNetNuke.Provider.ModuleCaching.MemoryProvider"
+                                             providerPath="~\Providers\ModuleCachingProviders\MemoryModuleCachingProvider\" />
+                                    </node>
+                                </nodes>
+                            </configuration>
+                        </install>
+                        <uninstall>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/ModuleCaching/providers/add[@name='MemoryModuleCachingProvider']" action="remove" />
+                                </nodes>
+                            </configuration>
+                        </uninstall>
+                    </config>
+                </component>
+            </components>
+        </package>
+    </packages>
+</dotnetnuke>

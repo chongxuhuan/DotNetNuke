@@ -1,0 +1,65 @@
+<dotnetnuke type="Package" version="5.0">
+    <packages>
+        <package name="DotNetNuke.AspNetMembershipProvider" type="Provider" version="07.00.00">
+            <friendlyName>DotNetNuke ASP.NET Membership Provider</friendlyName>
+            <description>DotNetNuke ASP.NET Membership Provider Project provides a membership service based on the core ASP.NET Membership components.</description>
+            <dependencies/>
+            <owner>
+                <name>DotNetNuke</name>
+                <organization>DotNetNuke Corporation</organization>
+                <url>www.dotnetnuke.com</url>
+                <email>support@dotnetnuke.com</email>
+            </owner>
+            <license src="license.txt" />
+            <releaseNotes src="releaseNotes.txt" />
+            <components>
+                <component type="Assembly">
+                    <assemblies>
+                        <assembly>
+                            <path>bin</path>
+                            <name>DotNetNuke.Provider.AspNetProvider.dll</name>
+                        </assembly>
+                        <assembly>
+                            <path>bin</path>
+                            <name>DotNetNuke.Membership.DataProvider.dll</name>
+                        </assembly>
+                    </assemblies>
+                </component>
+                <component type="File">
+                    <files>
+                        <basePath>Providers\MembershipProviders\AspNetMembershipProvider</basePath>
+                        <file>
+                            <name>license.txt</name>
+                        </file>
+                        <file>
+                            <name>releaseNotes.txt</name>
+                        </file>
+                    </files>
+                </component>
+                <component type="Config">
+                    <config>
+                        <configFile>web.config</configFile>
+                        <install>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/members/providers" action="update" key="name" collision="overwrite">
+                                        <add name="AspNetMembershipProvider"
+                                             type="DotNetNuke.Security.Membership.AspNetMembershipProvider, DotNetNuke.Provider.AspNetProvider"
+                                             providerPath="~\Providers\MembershipProviders\AspNetMembershipProvider\" />
+                                    </node>
+                                </nodes>
+                            </configuration>
+                        </install>
+                        <uninstall>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/members/providers/add[@name='AspNetMembershipProvider']" action="remove" />
+                                </nodes>
+                            </configuration>
+                        </uninstall>
+                    </config>
+                </component>
+            </components>
+        </package>
+    </packages>
+</dotnetnuke>
