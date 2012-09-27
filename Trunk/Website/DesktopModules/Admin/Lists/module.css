@@ -1,0 +1,29 @@
+
+.dnnListEditorTree {
+    width: 20%;
+    float: left;
+    padding: 15px;
+    background-color: #eee;
+    
+}
+
+.dnnListEditorDetails {
+    width: 75%;
+    float: right;
+}
+
+/* dnn tree */
+.DNNTree{
+    margin-bottom: 20px;
+}
+
+.DNNTree span{
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.DNNTree span img{
+    margin: 0 5px 0 5px;
+}
+
+

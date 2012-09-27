@@ -1,0 +1,546 @@
+@charset "utf-8";
+/* CSS Document */
+
+	body{
+		color:#444;
+		font-size:12px; 
+		line-height:18px; 
+		font-family:Arial, Helvetica, sans-serif;
+		-webkit-font-smoothing: antialiased; /* Fix for webkit rendering */
+		-webkit-text-size-adjust: 100%;
+	}
+
+/*-------------------------------------*/
+/* HEADER STYLES */
+/*-------------------------------------*/
+	
+	h1, h2, h3, h4, h5, h6 {
+		display:block;
+		color: #333;
+		font-family:Arial, Helvetica, sans-serif;
+		font-weight:bold;
+	}
+	h1 a, h2 a, h3 a, h4 a, h5 a, h6 a { font-weight: inherit; }
+	h1 { font-size: 38px; line-height: 54px; letter-spacing:-0.03em; margin-top:8px; margin-bottom: 10px; }
+	h2 { font-size: 32px; line-height: 36px; letter-spacing:-0.03em; margin-top:8px; margin-bottom: 10px; }
+	h3 { font-size: 28px; line-height: 36px; letter-spacing:-1px; margin-top:8px; margin-bottom: 10px; }
+	h4 { font-size: 22px; line-height: 36px; letter-spacing:-1px; }
+	h5 { font-size: 16px; line-height: 18px; }
+	h6 { font-size: 14px; line-height: 18px; }
+	
+	/* Module titles */
+	.Head{ 			display:block; border-bottom:1px solid #ddd; margin-bottom:6px;}
+	/* Item titles on edit and admin pages */
+	.SubHead{ 		display:block; border-bottom:1px solid #ddd;}
+	/* Module title style used instead of Head for compact rendering by QuickLinks and Signin modules */
+	.SubSubHead {	display:block; border-bottom:1px solid #ddd;}
+
+/*-------------------------------------*/
+/* PARAGRAPH STYLES */
+/*-------------------------------------*/
+	p{	margin: 0 0 18px 0;} /* margin bottom is equal to line-height */
+	p img { margin: 0;  }
+	
+	em { font-style: italic; }
+	strong { font-weight: bold; color: #222; }
+	small { font-size: 80%; }
+	
+	/* Set text size in moodules*/
+	.Normal, 
+	.NormalDisabled, 
+	.NormalDeleted{	
+		color:#444;
+		font-size:12px; 
+		font-weight:normal;
+		line-height:18px; 
+	}
+	
+	/* disabled text styles */
+	.NormalDisabled, 
+	.NormalDeleted{	color:#999;}
+	
+	/* text style used for help text rendered by modules */
+	.Help{border:#000 1px solid;padding:2px;font-weight:normal;font-size:11px;color:#000;background-color:#ff9;}
+	/* text style used for rendered text which requires emphasis */
+	.NormalBold{	font-weight: bold; color: #222;}
+	/* text style used for error messages */
+	.NormalRed{		font-weight: bold; color: red;}
+	
+	/* text style used for rendered text which should appear deleted */
+	.NormalDeleted{	text-decoration:line-through;}
+	
+	/*	Blockquotes  */
+	blockquote, blockquote p { font-size: 17px; line-height: 24px; color: #777; font-style: italic; }
+	blockquote { margin: 0 0 20px; padding: 9px 20px 0 19px; border-left: 1px solid #ddd; }
+	blockquote cite { display: block; font-size: 12px; color: #555; }
+	blockquote cite:before { content: "\2014 \0020"; }
+	blockquote cite a, blockquote cite a:visited, blockquote cite a:visited { color: #555; }
+	
+	hr { border: solid #ddd; border-width: 1px 0 0; clear: both; margin: 17px 0 17px; height: 0;}
+
+/*-------------------------------------*/
+/* ANCHOR STYLES */
+/*-------------------------------------*/
+	a, a:visited { color: rgb(2,139,255);/*blue*/ text-decoration: underline; outline: 0; }
+	a:hover, a:focus, a:active { color: #222; outline: 0; }
+	p a, p a:visited { line-height: inherit; }
+
+/*-------------------------------------*/
+/* IMAGE STYLES */
+/*-------------------------------------*/
+	img.dnn-scale-img {
+		max-width: 100%;
+		height: auto; 
+	}
+	img { border: 0; -ms-interpolation-mode: bicubic; vertical-align: middle; }
+
+/*-------------------------------------*/
+/* lIST STYLES */
+/*-------------------------------------*/
+	ul, ol { margin-bottom: 18px; margin-left:18px;  }
+	ul { list-style: square outside; }
+	ol { list-style: decimal; }
+	
+	/* Nested Styles */
+	ul ul, ul ol,
+	ol ol, ol ul { margin-left:18px; margin-bottom:0;}
+	ol ol { list-style:lower-roman; }
+	li p { line-height: 18px; }
+
+/*-------------------------------------*/
+/* MESSAGE STYLES */
+/*-------------------------------------*/
+	.dnnFormMessage{
+		display:block;
+		padding:17px 18px; margin-bottom:18px;
+		border:1px solid rgba(2,139,255,0.2);/* blue */
+		background:rgba(2,139,255,0.15);/* blue */		
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+	}
+	.dnnFormMessage.dnnFormError, 
+	.dnnFormMessage.dnnFormValidationSummary{
+		background-color:rgba(255,0,0,0.15); /* red */
+		border-color:rgba(255,0,0,0.2); /* red */
+	}
+	.dnnFormMessage.dnnFormWarning{
+		background-color:rgba(255,255,0,0.15); /* yellow */
+		border-color:#CDB21F; /* yellow */
+	}
+	.dnnFormMessage.dnnFormSuccess{
+		background-color:rgba(0,255,0,0.15); /* green */
+		border-color:rgba(0,255,0,0.5); /* green */
+	}
+
+/*-------------------------------------*/
+/* TABLE STYLES */
+/*-------------------------------------*/
+	table { border-collapse: collapse; border-spacing: 0; background:#fff;}
+	td { vertical-align: top; }
+	
+	.dnnTableDisplay{ margin-bottom:18px; border:1px solid #d1d1d1; border-left:0; border-bottom:0; }
+	.dnnTableDisplay td, .dnnTableDisplay th { 
+		padding:5px 9px;
+		border-bottom:1px solid #d1d1d1;
+	}
+	.dnnTableDisplay th{
+		padding:0;
+		border-left:1px solid #d1d1d1;
+		-webkit-box-shadow:  	1px 0px 0px 0px rgba(255, 255, 255, 0.9);
+		box-shadow:  			1px 0px 0px 0px rgba(255, 255, 255, 0.9);
+	}
+	.dnnTableDisplay th > span, .dnnTableDisplay th > a {display:block; padding:5px 9px;}
+	.dnnTableDisplay td:first-child{border-left:1px solid #cfcfcf;}
+	.dnnTableDisplay label{display:inline; padding-left:5px;}
+	.dnnTableDisplay caption{display:none;}
+
+/* thead styles */
+	.dnnTableDisplay th{
+		background: -moz-linear-gradient(top, #f5f5f5 0%, #dfdfdf 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f5f5), color-stop(100%,#dfdfdf)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%); /* Opera 11.10+ */
+		background: -ms-linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%); /* IE10+ */
+		background: linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%); /* W3C */
+		
+		text-align:left;
+		text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+		color:#555;
+	}
+	
+	.dnnTableDisplay th a, .dnnTableDisplay th label {
+		font-weight:normal;
+		color:#555;
+		text-decoration:none;
+	}
+	.dnnTableDisplay th a{padding:8px 9px;}
+	.dnnTableDisplay th a:hover{
+		background: #fefefe; /* Old browsers */
+		background: -moz-linear-gradient(top, #fefefe 0%, #e8e8e8 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefefe), color-stop(100%,#e8e8e8)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #fefefe 0%,#e8e8e8 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top, #fefefe 0%,#e8e8e8 100%); /* Opera 11.10+ */
+		background: -ms-linear-gradient(top, #fefefe 0%,#e8e8e8 100%); /* IE10+ */
+		background: linear-gradient(top, #fefefe 0%,#e8e8e8 100%); /* W3C */
+		
+		color:#555;
+	}
+	.dnnTableDisplay th a:active{
+		border-color:#999;
+	
+		background: #c6c6c6; /* Old browsers */
+		background: -moz-linear-gradient(top, #c6c6c6 0%, #f3f3f3 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c6c6c6), color-stop(100%,#f3f3f3)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #c6c6c6 0%,#f3f3f3 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top, #c6c6c6 0%,#f3f3f3 100%); /* Opera 11.10+ */
+		background: -ms-linear-gradient(top, #c6c6c6 0%,#f3f3f3 100%); /* IE10+ */
+		background: linear-gradient(top, #c6c6c6 0%,#f3f3f3 100%); /* W3C */
+		-webkit-box-shadow:  	inset 0px 2px 3px 0px rgba(0, 0, 0, 0.3);
+		box-shadow:  			inset 0px 2px 3px 0px rgba(0, 0, 0, 0.3);
+	}
+/* tbody styles */
+	.dnnTableDisplay tr:nth-child(2n) td{ background:rgba(0,0,0,0.04); }
+	.dnnTableDisplay tr:hover td{ background:rgba(2,139,255,0.15);/* blue */}
+
+/* tfooter styles */
+	.dnnTableDisplay tfoot tr:hover td{ background:none; }
+
+/* table filter styles */
+	.dnnTableFilter{ margin-bottom:18px; background:rgba(0,0,0,0.04);}
+	.dnnTableFilter .dnnTableDisplay{margin-bottom:0;}
+	
+	.dnnFilterSet{ padding:18px; }
+	.dnnFilterSet label{display:inline-block;}
+	.dnnFilterSet input, .dnnFilterSet select{display:inline-block; margin:0 5px;}
+
+/* table filter vertical styles */
+	.verticalFilter .dnnFilterSet{ float:left; width:20%; padding: 2% 18px;}
+	.verticalFilter .dnnTableDisplay{ float:right; width:75%;} 	
+	.verticalFilter input[type=search], .verticalFilter select, .verticalFilter input[type=text]{
+		margin:0; 
+		width:100%;
+		
+		box-sizing:border-box;
+		-moz-box-sizing:border-box; /* Firefox */
+		-webkit-box-sizing:border-box; /* Safari */		
+	}
+
+/*-------------------------------------*/
+/* PAGINATION & RESULT STYLES */
+/*-------------------------------------*/
+	.dnnResults{float:left; margin-bottom:0;}
+	.dnnPagination{
+		float:right;
+		margin:0; padding:0;
+	}
+	.dnnPagination li{
+		float:left;
+		list-style:none;
+	}
+	.dnnPagination li a, .dnnPagination li span {
+		display:inline-block;
+		padding:0 5px;
+		text-decoration:none;
+		color:#666;
+	}
+	.dnnPagination li a:hover{
+		text-decoration:underline;
+		color:#222;
+	}
+	.dnnPagination li span{
+		color:#222;
+		text-decoration:underline;
+	}
+
+/*-------------------------------------*/
+/* FORM STYLES */
+/*-------------------------------------*/
+
+	/* Indicate that 'label' will shift focus to the associated form element */
+	/*label { 
+		display:block;
+		color:#333;
+		line-height:18px;
+		font-weight:bold;
+		cursor: pointer;
+		margin-bottom:5px;
+	}*/
+	
+	input[type="text"],select,textarea,input[type="email"],input[type="search"], input[type="password"]{
+	
+		margin-bottom:18px; padding:8px;
+		
+		background: #ffffff;
+		border:1px solid #c9c9c9;
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+		-webkit-box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.8), inset 0px 1px 2px 0px rgba(0, 0, 0, 0.1) ;
+		box-shadow: 		0px 1px 0px 0px rgba(255, 255, 255, 0.8), inset 0px 1px 2px 0px rgba(0, 0, 0, 0.1) ;
+		
+		color:#999;
+		font-size:12px;
+		/*line-height:18px;*/
+	}
+
+	.dnnFormItem input.aspNetDisabled, 
+	.dnnFormItem textarea.aspNetDisabled{
+		background:#ebebeb;
+		-moz-box-shadow:none;
+		-webkit-box-shadow:none;
+		box-shadow:none;
+		border-color:#a7a7a7;
+		border-width:1px;
+	}
+	.aspNetDisabled, a.aspNetDisabled, 
+	.dnnDisabled, a.dnnDisabled{
+		color:#ccc;
+		cursor:not-allowed;
+		text-decoration:none;
+	}
+
+	/* Active and Focus States */
+	input[type="text"]:active, input[type="text"]:focus, input[type="password"]:focus,
+	input[type="email"]:active, input[type="email"]:focus, input[type="password"]:active,
+	select:active, select:focus,
+	textarea:active, textarea:focus,
+	input[type="search"]:active, input[type="search"]:focus {
+		background:#fff;
+		border:1px solid rgba(2,139,255,0.5);/* blue */
+		-webkit-box-shadow: 0px 0px 3px 0px rgba(2, 139, 255, 0.4);
+		box-shadow: 0px 0px 3px 0px rgba(2, 139, 255, 0.4); 
+		color:#333;
+	}
+	/* Required Fields */
+	.required label:after, legend.required:after{
+		margin-top:-2px;
+		display:inline-block;
+		padding:1px 9px; margin-left:9px;
+		font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+		font-size:11px; 
+		font-style:italic;
+		content:'Required';
+		color:#777;
+		-webkit-border-radius: 3px;
+		border:1px solid rgba(0,0,0,0.1);
+		border-radius: 3px; 
+		background:rgba(0,0,0,0.03);
+		font-weight:normal;
+	}
+	
+	/* Error Styles */
+	.error label, legend.error{
+		color:rgba(255,0,0,0.9);
+	}
+	.error input[type="text"],.error select,.error textarea,.error input[type="email"],.error input[type="search"]{
+		border:1px solid rgba(255,0,0,0.6);
+		color:rgba(255,0,0,0.7);
+	}
+
+	/*
+	 * 1. Display hand cursor for clickable form elements
+	 * 2. Allow styling of clickable form elements in iOS
+	 * 3. Correct inner spacing displayed oddly in IE7 (doesn't effect IE6)
+	 */
+	
+	button, input[type="button"], 
+	input[type="reset"], 
+	input[type="submit"],
+	.dnnPrimaryAction, 
+	.dnnSecondaryAction, 
+	.dnnTertiaryAction,
+	ul.dnnAdminTabNav li a { 
+		display:inline-block;
+		padding:9px 9px;
+		margin-bottom:9px;
+		cursor: pointer; 
+		
+		*overflow: visible;
+		border:1px solid #c2c2c2;
+		background:#eaeaea;
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+		
+		color:#666666;
+		font-weight:bold; 
+		text-decoration:none;
+	}
+	
+	button, input[type="button"], 
+	input[type="reset"], 
+	input[type="submit"],
+	.dnnPrimaryAction, 
+	.dnnSecondaryAction, 
+	.dnnTertiaryAction{
+	    padding: 6px 6px;
+	}
+	
+	/* Primary Action */
+	
+	.dnnPrimaryAction, input[type="submit"], a.dnnPrimaryAction {
+		border-color: #0D569E; /*dark blue*/
+		background:#3792ED;
+		background: -moz-linear-gradient(top, #358eea 0%, #2170cd 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#358eea), color-stop(100%,#2170cd)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #358eea 0%,#2170cd 100%); /* Chrome10+,Safari5.1+ */
+		background: linear-gradient(top, #358eea 0%,#2170cd 100%); /* W3C */
+		
+		-webkit-box-shadow:  	0px 1px 0px 0px rgba(0, 0, 0, 0.6), inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4);
+		box-shadow:  			0px 1px 0px 0px rgba(0, 0, 0, 0.6), inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4);
+		
+		color:#efefef;
+		text-shadow: 0px -1px 0px #185B93;
+	}
+	
+	.dnnPrimaryAction:hover, input[type="submit"]:hover, a.dnnPrimaryAction:hover{
+		border-color:#0D569E;
+		background: #6cb6f3; /* Old browsers */
+		background: -moz-linear-gradient(top, #6cb6f3 0%, #4387d2 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6cb6f3), color-stop(100%,#4387d2)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #6cb6f3 0%,#4387d2 100%); /* Chrome10+,Safari5.1+ */
+		background: linear-gradient(top, #6cb6f3 0%,#4387d2 100%); /* W3C */
+		color:#fff;
+	} 
+	
+	.dnnPrimaryAction:active, input[type="submit"]:active, a.dnnPrimaryAction:active{
+		border-color:#0D569E;
+		background: #1f66be; /* Old browsers */
+		background: -moz-linear-gradient(top, #1f66be 0%, #3085e0 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1f66be), color-stop(100%,#3085e0)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #1f66be 0%,#3085e0 100%); /* Chrome10+,Safari5.1+ */
+		background: linear-gradient(top, #1f66be 0%,#3085e0 100%); /* W3C */
+		
+		-webkit-box-shadow:  	inset 0px 1px 5px 0px rgba(0, 0, 0, 0.4);
+		box-shadow:  			inset 0px 1px 5px 0px rgba(0, 0, 0, 0.4);
+		
+		color:#fff;
+	} 
+	
+	.dnnPrimaryAction[disabled], 
+    .dnnPrimaryAction[disabled]:hover, 
+    .dnnPrimaryAction[disabled]:active
+    {
+        background:#ccc !important;
+	    color: #aaa !important;
+	    border: none !important;
+	    -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        text-shadow: none;
+    }
+	
+	/* Secondary Action */
+	
+	button, input[type="button"], 
+	input[type="reset"], 
+	.dnnSecondaryAction, 
+	a.dnnSecondaryAction,
+	ul.dnnAdminTabNav li a{
+		background: #f5f5f5; /* Old browsers */
+		background: -moz-linear-gradient(top, #f5f5f5 0%, #dfdfdf 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f5f5), color-stop(100%,#dfdfdf)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%); /* Opera 11.10+ */
+		background: -ms-linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%); /* IE10+ */
+		background: linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%); /* W3C */
+		-webkit-box-shadow:  	0px 1px 0px 0px rgba(0, 0, 0, 0.4), inset 0px 1px 0px 0px rgba(255, 255, 255, 1);
+		box-shadow:  			0px 1px 0px 0px rgba(0, 0, 0, 0.4), inset 0px 1px 0px 0px rgba(255, 255, 255, 1);
+		
+		text-shadow: 0px 1px 0px #ffffff;
+		color:#555;
+	}
+	
+	button:hover, input[type="button"]:hover, 
+	input[type="reset"]:hover, 
+	.dnnSecondaryAction:hover, 
+	a.dnnSecondaryAction:hover, 
+	ul.dnnAdminTabNav li a:hover{
+		background: #fefefe; /* Old browsers */
+		background: -moz-linear-gradient(top, #fefefe 0%, #e8e8e8 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefefe), color-stop(100%,#e8e8e8)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #fefefe 0%,#e8e8e8 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top, #fefefe 0%,#e8e8e8 100%); /* Opera 11.10+ */
+		background: -ms-linear-gradient(top, #fefefe 0%,#e8e8e8 100%); /* IE10+ */
+		background: linear-gradient(top, #fefefe 0%,#e8e8e8 100%); /* W3C */
+		
+		color:#555;
+	}
+	button:active, 
+	input[type="button"]:active, 
+	input[type="reset"]:active, 
+	input[type="reset"]:active,
+	.dnnSecondaryAction:active,
+	a.dnnSecondaryAction:active,
+	ul.dnnAdminTabNav li a:active{
+		border-color:#999;
+		
+		background: #c6c6c6; /* Old browsers */
+		background: -moz-linear-gradient(top, #c6c6c6 0%, #f3f3f3 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c6c6c6), color-stop(100%,#f3f3f3)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #c6c6c6 0%,#f3f3f3 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top, #c6c6c6 0%,#f3f3f3 100%); /* Opera 11.10+ */
+		background: -ms-linear-gradient(top, #c6c6c6 0%,#f3f3f3 100%); /* IE10+ */
+		background: linear-gradient(top, #c6c6c6 0%,#f3f3f3 100%); /* W3C */
+		-webkit-box-shadow:  	inset 0px 1px 5px 0px rgba(0, 0, 0, 0.4);
+		box-shadow:  			inset 0px 1px 5px 0px rgba(0, 0, 0, 0.4);
+	}
+	
+	/* Tertiary Action */
+	
+	.dnnTertiaryAction, a.dnnTertiaryAction{
+		padding:10px 10px;
+		border:none;
+		background:#eaeaea;
+		color:#666666;
+	}
+	
+	.dnnTertiaryAction:hover, a.dnnTertiaryAction:hover{ background:#f2f2f2; }
+	.dnnTertiaryAction:active, a.dnnTertiaryAction:active{ background:#d8d8d8; }
+	
+	/* Action Button behind input */
+	input[type="text"] + a.dnnPrimaryAction,
+	input[type="text"] + a.dnnSecondaryAction,
+	input[type="text"] + a.dnnTerriaryAction{
+	    margin-left: 5px;
+	}
+	
+	.dnnFormItem input[type="checkbox"] + span, 
+	.dnnFormItem input[type="radio"] + span {
+        margin: 5px;
+    }
+	
+	/* text style for buttons and link buttons used in the portal admin pages */
+	/*.CommandButton{border:1px solid blue;}*/
+	/* button style for standard HTML buttons */
+	.StandardButton{border:1px solid blue;}
+	
+	/*
+	 * Re-set default cursor for disabled elements
+	 */
+	
+	button[disabled], input[disabled] { cursor: default; opacity:0.5; }
+	
+	/*
+	 * Consistent box sizing and appearance
+	 */
+	
+	input[type="checkbox"], input[type="radio"] { box-sizing: border-box; padding: 0; *width: 13px; *height: 13px; }
+	input[type="search"] { -webkit-appearance: textfield; -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box; }
+	input[type="search"]::-webkit-search-decoration, input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
+	
+	/*
+	 * Remove inner padding and border in FF3/4: h5bp.com/l
+	 */
+	
+	button::-moz-focus-inner, input::-moz-focus-inner { border: 0; padding: 0; }
+	
+	/*
+	 * 1. Remove default vertical scrollbar in IE6/7/8/9
+	 * 2. Allow only vertical resizing
+	 */
+	
+	textarea { overflow: auto; vertical-align: top; resize: vertical; }
+	
+	/* Colors for form validity */
+	input:valid, textarea:valid {  }
+	input:invalid, textarea:invalid { background-color: #f0dddd; } 
+
+

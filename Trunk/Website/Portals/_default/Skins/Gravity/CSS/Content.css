@@ -1,0 +1,357 @@
+@charset "UTF-8";
+/* Gravity: Content.css */
+
+/*------------------------------------------------*/
+/* HOMEPAGE */
+/*------------------------------------------------*/
+/* Welcome Message
+-------------------------------------*/
+.content_intro {
+	color: #8c8c8c;
+	font-size: 14px;
+	line-height: 20px;
+	text-align: center;
+	padding-top: 30px;
+}
+
+.content_intro h1 span{
+	font-weight: normal;
+}
+
+.content_intro a {
+	font-size: 14px;
+}
+
+/* Featured Product 
+-------------------------------------*/
+.content_featured {
+	color: #999;
+	vertical-align: top;
+}
+
+.content_featured h2 .TitleH2 {
+	display: block;
+	margin-bottom: 30px;
+}
+
+.content_featured .normal{
+	font-weight: normal;
+}
+
+.content_featured img {
+	margin-bottom: 25px;
+}
+
+.content_featured a.primaryButton {
+	margin-left: 25px;
+}
+
+/* News 
+-------------------------------------*/
+.content_newslist ul {
+	margin: 0;
+}
+
+.content_newslist ul li {
+	list-style-type: none;
+	margin-bottom: 30px;
+}
+
+.content_newslist ul li.last {
+	margin-bottom: 0;
+}
+
+.content_newslist ul li img {
+	float: left;
+	margin-right: 20px;
+	margin-bottom: 20px;
+}
+
+.content_newslist ul li div {
+	/*margin-left: 175px;*/ 
+}
+
+.content_newslist ul li h5 {
+	margin-bottom: 5px;
+}
+
+.content_newslist ul li span,
+.content_newslist ul li strong {
+	color: #a6a6a6;
+}
+
+.content_newslist ul li p {
+	margin-top: 12px;
+	margin-bottom: 12px;
+}
+
+/* newslist with small thumbnail*/
+.smallThumbnail img { 
+	width: 80px;
+}
+
+/* Ads 
+-------------------------------------*/
+/* Ads - Copy Block Style */
+.adContent {
+	position: absolute; 
+	color: #eee;
+	padding: 20px;
+	background-color: #000;
+	opacity: 0.7;
+	
+}
+.adContent h2 {
+		color: #eee;
+		font-weight: normal;
+		margin-bottom: 5px;
+	}
+
+/* Ads - Style One: 400x270 */
+.content_adstyleOne  {
+	position: relative;
+	width: 400px;
+	height: 270px;
+	color: #eee;
+	margin-right: 5px;
+	
+}
+
+	.content_adstyleOne .adContent {
+		bottom: 0;	
+		right: 0;
+	}
+
+/* Ads - Style Two: 570x130 */
+.content_adstyleTwo {
+	position: relative;
+	width: 570px;
+	height: 130px;
+	margin-bottom: 10px;
+}
+	.content_adstyleTwo .adContent {
+		top: 0;	
+	}
+
+/* Footer 
+-------------------------------------*/
+ul.footerlinks {
+	margin: 0;
+}
+.footerlinks li {
+	list-style: none;
+	margin-bottom: 8px;
+}
+.footerlinks li a:link,
+.footerlinks li a:visited {
+	color: #808080;
+}
+
+.footerlinks li a:hover {
+	color:#D00; 
+}
+
+ul.footerConnect {
+	margin: 0px;
+}
+
+ul.footerConnect li {
+	display: inline-block;
+	list-style-type: none;
+	margin-right: 10px;
+}
+
+/*------------------------------------------------*/
+/* ABOUT US */
+/*------------------------------------------------*/
+/* Team 
+-------------------------------------*/
+.content_team  ul{
+	margin: 0px;
+}
+
+.content_team  ul li {
+	width: 110px;	
+	display: inline-block;
+	text-align: center;
+	list-style-type: none;
+	margin-right: 30px;
+	margin-bottom: 40px;
+}
+
+.content_team  ul li.last {
+	margin-right: 0;
+}
+
+.content_team  ul li .teampic {
+	width: 110px;
+	height: 147px;
+	margin-bottom: 15px;
+	background-color: #bfbfbf;
+}
+
+.content_team  ul li img {
+	width: 110px;
+	max-width: 110px;
+	max-height: 147px;
+}
+
+.content_team  ul li span {
+	display: block;
+	font-weight: bold;
+	white-space: nowrap; 
+}
+
+/*------------------------------------------------*/
+/* OUR PRODUCTS */
+/*------------------------------------------------*/
+.content_products ul {
+	margin: 0; 
+}
+
+.content_products ul li {
+	display: inline-block;
+	width: 31%;
+	list-style-type: none;
+	margin-right: 30px;
+	margin-bottom: 45px;
+}
+
+.content_products ul li.last {
+	margin-right: 0;
+}
+
+.content_products ul li img {
+	margin-bottom: 25px;
+}
+
+/*------------------------------------------------*/
+/* CONTACT US */
+/*------------------------------------------------*/
+/* One Column Form
+-------------------------------------*/
+.form_oneCol label {
+	display: block;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+.form_oneCol input , .form_oneCol textarea{
+	width: 94%;
+}
+
+/* Dealer Form 
+-------------------------------------*/
+.form_dealer input {
+	width: 200px;
+	margin-bottom: 5px;
+}
+
+
+/*------------------------------------------------*/
+/* Slide jquery
+/*------------------------------------------------*/
+#container {
+	width:980px;
+	padding:0px;
+	margin:0 auto;
+	position:relative;
+	z-index:0;
+}
+
+#example {
+	width:980px;
+	height:380px;
+	position:relative; 
+}
+
+/* Slide 
+-------------------------------------*/
+#slides {
+	top:0px;
+	left:0px;
+	position:absolute;
+	z-index:9;
+}
+
+.slides_container {
+	width:980px;
+	overflow:hidden;
+	position:relative;
+	display:none;
+}
+
+.slides_container a {
+	width:980px;
+	height:380px;
+	display:block;
+}
+
+.slides_container a img {
+	display:block;
+}
+
+/* Next/Prev buttons 
+-------------------------------------*/
+#slides .next, #slides .prev {
+	width: 20px;
+	height: 20px;
+	bottom: 9px;
+	left: 12px;
+	display: block;
+	position: absolute;
+	padding: 0;
+	z-index:12;
+}
+
+#slides .prev { 
+	background: transparent url('../images/left-arrow.png') center center no-repeat; 
+}
+
+#slides .next {	
+	left:96px; 
+	background: transparent url('../images/right-arrow.png') center center no-repeat; 
+}
+
+/* Page link
+-------------------------------------*/
+.pagination_wrap { 
+	display: inline-block;
+	width: 128px;
+	height: 40px;
+	bottom: 0;
+	right: 0;
+	background-color: #222;
+	position: absolute;
+	z-index: 10;
+	opacity: 0.8;
+}
+.pagination {
+	bottom: 0;
+	right: 0;
+	padding: 0;
+	margin: 15px 40px;
+	position: absolute;
+	z-index: 11;
+}
+
+.pagination li {
+	float:left;
+	margin:0 3px;
+	list-style:none;
+}
+
+.pagination li a {
+	display:block;
+	width:9px;
+	float:left;
+	height:0;
+	padding-top:8px;
+	background-image:url(../images/pagination.png);
+	background-position:0 0;
+	overflow:hidden;
+}
+
+.pagination li.current a {
+	background-position:0 -9px;
+}
+

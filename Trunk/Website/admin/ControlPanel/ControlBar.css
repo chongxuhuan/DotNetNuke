@@ -1,0 +1,712 @@
+﻿/* ControlBar */
+#ControlBar {
+    /*position: relative;*/
+    position: fixed;
+    z-index: 1000;
+    padding-top: 10px;
+    height: 43px;
+    width: 100%;
+    background: #050505 url(controlbarimages/ControlBar_bg.jpg) repeat-x 0 0;
+    border-bottom: 1px solid #1b1b1b;
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.6);
+    box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.6);
+}
+.ControlContainer {
+    position: relative;
+    width: 980px;
+    height: 53px;
+    margin: 0 auto;
+}
+.ServiceIcon {
+    position: relative;
+    float: left;
+    margin-right: 15px;
+    width: 122px;
+    height: 39px;
+    border-bottom: 5px solid #4e89e3; /*blue*/
+}
+.ServiceIcon > img {
+    margin-top: 3px;
+}
+
+.ServiceIcon.community {
+    border-bottom: 5px solid #red;
+}
+.ServiceIcon.professional {
+    border-bottom: 5px solid #4e89e3; /*blue*/
+}
+.ServiceIcon.enterprise {
+    border-bottom: 5px solid #888; /*blue*/
+}
+
+#ServiceImg {
+    position: absolute;
+    top: -6px;
+    right: -15px;
+}
+
+/* Control Nav */
+
+#ControlNav {
+    float: left;
+}
+#ControlNav > li {
+    position: relative;
+    float: left;
+    list-style: none;
+}
+#ControlNav > li > a {
+    display: block;
+    padding: 12px 12px 0 12px;
+    height: 32px;
+    border-right: 1px solid transparent;
+    border-left: 1px solid transparent;
+    color: #999;
+    text-decoration: none;
+    text-shadow: 0px -2px 0px #000;
+}
+#ControlNav > li:hover > a {
+    background: #050505; /* Old browsers */
+    border-right: 1px solid #222;
+    border-left: 1px solid #111;
+    -webkit-box-shadow: inset 0px 0px 8px 0px rgba(0, 0, 0, 0.8);
+    box-shadow: inset 0px 0px 8px 0px rgba(0, 0, 0, 0.8);
+    color: #ddd;
+    text-shadow: 0px 0px 3px #000000; /* CSS3 */
+    background: -moz-linear-gradient(top, #050505 0%, #222222 99%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#050505), color-stop(99%,#222222)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #050505 0%,#222222 99%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #050505 0%,#222222 99%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #050505 0%,#222222 99%); /* IE10+ */
+    background: linear-gradient(to bottom, #050505 0%,#222222 99%); /* W3C */
+}
+
+/* Control Nav -- Sub Nav */
+.subNav {
+    display: none;
+    padding: 0;
+    position: absolute;
+    top: 43px;
+    left: 0;
+    background: #232323; /* Old browsers */
+    background: -moz-linear-gradient(top,  #232323 1%, #121212 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#232323), color-stop(100%,#121212)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #232323 1%,#121212 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #232323 1%,#121212 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #232323 1%,#121212 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #232323 1%,#121212 100%); /* W3C */
+    -webkit-box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.1);
+    -webkit-border-radius: 0 0 5px 5px;
+    border-radius: 0 0 5px 5px;
+    border-top: 1px solid #444;
+}
+.subNav.advanced {
+    width: 540px;
+}
+
+/*
+#ControlNav > li:hover .subNav {
+    display: block;
+}
+*/
+
+/* Control Nav -- Sub Nav Toggle */
+
+.subNavToggle {
+    float: left;
+    margin: 0;
+    padding: 10px 0 10px 10px;
+    -webkit-box-shadow: inset -3px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: inset -3px 0px 2px 0px rgba(0, 0, 0, 0.2);
+}
+.subNavToggle li {
+    list-style: none;
+    margin-bottom: 5px;
+}
+.subNavToggle li:last-child {
+    margin-bottom: 0;
+}
+.subNavToggle li a {
+    display: block;
+    width: 38px;
+    height: 48px;
+    border: 1px solid #363636;
+    border-right: 0;
+    -webkit-border-radius: 3px 0px 0px 3px;
+    border-radius: 3px 0px 0px 3px;
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.6), inset -3px 0px 3px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.6), inset -3px 0px 3px 0px rgba(0, 0, 0, 0.2);
+    background: #353535; /* Old browsers */
+    background: -moz-linear-gradient(top,  #353535 1%, #2a2a2a 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#353535), color-stop(100%,#2a2a2a)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #353535 1%,#2a2a2a 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #353535 1%,#2a2a2a 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #353535 1%,#2a2a2a 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #353535 1%,#2a2a2a 100%); /* W3C */
+}
+.subNavToggle li:hover a, .subNavToggle li.active a {
+    border: 1px solid #4c7abe;
+    border-right: 0;
+    border-top: 1px solid #74a8f2;
+    background: #4b86db; /* Old browsers */
+    background: -moz-linear-gradient(top,  #4b86db 0%, #3d6cb2 99%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4b86db), color-stop(99%,#3d6cb2)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #4b86db 0%,#3d6cb2 99%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #4b86db 0%,#3d6cb2 99%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #4b86db 0%,#3d6cb2 99%); /* IE10+ */
+    background: linear-gradient(to bottom,  #4b86db 0%,#3d6cb2 99%); /* W3C */
+}
+
+.subNavToggle li a span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    text-indent: -9999px;
+    opacity: 0.5;
+}
+.subNavToggle li:hover a span, .subNavToggle li.active a span {
+    opacity: 1;
+}
+
+.subNavToggle .BasicToggle a span {
+    background: url(controlbarimages/BasicSettings.png) no-repeat 12px 18px;
+}
+.subNavToggle .AdvancedToggle a span {
+    background: url(controlbarimages/AdvancedSettings.png) no-repeat 12px 16px;
+}
+.subNavToggle .BookmarkToggle a span {
+    background: url(controlbarimages/Bookmarks.png) no-repeat 12px 15px;
+}
+
+/* Control Nav -- List */
+
+.subNav dl {
+    width: 150px;
+    padding: 20px 20px 10px 20px;
+}
+.subNav.advanced dl {
+    display: none;
+    width: 450px;
+    float: left;
+    border-left: 1px solid #333;
+}
+
+.subNav dl.active {
+    display: block;
+}
+.subNav.advanced dl {
+    min-height: 140px;
+}
+.subNav dl dd {
+    display: inline-block; 
+}
+.subNav dl ul {
+    margin: 0;
+}
+.subNav.advanced dl ul li {
+    list-style: none;
+    margin: 0 0 8px 0;
+    min-height: 38px;
+}
+.subNav dl li {
+    position: relative;
+    float: left;
+    width: 150px;
+    margin-bottom: 10px;
+}
+.subNav dl a {
+    display: block;
+    width: 125px;
+    text-decoration: none;
+    color: #888;
+}
+.subNav dl li:hover a {
+    color: #4e89e3; /*blue*/
+}
+.subNav dl li a.bookmark {
+    display: none;
+    position: absolute;
+    right: 0px;
+    top: 3px;
+    height: 16px;
+    width: 25px;
+    background: url(controlbarimages/bookmarkThis.png) no-repeat 0 0;
+}
+#SiteSelector {
+    border-top: 1px solid #555;
+    padding-top: 10px;
+}
+#SiteSelector p {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 2px;
+}
+#SiteSelector select {
+    float: left;
+    display: inline-block;
+    width: 110px;
+    margin: 0;
+    margin-right: 6px;
+    padding: 3px;
+    border: 1px solid #111;
+    box-shadow: 0px 1px 1px #000;
+    background: #434345; /* Old browsers */
+    background: -moz-linear-gradient(top,  #434345 0%, #323031 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#434345), color-stop(100%,#323031)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #434345 0%,#323031 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #434345 0%,#323031 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #434345 0%,#323031 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #434345 0%,#323031 100%); /* W3C */
+    color: #bbb;
+}
+#SiteSelector input[type="submit"] {
+    float: left;
+    display: inline-block;
+    margin: 0;
+    padding: 4px;
+    font-size: 11px;
+}
+
+.subNav dl li:hover a.bookmark {
+    display: block;
+}
+.subNav dl li a.bookmark span {
+    display: none;
+}
+
+/* Control Action Menu -- List */
+#ControlActionMenu {
+    display: inline-block; /*fix child float*/
+    margin: -1px 0 0 30px;
+    border-left: 1px solid #111;
+    border-right: 1px solid #333;
+}
+#ControlActionMenu > li {
+    position: relative;
+    border-right: 1px solid #111;
+    border-left: 1px solid #333;
+    float: left;
+    list-style: none;
+    background: rgba(255,255,255,0.03);
+}
+#ControlActionMenu > li > a {
+    display: block;
+    padding: 12px 12px 0 12px;
+    height: 32px;
+    border-right: 1px solid transparent;
+    border-left: 1px solid transparent;
+    color: #999;
+    text-decoration: none;
+    text-shadow: 0px -1px 0px #000;
+}
+#ControlActionMenu > li > a:after {
+    content: '';
+    display: inline-block;
+    margin-left: 6px;
+    height: 5px;
+    width: 8px;
+    background: url(controlbarimages/menuArrow.png) no-repeat 0px 0px;
+}
+#ControlActionMenu > li:hover > a, #ControlActionMenu > li.active > a {
+    color: #ddd;
+    background: #505050; /* Old browsers */
+    background: -moz-linear-gradient(top,  #505050 0%, #272727 99%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#505050), color-stop(99%,#272727)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #505050 0%,#272727 99%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #505050 0%,#272727 99%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #505050 0%,#272727 99%); /* IE10+ */
+    background: linear-gradient(to bottom,  #505050 0%,#272727 99%); /* W3C */
+}
+#ControlActionMenu > li > a.onActionMenu{
+    color: #ddd;
+    background: #3693eb; /* Old browsers */
+    background: -moz-linear-gradient(top,  #3693eb 1%, #145eb8 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#3693eb), color-stop(100%,#145eb8)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #3693eb 1%,#145eb8 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #3693eb 1%,#145eb8 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #3693eb 1%,#145eb8 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #3693eb 1%,#145eb8 100%); /* W3C */
+}
+#ControlActionMenu > li ul {
+    display: none;
+    position: absolute;
+    top: 44px;
+    left: 0;
+    margin: 0;
+    width: 150px;
+    padding: 20px 20px 10px 20px;
+    background: #232323; /* Old browsers */
+    background: -moz-linear-gradient(top,  #232323 1%, #121212 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#232323), color-stop(100%,#121212)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #232323 1%,#121212 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #232323 1%,#121212 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #232323 1%,#121212 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #232323 1%,#121212 100%); /* W3C */
+    -webkit-box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.1);
+    -webkit-border-radius: 0 0 5px 5px;
+    border-radius: 0 0 5px 5px;
+    border-top: 1px solid #444;
+}
+/*
+#ControlActionMenu > li:hover ul {
+    display: block;
+}
+*/
+#ControlActionMenu > li ul li {
+    list-style: none;
+    padding-bottom: 3px;
+    margin-bottom: 10px;
+}
+#ControlActionMenu > li ul li a {
+    text-decoration: none;
+    color: #888;
+}
+#ControlActionMenu > li ul li:hover a {
+    color: #4e89e3; /*blue*/
+}
+
+/* Control Edit Page --- list
+******************************************/
+#ControlEditPageMenu{
+    display: block; /*fix child float*/
+    margin: -1px 0 0 30px;
+    border-left: 1px solid #111;
+    border-right: 1px solid #333;
+    float: right;
+}
+#ControlEditPageMenu > li {
+    position: relative;
+    border-right: 1px solid #111;
+    border-left: 1px solid #333;
+    float: left;
+    list-style: none;
+    background: rgba(255,255,255,0.03);
+}
+
+#ControlEditPageMenu > li:hover{
+    background: #050505; 
+    background: -moz-linear-gradient(top, #050505 0%, #222222 99%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#050505), color-stop(99%,#222222)); 
+    background: -webkit-linear-gradient(top, #050505 0%,#222222 99%); 
+    background: -o-linear-gradient(top, #050505 0%,#222222 99%); 
+    background: -ms-linear-gradient(top, #050505 0%,#222222 99%);
+    background: linear-gradient(to bottom, #050505 0%,#222222 99%); 
+}
+
+
+#ControlEditPageMenu > li > a {
+    display: block;
+    padding: 10px 12px 0 12px;
+    height: 34px;
+    border-right: 1px solid transparent;
+    border-left: 1px solid transparent;
+    color: #999;
+    text-decoration: none;
+    text-shadow: 0px -1px 0px #000;
+    
+}
+
+#ControlEditPageMenu > li > a.controlBar_editPageInEditMode{
+    background: #2d92ef; /* Old browsers */
+	background: -moz-linear-gradient(top, #2d92ef 0%, #005cbd 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2d92ef), color-stop(100%,#005cbd)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #2d92ef 0%,#005cbd 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #2d92ef 0%,#005cbd 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #2d92ef 0%,#005cbd 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #2d92ef 0%,#005cbd 100%); /* W3C */
+	color: #fff;
+	text-shadow: 0px -1px 0px #0664C4;
+	-webkit-box-shadow: inset 0px 1px 0px 0px #6DC0ED);
+    box-shadow:         inset 0px 1px 0px 0px #6DC0ED; 
+}
+
+span.controlBar_editPageIcon{
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: transparent url(controlbarimages/icons.png) no-repeat 0 -20px;
+    margin-right: 5px;
+    float: left;
+}
+span.controlBar_editPageTxt{
+    display: block;
+    float: left;
+    height: 20px;
+    padding-top: 4px;
+}
+
+#ControlEditPageMenu > li ul {
+    display: none;
+    position: absolute;
+    top: 44px;
+    right: 0;
+    margin: 0;
+    width: 150px;
+    padding: 20px 20px 10px 20px;
+    background: #232323; /* Old browsers */
+    background: -moz-linear-gradient(top,  #232323 1%, #121212 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#232323), color-stop(100%,#121212)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #232323 1%,#121212 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #232323 1%,#121212 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #232323 1%,#121212 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #232323 1%,#121212 100%); /* W3C */
+    -webkit-box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.1);
+    -webkit-border-radius: 0 0 5px 5px;
+    border-radius: 0 0 5px 5px;
+    border-top: 1px solid #444;
+}
+/*
+#ControlEditPageMenu > li:hover ul {
+    display: block;
+}
+*/
+#ControlEditPageMenu > li ul li {
+    list-style: none;
+    padding-bottom: 3px;
+    margin-bottom: 10px;
+}
+
+#ControlEditPageMenu > li ul li a {
+    text-decoration: none;
+    color: #888;
+}
+
+#ControlEditPageMenu > li ul li:hover a {
+    color: #4e89e3; /*blue*/
+}
+
+#ControlEditPageMenu li.controlBar_BlueEditPageBtn{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    height: 35px;
+}
+
+#ControlEditPageMenu li.controlBar_BlueEditPageBtn a{
+    color: #fff;
+    padding: 8px 12px 8px 12px;
+    background: #2d92ef; /* Old browsers */
+	background: -moz-linear-gradient(top, #2d92ef 0%, #005cbd 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2d92ef), color-stop(100%,#005cbd)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #2d92ef 0%,#005cbd 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #2d92ef 0%,#005cbd 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #2d92ef 0%,#005cbd 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #2d92ef 0%,#005cbd 100%); /* W3C */
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    margin-left: 18px;
+}
+#ControlEditPageMenu li.controlBar_BlueEditPageBtn:hover a,
+#ControlEditPageMenu li.controlBar_BlueEditPageBtn a:hover{
+    color: #fff;
+}
+
+#ControlEditPageMenu li label{
+    color: #999;
+}
+
+#ControlEditPageMenu li.controlBar_EditPageSection{    
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #666;
+}
+
+
+/* ControlBar Module
+******************************************/
+.ControlModulePanel{
+    position: fixed;
+    display: none;
+    top: 53px;
+    left: 0;    
+    width: 100%;
+    height: 250px;
+    
+    background:rgba(0,0,0,0.85);
+      
+    -webkit-box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.1);
+}
+
+.ControlModuleContainer {
+    position: relative;
+    width: 980px;    
+    margin: 0 auto;
+    padding-top: 10px;
+}
+
+.ControlModuleContainer .RadComboBox_Default{
+    width: 200px;
+}
+
+.ControlModuleContainer .RadComboBox_Default table{
+    background-color: transparent;
+}
+
+.ControlModuleContainer .dnnLeftComboBox{
+    float: left; 
+    margin-right: 10px;
+}
+
+.ControlModuleContainer .ControlBar_chckCopyModule{
+    float:left;
+    padding-top: 5px;    
+}
+
+.ControlModuleContainer .ControlBar_chckCopyModule label{
+    color: #fff;
+}
+
+div.ControlBar_ModuleListHolder{
+    width: 980px;
+    overflow: auto;
+    margin: 10px auto 10px auto;
+    position: relative;
+    height: 180px;
+}
+
+ul.ControlBar_ModuleList{
+    height:105px;
+    list-style-type: none;
+    margin-bottom: 5px;
+    margin-left:0!important;
+    position: absolute;
+}
+ul.ControlBar_ModuleList > li{
+    display:block;
+    float: left;
+    margin-right: 10px;  
+    height: 150px;  
+    width: 150px;
+}
+ul.ControlBar_ModuleList > li > div{
+    width: 150px;
+    height: 150px;
+    position: relative;
+    background: #4a4a4a; /* Old browsers */
+    background: -moz-linear-gradient(top,  #4a4a4a 1%, #363636 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#4a4a4a), color-stop(100%,#363636)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #4a4a4a 1%,#363636 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #4a4a4a 1%,#363636 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #4a4a4a 1%,#363636 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #4a4a4a 1%,#363636 100%); /* W3C */
+    cursor: move;
+    color: #999;
+    
+    -webkit-box-shadow: inset 0px 1px 0px 0px #666, 0px 0px 3px 0px #000;
+    box-shadow:         inset 0px 1px 0px 0px #666, 0px 0px 3px 0px #000;
+    
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+ul.ControlBar_ModuleList > li > div.ControlBar_Module_Selected{
+    background: #3693eb; /* Old browsers */
+    background: -moz-linear-gradient(top,  #3693eb 1%, #145eb8 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#3693eb), color-stop(100%,#145eb8)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #3693eb 1%,#145eb8 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #3693eb 1%,#145eb8 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #3693eb 1%,#145eb8 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #3693eb 1%,#145eb8 100%); /* W3C */
+    
+    -webkit-box-shadow: inset 0px 1px 0px 0px #6DC0ED, 0px 0px 3px 0px #000;
+    box-shadow:         inset 0px 1px 0px 0px #6DC0ED, 0px 0px 3px 0px #000;   
+    
+}
+
+ul.ControlBar_ModuleList > li > div > img{
+   display: block;
+   width: 32px;
+   height: 32px;
+   border: none;
+   top: 40px;
+   left: 60px;
+   position: absolute;
+}
+
+ul.ControlBar_ModuleList > li > div > span{
+   display: block;
+   width: 100px;
+   text-align:center;
+   line-height: 1.2em;
+   position: absolute;
+   top: 90px;
+   left: 25px;
+}
+
+ul.ControlBar_ModuleList > li > div > div{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 3px;
+    right: 3px;
+    background: transparent url(controlbarimages/icons.png) no-repeat -50px 0;
+    display: none;
+    cursor: pointer;
+}
+
+ul.ControlBar_ModuleList > li > div.ControlBar_Module_Selected > div{
+    display:block;
+}
+
+.ControlBar_ModuleListHolder .jspHorizontalBar{
+    background: #333;
+    border-radius:2px;
+    -webkit-transition: background 500ms ease;
+	-moz-transition: background 500ms ease;
+    -ms-transition: background 500ms ease;
+    -o-transition: background 500ms ease;
+	transition: background 500ms ease;
+}
+.ControlBar_ModuleListHolder .jspHorizontalBar:hover,
+.ControlBar_ModuleListHolder .jspHorizontalBar:focus
+{
+    background: #444;
+}
+.ControlBar_ModuleListHolder .jspActive,
+.ControlBar_ModuleListHolder .jspDrag:hover
+{
+    background:#4E89E3; /* blue */
+}
+
+ul#ControlBar_Module_ModulePosition{
+    display: none;
+    position: absolute;
+    background: #fff;
+    list-style-type: none;
+    z-index: 10000;
+    width: 200px;
+    padding: 0;
+    margin: 0;
+}
+ul#ControlBar_Module_ModulePosition > li{
+    display: block;
+    color :#999;
+    padding: 8px 0 5px 10px;
+    height: 20px;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    white-space: nowrap;
+    width: 190px; 
+    cursor: pointer;   
+}
+ul#ControlBar_Module_ModulePosition > li:hover{
+    background-color: #e8f1fa;
+}
+
+#ControlBar_ControlPanel{
+    position:relative;
+    height: 53px;
+}
+
+#shareableWarning {
+    padding: 16px;
+    display: none;
+}
+#shareableWarning h3 {
+    font-weight: bold;
+    font-size: 125%;
+}

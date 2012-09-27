@@ -1,0 +1,188 @@
+
+body {
+    background-image: url(../portals/_default/skins/Aphelia/images/backgrounds/body_bg.jpg);
+    background-repeat: no-repeat;
+    background-size: 200% 200%;
+    position: relative;
+    width: 900px;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: left;
+}
+
+.dnnForm {
+    width: 100%;
+}
+.install {
+    background-color: white;
+    padding: 20px 20px 20px 20px;
+    margin-top: 20px;
+}
+
+
+div#tabs {
+    border: none;
+    background-color: white;
+}
+div#tabs ul {
+    border: none;
+}
+div#tabs .tabSubTitle {
+    font-size: 1.4em;
+    font-weight: bold;
+    line-height: 2.5em;
+}
+div#tabs .installIntro {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+hr {
+    margin: 15px 0px 5px 0px;
+}
+
+.dnnFormItem .installRadioButtons label {
+    width: 90%;
+    text-align: left;
+    font-weight: normal;
+    margin-left: 5px;
+}
+.dnnFormItem .permissionsCheckBoxes label {
+    width: 200px;
+    text-align: left;
+    font-weight: normal;
+    margin-left: 5px;
+    display: inline-block;
+}
+.dnnInstall .dnnFormItem input[type="checkbox"] {
+    width: auto;
+    float: none;
+    min-width: 25px;
+}
+.dnnFormItem .databaseRadioButtons {
+    width: 50%;
+}
+.dnnFormItem .fullWidth {
+    width: 100%;
+    text-align: left;
+}
+.dnnFormItem .databaseRadioButtons label {
+    width: auto;
+    text-align: left;
+    font-weight: normal;
+    margin: 0px 10px 0px 5px;
+    display: inline-block;
+}
+
+.dnnFormMessage.dnnFormError {
+    display: none;
+}
+.dnnFormMessage.dnnFormValidationSummary {
+    display: none;
+}
+
+A.dnnDisabledAction:link, A.dnnDisabledAction:visited, A.dnnDisabledAction:active, A.dnnDisabledAction:hover {
+    text-decoration: none;
+    color: Silver;
+}
+
+.permissionsCheckBoxes .aspNetDisabled, .permissionsCheckBoxe a.aspNetDisabled, .permissionsCheckBoxe .dnnDisabled, a.dnnDisabled {
+    color: black;
+    display: inline-block;
+    width: 300px;
+}
+
+div#installation-buttons {
+    margin-top: 1em;
+}
+
+div#percentage {
+    margin: 0 0 3em 0;
+    color: #666;
+}
+
+div#installation-progress {
+    width: 450px;
+    float: left;
+}
+
+div.dnnProgressbar {
+    margin-bottom: 3em;
+}
+
+div#installation-steps {
+    width: 300px;
+    float: right;    
+    padding: 15px;
+    background-color: #eee;
+}
+
+div#installation-steps > p {
+    padding: 0 0 0 0;
+    margin: 0 0 8px 8px;
+}
+
+div#installation-steps > p > span{
+    display: inline-block;    
+}
+span.states-icons{
+    width: 25px;
+    height: 16px;
+    background-image: url("../images/installer-feedback-states-sprite.png");
+    background-repeat: no-repeat;
+}
+
+div#installation-steps > p.step-notstarted {
+    color: #bbb;
+}
+
+div#installation-steps > p.step-running {
+    color: #666;
+}
+
+div#installation-steps > p.step-done {
+    color: #666;
+}
+
+div#installation-steps > p.step-error {
+    color: #666;
+}
+
+p.step-notstarted > span.states-icons{
+    background-position: -1000px -1000px;
+}
+
+p.step-running > span.states-icons{
+    background-position: -48px 4px;
+}
+
+p.step-done > span.states-icons{
+    background-position: 0 3px;
+}
+
+p.step-error > span.states-icons{
+    background-position: -99px 3px;
+}
+
+div#installation-log-container{
+    margin: 1em 0 0 0;
+    height: 15em;
+    overflow: auto;
+    border: 1px solid #aaa;
+    display: none;
+    padding: .5em;
+}
+div#installation-log { 
+    white-space: nowrap;
+}
+
+/* update form style */
+.dnnFormItem input[type="checkbox"] + span, .dnnFormItem input[type="radio"] + span {
+    display: inline-block;
+    margin: 7px 5px 10px 5px;
+    width: auto;
+}
+
+img#banner {
+	width: 450px;
+	height: 120px;
+}
