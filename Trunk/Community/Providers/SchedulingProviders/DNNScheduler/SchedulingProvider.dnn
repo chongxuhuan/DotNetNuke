@@ -1,0 +1,63 @@
+<dotnetnuke type="Package" version="5.0">
+    <packages>
+        <package name="DotNetNuke.SchedulingProvider" type="Provider" version="07.00.00">
+            <friendlyName>DotNetNuke Scheduling Provider</friendlyName>
+            <description>DotNetNuke Scheduling Provider Project provides a scheduling service</description>
+            <dependencies/>
+            <owner>
+                <name>DotNetNuke</name>
+                <organization>DotNetNuke Corporation</organization>
+                <url>www.dotnetnuke.com</url>
+                <email>support@dotnetnuke.com</email>
+            </owner>
+            <license src="license.txt" />
+            <releaseNotes src="releaseNotes.txt" />
+            <components>
+                <component type="Assembly">
+                    <assemblies>
+                        <assembly>
+                            <path>bin</path>
+                            <name>DotNetNuke.DNNScheduler.dll</name>
+                        </assembly>
+                    </assemblies>
+                </component>
+                <component type="File">
+                    <files>
+                        <basePath>\Providers\SchedulingProviders\DNNScheduler</basePath>
+                        <file>
+                            <name>license.txt</name>
+                        </file>
+                        <file>
+                            <name>releaseNotes.txt</name>
+                        </file>
+                    </files>
+                </component>
+                <component type="Config">
+                    <config>
+                        <configFile>web.config</configFile>
+                        <install>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/scheduling/providers" action="update" key="name" collision="overwrite">
+                                        <add name="DNNScheduler"
+                                             type="DotNetNuke.Services.Scheduling.DNNScheduling.DNNScheduler, DotNetNuke.DNNScheduler"
+                                             providerPath="~\Providers\SchedulingProviders\DNNScheduler\"
+                                             debug="false"
+                                             maxThreads="1" />
+                                    </node>
+                                </nodes>
+                            </configuration>
+                        </install>
+                        <uninstall>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/scheduling/providers/add[@name='DNNScheduler']" action="remove" />
+                                </nodes>
+                            </configuration>
+                        </uninstall>
+                    </config>
+                </component>
+            </components>
+        </package>
+    </packages>
+</dotnetnuke>

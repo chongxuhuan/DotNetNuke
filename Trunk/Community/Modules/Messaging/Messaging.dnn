@@ -1,0 +1,97 @@
+﻿<dotnetnuke type="Package" version="5.0">
+	<packages>
+		<package name="Admin.Messaging" type="Module" version="06.02.00" isSystem="true">
+			<friendlyName>Messaging</friendlyName>
+			<description>The Messaging module allows users to send and receive private messages.</description>
+	  <iconFile>DesktopModules/Admin/Messaging/Images/messaging.gif</iconFile>
+			<owner>
+				<name>DotNetNuke Corporation</name>
+				<organization>DotNetNuke Corporation</organization>
+				<url>www.dotnetnuke.com</url>
+				<email>support@dotnetnuke.com</email>
+			</owner>
+			<license src="license.txt" />
+			<releaseNotes src="releaseNotes.txt" />
+			<dependencies>
+				<dependency type="CoreVersion">05.04.00</dependency>
+			</dependencies>
+			<components>
+				<component type="Module">
+					<desktopModule>
+						<moduleName>DotNetNuke.Messaging</moduleName>
+						<foldername>Admin/Messaging</foldername>
+						<businessControllerClass>DotNetNuke.Modules.Messaging.MessagingBusinessController, DotNetNuke.Modules.Messaging</businessControllerClass>
+						<supportedFeatures />
+						<isPremium>true</isPremium>
+						<isAdmin>true</isAdmin>
+						<moduleDefinitions>
+							<moduleDefinition>
+								<friendlyName>Messaging</friendlyName>
+								<defaultCacheTime>0</defaultCacheTime>
+								<moduleControls>
+									<moduleControl>
+										<controlKey />
+										<controlSrc>DesktopModules/Admin/Messaging/MessageList.ascx</controlSrc>
+										<supportsPartialRendering>True</supportsPartialRendering>
+										<controlTitle />
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>EditMessage</controlKey>
+										<controlSrc>DesktopModules/Admin/Messaging/EditMessage.ascx</controlSrc>
+										<supportsPartialRendering>True</supportsPartialRendering>
+										<controlTitle>Edit Message</controlTitle>
+										<controlType>Edit</controlType>
+										<iconFile />
+										<helpUrl />
+										<viewOrder>0</viewOrder>
+                    <supportsPopUps>True</supportsPopUps>
+                  </moduleControl>
+									<moduleControl>
+										<controlKey>ViewMessage</controlKey>
+										<controlSrc>DesktopModules/Admin/Messaging/ViewMessage.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>View Message</controlTitle>
+										<controlType>Edit</controlType>
+										<iconFile />
+										<helpUrl />
+										<viewOrder>0</viewOrder>
+                    <supportsPopUps>True</supportsPopUps>
+                  </moduleControl>
+								</moduleControls>
+							</moduleDefinition>
+						</moduleDefinitions>
+					</desktopModule>
+					<eventMessage>
+						<processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
+						<processorCommand>UpgradeModule</processorCommand>
+						<attributes>
+							<businessControllerClass>DotNetNuke.Modules.Messaging.MessagingBusinessController, DotNetNuke.Modules.Messaging</businessControllerClass>
+							<desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
+							<upgradeVersionsList>01.00.00</upgradeVersionsList>
+						</attributes>
+					</eventMessage>
+				</component>
+				<component type="Assembly">
+					<assemblies>
+						<assembly>
+			  <path>bin</path>
+			  <name>DotNetNuke.Modules.Messaging.dll</name>
+						</assembly>
+					</assemblies>
+				</component>
+		<component type="ResourceFile">
+		  <resourceFiles>
+			<basePath>DesktopModules\Admin\Messaging</basePath>
+			<resourceFile>
+			  <name>Resources.zip</name>
+			</resourceFile>
+		  </resourceFiles>
+		</component>
+	  </components>
+		</package>
+	</packages>
+</dotnetnuke>

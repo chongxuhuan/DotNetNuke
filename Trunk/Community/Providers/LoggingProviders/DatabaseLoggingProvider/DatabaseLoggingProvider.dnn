@@ -1,0 +1,69 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="DotNetNuke.DBLoggingProvider" type="Provider" version="07.00.00">
+      <friendlyName>DotNetNuke Database Logging Provider</friendlyName>
+      <description>DotNetNuke Database Logging Provider Project provides a database logging service.</description>
+      <dependencies/>
+      <owner>
+        <name>DotNetNuke</name>
+        <organization>DotNetNuke Corporation</organization>
+        <url>www.dotnetnuke.com</url>
+        <email>support@dotnetnuke.com</email>
+      </owner>
+      <license src="license.txt" />
+      <releaseNotes src="releaseNotes.txt" />
+      <components>
+        <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <path>bin\Providers</path>
+              <name>DotNetNuke.Provider.DBLoggingProvider.dll</name>
+            </assembly>
+          </assemblies>
+        </component>
+        <component type="File">
+          <files>
+            <basePath>Providers\LoggingProviders\DBLoggingProvider</basePath>
+            <file>
+              <name>license.txt</name>
+            </file>
+            <file>
+              <name>releaseNotes.txt</name>
+            </file>
+          </files>
+        </component>
+        <component type="Config">
+          <config>
+            <configFile>web.config</configFile>
+            <install>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/dotnetnuke/logging/providers" action="update" key="name" collision="overwrite">
+                    <add name="DBLoggingProvider"
+											 type="DotNetNuke.Services.Log.EventLog.DBLoggingProvider.DBLoggingProvider, DotNetNuke.Provider.DBLoggingProvider"
+											 providerPath="~\Providers\LoggingProviders\DBLoggingProvider\" />
+                  </node>
+                </nodes>
+              </configuration>
+            </install>
+            <uninstall>
+              <configuration>
+                <nodes>
+                  <node path="/configuration/dotnetnuke/logging/providers/add[@name='DBLoggingProvider']" action="remove" />
+                </nodes>
+              </configuration>
+            </uninstall>
+          </config>
+        </component>
+        <component type="Cleanup" version="05.01.01">
+          <files>
+            <file>
+              <path>bin</path>
+              <name>DotNetNuke.Provider.DBLoggingProvider.dll</name>
+            </file>
+          </files>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

@@ -1,0 +1,21 @@
+.dnnEditVocab .RadListBox {
+    white-space: normal !important;
+}
+
+.dnnEditVocab .RadListBox .rlbGroup {
+    border: 1px solid #c9c9c9;
+    width : 442px !important;
+}
+
+.dnnEditVocab .RadListBox_Default .rlbText,
+.dnnEditVocab .RadListBox_Default .rlbItem,
+.dnnEditVocab .RadListBox_Default .rlbButtonText,
+.dnnEditVocab .RadListBox_Default .rlbEmptyMessage {
+    font-size: inherit !important;
+    font-family: inherit !important;
+    color: inherit !important;
+}
+
+
+
+

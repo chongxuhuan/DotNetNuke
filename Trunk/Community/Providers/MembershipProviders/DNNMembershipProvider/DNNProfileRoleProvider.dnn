@@ -1,0 +1,65 @@
+<dotnetnuke type="Package" version="5.0">
+    <packages>
+        <package name="DotNetNuke.DNNProfileProvider" type="Provider" version="07.00.00">
+            <friendlyName>DotNetNuke Profile Provider</friendlyName>
+            <description>DotNetNuke Profile Provider Project provides an extensible profile service.</description>
+            <dependencies/>
+            <owner>
+                <name>DotNetNuke</name>
+                <organization>DotNetNuke Corporation</organization>
+                <url>www.dotnetnuke.com</url>
+                <email>support@dotnetnuke.com</email>
+            </owner>
+            <license src="license.txt" />
+            <releaseNotes src="releaseNotes.txt" />
+            <components>
+                <component type="Assembly">
+                    <assemblies>
+                        <assembly>
+                            <path>bin</path>
+                            <name>DotNetNuke.Provider.DNNProvider.dll</name>
+                        </assembly>
+                        <assembly>
+                            <path>bin</path>
+                            <name>DotNetNuke.Membership.DataProvider.dll</name>
+                        </assembly>
+                    </assemblies>
+                </component>
+                <component type="File">
+                    <files>
+                        <basePath>Providers\MembershipProviders\DNNProfileProvider</basePath>
+                        <file>
+                            <name>license.txt</name>
+                        </file>
+                        <file>
+                            <name>releaseNotes.txt</name>
+                        </file>
+                    </files>
+                </component>
+                <component type="Config">
+                    <config>
+                        <configFile>web.config</configFile>
+                        <install>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/profiles/providers" action="update" key="name" collision="overwrite">
+                                        <add name="DNNProfileProvider"
+                                                                 type="DotNetNuke.Security.Profile.DNNProfileProvider, DotNetNuke.Provider.DNNProvider"
+                                                                 providerPath="~\Providers\MembershipProviders\DNNProfileProvider\" />
+                                    </node>
+                                </nodes>
+                            </configuration>
+                        </install>
+                        <uninstall>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/members/providers/add[@name='DNNProfileProvider']" action="remove" />
+                                </nodes>
+                            </configuration>
+                        </uninstall>
+                    </config>
+                </component>
+            </components>
+        </package>
+    </packages>
+</dotnetnuke>

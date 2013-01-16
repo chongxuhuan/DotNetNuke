@@ -1,0 +1,69 @@
+﻿<dotnetnuke type="Package" version="5.0">
+    <packages>
+        <package name="DotNetNuke.CoreSitemapProvider" type="Provider" version="07.00.00">
+            <friendlyName>DotNetNuke Core Sitemap Provider</friendlyName>
+            <description>Provides the sitemap for the core of a DotNetNuke portal</description>
+            <owner>
+                <name>DotNetNuke</name>
+                <organization>DotNetNuke Corporation</organization>
+                <url>www.dotnetnuke.com</url>
+                <email>support@dotnetnuke.com</email>
+            </owner>
+            <license src="license.txt" />
+            <releaseNotes />
+            <components>
+                <component type="Assembly">
+                    <assemblies>
+                        <assembly>
+                            <path>bin\Providers</path>
+                            <name>DotNetNuke.SitemapProviders.CoreSitemapProvider.dll</name>
+                        </assembly>
+                    </assemblies>
+                </component>
+                <component type="File">
+                    <files>
+                        <basePath>Providers\SitemapProviders\Provider.CoreSitemapProvider</basePath>
+                        <file>
+                            <name>license.txt</name>
+                        </file>
+                    </files>
+                </component>
+                <component type="Config">
+                    <config>
+                        <configFile>web.config</configFile>
+                        <install>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/configSections/sectionGroup[@name='dotnetnuke']" action="update" key="name" collision="ignore">
+                                        <section name="sitemap" requirePermission="false" type="DotNetNuke.Framework.Providers.ProviderConfigurationHandler, DotNetNuke" />
+                                    </node>
+                                    <node path="/configuration/system.webServer/handlers" action="update" key="name" collision="ignore">
+                                        <add name="SitemapHandler" path="Sitemap.aspx" verb="*" type="DotNetNuke.Services.Sitemap.SitemapHandler, DotNetNuke" preCondition="integratedMode" />
+                                    </node>
+                                    <node path="/configuration/system.web/httpHandlers" action="update" key="path" collision="ignore">
+                                        <add verb="*" path="Sitemap.aspx" type="DotNetNuke.Services.Sitemap.SitemapHandler, DotNetNuke" />
+                                    </node>
+                                    <node path="/configuration/dotnetnuke" action="update" targetpath="/configuration/dotnetnuke/sitemap" collision="ignore">
+                                        <sitemap defaultProvider="coreSitemapProvider">
+                                            <providers>
+                                                <clear />
+                                                <add name="coreSitemapProvider" type="DotNetNuke.SitemapProviders.CoreSitemapProvider, DotNetNuke.SitemapProviders.CoreSitemapProvider" providerPath="~\Providers\MembershipProviders\Sitemap\CoreSitemapProvider\" />
+                                            </providers>
+                                        </sitemap>
+                                    </node>
+                                </nodes>
+                            </configuration>
+                        </install>
+                        <uninstall>
+                            <configuration>
+                                <nodes>
+                                    <node path="/configuration/dotnetnuke/sitemap/providers/add[@name='coreSitemapProvider']" action="remove" />
+                                </nodes>
+                            </configuration>
+                        </uninstall>
+                    </config>
+                </component>
+            </components>
+        </package>
+    </packages>
+</dotnetnuke>
