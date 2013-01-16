@@ -1,0 +1,1 @@
+﻿Scenario outlines are always used so we can pass different logins to the scenario

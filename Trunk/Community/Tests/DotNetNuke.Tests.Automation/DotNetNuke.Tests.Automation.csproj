@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6ECF538C-BA8D-42AC-A892-92FD804B9976}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotNetNuke.Tests.Automation</RootNamespace>
+    <AssemblyName>DotNetNuke.Tests.Automation</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\Fixtures\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\Fixtures\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CountryListBox, Version=6.2.1.11, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Controls\CountryListBox\bin\CountryListBox.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Instrumentation, Version=6.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DotNetNuke.Instrumentation\bin\DotNetNuke.Instrumentation.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Services.Syndication, Version=6.2.1.11, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Syndication\bin\DotNetNuke.Services.Syndication.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.SHDocVw">
+      <HintPath>..\..\..\packages\WatiN.2.1.0\lib\net40\Interop.SHDocVw.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
+      <HintPath>..\..\..\packages\WatiN.2.1.0\lib\net40\Microsoft.mshtml.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.Management.Sdk.Sfc.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Smo, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.Smo.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.SqlEnum, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.SqlEnum.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\System32\inetsrv\Microsoft.Web.Administration.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.mocks">
+      <HintPath>..\..\..\packages\NUnit.2.5.10.11092\lib\nunit.mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="pnunit.framework">
+      <HintPath>..\..\..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TechTalk.SpecFlow">
+      <HintPath>..\..\..\packages\SpecFlow.1.8.1\lib\net35\TechTalk.SpecFlow.dll</HintPath>
+    </Reference>
+    <Reference Include="WatiN.Core">
+      <HintPath>..\..\..\packages\WatiN.2.1.0\lib\net40\WatiN.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseEmailSteps.cs" />
+    <Compile Include="BaseFileManagerSteps.cs" />
+    <Compile Include="BaseLoginSteps.cs" />
+    <Compile Include="BaseMembershipSteps.cs" />
+    <Compile Include="BaseModuleSettingsSteps.cs" />
+    <Compile Include="BaseModuleSteps.cs" />
+    <Compile Include="BasePageSteps.cs" />
+    <Compile Include="BaseSiteSettingsSteps.cs" />
+    <Compile Include="BaseSteps.cs" />
+    <Compile Include="BaseUserSteps.cs" />
+    <Compile Include="DnnUnitTest.cs" />
+    <Compile Include="HttpSimulator\HttpSimulator.cs" />
+    <Compile Include="HttpSimulator\HttpSimulatorTests.cs" />
+    <Compile Include="HttpSimulator\ReflectionHelper.cs" />
+    <Compile Include="HttpSimulator\SimulatedHttpRequest.cs" />
+    <Compile Include="IEExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="TestBase.cs" />
+    <Compile Include="TestEnvironment.cs" />
+    <Compile Include="TestUsers.cs" />
+    <Compile Include="WatiNAssert.cs" />
+    <Compile Include="WatiNBase.cs" />
+    <Compile Include="WatiNObjects\AdminConsole.cs" />
+    <Compile Include="WatiNObjects\AdminPagesPage.cs" />
+    <Compile Include="WatiNObjects\AdminSiteLogPage.cs" />
+    <Compile Include="WatiNObjects\AdminSkinPage.cs" />
+    <Compile Include="WatiNObjects\CreateNewModulePage.cs" />
+    <Compile Include="WatiNObjects\EventViewerPage.cs" />
+    <Compile Include="WatiNObjects\ExportImportPage.cs" />
+    <Compile Include="WatiNObjects\ExtensionsPage.cs" />
+    <Compile Include="WatiNObjects\FileManagerPage.cs" />
+    <Compile Include="WatiNObjects\ForumPage.cs" />
+    <Compile Include="WatiNObjects\HostListPage.cs" />
+    <Compile Include="WatiNObjects\HostProSiteGroupPage.cs" />
+    <Compile Include="WatiNObjects\HostSettingsPage.cs" />
+    <Compile Include="WatiNObjects\HostSiteManagementPage.cs" />
+    <Compile Include="WatiNObjects\HostSQLPage.cs" />
+    <Compile Include="WatiNObjects\HostUserPage.cs" />
+    <Compile Include="WatiNObjects\HTMLModule.cs" />
+    <Compile Include="WatiNObjects\IconBar.cs" />
+    <Compile Include="WatiNObjects\LanguagePage.cs" />
+    <Compile Include="WatiNObjects\LoginPage.cs" />
+    <Compile Include="WatiNObjects\MessagingModule.cs" />
+    <Compile Include="WatiNObjects\ModuleActionMenu.cs" />
+    <Compile Include="WatiNObjects\ModuleDefinitionPage.cs" />
+    <Compile Include="WatiNObjects\ModulePage.cs" />
+    <Compile Include="WatiNObjects\NewsletterPage.cs" />
+    <Compile Include="WatiNObjects\PageSettingsPage.cs" />
+    <Compile Include="WatiNObjects\ProfessionalBase.cs" />
+    <Compile Include="WatiNObjects\ProfilePropertiesPage.cs" />
+    <Compile Include="WatiNObjects\RecycleBinPage.cs" />
+    <Compile Include="WatiNObjects\RegisterPage.cs" />
+    <Compile Include="WatiNObjects\RibbonBar.cs" />
+    <Compile Include="WatiNObjects\SchedulePage.cs" />
+    <Compile Include="WatiNObjects\SearchAdminPage.cs" />
+    <Compile Include="WatiNObjects\SecurityRolesPage.cs" />
+    <Compile Include="WatiNObjects\SiteMenu.cs" />
+    <Compile Include="WatiNObjects\SiteSettingsPage.cs" />
+    <Compile Include="WatiNObjects\SiteWizardPage.cs" />
+    <Compile Include="WatiNObjects\TelerikEditor.cs" />
+    <Compile Include="WatiNObjects\TemplateHomePage.cs" />
+    <Compile Include="WatiNObjects\UserPage.cs" />
+    <Compile Include="WatiNObjects\UserProfilePage.cs" />
+    <Compile Include="WatiNObjects\UserRolesPage.cs" />
+    <Compile Include="WatiNObjects\UserSettingsPage.cs" />
+    <Compile Include="WatiNObjects\VendorsPage.cs" />
+    <Compile Include="WatiNObjects\WizardPage.cs" />
+    <Compile Include="WatiNTest.cs" />
+    <Compile Include="WatiNUtil.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Library\DotNetNuke.Library.csproj">
+      <Project>{D391550C-7107-49B2-A6AC-8627C8B06ADC}</Project>
+      <Name>DotNetNuke.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DotNetNuke.Tests.Utilities\DotNetNuke.Tests.Utilities.csproj">
+      <Project>{5AECE021-E449-4A7F-BF82-2FA7B236ED3E}</Project>
+      <Name>DotNetNuke.Tests.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\App.config">
+      <Link>App.config</Link>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Scripts\AddSuperUser.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\AddSuperUserToPortal.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\AddTestUser.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\ResetPassword.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\SetUpdatePassword.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <WebsitePath>$(MSBuildProjectDirectory)\..\..\..\Website</WebsitePath>
+  </PropertyGroup>
+  <Target Name="AfterBuild" DependsOnTargets="CopyBin" />
+  <Target Name="CopyBin">
+    <ItemGroup>
+      <Assemblies Include="$(WebsitePath)\bin\*.dll;$(WebsitePath)\bin\Providers\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(Assemblies)" DestinationFolder="$(OutputPath)" />
+  </Target>
+</Project>
