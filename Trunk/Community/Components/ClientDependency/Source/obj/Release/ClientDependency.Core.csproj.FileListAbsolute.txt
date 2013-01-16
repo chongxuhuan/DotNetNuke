@@ -1,5 +1,0 @@
-D:\DotNetNuke\CodePlex\dotnetnuke\Trunk\Community\Components\ClientDependency\Source\bin\ClientDependency.Core.dll
-D:\DotNetNuke\CodePlex\dotnetnuke\Trunk\Community\Components\ClientDependency\Source\bin\ClientDependency.Core.pdb
-D:\DotNetNuke\CodePlex\dotnetnuke\Trunk\Community\Components\ClientDependency\Source\obj\Release\ClientDependency.Core.csprojResolveAssemblyReference.cache
-D:\DotNetNuke\CodePlex\dotnetnuke\Trunk\Community\Components\ClientDependency\Source\obj\Release\ClientDependency.Core.dll
-D:\DotNetNuke\CodePlex\dotnetnuke\Trunk\Community\Components\ClientDependency\Source\obj\Release\ClientDependency.Core.pdb
