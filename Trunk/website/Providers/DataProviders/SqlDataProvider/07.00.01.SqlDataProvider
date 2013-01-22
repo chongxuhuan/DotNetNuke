@@ -802,6 +802,7 @@ GO
 
 -- we need to ensure that after upgrade all the paths are also fixed
 UPDATE {databaseOwner}[{objectQualifier}Tabs] SET [TabPath] = Replace([TabPath], '+', '') WHERE [TabPath] LIKE '%+%'
+GO
 
 /***** Fix bug 23824: update packages to use new icon file *****/
 UPDATE {databaseOwner}[{objectQualifier}Packages]
@@ -836,6 +837,7 @@ UPDATE {databaseOwner}[{objectQualifier}Packages]
 						WHEN '~/DesktopModules/Admin/SearchResults/search.gif' THEN '~/Icons/Sigma/Search_32x32_Standard.png'
 						ELSE IconFile
 					END
+GO
 
 /***** Fix bug 22480: define register control as a desktop module. *****/
 IF NOT EXISTS ( SELECT  PackageID
@@ -844,12 +846,19 @@ IF NOT EXISTS ( SELECT  PackageID
     BEGIN
         DECLARE @PackageID INT ,
             @ContentItemID INT ,
+			@ContentTypeID INT ,
             @DesktopModuleID INT ,
             @ModuleDefID INT
 		DECLARE @Ident TABLE(PrimaryKey INT)          
-    
+		
+		IF NOT EXISTS(SELECT ContentTypeID FROM {databaseOwner}[{objectQualifier}ContentTypes] WHERE ContentType = 'DesktopModule')
+		BEGIN
+			EXEC {databaseOwner}[{objectQualifier}AddContentType] @ContentType = N'DesktopModule'
+		END
+		SELECT @ContentTypeID = ContentTypeID FROM {databaseOwner}[{objectQualifier}ContentTypes] WHERE ContentType = 'DesktopModule'
+
         INSERT @Ident EXEC {databaseOwner}[{objectQualifier}AddContentItem] @Content = N'Account Registration', -- nvarchar(max)
-            @ContentTypeID = 3, -- int
+            @ContentTypeID = @ContentTypeID, -- int
             @TabID = -1, -- int
             @ModuleID = -1, -- int
             @ContentKey = N'', -- nvarchar(250)

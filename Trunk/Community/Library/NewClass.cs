@@ -5,9 +5,7 @@ using System.Text;
 
 namespace DotNetNuke
 {
-    class AnotherTest
+    class NewClass
     {
-        //Auto updating CodePlex on checkin to internal TFS
-        //Test it again
     }
 }

@@ -27,7 +27,7 @@
     });
 } (jQuery, window.Sys));
 </script>
-<div class="dnnForm dnnManageUsers dnnClear" id="dnnManageUsers">
+<div class="dnnForm dnnManageUsers dnnClear" id="dnnManageUsers" runat="server" ClientIDMode="Static">
     <ul class="dnnAdminTabNav dnnClear" id="adminTabNav" runat="server">
         <li><a href="#dnnUserDetails"><%=LocalizeString("cmdUser")%></a></li>
         <li id="rolesTab" runat="server"><a href="#<%=dnnRoleDetails.ClientID%>"><%=LocalizeString("cmdRoles")%></a></li>

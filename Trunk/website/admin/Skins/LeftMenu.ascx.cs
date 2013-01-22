@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Instrumentation;
@@ -865,28 +866,27 @@ namespace DotNetNuke.UI.Skins.Controls
                 IList<TabInfo> desktopTabs = TabController.GetTabsBySortOrder(portalID, PortalController.GetActivePortalLanguage(portalID), true);
                 for (i = 0; i <= desktopTabs.Count - 1; i++)
                 {
+	                var tab = desktopTabs[i];
+					if (tab.TabID == PortalSettings.ActiveTab.TabID)
                     {
-                        if (((desktopTabs[i]).TabID == PortalSettings.ActiveTab.TabID))
+						FillShowPathArray(ref arrayShowPath, tab.TabID, objTabController);
+                    }
+                    if (tab.IsVisible && !tab.IsDeleted &&
+						(AdminMode || ((Null.IsNull(tab.StartDate) || tab.StartDate < DateTime.Now) &&
+						(Null.IsNull(tab.EndDate) || tab.EndDate > DateTime.Now))) &&
+                        (TabPermissionController.CanViewPage(tab) && !CheckToExclude(tab.TabName, tab.TabID)))
+                    {
+                        temp = new qElement();
+                        temp.page = desktopTabs[i];
+                        temp.radPanelItem = new RadPanelItem();
+                        if (CheckShowOnlyCurrent(tab.TabID, tab.ParentId, StartingItemId, iRootGroupId) && CheckPanelVisibility(tab))
                         {
-                            FillShowPathArray(ref arrayShowPath, (desktopTabs[i]).TabID, objTabController);
+                            iItemIndex = iItemIndex + 1;
+                            temp.item = iItemIndex;
+                            PagesQueue.Enqueue(AuthPages.Count);
+                            RadPanel1.Items.Add(temp.radPanelItem);
                         }
-                        if (((desktopTabs[i]).IsVisible && !(desktopTabs[i]).IsDeleted) &&
-                            (((desktopTabs[i]).StartDate == DateTime.MinValue && (desktopTabs[i]).EndDate == DateTime.MinValue) ||
-                             ((desktopTabs[i]).StartDate < DateTime.Now && (desktopTabs[i]).EndDate > DateTime.Now) || AdminMode) &&
-                            (TabPermissionController.CanViewPage(desktopTabs[i]) && !CheckToExclude((desktopTabs[i]).TabName, (desktopTabs[i]).TabID)))
-                        {
-                            temp = new qElement();
-                            temp.page = desktopTabs[i];
-                            temp.radPanelItem = new RadPanelItem();
-                            if (CheckShowOnlyCurrent((desktopTabs[i]).TabID, (desktopTabs[i]).ParentId, StartingItemId, iRootGroupId) && CheckPanelVisibility(desktopTabs[i]))
-                            {
-                                iItemIndex = iItemIndex + 1;
-                                temp.item = iItemIndex;
-                                PagesQueue.Enqueue(AuthPages.Count);
-                                RadPanel1.Items.Add(temp.radPanelItem);
-                            }
-                            AuthPages.Add(temp);
-                        }
+                        AuthPages.Add(temp);
                     }
                 }
                 BuildPanelbar(RadPanel1.Items);

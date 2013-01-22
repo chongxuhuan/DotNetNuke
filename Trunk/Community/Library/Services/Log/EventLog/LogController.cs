@@ -206,7 +206,21 @@ namespace DotNetNuke.Services.Log.EventLog
                         logInfo.LogPortalName = portalController.GetPortal(logInfo.LogPortalID).PortalName;
                     }
 
-                    if (LoggingProvider.Instance() != null) LoggingProvider.Instance().AddLog(logInfo);
+	                if (LoggingProvider.Instance() != null)
+	                {
+		                try
+		                {
+							LoggingProvider.Instance().AddLog(logInfo);
+		                }
+		                catch (Exception ex)
+		                {
+			                if (Globals.Status != Globals.UpgradeStatus.Upgrade) //this may caught exception during upgrade because old logging provider has problem in it.
+			                {
+				                throw;
+			                }
+		                }
+		                
+	                }
                 }
                 catch (Exception exc)
                 {

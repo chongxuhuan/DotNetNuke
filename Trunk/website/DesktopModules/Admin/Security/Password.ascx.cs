@@ -29,6 +29,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Services.Localization;
+using DotNetNuke.UI.Skins.Controls;
 using DotNetNuke.UI.Utilities;
 
 #endregion
@@ -258,6 +259,12 @@ namespace DotNetNuke.Modules.Admin.Users
             cmdReset.Click += cmdReset_Click;
             cmdUpdate.Click += cmdUpdate_Click;
             cmdUpdateQA.Click += cmdUpdateQA_Click;
+
+			if (MembershipProviderConfig.RequiresQuestionAndAnswer && User.UserID != UserController.GetCurrentUserInfo().UserID)
+			{
+				pnlChange.Visible = false;
+				CannotChangePasswordMessage.Visible = true;
+			}
         }
 
         /// -----------------------------------------------------------------------------

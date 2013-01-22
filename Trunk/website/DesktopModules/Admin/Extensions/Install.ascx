@@ -104,3 +104,25 @@
         </WizardSteps>
     </asp:Wizard>
 </div>
+<script type="text/javascript">
+	/*globals jQuery, window, Sys */
+	(function ($, Sys) {
+		function setUpInstallWizard() {
+			var actionLinks = $("a[id$=nextButtonStart], a[id$=cancelButtonStart], a[id$=nextButtonStep], a[id$=cancelButtonStep], a[id$=finishButtonStep]");
+			actionLinks.click(function () {
+				if ($(this).hasClass("dnnDisabledAction")) {
+					return false;
+				}
+
+				actionLinks.addClass("dnnDisabledAction");
+			});
+		}
+		
+		$(document).ready(function () {
+			setUpInstallWizard();
+			Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+				setUpInstallWizard();
+			});
+		});
+	}(jQuery, window.Sys));
+</script>   

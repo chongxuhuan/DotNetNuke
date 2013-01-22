@@ -46,7 +46,7 @@ namespace DotNetNuke.Services.Social.Messaging.Scheduler
            
         private bool SendEmail(int portalId)
         {
-            return PortalController.GetPortalSetting("MessagingSendEmail", portalId, "NO") == "YES";
+            return PortalController.GetPortalSetting("MessagingSendEmail", portalId, "YES") == "YES";
         }
 
         public override void DoWork()

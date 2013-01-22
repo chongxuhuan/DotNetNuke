@@ -519,13 +519,13 @@ namespace DotNetNuke.Modules.Admin.Users
                 if (Request.IsAuthenticated && MembershipProviderConfig.RequiresQuestionAndAnswer)
                 {
 					//Admin adding user
-                    //pnlUser.Visible = false;
+					dnnManageUsers.Visible = false;
                     actionsRow.Visible = false;
                     AddModuleMessage("CannotAddUser", ModuleMessage.ModuleMessageType.YellowWarning, true);
                 }
                 else
                 {
-                    //pnlUser.Visible = true;
+					dnnManageUsers.Visible = true;
                     actionsRow.Visible = true;
                 }
                 BindUser();

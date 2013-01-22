@@ -15,6 +15,7 @@
             <dnn:label id="plExpires" runat="server" controlname="lblExpires" />
             <asp:label id = "lblExpires" runat="server" />
         </div>
+			<asp:Panel runat="server" ID="CannotChangePasswordMessage" CssClass="dnnFormMessage dnnFormWarning" Visible="False"><%=LocalizeString("CannotChangePassword") %></asp:Panel>
 			<asp:panel id="pnlChange" runat="server">
                 <div class="dnnFormItem"><h2 class="dnnFormSectionHead"><asp:label id="lblChangeHeading" resourcekey="ChangePassword" runat="server" /></h2></div>
                 <div class="dnnFormItem"><p><asp:label id="lblChangeHelp" runat="server" /></p></div>
