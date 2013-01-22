@@ -105,7 +105,7 @@ div.RadComboBox_Default .rcbArrowCell a {
 	background: -o-linear-gradient(top,  #fff 1%,#f0f2f1 100%); /* Opera 11.10+ */
 	background: -ms-linear-gradient(top, #fff 0%,#f0f2f1 100%) !important; /* IE10+ */
     background: linear-gradient(top, #fff 0%,#f0f2f1 100%) !important; /* W3C */
-    color: #666666;
+    color: #333;
     text-decoration: none;
     vertical-align: middle !important;
 }
@@ -142,7 +142,7 @@ div.RadComboBox_Default .rcbArrowCell a {
 }
 
 .RadComboBox_Default .rcbInputCell .rcbEmptyMessage {
-    color: #666;
+    color: #333;
 }
 
 .RadComboBox_Default .rcbInput {

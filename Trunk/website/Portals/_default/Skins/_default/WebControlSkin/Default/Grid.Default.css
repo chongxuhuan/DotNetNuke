@@ -126,7 +126,7 @@
     width: 10px;
     height: 22px;
     vertical-align: middle;
-    color: #666;
+    color: #333;
     visibility: hidden;
 }
 .RadGrid .rgArrPart1 a, .RadGrid .rgArrPart2 a {
@@ -134,7 +134,7 @@
     height: 22px;
     vertical-align: middle;
     color: #666;*/
-    color: #666;
+    color: #333;
 }
 .RadGrid .NextPrev .rgPageFirst, .RadGrid .NextPrev .rgPagePrev, .RadGrid .NextPrev .rgPageNext, .RadGrid .NextPrev .rgPageLast {
     vertical-align: middle;
@@ -391,7 +391,7 @@
 .RadGrid_Default {
     border:1px solid #c9c9c9;
     background:#fff;
-    color: #666;
+    color: #333;
 }
 .RadGrid_Default, .RadGrid_Default .rgMasterTable, .RadGrid_Default .rgDetailTable, .RadGrid_Default .rgGroupPanel table, .RadGrid_Default .rgCommandRow table, .RadGrid_Default .rgEditForm table, .RadGrid_Default .rgPager table, .GridToolTip_Default {
     font-size: 12px;
@@ -427,7 +427,7 @@
     background-position: 0 -2600px;*/
 }
 .RadGrid_Default .rgHeader, .RadGrid_Default .rgHeader a {
-    color: #666;
+    color: #333;
 }
 .RadGrid_Default .rgRow td, .RadGrid_Default .rgAltRow td, .RadGrid_Default .rgEditRow td, .RadGrid_Default .rgFooter td {
     border-style: solid;
@@ -837,7 +837,7 @@
 .RadGrid_Default .rgRow:hover, 
 .RadGrid_Default .rgAltRow:hover{
     background-color:  #e8f1fa;
-    color: #666666;
+    color: #333;
 } 
 
 .RadGrid_Default .rgPagerCell .rgArrPart1,
@@ -990,7 +990,7 @@
 	cursor:pointer;
 	display:block;	
 	font-size: 12px;
-	color: #666;
+	color: #333;
 	text-decoration: none;
 }
 

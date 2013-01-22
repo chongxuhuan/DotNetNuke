@@ -318,12 +318,12 @@
 		
 		text-align:left;
 		text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
-		color:#555;
+		color:#333;
 	}
 	
 	.dnnTableDisplay th a, .dnnTableDisplay th label {
 		font-weight:normal;
-		color:#555;
+		color:#333;
 		text-decoration:none;
 	}
 	.dnnTableDisplay th a{padding:8px 9px;}
@@ -336,7 +336,7 @@
 		background: -ms-linear-gradient(top, #fefefe 0%,#e8e8e8 100%); /* IE10+ */
 		background: linear-gradient(top, #fefefe 0%,#e8e8e8 100%); /* W3C */
 		
-		color:#555;
+		color:#333;
 	}
 	.dnnTableDisplay th a:active{
 		border-color:#999;
@@ -400,7 +400,7 @@
 		display:inline-block;
 		padding:0 5px;
 		text-decoration:none;
-		color:#666;
+		color:#333;
 	}
 	.dnnPagination li a:hover{
 		text-decoration:underline;
@@ -432,7 +432,7 @@
 		-webkit-box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.8), inset 0px 1px 2px 0px rgba(0, 0, 0, 0.1) ;
 		box-shadow: 		0px 1px 0px 0px rgba(255, 255, 255, 0.8), inset 0px 1px 2px 0px rgba(0, 0, 0, 0.1) ;
 		
-		color:#555;
+		color:#333;
 		font-size:12px;
 	}
 
@@ -525,7 +525,7 @@
 		-webkit-border-radius: 3px;
 		border-radius: 3px;
 		
-		color:#666666;
+		color:#333;
 		font-weight:bold; 
 		text-decoration:none;
 		text-align:center;
@@ -610,7 +610,7 @@
 		box-shadow:  			0px 1px 0px 0px rgba(0, 0, 0, 0.4), inset 0px 1px 0px 0px rgba(255, 255, 255, 1);
 		
 		text-shadow: 0px 1px 0px #ffffff;
-		color:#555;
+		color:#333;
 	}
 	
 	.dnnFormItem button:hover, .dnnFormItem input[type="button"]:hover, 
@@ -670,7 +670,7 @@
 		padding:10px 10px;
 		border:none;
 		background:#eaeaea;
-		color:#666666;
+		color:#333;
 	}
 	
 	.dnnTertiaryAction:hover, a.dnnTertiaryAction:hover{ background:#f2f2f2; }
@@ -914,7 +914,7 @@
 	    display: inline-block;
 	    position:absolute;
 	    right:0; top:2px;
-	    width: 13px; height: 15px;	    
+	    width: 14px; height: 15px;	    
 	    background:url(../../images/helpI-icn-grey.png) no-repeat left 2px;
 		padding: 0 !important;
 		margin: 0 !important;
@@ -1032,7 +1032,7 @@
 	}
 	.dnnFormItem select{ width:47%;}
 	.dnnFormItem select option{
-	    color: #666;	    
+	    color: #333;	    
 	}
 	
 	.dnnFormItem table { background:none; }
@@ -1110,7 +1110,7 @@
 		-webkit-border-radius: 3px;
 		border-radius: 3px;
 		
-		color:#666666;
+		color:#333;
 		text-decoration:none;
 			
 		-webkit-box-shadow:  	0px 1px 0px 0px #bbb;
@@ -1257,7 +1257,7 @@
 	    cursor: pointer;
 	    display: block;
 	    overflow: hidden;
-        color: #666;
+        color: #333;
     }
 
     .acLoading {
@@ -1384,7 +1384,7 @@
     .dnnButtonDropdown-ul > li{
         padding: 8px;
         border-bottom: 1px solid #c9c9c9;
-        color: #666;
+        color: #333;
         cursor: pointer;
     }
     
@@ -1439,11 +1439,11 @@
         display: inline-block;
         padding: 7px 7px 6px 7px;
         text-decoration: none;
-        color: #666;
+        color: #333;
     }
    
     ul.dnnButtonGroup span{       
-        color: #666;
+        color: #333;
     }
     
 	
@@ -1939,7 +1939,7 @@
     .dnnFormExpandContent{ margin: 10px 0; }
 
     .dnnFormExpandContent > a{
-        color: #666;
+        color: #333;
         font-size: 13px;
         font-weight: bold;
      }
@@ -2261,7 +2261,7 @@
 		padding-left:3px;
 		background:url(../../images/down-icn.png) no-repeat right 50%;
 		text-decoration:none;
-		color:#666;
+		color:#333;
 		font-size:18px;
 		letter-spacing:normal;
 		font-weight:normal;
@@ -2299,7 +2299,7 @@
 	}
 	.dnnVerticalTabs li a:hover {
 		background:rgba(0, 0, 0, 0.06);
-		color:#666;
+		color:#333;
 	}
 	.dnnVerticalTabs li.active a {
 		background:none;
@@ -2528,7 +2528,7 @@
 /*------------------------------------------*/
 
     #GettingStartedTitle {
-        color: #666666;
+        color: #333;
         font-weight: lighter;
     }
 
