@@ -53,6 +53,8 @@ namespace DotNetNuke.Web.InternalServices
     	private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof (ControlBarController));
         private const string DefaultExtensionImage = "icon_extensions_32px.gif";
 
+		private IDictionary<string, string> _nameDics;
+
         public class ModuleDefDTO
         {
             public int ModuleID { get; set; }
@@ -119,7 +121,7 @@ namespace DotNetNuke.Web.InternalServices
             foreach (var kvp in resultDict)
             {
                 string imageUrl = GetDeskTopModuleImage(kvp.Key);
-                result.Add(new ModuleDefDTO { ModuleID = kvp.Key, ModuleName = kvp.Value, ModuleImage = imageUrl });
+                result.Add(new ModuleDefDTO { ModuleID = kvp.Key, ModuleName = GetModuleName(kvp.Value), ModuleImage = imageUrl });
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, result);
@@ -857,5 +859,16 @@ namespace DotNetNuke.Web.InternalServices
 			return tabModuleId;
         }
 
+		private string GetModuleName(string moduleName)
+		{
+			 if (_nameDics == null)
+			 {
+				 _nameDics = new Dictionary<string, string> {{"SearchCrawlerAdmin", "SearchCrawler Admin"}, 
+															 {"SearchCrawlerInput", "SearchCrawler Input"}, 
+															 {"SearchCrawlerResults", "SearchCrawler Results"}};
+			 }
+
+			return _nameDics.ContainsKey(moduleName) ? _nameDics[moduleName] : moduleName;
+		}
     }
 }
