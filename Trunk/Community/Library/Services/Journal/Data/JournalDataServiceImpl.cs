@@ -50,10 +50,18 @@ namespace DotNetNuke.Services.Journal
             _provider.ExecuteNonQuery("Journal_UpdateContentItemId", journalId, contentItemId);
         }
         public IDataReader Journal_Get(int portalId, int currentUserId, int journalId) {
-            return _provider.ExecuteReader("Journal_Get", portalId, currentUserId, journalId);
+            return Journal_Get(portalId, currentUserId, journalId, false, false);
+        }
+        public IDataReader Journal_Get(int portalId, int currentUserId, int journalId, bool includeAllItems, bool isDeleted)
+        {
+            return _provider.ExecuteReader("Journal_Get", portalId, currentUserId, journalId, includeAllItems, isDeleted);
         }
         public IDataReader Journal_GetByKey(int portalId, string objectKey) {
-            return _provider.ExecuteReader("Journal_GetByKey", portalId, objectKey);
+            return Journal_GetByKey(portalId, objectKey, false, false);
+        }
+        public IDataReader Journal_GetByKey(int portalId, string objectKey, bool includeAllItems, bool isDeleted)
+        {
+            return _provider.ExecuteReader("Journal_GetByKey", portalId, objectKey, includeAllItems, isDeleted);
         }
         public int Journal_Save(int portalId, int currentUserId, int profileId, int groupId, int journalId, int journalTypeId, string title,
                                 string summary, string body, string itemData, string xml, string objectKey, Guid accessKey, string securitySet) {  

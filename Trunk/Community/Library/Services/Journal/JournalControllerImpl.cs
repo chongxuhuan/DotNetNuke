@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -131,16 +131,31 @@ namespace DotNetNuke.Services.Journal
         // Journal Items
         public JournalItem GetJournalItem(int portalId, int currentUserId, int journalId)
         {
-            return CBO.FillObject<JournalItem>(_dataService.Journal_Get(portalId, currentUserId, journalId));
+            return GetJournalItem(portalId, currentUserId, journalId, false, false);
         }
-
+        public JournalItem GetJournalItem(int portalId, int currentUserId, int journalId, bool includeAllItems)
+        {
+            return GetJournalItem(portalId, currentUserId, journalId, includeAllItems, false);
+        }
+        public JournalItem GetJournalItem(int portalId, int currentUserId, int journalId, bool includeAllItems, bool isDeleted)
+        {
+            return CBO.FillObject<JournalItem>(_dataService.Journal_Get(portalId, currentUserId, journalId, includeAllItems, isDeleted));
+        }
         public JournalItem GetJournalItemByKey(int portalId, string objectKey)
+        {
+            return GetJournalItemByKey(portalId, objectKey, false, false);
+        }
+        public JournalItem GetJournalItemByKey(int portalId, string objectKey, bool includeAllItems)
+        {
+            return GetJournalItemByKey(portalId, objectKey, includeAllItems, false);
+        }
+        public JournalItem GetJournalItemByKey(int portalId, string objectKey, bool includeAllItems, bool isDeleted)
         {
             if (string.IsNullOrEmpty(objectKey))
             {
                 return null;
             }
-            return (JournalItem)CBO.FillObject(_dataService.Journal_GetByKey(portalId, objectKey), typeof(JournalItem));
+            return (JournalItem)CBO.FillObject(_dataService.Journal_GetByKey(portalId, objectKey, includeAllItems, isDeleted), typeof(JournalItem));
         }
 
         public void SaveJournalItem(JournalItem journalItem, int tabId)
@@ -362,12 +377,10 @@ namespace DotNetNuke.Services.Journal
             var journalIds = journalIdList.Aggregate("", (current, journalId) => current + journalId + ";");
             return CBO.FillCollection<CommentInfo>(_dataService.Journal_Comment_ListByJournalIds(journalIds));
         }
-
         public void LikeJournalItem(int journalId, int userId, string displayName)
         {
             _dataService.Journal_Like(journalId, userId, displayName);
         }
-
         public void SaveComment(CommentInfo comment)
         {
             var portalSecurity = new PortalSecurity();
@@ -397,17 +410,14 @@ namespace DotNetNuke.Services.Journal
             comment.DateCreated = newComment.DateCreated;
             comment.DateUpdated = newComment.DateUpdated;
         }
-
         public CommentInfo GetComment(int commentId)
         {
             return CBO.FillObject<CommentInfo>(_dataService.Journal_Comment_Get(commentId));
         }
-
         public void DeleteComment(int journalId, int commentId)
         {
             _dataService.Journal_Comment_Delete(journalId, commentId);
         }
-
         public void LikeComment(int journalId, int commentId, int userId, string displayName)
         {
             _dataService.Journal_Comment_Like(journalId, commentId, userId, displayName);

@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -41,7 +41,9 @@ namespace DotNetNuke.Services.Journal {
         void Journal_SoftDeleteByKey(int portalId, string objectKey);
         void Journal_SoftDeleteByGroupId(int portalId, int groupId);
         IDataReader Journal_Get(int portalId, int currentUserId, int journalId);
+        IDataReader Journal_Get(int portalId, int currentUserId, int journalId, bool includeAllItems, bool isDeleted);
         IDataReader Journal_GetByKey(int portalId, string objectKey);
+        IDataReader Journal_GetByKey(int portalId, string objectKey, bool includeAllItems, bool isDeleted);
         int Journal_Save(int portalId, int currentUserId, int profileId, int groupId, int journalId, int journalTypeId, string title, string summary,
             string body, string itemData, string xml, string objectKey, Guid accessKey, string securitySet);
         void Journal_UpdateContentItemId(int journalId, int contentItemId);

@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -29,7 +29,11 @@ namespace DotNetNuke.Services.Journal
         JournalTypeInfo GetJournalType(string journalType);
         JournalTypeInfo GetJournalTypeById(int journalTypeId);
         JournalItem GetJournalItemByKey(int portalId, string objectKey);
+        JournalItem GetJournalItemByKey(int portalId, string objectKey, bool includeAllItems);
+        JournalItem GetJournalItemByKey(int portalId, string objectKey, bool includeAllItems, bool isDeleted);
         JournalItem GetJournalItem(int portalId, int userId, int journalId);
+        JournalItem GetJournalItem(int portalId, int userId, int journalId, bool includeAllItems);
+        JournalItem GetJournalItem(int portalId, int userId, int journalId, bool includeAllItems, bool isDeleted);
         IEnumerable<JournalTypeInfo> GetJournalTypes(int portalId);
         void SaveJournalItem(JournalItem journalItem, int tabId);
 
