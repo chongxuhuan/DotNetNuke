@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,6 +21,12 @@
 #region Usings
 
 using System;
+using System.Web;
+using System.Web.Configuration;
+
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Framework;
+using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.Upgrade.Internals;
 using DotNetNuke.Services.Upgrade.Internals.Steps;
 
@@ -35,6 +41,7 @@ namespace DotNetNuke.Services.Upgrade.InternalController.Steps
     /// -----------------------------------------------------------------------------    
     public class UpdateLanguagePackStep : BaseInstallationStep
     {
+		private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(UpdateLanguagePackStep));
         #region Implementation of IInstallationStep
 
         /// <summary>
@@ -48,9 +55,29 @@ namespace DotNetNuke.Services.Upgrade.InternalController.Steps
             var installConfig = InstallController.Instance.GetInstallConfig();
             string culture = installConfig.InstallCulture;
           
-            if (culture.ToLower()!="en-us")
+            if (culture.ToLower() != "en-us")
             {
-                InstallController.Instance.IsAvailableLanguagePack(culture);    
+	            try
+	            {
+					//need apply the Licensing module after packages installed, so that we can know whats the edition of install instance. CE/PE/EE
+					var document = Config.Load();
+					var licensingNode = document.SelectSingleNode("/configuration/system.webServer/modules/add[@name='Licensing']");
+					if (licensingNode != null)
+					{
+						var type = licensingNode.Attributes["type"].Value;
+						var module = Reflection.CreateObject(type, null, false) as IHttpModule;
+						module.Init(HttpContext.Current.ApplicationInstance);
+					}
+
+					InstallController.Instance.IsAvailableLanguagePack(culture);    
+	            }
+	            catch (Exception ex)
+	            {
+					//we shouldn't break the install process when LP download failed, for admin user can install the LP after website created.
+					//so we logged what's wrong here, and user can check it later.
+		            Logger.Error(ex);
+	            }
+
             }
             Status = StepStatus.Done;
         }

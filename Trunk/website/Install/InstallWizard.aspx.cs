@@ -1051,12 +1051,12 @@ namespace DotNetNuke.Services.Install
 
         //Ordered List of Steps (and weight in percentage) to be executed
         private static readonly IDictionary<IInstallationStep, int> _steps = new Dictionary<IInstallationStep, int>
-                                        {   {new UpdateLanguagePackStep(), 5},                                            
-                                            {filePermissionCheck, 10},
+                                        {   {filePermissionCheck, 10},
                                             {new IISVerificationStep(), 5},
                                             {installDatabase, 20},
                                             {installExtensions, 25},
                                             {new InitializeHostSettingsStep(), 5},
+											{new UpdateLanguagePackStep(), 5},
                                             {installSite, 20},
                                             {createSuperUser, 5},
                                             {activateLicense, 5}
