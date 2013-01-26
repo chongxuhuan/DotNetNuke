@@ -658,6 +658,23 @@ GO
 	ORDER BY RowNumber ASC;
 GO
 
+/* Fix bug 24908: remove sp GetAllPortals and add 'en-US' for each portal in PortalLocalization table. */
+/*******************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetAllPortals]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetAllPortals]
+GO
+
+DECLARE @Portals AS Table(PortalId INT)
+DECLARE @PortalId INT
+INSERT INTO @Portals SELECT PortalId FROM {databaseOwner}[{objectQualifier}Portals] 
+WHILE EXISTS(SELECT PortalId FROM @Portals)
+BEGIN
+	SELECT @PortalId = PortalId FROM @Portals
+	EXEC {databaseOwner}[{objectQualifier}EnsureLocalizationExists] @PortalId, 'en-US'
+	DELETE FROM @Portals WHERE PortalId = @PortalId
+END
+GO
 
 /************************************************************/
 

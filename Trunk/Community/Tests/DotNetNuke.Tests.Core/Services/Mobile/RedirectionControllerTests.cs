@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -631,7 +631,6 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
 			});
 
             _dataProvider.Setup(d => d.GetPortals(It.IsAny<string>())).Returns<string>(GetPortalsCallBack);
-			_dataProvider.Setup(d => d.GetAllPortals()).Returns(GetAllPortalsCallBack);
 			_dataProvider.Setup(d => d.GetTabs(It.IsAny<int>())).Returns<int>(GetTabsCallBack);
 			_dataProvider.Setup(d => d.GetTabModules(It.IsAny<int>())).Returns<int>(GetTabModulesCallBack);
 			_dataProvider.Setup(d => d.GetPortalSettings(It.IsAny<int>(), It.IsAny<string>())).Returns<int, string>(GetPortalSettingsCallBack);
@@ -690,11 +689,6 @@ namespace DotNetNuke.Tests.Core.Services.Mobile
         {
             return GetPortalCallBack(Portal0, DotNetNuke.Services.Localization.Localization.SystemLocale);
         }
-
-		private IDataReader GetAllPortalsCallBack()
-		{
-			return GetPortalCallBack(Portal0, DotNetNuke.Services.Localization.Localization.SystemLocale);
-		}
 
 		private IDataReader GetPortalCallBack(int portalId, string culture)
 		{

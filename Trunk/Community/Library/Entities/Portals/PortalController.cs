@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -320,11 +320,6 @@ namespace DotNetNuke.Entities.Portals
             DataCache.SetCache(cacheKey, portals);
             return portals;
         }
-
-		private object GetAllPortalsCallBack(CacheItemArgs cacheItemArgs)
-		{
-			return CBO.FillCollection<PortalInfo>(DataProvider.Instance().GetAllPortals());
-		}
 
         private static object GetPortalSettingsDictionaryCallback(CacheItemArgs cacheItemArgs)
         {
@@ -1634,9 +1629,10 @@ namespace DotNetNuke.Entities.Portals
         /// -----------------------------------------------------------------------------
         public ArrayList GetPortals()
         {
-            string cacheKey = DataCache.AllPortalsCacheKey;
-            var portals = CBO.GetCachedObject<List<PortalInfo>>(new CacheItemArgs(cacheKey, DataCache.AllPortalsCacheTimeOut, DataCache.AllPortalsCachePriority), 
-                                                    GetAllPortalsCallBack);
+            string cultureCode = Localization.SystemLocale;
+            string cacheKey = String.Format(DataCache.PortalCacheKey, Null.NullInteger, cultureCode);
+            var portals = CBO.GetCachedObject<List<PortalInfo>>(new CacheItemArgs(cacheKey, DataCache.PortalCacheTimeOut, DataCache.PortalCachePriority, cultureCode), 
+                                                    GetPortalsCallBack);
             return new ArrayList(portals);
         }
 
@@ -3008,5 +3004,5 @@ namespace DotNetNuke.Entities.Portals
 
 
         #endregion
-    }
+	}
 }

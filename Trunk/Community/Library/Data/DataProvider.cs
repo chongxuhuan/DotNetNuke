@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -507,11 +507,6 @@ namespace DotNetNuke.Data
             }
             return reader;
         }
-
-	    public virtual IDataReader GetAllPortals()
-		{
-			return ExecuteReader("GetAllPortals");
-		}
 
         public virtual IDataReader GetPortalsByName(string nameToMatch, int pageIndex, int pageSize)
         {
