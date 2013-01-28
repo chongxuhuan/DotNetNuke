@@ -2326,8 +2326,49 @@ corrected with each release. &lt;/p&gt;
 	&lt;li&gt;none&lt;/li&gt;
 &lt;/ul&gt;</value>
   </data>
-  <data name="WhatsNew.07.00.02" xml:space="preserve">
-    <value>&lt;h3 class="SubSubHead"&gt;Whats new placeholder 7.0.2&lt;/h3&gt;
-</value>
+  <data name="WhatsNew.07.00.03" xml:space="preserve">
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue that prevented non admins and non hosts to save HTML content as a template&lt;/li&gt;
+	&lt;li&gt;Fixed potential endless loop when using the device redirection on a new site&lt;/li&gt;
+	&lt;li&gt;Fixed UI issue where sub menus could go off screen&lt;/li&gt;
+	&lt;li&gt;Fixed issue that stopped users from switching sites from the control bar&lt;/li&gt;
+	&lt;li&gt;Fixed CSS issue for disabled menu items&lt;/li&gt;
+	&lt;li&gt;Fixed issue with link in the Journal when a site is restored in a different server&lt;/li&gt;
+	&lt;li&gt;Fixed issue that prevented pop ups from closing when a window would not use the default alias for JQuery&lt;/li&gt;
+	&lt;li&gt;Fixed errors when registering or logging in using a Twitter account&lt;/li&gt;
+	&lt;li&gt;Fixed issue that stopped users from updating the Max File Size value&lt;/li&gt;
+	&lt;li&gt;Implemented functionality in the Admin &gt; Advanced Configuration &gt; Languages so that users are able to re install and upgrade language packs&lt;/li&gt;
+	&lt;li&gt;Fixed error in the HTML Editor Image Manager that stopped users from navigating the complete folder structure&lt;/li&gt;
+	&lt;li&gt;Improved performance of the File Explorer when looking for files from an HTML module&lt;/li&gt;
+	&lt;li&gt;Fixed issue where more than one language pack was being shown for each language during installation&lt;/li&gt;
+	&lt;li&gt;Fixed issue where notification emails were not being sent&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the wrong timezone would be set in the host user's profile&lt;/li&gt;
+	&lt;li&gt;Fixed issue where email was not getting delivered when a user received a message from another user&lt;/li&gt;
+	&lt;li&gt;Fixed issue that prevented users from renaming pages that include special characteres&lt;/li&gt;
+	&lt;li&gt;Enhanced the flow when downloading documents that can be opened in a browser (like xml)&lt;/li&gt;
+	&lt;li&gt;Removed non FIPS compliant code from the Client Resource Management component&lt;/li&gt;
+	&lt;li&gt;Fixed issue where the user was not able to download language packs from the host &gt; languages section&lt;/li&gt;
+	&lt;li&gt;Implemented functionality to send query strings when redirecting sites using the mobile redirection feature&lt;/li&gt;
+
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;File Manager Module&lt;/li&gt;
+	&lt;li&gt;HTML Module&lt;/li&gt;
+	&lt;li&gt;Journal Module&lt;/li&gt;
+	&lt;li&gt;Messaging Module&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;</value>
   </data>
 </root>
