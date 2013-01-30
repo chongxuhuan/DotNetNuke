@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -25,7 +25,10 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using DotNetNuke.Entities.Host;
 using DotNetNuke.UI.WebControls;
+
+using Telerik.Web.UI;
 
 #endregion
 
@@ -44,19 +47,46 @@ namespace DotNetNuke.Framework
         /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
-        public static void AddScriptManager(Page objPage)
+        public static void AddScriptManager(Page page)
         {
-            if (GetScriptManager(objPage) == null)
+	        AddScriptManager(page, true);
+        }
+		/// <summary>
+		/// AddScriptManager is used internally by the framework to add a ScriptManager control to the page.
+		/// </summary>
+		/// <param name="page">the page instance.</param>
+		/// <param name="checkCdn">Whether check cdn settings from host settings.</param>
+        public static void AddScriptManager(Page page, bool checkCdn)
+        {
+			if (GetScriptManager(page) == null)
             {
-                using (var objScriptManager = new Telerik.Web.UI.RadScriptManager { ID = "ScriptManager", EnableScriptGlobalization = true, SupportsPartialRendering = true, EnableHandlerDetection = false})
+                using (var scriptManager = new RadScriptManager
+	                {
+		                ID = "ScriptManager", 
+						EnableScriptGlobalization = true, 
+						SupportsPartialRendering = true, 
+						EnableHandlerDetection = false,
+						EnableEmbeddedjQuery = false
+	                })
                 {
-                    if (objPage.Form != null)
+					if (page.Form != null)
                     {
                         try
                         {
-                            var scriptReference = new ScriptReference("MicrosoftAjax.js", "System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35") { Path = "https://ajax.aspnetcdn.com/ajax/4.0/1/MicrosoftAjax.js", ScriptMode = ScriptMode.Release };
-                            objScriptManager.Scripts.Add(scriptReference);
-                            objPage.Form.Controls.AddAt(0, objScriptManager);
+							if (checkCdn)
+							{
+								scriptManager.EnableCdn = Host.EnableMsAjaxCdn;
+								scriptManager.CdnSettings.TelerikCdn = Host.EnableTelerikCdn ? TelerikCdnMode.Enabled : TelerikCdnMode.Disabled;
+								if (scriptManager.CdnSettings.TelerikCdn != TelerikCdnMode.Disabled && !string.IsNullOrEmpty(Host.TelerikCdnBasicUrl))
+								{
+									scriptManager.CdnSettings.BaseUrl = Host.TelerikCdnBasicUrl;
+								}
+								if (scriptManager.CdnSettings.TelerikCdn != TelerikCdnMode.Disabled && !string.IsNullOrEmpty(Host.TelerikCdnSecureUrl))
+								{
+									scriptManager.CdnSettings.BaseSecureUrl = Host.TelerikCdnSecureUrl;
+								}
+							}
+							page.Form.Controls.AddAt(0, scriptManager);
                         }
                         catch
                         {
@@ -68,13 +98,25 @@ namespace DotNetNuke.Framework
                         }
                     }
                 }
-				using (var objStylesheetManager = new Telerik.Web.UI.RadStyleSheetManager { ID = "StylesheetManager", EnableHandlerDetection = false })
+				using (var stylesheetManager = new RadStyleSheetManager { ID = "StylesheetManager", EnableHandlerDetection = false })
                 {
-                    if (objPage.Form != null)
+					if (page.Form != null)
                     {
                         try
                         {
-                            objPage.Form.Controls.AddAt(0, objStylesheetManager);
+							if (checkCdn)
+							{
+								stylesheetManager.CdnSettings.TelerikCdn = Host.EnableTelerikCdn ? TelerikCdnMode.Enabled : TelerikCdnMode.Disabled;
+								if (stylesheetManager.CdnSettings.TelerikCdn != TelerikCdnMode.Disabled && !string.IsNullOrEmpty(Host.TelerikCdnBasicUrl))
+								{
+									stylesheetManager.CdnSettings.BaseUrl = Host.TelerikCdnBasicUrl;
+								}
+								if (stylesheetManager.CdnSettings.TelerikCdn != TelerikCdnMode.Disabled && !string.IsNullOrEmpty(Host.TelerikCdnSecureUrl))
+								{
+									stylesheetManager.CdnSettings.BaseSecureUrl = Host.TelerikCdnSecureUrl;
+								}
+							}
+							page.Form.Controls.AddAt(0, stylesheetManager);
                         }
                         catch
                         {

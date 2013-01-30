@@ -972,4 +972,31 @@
   <data name="plBatch.Text" xml:space="preserve">
     <value>Number of messages sent in each batch:</value>
   </data>
+  <data name="CdnSettings.Text" xml:space="preserve">
+    <value>CDN Settings</value>
+  </data>
+  <data name="plMsAjaxCdn.Help" xml:space="preserve">
+    <value>Enable CDN setting for Microsoft Ajax Library?</value>
+  </data>
+  <data name="plMsAjaxCdn.Text" xml:space="preserve">
+    <value>Enable MS Ajax CDN?</value>
+  </data>
+  <data name="plTelerikBasicUrl.Help" xml:space="preserve">
+    <value>Set the basic url of Telerik CDN, it will use the files on Telerik server if you keep this field empty. you can see more from &lt;a href="http://www.telerik.com/help/aspnet-ajax/cdn-custom-provider.html" target="_blank"&gt;here&lt;/a&gt;.</value>
+  </data>
+  <data name="plTelerikBasicUrl.Text" xml:space="preserve">
+    <value>Telerik CDN Basic Url</value>
+  </data>
+  <data name="plTelerikCdn.Help" xml:space="preserve">
+    <value>Enable CDN settings for Telerik Controls?</value>
+  </data>
+  <data name="plTelerikCdn.Text" xml:space="preserve">
+    <value>Enable Telerik CDN?</value>
+  </data>
+  <data name="plTelerikSecureUrl.Help" xml:space="preserve">
+    <value>Set the secure url of Telerik CDN, it will use the files on Telerik server if you keep this field empty. you can see more from &lt;a href="http://www.telerik.com/help/aspnet-ajax/cdn-custom-provider.html" target="_blank"&gt;here&lt;/a&gt;.</value>
+  </data>
+  <data name="plTelerikSecureUrl.Text" xml:space="preserve">
+    <value>Telerik CDN Secure Url</value>
+  </data>
 </root>

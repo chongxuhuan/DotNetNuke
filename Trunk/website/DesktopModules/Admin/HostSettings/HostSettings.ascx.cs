@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -183,6 +183,14 @@ namespace DotNetNuke.Modules.Admin.Host
             txtJQueryUIHostedUrl.Text = jQuery.HostedUIUrl;
         }
 
+		private void BindCdnSettings()
+		{
+			chkMsAjaxCdn.Checked = Entities.Host.Host.EnableMsAjaxCdn;
+			chkTelerikCdn.Checked = Entities.Host.Host.EnableTelerikCdn;
+			txtTelerikBasicUrl.Text = Entities.Host.Host.TelerikCdnBasicUrl;
+			txtTelerikSecureUrl.Text = Entities.Host.Host.TelerikCdnSecureUrl;
+		}
+
         private void BindPerformance()
         {
             cboPageState.Items.FindByValue(Entities.Host.Host.PageStatePersister).Selected = true; 
@@ -309,6 +317,7 @@ namespace DotNetNuke.Modules.Admin.Host
             BindSmtpServer();
             BindPerformance();
             BindJQuery();
+	        BindCdnSettings();
             BindClientResourceManagement();
             BindLogList();
             ManageMinificationUi();
@@ -831,6 +840,10 @@ namespace DotNetNuke.Modules.Admin.Host
                     HostController.Instance.Update("jQueryHosted", chkJQueryUseHosted.Checked ? "Y" : "N", false);
                     HostController.Instance.Update("jQueryUrl", txtJQueryHostedUrl.Text, false);
                     HostController.Instance.Update("jQueryUIUrl", txtJQueryUIHostedUrl.Text, false);
+					HostController.Instance.Update("EnableMsAjaxCDN", chkMsAjaxCdn.Checked ? "Y" : "N", false);
+					HostController.Instance.Update("EnableTelerikCDN", chkTelerikCdn.Checked ? "Y" : "N", false);
+					HostController.Instance.Update("TelerikCDNBasicUrl", txtTelerikBasicUrl.Text, false);
+					HostController.Instance.Update("TelerikCDNSecureUrl", txtTelerikSecureUrl.Text, false);
                     HostController.Instance.Update(ClientResourceSettings.EnableCompositeFilesKey, chkCrmEnableCompositeFiles.Checked.ToString(CultureInfo.InvariantCulture));
                     HostController.Instance.Update(ClientResourceSettings.MinifyCssKey, chkCrmMinifyCss.Checked.ToString(CultureInfo.InvariantCulture));
                     HostController.Instance.Update(ClientResourceSettings.MinifyJsKey, chkCrmMinifyJs.Checked.ToString(CultureInfo.InvariantCulture));

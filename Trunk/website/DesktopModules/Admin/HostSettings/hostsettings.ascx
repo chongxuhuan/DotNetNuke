@@ -50,7 +50,8 @@
         });
 
         toggleSection('friendlyUrlsRow', document.getElementById('<%=chkUseFriendlyUrls.ClientID %>').checked);
-        toggleSection('requestFiltersRow', document.getElementById('<%=chkEnableRequestFilters.ClientID %>').checked);
+    	toggleSection('requestFiltersRow', document.getElementById('<%=chkEnableRequestFilters.ClientID %>').checked);
+    	toggleSection('telerikCdnSettingsRow', document.getElementById('<%=chkTelerikCdn.ClientID %>').checked);
 
         $("#<%=chkUseFriendlyUrls.ClientID %>").change(function(e) {
             toggleSection('friendlyUrlsRow', this.checked);
@@ -59,6 +60,10 @@
         $("#<%=chkEnableRequestFilters.ClientID %>").change(function(e) {
             toggleSection('requestFiltersRow', this.checked);
         });
+	    
+    	$("#<%=chkTelerikCdn.ClientID %>").change(function (e) {
+    		toggleSection('telerikCdnSettingsRow', this.checked);
+    	});
 
         var yesText = '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>',
             noText = '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>',
@@ -490,7 +495,29 @@
                     <asp:TextBox ID="txtJQueryUIHostedUrl" runat="server" MaxLength="256" />
                 </div>
             </fieldset>
-            
+            <h2 id="Panel-CdnSettings" class="dnnFormSectionHead">
+                <a href="#" class="">
+                    <%=LocalizeString("CdnSettings")%></a></h2>
+            <fieldset>
+                <div class="dnnFormItem">
+                    <dnn:Label ID="plMsAjaxCdn" ControlName="chkMsAjaxCdn" runat="server" />
+                    <asp:CheckBox ID="chkMsAjaxCdn" runat="server" />
+                </div>
+				<div class="dnnFormItem">
+                    <dnn:Label ID="plTelerikCdn" ControlName="chkTelerikCdn" runat="server" />
+                    <asp:CheckBox ID="chkTelerikCdn" runat="server" />
+                </div>
+				<div id="telerikCdnSettingsRow">
+					<div class="dnnFormItem">
+						<dnn:Label ID="plTelerikBasicUrl" ControlName="chkTelerikBasicUrl" runat="server" />
+						<asp:TextBox ID="txtTelerikBasicUrl" runat="server" MaxLength="256" />
+					</div>
+					<div class="dnnFormItem">
+						<dnn:Label ID="plTelerikSecureUrl" ControlName="chkTelerikSecureUrl" runat="server" />
+						<asp:TextBox ID="txtTelerikSecureUrl" runat="server" MaxLength="256" />
+					</div>
+				</div>
+            </fieldset>
             <h2 id="Panel-ClientResourceManagement" class="dnnFormSectionHead">
                 <a href="#" class=""><%=LocalizeString("ClientResourceManagement")%></a>
             </h2>

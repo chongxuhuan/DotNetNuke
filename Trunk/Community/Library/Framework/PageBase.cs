@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -227,12 +227,13 @@ namespace DotNetNuke.Framework
 
         protected override void OnInit(EventArgs e)
         {
-            if (!HttpContext.Current.Request.Url.LocalPath.ToLower().Contains("installwizard.aspx"))
+	        var isInstallPage = HttpContext.Current.Request.Url.LocalPath.ToLower().Contains("installwizard.aspx");
+			if (!isInstallPage)
             {
                 Localization.SetThreadCultures(PageCulture, PortalSettings);
             }
 
-            AJAX.AddScriptManager(this);
+			AJAX.AddScriptManager(this, !isInstallPage);
 
             var dnncoreFilePath = HttpContext.Current.IsDebuggingEnabled
                    ? "~/js/Debug/dnncore.js"

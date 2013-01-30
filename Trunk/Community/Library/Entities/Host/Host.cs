@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -1482,6 +1482,56 @@ namespace DotNetNuke.Entities.Host
                 }
             }
         }
+
+		/// <summary>
+		///   Gets whether to use a hosted version of the MS Ajax Library
+		/// </summary>
+		/// <remarks>
+		///   Defaults to False
+		/// </remarks>
+	    public static bool EnableMsAjaxCdn
+	    {
+		    get
+		    {
+				return HostController.Instance.GetBoolean("EnableMsAjaxCDN", false);
+		    }
+	    }
+
+		/// <summary>
+		///   Gets whether to use a hosted version of the Telerik Library
+		/// </summary>
+		/// <remarks>
+		///   Defaults to False
+		/// </remarks>
+		public static bool EnableTelerikCdn
+		{
+			get
+			{
+				return HostController.Instance.GetBoolean("EnableTelerikCDN", false);
+			}
+		}
+
+		/// <summary>
+		/// Get Telerik CDN Basic Path.
+		/// </summary>
+	    public static string TelerikCdnBasicUrl
+	    {
+			get
+			{
+				return HostController.Instance.GetString("TelerikCDNBasicUrl");
+			}
+	    }
+
+		/// <summary>
+		/// Get Telerik CDN Secure Path.
+		/// </summary>
+		public static string TelerikCdnSecureUrl
+		{
+			get
+			{
+				return HostController.Instance.GetString("TelerikCDNSecureUrl");
+			}
+		}
 
         #endregion
 
