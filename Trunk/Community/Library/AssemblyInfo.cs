@@ -49,8 +49,8 @@ using DotNetNuke.Application;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("7.0.4.3")]
-[assembly: AssemblyFileVersion("7.0.4.3")]
+[assembly: AssemblyVersion("7.0.4.6")]
+[assembly: AssemblyFileVersion("7.0.4.6")]
 [assembly: AssemblyStatus(ReleaseMode.Stable)]
 // Allow internal variables to be visible to testing projects
 [assembly: InternalsVisibleTo("DotNetNuke.Tests.Core")]
@@ -58,6 +58,7 @@ using DotNetNuke.Application;
 // used by Moq. Paste in a single line.
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: InternalsVisibleTo("DotNetNuke.Web")]
+[assembly: InternalsVisibleTo("DotNetNuke.HttpModules")]
 [assembly: InternalsVisibleTo("DotNetNuke.Modules.MemberDirectory")]
 [assembly: InternalsVisibleTo("DotNetNuke.Provider.AspNetProvider")]
 [assembly: InternalsVisibleTo("DotNetNuke.Tests.Content")]

@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -1426,19 +1426,38 @@ namespace DotNetNuke.Entities.Users
         /// </remarks>
         public static void UpdateUser(int portalId, UserInfo user, bool loggedAction)
         {
-            portalId = GetEffectivePortalId(portalId);
-            user.PortalID = portalId;
-
-            //Update the User
-            MembershipProvider.Instance().UpdateUser(user);
-            if (loggedAction)
-            {
-                var objEventLog = new EventLogController();
-                objEventLog.AddLog(user, PortalController.GetCurrentPortalSettings(), GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.USER_UPDATED);
-            }
-            //Remove the UserInfo from the Cache, as it has been modified
-            DataCache.ClearUserCache(portalId, user.Username);
+            UpdateUser(portalId, user, loggedAction, true);
         }
+
+		/// -----------------------------------------------------------------------------
+		/// <summary>
+		///   updates a user
+		/// </summary>
+		/// <param name = "portalId">the portalid of the user</param>
+		/// <param name = "user">the user object</param>
+		/// <param name = "loggedAction">whether or not the update calls the eventlog - the eventlogtype must still be enabled for logging to occur</param>
+		/// <param name="clearCache">Whether clear cache after update user.</param>
+		/// <remarks>
+		/// This method is used internal because it should be use carefully, or it will caught cache doesn't clear correctly.
+		/// </remarks>
+		internal static void UpdateUser(int portalId, UserInfo user, bool loggedAction, bool clearCache)
+		{
+			portalId = GetEffectivePortalId(portalId);
+			user.PortalID = portalId;
+
+			//Update the User
+			MembershipProvider.Instance().UpdateUser(user);
+			if (loggedAction)
+			{
+				var objEventLog = new EventLogController();
+				objEventLog.AddLog(user, PortalController.GetCurrentPortalSettings(), GetCurrentUserInfo().UserID, "", EventLogController.EventLogType.USER_UPDATED);
+			}
+			//Remove the UserInfo from the Cache, as it has been modified
+			if (clearCache)
+			{
+				DataCache.ClearUserCache(portalId, user.Username);
+			}
+		}
 
         /// -----------------------------------------------------------------------------
         /// <summary>

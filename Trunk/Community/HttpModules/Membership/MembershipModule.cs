@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -147,7 +147,7 @@ namespace DotNetNuke.HttpModules.Membership
                     //update LastActivityDate and IP Address for user
                     user.Membership.LastActivityDate = DateTime.Now;
                     user.LastIPAddress = request.UserHostAddress;
-                    UserController.UpdateUser(portalSettings.PortalId, user, false);
+                    UserController.UpdateUser(portalSettings.PortalId, user, false, false);
                 }
 
                 //check for RSVP code
