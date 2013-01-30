@@ -5,7 +5,7 @@
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 <%@ Register Assembly="DotNetNuke.RadEditorProvider" Namespace="DotNetNuke.Providers.RadEditorProvider" TagPrefix="provider" %>
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> 
+<script type="text/javascript" src="[$protocol$]ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> 
 
 <script type="text/javascript">
 	var _PageOnSite_ClientID = "PageOnSite";
