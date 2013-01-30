@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -86,7 +86,9 @@ namespace DotNetNuke.Modules.CoreMessaging
             }
             if (UserId != ProfileUserId && (PortalSettings.ActiveTab.ParentId == PortalSettings.UserTabId || TabId == PortalSettings.UserTabId))
             {
-                Response.Redirect(Globals.NavigateURL(ModuleContext.PortalSettings.ActiveTab.TabID, "", "UserId=" + ModuleContext.PortalSettings.UserId.ToString(CultureInfo.InvariantCulture)));
+				// Do not redirect but hide the content of the module.
+				CoreMessagingContainer.Visible = false;
+				return;
             }
             
             if (IsEditable && PermissionsNotProperlySet())
