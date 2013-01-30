@@ -8,6 +8,30 @@
 /*****                                                  *****/
 /************************************************************/
 
+/***** Fix bug 24927: Return the language package ID in sp UpdateLanguagePack. *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdateLanguagePack]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateLanguagePack
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}UpdateLanguagePack]
+	@LanguagePackID			int,
+	@PackageID			    int,
+	@LanguageID			    int,
+	@DependentPackageID		int,
+	@LastModifiedByUserID	int
+
+AS
+	UPDATE {databaseOwner}{objectQualifier}LanguagePacks
+		SET
+			PackageID = @PackageID,
+			LanguageID = @LanguageID,
+			DependentPackageID = @DependentPackageID,
+			[LastModifiedByUserID] = @LastModifiedByUserID,	
+			[LastModifiedOnDate] = GETDATE()
+	WHERE LanguagePackID = @LanguagePackID
+
+	SELECT @LanguagePackID
+GO
 
 
 /************************************************************/
