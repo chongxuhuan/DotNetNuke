@@ -2533,7 +2533,7 @@ namespace DotNetNuke.Entities.Portals
             var portalController = TestablePortalController.Instance;
             var portal = portalController.GetPortal(portalId);
 
-            return (portal.PortalGroupID > Null.NullInteger);
+			return portal != null && portal.PortalGroupID > Null.NullInteger;
         }
 
         /// <summary>
