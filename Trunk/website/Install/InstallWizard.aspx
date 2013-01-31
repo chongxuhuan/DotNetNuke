@@ -45,10 +45,6 @@
             <asp:Label id="lblDotNetNukeInstalltion" runat="server" ResourceKey="InstallTitle" />
             <hr/>
         </h2>
-        <div class="dnnForm dnnInstall dnnClear" id="dnnInstall">
-            <asp:Label ID="lblIntroDetail" runat="Server" ResourceKey="IntroDetail" />
-        </div>
-        <br />
         <asp:Label ID="lblError" runat="server" CssClass="dnnFormMessage dnnFormError" />
 		<div id="permissionCheckMessage">
             <span class="NormalBold promptMessage permissionCheck"></span>
@@ -81,6 +77,7 @@
             </ul>
             <div class="installAccountInfo dnnClear" id="installAccountInfo">
                 <asp:Label ID="lblAccountInfoIntro" runat="server" ResourceKey="AccountInfoIntro" />
+				<asp:Label ID="lblIntroDetail" runat="Server" ResourceKey="IntroDetail" />
                 <p style="display: block; margin: 10px 0 10px 0;">
                     <asp:Label ID="lblAccountInfoError" runat="server" CssClass="dnnFormMessage dnnFormError" />                 
                 </p>
@@ -225,14 +222,16 @@
                 <div id="installInstallation" runat="Server" visible="True" class="dnnForm">
                     <div class="dnnFormItem">
                         <div id="installation-progress">
-                                <span id="timer"> </span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<span id="percentage" style="height: auto; max-height: 200px; overflow: auto"> </span>
-                                <div class="dnnProgressbar">
-                                    <div id="progressbar"></div>
-                                </div>    
-                                <div id="installation-buttons">
-                                    <a id="retry" href="javascript:void(0)" class="dnnPrimaryAction"><%= LocalizeString("Retry") %></a>
-                                    <a id="seeLogs" href="javascript:void(0)" class="dnnSecondaryAction"><%= LocalizeString("SeeLogs") %></a>                               
-                                </div>    
+                            <span id="timer"> </span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<span id="percentage" style="height: auto; max-height: 200px; overflow: auto"> </span>
+                            <div class="dnnProgressbar">
+                                <div id="progressbar"></div>
+                            </div>    
+                            <div id="installation-buttons">
+                                <a id="retry" href="javascript:void(0)" class="dnnPrimaryAction"><%= LocalizeString("Retry") %></a>
+                                <a id="seeLogs" href="javascript:void(0)" class="dnnSecondaryAction"><%= LocalizeString("SeeLogs") %></a>
+								<asp:LinkButton ID="visitSite" runat="server" resourcekey="VisitWebsite" CssClass="dnnPrimaryAction visitSiteLink" />                               
+                            </div> 
+							<hr />   
                             <div id="installation-log-container" class="dnnScroll">                                
                                 <div id="installation-log" ></div>
                             </div>
@@ -250,8 +249,6 @@
                                 <img id="bannerImage" runat="server" class="banner" src="../images/branding/DNN_logo.png" alt="" onerror="installWizard.bannerError(this);" />
                             </a>
                         </div>                       
-                        <hr />
-                        <asp:LinkButton ID="visitSite" runat="server" resourcekey="VisitWebsite" CssClass="dnnPrimaryAction visitSiteLink" />
                     </div>
                 </div>
             </div>

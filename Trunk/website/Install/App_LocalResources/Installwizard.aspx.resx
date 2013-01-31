@@ -202,7 +202,7 @@
     <value>DotNetNuke Installation</value>
   </data>
   <data name="IntroDetail.Text" xml:space="preserve">
-    <value>&lt;a class="dnnSecondaryAction" href="http://www.dotnetnuke.com/Resources/Training/Training-Videos/Installation.aspx" target="new"&gt;View Installation Video&lt;/a&gt;</value>
+    <value>&lt;a class="videoLink" href="http://www.dotnetnuke.com/Resources/Training/Training-Videos/Installation.aspx" target="new"&gt;View Installation Video&lt;/a&gt;</value>
   </data>
   <data name="IsAbleToPerformDatabaseActionsCheck.Text" xml:space="preserve">
     <value>Checking database user has ability to perform necessary actions</value>
@@ -430,10 +430,10 @@
     <value>Activating License</value>
   </data>
   <data name="AccountInfo.Text" xml:space="preserve">
-    <value>Account Info</value>
+    <value>Enter Your Account Information</value>
   </data>
   <data name="Installation.Text" xml:space="preserve">
-    <value>Installation</value>
+    <value>Proceed with Installation</value>
   </data>
   <data name="ViewWebsite.Text" xml:space="preserve">
     <value>View Website</value>
