@@ -24,7 +24,7 @@ Scenario Outline: Add User from the Users Accounts Logged In As a User in the Ad
 	And In the Password text box, enter <Password>
 	And In the Confirm Password text box, re-enter the same password <Confirm Password>
 	And Click the Add New User link.
-	Then The newly added user account can now be viewed and modified using the User Accounts module
+	Then The newly added user account can now be viewed and modified using the User Accounts module <User Name>
 	And If Authorize is checked the new user will automatically gain access to the Registered User role and any roles set for Auto Assignment
 	And If Authorize is unchecked the new user will be created but will not be able to access the restricted areas of the site
 	And If Notify is checked the new user will be sent a notification email 
