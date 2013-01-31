@@ -712,9 +712,11 @@ namespace DotNetNuke.Services.Install
 					var li = new ListItem { Value = package.Description, Text = package.Name };
 		            languageList.AddItem(li.Text, li.Value);
 		            RadComboBoxItem lastItem = languageList.Items[languageList.Items.Count - 1];
-					if (!DotNetNukeContext.Current.Application.Version.Equals(package.Version))
+					if (DotNetNukeContext.Current.Application.Version.Major != package.Version.Major
+						|| DotNetNukeContext.Current.Application.Version.Minor != package.Version.Minor
+						|| DotNetNukeContext.Current.Application.Version.Build != package.Version.Build)
 		            {
-						lastItem.Attributes.Add("onclick", "javascript:LegacyLangaugePack(" + package.Version + ");");
+						lastItem.Attributes.Add("onclick", "javascript:LegacyLangaugePack('" + package.Version + "');");
 		            }
                 }
             }
