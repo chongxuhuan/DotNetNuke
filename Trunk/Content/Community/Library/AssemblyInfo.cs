@@ -46,12 +46,12 @@ using DotNetNuke.Application;
 //      Minor Version 
 //      Build Number
 //      Revision
-//
+// 
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("7.0.4.7")]
-[assembly: AssemblyFileVersion("7.0.4.7")]
-[assembly: AssemblyStatus(ReleaseMode.Stable)]
+[assembly: AssemblyVersion("7.0.4.24")]
+[assembly: AssemblyFileVersion("7.0.4.24")]
+[assembly: AssemblyStatus(ReleaseMode.Alpha)]
 // Allow internal variables to be visible to testing projects
 [assembly: InternalsVisibleTo("DotNetNuke.Tests.Core")]
 // This assembly is the default dynamic assembly generated Castle DynamicProxy, 
