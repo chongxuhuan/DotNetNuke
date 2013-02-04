@@ -33,6 +33,14 @@ AS
 	SELECT @LanguagePackID
 GO
 
+/***** Fix bug 24221: add unique index on MetaData table. *****/
+DELETE FROM {databaseOwner}[{objectQualifier}MetaData] WHERE MetaDataID NOT IN (SELECT MIN(MetaDataID) FROM {databaseOwner}[{objectQualifier}MetaData] GROUP BY MetaDataName)
+GO
+IF EXISTS (SELECT * FROM dbo.sysindexes WHERE name='IX_{objectQualifier}MetaData_MetaDataName')
+	DROP INDEX {databaseOwner}[{objectQualifier}MetaData].[IX_{objectQualifier}MetaData_MetaDataName]   
+GO
+CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}MetaData_MetaDataName ON {databaseOwner}[{objectQualifier}MetaData](MetaDataName) 
+GO
 
 /************************************************************/
 
