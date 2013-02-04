@@ -7,10 +7,10 @@
             <dnn:label id="plRoleGroups" runat="server" suffix="" controlname="cboRoleGroups" />
             <%--<asp:dropdownlist id="cboRoleGroups" Runat="server" AutoPostBack="True" />--%>
             <dnn:DnnComboBox id="cboRoleGroups" Runat="server" AutoPostBack="True" />
-			<asp:hyperlink ID="lnkEditGroup" runat="server">
+			<asp:hyperlink ID="lnkEditGroup" runat="server" CssClass="inlineButton">
 				<dnn:dnnImage ID="imgEditGroup" IconKey="Edit" AlternateText="Edit" runat="server" resourcekey="Edit" />
 			</asp:hyperlink>
-			<dnn:DnnImagebutton ID="cmdDelete" Runat="server" IconKey="Delete" />
+			<dnn:DnnImagebutton ID="cmdDelete" Runat="server" IconKey="Delete" CssClass="inlineButton" />
         </div>
     </div>
 	<dnn:DnnGrid id="grdRoles" AutoGenerateColumns="false" EnableViewState="false" runat="server" CssClass="dnnGrid">
@@ -80,7 +80,8 @@
             text: '<%= DotNetNuke.UI.Utilities.ClientAPI.GetSafeJSString(LocalizeString("DeleteItem")) %>',
             yesText: '<%= Localization.GetSafeJSString("Yes.Text", Localization.SharedResourceFile) %>',
             noText: '<%= Localization.GetSafeJSString("No.Text", Localization.SharedResourceFile) %>',
-            title: '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>'
+        	title: '<%= Localization.GetSafeJSString("Confirm.Text", Localization.SharedResourceFile) %>',
+        	isButton: true
         });
     }
 

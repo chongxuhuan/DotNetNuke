@@ -31,6 +31,12 @@
     width: auto !important;
     margin-bottom: 5px;
 }
+.dnnSecurityRoles .inlineButton {
+	position: relative;
+	top: -33px;
+	vertical-align: bottom;
+	margin-left: 4px;
+}
 
 .dnnFormItem input.dnnUserSearchInput
 {
