@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -44,6 +44,7 @@ using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
+using DotNetNuke.Services.Personalization;
 using DotNetNuke.UI.ControlPanels;
 using DotNetNuke.UI.Utilities;
 using DotNetNuke.Web.UI;
@@ -311,6 +312,11 @@ namespace DotNetNuke.UI.ControlPanel
 					}
 				}
 
+				//set view mode to edit after add module.
+				if (PortalSettings.UserMode != PortalSettings.Mode.Edit)
+				{
+					Personalization.SetProfile("Usability", "UserMode" + PortalSettings.PortalId, "EDIT");
+				}
 				Response.Redirect(Request.RawUrl, true);
 			}
 		}

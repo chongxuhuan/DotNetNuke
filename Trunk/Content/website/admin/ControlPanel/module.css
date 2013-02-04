@@ -337,8 +337,8 @@ a.dnnCPHMessage {
 	width: 100px;
 	margin: 0;
 }	
-.dnnCPHNav .rcbInput{
-	padding: 5px;
+#RibbonBar_ddlMode .rcbInput{
+	padding: 5px !important;
 }
 
 .cbctAddModule .dnnClear label{
