@@ -642,9 +642,14 @@
                     <asp:CheckBox ID="chkEnableContentLocalization" runat="server" />
                 </div>
                  <div class="dnnFormItem">
-						<dnn:Label ID="plBatch" runat="server" ControlName="txtBatch" />
-						<asp:TextBox ID="txtBatch" runat="server" MaxLength="6" />
-					</div>
+					<dnn:Label ID="plBatch" runat="server" ControlName="txtBatch" />
+					<asp:TextBox ID="txtBatch" runat="server" MaxLength="6" />
+				</div>
+				<div class="dnnFormItem">
+                    <dnn:Label ID="plAsyncTimeout" ControlName="txtAsyncTimeout" runat="server" />
+                    <asp:TextBox ID="txtAsyncTimeout" runat="server" MaxLength="4" />
+                    <asp:Label runat="server" resourcekey="Seconds" />
+                </div>
             </fieldset>
         </div>
     </div>

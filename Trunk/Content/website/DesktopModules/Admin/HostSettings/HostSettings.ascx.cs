@@ -376,6 +376,7 @@ namespace DotNetNuke.Modules.Admin.Host
             chkAutoSync.Checked = Entities.Host.Host.EnableFileAutoSync;
             chkEnableContentLocalization.Checked = Entities.Host.Host.EnableContentLocalization;
             txtBatch.Text = Entities.Host.Host.MessageSchedulerBatchSize.ToString();
+			txtAsyncTimeout.Text = Entities.Host.Host.AsyncTimeout.ToString();
 
             ViewState["SelectedSchedulerMode"] = cboSchedulerMode.SelectedItem.Value;
             ViewState["SelectedLogBufferEnabled"] = chkLogBuffer.Checked;
@@ -844,6 +845,7 @@ namespace DotNetNuke.Modules.Admin.Host
 					HostController.Instance.Update("EnableTelerikCDN", chkTelerikCdn.Checked ? "Y" : "N", false);
 					HostController.Instance.Update("TelerikCDNBasicUrl", txtTelerikBasicUrl.Text, false);
 					HostController.Instance.Update("TelerikCDNSecureUrl", txtTelerikSecureUrl.Text, false);
+					HostController.Instance.Update("AsyncTimeout", txtAsyncTimeout.Text, false);
                     HostController.Instance.Update(ClientResourceSettings.EnableCompositeFilesKey, chkCrmEnableCompositeFiles.Checked.ToString(CultureInfo.InvariantCulture));
                     HostController.Instance.Update(ClientResourceSettings.MinifyCssKey, chkCrmMinifyCss.Checked.ToString(CultureInfo.InvariantCulture));
                     HostController.Instance.Update(ClientResourceSettings.MinifyJsKey, chkCrmMinifyJs.Checked.ToString(CultureInfo.InvariantCulture));

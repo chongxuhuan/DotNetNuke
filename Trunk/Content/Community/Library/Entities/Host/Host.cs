@@ -1533,6 +1533,23 @@ namespace DotNetNuke.Entities.Host
 			}
 		}
 
+		/// <summary>
+		/// Get the time, in seconds, before asynchronous postbacks time out if no response is received.
+		/// </summary>
+		public static int AsyncTimeout
+		{
+			get
+			{
+				var timeout = HostController.Instance.GetInteger("AsyncTimeout", 90);
+				if (timeout < 90)
+				{
+					timeout = 90;
+				}
+
+				return timeout;
+			}
+		}
+
         #endregion
 
         #region Obsolete Members

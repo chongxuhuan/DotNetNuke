@@ -999,4 +999,10 @@
   <data name="plTelerikSecureUrl.Text" xml:space="preserve">
     <value>Telerik CDN Secure Url</value>
   </data>
+  <data name="plAsyncTimeout.Help" xml:space="preserve">
+    <value>Set a value that indicates the time, in seconds, before asynchronous postbacks time out if no response is received, the value should between 90-9999 seconds.</value>
+  </data>
+  <data name="plAsyncTimeout.Text" xml:space="preserve">
+    <value>Async postbacks time out:</value>
+  </data>
 </root>
