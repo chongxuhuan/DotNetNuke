@@ -165,7 +165,7 @@
                         <% } %>
                         </div>
                         <a href="#" class="contents-help"><strong><%=LocalizeString("Help.Text") %></strong></a>
-                        <dnn:DnnDeviceExplorer runat="server" ID="DeviceExplorer" FooterEnabled="False" LogoEnabled="False" BackButtonCssClass="dnnTertiaryAction"/>
+                        <dnn:DnnDeviceExplorer runat="server" ID="DeviceExplorer" FooterEnabled="False" LogoEnabled="False" BackButtonCssClass="dnnTertiaryAction" ImagesEnabled="True"/>
                     </div>
                   
                 </div>

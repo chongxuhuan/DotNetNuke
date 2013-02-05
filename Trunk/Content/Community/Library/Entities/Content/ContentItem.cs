@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -261,6 +261,17 @@ namespace DotNetNuke.Entities.Content
             ContentKey = Null.SetNullString(dr["ContentKey"]);
             Indexed = Null.SetNullBoolean(dr["Indexed"]);
         }
+
+		protected void Clone(ContentItem cloneItem, ContentItem originalItem)
+		{
+			cloneItem.ContentItemId = originalItem.ContentItemId;
+			cloneItem.Content = originalItem.Content;
+			cloneItem.ContentTypeId = originalItem.ContentTypeId;
+			cloneItem.TabID = originalItem.TabID;
+			cloneItem.ModuleID = originalItem.ModuleID;
+			cloneItem.ContentKey = originalItem.ContentKey;
+			cloneItem.Indexed = originalItem.Indexed;
+		}
         
 	    #endregion
 

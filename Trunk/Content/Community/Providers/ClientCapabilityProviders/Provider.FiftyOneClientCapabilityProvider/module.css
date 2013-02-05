@@ -202,7 +202,7 @@
 .deviceExplorerDevice h2 { font-size: 1.1em; clear: both; }
 
 /* VENDORS DEVICE BROWSING */ 
-.deviceExplorerDevices .item{margin-bottom:5px; min-height:50px;}
+.deviceExplorerDevices .item{margin-bottom:5px; min-height:150px;}
 .deviceExplorerDevices .item .model{font-weight:bold;}
 
 .DnnModule-Device-Detection .dnnTertiaryAction{margin-bottom:15px;}

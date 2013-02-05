@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -826,7 +826,8 @@ namespace DotNetNuke.Entities.Tabs
                     clonedTab.BreadCrumbs.Add(t.Clone());
                 }
             }
-            clonedTab.ContentItemId = ContentItemId;
+
+	        Clone(clonedTab, this);
 
             //localized properties
             clonedTab.UniqueId = UniqueId;

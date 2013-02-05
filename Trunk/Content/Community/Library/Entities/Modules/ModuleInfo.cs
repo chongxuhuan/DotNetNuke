@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -1023,7 +1023,6 @@ namespace DotNetNuke.Entities.Modules
                                         PaneModuleCount = PaneModuleCount,
                                         IsDefaultModule = IsDefaultModule,
                                         AllModules = AllModules,
-                                        ContentItemId = ContentItemId,
                                         UniqueId = Guid.NewGuid(),
                                         VersionGuid = Guid.NewGuid(),
                                         DefaultLanguageGuid = DefaultLanguageGuid,
@@ -1032,7 +1031,7 @@ namespace DotNetNuke.Entities.Modules
                                     };
 
             //localized properties
-
+	        Clone(objModuleInfo, this);
             return objModuleInfo;
         }
 
