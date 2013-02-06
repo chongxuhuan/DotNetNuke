@@ -847,16 +847,10 @@
     };
 })(jQuery);
 
-// jquery autocompleter
+// dnn customised jquery autocompleter
 (function ($) {
     "use strict";
-
-    /**
-     * jQuery autocomplete plugin
-     * @param {object|string} options
-     * @returns (object} jQuery object
-     */
-    $.fn.autocomplete = function (options) {
+    $.fn.dnnAutocomplete = function (options) {
         var url;
         if (arguments.length > 1) {
             url = options;
@@ -866,10 +860,10 @@
             url = options;
             options = { url: url };
         }
-        var opts = $.extend({}, $.fn.autocomplete.defaults, options);
+        var opts = $.extend({}, $.fn.dnnAutocomplete.defaults, options);
         return this.each(function () {
             var $this = $(this);
-            $this.data('autocompleter', new $.Autocompleter(
+            $this.data('autocompleter', new $.dnnAutocompleter(
                 $this,
                 $.meta ? $.extend({}, opts, $this.data()) : opts
             ));
@@ -880,7 +874,7 @@
      * Store default options
      * @type {object}
      */
-    $.fn.autocomplete.defaults = {
+    $.fn.dnnAutocomplete.defaults = {
         inputClass: 'acInput',
         loadingClass: 'acLoading',
         resultsClass: 'acResults',
@@ -1014,18 +1008,18 @@
     };
 
     /**
-     * Autocompleter class
+     * dnnAutocompleter class
      * @param {object} $elem jQuery object with one input tag
      * @param {object} options Settings
      * @constructor
      */
-    $.Autocompleter = function ($elem, options) {
+    $.dnnAutocompleter = function ($elem, options) {
 
         /**
          * Assert parameters
          */
         if (!$elem || !($elem instanceof $) || $elem.length !== 1 || $elem.get(0).tagName.toUpperCase() !== 'INPUT') {
-            throw new Error('Invalid parameter for jquery.Autocompleter, jQuery object with one element with INPUT tag expected.');
+            throw new Error('Invalid parameter for dnnAutocompleter, jQuery object with one element with INPUT tag expected.');
         }
 
         /**
@@ -1105,10 +1099,10 @@
         /**
          * Sanitize options
          */
-        this.options.minChars = sanitizeInteger(this.options.minChars, $.fn.autocomplete.defaults.minChars, { min: 0 });
-        this.options.maxItemsToShow = sanitizeInteger(this.options.maxItemsToShow, $.fn.autocomplete.defaults.maxItemsToShow, { min: 0 });
-        this.options.maxCacheLength = sanitizeInteger(this.options.maxCacheLength, $.fn.autocomplete.defaults.maxCacheLength, { min: 1 });
-        this.options.delay = sanitizeInteger(this.options.delay, $.fn.autocomplete.defaults.delay, { min: 0 });
+        this.options.minChars = sanitizeInteger(this.options.minChars, $.fn.dnnAutocomplete.defaults.minChars, { min: 0 });
+        this.options.maxItemsToShow = sanitizeInteger(this.options.maxItemsToShow, $.fn.dnnAutocomplete.defaults.maxItemsToShow, { min: 0 });
+        this.options.maxCacheLength = sanitizeInteger(this.options.maxCacheLength, $.fn.dnnAutocomplete.defaults.maxCacheLength, { min: 1 });
+        this.options.delay = sanitizeInteger(this.options.delay, $.fn.dnnAutocomplete.defaults.delay, { min: 0 });
         if (this.options.preventDefaultReturn != 2) {
             this.options.preventDefaultReturn = this.options.preventDefaultReturn ? 1 : 0;
         }
@@ -1245,10 +1239,10 @@
      * Position output DOM elements
      * @private
      */
-    $.Autocompleter.prototype.position = function () {
+    $.dnnAutocompleter.prototype.position = function () {
         var offset = this.dom.$elem.offset();
         var height = this.dom.$results.outerHeight();
-        var totalHeight = $(window).outerHeight();
+        var totalHeight = window.outerHeight;
         var inputBottom = offset.top + this.dom.$elem.outerHeight();
         var bottomIfDown = inputBottom + height;
         // Set autocomplete results at the bottom of input
@@ -1267,7 +1261,7 @@
      * Read from cache
      * @private
      */
-    $.Autocompleter.prototype.cacheRead = function (filter) {
+    $.dnnAutocompleter.prototype.cacheRead = function (filter) {
         var filterLength, searchLength, search, maxPos, pos;
         if (this.options.useCache) {
             filter = String(filter);
@@ -1301,7 +1295,7 @@
      * Write to cache
      * @private
      */
-    $.Autocompleter.prototype.cacheWrite = function (filter, data) {
+    $.dnnAutocompleter.prototype.cacheWrite = function (filter, data) {
         if (this.options.useCache) {
             if (this.cacheLength_ >= this.options.maxCacheLength) {
                 this.cacheFlush();
@@ -1320,7 +1314,7 @@
      * Flush cache
      * @public
      */
-    $.Autocompleter.prototype.cacheFlush = function () {
+    $.dnnAutocompleter.prototype.cacheFlush = function () {
         this.cacheData_ = {};
         this.cacheLength_ = 0;
     };
@@ -1332,7 +1326,7 @@
      * @param data
      * @returns Result of called hook, false if hook is undefined
      */
-    $.Autocompleter.prototype.callHook = function (hook, data) {
+    $.dnnAutocompleter.prototype.callHook = function (hook, data) {
         var f = this.options[hook];
         if (f && $.isFunction(f)) {
             return f(data, this);
@@ -1343,7 +1337,7 @@
     /**
      * Set timeout to activate autocompleter
      */
-    $.Autocompleter.prototype.activate = function () {
+    $.dnnAutocompleter.prototype.activate = function () {
         var self = this;
         if (this.keyTimeout_) {
             clearTimeout(this.keyTimeout_);
@@ -1356,7 +1350,7 @@
     /**
      * Activate autocompleter immediately
      */
-    $.Autocompleter.prototype.activateNow = function () {
+    $.dnnAutocompleter.prototype.activateNow = function () {
         var value = this.beforeUseConverter(this.dom.$elem.val());
         if (value !== this.lastProcessedValue_ && value !== this.lastSelectedValue_) {
             this.fetchData(value);
@@ -1368,7 +1362,7 @@
      * @param {string} value Value to base autocompletion on
      * @private
      */
-    $.Autocompleter.prototype.fetchData = function (value) {
+    $.dnnAutocompleter.prototype.fetchData = function (value) {
         var self = this;
         var processResults = function (results, filter) {
             if (self.options.processData) {
@@ -1394,7 +1388,7 @@
      * @param {function} callback The function to call after data retrieval
      * @private
      */
-    $.Autocompleter.prototype.fetchRemoteData = function (filter, callback) {
+    $.dnnAutocompleter.prototype.fetchRemoteData = function (filter, callback) {
         var data = this.cacheRead(filter);
         if (data) {
             callback(data);
@@ -1436,7 +1430,7 @@
      * @param {string} value Parameter value
      * @public
      */
-    $.Autocompleter.prototype.setExtraParam = function (name, value) {
+    $.dnnAutocompleter.prototype.setExtraParam = function (name, value) {
         var index = $.trim(String(name));
         if (index) {
             if (!this.options.extraParams) {
@@ -1455,7 +1449,7 @@
      * @param {string} param The value parameter to pass to the backend
      * @returns {string} The finished url with parameters
      */
-    $.Autocompleter.prototype.makeUrl = function (param) {
+    $.dnnAutocompleter.prototype.makeUrl = function (param) {
         var self = this;
         var url = this.options.url;
         var params = {};
@@ -1468,7 +1462,7 @@
      * @param remoteData Data received from remote server
      * @returns {array} Parsed data
      */
-    $.Autocompleter.prototype.parseRemoteData = function (remoteData) {
+    $.dnnAutocompleter.prototype.parseRemoteData = function (remoteData) {
         var data = remoteData;
         if (typeof data['d'] != 'undefined') {
             data = $.parseJSON(data['d']);
@@ -1483,7 +1477,7 @@
      * @returns {boolean} Include this result
      * @private
      */
-    $.Autocompleter.prototype.filterResult = function (result, filter) {
+    $.dnnAutocompleter.prototype.filterResult = function (result, filter) {
         if (!result.value) {
             return false;
         }
@@ -1509,7 +1503,7 @@
      * @param results
      * @param filter
      */
-    $.Autocompleter.prototype.filterResults = function (results, filter) {
+    $.dnnAutocompleter.prototype.filterResults = function (results, filter) {
         var filtered = [];
         var i, result;
 
@@ -1533,7 +1527,7 @@
      * @param results
      * @param filter
      */
-    $.Autocompleter.prototype.sortResults = function (results, filter) {
+    $.dnnAutocompleter.prototype.sortResults = function (results, filter) {
         var self = this;
         var sortFunction = this.options.sortFunction;
         if (!$.isFunction(sortFunction)) {
@@ -1553,7 +1547,7 @@
      * @param a
      * @param b
      */
-    $.Autocompleter.prototype.matchStringConverter = function (s, a, b) {
+    $.dnnAutocompleter.prototype.matchStringConverter = function (s, a, b) {
         var converter = this.options.matchStringConverter;
         if ($.isFunction(converter)) {
             s = converter(s, a, b);
@@ -1567,7 +1561,7 @@
      * @param a
      * @param b
      */
-    $.Autocompleter.prototype.beforeUseConverter = function (s, a, b) {
+    $.dnnAutocompleter.prototype.beforeUseConverter = function (s, a, b) {
         s = this.getValue();
         var converter = this.options.beforeUseConverter;
         if ($.isFunction(converter)) {
@@ -1579,14 +1573,14 @@
     /**
      * Enable finish on blur event
      */
-    $.Autocompleter.prototype.enableFinishOnBlur = function () {
+    $.dnnAutocompleter.prototype.enableFinishOnBlur = function () {
         this.finishOnBlur_ = true;
     };
 
     /**
      * Disable finish on blur event
      */
-    $.Autocompleter.prototype.disableFinishOnBlur = function () {
+    $.dnnAutocompleter.prototype.disableFinishOnBlur = function () {
         this.finishOnBlur_ = false;
     };
 
@@ -1594,7 +1588,7 @@
      * Create a results item (LI element) from a result
      * @param result
      */
-    $.Autocompleter.prototype.createItemFromResult = function (result) {
+    $.dnnAutocompleter.prototype.createItemFromResult = function (result) {
         var self = this;
         var $li = $('<li>' + this.showResult(result.value, result.data) + '</li>');
         $li.data({ value: result.value, data: result.data })
@@ -1611,7 +1605,7 @@
      * Get all items from the results list
      * @param result
      */
-    $.Autocompleter.prototype.getItems = function () {
+    $.dnnAutocompleter.prototype.getItems = function () {
         return $('>ul>li', this.dom.$results);
     };
 
@@ -1620,7 +1614,7 @@
      * @param results
      * @param filter
      */
-    $.Autocompleter.prototype.showResults = function (results, filter) {
+    $.dnnAutocompleter.prototype.showResults = function (results, filter) {
         var numResults = results.length;
         var self = this;
         var $ul = $('<ul></ul>');
@@ -1664,7 +1658,7 @@
         }
     };
 
-    $.Autocompleter.prototype.showResult = function (value, data) {
+    $.dnnAutocompleter.prototype.showResult = function (value, data) {
         if ($.isFunction(this.options.showResult)) {
             return this.options.showResult(value, data);
         } else {
@@ -1672,7 +1666,7 @@
         }
     };
 
-    $.Autocompleter.prototype.autoFill = function (value, filter) {
+    $.dnnAutocompleter.prototype.autoFill = function (value, filter) {
         var lcValue, lcFilter, valueLength, filterLength;
         if (this.options.autoFill && this.lastKeyPressed_ !== 8) {
             lcValue = String(value).toLowerCase();
@@ -1692,15 +1686,15 @@
         return false;
     };
 
-    $.Autocompleter.prototype.focusNext = function () {
+    $.dnnAutocompleter.prototype.focusNext = function () {
         this.focusMove(+1);
     };
 
-    $.Autocompleter.prototype.focusPrev = function () {
+    $.dnnAutocompleter.prototype.focusPrev = function () {
         this.focusMove(-1);
     };
 
-    $.Autocompleter.prototype.focusMove = function (modifier) {
+    $.dnnAutocompleter.prototype.focusMove = function (modifier) {
         var $items = this.getItems();
         modifier = sanitizeInteger(modifier, 0);
         if (modifier) {
@@ -1714,7 +1708,7 @@
         this.focusItem(0);
     };
 
-    $.Autocompleter.prototype.focusItem = function (item) {
+    $.dnnAutocompleter.prototype.focusItem = function (item) {
         var $item, $items = this.getItems();
         if ($items.length) {
             $items.removeClass(this.selectClass_).removeClass(this.options.selectClass);
@@ -1734,7 +1728,7 @@
         }
     };
 
-    $.Autocompleter.prototype.selectCurrent = function () {
+    $.dnnAutocompleter.prototype.selectCurrent = function () {
         var $item = $('li.' + this.selectClass_, this.dom.$results);
         if ($item.length === 1) {
             this.selectItem($item);
@@ -1743,7 +1737,7 @@
         }
     };
 
-    $.Autocompleter.prototype.selectItem = function ($li) {
+    $.dnnAutocompleter.prototype.selectItem = function ($li) {
         var value = $li.data('value');
         var data = $li.data('data');
         var displayValue = this.displayValue(value, data);
@@ -1774,18 +1768,18 @@
         elem.trigger('result', value);
     };
 
-    $.Autocompleter.prototype.displayValue = function (value, data) {
+    $.dnnAutocompleter.prototype.displayValue = function (value, data) {
         if ($.isFunction(this.options.displayValue)) {
             return this.options.displayValue(value, data);
         }
         return value;
     };
 
-    $.Autocompleter.prototype.hideResults = function () {
+    $.dnnAutocompleter.prototype.hideResults = function () {
         this.dom.$results.hide();
     };
 
-    $.Autocompleter.prototype.deactivate = function (finish) {
+    $.dnnAutocompleter.prototype.deactivate = function (finish) {
         if (this.finishTimeout_) {
             clearTimeout(this.finishTimeout_);
         }
@@ -1810,7 +1804,7 @@
         this.hideResults();
     };
 
-    $.Autocompleter.prototype.selectRange = function (start, end) {
+    $.dnnAutocompleter.prototype.selectRange = function (start, end) {
         var input = this.dom.$elem.get(0);
         if (input.setSelectionRange) {
             input.focus();
@@ -1828,14 +1822,14 @@
      * Move caret to position
      * @param {Number} pos
      */
-    $.Autocompleter.prototype.setCaret = function (pos) {
+    $.dnnAutocompleter.prototype.setCaret = function (pos) {
         this.selectRange(pos, pos);
     };
 
     /**
      * Get caret position
      */
-    $.Autocompleter.prototype.getCaret = function () {
+    $.dnnAutocompleter.prototype.getCaret = function () {
         var elem = this.dom.$elem;
         if ($.browser.msie) {
             // ie
@@ -1871,7 +1865,7 @@
      * Set the value that is currently being autocompleted
      * @param {String} value
      */
-    $.Autocompleter.prototype.setValue = function (value) {
+    $.dnnAutocompleter.prototype.setValue = function (value) {
         if (this.options.useDelimiter) {
             // set the substring between the current delimiters
             var val = this.dom.$elem.val();
@@ -1887,7 +1881,7 @@
      * Get the value currently being autocompleted
      * @param {String} value
      */
-    $.Autocompleter.prototype.getValue = function () {
+    $.dnnAutocompleter.prototype.getValue = function () {
         var val = this.dom.$elem.val();
         if (this.options.useDelimiter) {
             var d = this.getDelimiterOffsets();
@@ -1900,7 +1894,7 @@
     /**
      * Get the offsets of the value currently being autocompleted
      */
-    $.Autocompleter.prototype.getDelimiterOffsets = function () {
+    $.dnnAutocompleter.prototype.getDelimiterOffsets = function () {
         var val = this.dom.$elem.val();
         if (this.options.useDelimiter) {
             var preCaretVal = val.substring(0, this.getCaret().start);
@@ -2166,8 +2160,8 @@
                         autocomplete_options[attrname] = settings.autocomplete[attrname];
                     }
 
-                    if (jQuery.Autocompleter !== undefined) {
-                        $(data.fake_input).autocomplete(settings.autocomplete_url, settings.autocomplete);
+                    if ($.dnnAutocompleter !== undefined) {
+                        $(data.fake_input).dnnAutocomplete(settings.autocomplete_url, settings.autocomplete);
                         $(data.fake_input).bind('result', data, function (event, data, formatted) {
                             if (data) {
                                 $('#' + id).dnnAddTag(data, { focus: true, unique: (settings.unique) });
@@ -2209,7 +2203,7 @@
                         event.preventDefault();
                         var last_tag = $(this).closest('.dnnTagsInput').find('.tag:last').text();
                         var id = $(this).attr('id').replace(/_tag$/, '');
-                        last_tag = last_tag.replace(/[\s]+x$/, '');
+                        last_tag = last_tag.replace(/[\s]+$/, '');
                         $('#' + id).dnnRemoveTag(escape(last_tag));
                         $(this).trigger('focus');
                     }
