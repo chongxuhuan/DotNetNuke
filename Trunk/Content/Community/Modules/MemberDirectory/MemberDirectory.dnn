@@ -35,7 +35,7 @@
                     <controlTitle>Social Messaging View</controlTitle>
                     <controlType>View</controlType>
                     <iconFile />
-                    <helpUrl>http://help.dotnetnuke.com/070000/default.htm#Building Your Site/Installed Modules/Member Directory/About the Member Directory Module.html</helpUrl>
+                    <helpUrl>http://help.dotnetnuke.com/070000/default.htm#DocumentationBuilding Your Site/Installed Modules/Member Directory/About the Member Directory Module.html</helpUrl>
                     <viewOrder>0</viewOrder>
                   </moduleControl>
                   <moduleControl>

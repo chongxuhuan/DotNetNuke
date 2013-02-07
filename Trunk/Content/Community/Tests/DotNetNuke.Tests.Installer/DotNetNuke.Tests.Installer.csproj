@@ -82,7 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DotNetNuke.Tests.Selenium\DotNetNuke.Tests.Selenium.csproj">
-      <Project>{32A2D0F4-3F50-4F25-9388-0748589B6639}</Project>
+      <Project>{32a2d0f4-3f50-4f25-9388-0748589b6639}</Project>
       <Name>DotNetNuke.Tests.Selenium</Name>
     </ProjectReference>
   </ItemGroup>
