@@ -42,6 +42,13 @@ GO
 CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}MetaData_MetaDataName ON {databaseOwner}[{objectQualifier}MetaData](MetaDataName) 
 GO
 
+
+/*Fix bug 24977  */
+
+UPDATE {databaseOwner}[{objectQualifier}ModuleControls] 
+SET [ControlType] = 2 WHERE [ControlSrc] = N'DesktopModules/Admin/Extensions/UsageDetails.ascx'
+
+
 /************************************************************/
 
 
