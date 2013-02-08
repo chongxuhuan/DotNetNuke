@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -83,6 +83,11 @@ namespace DotNetNuke.Web.Client
             /// /js/dnn.controls.labeledit.js has the priority of 45
             /// </summary>
             DnnControlsLabelEdit = 45,
+
+			/// <summary>
+			/// /js/dnn.modalpopup.js has the priority of 50
+			/// </summary>
+			DnnModalPopup = 50,
         }
 
         /// <summary>

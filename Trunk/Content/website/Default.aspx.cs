@@ -667,7 +667,7 @@ namespace DotNetNuke.Framework
                                    ? "~/js/Debug/dnn.modalpopup.js"
                                    : "~/js/dnn.modalpopup.js";
 
-                ClientResourceManager.RegisterScript(this, popupFilePath);
+                ClientResourceManager.RegisterScript(this, popupFilePath, FileOrder.Js.DnnModalPopup);
             }
             else
             {
