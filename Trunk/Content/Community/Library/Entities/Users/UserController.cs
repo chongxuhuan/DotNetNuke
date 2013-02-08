@@ -788,6 +788,14 @@ namespace DotNetNuke.Entities.Users
                 }
                 return new UserInfo();
             }
+            else if (HttpContext.Current.Items["UserInfo"] == null)
+            {
+                if (HttpContext.Current.Request.IsAuthenticated)
+                {
+                    user = GetCachedUser(PortalSettings.Current.PortalId, HttpContext.Current.User.Identity.Name);
+                    HttpContext.Current.Items["UserInfo"] = user;
+                }
+            }
             user = (UserInfo)HttpContext.Current.Items["UserInfo"];
             return user ?? new UserInfo();
         }
