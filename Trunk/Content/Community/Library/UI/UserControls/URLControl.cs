@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -798,7 +798,6 @@ namespace DotNetNuke.UI.UserControls
                         optType.Items[0].Selected = true;
                     }
                 }
-                chkNewWindow.Checked = false; //Need check
                 chkTrack.Checked = false; //Need check
                 chkLog.Checked = false; //Need check
             }
