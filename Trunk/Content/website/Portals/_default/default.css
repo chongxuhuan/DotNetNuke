@@ -2095,34 +2095,34 @@
 
     /* FILE UPLOAD CSS */
     span.dnnInputFileWrapper > input[type="file"] { /* force file upload style here, cause some module just override */
-        position: absolute !important;
-        top: 0 !important; 
-        right: 0 !important;
-        margin: 0 !important;
-        border: solid transparent !important;
-        border-width: 0 0 100px 200px !important;
-        opacity: 0 !important;
-        filter: alpha(opacity=0) !important;
-        -moz-transform: translate(-300px, 0) scale(4) !important;
-        direction: ltr !important;
-        cursor: pointer !important;
-        height: auto !important;
-	    font-size: 100px !important;
+        position: absolute;
+        top: 0; 
+        right: 0;
+        margin: 0 ;
+        border: solid transparent ;
+        border-width: 0 0 100px 200px ;
+        opacity: 0;
+        filter: alpha(opacity=0);
+        -moz-transform: translate(-300px, 0) scale(4);
+        direction: ltr;
+        cursor: pointer;
+        height: auto;
+	    font-size: 100px;
     }
 
     span.dnnInputFileWrapper {
-        position: relative !important; 
-        overflow: hidden !important; 
+        position: relative; 
+        overflow: hidden; 
         margin: 0 4px 0 0;
-        width: auto !important;
+        width: auto;
         display: block;
         float: left;
     }
 
     span.dnnInputFileWrapper > span.dnnSecondaryAction {
-        display: inline-block !important;
-        float: none !important;
-        width: auto !important;
+        display: inline-block;
+        float: none;
+        width: auto;
     }
 
     /* DNN DRAG n DROP FILE PICKER UPLOAD */

@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,6 +23,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
@@ -928,29 +929,17 @@ namespace DotNetNuke.Modules.Admin.Languages
                         }
                     }
 
-                    foreach (string file in Directory.GetFiles(e.Node.Value, "*.resx"))
+                    // split filenames at dots,
+                    // only accept filenames with 3 elements or less, that means these types of filenames:
+                    // SharedResources.resx and HtmlModule.ascx.resx
+                    // explicitly ignore these filenames:
+                    // EditHtml.ascx.Host.resx, EditHtml.ascx.[culture].Host.resx and , EditHtml.ascx.[culture].Portal-n.resx, 
+                    // SharedResources.[culture].Host.resx and SharedResources.culture.Portal-n.resx
+                    foreach (var fileInfo in from file in Directory.GetFiles(e.Node.Value, "*.resx") select new FileInfo(file) into fileInfo let s = fileInfo.Name.Split('.') where s.Length <= 3 select fileInfo)
                     {
-                        var fileInfo = new FileInfo(file);
-                        node = new RadTreeNode();
-                        node.Value = fileInfo.FullName;
-                        node.Text = fileInfo.Name.Replace(".resx", "");
-                        if (node.Text.LastIndexOf("-") == node.Text.Length - 3)
-                        {
-                            //Ignore languagefiles "xx-XX"
-                            continue;
-                        }
+                        node = new RadTreeNode { Value = fileInfo.FullName, Text = fileInfo.Name.Replace(".resx", "") };
                         e.Node.Nodes.Add(node);
                     }
-
-                    //foreach (string file in Directory.GetFiles(e.Node.Value, "SharedResources.resx"))
-                    //{
-                    //    System.IO.FileInfo fileInfo = new System.IO.FileInfo(file);
-                    //    node = new RadTreeNode();
-                    //    node.Value = fileInfo.FullName;
-                    //    node.Text = fileInfo.Name.Replace(".resx", "");
-
-                    //    e.Node.Nodes.Add(node);
-                    //}
 
                     break;
             }
