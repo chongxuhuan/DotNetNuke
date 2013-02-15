@@ -27,18 +27,26 @@
     <asp:HiddenField runat="server" ID="dnnFileUploadFileId" />
 </asp:Panel>
 <script type="text/javascript">
-    $(function () {
-        var settings = {
-          fileFilter:   '<%= FileFilter %>',
-          required: <%= Required? "true":"false" %>,
-          foldersComboId: '<%= FoldersComboBox.ClientID %>',
-          filesComboId: '<%= FilesComboBox.ClientID %>',
-          folder: '<%= FolderPath %>',
-          filePathId: '<%= dnnFileUploadFilePath.ClientID %>',
-          fileIdId:'<%= dnnFileUploadFileId.ClientID %>',
-          progressBarId: '<%= dnnFileUploadProgressBar.ClientID %>',
-          dropZoneId: '<%= dnnFileUploadDropZone.ClientID %>'
-        };
-        $('#<%= dnnFileUploadScope.ClientID %>').dnnFileUpload(settings);
-    });
+    (function($){
+        var initDnnFileUploader = function(){
+            var settings = {
+                fileFilter:   '<%= FileFilter %>',
+			    required: <%= Required? "true":"false" %>,
+			    foldersComboId: '<%= FoldersComboBox.ClientID %>',
+			    filesComboId: '<%= FilesComboBox.ClientID %>',
+			    folder: '<%= FolderPath %>',
+			    filePathId: '<%= dnnFileUploadFilePath.ClientID %>',
+			    fileIdId:'<%= dnnFileUploadFileId.ClientID %>',
+			    progressBarId: '<%= dnnFileUploadProgressBar.ClientID %>',
+			    dropZoneId: '<%= dnnFileUploadDropZone.ClientID %>'
+			};
+		    $('#<%= dnnFileUploadScope.ClientID %>').dnnFileUpload(settings);
+		}
+        $(initDnnFileUploader);
+
+        // microsoft ajax registered - to fix microsoft ajax update panel post back
+        if(typeof Sys != 'undefined')
+            Sys.WebForms.PageRequestManager.getInstance().add_endRequest(initDnnFileUploader);
+
+    })(jQuery);
 </script>
