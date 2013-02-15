@@ -1055,6 +1055,12 @@
 	.dnnCheckbox-disabled img { opacity: .5; }
 	.dnnCheckbox-checked-error img { background-position: -150px 0px }
 	.dnnCheckbox-error img { background-position: -100px 0px }
+
+     /* normal checkbox fix */
+    .dnnFormItem input[type="checkbox"].normalCheckBox {
+        display: inline-block;
+        margin: 8px 0 4px 0;
+    }
 	
 	/* Input Customised Radiobutton */
 
@@ -1386,9 +1392,10 @@
         border-bottom: 1px solid #c9c9c9;
         color: #333;
         cursor: pointer;
+        vertical-align: middle;
     }
     
-    .dnnButtonDropdown-ul > li:last{
+    .dnnButtonDropdown-ul > li:last-child{
         border-bottom: none !important;
     }
     

@@ -49,6 +49,20 @@ UPDATE {databaseOwner}[{objectQualifier}ModuleControls]
 SET [ControlType] = 2 WHERE [ControlSrc] = N'DesktopModules/Admin/Extensions/UsageDetails.ascx'
 
 
+/***** DNN-25176 - Core allows duplicate ContentType. *****/
+IF NOT EXISTS (SELECT * FROM dbo.sysindexes WHERE name='IX_{objectQualifier}ContentTypes_ContentType')
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}ContentTypes_ContentType ON {databaseOwner}[{objectQualifier}ContentTypes](ContentType) 
+GO
+
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}ContentTypes WHERE [ContentType] = 'DNNCorp_JournalProfile') 
+		 INSERT INTO  {databaseOwner}{objectQualifier}ContentTypes (ContentType) VALUES ('DNNCorp_JournalProfile')
+GO
+
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}ContentTypes WHERE [ContentType] = 'DNNCorp_JournalGroup') 
+		 INSERT INTO  {databaseOwner}{objectQualifier}ContentTypes (ContentType) VALUES ('DNNCorp_JournalGroup')
+GO
+
+
 /* Update version number in DesktopModules */
 /*******************************************/
 DECLARE @version nvarchar(8)
