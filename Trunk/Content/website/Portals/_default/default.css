@@ -2110,13 +2110,13 @@
 	    font-size: 100px;
     }
 
-    span.dnnInputFileWrapper {
-        position: relative; 
-        overflow: hidden; 
+    span.dnnInputFileWrapper { /* NOTES(by Richard): here must set !important */
+        position: relative !important; 
+        overflow: hidden !important; 
         margin: 0 4px 0 0;
-        width: auto;
-        display: block;
-        float: left;
+        width: auto !important;
+        display: block !important;
+        float: left !important;
     }
 
     span.dnnInputFileWrapper > span.dnnSecondaryAction {
