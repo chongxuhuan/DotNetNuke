@@ -298,7 +298,7 @@ button, input[type="button"], input[type="reset"], input[type="submit"], .dnnPri
 	.DnnModule-Messaging-Details .smListings .meta{margin-bottom:10px;}
 	.DnnModule-Messaging-Details .smListings .meta em{font-style:italic;}
 	.DnnModule-Messaging-Details .smListings .meta a{font-weight:bold;}
-	.DnnModule-Messaging-Details .smListings .message{color:#888; margin-bottom:15px;}
+	.DnnModule-Messaging-Details .smListings .message{color:#888; margin-bottom:15px;white-space: pre-wrap;}
 	.DnnModule-Messaging-Details .smListings .attatchements{margin-bottom:15px;}
 	.DnnModule-Messaging-Details .smListings .attatchements strong{
 		display:block;
@@ -316,7 +316,7 @@ button, input[type="button"], input[type="reset"], input[type="submit"], .dnnPri
 	.DnnModule-Messaging-Notifications .smListings .meta em{font-style:italic;}
 	.DnnModule-Messaging-Notifications .smListings .meta a{}
 	.DnnModule-Messaging-Notifications .smListings .meta a:hover{/*baby blue*/}
-	.DnnModule-Messaging-Notifications .smListings .message{color:#888;}
+	.DnnModule-Messaging-Notifications .smListings .message{color:#888;white-space: pre-wrap;}
 
 	.DnnModule-Messaging-Details .smListings .ListCol-3 ul{float:right;} 
 	.DnnModule-Messaging-Details .smListings .ListCol-3 ul li{text-align:right; margin-bottom:8px; height:18px; list-style:none;}
