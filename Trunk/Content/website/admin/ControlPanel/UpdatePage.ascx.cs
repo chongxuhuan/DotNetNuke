@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -22,6 +22,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Web.UI;
 
 using DotNetNuke.Common;
@@ -347,14 +348,8 @@ namespace DotNetNuke.UI.ControlPanel
 
             PageLst.DataTextField = "IndentedTabName";
             PageLst.DataValueField = "TabID";
-            PageLst.DataSource = RibbonBarManager.GetPagesList();
+            PageLst.DataSource = RibbonBarManager.GetPagesList().Where(t => !IsParentTab(t, CurrentTab.TabID));
             PageLst.DataBind();
-
-            var disableCurrentTab = PageLst.FindItemByValue(CurrentTab.TabID.ToString());
-            if (((disableCurrentTab != null)))
-            {
-                disableCurrentTab.Enabled = false;
-            }
 
             //PageLst.Items.Insert(0, new ListItem(GetString("NoPageSelection"), string.Empty));
             PageLst.InsertItem(0, GetString("NoPageSelection"), string.Empty);
@@ -365,6 +360,21 @@ namespace DotNetNuke.UI.ControlPanel
         {
             return Localization.GetString(key, LocalResourceFile);
         }
+
+		private bool IsParentTab(TabInfo tab, int parentTabId)
+		{
+			var tabController = new TabController();
+			while (tab != null)
+			{
+				if (tab.TabID == parentTabId)
+				{
+					return true;
+				}
+				tab = tab.ParentId != Null.NullInteger ? tabController.GetTab(tab.ParentId, tab.PortalID, false) : null;
+			}
+
+			return false;
+		}
 
         #endregion
     }
