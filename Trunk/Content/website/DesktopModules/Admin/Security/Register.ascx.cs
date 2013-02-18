@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Web;
 
 using DotNetNuke.Common;
@@ -629,7 +630,20 @@ namespace DotNetNuke.Modules.Admin.Users
             }
             else
             {
-                string[] fields = RegistrationFields.Split(',');
+                var fields = RegistrationFields.Split(',').ToList();
+				//append question/answer field when RequiresQuestionAndAnswer is enabled in config.
+				if (MembershipProviderConfig.RequiresQuestionAndAnswer)
+				{
+					if (!fields.Contains("PasswordQuestion"))
+					{
+						fields.Add("PasswordQuestion");
+					}
+					if (!fields.Contains("PasswordAnswer"))
+					{
+						fields.Add("PasswordAnswer");
+					}
+				}
+
                 foreach (string field in fields)
                 {
                     var trimmedField = field.Trim();
