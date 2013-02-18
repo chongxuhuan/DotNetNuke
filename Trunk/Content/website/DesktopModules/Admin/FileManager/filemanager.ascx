@@ -164,7 +164,7 @@ function clearErrorMessage() {
 
 function confirmMoveFiles(strDestFolder, destFiles) {
     if(typeof destFiles === "undefined") {
-        dnn.callPostBack("GetFiles", "folder=" + strDestFolder.replace("\\", "\\\\"), "callback=confirmMoveFiles");
+        dnn.callPostBack("GetFiles", "folder=" + strDestFolder.replace(/\\/g, "\\\\"), "callback=confirmMoveFiles");
         return;
     }
     
