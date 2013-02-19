@@ -1,0 +1,26 @@
+﻿<?xml version ="1.0" encoding ="utf-8"?>
+<Tests>
+  <settings
+    name = "Layout Installer Test, Daily run"
+    browser = "chrome"
+    edition = "enterprice"
+    baseURL = "InstallerEETest2.lvh.me"
+    InstallerLanguage = "english"
+    UserName = "host"
+    Password = "dnnhost"
+    WebsiteName = "My Website"
+    Template = "Default Template"
+    Language = "English (United States)"
+    DatabaseSetup = "Custom"
+    DatabaseType = "SQL Server"
+    DatabaseServerName = "(local)"
+    DatabaseName = "InstallerEETest2"
+    DatabaseFilename = ""
+    ObjectQualifier = ""
+    Security = "Integrated"
+    DatabaseUserName = ""
+    DatabasePassword = ""
+    RunDatabaseAsDatabaseOwner = "yes"
+/>
+  
+</Tests>
