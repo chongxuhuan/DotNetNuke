@@ -162,6 +162,10 @@ p.dnnFormRequired span
     margin-bottom: 20px;
 }
 
+.dnnProfileDetails .dnnFormItem  > .dnnLeft{
+	width:325px;
+}
+
 
 .dnnProfileDetails .dnnFormItem .dnnLeft select{
     display: block;

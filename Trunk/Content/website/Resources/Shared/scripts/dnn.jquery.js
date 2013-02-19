@@ -1242,7 +1242,7 @@
     $.dnnAutocompleter.prototype.position = function () {
         var offset = this.dom.$elem.offset();
         var height = this.dom.$results.outerHeight();
-        var totalHeight = window.outerHeight;
+        var totalHeight = $(window).outerHeight();
         var inputBottom = offset.top + this.dom.$elem.outerHeight();
         var bottomIfDown = inputBottom + height;
         // Set autocomplete results at the bottom of input
@@ -4097,7 +4097,7 @@
         };
 
         var hideDropdown = function () {
-            var btn = $(this).prev();
+            var btn = $(this).children(':first');
             if (btn.hasClass('dnnButtonDropdown-clicked')) {
                 btn.removeClass('dnnButtonDropdown-clicked').addClass('dnnButtonDropdown');
                 btn.next().fadeOut();
@@ -4113,7 +4113,7 @@
 
         return $(this).each(function () {
             $(this).unbind('click', clicked).bind('click', clicked);
-            $(this).next().hoverIntent(hoverConfig);
+            $(this).parent().hoverIntent(hoverConfig);
         });
     };
 })(jQuery);

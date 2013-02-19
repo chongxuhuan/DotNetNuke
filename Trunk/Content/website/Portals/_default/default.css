@@ -1393,6 +1393,8 @@
         color: #333;
         cursor: pointer;
         vertical-align: middle;
+        list-style: none;
+        margin: 0;
     }
     
     .dnnButtonDropdown-ul > li:last-child{
