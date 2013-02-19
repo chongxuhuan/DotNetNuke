@@ -119,7 +119,8 @@
                                         window.location.href = defaultAction;
                                     }
                                 }
-                            }
+                            },
+                            'class': opts.buttonYesClass
                         },
                         {
                             text: opts.noText,
@@ -128,7 +129,8 @@
                                 if ($.isFunction(opts.callbackFalse)) {
                                     opts.callbackFalse.call(this);
                                 };
-                            }
+                            },
+                            'class': opts.buttonNoClass
                         }
                         ]
                     });
@@ -144,6 +146,8 @@
         text: 'Are you sure?',
         yesText: 'Yes',
         noText: 'No',
+        buttonYesClass: 'dnnPrimaryAction',
+        buttonNoClass: 'dnnSecondaryAction',
         actionUrl: window.location.href,
         autoOpen: false,
         resizable: false,
@@ -164,6 +168,7 @@
             buttons: [
                 {
                     text: opts.okText,
+                    "class": opts.buttonOkClass,
                     click: function () {
                         $(this).dialog("close");
                         if ($.isFunction(opts.callback)) {
@@ -182,6 +187,7 @@
         autoOpen: false,
         resizable: false,
         modal: true,
+        buttonOkClass: 'dnnPrimaryAction',
         dialogClass: 'dnnFormPopup dnnClear'
     };
 
