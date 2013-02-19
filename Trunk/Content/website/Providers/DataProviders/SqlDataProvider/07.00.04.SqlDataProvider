@@ -236,6 +236,14 @@ UPDATE {databaseOwner}{objectQualifier}ModuleControls SET HelpUrl = 'http://help
 
 GO
 
+IF NOT EXISTS(SELECT * FROM sysconstraints WHERE id = (SELECT id FROM sysobjects WHERE name = '{objectQualifier}Tabs') 
+				AND colid = (SELECT colid FROM syscolumns WHERE id = (SELECT id FROM sysobjects WHERE name = '{objectQualifier}Tabs') AND name = 'Level'))
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Tabs ADD CONSTRAINT
+		DF_{objectQualifier}Tabs_Level DEFAULT 0 FOR [Level]
+END
+GO
+
 /************************************************************/
 
 

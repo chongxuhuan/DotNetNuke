@@ -65,8 +65,7 @@ namespace DotNetNuke.Framework
 		                ID = "ScriptManager", 
 						EnableScriptGlobalization = true, 
 						SupportsPartialRendering = true, 
-						EnableHandlerDetection = false,
-						EnableEmbeddedjQuery = false
+						EnableHandlerDetection = false
 	                })
                 {
 					if (page.Form != null)
