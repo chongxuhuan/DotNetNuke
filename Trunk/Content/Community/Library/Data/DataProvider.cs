@@ -271,9 +271,10 @@ namespace DotNetNuke.Data
         public virtual Version GetVersion()
         {
             Version version = null;
+			IDataReader dr = null;
             try
             {
-                IDataReader dr = GetDatabaseVersion();
+                dr = GetDatabaseVersion();
                 if (dr.Read())
                 {
                     version = new Version(Convert.ToInt32(dr["Major"]), Convert.ToInt32(dr["Minor"]), Convert.ToInt32(dr["Build"]));
@@ -297,6 +298,10 @@ namespace DotNetNuke.Data
                     throw;
                 }
             }
+			finally
+			{
+				CBO.CloseDataReader(dr, true);
+			}
             return version;
         }
 
