@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -1082,7 +1082,20 @@ namespace DotNetNuke.Common
         public static void UpdateDataBaseVersion(Version version)
         {
             //update the version
-            DataProvider.Instance().UpdateDatabaseVersion(version.Major, version.Minor, version.Build, DotNetNukeContext.Current.Application.Name);
+            //DotNetNukeContext.Current.Application.Name may not be the correct Name during upgrade and install 
+            //detecting dll is 100%
+            //PE is always included when EE installed hence order of detection
+            var currentApplicationName = "DNNCORP.CE";
+            if (File.Exists(HttpContext.Current.Server.MapPath("~\\bin\\DotNetNuke.Enterprise.dll")))
+            {
+                currentApplicationName = "DNNCORP.XE";
+            }
+            else if (File.Exists(HttpContext.Current.Server.MapPath("~\\bin\\DotNetNuke.Professional.dll")))
+            {
+                currentApplicationName = "DNNCORP.PE";
+            }
+
+            DataProvider.Instance().UpdateDatabaseVersion(version.Major, version.Minor, version.Build, currentApplicationName);
             _dataBaseVersion = version;
         }
 
