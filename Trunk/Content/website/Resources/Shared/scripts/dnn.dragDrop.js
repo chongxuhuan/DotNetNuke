@@ -292,6 +292,14 @@
             }
         });
 
+        // register window resize on ajaxComplete to reposition action menus - only in edit mode
+        // after page fully load
+        $(window).load(function () {
+            $(document).ajaxComplete(function () {
+                $(window).resize();
+            });
+        });
+
         return $self;
     };
 })(jQuery);
