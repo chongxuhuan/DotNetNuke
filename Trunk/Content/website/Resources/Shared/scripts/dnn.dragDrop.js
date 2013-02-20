@@ -90,6 +90,7 @@
                 data: dataVar,
                 beforeSend: service.setModuleHeaders,
                 success: function () {
+                	window.location.reload();
                 },
                 error: function () {
                 }
