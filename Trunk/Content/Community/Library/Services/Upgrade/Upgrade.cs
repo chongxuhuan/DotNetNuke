@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -4881,6 +4881,15 @@ namespace DotNetNuke.Services.Upgrade
             {
                 // execute script file (and version upgrades) for version
                 exceptions = ExecuteScript(scriptFile, writeFeedback);
+                //need apply the Licensing module after packages installed, so that we can know whats the edition of install instance. CE/PE/EE
+                var document = Config.Load();
+                var licensingNode = document.SelectSingleNode("/configuration/system.webServer/modules/add[@name='Licensing']");
+                if (licensingNode != null)
+                {
+                    var type = licensingNode.Attributes["type"].Value;
+                    var module = Reflection.CreateObject(type, null, false) as IHttpModule;
+                    module.Init(HttpContext.Current.ApplicationInstance);
+                }
 
                 // update the version
                 Globals.UpdateDataBaseVersion(version);
