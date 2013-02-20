@@ -15,7 +15,7 @@
     <property name="StripFormattingOptions">MSWordRemoveAll</property>
     <property name="LinksUseRelativeUrls">True</property>
     <property name="LinksUseTabNames">false</property>
-    <property name="ShowPortalLinks">True</property>
+    <property name="ShowPortalLinks">False</property>
     <property name="ContentAreaMode"></property>
 
     <property name="Toolbar Settings" IsSeparator="true" />
