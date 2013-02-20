@@ -175,6 +175,3 @@ body > form > .rcbSlide { z-index:6000!important;}
 /* Set Z-index of Telerik Tree context menu */
 body > form > .RadMenu_Context { z-index: 1000 !important;} 
 
-/* Set Z-index of Telerik popup window  */
-body > form > .RadWindow { z-index: 3002 !important;} 
-
