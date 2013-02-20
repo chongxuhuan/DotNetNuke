@@ -51,7 +51,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DDRMenu_02.00.02_Install.zip" />
+    <None Include="DDRMenu_02.00.03_Install.zip" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
