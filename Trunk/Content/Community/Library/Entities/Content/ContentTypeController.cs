@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -20,6 +20,7 @@
 #endregion
 #region Usings
 
+using System.Collections.Generic;
 using System.Linq;
 
 using DotNetNuke.Common;
@@ -73,7 +74,7 @@ namespace DotNetNuke.Entities.Content
 
         private object GetContentTypesCallBack(CacheItemArgs cacheItemArgs)
         {
-            return CBO.FillQueryable<ContentType>(_DataService.GetContentTypes());
+            return CBO.FillQueryable<ContentType>(_DataService.GetContentTypes()).ToList();
         }
 
         #endregion
@@ -133,7 +134,7 @@ namespace DotNetNuke.Entities.Content
 		/// <returns>content type collection.</returns>
         public IQueryable<ContentType> GetContentTypes()
         {
-            return CBO.GetCachedObject<IQueryable<ContentType>>(new CacheItemArgs(_CacheKey, _CacheTimeOut), GetContentTypesCallBack);
+            return CBO.GetCachedObject<List<ContentType>>(new CacheItemArgs(_CacheKey, _CacheTimeOut), GetContentTypesCallBack).AsQueryable();
         }
 
 		/// <summary>
