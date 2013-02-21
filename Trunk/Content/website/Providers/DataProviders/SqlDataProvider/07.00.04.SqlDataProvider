@@ -244,6 +244,41 @@ BEGIN
 END
 GO
 
+/***** Fix bug 24171: update sp UpdateOnlineUser to check whether user is exist first. *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}UpdateOnlineUser]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}UpdateOnlineUser
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}UpdateOnlineUser
+@UserID 	INT,
+@PortalID 	INT,
+@TabID 		INT,
+@LastActiveDate DATETIME 
+AS
+BEGIN
+	IF EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}Users WHERE UserID = @UserID)
+	BEGIN
+		IF EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}UsersOnline WHERE UserID = @UserID and PortalID = @PortalID)
+			UPDATE 
+				{databaseOwner}{objectQualifier}UsersOnline
+			SET 
+				TabID = @TabID,
+				LastActiveDate = @LastActiveDate
+			WHERE
+				UserID = @UserID
+				and 
+				PortalID = @PortalID
+		ELSE
+			INSERT INTO
+				{databaseOwner}{objectQualifier}UsersOnline
+				(UserID, PortalID, TabID, CreationDate, LastActiveDate) 
+			VALUES
+				(@UserID, @PortalID, @TabID, GetDate(), @LastActiveDate)
+	END
+
+END
+GO
+
 /************************************************************/
 
 
