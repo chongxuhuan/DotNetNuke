@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Security;
 
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Portals;
@@ -59,6 +60,7 @@ namespace DotNetNuke.Entities.Tabs
 
         // Implement this method to serialize data. The method is called 
         // on serialization.
+        [SecurityCritical]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             // Use the AddValue method to specify serialized values.

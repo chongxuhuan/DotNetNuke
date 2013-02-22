@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -139,9 +139,16 @@ namespace DotNetNuke.Services.Install
                     {
                         return;
                     }
-                    Upgrade.Upgrade.InstallDNN(strProviderPath);
 
                     var installConfig = InstallController.Instance.GetInstallConfig();
+
+                    //download LP (and templates) if not using en-us
+                    IInstallationStep ensureLpAndTemplate = new UpdateLanguagePackStep();
+                    ensureLpAndTemplate.Execute();
+
+                    Upgrade.Upgrade.InstallDNN(strProviderPath);
+
+                    
                     var licenseConfig = (installConfig != null) ? installConfig.License : null;
                     bool IsProOrEnterprise = (File.Exists(HttpContext.Current.Server.MapPath("~\\bin\\DotNetNuke.Professional.dll")) || File.Exists(HttpContext.Current.Server.MapPath("~\\bin\\DotNetNuke.Enterprise.dll")));
                     if (IsProOrEnterprise && licenseConfig !=null && !String.IsNullOrEmpty(licenseConfig.AccountEmail) && !String.IsNullOrEmpty(licenseConfig.InvoiceNumber))

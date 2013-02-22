@@ -4105,6 +4105,20 @@ namespace DotNetNuke.Services.Upgrade
                 InstallPackages("AuthSystem", true);
                 InstallPackages("Package", true);
 
+                //install LP that contains templates if installing in a different language   
+                var installConfig = InstallController.Instance.GetInstallConfig();
+                string culture = installConfig.InstallCulture;
+                if (!culture.Equals("en-us", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    string installFolder = HttpContext.Current.Server.MapPath("~/Install/language");
+                    string lpAndTemplates = installFolder + "\\installlanguage.resources";
+
+                    if (File.Exists(lpAndTemplates))
+                    {
+                        InstallPackage(lpAndTemplates, "Language", false);
+                    }
+                }
+
                 //Set Status to None
                 Globals.SetStatus(Globals.UpgradeStatus.None);
 
