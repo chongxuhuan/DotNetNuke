@@ -35,7 +35,7 @@
 										<controlTitle>Site Redirection Management</controlTitle>
 										<controlType>View</controlType>
 										<iconFile />
-                    <helpUrl>http://help.dotnetnuke.com/070000/default.htm#DocumentationUsing the Control Panel/Admin Console/Site Redirection Management/About the Site Redirection Management Module.html</helpUrl>
+                    <helpUrl>http://help.dotnetnuke.com/070000/default.htm#Documentation/Using the Control Panel/Admin Console/Site Redirection Management/About the Site Redirection Management Module.html</helpUrl>
 										<viewOrder>0</viewOrder>
 									</moduleControl>
 									<moduleControl>

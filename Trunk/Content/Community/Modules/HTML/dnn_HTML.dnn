@@ -3,7 +3,7 @@
     <package name="DNN_HTML" type="Module" version="07.00.04">
       <friendlyName>HTML</friendlyName>
       <description>This module renders a block of HTML or Text content. The Html/Text module allows authorized users to edit the content either inline or in a separate administration page. Optional tokens can be used that get replaced dynamically during display. All versions of content are stored in the database including the ability to rollback to an older version.</description>
-      <iconFile>DesktopModules\HTML\Images\html.gif</iconFile>
+      <iconFile>DesktopModules\HTML\Images\html.png</iconFile>
       <owner>
         <name>DotNetNuke Corporation</name>
         <organization>DotNetNuke Corporation</organization>
@@ -116,7 +116,7 @@
                     <controlTitle />
                     <controlType>View</controlType>
                     <iconFile />
-                    <helpUrl>http://help.dotnetnuke.com/070000/default.htm#DocumentationBuilding Your Site/Installed Modules/HTML/About the Text HTML Module.htm</helpUrl>
+                    <helpUrl>http://help.dotnetnuke.com/070000/default.htm#Documentation/Building Your Site/Installed Modules/HTML/About the Text HTML Module.htm</helpUrl>
                     <viewOrder>0</viewOrder>
                   </moduleControl>
                   <moduleControl>

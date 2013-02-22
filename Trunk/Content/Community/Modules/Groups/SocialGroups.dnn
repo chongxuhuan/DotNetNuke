@@ -45,7 +45,7 @@
                                 <controlTitle>Create A Group</controlTitle>
                                 <controlType>View</controlType>
                                 <iconFile />
-                              <helpUrl>http://help.dotnetnuke.com/070000/default.htm#DocumentationBuilding Your Site/Installed Modules/Social Groups/Adding a Social Group.html</helpUrl>
+                              <helpUrl>http://help.dotnetnuke.com/070000/default.htm#Documentation/Building Your Site/Installed Modules/Social Groups/Adding a Social Group.html</helpUrl>
                                 <supportsPopUps>True</supportsPopUps>
                                 <viewOrder>0</viewOrder>
                             </moduleControl>

@@ -34,7 +34,7 @@
 										<controlTitle />
 										<controlType>View</controlType>
 										<iconFile />
-                    <helpUrl>http://help.dotnetnuke.com/070000/default.htm#DocumentationUsing the Control Panel/Admin Console/Taxonomy/About the Taxonomy Manager Module.html</helpUrl>
+                    <helpUrl>http://help.dotnetnuke.com/070000/default.htm#Documentation/Using the Control Panel/Admin Console/Taxonomy/About the Taxonomy Manager Module.html</helpUrl>
 										<viewOrder>0</viewOrder>
 									</moduleControl>
 									<moduleControl>
