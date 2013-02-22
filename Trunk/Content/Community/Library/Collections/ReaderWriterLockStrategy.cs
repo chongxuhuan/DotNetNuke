@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -19,21 +19,51 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 using System;
+using System.Runtime.Serialization;
 using System.Threading;
 
 namespace DotNetNuke.Collections.Internal
 {
+    [Serializable]
     public class ReaderWriterLockStrategy : IDisposable, ILockStrategy
     {
+        [NonSerialized]
         private ReaderWriterLockSlim _lock;
 
-        public ReaderWriterLockStrategy() : this(LockRecursionPolicy.NoRecursion)
+        private LockRecursionPolicy _lockRecursionPolicy;
+
+        private ReaderWriterLockSlim Lock
+        {
+            get
+            {
+                return _lock ?? (_lock = new ReaderWriterLockSlim(_lockRecursionPolicy));
+            }
+        }
+
+        // Implement this method to serialize data. The method is called 
+        // on serialization.
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            // Use the AddValue method to specify serialized values.
+            info.AddValue("_lockRecursionPolicy", _lockRecursionPolicy, typeof(LockRecursionPolicy));
+        }
+
+        public ReaderWriterLockStrategy()
+            : this(LockRecursionPolicy.NoRecursion)
         {
         }
 
         public ReaderWriterLockStrategy(LockRecursionPolicy recursionPolicy)
         {
+            _lockRecursionPolicy = recursionPolicy;
             _lock = new ReaderWriterLockSlim(recursionPolicy);
+        }
+
+        // The special constructor is used to deserialize values.
+        public ReaderWriterLockStrategy(SerializationInfo info, StreamingContext context)
+        {
+            _lockRecursionPolicy = (LockRecursionPolicy)info.GetValue("_lockRecursionPolicy", typeof(LockRecursionPolicy));
+            _lock = new ReaderWriterLockSlim(_lockRecursionPolicy);
         }
 
         #region ILockStrategy Members
@@ -46,9 +76,9 @@ namespace DotNetNuke.Collections.Internal
         public ISharedCollectionLock GetReadLock(TimeSpan timeout)
         {
             EnsureNotDisposed();
-            if (_lock.TryEnterReadLock(timeout))
+            if (Lock.TryEnterReadLock(timeout))
             {
-                return new ReaderWriterSlimLock(_lock);
+                return new ReaderWriterSlimLock(Lock);
             }
             else
             {
@@ -64,9 +94,9 @@ namespace DotNetNuke.Collections.Internal
         public ISharedCollectionLock GetWriteLock(TimeSpan timeout)
         {
             EnsureNotDisposed();
-            if (_lock.TryEnterWriteLock(timeout))
+            if (Lock.TryEnterWriteLock(timeout))
             {
-                return new ReaderWriterSlimLock(_lock);
+                return new ReaderWriterSlimLock(Lock);
             }
             else
             {
@@ -79,7 +109,7 @@ namespace DotNetNuke.Collections.Internal
             get
             {
                 EnsureNotDisposed();
-                return _lock.IsReadLockHeld || _lock.IsWriteLockHeld;
+                return Lock.IsReadLockHeld || Lock.IsWriteLockHeld;
                 //todo uncomment if upgradelock is used OrElse _lock.IsUpgradeableReadLockHeld
             }
         }
@@ -89,7 +119,7 @@ namespace DotNetNuke.Collections.Internal
             get
             {
                 EnsureNotDisposed();
-                return _lock.IsWriteLockHeld;
+                return Lock.IsWriteLockHeld;
             }
         }
 
@@ -134,8 +164,11 @@ namespace DotNetNuke.Collections.Internal
                     //dispose managed state (managed objects).
                 }
 
-                _lock.Dispose();
-                _lock = null;
+                if (_lock != null)
+                {
+                    _lock.Dispose();
+                    _lock = null;
+                }
             }
             _isDisposed = true;
         }

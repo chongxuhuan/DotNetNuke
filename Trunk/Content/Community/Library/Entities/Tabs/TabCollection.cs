@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -57,9 +57,25 @@ namespace DotNetNuke.Entities.Tabs
             _localizedTabs = new Dictionary<string, List<TabInfo>>();
         }
 
-        //Required for Serialization
-        public TabCollection(SerializationInfo info, StreamingContext context) : base(info, context)
+        // Implement this method to serialize data. The method is called 
+        // on serialization.
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            // Use the AddValue method to specify serialized values.
+            info.AddValue("_list", _list, typeof(List<TabInfo>));
+            info.AddValue("_children", _children, typeof(Dictionary<int, List<TabInfo>>));
+            info.AddValue("_localizedTabs", _localizedTabs, typeof(Dictionary<string, List<TabInfo>>));
+            base.GetObjectData(info, context);
+        }
+
+
+        // The special constructor is used to deserialize values.
+        public TabCollection(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            _list = (List<TabInfo>) info.GetValue("_list", typeof(List<TabInfo>));
+            _children = (Dictionary<int, List<TabInfo>>) info.GetValue("_children", typeof(Dictionary<int, List<TabInfo>>));
+            _localizedTabs = (Dictionary<string, List<TabInfo>>) info.GetValue("_localizedTabs", typeof(Dictionary<string, List<TabInfo>>));
         }
 
         public TabCollection(IEnumerable<TabInfo> tabs) : this()

@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -20,6 +20,7 @@
 #endregion
 #region Usings
 
+using System.Collections.Generic;
 using System.Linq;
 
 using DotNetNuke.Common;
@@ -59,7 +60,7 @@ namespace DotNetNuke.Entities.Content.Taxonomy
 
         private object GetVocabulariesCallBack(CacheItemArgs cacheItemArgs)
         {
-            return CBO.FillQueryable<Vocabulary>(_DataService.GetVocabularies());
+            return CBO.FillQueryable<Vocabulary>(_DataService.GetVocabularies()).ToList();
         }
 
         #endregion
@@ -100,7 +101,7 @@ namespace DotNetNuke.Entities.Content.Taxonomy
 
         public IQueryable<Vocabulary> GetVocabularies()
         {
-            return CBO.GetCachedObject<IQueryable<Vocabulary>>(new CacheItemArgs(_CacheKey, _CacheTimeOut), GetVocabulariesCallBack);
+            return CBO.GetCachedObject<List<Vocabulary>>(new CacheItemArgs(_CacheKey, _CacheTimeOut), GetVocabulariesCallBack).AsQueryable();
         }
 
         public void UpdateVocabulary(Vocabulary vocabulary)

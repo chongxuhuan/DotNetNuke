@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,6 +21,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Caching;
 
@@ -72,7 +73,7 @@ namespace DotNetNuke.Entities.Content.Taxonomy
         private object GetTermsCallBack(CacheItemArgs cacheItemArgs)
         {
             var vocabularyId = (int) cacheItemArgs.ParamList[0];
-            return CBO.FillQueryable<Term>(_DataService.GetTermsByVocabulary(vocabularyId));
+            return CBO.FillQueryable<Term>(_DataService.GetTermsByVocabulary(vocabularyId)).ToList();
         }
 
         #endregion
@@ -201,7 +202,7 @@ namespace DotNetNuke.Entities.Content.Taxonomy
             //Argument Contract
             Requires.NotNegative("vocabularyId", vocabularyId);
 
-            return CBO.GetCachedObject<IQueryable<Term>>(new CacheItemArgs(string.Format(_CacheKey, vocabularyId), _CacheTimeOut, _CachePriority, vocabularyId), GetTermsCallBack);
+            return CBO.GetCachedObject<List<Term>>(new CacheItemArgs(string.Format(_CacheKey, vocabularyId), _CacheTimeOut, _CachePriority, vocabularyId), GetTermsCallBack).AsQueryable();
         }
 
 		/// <summary>
