@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2011
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -64,6 +64,9 @@ namespace DotNetNuke.Services.Journal {
         public bool CurrentUserLikes { get; set; }
         public string JournalType { get; set; }
         public bool IsDeleted { get; set; }
+        public bool CommentsDisabled { get; set; }
+        public bool CommentsHidden { get; set; }
+       
 
        /// <summary>
         /// Gets or sets the key ID.
@@ -117,6 +120,9 @@ namespace DotNetNuke.Services.Journal {
             JournalType = Null.SetNullString(dr["JournalType"]);
 
             IsDeleted = Null.SetNullBoolean(dr["IsDeleted"]);
+
+            CommentsDisabled = Null.SetNullBoolean(dr["CommentsDisabled"]);
+            CommentsHidden = Null.SetNullBoolean(dr["CommentsHidden"]);
         }
         public CacheLevel Cacheability {
             get {

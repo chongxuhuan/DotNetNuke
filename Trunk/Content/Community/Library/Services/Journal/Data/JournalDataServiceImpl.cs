@@ -64,13 +64,41 @@ namespace DotNetNuke.Services.Journal
             return _provider.ExecuteReader("Journal_GetByKey", portalId, objectKey, includeAllItems, isDeleted);
         }
         public int Journal_Save(int portalId, int currentUserId, int profileId, int groupId, int journalId, int journalTypeId, string title,
-                                string summary, string body, string itemData, string xml, string objectKey, Guid accessKey, string securitySet) {  
+                                string summary, string body, string itemData, string xml, string objectKey, Guid accessKey, string securitySet) 
+        {  
             
             journalId = _provider.ExecuteScalar<int>("Journal_Save", portalId, journalId, journalTypeId, currentUserId, profileId, 
-                                                    groupId, title, summary, itemData, xml, objectKey, accessKey, securitySet);
+                                                    groupId, title, summary, itemData, xml, objectKey, accessKey, securitySet, false, false);
             
             return journalId;
-                                }
+         }
+        public int Journal_Save(int portalId, int currentUserId, int profileId, int groupId, int journalId, int journalTypeId, string title,
+                        string summary, string body, string itemData, string xml, string objectKey, Guid accessKey, string securitySet, bool commentsDisabled, bool commentsHidden)
+        {
+
+            journalId = _provider.ExecuteScalar<int>("Journal_Save", portalId, journalId, journalTypeId, currentUserId, profileId,
+                                                    groupId, title, summary, itemData, xml, objectKey, accessKey, securitySet, commentsDisabled, commentsHidden);
+
+            return journalId;
+        }
+        public int Journal_Update(int portalId, int currentUserId, int profileId, int groupId, int journalId, int journalTypeId, string title,
+                        string summary, string body, string itemData, string xml, string objectKey, Guid accessKey, string securitySet)
+        {
+
+            journalId = _provider.ExecuteScalar<int>("Journal_Update", portalId, journalId, journalTypeId, currentUserId, profileId,
+                                                    groupId, title, summary, itemData, xml, objectKey, accessKey, securitySet, false, false);
+
+            return journalId;
+        }
+        public int Journal_Update(int portalId, int currentUserId, int profileId, int groupId, int journalId, int journalTypeId, string title,
+                        string summary, string body, string itemData, string xml, string objectKey, Guid accessKey, string securitySet, bool commentsDisabled, bool commentsHidden)
+        {
+
+            journalId = _provider.ExecuteScalar<int>("Journal_Update", portalId, journalId, journalTypeId, currentUserId, profileId,
+                                                    groupId, title, summary, itemData, xml, objectKey, accessKey, securitySet, commentsDisabled, commentsHidden);
+
+            return journalId;
+        }
 
         public void Journal_Comment_Delete(int journalId, int commentId) {
             _provider.ExecuteNonQuery("Journal_Comment_Delete", journalId, commentId);
@@ -94,7 +122,16 @@ namespace DotNetNuke.Services.Journal
         public IDataReader Journal_Comment_LikeList(int portalId, int journalId, int commentId) {
             return _provider.ExecuteReader("Journal_Comment_LikeList", portalId, journalId, commentId);
         }
+        public void Journal_Comments_ToggleDisable(int portalId, int journalId, bool disable)
+        {
+            _provider.ExecuteNonQuery("Journal_Comments_ToggleDisable", portalId, journalId, disable);
+        }
 
+        public void Journal_Comments_ToggleHidden(int portalId, int journalId, bool hidden)
+        {
+            _provider.ExecuteNonQuery("Journal_Comments_ToggleHidden", portalId, journalId, hidden);
+        }
+      
         public IDataReader Journal_Types_List(int portalId) {
             return _provider.ExecuteReader("Journal_Types_List", portalId);
         }

@@ -36,6 +36,7 @@ namespace DotNetNuke.Services.Journal
         JournalItem GetJournalItem(int portalId, int userId, int journalId, bool includeAllItems, bool isDeleted);
         IEnumerable<JournalTypeInfo> GetJournalTypes(int portalId);
         void SaveJournalItem(JournalItem journalItem, int tabId);
+        void UpdateJournalItem(JournalItem journalItem, int tabId);
 
         // Delete Journal Items
         void DeleteJournalItem(int portalId, int userId, int journalId);
@@ -46,6 +47,11 @@ namespace DotNetNuke.Services.Journal
         void SoftDeleteJournalItemByKey(int portalId, string objectKey);
 
         // Journal Comments
+        void DisableComments(int portalId, int journalId);
+        void HideComments(int portalId, int journalId);
+        void EnableComments(int portalId, int journalId);
+        void ShowComments(int portalId, int journalId);
+
         IList<CommentInfo> GetCommentsByJournalIds(List<int> journalIdList);
         void LikeJournalItem(int journalId, int userId, string displayName);
         void SaveComment(CommentInfo ci);

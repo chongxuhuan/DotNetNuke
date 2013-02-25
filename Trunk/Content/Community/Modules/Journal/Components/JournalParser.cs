@@ -126,7 +126,10 @@ namespace DotNetNuke.Modules.Journal.Components {
                 
                 ctl.AuthorNameLink = "<a href=\"" + DotNetNuke.Common.Globals.NavigateURL(PortalSettings.UserTabId, string.Empty, new String[] {"userId=" + ji.JournalAuthor.Id.ToString()}) + "\">" + ji.JournalAuthor.Name + "</a>";
                 if (CurrentUser.UserID > 0) {
-                    ctl.CommentLink = "<a href=\"#\" id=\"cmtbtn-" + ji.JournalId + "\">" + Comment + "</a>";
+                    if (!ji.CommentsDisabled)
+                    {
+                        ctl.CommentLink = "<a href=\"#\" id=\"cmtbtn-" + ji.JournalId + "\">" + Comment + "</a>";
+                    }
                     if (isLiked) {
                         ctl.LikeLink = "<a href=\"#\" id=\"like-" + ji.JournalId + "\">{resx:unlike}</a>";
                     } else {
@@ -134,7 +137,7 @@ namespace DotNetNuke.Modules.Journal.Components {
                     }
                 }
                 
-                ctl.CommentArea = GetCommentAreaHTML(ji.JournalId, comments);
+                ctl.CommentArea = GetCommentAreaHTML(ji.JournalId, comments, ji.CommentsHidden, ji.CommentsDisabled);
 				ji.TimeFrame = Common.Utilities.DateUtils.CalculateDateForDisplay(ji.DateCreated);
                 ji.DateCreated = CurrentUser.LocalTime(ji.DateCreated);
  
@@ -216,7 +219,7 @@ namespace DotNetNuke.Modules.Journal.Components {
 					int UserId = Convert.ToInt32(l.Attributes["uid"].Value.ToString());
 					string Name = l.Attributes["un"].Value.ToString();
 					if (!(UserId == CurrentUser.UserID)) {
-						if (xc < xLikes.Count - 1 & xc > 0) {
+						if (xc < xLikes.Count - 1 && xc > 0 && xc < 3) {
 							sb.Append(", ");
 						} else if (xc > 0 & xc < xLikes.Count & xc < 3) {
 							sb.Append(" {resx:and} ");
@@ -236,7 +239,7 @@ namespace DotNetNuke.Modules.Journal.Components {
 				}
 				if (xc == 1) {
 					sb.Append(" {resx:likesthis}");
-				} else if (xc>1 && isLiked) {
+				} else if (xc>1) {
 					sb.Append(" {resx:likethis}");
 				}
 
@@ -254,7 +257,7 @@ namespace DotNetNuke.Modules.Journal.Components {
 			}
 			if (xc == 1) {
 				sb.Append(" {resx:likesthis}");
-			} else if (xc>1 && isLiked) {
+			} else if (xc>1) {
 				sb.Append(" {resx:likethis}");
 			}
 		}
@@ -263,7 +266,11 @@ namespace DotNetNuke.Modules.Journal.Components {
 			sb.Append("</div>");
 			return sb.ToString();
 		}
-        internal string GetCommentAreaHTML(int JournalId, IList<CommentInfo> comments) {
+        internal string GetCommentAreaHTML(int JournalId, IList<CommentInfo> comments, bool CommentsHidden, bool CommentsDisabled) {
+            if (CommentsHidden)
+            {
+                return string.Empty;
+            }
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("<ul class=\"jcmt\" id=\"jcmt-{0}\">", JournalId);
             foreach(CommentInfo ci in comments) {
@@ -271,7 +278,7 @@ namespace DotNetNuke.Modules.Journal.Components {
                     sb.Append(GetCommentRow(ci));
                 }
             }
-            if (CurrentUser.UserID > 0) {
+            if (CurrentUser.UserID > 0 && !CommentsDisabled) {
                 sb.AppendFormat("<li id=\"jcmt-{0}-txtrow\" class=\"cmteditarea\">", JournalId);
                 sb.AppendFormat("<textarea id=\"jcmt-{0}-txt\" class=\"cmteditor\"></textarea>", JournalId);
                 sb.Append("<div class=\"editorPlaceholder\">{resx:leavecomment}</div></li>");
