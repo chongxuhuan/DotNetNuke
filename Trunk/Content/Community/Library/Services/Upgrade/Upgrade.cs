@@ -1634,14 +1634,14 @@ namespace DotNetNuke.Services.Upgrade
             if (CoreModuleExists("Extensions") == false)
             {
                 moduleDefId = AddModuleDefinition("Extensions", "", "Extensions");
-                AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/Extensions/Extensions.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.View, 0);
-                AddModuleControl(moduleDefId, "Edit", "Edit Feature", "DesktopModules/Admin/Extensions/EditExtension.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Edit, 0);
-                AddModuleControl(moduleDefId, "PackageWriter", "Package Writer", "DesktopModules/Admin/Extensions/PackageWriter.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0);
-                AddModuleControl(moduleDefId, "EditControl", "Edit Control", "DesktopModules/Admin/Extensions/Editors/EditModuleControl.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0);
-                AddModuleControl(moduleDefId, "ImportModuleDefinition", "Import Module Definition", "DesktopModules/Admin/Extensions/Editors/ImportModuleDefinition.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0);
-                AddModuleControl(moduleDefId, "BatchInstall", "Batch Install", "DesktopModules/Admin/Extensions/BatchInstall.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0);
-                AddModuleControl(moduleDefId, "NewExtension", "New Extension Wizard", "DesktopModules/Admin/Extensions/ExtensionWizard.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0);
-                AddModuleControl(moduleDefId, "UsageDetails", "Usage Information", "DesktopModules/Admin/Extensions/UsageDetails.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0, "", true);
+                AddModuleControl(moduleDefId, "", "", "DesktopModules/Admin/Extensions/Extensions.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.View, 0);
+                AddModuleControl(moduleDefId, "Edit", "Edit Feature", "DesktopModules/Admin/Extensions/EditExtension.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.Edit, 0);
+                AddModuleControl(moduleDefId, "PackageWriter", "Package Writer", "DesktopModules/Admin/Extensions/PackageWriter.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.Host, 0);
+                AddModuleControl(moduleDefId, "EditControl", "Edit Control", "DesktopModules/Admin/Extensions/Editors/EditModuleControl.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.Host, 0);
+                AddModuleControl(moduleDefId, "ImportModuleDefinition", "Import Module Definition", "DesktopModules/Admin/Extensions/Editors/ImportModuleDefinition.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.Host, 0);
+                AddModuleControl(moduleDefId, "BatchInstall", "Batch Install", "DesktopModules/Admin/Extensions/BatchInstall.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.Host, 0);
+                AddModuleControl(moduleDefId, "NewExtension", "New Extension Wizard", "DesktopModules/Admin/Extensions/ExtensionWizard.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.Host, 0);
+                AddModuleControl(moduleDefId, "UsageDetails", "Usage Information", "DesktopModules/Admin/Extensions/UsageDetails.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.Host, 0, "", true);
             }
             else
             {
@@ -1652,7 +1652,7 @@ namespace DotNetNuke.Services.Upgrade
                 RemoveModuleControl(moduleDefId, "LanguageSettings");
                 RemoveModuleControl(moduleDefId, "EditResourceKey");
                 RemoveModuleControl(moduleDefId, "EditSkins");
-                AddModuleControl(moduleDefId, "UsageDetails", "Usage Information", "DesktopModules/Admin/Extensions/UsageDetails.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0, "", true);
+                AddModuleControl(moduleDefId, "UsageDetails", "Usage Information", "DesktopModules/Admin/Extensions/UsageDetails.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.Host, 0, "", true);
 
                 //Module was incorrectly assigned as "IsPremium=False"
                 RemoveModuleFromPortals("Extensions");
@@ -1672,13 +1672,13 @@ namespace DotNetNuke.Services.Upgrade
             moduleController.UpdateModuleSetting(moduleId, "Extensions_Mode", "Module");
 
             //Add Extensions Host Page
-            TabInfo extensionsPage = AddHostPage("Extensions", "Install, add, modify and delete extensions, such as modules, skins and language packs.", "~/images/icon_extensions_16px.gif", "~/images/icon_extensions_32px.gif", true);
+            TabInfo extensionsPage = AddHostPage("Extensions", "Install, add, modify and delete extensions, such as modules, skins and language packs.", "~/images/icon_extensions_16px.png", "~/images/icon_extensions_32px.png", true);
 
-            moduleId = AddModuleToPage(extensionsPage, moduleDefId, "Extensions", "~/images/icon_extensions_32px.gif");
+            moduleId = AddModuleToPage(extensionsPage, moduleDefId, "Extensions", "~/images/icon_extensions_32px.png");
             moduleController.UpdateModuleSetting(moduleId, "Extensions_Mode", "All");
 
             //Add Extensions Module to Admin Page for all Portals
-            AddAdminPages("Extensions", "Install, add, modify and delete extensions, such as modules, skins and language packs.", "~/images/icon_extensions_16px.gif", "~/images/icon_extensions_32px.gif", true, moduleDefId, "Extensions", "~/images/icon_extensions_32px.gif"); 
+            AddAdminPages("Extensions", "Install, add, modify and delete extensions, such as modules, skins and language packs.", "~/images/icon_extensions_16px.png", "~/images/icon_extensions_32px.png", true, moduleDefId, "Extensions", "~/images/icon_extensions_32px.png"); 
 
             //Remove Host Languages Page
             RemoveHostPage("Languages");
@@ -1973,7 +1973,7 @@ namespace DotNetNuke.Services.Upgrade
             //Change Key for Module Defintions;
             moduleDefId = GetModuleDefinition("Extensions", "Extensions");
             RemoveModuleControl(moduleDefId, "ImportModuleDefinition");
-            AddModuleControl(moduleDefId, "EditModuleDefinition", "Edit Module Definition", "DesktopModules/Admin/Extensions/Editors/EditModuleDefinition.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0);
+            AddModuleControl(moduleDefId, "EditModuleDefinition", "Edit Module Definition", "DesktopModules/Admin/Extensions/Editors/EditModuleDefinition.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.Host, 0);
 
             //Module was incorrectly assigned as "IsPremium=False"
             RemoveModuleFromPortals("Users And Roles");
@@ -2470,7 +2470,7 @@ namespace DotNetNuke.Services.Upgrade
 
             //add store control
             moduleDefId = AddModuleDefinition("Extensions", "", "Extensions");
-            AddModuleControl(moduleDefId, "Store", "Store Details", "DesktopModules/Admin/Extensions/Store.ascx", "~/images/icon_extensions_32px.gif", SecurityAccessLevel.Host, 0);
+            AddModuleControl(moduleDefId, "Store", "Store Details", "DesktopModules/Admin/Extensions/Store.ascx", "~/images/icon_extensions_32px.png", SecurityAccessLevel.Host, 0);
 
             EnableModalPopUps();
 
