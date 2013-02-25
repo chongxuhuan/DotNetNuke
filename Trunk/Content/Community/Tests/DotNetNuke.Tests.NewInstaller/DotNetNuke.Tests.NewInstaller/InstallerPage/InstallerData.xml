@@ -4,7 +4,7 @@
   <settings
     name = "Complete Installer Test, Daily run"
     browser = "chrome"
-    baseURL = "InstallerEETest1.lvh.me"
+    baseURL = "InstallerEE704Test1.lvh.me"
     InstallerLanguage = "english"
     UserName = "host"
     Password = "dnnhost"
@@ -14,7 +14,7 @@
     DatabaseSetup = "Custom"
     DatabaseType = "SQL Server"
     DatabaseServerName = "(local)"
-    DatabaseName = "InstallerEETest1"
+    DatabaseName = "InstallerEE704Test1"
     DatabaseFilename = ""
     ObjectQualifier = ""
     Security = "Integrated"
