@@ -294,24 +294,36 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objec
 	END
 GO
 
-DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_GetByKey]
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Journal_GetByKey]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Journal_GetByKey
 GO
-DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForSummary]
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Journal_ListForSummary]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Journal_ListForSummary
 GO
-DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForProfile]
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Journal_ListForProfile]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Journal_ListForProfile
 GO
-DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_ListForGroup]
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Journal_ListForGroup]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Journal_ListForGroup
 GO
-DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_Get]
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Journal_Get]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Journal_Get
 GO
-DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_Save]
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Journal_Save]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Journal_Save
 GO
-DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_Update]
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Journal_Update]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Journal_Update
 GO
-DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_Comments_ToggleDisable]
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Journal_Comments_ToggleDisable]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Journal_Comments_ToggleDisable
 GO
-DROP PROCEDURE {databaseOwner}[{objectQualifier}Journal_Comments_ToggleHidden]
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Journal_Comments_ToggleHidden]') AND OBJECTPROPERTY(id, N'IsPROCEDURE') = 1)
+  DROP PROCEDURE {databaseOwner}{objectQualifier}Journal_Comments_ToggleHidden
 GO
+
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}Journal_GetByKey]
 	@PortalId int,
 	@ObjectKey nvarchar(255),
