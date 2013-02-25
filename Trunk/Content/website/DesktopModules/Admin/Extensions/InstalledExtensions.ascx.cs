@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -52,7 +52,7 @@ namespace DotNetNuke.Modules.Admin.Extensions
     {
         #region Private Members
 
-        private const string DefaultExtensionImage = "icon_extensions.gif";
+        private const string DefaultExtensionImage = "icon_extensions_32px.png";
         private const string DefaultLanguageImage = "icon_languagePack.gif";
         private const string DefaultAuthenicationImage = "icon_authentication.png";
         private const string DefaultContainerImage = "icon_container.gif";
