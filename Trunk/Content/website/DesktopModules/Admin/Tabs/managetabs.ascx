@@ -84,7 +84,7 @@
 					</div>    	
 					<div id="modulesRow" runat="server" class="dnnFormItem">
 						<dnn:Label ID="plModules" runat="server" ResourceKey="CopyContent" Suffix=":" HelpKey="CopyContentHelp" ControlName="grdModules" />
-                        <asp:DataGrid ID="grdModules" runat="server" DataKeyField="ModuleID" AutoGenerateColumns="false" CssClass="dnnGrid dnnLeft" Width="45%">
+                        <asp:DataGrid ID="grdModules" runat="server" DataKeyField="ModuleID" AutoGenerateColumns="false" CssClass="dnnGrid dnnLeft">
 							<headerstyle cssclass="dnnGridHeader" verticalalign="Top" />
 							<itemstyle cssclass="dnnGridItem" horizontalalign="Left" />
 							<alternatingitemstyle cssclass="dnnGridAltItem" />
