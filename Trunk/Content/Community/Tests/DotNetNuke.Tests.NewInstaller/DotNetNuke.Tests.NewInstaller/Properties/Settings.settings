@@ -9,7 +9,7 @@
       <Value Profile="(Default)">LayoutInstallerData.xml</Value>
     </Setting>
     <Setting Name="WaitFactor" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">6</Value>
+      <Value Profile="(Default)">10</Value>
     </Setting>
   </Settings>
 </SettingsFile>

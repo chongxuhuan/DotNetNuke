@@ -43,7 +43,7 @@ namespace DotNetNuke.Tests.NewInstaller.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public int WaitFactor {
             get {
                 return ((int)(this["WaitFactor"]));
