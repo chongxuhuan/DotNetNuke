@@ -34,6 +34,7 @@ using DotNetNuke.Data;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework.Providers;
 using DotNetNuke.Instrumentation;
+using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Scheduling;
 using DotNetNuke.Services.Upgrade.InternalController.Steps;
 using DotNetNuke.Services.Upgrade.Internals;
@@ -147,6 +148,12 @@ namespace DotNetNuke.Services.Install
                     ensureLpAndTemplate.Execute();
 
                     Upgrade.Upgrade.InstallDNN(strProviderPath);
+                    //remove en-US from portal if installing in a different language
+                    if (!installConfig.InstallCulture.Equals("en-us", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        var locale = LocaleController.Instance.GetLocale("en-US");
+                        Localization.Localization.RemoveLanguageFromPortal(0, locale.LanguageId);
+                    }
 
                     
                     var licenseConfig = (installConfig != null) ? installConfig.License : null;
