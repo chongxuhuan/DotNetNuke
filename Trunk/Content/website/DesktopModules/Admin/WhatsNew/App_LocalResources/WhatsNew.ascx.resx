@@ -2372,7 +2372,41 @@ corrected with each release. &lt;/p&gt;
 &lt;/ul&gt;</value>
   </data>
   <data name="WhatsNew.07.00.04" xml:space="preserve">
-    <value>&lt;h3 class="SubSubHead"&gt;PLACEHOLDER&lt;/h3&gt;
-    </value>
+    <value>&lt;h3 class="SubSubHead"&gt;Major Highlights&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;Fixed issue that caused message replies to now show in the feed&lt;/li&gt;
+	&lt;li&gt;Fixed errors in Razor DDR Templates when upgrading to a version higher than 7.0.0&lt;/li&gt;
+	&lt;li&gt;Fixed issue that prevented hosts users from changing their password&lt;/li&gt;
+	&lt;li&gt;Fixed issue that caused line feeds to be removed from messages when using Firefox&lt;/li&gt;
+	&lt;li&gt;Fixed UX issue when copying pages from the control panel&lt;/li&gt;
+	&lt;li&gt;Fixed JS errors when creating pages using IE 10&lt;/li&gt;
+	&lt;li&gt;Fixed issue where standard asp file input elements were rendered incorrectly&lt;/li&gt;
+	&lt;li&gt;Fixed drag and drop functionality when updating a user's profile picture&lt;/li&gt;
+	&lt;li&gt;Replaced the old style icons for modules shown in the control panel&lt;/li&gt;
+	&lt;li&gt;Fixed issue that caused the server to hang when pages were moved using the Pages Module&lt;/li&gt;
+	&lt;li&gt;Fixed issue that caused the site logo to not function correctly on child websites&lt;/li&gt;
+	&lt;li&gt;Fixed issue that caused autocomplete to fail when a Console Module was added to a page&lt;/li&gt;
+	&lt;li&gt;Fixed module actions positioning issues when using ajax to load content after the page is rendered&lt;/li&gt;
+	&lt;li&gt;Enhanced the way user names are displayed when liking comments in the Journal Module&lt;/li&gt;
+	&lt;li&gt;Fixed issue that caused multilingual sites to show duplicate entries in the site switching tool in the control panel&lt;/li&gt;
+	&lt;li&gt;Fixed issue that caused multiple entries to be added to the ContentItems table when adding tags to modules&lt;/li&gt;
+	&lt;li&gt;Updated the list of devices in the Preview Management Module to include the most popular devices to date&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Security Fixes&lt;/h3&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 class="SubSubHead"&gt;Updated Modules/Providers&lt;/h3&gt;
+&lt;h4 class="SubSubHead"&gt;Modules&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;Pages Module&lt;/li&gt;
+	&lt;li&gt;DDR Menu&lt;/li&gt;
+	&lt;li&gt;Journal Module&lt;/li&gt;
+	&lt;li&gt;Messaging Module&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="SubSubHead"&gt;Providers&lt;/h4&gt;
+&lt;ul&gt;
+	&lt;li&gt;none&lt;/li&gt;
+&lt;/ul&gt;</value>
   </data>
 </root>
