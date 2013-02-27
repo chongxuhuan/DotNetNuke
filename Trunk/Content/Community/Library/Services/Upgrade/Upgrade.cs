@@ -67,7 +67,9 @@ using DotNetNuke.Services.Localization.Internal;
 using DotNetNuke.Services.Log.EventLog;
 using DotNetNuke.Services.Social.Messaging.Internal;
 using DotNetNuke.Services.Social.Notifications;
+using DotNetNuke.Services.Upgrade.InternalController.Steps;
 using DotNetNuke.Services.Upgrade.Internals;
+using DotNetNuke.Services.Upgrade.Internals.Steps;
 using DotNetNuke.UI.Internals;
 
 using FileInfo = DotNetNuke.Services.FileSystem.FileInfo;
@@ -4105,6 +4107,13 @@ namespace DotNetNuke.Services.Upgrade
                 InstallPackages("AuthSystem", true);
                 InstallPackages("Package", true);
 
+				//Set Status to None
+				Globals.SetStatus(Globals.UpgradeStatus.None);
+
+				//download LP (and templates) if not using en-us
+				IInstallationStep ensureLpAndTemplate = new UpdateLanguagePackStep();
+				ensureLpAndTemplate.Execute();
+
                 //install LP that contains templates if installing in a different language   
                 var installConfig = InstallController.Instance.GetInstallConfig();
                 string culture = installConfig.InstallCulture;
@@ -4118,9 +4127,6 @@ namespace DotNetNuke.Services.Upgrade
                         InstallPackage(lpAndTemplates, "Language", false);
                     }
                 }
-
-                //Set Status to None
-                Globals.SetStatus(Globals.UpgradeStatus.None);
 
                 // parse portal(s) if available
                 XmlNodeList nodes = xmlDoc.SelectNodes("//dotnetnuke/portals/portal");

@@ -143,10 +143,6 @@ namespace DotNetNuke.Services.Install
 
                     var installConfig = InstallController.Instance.GetInstallConfig();
 
-                    //download LP (and templates) if not using en-us
-                    IInstallationStep ensureLpAndTemplate = new UpdateLanguagePackStep();
-                    ensureLpAndTemplate.Execute();
-
                     Upgrade.Upgrade.InstallDNN(strProviderPath);
                     //remove en-US from portal if installing in a different language
                     if (!installConfig.InstallCulture.Equals("en-us", StringComparison.InvariantCultureIgnoreCase))
