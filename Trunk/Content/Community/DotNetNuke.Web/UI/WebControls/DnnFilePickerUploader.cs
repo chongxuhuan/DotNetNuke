@@ -15,16 +15,25 @@ using DotNetNuke.Services.FileSystem;
 namespace DotNetNuke.Web.UI.WebControls
 {
     public class DnnFilePickerUploader: UserControl
-    {
-        #region protected properties
+	{
+		#region Private Fields
 
-        protected HiddenField dnnFileUploadFilePath;
+	    private int? _portalId = null;
+
+		#endregion
+
+		#region protected properties
+
+		protected HiddenField dnnFileUploadFilePath;
         protected HiddenField dnnFileUploadFileId;
         protected DnnComboBox FilesComboBox;
         protected DnnComboBox FoldersComboBox;
         
+		#endregion
 
-        public bool UsePersonalFolder { get; set; }
+		#region Public Properties
+
+		public bool UsePersonalFolder { get; set; }
         public string FilePath
         {
             get
@@ -72,6 +81,18 @@ namespace DotNetNuke.Web.UI.WebControls
         public bool Required { get; set; }
         public UserInfo User { get; set; }
 
+	    public int PortalId
+	    {
+		    get
+		    {
+			    return !_portalId.HasValue ? PortalSettings.Current.PortalId : _portalId.Value;
+		    }
+			set
+			{
+				_portalId = value;
+			}
+	    }
+
         #endregion
 
         protected void Page_Load(object sender, EventArgs e)
@@ -105,7 +126,7 @@ namespace DotNetNuke.Web.UI.WebControls
             }
             else
             {
-                var folders = FolderManager.Instance.GetFolders(PortalSettings.Current.PortalId, "READ,ADD", user.UserID);
+                var folders = FolderManager.Instance.GetFolders(PortalId, "READ,ADD", user.UserID);
                 foreach (FolderInfo folder in folders)
                 {
                     var folderItem = new ListItem
@@ -159,7 +180,7 @@ namespace DotNetNuke.Web.UI.WebControls
 
         private void LoadFiles()
         {
-            int effectivePortalId = PortalSettings.Current.PortalId;
+            int effectivePortalId = PortalId;
             var user = User ?? UserController.GetCurrentUserInfo();
             if (IsUserFolder(FoldersComboBox.SelectedItem.Value))
             {

@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -838,6 +838,8 @@ namespace DotNetNuke.Modules.Admin.Portals
                     //ctlFavIcon.ShowUpLoad = true;
                     cancelHyperLink.Visible = false;
                 }
+
+				ctlLogo.PortalId = ctlBackground.PortalId = ctlFavIcon.PortalId = _portalId;
 
                 ////this needs to execute always to the client script code is registred in InvokePopupCal
                 //cmdExpiryCalendar.NavigateUrl = Calendar.InvokePopupCal(txtExpiryDate);
