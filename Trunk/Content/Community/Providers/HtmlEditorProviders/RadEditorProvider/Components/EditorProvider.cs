@@ -39,6 +39,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Modules.HTMLEditorProvider;
+using DotNetNuke.RadEditorProvider.Components;
 using DotNetNuke.Security;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI;
@@ -941,6 +942,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
                 string styleOverrideScriptPath = _panel.Page.ResolveUrl(moduleFolderPath + "js/overrideCSS.js");
                 ScriptManager.RegisterClientScriptInclude(_panel.Page, _panel.Page.GetType(), "OverrideCSS", styleOverrideScriptPath);
                 _editor.Skin = "Black";
+	            _editor.PreventDefaultStylesheet = true;
             }
             else
             {
@@ -1167,7 +1169,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
 
         #endregion
 
-        private readonly RadEditor _editor = new RadEditor();
+		private readonly DnnEditor _editor = new DnnEditor();
         private readonly Panel _panel = new Panel();
         private bool _ShowPortalLinks = true;
 

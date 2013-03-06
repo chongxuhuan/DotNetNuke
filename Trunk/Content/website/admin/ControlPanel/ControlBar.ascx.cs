@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -644,7 +644,7 @@ namespace DotNetNuke.UI.ControlPanels
 
         protected string GetModeForAttribute()
         {
-            return UserMode.ToString().ToUpper();
+            return UserMode.ToString().ToUpperInvariant();
         }
 
         protected string GetEditButtonLabel()

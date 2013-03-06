@@ -106,6 +106,7 @@
     <Import Include="System.Web.UI.HtmlControls" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\DnnEditor.cs" />
     <Compile Include="SimulateIsNumeric.cs" />
     <Compile Include="Components\DialogParams.cs" />
     <Compile Include="Components\EditorProvider.cs">
