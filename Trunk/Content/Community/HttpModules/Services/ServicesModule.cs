@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -27,7 +27,7 @@ namespace DotNetNuke.HttpModules.Services
 {
     public class ServicesModule : IHttpModule
     {
-        static readonly Regex ServiceApi = new Regex(@"DesktopModules/.+/API");
+		public static readonly Regex ServiceApi = new Regex(@"DesktopModules/.+/API");
 
         public void Init(HttpApplication context)
         {

@@ -80,7 +80,7 @@
 					<div class="dnnFormItem">
 						<dnn:Label ID="plCopyPage" runat="server" ResourceKey="CopyModules" Suffix=":" HelpKey="CopyModulesHelp" ControlName="cboCopyPage" />
 						<%--<asp:DropDownList ID="cboCopyPage" runat="server" DataTextField="IndentedTabName" DataValueField="TabId" AutoPostBack="True" />--%>
-                        <dnn:DnnComboBox ID="cboCopyPage" runat="server" DataTextField="IndentedTabName" DataValueField="TabId" AutoPostBack="True" />
+                        <dnn:DnnComboBox ID="cboCopyPage" runat="server" DataTextField="IndentedTabName" DataValueField="TabId" AutoPostBack="True" CausesValidation="False" />
 					</div>    	
 					<div id="modulesRow" runat="server" class="dnnFormItem">
 						<dnn:Label ID="plModules" runat="server" ResourceKey="CopyContent" Suffix=":" HelpKey="CopyContentHelp" ControlName="grdModules" />
@@ -247,7 +247,7 @@
 				<div class="dnnFormItem">
 					<dnn:Label ID="lblCacheProvider" runat="server" ControlName="cboCacheProvider" ResourceKey="CacheProvider" HelpKey="CacheProvider.Help"></dnn:Label>
 					<%--<asp:DropDownList ID="cboCacheProvider" runat="server" AutoPostBack="true" DataValueField="Key" DataTextField="Key" />--%>
-                    <dnn:DnnComboBox ID="cboCacheProvider" runat="server" AutoPostBack="true" DataValueField="Key" DataTextField="Key" />
+                    <dnn:DnnComboBox ID="cboCacheProvider" runat="server" AutoPostBack="true" DataValueField="Key" DataTextField="Key" CausesValidation="False" />
 				</div>        
 				<div id="CacheStatusRow" runat="server" visible="false" class="dnnFormItem">
 					<dnn:Label ID="lblCacheStatus" runat="server" ResourceKey="CacheStatus" HelpKey="CacheStatus.Help"></dnn:Label>

@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
@@ -35,6 +36,7 @@ using DotNetNuke.Entities.Host;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.HttpModules.Config;
+using DotNetNuke.HttpModules.Services;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Services.EventQueue;
 using DotNetNuke.Services.Localization;
@@ -47,6 +49,7 @@ namespace DotNetNuke.HttpModules
     public class MobileRedirectModule : IHttpModule
     {
         private IRedirectionController _redirectionController;
+		private IList<string> _specialPages = new List<string> { "/login.aspx", "/register.aspx", "/terms.aspx", "/privacy.aspx" };
         public string ModuleName
         {
             get
@@ -84,6 +87,8 @@ namespace DotNetNuke.HttpModules
                     || app.Request.Url.LocalPath.ToLower().EndsWith(".asmx")
                     || app.Request.Url.LocalPath.ToLower().EndsWith(".ashx")
                     || app.Request.Url.LocalPath.ToLower().EndsWith(".svc")
+					|| ServicesModule.ServiceApi.IsMatch(app.Context.Request.RawUrl)
+					|| IsSpecialPage(app.Request.RawUrl)
 					|| app.Request.HttpMethod == "POST")
             {
                 return;
@@ -118,6 +123,20 @@ namespace DotNetNuke.HttpModules
             }
         }
 
+		private bool IsSpecialPage(string url)
+		{
+			var tabPath = url.ToLowerInvariant();
+			if (tabPath.Contains("?"))
+			{
+				tabPath = tabPath.Substring(0, tabPath.IndexOf("?"));
+			}
 
+			var alias = PortalController.GetCurrentPortalSettings().PortalAlias.HTTPAlias.ToLowerInvariant();
+			if (alias.Contains("/"))
+			{
+				tabPath = tabPath.Replace(alias.Substring(alias.IndexOf("/")), string.Empty);
+			}
+			return _specialPages.Contains(tabPath);
+		}
     }
 }
