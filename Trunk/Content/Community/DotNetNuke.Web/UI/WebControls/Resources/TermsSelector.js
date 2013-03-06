@@ -1,4 +1,4 @@
-﻿(function ($, t) {
+﻿(function ($, t, sys) {
 	t.registerNamespace("dnn.controls");
 	dnn.controls.termsSelector = {};
 	
@@ -54,7 +54,7 @@
 		});
 	};
 
-	$().ready(function () {
+	var updateTerms = function() {
 		setTimeout(function() {
 			$("div[class*=TermsSelector]").each(function() {
 				var clientId = $(this).attr("id");
@@ -66,6 +66,15 @@
 				}
 			});
 		}, 0);
+	};
+
+	$().ready(function () {
+		updateTerms();
+		if (typeof sys != "undefined") {
+			sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+				updateTerms();
+			});
+		}
 	});
-}(jQuery, Type));
+}(jQuery, Type, window.Sys));
 

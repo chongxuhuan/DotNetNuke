@@ -66,6 +66,8 @@ namespace DotNetNuke.Framework
     public abstract class PageBase : Page
     {
     	private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof (PageBase));
+
+	    private PageStatePersister _persister;
         #region Private Members
 
         private readonly NameValueCollection _htmlAttributes = new NameValueCollection();
@@ -108,22 +110,25 @@ namespace DotNetNuke.Framework
             get
             {
                 //Set ViewState Persister to default (as defined in Base Class)
-                PageStatePersister persister = base.PageStatePersister;
-                
-                if (Globals.Status == Globals.UpgradeStatus.None)
-                {
-                    switch (Host.PageStatePersister)
-                    {
-                        case "M":
-                            persister = new CachePageStatePersister(this);
-                            break;
-                        case "D":
-                            persister = new DiskPageStatePersister(this);
-                            break;
-                    }
-                }
+	            if (_persister == null)
+	            {
+		            _persister = base.PageStatePersister;
 
-                return persister;
+		            if (Globals.Status == Globals.UpgradeStatus.None)
+		            {
+			            switch (Host.PageStatePersister)
+			            {
+				            case "M":
+								_persister = new CachePageStatePersister(this);
+					            break;
+				            case "D":
+								_persister = new DiskPageStatePersister(this);
+					            break;
+			            }
+		            }
+	            }
+
+				return _persister;
             }
         }
 

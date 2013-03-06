@@ -8,7 +8,17 @@
 /*****                                                  *****/
 /************************************************************/
 
-
+/***** Fix bug 25350: update the icon to new file name. *****/
+UPDATE {databaseOwner}[{objectQualifier}Packages]
+	SET IconFile = CASE IconFile
+						WHEN '~/DesktopModules/Admin/Authentication/authentication.gif' THEN '~/DesktopModules/Admin/Authentication/authentication.png'
+						WHEN '~/DesktopModules/Admin/Banners/banners.gif' THEN '~/DesktopModules/Admin/Banners/banners.png'
+						WHEN '~/DesktopModules/Admin/Console/console.gif' THEN '~/DesktopModules/Admin/Console/console.png'
+						WHEN '~/DesktopModules/Admin/ContentList/contentList.gif' THEN '~/DesktopModules/Admin/ContentList/contentList.png'
+						WHEN '~/DesktopModules/Admin/ViewProfile/viewProfile.gif' THEN '~/DesktopModules/Admin/ViewProfile/viewProfile.png'
+						ELSE IconFile
+					END
+GO
 
 /************************************************************/
 
