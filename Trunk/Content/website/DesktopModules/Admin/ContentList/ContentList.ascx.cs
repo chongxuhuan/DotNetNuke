@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -66,10 +66,16 @@ namespace DotNetNuke.Modules.ContentList
                         dr["ContentKey"] = item.ContentKey;
                         dr["Title"] = item.Content;
 
-                        //get tab info and use the tab description
+                        //get tab info and use the tab description, if tab is deleted then ignore the item.
                         var tab = tabController.GetTab(item.TabID, PortalId, false);
                         if(tab != null)
                         {
+							if (tab.IsDeleted)
+							{
+								continue;
+							}
+
+							dr["Title"] = string.IsNullOrEmpty(tab.Title) ? tab.TabName : tab.Title;
                             dr["Description"] = tab.Description;
                         }
                         else

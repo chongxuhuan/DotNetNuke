@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -22,6 +22,8 @@
 
 using System;
 using System.Reflection;
+
+using DotNetNuke.Common.Utilities;
 
 #endregion
 
@@ -194,7 +196,12 @@ namespace DotNetNuke.Application
         {
             get
             {
-                return "http://update.dotnetnuke.com";
+	            var url = Config.GetSetting("UpdateServiceUrl");
+				if (string.IsNullOrEmpty(url))
+				{
+					return "http://update.dotnetnuke.com";
+				}
+	            return url;
             }
         }
 
