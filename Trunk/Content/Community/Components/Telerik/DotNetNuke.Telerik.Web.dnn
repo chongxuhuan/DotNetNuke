@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="DotNetNuke.Telerik.Web" type="Library" version="07.00.01">
+    <package name="DotNetNuke.Telerik.Web" type="Library" version="07.00.05">
       <friendlyName>DotNetNuke Telerik Web Components</friendlyName>
       <description>Provides Telerik Components for DotNetNuke.</description>
       <dependencies/>
@@ -20,12 +20,12 @@
             <assembly>
               <path>bin</path>
               <name>Telerik.Web.UI.dll</name>
-              <version>2012.3.1205.40</version>
+              <version>2013.1.220.40</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>Telerik.Web.UI.Skins.dll</name>
-              <version>2012.3.1205.40</version>
+              <version>2013.1.220.40</version>
             </assembly>
           </assemblies>
         </component>
@@ -62,7 +62,7 @@
                     <add name="Telerik.Web.UI.ChartHttpHandler" verb="*" path="ChartImage.axd" type="Telerik.Web.UI.ChartHttpHandler, Telerik.Web.UI, Culture=neutral, PublicKeyToken=121fae78165ba3d4"/>
                   </node>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Telerik.Web.UI']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Telerik.Web.UI']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="2008.0.0.0-2020.0.0.0" newVersion="2012.3.1205.40" />
+                    <bindingRedirect oldVersion="2008.0.0.0-2020.0.0.0" newVersion="2013.1.220.40" />
                   </node>
                 </nodes>
               </configuration>
