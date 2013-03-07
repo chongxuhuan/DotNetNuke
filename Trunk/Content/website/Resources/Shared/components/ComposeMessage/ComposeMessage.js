@@ -73,8 +73,13 @@
             });
         };
         $wrap.delegate(opts.openTriggerSelector, 'click', function (e) {
+
             e.preventDefault();
             e.stopPropagation();
+
+            if (opts.canTrigger && !opts.canTrigger()) {
+                return;
+            }
 
             var autoclose,
                 messageId = -1;
