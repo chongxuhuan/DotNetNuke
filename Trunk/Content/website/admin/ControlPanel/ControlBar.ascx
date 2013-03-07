@@ -87,6 +87,7 @@
                     <!--close subNav-->
                 </li>
                 <% } %>
+				<!--SEO NOINDEX-->
                 <li class="controlBar_ArrowMenu"><a href="javascript:void(0)">
                     <%= GetString("Tool.Tools.Text") %></a>
                     <div class="subNav">
@@ -157,10 +158,11 @@
                     </div>
                     <!--close subNav-->
                 </li>
+				<!--END SEO-->
                 <% } %>
             </ul>
             <!--close ControlNav-->
-          
+			<!--SEO NOINDEX-->
             <ul id="ControlActionMenu">
                <% if (TabPermissionController.HasTabPermission("EDIT,CONTENT,MANAGE"))
                   {%>
@@ -292,6 +294,7 @@
                 </li>
             </ul>
              <%}%>
+			<!--END SEO-->
         </div>
         
          <% if (TabPermissionController.HasTabPermission("EDIT,CONTENT,MANAGE"))
