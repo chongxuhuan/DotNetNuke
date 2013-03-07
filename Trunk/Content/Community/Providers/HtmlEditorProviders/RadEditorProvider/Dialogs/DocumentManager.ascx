@@ -26,7 +26,7 @@
 
         _setLinkManagerItem: function (item, linkManagerParameters) {
             var link = linkManagerParameters.get_value();
-            link.href = item.get_url();
+            link.href = escape(item.get_url());
             if (this._originalText && this._originalText == link.innerHTML) {
                 link.innerHTML = "";
             }
