@@ -96,6 +96,83 @@ AS
 		END
 GO
 
+/***** Fix bug 25446: update sp Dashboard_GetDbBackups. *****/
+IF (EXISTS (SELECT name FROM sysobjects WHERE (name = N'{objectQualifier}Dashboard_GetDbBackups') AND (type = 'P')))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Dashboard_GetDbBackups
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Dashboard_GetDbBackups
+AS
+	DECLARE @ProductEdition INT
+	SET @ProductEdition = CAST(ServerProperty('EngineEdition') as INT)
+
+	IF (@ProductEdition = 5) --Check for SQL Azure
+	BEGIN
+		SELECT      
+			'Unsupported' as name, 
+			NULL as StartDate, 
+			NULL as FinishDate, 
+			0 as size, 
+			NULL as database_name, 
+			'UNKNOWN' as BackupType
+	END
+	ELSE
+	BEGIN
+		EXEC('SELECT TOP 20     
+				name, 
+				backup_start_date as StartDate, 
+				backup_finish_date as FinishDate, 
+				backup_size/1024 as size, 
+				database_name, 
+				CASE type
+					WHEN ''D'' THEN ''Database''
+					WHEN ''I'' THEN ''Differential database''
+					WHEN ''L'' THEN ''Log''
+					WHEN ''F'' THEN ''File or filegroup''
+					WHEN ''G'' THEN ''Differential file''
+					WHEN ''P'' THEN ''Partial''
+					WHEN ''Q'' THEN ''Differential partial''
+				END AS BackupType
+				FROM         
+				msdb..backupset
+				WHERE
+				database_name = DB_NAME() 
+				ORDER BY backup_start_date DESC')
+	END
+GO
+
+/***** Fix bug 25444: update sp Dashboard_GetDbFileInfo. *****/
+IF (EXISTS (SELECT name FROM sysobjects WHERE (name = N'{objectQualifier}Dashboard_GetDbFileInfo') AND (type = 'P')))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Dashboard_GetDbFileInfo
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Dashboard_GetDbFileInfo
+AS
+	DECLARE @ProductEdition INT
+	SET @ProductEdition = CAST(ServerProperty('EngineEdition') as INT)
+
+	IF (@ProductEdition = 5) --Check for SQL Azure
+	BEGIN
+		SELECT 
+			'UNKNOWN' as FileType,
+			'UNKNOWN' as Name,
+			0 as Size,
+			'UNKOWN' as filename
+	END
+	ELSE
+	BEGIN
+		SELECT 
+			CASE LOWER(RIGHT(filename,3))
+				WHEN 'mdf' THEN 'DATA'
+				WHEN 'ldf' THEN 'LOG'
+				ELSE 'UNKNOWN'
+			END as FileType,
+			Name,
+			size*8 AS Size,
+			filename
+		FROM sysfiles
+	END
+GO
 
 /************************************************************/
 
