@@ -590,7 +590,7 @@ namespace DotNetNuke.UI.ControlPanels
 
         protected bool ShowSwitchLanguagesPanel()
         {
-             if (PortalSettings.AllowUserUICulture)
+             if (PortalSettings.AllowUserUICulture && PortalSettings.ContentLocalizationEnabled)
              {
                  if (CurrentUICulture == null)
                  {
