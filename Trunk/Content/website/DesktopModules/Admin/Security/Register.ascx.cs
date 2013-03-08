@@ -132,7 +132,7 @@ namespace DotNetNuke.Modules.Admin.Users
 
                 object setting = GetSetting(PortalId, "Redirect_AfterRegistration");
 
-                if (Convert.ToInt32(setting) == Null.NullInteger)
+				if (Convert.ToInt32(setting) > 0)
                 {
                     if (Request.QueryString["returnurl"] != null)
                     {
