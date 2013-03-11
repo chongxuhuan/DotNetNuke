@@ -41,6 +41,7 @@ using DotNetNuke.Instrumentation;
 using DotNetNuke.Modules.HTMLEditorProvider;
 using DotNetNuke.RadEditorProvider.Components;
 using DotNetNuke.Security;
+using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI;
 
@@ -392,6 +393,13 @@ namespace DotNetNuke.Providers.RadEditorProvider
                 ReadPaths.Add(RootImageDirectory);
                 WritePaths.Add(RootImageDirectory);
             }
+			else if (folderPath.ToUpperInvariant() == "[USERFOLDER]")
+			{
+				var userFolderPath = FolderManager.Instance.GetUserFolder(UserController.GetCurrentUserInfo()).FolderPath;
+				var path = RemoveEndSlash(RootImageDirectory) + AddSlash(userFolderPath);
+				WritePaths.Add(path);
+				ReadPaths.Add(path);
+			}
             else if (folderPath.Length > 0)
             {
                 string path = RemoveEndSlash(RootImageDirectory) + AddSlash(folderPath);

@@ -88,7 +88,8 @@
 	            var defaultVal = parseInt(ctrl.val());
 	            ctrl.dnnSpinner({
 	                type: 'range',
-	                defaultVal: defaultVal
+	                defaultVal: defaultVal,
+	            	typedata: {min: 0, max: 9999}
 	            });
 	        });
 

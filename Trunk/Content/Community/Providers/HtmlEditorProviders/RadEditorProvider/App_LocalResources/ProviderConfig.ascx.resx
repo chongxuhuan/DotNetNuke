@@ -554,4 +554,7 @@ You must set the CustomLinks tool in your toolbar configuratioon in order to mak
   <data name="Toolbar Settings.Title" xml:space="preserve">
     <value>Toolbar Settings</value>
   </data>
+  <data name="UserFolder.Text" xml:space="preserve">
+    <value>[UserFolder]</value>
+  </data>
 </root>
