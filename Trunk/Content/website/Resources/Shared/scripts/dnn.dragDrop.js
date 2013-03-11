@@ -294,9 +294,18 @@
 
         // register window resize on ajaxComplete to reposition action menus - only in edit mode
         // after page fully load
+        var throttleTimeout;
         $(window).load(function () {
             $(document).ajaxComplete(function () {
-                $(window).resize();
+                if (!throttleTimeout) {
+                    throttleTimeout = setTimeout(
+                        function () {
+                            $(window).resize();
+                            throttleTimeout = null;
+                        },
+                        100
+                    );
+                }
             });
         });
 

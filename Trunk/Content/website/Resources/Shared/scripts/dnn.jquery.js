@@ -654,7 +654,7 @@
         if (pd.tooltipWrapper) pd.tooltipWrapper.remove();
         pd.tooltipWrapper = $('<div class="dnnTooltip"> <div class="dnnFormHelpContent dnnClear"><span class="dnnHelpText"></span></div></div>').insertAfter($pd);
         pd.tooltipWrapperInner = $('.dnnFormHelpContent', pd.tooltipWrapper);
-        pd.tooltipWrapperInner.css({ width: '30px', padding: '8px' });
+        pd.tooltipWrapperInner.css({ width: '32px', padding: '7px' });
         $pd.parent().css({ position: 'relative' });
 
         var hoverOnToolTip = false, hoverOnPd = false;
@@ -662,13 +662,7 @@
             over: function () {
                 hoverOnPd = true;
                 var val = $(this).children(':first').progressbar('value');
-                pd.tooltipWrapperInner.find('span').html(val + ' %');
-                var pdTop = $pd.position().top,
-                    tooltipHeight = pd.tooltipWrapperInner.height();
-
-                pdTop -= (tooltipHeight + 10);
-                var pdLeft = val > 50 ? (val - 4) + '%' : val > 0 ? (val - 2) + '%' : '10px';
-                pd.tooltipWrapper.css({ position: 'absolute', left: pdLeft, top: pdTop + 'px' });
+	            pd.update(val);
                 pd.tooltipWrapperInner.show();
 
             },
@@ -688,6 +682,16 @@
                 pd.tooltipWrapperInner.hide();
             }
         });
+
+	    pd.update = function(value) {
+	    	pd.tooltipWrapperInner.find('span').html(value + ' %');
+		    var pdTop = $pd.position().top,
+			    tooltipHeight = pd.tooltipWrapperInner.height();
+
+		    pdTop -= (tooltipHeight + 10);
+		    var pdLeft = value > 50 ? (value - 4) + '%' : value > 0 ? (value - 2) + '%' : '10px';
+		    pd.tooltipWrapper.css({ position: 'absolute', left: pdLeft, top: pdTop + 'px' });
+	    };
 
         return this;
     };
@@ -750,6 +754,38 @@
         // hide the input control and place within the Spinner Control body
         inputControl.insertAfter($("div.dnnSpinnerDisplay", objContainerDiv));
         $("div.dnnSpinnerDisplay", objContainerDiv).click(function () {
+            if (opt.type == 'range') {
+                var displayCtrl = $(this);
+                // show inner input
+                var innerInput = $('input[type="text"]', displayCtrl);
+                if (innerInput.length < 1) {
+                    var originalVal = displayCtrl.html();
+                    innerInput = $('<input type="text" />').val(originalVal);
+                    displayCtrl.html(innerInput);
+                }
+                innerInput.focus().blur(function () {
+                    var newVal = $(this).val();
+                    if (newVal > opt.typedata.max) {
+                        newVal = opt.typedata.max;
+                    }
+                    if (newVal < opt.typedata.min) {
+                        newVal = opt.typedata.min;
+                    }
+
+                    $(this).remove();
+                    selectedValue = newVal;
+                    inputControl.val(newVal);
+                    displayCtrl.html(newVal);
+                }).keypress(function (e) {
+                    var regex = new RegExp("^[0-9]+$");
+                    var key = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+                    if (!regex.test(key)) {
+                        event.preventDefault();
+                        return false;
+                    }
+                });
+            }
+
             inputControl.triggerHandler('focus');
         });
         inputControl.css('display', 'none');
@@ -770,6 +806,7 @@
                 if ((opt.typedata.max - opt.typedata.min) > opt.typedata.interval) {
                     // attach events;
                     $("a.dnnSpinnerTopButton", objContainerDiv).click(function () {
+
                         if ((selectedValue + opt.typedata.interval) <= opt.typedata.max || opt.looping) {
                             if ((selectedValue + opt.typedata.interval) > opt.typedata.max) {
                                 selectedValue = opt.typedata.min - opt.typedata.interval;
@@ -2464,9 +2501,32 @@
             var $this = $(this);
             var ele = $this.get(0);
             ele.scrollPane = $this.jScrollPane();
+            var api = ele.scrollPane.data('jsp');
+            var throttleTimeout;
+            $(window).bind(
+                'resize',
+                function () {
+                    if ($.browser.msie) {
+                        // IE fires multiple resize events while you are dragging the browser window which
+                        // causes it to crash if you try to update the scrollpane on every one. So we need
+                        // to throttle it to fire a maximum of once every 50 milliseconds...
+                        if (!throttleTimeout) {
+                            throttleTimeout = setTimeout(
+                                function () {
+                                    api.reinitialise();
+                                    throttleTimeout = null;
+                                },
+                                50
+                            );
+                        }
+                    } else {
+                        api.reinitialise();
+                    }
+                }
+            );
+
             if (window.__rgDataDivScrollTopPersistArray && window.__rgDataDivScrollTopPersistArray.length) {
                 var y = window.__rgDataDivScrollTopPersistArray.pop();
-                var api = ele.scrollPane.data('jsp');
                 api.scrollToY(y);
             }
         });

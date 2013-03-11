@@ -1133,6 +1133,15 @@
 	    background: transparent;	
 	    color: #999;   
 	}
+
+        .dnnFormItem .dnnSpinnerDisplay > input[type="text"],
+        .dnnFormItem .dnnSpinnerDisplay > input[type="text"]:focus  {
+            border: none;
+            margin: 0;
+            box-shadow: none;
+            padding: 0;
+            background: transparent;	
+        }
 	
 	.dnnSpinnerCtrl {
 	    position: absolute;
