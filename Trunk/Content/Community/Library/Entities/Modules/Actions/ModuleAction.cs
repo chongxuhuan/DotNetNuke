@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -133,7 +133,7 @@ namespace DotNetNuke.Entities.Modules.Actions
 
         ///-----------------------------------------------------------------------------
         /// <summary>
-        /// The Actions property allows the user to create a heirarchy of actions, with
+        /// The Actions property allows the user to create a hierarchy of actions, with
         /// each action having sub-actions.
         /// </summary>
         /// <value>Returns a collection of ModuleActions.</value>
@@ -153,7 +153,7 @@ namespace DotNetNuke.Entities.Modules.Actions
         /// to find a specific Action. 
         /// </summary>
         /// <value>The integer ID of the current <see cref="T:DotNetNuke.ModuleAction"/>.</value>
-        /// <remarks>When building a heirarchy of <see cref="T:DotNetNuke.ModuleAction">ModuleActions</see>, 
+        /// <remarks>When building a hierarchy of <see cref="T:DotNetNuke.ModuleAction">ModuleActions</see>, 
         /// the ID is used to link the child and parent actions.</remarks>
         /// <history>
         /// 	[Joe] 	10/18/2003	Created

@@ -276,7 +276,7 @@ namespace ClientDependency.Core.Controls
 		}
 
 		/// <summary>
-		/// Find all dependencies of this control and it's entire child control heirarchy.
+        /// Find all dependencies of this control and it's entire child control hierarchy.
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>

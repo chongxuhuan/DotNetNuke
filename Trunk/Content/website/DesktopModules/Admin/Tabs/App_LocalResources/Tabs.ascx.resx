@@ -325,7 +325,7 @@
     <value>There are no modules on the selected page.</value>
   </data>
   <data name="TabExists.Text" xml:space="preserve">
-    <value>The Page Name you chose is already being used for another page at the same level of the page heirarchy.</value>
+    <value>The Page Name you chose is already being used for another page at the same level of the page hierarchy.</value>
   </data>
   <data name="TabCreated.Text" xml:space="preserve">
     <value>Page {0} Created</value>

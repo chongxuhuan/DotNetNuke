@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -37,7 +37,7 @@ namespace DotNetNuke.Entities.Modules.Actions
     /// </summary>
     /// <remarks>The ModuleActionCollection is a custom collection of ModuleActions.
     /// Each ModuleAction in the collection has it's own <see cref="P:DotNetNuke.ModuleAction.Actions" />
-    ///  collection which provides the ability to create a heirarchy of ModuleActions.</remarks>
+    ///  collection which provides the ability to create a hierarchy of ModuleActions.</remarks>
     /// <history>
     /// 	[Joe] 	10/9/2003	Created
     /// </history>
