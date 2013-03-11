@@ -150,10 +150,10 @@ namespace DotNetNuke.Modules.Admin.Host
             //Load DocTypes
             var docTypes = new Dictionary<string, string>
                                {
-                                   { LocalizeString("LegacyDoctype"), "0" }, 
-                                   { LocalizeString("TransDoctype"), "1" }, 
-                                   { LocalizeString("StrictDoctype"), "2" },
-                                   { LocalizeString("Html5Doctype"), "3" }
+                                   { "0", string.IsNullOrEmpty(LocalizeString("LegacyDoctype")) ? "Legacy" : LocalizeString("LegacyDoctype") }, 
+                                   { "1", string.IsNullOrEmpty(LocalizeString("TransDoctype")) ? "Trans" : LocalizeString("TransDoctype") }, 
+                                   { "2", string.IsNullOrEmpty(LocalizeString("StrictDoctype")) ? "Strict" : LocalizeString("StrictDoctype") },
+                                   { "3", string.IsNullOrEmpty(LocalizeString("Html5Doctype")) ? "Html5" : LocalizeString("Html5Doctype") }
                                };
 
             docTypeCombo.DataSource = docTypes;

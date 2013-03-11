@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -123,9 +123,9 @@ namespace DotNetNuke.Services.Social.Messaging
 
             if (roles != null && roles.Count > 0 && !IsAdminOrHost(sender))
             {
-                if (roles.Select(role => sender.Social.Roles.Any(userRoleInfo => role.RoleID == userRoleInfo.RoleID && userRoleInfo.IsOwner)).Any(owner => !owner))
+                if (!roles.All(role => sender.Social.Roles.Any(userRoleInfo => role.RoleID == userRoleInfo.RoleID)))
                 {
-                    throw new ArgumentException(Localization.Localization.GetString("MsgOnlyHostOrAdminOrGroupOwnerCanSendToRoleError", Localization.Localization.ExceptionsResourceFile));
+                    throw new ArgumentException(Localization.Localization.GetString("MsgOnlyHostOrAdminOrUserInGroupCanSendToRoleError", Localization.Localization.ExceptionsResourceFile));
                 }
             }
 

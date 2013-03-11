@@ -208,8 +208,7 @@
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plHostDefaultDocType" ControlName="cboHostDefaultDocType" runat="server" />
-                    <%--<asp:DropDownList ID="docTypeCombo" runat="server" DataTextField="Key" DataValueField="Value" />--%>
-                    <dnn:DnnComboBox ID="docTypeCombo" runat="server" DataTextField="Key" DataValueField="Value" />
+                    <dnn:DnnComboBox ID="docTypeCombo" runat="server" DataTextField="Value" DataValueField="Key" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:Label ID="plRememberMe" ControlName="chkRemember" runat="server" />

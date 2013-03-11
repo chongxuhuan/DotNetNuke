@@ -2,7 +2,7 @@
 
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -124,27 +124,24 @@ namespace DotNetNuke.Web.InternalServices
                         iconfile = string.Format(Globals.UserProfilePicFormattedUrl(), user.UserID, 32, 32),
                     }).ToList();
 
-                //Roles should be visible to Administrators or Group Owner
-                if (isAdmin || UserInfo.Social.Roles.Any(role => role.IsOwner))
-                {
-                    var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, numResults, q);
-                    results.AddRange(from roleInfo in roles
-                                     where
-                                         isAdmin ||
-                                         UserInfo.Social.Roles.SingleOrDefault(
-                                             ur => ur.RoleID == roleInfo.RoleID && ur.IsOwner) != null
-                                     select new SearchResult
-                                     {
-                                         id = "role-" + roleInfo.RoleID,
-                                         name = roleInfo.RoleName,
-                                         iconfile =
-                                             TestableGlobals.Instance.ResolveUrl(
-                                                 string.IsNullOrEmpty(roleInfo.IconFile)
-                                                     ? "~/images/no_avatar.gif"
-                                                     : PortalSettings.HomeDirectory.TrimEnd('/') + "/" +
-                                                       roleInfo.IconFile)
-                                     });
-                }
+                //Roles should be visible to Administrators or User in the Role.
+                var roles = TestableRoleController.Instance.GetRolesBasicSearch(portalId, numResults, q);
+                results.AddRange(from roleInfo in roles
+                                    where
+                                        isAdmin ||
+                                        UserInfo.Social.Roles.SingleOrDefault(
+                                            ur => ur.RoleID == roleInfo.RoleID) != null
+                                    select new SearchResult
+                                    {
+                                        id = "role-" + roleInfo.RoleID,
+                                        name = roleInfo.RoleName,
+                                        iconfile =
+                                            TestableGlobals.Instance.ResolveUrl(
+                                                string.IsNullOrEmpty(roleInfo.IconFile)
+                                                    ? "~/images/no_avatar.gif"
+                                                    : PortalSettings.HomeDirectory.TrimEnd('/') + "/" +
+                                                    roleInfo.IconFile)
+                                    });
 
                 return Request.CreateResponse(HttpStatusCode.OK, results.OrderBy(sr => sr.name));
             }
