@@ -31,6 +31,24 @@ namespace DotNetNuke.Modules.Html {
         protected global::System.Web.UI.WebControls.CheckBox chkReplaceTokens;
         
         /// <summary>
+        /// plDecorate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UserControl plDecorate;
+        
+        /// <summary>
+        /// cbDecorate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbDecorate;
+        
+        /// <summary>
         /// plWorkflow control.
         /// </summary>
         /// <remarks>

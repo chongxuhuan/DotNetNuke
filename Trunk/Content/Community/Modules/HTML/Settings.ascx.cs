@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -105,6 +105,10 @@ namespace DotNetNuke.Modules.Html
                         chkReplaceTokens.Checked = Convert.ToBoolean(ModuleSettings["HtmlText_ReplaceTokens"]);
                     }
 
+					//get decoration setting, set to true as default.
+					cbDecorate.Checked = !ModuleSettings.ContainsKey("HtmlText_UseDecorate")
+											|| ModuleSettings["HtmlText_UseDecorate"].ToString() == "1";
+
                     // get workflow/version settings
                     var arrWorkflows = new ArrayList();
                     foreach (WorkflowStateInfo objState in workflowStateController.GetWorkflows(PortalId))
@@ -150,6 +154,7 @@ namespace DotNetNuke.Modules.Html
                 // update replace token setting
                 var objModules = new ModuleController();
                 objModules.UpdateModuleSetting(ModuleId, "HtmlText_ReplaceTokens", chkReplaceTokens.Checked.ToString());
+				objModules.UpdateModuleSetting(ModuleId, "HtmlText_UseDecorate", cbDecorate.Checked ? "1" : "0");
 
                 // disable module caching if token replace is enabled
                 if (chkReplaceTokens.Checked)

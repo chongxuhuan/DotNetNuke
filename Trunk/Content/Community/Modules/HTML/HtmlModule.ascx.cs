@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -172,6 +172,12 @@ namespace DotNetNuke.Modules.Html
 
                 // add content to module
                 lblContent.Controls.Add(new LiteralControl(HtmlTextController.FormatHtmlText(ModuleId, contentString, Settings)));
+
+				//set normalCheckBox on the content wrapper to prevent form decoration if its disabled.
+				if (Settings.ContainsKey("HtmlText_UseDecorate") && Settings["HtmlText_UseDecorate"].ToString() == "0")
+				{
+					lblContent.CssClass = string.Format("{0} normalCheckBox", lblContent.CssClass);
+				}
             }
             catch (Exception exc)
             {
