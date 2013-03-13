@@ -13,7 +13,8 @@
 			        <asp:Label ID="lblName" runat="server" resourcekey="lblName" CssClass="dnnFormRequired" ></asp:Label>
                 </label>
             </div>
-			<dnn:DnnComboBox ID="cbName" runat="server" AllowCustomText="true" 
+			<dnn:DnnComboBox ID="cbName" runat="server" AllowCustomText="true"
+				MarkFirstMatch="true" ShowDropDownOnTextboxClick="true" CloseDropDownOnBlur="true" CollapseDelay="0" Filter="Contains"
                 OnClientSelectedIndexChanged="OnClientSelectedIndexChanged" />
 			<asp:CustomValidator ID="CustomValidator1" runat="server" ValidateEmptyText="true" ClientValidationFunction="notEmpty" CssClass="dnnFormMessage dnnFormError"
 				OnServerValidate="ValidateName" ControlToValidate="cbName" Display="Dynamic" resourcekey="valName"
