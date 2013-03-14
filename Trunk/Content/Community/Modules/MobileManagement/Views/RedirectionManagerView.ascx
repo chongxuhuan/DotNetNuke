@@ -82,8 +82,9 @@
 <script type="text/javascript">
     (function ($) {
         $(document).ready(function () {
-            $("#<%=lnkAdd.ClientID %>").click(function (e) {
-                var href = $(this).attr("href").replace(escape(escape("{0}")), $("input[type=radio][name$=optSimpleAdvanced]:checked").val());
+        	$("#<%=lnkAdd.ClientID %>").click(function (e) {
+        		var type = $("input[type=radio][name$=optSimpleAdvanced]:checked").val();
+                var href = $(this).attr("href").replace(escape(escape("{0}")), type).replace("{0}", type);
                 $(this).attr("href", href);
             });
             $('a.delete').dnnConfirm({
