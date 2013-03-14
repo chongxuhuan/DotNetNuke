@@ -323,9 +323,15 @@ namespace DotNetNuke.Entities.Portals
 
         private static object GetPortalSettingsDictionaryCallback(CacheItemArgs cacheItemArgs)
         {
-            int portalID = (int)cacheItemArgs.ParamList[0];
+            var portalId = (int)cacheItemArgs.ParamList[0];
+	        var cultureCode = Convert.ToString(cacheItemArgs.ParamList[1]);
+			if (string.IsNullOrEmpty(cultureCode))
+			{
+				cultureCode = GetActivePortalLanguage(portalId);
+			}
+
             var dicSettings = new Dictionary<string, string>();
-            IDataReader dr = DataProvider.Instance().GetPortalSettings(portalID, GetActivePortalLanguage(portalID));
+			IDataReader dr = DataProvider.Instance().GetPortalSettings(portalId, cultureCode);
             try
             {
                 while (dr.Read())
@@ -1162,29 +1168,12 @@ namespace DotNetNuke.Entities.Portals
 			return languageFileName.Substring(1 + languageFileName.Length - ".xx-XX.resx".Length, "xx-XX".Length);
 		}
 
-		private static IDictionary<string, string> GetPortalSettingsInDefault(int portalId)
+		private static Dictionary<string, string> GetPortalSettingsDictionary(int portalId, string cultureCode)
 		{
-			var dicSettings = new Dictionary<string, string>();
-			IDataReader dr = DataProvider.Instance().GetPortalSettings(portalId, Localization.SystemLocale);
-			try
-			{
-				while (dr.Read())
-				{
-					if (!dr.IsDBNull(1))
-					{
-						dicSettings.Add(dr.GetString(0), dr.GetString(1));
-					}
-				}
-			}
-			catch (Exception exc)
-			{
-				Exceptions.LogException(exc);
-			}
-			finally
-			{
-				CBO.CloseDataReader(dr, true);
-			}
-			return dicSettings;
+			string cacheKey = string.Format(DataCache.PortalSettingsCacheKey, portalId);
+			return CBO.GetCachedObject<Dictionary<string, string>>(new CacheItemArgs(cacheKey, DataCache.PortalSettingsCacheTimeOut, DataCache.PortalSettingsCachePriority, portalId, cultureCode),
+																   GetPortalSettingsDictionaryCallback,
+																   true);
 		}
 
 		private static bool EnableBrowserLanguageInDefault(int portalId)
@@ -1193,7 +1182,7 @@ namespace DotNetNuke.Entities.Portals
 			try
 			{
 				var setting = Null.NullString;
-				GetPortalSettingsInDefault(portalId).TryGetValue("EnableBrowserLanguage", out setting);
+				GetPortalSettingsDictionary(portalId, Localization.SystemLocale).TryGetValue("EnableBrowserLanguage", out setting);
 				if (string.IsNullOrEmpty(setting))
 				{
 					retValue = Host.Host.EnableBrowserLanguage;
@@ -2635,10 +2624,7 @@ namespace DotNetNuke.Entities.Portals
         /// <returns>portal settings.</returns>
         public static Dictionary<string, string> GetPortalSettingsDictionary(int portalID)
         {
-            string cacheKey = string.Format(DataCache.PortalSettingsCacheKey, portalID);
-            return CBO.GetCachedObject<Dictionary<string, string>>(new CacheItemArgs(cacheKey, DataCache.PortalSettingsCacheTimeOut, DataCache.PortalSettingsCachePriority, portalID),
-                                                                   GetPortalSettingsDictionaryCallback,
-                                                                   true);
+	        return GetPortalSettingsDictionary(portalID, string.Empty);
         }
 
         /// <summary>
