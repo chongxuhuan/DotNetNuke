@@ -56,6 +56,7 @@ using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Installer;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Log.EventLog;
+using DotNetNuke.Web.Client;
 
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -65,8 +66,6 @@ using FileInfo = DotNetNuke.Services.FileSystem.FileInfo;
 
 namespace DotNetNuke.Entities.Portals
 {
-    using Web.Client;
-
     /// <summary>
 	/// PoralController provides business layer of poatal.
 	/// </summary>
@@ -77,6 +76,7 @@ namespace DotNetNuke.Entities.Portals
     public class PortalController : IPortalController
     {
     	private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof (PortalController));
+
         #region const values
 
         public const string HtmlText_TimeToAutoSave = "HtmlText_TimeToAutoSave";
@@ -1105,10 +1105,116 @@ namespace DotNetNuke.Entities.Portals
             objEventLog.AddLog("PortalId", PortalId.ToString(), GetCurrentPortalSettings(), UserController.GetCurrentUserInfo().UserID, EventLogController.EventLogType.PORTALINFO_UPDATED);
             DataCache.ClearHostCache(true);
         }
+		
+		private void PrepareLocalizedPortalTemplate(PortalTemplateInfo template, out string templatePath, out string templateFile)
+		{
+			if (string.IsNullOrEmpty(template.LanguageFilePath))
+			{
+				//no language to merge
+				templatePath = Path.GetDirectoryName(template.TemplateFilePath) + @"\";
+				templateFile = Path.GetFileName(template.TemplateFilePath);
+				return;
+			}
+
+			templatePath = Path.Combine(TestableGlobals.Instance.HostMapPath, "MergedTemplate");
+			Directory.CreateDirectory(templatePath);
+
+			var buffer = new StringBuilder(File.ReadAllText(template.TemplateFilePath));
+
+			XDocument languageDoc;
+			using (var reader = PortalTemplateIO.Instance.OpenTextReader(template.LanguageFilePath))
+			{
+				languageDoc = XDocument.Load(reader);
+			}
+
+			var localizedData = languageDoc.Descendants("data");
+
+			foreach (var item in localizedData)
+			{
+				var nameAttribute = item.Attribute("name");
+				if (nameAttribute != null)
+				{
+					string name = nameAttribute.Value;
+					var valueElement = item.Descendants("value").FirstOrDefault();
+					if (valueElement != null)
+					{
+						string value = valueElement.Value;
+
+						buffer = buffer.Replace(string.Format("[{0}]", name), value);
+					}
+				}
+			}
+
+			templateFile = string.Format("Merged-{0}-{1}", template.CultureCode, Path.GetFileName(template.TemplateFilePath));
+
+			File.WriteAllText(Path.Combine(templatePath, templateFile), buffer.ToString());
+		}
+
+		private string GetTemplateName(string languageFileName)
+		{
+			//e.g. "default template.template.en-US.resx"
+			return languageFileName.Substring(0, languageFileName.Length - ".xx-XX.resx".Length);
+		}
+
+		private string GetCultureCode(string languageFileName)
+		{
+			//e.g. "default template.template.en-US.resx"
+			return languageFileName.Substring(1 + languageFileName.Length - ".xx-XX.resx".Length, "xx-XX".Length);
+		}
+
+		private static IDictionary<string, string> GetPortalSettingsInDefault(int portalId)
+		{
+			var dicSettings = new Dictionary<string, string>();
+			IDataReader dr = DataProvider.Instance().GetPortalSettings(portalId, Localization.SystemLocale);
+			try
+			{
+				while (dr.Read())
+				{
+					if (!dr.IsDBNull(1))
+					{
+						dicSettings.Add(dr.GetString(0), dr.GetString(1));
+					}
+				}
+			}
+			catch (Exception exc)
+			{
+				Exceptions.LogException(exc);
+			}
+			finally
+			{
+				CBO.CloseDataReader(dr, true);
+			}
+			return dicSettings;
+		}
+
+		private static bool EnableBrowserLanguageInDefault(int portalId)
+		{
+			bool retValue = Null.NullBoolean;
+			try
+			{
+				var setting = Null.NullString;
+				GetPortalSettingsInDefault(portalId).TryGetValue("EnableBrowserLanguage", out setting);
+				if (string.IsNullOrEmpty(setting))
+				{
+					retValue = Host.Host.EnableBrowserLanguage;
+				}
+				else
+				{
+					retValue = (setting.StartsWith("Y", StringComparison.InvariantCultureIgnoreCase) || setting.ToUpperInvariant() == "TRUE");
+				}
+			}
+			catch (Exception exc)
+			{
+				Logger.Error(exc);
+			}
+			return retValue;
+		}
 
         #endregion
 
-	    /// -----------------------------------------------------------------------------
+		#region Public Methods
+
+		/// -----------------------------------------------------------------------------
         /// <summary>
         /// Creates a new portal alias
         /// </summary>
@@ -1446,50 +1552,6 @@ namespace DotNetNuke.Entities.Portals
                 throw new Exception(message);
             }
             return portalId;
-        }
-
-        private void PrepareLocalizedPortalTemplate(PortalTemplateInfo template, out string templatePath, out string templateFile)
-        {
-            if(string.IsNullOrEmpty(template.LanguageFilePath))
-            {
-                //no language to merge
-                templatePath = Path.GetDirectoryName(template.TemplateFilePath) + @"\";
-                templateFile = Path.GetFileName(template.TemplateFilePath);
-                return;
-            }
-
-            templatePath = Path.Combine(TestableGlobals.Instance.HostMapPath, "MergedTemplate");
-            Directory.CreateDirectory(templatePath);
-
-            var buffer = new StringBuilder(File.ReadAllText(template.TemplateFilePath));
-
-            XDocument languageDoc;
-            using (var reader = PortalTemplateIO.Instance.OpenTextReader(template.LanguageFilePath))
-            {
-                languageDoc = XDocument.Load(reader);
-            }
-
-            var localizedData = languageDoc.Descendants("data");
-
-            foreach (var item in localizedData)
-            {
-                var nameAttribute = item.Attribute("name");
-                if (nameAttribute != null)
-                {
-                    string name = nameAttribute.Value;
-                    var valueElement = item.Descendants("value").FirstOrDefault();
-                    if (valueElement != null)
-                    {
-                        string value = valueElement.Value;
-
-                        buffer = buffer.Replace(string.Format("[{0}]", name), value);
-                    }
-                }
-            }
-
-            templateFile = string.Format("Merged-{0}-{1}", template.CultureCode, Path.GetFileName(template.TemplateFilePath));
-
-            File.WriteAllText(Path.Combine(templatePath, templateFile), buffer.ToString());
         }
 
         /// -----------------------------------------------------------------------------
@@ -2072,15 +2134,6 @@ namespace DotNetNuke.Entities.Portals
             DataCache.ClearHostCache(true);
         }
 
-        /// <summary>
-        /// Gets the current portal settings.
-        /// </summary>
-        /// <returns>portal settings.</returns>
-        PortalSettings IPortalController.GetCurrentPortalSettings()
-        {
-            return GetCurrentPortalSettings();
-        }
-
         public class PortalTemplateInfo
         {
             private string _resourceFilePath;
@@ -2234,17 +2287,20 @@ namespace DotNetNuke.Entities.Portals
             return template;
         }
 
-        private string GetTemplateName(string languageFileName)
-        {
-            //e.g. "default template.template.en-US.resx"
-            return languageFileName.Substring(0, languageFileName.Length - ".xx-XX.resx".Length);
-        }
+		#endregion
 
-        private string GetCultureCode(string languageFileName)
-        {
-            //e.g. "default template.template.en-US.resx"
-            return languageFileName.Substring(1 + languageFileName.Length - ".xx-XX.resx".Length, "xx-XX".Length);
-        }
+		#region Interface Implementation
+
+		/// <summary>
+		/// Gets the current portal settings.
+		/// </summary>
+		/// <returns>portal settings.</returns>
+		PortalSettings IPortalController.GetCurrentPortalSettings()
+		{
+			return GetCurrentPortalSettings();
+		}
+
+		#endregion
 
         #region Public Static Methods
 
@@ -2817,7 +2873,7 @@ namespace DotNetNuke.Entities.Portals
                         }
 
                         //if no cookie - try detecting browser
-						if (String.IsNullOrEmpty(Language) || isDefaultLanguage)
+						if ((String.IsNullOrEmpty(Language) || isDefaultLanguage) && EnableBrowserLanguageInDefault(portalID))
                         {
                             CultureInfo Culture = Localization.GetBrowserCulture(portalID);
 
