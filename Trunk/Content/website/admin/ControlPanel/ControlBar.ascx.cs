@@ -413,14 +413,14 @@ namespace DotNetNuke.UI.ControlPanels
                 if (!isRemoveBookmark)
                 {
                     if(!isHideBookmark)
-                        return string.Format("<li data-tabname='{3}'><a href='{0}'{4}>{1}</a><a href='javascript:void(0)' class='bookmark' title='{2}'><span></span></a></li>",
+						return string.Format("<li data-tabname=\"{3}\"><a href=\"{0}\" {4}>{1}</a><a href=\"javascript:void(0)\" class=\"bookmark\" title=\"{2}\"><span></span></a></li>",
                                              tab.FullUrl,
                                              name,
                                              ClientAPI.GetSafeJSString(GetString("Tool.AddToBookmarks.ToolTip")),
                                              ClientAPI.GetSafeJSString(tab.TabName),
 											 linkClass);
                     else
-						return string.Format("<li data-tabname='{3}'><a href='{0}'{4}>{1}</a><a href='javascript:void(0)' class='bookmark hideBookmark' data-title='{2}'><span></span></a></li>",
+						return string.Format("<li data-tabname=\"{3}\"><a href=\"{0}\" {4}>{1}</a><a href=\"javascript:void(0)\" class=\"bookmark hideBookmark\" data-title=\"{2}\"><span></span></a></li>",
                                             tab.FullUrl,
                                             name,
                                             ClientAPI.GetSafeJSString(GetString("Tool.AddToBookmarks.ToolTip")),
@@ -428,7 +428,7 @@ namespace DotNetNuke.UI.ControlPanels
 											linkClass);
                 }
                 else
-					return string.Format("<li data-tabname='{3}'><a href='{0}'{4}>{1}</a><a href='javascript:void(0)' class='removeBookmark' title='{2}'><span></span></a></li>",
+					return string.Format("<li data-tabname=\"{3}\"><a href=\"{0}\" {4}>{1}</a><a href=\"javascript:void(0)\" class=\"removeBookmark\" title=\"{2}\"><span></span></a></li>",
                                         tab.FullUrl,
                                         name,
                                         ClientAPI.GetSafeJSString(GetString("Tool.RemoveFromBookmarks.ToolTip")),
