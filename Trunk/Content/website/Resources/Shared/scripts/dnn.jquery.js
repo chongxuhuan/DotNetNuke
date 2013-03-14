@@ -762,28 +762,31 @@
                     var originalVal = displayCtrl.html();
                     innerInput = $('<input type="text" />').val(originalVal);
                     displayCtrl.html(innerInput);
-                }
-                innerInput.focus().blur(function () {
-                    var newVal = $(this).val();
-                    if (newVal > opt.typedata.max) {
-                        newVal = opt.typedata.max;
-                    }
-                    if (newVal < opt.typedata.min) {
-                        newVal = opt.typedata.min;
-                    }
 
-                    $(this).remove();
-                    selectedValue = newVal;
-                    inputControl.val(newVal);
-                    displayCtrl.html(newVal);
-                }).keypress(function (e) {
-                    var regex = new RegExp("^[0-9]+$");
-                    var key = String.fromCharCode(!e.charCode ? e.which : e.charCode);
-                    if (!regex.test(key)) {
-                        event.preventDefault();
-                        return false;
-                    }
-                });
+                    innerInput.blur(function () {
+                        var newVal = $(this).val();
+                        if (newVal > opt.typedata.max) {
+                            newVal = opt.typedata.max;
+                        }
+                        if (newVal < opt.typedata.min) {
+                            newVal = opt.typedata.min;
+                        }
+
+                        $(this).remove();
+                        selectedValue = parseInt(newVal);
+                        inputControl.val(newVal);
+                        displayCtrl.html(newVal);
+                    }).keypress(function (e) {
+                        var regex = new RegExp("^[0-9]+$");
+                        var key = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+                        if (!regex.test(key)) {
+                            event.preventDefault();
+                            return false;
+                        }
+                    });
+                }
+
+                innerInput.focus();
             }
 
             inputControl.triggerHandler('focus');
