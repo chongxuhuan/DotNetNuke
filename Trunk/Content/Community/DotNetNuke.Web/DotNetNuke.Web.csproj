@@ -198,6 +198,7 @@
     <Compile Include="Api\IMapRoute.cs" />
     <Compile Include="Api\IServiceRouteMapper.cs" />
     <Compile Include="Api\Internal\ServicesRoutingManager.cs" />
+    <Compile Include="UI\WebControls\DnnDateTimePicker.cs" />
     <Compile Include="UI\WebControls\DnnFilePickerUploader.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

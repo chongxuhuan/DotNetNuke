@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -326,12 +326,12 @@ namespace DotNetNuke.UI.Containers
             }
             if (ModuleConfiguration.StartDate >= DateTime.Now)
             {
-                adminMessage = string.Format(Localization.GetString("ModuleEffective.Text"), ModuleConfiguration.StartDate.ToShortDateString());
+                adminMessage = string.Format(Localization.GetString("ModuleEffective.Text"), ModuleConfiguration.StartDate);
                 showMessage = !Globals.IsAdminControl();
             }
             if (ModuleConfiguration.EndDate <= DateTime.Now)
             {
-                adminMessage = string.Format(Localization.GetString("ModuleExpired.Text"), ModuleConfiguration.EndDate.ToShortDateString());
+                adminMessage = string.Format(Localization.GetString("ModuleExpired.Text"), ModuleConfiguration.EndDate);
                 showMessage = !Globals.IsAdminControl();
             }
             if (showMessage)
@@ -651,7 +651,7 @@ namespace DotNetNuke.UI.Containers
 					//check if it is nested within an UpdatePanel 
                     try
                     {
-                        moduleControl = (PortalModuleBase) panel.Controls[0].Controls[0].Controls[1];
+                        moduleControl = (PortalModuleBase) panel.Controls[1].Controls[1];
                     }
                     catch (Exception exc)
                     {

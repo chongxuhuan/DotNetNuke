@@ -76,21 +76,18 @@
                 </div>
                 <div class="dnnFormItem">
                     <dnn:label id="plStartDate" runat="server" controlname="txtStartDate" />
-                    <dnn:dnndatepicker id="startDatePicker" runat="server" />
-                    <asp:CompareValidator ID="valtxtStartDate" ControlToValidate="startDatePicker" Operator="DataTypeCheck"
-                        Type="Date" runat="server" Display="Dynamic" resourcekey="valStartDate.ErrorMessage"
-                        CssClass="dnnFormMessage dnnFormError" />
+                    <dnn:dnndatetimepicker id="startDatePicker" runat="server" />
                 </div>
                 <div class="dnnFormItem">
                     <dnn:label id="plEndDate" runat="server" controlname="txtEndDate" />
-                    <dnn:dnndatepicker id="endDatePicker" runat="server" />
-                    <asp:CompareValidator ID="valtxtEndDate" ControlToValidate="endDatePicker" Operator="DataTypeCheck"
-                        Type="Date" runat="server" Display="Dynamic" resourcekey="valEndDate.ErrorMessage"
-                        CssClass="dnnFormMessage dnnFormError" />
-                    <asp:CompareValidator ID="val2txtEndDate" ControlToValidate="endDatePicker" ControlToCompare="startDatePicker"
-                        Operator="GreaterThanEqual" Type="Date" runat="server" Display="Dynamic" resourcekey="valEndDate2.ErrorMessage"
-                        CssClass="dnnFormMessage dnnFormError" />
+                    <dnn:dnndatetimepicker id="endDatePicker" runat="server" />
+                    
                 </div>
+				<div class="dnnFormItem">
+					<asp:CustomValidator runat="server" ControlToValidate="endDatePicker" ClientValidationFunction="compareDate" 
+						Display="Dynamic" resourcekey="valEndDate2.ErrorMessage" CompareControl="startDatePicker"
+                        CssClass="dnnFormMessage dnnFormError"></asp:CustomValidator>
+				</div>
             </fieldset>
             <h2 id="dnnPanel-ModuleAdditionalPages" class="dnnFormSectionHead">
                 <a href="" class="dnnSectionExpanded">
@@ -341,6 +338,14 @@
             Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
                 setUpDnnModuleSettings();
             });
+	        
+            window.compareDate = function (source, arg) {
+            	var id = source.controltovalidate;
+            	var compareId = source.getAttribute("CompareControl");
+            	var time = $find(id).get_timeView().getTime();
+            	var compareTime = $find(id.substr(0, id.lastIndexOf("_") + 1) + compareId).get_timeView().getTime();
+            	arg.IsValid = compareTime == null || time > compareTime;
+            };
         });
     } (jQuery, window.Sys));
 </script>
