@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -23,6 +23,7 @@
 using System.Linq;
 using System.Web.UI;
 using DotNetNuke.Entities.Content.Taxonomy;
+using DotNetNuke.Services.Localization;
 
 #endregion
 
@@ -62,7 +63,7 @@ namespace DotNetNuke.Modules.Taxonomy.Views.Controls
                 typeList.Items.FindByValue(vocabulary.Type.ToString()).Selected = true;
                 if (vocabulary.ScopeType != null)
                 {
-                    scopeLabel.Text = vocabulary.ScopeType.ScopeType;
+					scopeLabel.Text = Localization.GetString(vocabulary.ScopeType.ScopeType, LocalResourceFile);
                     scopeList.Items.FindByValue(vocabulary.ScopeType.ScopeType).Selected = true;
                 }
                 typeLabel.Text = vocabulary.Type.ToString();
