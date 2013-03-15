@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -166,9 +166,9 @@ namespace DotNetNuke.Common
             }
         }
 
-        private static string InitializeApp(HttpApplication app)
+        private static string InitializeApp(HttpApplication app, ref bool initialized)
         {
-                        HttpRequest request = app.Request;
+            HttpRequest request = app.Request;
             string redirect = Null.NullString;
 
             Logger.Trace("Request " + request.Url.LocalPath);
@@ -211,6 +211,8 @@ namespace DotNetNuke.Common
                     //Log Server information
                     ServerController.UpdateServerActivity(new ServerInfo());
                     Logger.Info("Application Initialized");
+
+	                initialized = true;
                 }
             }
             else
@@ -275,9 +277,7 @@ namespace DotNetNuke.Common
                     return;
                 }
                 //Initialize ...
-                redirect = InitializeApp(app);
-                //Set flag to indicate app has been initialised
-                InitializedAlready = true;
+				redirect = InitializeApp(app, ref InitializedAlready);
             }
             if (!string.IsNullOrEmpty(redirect))
             {
