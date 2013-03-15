@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -692,7 +692,7 @@ namespace DotNetNuke.Providers.RadEditorProvider
                         var files = FolderManager.Instance.GetFiles(dnnFolder);
                         foreach (var fileInfo in files)
                         {
-                            showFiles.Add(new FileItem(fileInfo.FileName, fileInfo.Extension, fileInfo.Size, "", FileManager.Instance.GetUrl(fileInfo), "", folderPermissions));
+                            showFiles.Add(new FileItem(fileInfo.FileName, fileInfo.Extension, fileInfo.Size, "", GetFileUrl(fileInfo), "", folderPermissions));
                         }
                     }
 
@@ -924,6 +924,22 @@ namespace DotNetNuke.Providers.RadEditorProvider
 					}
 				}
 			}
+		}
+
+		private string GetFileUrl(IFileInfo file)
+		{
+			if (file == null)
+			{
+				return string.Empty;
+			}
+
+			var folderMapping = FolderMappingController.Instance.GetFolderMapping(file.FolderMappingID);
+			if (folderMapping.IsEditable)
+			{
+				return Globals.LinkClick("fileid=" + file.FileId, Null.NullInteger, Null.NullInteger);
+			}
+			
+			return FileManager.Instance.GetUrl(file);
 		}
 
 #endregion
