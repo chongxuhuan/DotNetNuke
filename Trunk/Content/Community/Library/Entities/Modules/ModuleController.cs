@@ -1,7 +1,7 @@
 #region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2012
+// Copyright (c) 2002-2013
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -175,6 +175,27 @@ namespace DotNetNuke.Entities.Modules
                     module.ModulePermissions.Add(modulePermission);
                 }
             }
+        }
+
+		private ModulePermissionInfo AddModulePermission(ModuleInfo module, PermissionInfo permission, int roleId, int userId, bool allowAccess)
+        {
+            var modulePermission = new ModulePermissionInfo
+            {
+				ModuleID = module.ModuleID,
+                PermissionID = permission.PermissionID,
+                RoleID = roleId,
+                UserID = userId,
+                PermissionKey = permission.PermissionKey,
+                AllowAccess = allowAccess
+            };
+
+            // add the permission to the collection
+			if (!module.ModulePermissions.Contains(modulePermission))
+            {
+				module.ModulePermissions.Add(modulePermission);
+            }
+
+			return modulePermission;
         }
 
         private static bool CheckIsInstance(int templateModuleID, Hashtable hModules)
@@ -2222,6 +2243,66 @@ namespace DotNetNuke.Entities.Modules
         }
 
         #endregion
+
+		public void InitialModulePermission(ModuleInfo module, int tabId, int permissionType)
+		{
+			var tabPermissions = TabPermissionController.GetTabPermissions(tabId, module.PortalID);
+            var permissionController = new PermissionController();
+
+            module.InheritViewPermissions = permissionType == 0;
+
+            // get the default module view permissions
+            ArrayList systemModuleViewPermissions = permissionController.GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", "VIEW");
+
+            // get the permissions from the page
+			foreach (TabPermissionInfo tabPermission in tabPermissions)
+			{
+				if (tabPermission.PermissionKey == "VIEW" && permissionType == 0)
+				{
+					//Don't need to explicitly add View permisisons if "Same As Page"
+					continue;
+				}
+
+				// get the system module permissions for the permissionkey
+				ArrayList systemModulePermissions = permissionController.GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", tabPermission.PermissionKey);
+				// loop through the system module permissions
+				int j;
+				for (j = 0; j <= systemModulePermissions.Count - 1; j++)
+				{
+					// create the module permission
+					var systemModulePermission = (PermissionInfo) systemModulePermissions[j];
+					if (systemModulePermission.PermissionKey == "VIEW" && permissionType == 1 && tabPermission.PermissionKey != "EDIT")
+					{
+						//Only Page Editors get View permissions if "Page Editors Only"
+						continue;
+					}
+
+					ModulePermissionInfo modulePermission = AddModulePermission(module, systemModulePermission, tabPermission.RoleID, tabPermission.UserID, tabPermission.AllowAccess);
+
+					// ensure that every EDIT permission which allows access also provides VIEW permission
+					if (modulePermission.PermissionKey == "EDIT" && modulePermission.AllowAccess)
+					{
+						AddModulePermission(module, (PermissionInfo) systemModuleViewPermissions[0], modulePermission.RoleID, modulePermission.UserID, true);
+					}
+				}
+
+				//Get the custom Module Permissions,  Assume that roles with Edit Tab Permissions
+				//are automatically assigned to the Custom Module Permissions
+				if (tabPermission.PermissionKey == "EDIT")
+				{
+					ArrayList customModulePermissions = permissionController.GetPermissionsByModuleDefID(module.ModuleDefID);
+
+					// loop through the custom module permissions
+					for (j = 0; j <= customModulePermissions.Count - 1; j++)
+					{
+						// create the module permission
+						var customModulePermission = (PermissionInfo)customModulePermissions[j];
+
+						AddModulePermission(module, customModulePermission, tabPermission.RoleID, tabPermission.UserID, tabPermission.AllowAccess);
+					}
+				}
+			}
+		}
 
         #endregion
 

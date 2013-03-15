@@ -525,10 +525,7 @@ namespace DotNetNuke.UI.ControlPanel
 
         private static void DoAddNewModule(string title, int desktopModuleId, string paneName, int position, int permissionType, string align)
         {
-            TabPermissionCollection objTabPermissions = PortalSettings.Current.ActiveTab.TabPermissions;
-            var objPermissionController = new PermissionController();
             var objModules = new ModuleController();
-            new EventLogController();
 
             try
             {
@@ -568,75 +565,8 @@ namespace DotNetNuke.UI.ControlPanel
                     }
                 }
 
-                switch (permissionType)
-                {
-                    case 0:
-                        objModule.InheritViewPermissions = true;
-                        break;
-                    case 1:
-                        objModule.InheritViewPermissions = false;
-                        break;
-                }
+                objModules.InitialModulePermission(objModule, objModule.TabID, permissionType);
 
-                // get the default module view permissions
-                ArrayList arrSystemModuleViewPermissions = objPermissionController.GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", "VIEW");
-
-                // get the permissions from the page
-                foreach (TabPermissionInfo objTabPermission in objTabPermissions)
-                {
-                    if (objTabPermission.PermissionKey == "VIEW" && permissionType == 0)
-                    {
-                        //Don't need to explicitly add View permisisons if "Same As Page"
-                        continue;
-                    }
-
-                    // get the system module permissions for the permissionkey
-                    ArrayList arrSystemModulePermissions = objPermissionController.GetPermissionByCodeAndKey("SYSTEM_MODULE_DEFINITION", objTabPermission.PermissionKey);
-                    // loop through the system module permissions
-                    int j;
-                    for (j = 0; j <= arrSystemModulePermissions.Count - 1; j++)
-                    {
-                        // create the module permission
-                        var objSystemModulePermission = (PermissionInfo)arrSystemModulePermissions[j];
-                        if (objSystemModulePermission.PermissionKey == "VIEW" && permissionType == 1 && objTabPermission.PermissionKey != "EDIT")
-                        {
-                            //Only Page Editors get View permissions if "Page Editors Only"
-                            continue;
-                        }
-
-                        ModulePermissionInfo objModulePermission = AddModulePermission(objModule,
-                                                                                       objSystemModulePermission,
-                                                                                       objTabPermission.RoleID,
-                                                                                       objTabPermission.UserID,
-                                                                                       objTabPermission.AllowAccess);
-
-                        // ensure that every EDIT permission which allows access also provides VIEW permission
-                        if (objModulePermission.PermissionKey == "EDIT" && objModulePermission.AllowAccess)
-                        {
-                            AddModulePermission(objModule,
-                                (PermissionInfo)arrSystemModuleViewPermissions[0],
-                                objModulePermission.RoleID,
-                                objModulePermission.UserID,
-                                true);
-                        }
-                    }
-
-                    //Get the custom Module Permissions,  Assume that roles with Edit Tab Permissions
-                    //are automatically assigned to the Custom Module Permissions
-                    if (objTabPermission.PermissionKey == "EDIT")
-                    {
-                        ArrayList arrCustomModulePermissions = objPermissionController.GetPermissionsByModuleDefID(objModule.ModuleDefID);
-
-                        // loop through the custom module permissions
-                        for (j = 0; j <= arrCustomModulePermissions.Count - 1; j++)
-                        {
-                            // create the module permission
-                            var objCustomModulePermission = (PermissionInfo)arrCustomModulePermissions[j];
-
-                            AddModulePermission(objModule, objCustomModulePermission, objTabPermission.RoleID, objTabPermission.UserID, objTabPermission.AllowAccess);
-                        }
-                    }
-                }
                 if (PortalSettings.Current.ContentLocalizationEnabled)
                 {
                     Locale defaultLocale = LocaleController.Instance.GetDefaultLocale(PortalSettings.Current.PortalId);
